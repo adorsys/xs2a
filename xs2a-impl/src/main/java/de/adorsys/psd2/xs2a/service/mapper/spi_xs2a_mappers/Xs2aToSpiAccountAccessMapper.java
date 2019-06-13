@@ -36,7 +36,8 @@ public class Xs2aToSpiAccountAccessMapper {
                                 xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aa.getBalances()),
                                 xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aa.getTransactions()),
                                 aa.getAvailableAccounts(),
-                                aa.getAllPsd2()
+                                aa.getAllPsd2(),
+                                aa.getAvailableAccountsWithBalances()
                             )
                    )
                    .orElse(null);

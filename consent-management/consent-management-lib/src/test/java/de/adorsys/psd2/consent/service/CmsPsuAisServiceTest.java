@@ -690,7 +690,10 @@ public class CmsPsuAisServiceTest {
         return new AisAccountAccess(
             Collections.singletonList(accountReference),
             Collections.singletonList(accountReference),
-            Collections.singletonList(accountReference), null, null);
+            Collections.singletonList(accountReference),
+            null,
+            null,
+            null);
     }
 
     private AccountReference getAccountReference(String iban, Currency currency) {

@@ -187,7 +187,7 @@ public class AccountReferenceInConsentUpdaterTest {
     private Xs2aAccountAccess buildXs2aAccountAccess(List<AccountReference> accounts,
                                                      List<AccountReference> balances,
                                                      List<AccountReference> transactions) {
-        return new Xs2aAccountAccess(accounts, balances, transactions, AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES, AccountAccessType.ALL_ACCOUNTS);
+        return new Xs2aAccountAccess(accounts, balances, transactions, AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS);
     }
 
     private Xs2aAccountDetails buildXs2aAccountDetails(String aspspAccountId, String resourceId, String iban) {

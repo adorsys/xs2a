@@ -137,10 +137,11 @@ public class AisConsentMapper {
     private AisAccountAccess mapToAisAccountAccess(AisConsent consent) {
         List<TppAccountAccess> accesses = consent.getAccesses();
         return new AisAccountAccess(mapToInitialAccountReferences(accesses, TypeAccess.ACCOUNT),
-            mapToInitialAccountReferences(accesses, TypeAccess.BALANCE),
-            mapToInitialAccountReferences(accesses, TypeAccess.TRANSACTION),
-            getAccessType(consent.getAvailableAccounts()),
-            getAccessType(consent.getAllPsd2()));
+                                    mapToInitialAccountReferences(accesses, TypeAccess.BALANCE),
+                                    mapToInitialAccountReferences(accesses, TypeAccess.TRANSACTION),
+                                    getAccessType(consent.getAvailableAccounts()),
+                                    getAccessType(consent.getAllPsd2()),
+                                    getAccessType(consent.getAvailableAccountsWithBalances()));
     }
 
     private List<AccountReference> mapToInitialAccountReferences(List<TppAccountAccess> aisAccounts, TypeAccess typeAccess) {
@@ -153,10 +154,11 @@ public class AisConsentMapper {
     private AisAccountAccess mapToAspspAisAccountAccess(AisConsent consent) {
         List<AspspAccountAccess> accesses = consent.getAspspAccountAccesses();
         return new AisAccountAccess(mapToAccountReferences(accesses, TypeAccess.ACCOUNT),
-            mapToAccountReferences(accesses, TypeAccess.BALANCE),
-            mapToAccountReferences(accesses, TypeAccess.TRANSACTION),
-            getAccessType(consent.getAvailableAccounts()),
-            getAccessType(consent.getAllPsd2()));
+                                    mapToAccountReferences(accesses, TypeAccess.BALANCE),
+                                    mapToAccountReferences(accesses, TypeAccess.TRANSACTION),
+                                    getAccessType(consent.getAvailableAccounts()),
+                                    getAccessType(consent.getAllPsd2()),
+                                    getAccessType(consent.getAvailableAccountsWithBalances()));
     }
 
     private List<AccountReference> mapToAccountReferences(List<AspspAccountAccess> aisAccounts, TypeAccess typeAccess) {

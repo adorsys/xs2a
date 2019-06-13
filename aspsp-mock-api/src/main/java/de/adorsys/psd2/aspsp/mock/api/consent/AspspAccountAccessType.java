@@ -17,8 +17,7 @@
 package de.adorsys.psd2.aspsp.mock.api.consent;
 
 public enum AspspAccountAccessType {
-    ALL_ACCOUNTS("allAccounts"),
-    ALL_ACCOUNTS_WITH_BALANCES("allAccountsWithBalances");
+    ALL_ACCOUNTS("allAccounts");
 
     private String description;
 
