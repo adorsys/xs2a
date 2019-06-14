@@ -3,6 +3,7 @@
 == Table of Contents
 * Update version of jackson-databind to 2.9.9
 * Forced mode for starting authorisation
+* Change the logic of SpiResponseStatus to MessageErrorCode mapping
 
 == Update version of jackson-databind to 2.9.9
 
@@ -19,3 +20,12 @@ From now on, new field is present in bank_profile configuration - `startAuthoris
  - `implicit` - forces implicit mode.
 
 Default value is `auto`.
+
+== Change the logic of SpiResponseStatus to MessageErrorCode mapping
+
+From now on, XS2A will propagate error from SPI to the TPP based on message error code inside the
+`de.adorsys.psd2.xs2a.core.error.TppMessage` instead of `de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus`.
+This means that if `SpiResponse` will contain any errors (populated via `SpiResponseBuilder#error`), these errors will be
+returned to the TPP in the response with error codes provided by the SPI Developer.
+
+Order of the messages matters, as the HTTP status code in response will be determined based on the first error.
