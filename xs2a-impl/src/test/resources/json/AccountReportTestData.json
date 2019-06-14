@@ -25,6 +25,8 @@
   ],
   "pending": [],
   "_links": {
-    "viewAccount": "http://localhost/api/v1/accounts/33333-999999999"
+    "viewAccount": {
+      "href": "http://localhost/api/v1/accounts/33333-999999999"
+    }
   }
 }

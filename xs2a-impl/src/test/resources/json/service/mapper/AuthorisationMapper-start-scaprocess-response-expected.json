@@ -1,5 +1,4 @@
 {
   "authorisationId": "authorisation ID",
-  "scaStatus": "received",
-  "_links": {}
+  "scaStatus": "received"
 }

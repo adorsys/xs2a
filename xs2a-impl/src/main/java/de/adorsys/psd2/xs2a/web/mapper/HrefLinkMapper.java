@@ -18,41 +18,30 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-// TODO Use HrefType instead of HrefLinkMapper https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/777
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class HrefLinkMapper {
-    private static final String HREF = "href";
     private final ObjectMapper mapper;
 
     /**
-     * Maps Links to HrefType Links Map
+     * Maps Links to Links Map
      *
-     * @param links Links model Object, where URI links stored as a string
-     * @return Map with link name and href value.
-     * Returned Map with added 'href' to link value.
+     * @param links Links model Object, where URI links stored as a HrefType
+     * @return Map with link name and HrefType value.
      */
-    public Map<String, Map<String, String>> mapToLinksMap(Links links) {
+    public Map<String, HrefType> mapToLinksMap(Links links) {
         if (links == null) {
             return null;
         }
 
-        Map<String, String> linksMap = mapper.convertValue(links, new TypeReference<Map<String, String>>() {
+        return mapper.convertValue(links, new TypeReference<Map<String, HrefType>>() {
         });
-        return linksMap
-                   .entrySet().stream().collect(Collectors.toMap(
-                Map.Entry::getKey,
-                e -> Collections.singletonMap(HREF, e.getValue())
-            ));
     }
 }

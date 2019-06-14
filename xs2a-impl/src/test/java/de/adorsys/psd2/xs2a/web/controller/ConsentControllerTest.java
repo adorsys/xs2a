@@ -333,7 +333,6 @@ public class ConsentControllerTest {
                    : ResponseObject.<ConsentsResponse201>builder().body(response).build();
     }
 
-
     private ResponseObject<CreateConsentResponse> createXs2aConsentResponse(String consentId) {
         return isEmpty(consentId)
                    ? ResponseObject.<CreateConsentResponse>builder().fail(MESSAGE_ERROR_AIS_404).build()
