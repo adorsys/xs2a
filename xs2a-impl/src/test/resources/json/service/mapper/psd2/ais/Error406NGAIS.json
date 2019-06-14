@@ -1,0 +1,9 @@
+{
+  "tppMessages": [
+    {
+      "category": "ERROR",
+      "code": "REQUESTED_FORMATS_INVALID",
+      "text": "Some text"
+    }
+  ]
+}

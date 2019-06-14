@@ -1,0 +1,9 @@
+{
+  "tppMessages": [
+    {
+      "category": "ERROR",
+      "code": "INTERNAL_SERVER_ERROR",
+      "text": "Custom text"
+    }
+  ]
+}

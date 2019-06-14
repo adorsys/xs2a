@@ -1,0 +1,9 @@
+{
+  "tppMessages": [
+    {
+      "category": "ERROR",
+      "code": "EXECUTION_DATE_INVALID",
+      "text": "Custom text"
+    }
+  ]
+}

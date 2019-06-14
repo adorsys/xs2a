@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2.piis;
 
 import de.adorsys.psd2.model.Error405NGPIIS;
-import de.adorsys.psd2.model.MessageCode405PIIS;
 import de.adorsys.psd2.model.TppMessage405PIIS;
 import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -52,7 +51,7 @@ public class PIIS405ErrorMapper extends Psd2ErrorMapper<MessageError, Error405NG
         return tppMessages.stream()
                    .map(m -> new TppMessage405PIIS()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
-                                 .code(MessageCode405PIIS.fromValue(m.getMessageErrorCode().getName()))
+                                 .code(m.getMessageErrorCode().getName())
                                  .path(m.getPath())
                                  .text(getErrorText(m))
                    ).collect(Collectors.toList());

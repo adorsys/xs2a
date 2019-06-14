@@ -34,7 +34,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 404 for PIIS. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
 
 public class Error404PIIS   {
   @JsonProperty("type")
@@ -47,7 +47,7 @@ public class Error404PIIS   {
   private String detail = null;
 
   @JsonProperty("code")
-  private MessageCode404PIIS code = null;
+  private String code = null;
 
   @JsonProperty("additionalErrors")
   @Valid
@@ -123,7 +123,7 @@ public class Error404PIIS   {
     this.detail = detail;
   }
 
-  public Error404PIIS code(MessageCode404PIIS code) {
+    public Error404PIIS code(String code) {
     this.code = code;
     return this;
   }
@@ -135,15 +135,14 @@ public class Error404PIIS   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-  @Valid
 
 
   @JsonProperty("code")
-  public MessageCode404PIIS getCode() {
+  public String getCode() {
     return code;
   }
 
-  public void setCode(MessageCode404PIIS code) {
+    public void setCode(String code) {
     this.code = code;
   }
 

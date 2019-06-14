@@ -16,64 +16,54 @@
 
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.Objects;
 
 /**
  * Message codes defined for PIS for HTTP Error code 401 (UNAUTHORIZED).
  */
-public enum MessageCode401PIS {
-  
-  CERTIFICATE_INVALID("CERTIFICATE_INVALID"),
-  
-  CERTIFICATE_EXPIRED("CERTIFICATE_EXPIRED"),
-  
-  CERTIFICATE_BLOCKED("CERTIFICATE_BLOCKED"),
-  
-  CERTIFICATE_REVOKE("CERTIFICATE_REVOKE"),
-  
-  CERTIFICATE_MISSING("CERTIFICATE_MISSING"),
-  
-  SIGNATURE_INVALID("SIGNATURE_INVALID"),
-  
-  SIGNATURE_MISSING("SIGNATURE_MISSING"),
-  
-  CORPORATE_ID_INVALID("CORPORATE_ID_INVALID"),
-  
-  PSU_CREDENTIALS_INVALID("PSU_CREDENTIALS_INVALID"),
-  
-  CONSENT_INVALID("CONSENT_INVALID"),
-  
-  CONSENT_EXPIRED("CONSENT_EXPIRED"),
-  
-  TOKEN_UNKNOWN("TOKEN_UNKNOWN"),
-  
-  TOKEN_INVALID("TOKEN_INVALID"),
-  
-  TOKEN_EXPIRED("TOKEN_EXPIRED"),
-  
-  REQUIRED_KID_MISSING("REQUIRED_KID_MISSING");
+@ApiModel(description = "Message codes defined for PIS for HTTP Error code 401 (UNAUTHORIZED).")
+@Validated
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
 
-  private String value;
+public class MessageCode401PIS {
 
-  MessageCode401PIS(String value) {
-    this.value = value;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        return true;
   }
 
   @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
+  public int hashCode() {
+      return Objects.hash();
   }
 
-  @JsonCreator
-  public static MessageCode401PIS fromValue(String text) {
-    for (MessageCode401PIS b : MessageCode401PIS.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
+    @Override
+  public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class MessageCode401PIS {\n");
+
+        sb.append("}");
+        return sb.toString();
     }
-    return null;
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
   }
 }
 

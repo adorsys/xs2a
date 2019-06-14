@@ -1,0 +1,9 @@
+{
+  "tppMessages": [
+    {
+      "category": "ERROR",
+      "code": "STATUS_INVALID",
+      "text": "Some text"
+    }
+  ]
+}

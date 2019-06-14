@@ -16,36 +16,54 @@
 
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.Objects;
 
 /**
  * Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).
  */
-public enum MessageCode406AIS {
-  
-  INVALID("REQUESTED_FORMATS_INVALID");
+@ApiModel(description = "Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).")
+@Validated
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
 
-  private String value;
+public class MessageCode406AIS {
 
-  MessageCode406AIS(String value) {
-    this.value = value;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        return true;
   }
 
   @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
+  public int hashCode() {
+      return Objects.hash();
   }
 
-  @JsonCreator
-  public static MessageCode406AIS fromValue(String text) {
-    for (MessageCode406AIS b : MessageCode406AIS.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
+    @Override
+  public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class MessageCode406AIS {\n");
+
+        sb.append("}");
+        return sb.toString();
     }
-    return null;
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
   }
 }
 

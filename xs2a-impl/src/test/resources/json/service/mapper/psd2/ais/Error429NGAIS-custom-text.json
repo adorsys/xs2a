@@ -1,0 +1,9 @@
+{
+  "tppMessages": [
+    {
+      "category": "ERROR",
+      "code": "ACCESS_EXCEEDED",
+      "text": "Custom text"
+    }
+  ]
+}

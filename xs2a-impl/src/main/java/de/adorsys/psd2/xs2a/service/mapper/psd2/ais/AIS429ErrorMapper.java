@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2.ais;
 
 import de.adorsys.psd2.model.Error429NGAIS;
-import de.adorsys.psd2.model.MessageCode429AIS;
 import de.adorsys.psd2.model.TppMessage429AIS;
 import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -52,7 +51,7 @@ public class AIS429ErrorMapper extends Psd2ErrorMapper<MessageError, Error429NGA
         return tppMessages.stream()
                    .map(m -> new TppMessage429AIS()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
-                                 .code(MessageCode429AIS.fromValue(m.getMessageErrorCode().getName()))
+                                 .code(m.getMessageErrorCode().getName())
                                  .path(m.getPath())
                                  .text(getErrorText(m))
                    ).collect(Collectors.toList());

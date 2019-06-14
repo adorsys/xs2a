@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2.piis;
 
 import de.adorsys.psd2.model.Error400NGPIIS;
-import de.adorsys.psd2.model.MessageCode400PIIS;
 import de.adorsys.psd2.model.TppMessage400PIIS;
 import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -52,7 +51,7 @@ public class PIIS400ErrorMapper extends Psd2ErrorMapper<MessageError, Error400NG
         return tppMessages.stream()
                    .map(m -> new TppMessage400PIIS()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
-                                 .code(MessageCode400PIIS.fromValue(m.getMessageErrorCode().getName()))
+                                 .code(m.getMessageErrorCode().getName())
                                  .path(m.getPath())
                                  .text(getErrorText(m))
                    ).collect(Collectors.toList());

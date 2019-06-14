@@ -20,7 +20,6 @@ import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.exception.model.error500.Error500NGPIS;
-import de.adorsys.psd2.xs2a.exception.model.error500.MessageCode500PIS;
 import de.adorsys.psd2.xs2a.exception.model.error500.TppMessage500PIS;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.Psd2ErrorMapper;
 import org.springframework.http.HttpStatus;
@@ -52,7 +51,7 @@ public class PIS500ErrorMapper extends Psd2ErrorMapper<MessageError, Error500NGP
         return tppMessages.stream()
                    .map(m -> new TppMessage500PIS()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
-                                 .code(MessageCode500PIS.fromValue(m.getMessageErrorCode().getName()))
+                                 .code(m.getMessageErrorCode().getName())
                                  .path(m.getPath())
                                  .text(getErrorText(m))
                    ).collect(Collectors.toList());

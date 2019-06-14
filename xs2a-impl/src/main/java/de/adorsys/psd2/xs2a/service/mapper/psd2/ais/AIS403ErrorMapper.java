@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2.ais;
 
 import de.adorsys.psd2.model.Error403NGAIS;
-import de.adorsys.psd2.model.MessageCode403AIS;
 import de.adorsys.psd2.model.TppMessage403AIS;
 import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -52,9 +51,9 @@ public class AIS403ErrorMapper extends Psd2ErrorMapper<MessageError, Error403NGA
         return tppMessages.stream()
                    .map(m -> new TppMessage403AIS()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
-                                 .code(MessageCode403AIS.fromValue(m.getMessageErrorCode().getName()))
+                                 .code(m.getMessageErrorCode().getName())
                                  .path(m.getPath())
-                                 .text(messageService.getMessage(m.getMessageErrorCode().name()))
+                                 .text(getErrorText(m))
                    ).collect(Collectors.toList());
     }
 }
