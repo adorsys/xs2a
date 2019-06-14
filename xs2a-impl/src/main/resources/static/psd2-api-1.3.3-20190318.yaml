@@ -7332,298 +7332,121 @@ components:
     MessageCode400_AIS: 
       description: Message codes defined for AIS for HTTP Error code 400 (BAD_REQUEST).
       type: string
-      enum: 
-        - "FORMAT_ERROR"              #gen
-        - "PARAMETER_NOT_CONSISTENT"  #gen
-        - "PARAMETER_NOT_SUPPORTED"   #gen
-        - "SERVICE_INVALID"           #gen
-        - "RESOURCE_UNKNOWN"          #gen
-        - "RESOURCE_EXPIRED"          #gen
-        - "RESOURCE_BLOCKED"          #gen
-        - "TIMESTAMP_INVALID"         #gen
-        - "PERIOD_INVALID"            #gen
-        - "SCA_METHOD_UNKNOWN"        #gen
-        - "CONSENT_UNKNOWN"           #gen
-        - "SESSIONS_NOT_SUPPORTED"    #AIS
-
 
     MessageCode400_PIS: 
       description: Message codes defined for PIS for HTTP Error code 400 (BAD_REQUEST).
       type: string
-      enum: 
-        - "FORMAT_ERROR"              #gen
-        - "PARAMETER_NOT_CONSISTENT"  #gen
-        - "PARAMETER_NOT_SUPPORTED"   #gen
-        - "SERVICE_INVALID"           #gen
-        - "RESOURCE_UNKNOWN"          #gen
-        - "RESOURCE_EXPIRED"          #gen
-        - "RESOURCE_BLOCKED"          #gen
-        - "TIMESTAMP_INVALID"         #gen
-        - "PERIOD_INVALID"            #gen
-        - "SCA_METHOD_UNKNOWN"        #gen
-        - "CONSENT_UNKNOWN"           #gen
-        - "PAYMENT_FAILED"            #PIS
-        - "EXECUTION_DATE_INVALID"    #PIS
-
 
     MessageCode400_PIIS: 
       description: Message codes defined for PIIS for HTTP Error code 400 (BAD_REQUEST).
       type: string
-      enum: 
-        - "FORMAT_ERROR"              #gen
-        - "PARAMETER_NOT_CONSISTENT"  #gen
-        - "PARAMETER_NOT_SUPPORTED"   #gen
-        - "SERVICE_INVALID"           #gen
-        - "RESOURCE_UNKNOWN"          #gen
-        - "RESOURCE_EXPIRED"          #gen
-        - "RESOURCE_BLOCKED"          #gen
-        - "TIMESTAMP_INVALID"         #gen
-        - "PERIOD_INVALID"            #gen
-        - "SCA_METHOD_UNKNOWN"        #gen
-        - "CONSENT_UNKNOWN"           #gen
-        - "CARD_INVALID"              #PIIS
-        - "NO_PIIS_ACTIVATION"        #PIIS
-
 
     MessageCode400_SBS: 
       description: Message codes defined for signing baskets for HTTP Error code 400 (BAD_REQUEST).
       type: string
-      enum: 
-        - "FORMAT_ERROR"              #gen
-        - "PARAMETER_NOT_CONSISTENT"  #gen
-        - "PARAMETER_NOT_SUPPORTED"   #gen
-        - "SERVICE_INVALID"           #gen
-        - "RESOURCE_UNKNOWN"          #gen
-        - "RESOURCE_EXPIRED"          #gen
-        - "RESOURCE_BLOCKED"          #gen
-        - "TIMESTAMP_INVALID"         #gen
-        - "PERIOD_INVALID"            #gen
-        - "SCA_METHOD_UNKNOWN"        #gen
-        - "CONSENT_UNKNOWN"           #gen
-        - "REFERENCE_MIX_INVALID"     #SBS
-
 
     MessageCode401_PIS: 
       description: Message codes defined for PIS for HTTP Error code 401 (UNAUTHORIZED).
       type: string
-      enum: 
-        - "CERTIFICATE_INVALID"       #gen
-        - "CERTIFICATE_EXPIRED"       #gen
-        - "CERTIFICATE_BLOCKED"       #gen
-        - "CERTIFICATE_REVOKE"        #gen
-        - "CERTIFICATE_MISSING"       #gen
-        - "SIGNATURE_INVALID"         #gen
-        - "SIGNATURE_MISSING"         #gen
-        - "CORPORATE_ID_INVALID"      #gen
-        - "PSU_CREDENTIALS_INVALID"   #gen
-        - "CONSENT_INVALID"           #gen, AIS
-        - "CONSENT_EXPIRED"           #gen
-        - "TOKEN_UNKNOWN"             #gen
-        - "TOKEN_INVALID"             #gen
-        - "TOKEN_EXPIRED"             #gen
-        - "REQUIRED_KID_MISSING"      #PIS
-
 
     MessageCode401_AIS: 
       description: Message codes defined for AIS for HTTP Error code 401 (UNAUTHORIZED).
       type: string
-      enum: 
-        - "CERTIFICATE_INVALID"       #gen
-        - "CERTIFICATE_EXPIRED"       #gen
-        - "CERTIFICATE_BLOCKED"       #gen
-        - "CERTIFICATE_REVOKE"        #gen
-        - "CERTIFICATE_MISSING"       #gen
-        - "SIGNATURE_INVALID"         #gen
-        - "SIGNATURE_MISSING"         #gen
-        - "CORPORATE_ID_INVALID"      #gen
-        - "PSU_CREDENTIALS_INVALID"   #gen
-        - "CONSENT_INVALID"           #gen, AIS
-        - "CONSENT_EXPIRED"           #gen
-        - "TOKEN_UNKNOWN"             #gen
-        - "TOKEN_INVALID"             #gen
-        - "TOKEN_EXPIRED"             #gen
-
 
     MessageCode401_PIIS: 
       description: Message codes defined for PIIS for HTTP Error code 401 (UNAUTHORIZED).
       type: string
-      enum: 
-        - "CERTIFICATE_INVALID"       #gen
-        - "CERTIFICATE_EXPIRED"       #gen
-        - "CERTIFICATE_BLOCKED"       #gen
-        - "CERTIFICATE_REVOKE"        #gen
-        - "CERTIFICATE_MISSING"       #gen
-        - "SIGNATURE_INVALID"         #gen
-        - "SIGNATURE_MISSING"         #gen
-        - "CORPORATE_ID_INVALID"      #gen
-        - "PSU_CREDENTIALS_INVALID"   #gen
-        - "CONSENT_INVALID"           #gen, AIS
-        - "CONSENT_EXPIRED"           #gen
-        - "TOKEN_UNKNOWN"             #gen
-        - "TOKEN_INVALID"             #gen
-        - "TOKEN_EXPIRED"             #gen
-
 
     MessageCode401_SBS: 
       description: Message codes defined for signing baskets for HTTP Error code 401 (UNAUTHORIZED).
       type: string
-      enum: 
-        - "CERTIFICATE_INVALID"       #gen
-        - "CERTIFICATE_EXPIRED"       #gen
-        - "CERTIFICATE_BLOCKED"       #gen
-        - "CERTIFICATE_REVOKE"        #gen
-        - "CERTIFICATE_MISSING"       #gen
-        - "SIGNATURE_INVALID"         #gen
-        - "SIGNATURE_MISSING"         #gen
-        - "CORPORATE_ID_INVALID"      #gen
-        - "PSU_CREDENTIALS_INVALID"   #gen
-        - "CONSENT_INVALID"           #gen, AIS
-        - "CONSENT_EXPIRED"           #gen
-        - "TOKEN_UNKNOWN"             #gen
-        - "TOKEN_INVALID"             #gen
-        - "TOKEN_EXPIRED"             #gen
         
         
     MessageCode403_PIS: 
       description: Message codes defined defined for PIS for PIS for HTTP Error code 403 (FORBIDDEN).
       type: string
-      enum: 
-        - "CONSENT_UNKNOWN"           #gen
-        - "SERVICE_BLOCKED"           #gen
-        - "RESOURCE_UNKNOWN"          #gen
-        - "RESOURCE_EXPIRED"          #gen
-        - "PRODUCT_INVALID"           #PIS
 
     MessageCode403_AIS: 
       description: Message codes defined for AIS for HTTP Error code 403 (FORBIDDEN).
       type: string
-      enum: 
-        - "CONSENT_UNKNOWN"           #gen
-        - "SERVICE_BLOCKED"           #gen
-        - "RESOURCE_UNKNOWN"          #gen
-        - "RESOURCE_EXPIRED"          #gen
-
 
     MessageCode403_PIIS: 
       description: Message codes defined for PIIS for HTTP Error code 403 (FORBIDDEN).
       type: string
-      enum: 
-        - "CONSENT_UNKNOWN"           #gen
-        - "SERVICE_BLOCKED"           #gen
-        - "RESOURCE_UNKNOWN"          #gen
-        - "RESOURCE_EXPIRED"          #gen
 
 
     MessageCode403_SBS: 
       description: Message codes defined for signing baskets for HTTP Error code 403 (FORBIDDEN).
       type: string
-      enum: 
-        - "CONSENT_UNKNOWN"           #gen
-        - "SERVICE_BLOCKED"           #gen
-        - "RESOURCE_UNKNOWN"          #gen
-        - "RESOURCE_EXPIRED"          #gen
 
 
     MessageCode404_PIS: 
       description: Message codes defined for PIS for HTTP Error code 404 (NOT FOUND).
       type: string
-      enum: 
-        - "RESOURCE_UNKNOWN"          #gens
-        - "PRODUCT_UNKNOWN"           #PIS
 
 
     MessageCode404_AIS: 
       description: Message codes defined for AIS for HTTP Error code 404 (NOT FOUND).
       type: string
-      enum: 
-        - "RESOURCE_UNKNOWN"          #gens
 
 
     MessageCode404_PIIS: 
       description: Message codes defined for PIIS for HTTP Error code 404 (NOT FOUND).
       type: string
-      enum: 
-        - "RESOURCE_UNKNOWN"          #gens
 
 
     MessageCode404_SBS: 
       description: Message codes defined for signing baskets for HTTP Error code 404 (NOT FOUND).
       type: string
-      enum: 
-        - "RESOURCE_UNKNOWN"          #gens
 
 
     MessageCode405_PIS: 
       description: Message codes defined for payment cancelations PIS for HTTP Error code 405 (METHOD NOT ALLOWED).
       type: string
-      enum: 
-        - "SERVICE_INVALID"           #gens
 
 
     MessageCode405_PIS_CANC: 
       description: Message codes defined for payment cancelations PIS for HTTP Error code 405 (METHOD NOT ALLOWED).
       type: string
-      enum: 
-        - "CANCELLATION_INVALID"      #PIS
-        - "SERVICE_INVALID"           #gens
 
     MessageCode405_AIS: 
       description: Message codes defined for AIS for HTTP Error code 405 (METHOD NOT ALLOWED).
       type: string
-      enum: 
-        - "SERVICE_INVALID"           #gens
 
     MessageCode405_PIIS: 
       description: Message codes defined for PIIS for HTTP Error code 405 (METHOD NOT ALLOWED).
       type: string
-      enum: 
-        - "SERVICE_INVALID"           #gens
 
     MessageCode405_SBS: 
       description: Message codes defined for SBS for HTTP Error code 405 (METHOD NOT ALLOWED).
       type: string
-      enum: 
-        - "SERVICE_INVALID"           #gens
 
 
     MessageCode406_AIS: 
       description: Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).
       type: string
-      enum: 
-        - "REQUESTED_FORMATS_INVALID"  #AIS
 
 
     MessageCode409_AIS: 
       description: Message codes defined for AIS for HTTP Error code 409 (CONFLICT).
       type: string
-      enum: 
-        - "STATUS_INVALID"            #gen
 
     MessageCode409_PIS: 
       description: Message codes defined for PIS for HTTP Error code 409 (CONFLICT).
       type: string
-      enum: 
-        - "STATUS_INVALID"            #gen
 
     MessageCode409_PIIS: 
       description: Message codes defined for PIIS for HTTP Error code 409 (CONFLICT).
       type: string
-      enum: 
-        - "STATUS_INVALID"            #gen
 
     MessageCode409_SBS: 
       description: Message codes defined for signing baskets for HTTP Error code 409 (CONFLICT).
       type: string
-      enum: 
-        - "REFERENCE_STATUS_INVALID"  #SBS
-        - "STATUS_INVALID"            #gen
 
 
     MessageCode429_AIS: 
       description: Message codes for HTTP Error code 429 (TOO MANY REQUESTS).
       type: string
-      enum: 
-        - "ACCESS_EXCEEDED"           #AIS
 
 
 

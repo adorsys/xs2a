@@ -29,14 +29,14 @@ import java.util.Objects;
  * TppMessage405PISCANC
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
 
 public class TppMessage405PISCANC   {
   @JsonProperty("category")
   private TppMessageCategory category = null;
 
   @JsonProperty("code")
-  private MessageCode405PISCANC code = null;
+  private String code = null;
 
   @JsonProperty("path")
   private String path = null;
@@ -68,7 +68,7 @@ public class TppMessage405PISCANC   {
     this.category = category;
   }
 
-  public TppMessage405PISCANC code(MessageCode405PISCANC code) {
+    public TppMessage405PISCANC code(String code) {
     this.code = code;
     return this;
   }
@@ -80,15 +80,14 @@ public class TppMessage405PISCANC   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-  @Valid
 
 
   @JsonProperty("code")
-  public MessageCode405PISCANC getCode() {
+  public String getCode() {
     return code;
   }
 
-  public void setCode(MessageCode405PISCANC code) {
+    public void setCode(String code) {
     this.code = code;
   }
 

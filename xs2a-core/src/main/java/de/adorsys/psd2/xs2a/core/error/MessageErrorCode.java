@@ -135,7 +135,8 @@ public enum MessageErrorCode {
     UNSUPPORTED_MEDIA_TYPE(415),
     // CANCELLATION_INVALID: Payment initiation cannot be cancelled due to legal or other operational reasons.
     CANCELLATION_INVALID(405),
-    SERVICE_UNAVAILABLE(503);
+    SERVICE_UNAVAILABLE(503),
+    STATUS_INVALID(409);
 
     private static Map<String, MessageErrorCode> container = new HashMap<>();
 

@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2.pis;
 
 import de.adorsys.psd2.model.Error403NGPIS;
-import de.adorsys.psd2.model.MessageCode403PIS;
 import de.adorsys.psd2.model.TppMessage403PIS;
 import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -52,7 +51,7 @@ public class PIS403ErrorMapper extends Psd2ErrorMapper<MessageError, Error403NGP
         return tppMessages.stream()
                    .map(m -> new TppMessage403PIS()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
-                                 .code(MessageCode403PIS.fromValue(m.getMessageErrorCode().getName()))
+                                 .code(m.getMessageErrorCode().getName())
                                  .path(m.getPath())
                                  .text(getErrorText(m))
                    ).collect(Collectors.toList());

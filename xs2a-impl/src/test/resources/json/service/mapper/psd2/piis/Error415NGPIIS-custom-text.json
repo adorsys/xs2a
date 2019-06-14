@@ -1,0 +1,9 @@
+{
+  "tppMessages": [
+    {
+      "category": "ERROR",
+      "code": "UNSUPPORTED_MEDIA_TYPE",
+      "text": "Custom text"
+    }
+  ]
+}

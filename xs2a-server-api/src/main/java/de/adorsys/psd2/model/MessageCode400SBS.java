@@ -16,58 +16,54 @@
 
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.Objects;
 
 /**
  * Message codes defined for signing baskets for HTTP Error code 400 (BAD_REQUEST).
  */
-public enum MessageCode400SBS {
-  
-  FORMAT_ERROR("FORMAT_ERROR"),
-  
-  PARAMETER_NOT_CONSISTENT("PARAMETER_NOT_CONSISTENT"),
-  
-  PARAMETER_NOT_SUPPORTED("PARAMETER_NOT_SUPPORTED"),
-  
-  SERVICE_INVALID("SERVICE_INVALID"),
-  
-  RESOURCE_UNKNOWN("RESOURCE_UNKNOWN"),
-  
-  RESOURCE_EXPIRED("RESOURCE_EXPIRED"),
-  
-  RESOURCE_BLOCKED("RESOURCE_BLOCKED"),
-  
-  TIMESTAMP_INVALID("TIMESTAMP_INVALID"),
-  
-  PERIOD_INVALID("PERIOD_INVALID"),
-  
-  SCA_METHOD_UNKNOWN("SCA_METHOD_UNKNOWN"),
-  
-  CONSENT_UNKNOWN("CONSENT_UNKNOWN"),
-  
-  REFERENCE_MIX_INVALID("REFERENCE_MIX_INVALID");
+@ApiModel(description = "Message codes defined for signing baskets for HTTP Error code 400 (BAD_REQUEST).")
+@Validated
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
 
-  private String value;
+public class MessageCode400SBS {
 
-  MessageCode400SBS(String value) {
-    this.value = value;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        return true;
   }
 
   @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
+  public int hashCode() {
+      return Objects.hash();
   }
 
-  @JsonCreator
-  public static MessageCode400SBS fromValue(String text) {
-    for (MessageCode400SBS b : MessageCode400SBS.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
+    @Override
+  public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class MessageCode400SBS {\n");
+
+        sb.append("}");
+        return sb.toString();
     }
-    return null;
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
   }
 }
 

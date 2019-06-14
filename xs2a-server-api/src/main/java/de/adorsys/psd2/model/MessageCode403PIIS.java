@@ -16,42 +16,54 @@
 
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.Objects;
 
 /**
  * Message codes defined for PIIS for HTTP Error code 403 (FORBIDDEN).
  */
-public enum MessageCode403PIIS {
-  
-  CONSENT_UNKNOWN("CONSENT_UNKNOWN"),
-  
-  SERVICE_BLOCKED("SERVICE_BLOCKED"),
-  
-  RESOURCE_UNKNOWN("RESOURCE_UNKNOWN"),
-  
-  RESOURCE_EXPIRED("RESOURCE_EXPIRED");
+@ApiModel(description = "Message codes defined for PIIS for HTTP Error code 403 (FORBIDDEN).")
+@Validated
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
 
-  private String value;
+public class MessageCode403PIIS {
 
-  MessageCode403PIIS(String value) {
-    this.value = value;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        return true;
   }
 
   @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
+  public int hashCode() {
+      return Objects.hash();
   }
 
-  @JsonCreator
-  public static MessageCode403PIIS fromValue(String text) {
-    for (MessageCode403PIIS b : MessageCode403PIIS.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
+    @Override
+  public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class MessageCode403PIIS {\n");
+
+        sb.append("}");
+        return sb.toString();
     }
-    return null;
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
   }
 }
 

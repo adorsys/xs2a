@@ -16,60 +16,54 @@
 
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.Objects;
 
 /**
  * Message codes defined for PIIS for HTTP Error code 400 (BAD_REQUEST).
  */
-public enum MessageCode400PIIS {
-  
-  FORMAT_ERROR("FORMAT_ERROR"),
-  
-  PARAMETER_NOT_CONSISTENT("PARAMETER_NOT_CONSISTENT"),
-  
-  PARAMETER_NOT_SUPPORTED("PARAMETER_NOT_SUPPORTED"),
-  
-  SERVICE_INVALID("SERVICE_INVALID"),
-  
-  RESOURCE_UNKNOWN("RESOURCE_UNKNOWN"),
-  
-  RESOURCE_EXPIRED("RESOURCE_EXPIRED"),
-  
-  RESOURCE_BLOCKED("RESOURCE_BLOCKED"),
-  
-  TIMESTAMP_INVALID("TIMESTAMP_INVALID"),
-  
-  PERIOD_INVALID("PERIOD_INVALID"),
-  
-  SCA_METHOD_UNKNOWN("SCA_METHOD_UNKNOWN"),
-  
-  CONSENT_UNKNOWN("CONSENT_UNKNOWN"),
-  
-  CARD_INVALID("CARD_INVALID"),
-  
-  NO_PIIS_ACTIVATION("NO_PIIS_ACTIVATION");
+@ApiModel(description = "Message codes defined for PIIS for HTTP Error code 400 (BAD_REQUEST).")
+@Validated
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
 
-  private String value;
+public class MessageCode400PIIS {
 
-  MessageCode400PIIS(String value) {
-    this.value = value;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        return true;
   }
 
   @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
+  public int hashCode() {
+      return Objects.hash();
   }
 
-  @JsonCreator
-  public static MessageCode400PIIS fromValue(String text) {
-    for (MessageCode400PIIS b : MessageCode400PIIS.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
+    @Override
+  public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class MessageCode400PIIS {\n");
+
+        sb.append("}");
+        return sb.toString();
     }
-    return null;
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
   }
 }
 

@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2.sb;
 
 import de.adorsys.psd2.model.Error405NGSBS;
-import de.adorsys.psd2.model.MessageCode405SBS;
 import de.adorsys.psd2.model.TppMessage405SBS;
 import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -52,7 +51,7 @@ public class SB405ErrorMapper extends Psd2ErrorMapper<MessageError, Error405NGSB
         return tppMessages.stream()
                    .map(m -> new TppMessage405SBS()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
-                                 .code(MessageCode405SBS.fromValue(m.getMessageErrorCode().getName()))
+                                 .code(m.getMessageErrorCode().getName())
                                  .path(m.getPath())
                                  .text(getErrorText(m))
                    ).collect(Collectors.toList());

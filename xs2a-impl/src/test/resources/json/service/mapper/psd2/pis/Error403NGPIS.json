@@ -1,0 +1,9 @@
+{
+  "tppMessages": [
+    {
+      "category": "ERROR",
+      "code": "PRODUCT_INVALID",
+      "text": "Some text"
+    }
+  ]
+}

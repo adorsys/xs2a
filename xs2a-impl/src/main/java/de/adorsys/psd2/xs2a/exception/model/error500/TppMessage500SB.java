@@ -37,7 +37,7 @@ public class TppMessage500SB {
     private TppMessageCategory category = null;
 
     @JsonProperty("code")
-    private MessageCode500SB code = null;
+    private String code = null;
 
     @JsonProperty("path")
     private String path = null;
@@ -66,7 +66,7 @@ public class TppMessage500SB {
         this.category = category;
     }
 
-    public TppMessage500SB code(MessageCode500SB code) {
+    public TppMessage500SB code(String code) {
         this.code = code;
         return this;
     }
@@ -78,12 +78,11 @@ public class TppMessage500SB {
      **/
     @ApiModelProperty(required = true, value = "")
     @NotNull
-    @Valid
-    public MessageCode500SB getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(MessageCode500SB code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

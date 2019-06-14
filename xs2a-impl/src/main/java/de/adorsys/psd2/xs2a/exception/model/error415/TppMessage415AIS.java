@@ -37,7 +37,7 @@ public class TppMessage415AIS {
     private TppMessageCategory category = null;
 
     @JsonProperty("code")
-    private MessageCode415AIS code = null;
+    private String code = null;
 
     @JsonProperty("path")
     private String path = null;
@@ -66,7 +66,7 @@ public class TppMessage415AIS {
         this.category = category;
     }
 
-    public TppMessage415AIS code(MessageCode415AIS code) {
+    public TppMessage415AIS code(String code) {
         this.code = code;
         return this;
     }
@@ -78,12 +78,11 @@ public class TppMessage415AIS {
      **/
     @ApiModelProperty(required = true, value = "")
     @NotNull
-    @Valid
-    public MessageCode415AIS getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(MessageCode415AIS code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

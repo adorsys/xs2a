@@ -20,7 +20,6 @@ import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.exception.model.error415.Error415NGPIIS;
-import de.adorsys.psd2.xs2a.exception.model.error415.MessageCode415PIIS;
 import de.adorsys.psd2.xs2a.exception.model.error415.TppMessage415PIIS;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.Psd2ErrorMapper;
 import org.springframework.http.HttpStatus;
@@ -52,7 +51,7 @@ public class PIIS415ErrorMapper extends Psd2ErrorMapper<MessageError, Error415NG
         return tppMessages.stream()
                    .map(m -> new TppMessage415PIIS()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
-                                 .code(MessageCode415PIIS.fromValue(m.getMessageErrorCode().getName()))
+                                 .code(m.getMessageErrorCode().getName())
                                  .path(m.getPath())
                                  .text(getErrorText(m))
                    ).collect(Collectors.toList());

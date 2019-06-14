@@ -21,7 +21,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
@@ -30,7 +29,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
 
 public class Error401AISAdditionalErrors   {
   @JsonProperty("title")
@@ -40,7 +39,7 @@ public class Error401AISAdditionalErrors   {
   private String detail = null;
 
   @JsonProperty("code")
-  private MessageCode401AIS code = null;
+  private String code = null;
 
   public Error401AISAdditionalErrors title(String title) {
     this.title = title;
@@ -86,7 +85,7 @@ public class Error401AISAdditionalErrors   {
     this.detail = detail;
   }
 
-  public Error401AISAdditionalErrors code(MessageCode401AIS code) {
+    public Error401AISAdditionalErrors code(String code) {
     this.code = code;
     return this;
   }
@@ -97,15 +96,14 @@ public class Error401AISAdditionalErrors   {
   **/
   @ApiModelProperty(value = "")
 
-  @Valid
 
 
   @JsonProperty("code")
-  public MessageCode401AIS getCode() {
+  public String getCode() {
     return code;
   }
 
-  public void setCode(MessageCode401AIS code) {
+    public void setCode(String code) {
     this.code = code;
   }
 

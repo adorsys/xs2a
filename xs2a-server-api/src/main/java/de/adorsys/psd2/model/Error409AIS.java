@@ -34,7 +34,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 409 for AIS. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
 
 public class Error409AIS   {
   @JsonProperty("type")
@@ -47,7 +47,7 @@ public class Error409AIS   {
   private String detail = null;
 
   @JsonProperty("code")
-  private MessageCode409AIS code = null;
+  private String code = null;
 
   @JsonProperty("additionalErrors")
   @Valid
@@ -123,7 +123,7 @@ public class Error409AIS   {
     this.detail = detail;
   }
 
-  public Error409AIS code(MessageCode409AIS code) {
+    public Error409AIS code(String code) {
     this.code = code;
     return this;
   }
@@ -135,15 +135,14 @@ public class Error409AIS   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-  @Valid
 
 
   @JsonProperty("code")
-  public MessageCode409AIS getCode() {
+  public String getCode() {
     return code;
   }
 
-  public void setCode(MessageCode409AIS code) {
+    public void setCode(String code) {
     this.code = code;
   }
 
