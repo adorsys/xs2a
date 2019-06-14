@@ -32,14 +32,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.UPDATE_PSU_AUTHENTICATION;
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.UPDATE_PSU_IDENTIFICATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -55,8 +51,6 @@ public class EmbeddedAisAuthorizationServiceTest {
     private static final String AUTHORISATION_ID = "Test authorisationId";
     private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
-    private static final List<String> STRING_LIST = Collections.singletonList(CONSENT_ID);
-    private static final Xs2aAuthorisationSubResources XS2A_AUTHORISATION_SUB_RESOURCES = new Xs2aAuthorisationSubResources(STRING_LIST);
 
     @InjectMocks
     private EmbeddedAisAuthorizationService authorizationService;
@@ -159,7 +153,6 @@ public class EmbeddedAisAuthorizationServiceTest {
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(actualResponse.getAuthorisationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(UPDATE_PSU_AUTHENTICATION);
     }
 
 
@@ -190,7 +183,6 @@ public class EmbeddedAisAuthorizationServiceTest {
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(actualResponse.getAuthorisationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(UPDATE_PSU_AUTHENTICATION);
     }
 
     @Test
@@ -208,7 +200,6 @@ public class EmbeddedAisAuthorizationServiceTest {
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(actualResponse.getAuthorisationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(UPDATE_PSU_IDENTIFICATION);
     }
 
     @Test

@@ -2,8 +2,9 @@
   "authorisationId": "authorisation ID",
   "scaStatus": "received",
   "paymentType": "SINGLE",
-
   "_links": {
-    "self": "http://localhost"
+    "self": {
+      "href": "http://localhost"
+    }
   }
 }

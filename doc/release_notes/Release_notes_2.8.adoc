@@ -7,6 +7,7 @@
 * Bugfix: Ignore multilevel flag for one-off Consent on Account List of Available Accounts when SCA is not needed
 * Bugfix: Changed the allowed length for some HTTP headers
 * Bugfix: Error on creating AIS consent with availableAccountsWithBalances attribute in the access property
+* Change String type of fields in Links to HrefType
 
 == Update version of jackson-databind to 2.9.9
 
@@ -35,3 +36,7 @@ headers is extended to 255 symbols. Header `authorization` is not validated for 
 == Bugfix: Error on creating AIS consent with availableAccountsWithBalances attribute in the access property
 From now on, TPP is able to create AIS consent with `availableAccountsWithBalances` attribute in the access property.
 As a result, creation of AIS Consent with `allAccountsWithBalances` value in `availableAccounts` field is no longer allowed.
+
+== Change String type of fields in Links to HrefType
+
+From now on, object de.adorsys.psd2.xs2a.domain.Links has new HrefType for all fields to simplify serialization to json.

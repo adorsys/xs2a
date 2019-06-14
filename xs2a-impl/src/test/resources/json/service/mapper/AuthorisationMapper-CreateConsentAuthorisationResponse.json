@@ -2,6 +2,5 @@
   "consentId": "consent ID",
   "psuMessage": "PSU message",
   "scaStatus": "received",
-  "authorisationId": "authorisation ID",
-  "responseLinkType": "START_AUTHORISATION_WITH_PSU_AUTHENTICATION"
+  "authorisationId": "authorisation ID"
 }

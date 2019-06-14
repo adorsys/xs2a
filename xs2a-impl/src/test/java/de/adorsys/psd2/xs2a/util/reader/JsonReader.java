@@ -123,6 +123,14 @@ public class JsonReader {
         }
     }
 
+    public String writeValueAsString(Object value) {
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (IOException e) {
+            throw new ParseContentJsonReaderException("Exception during object parsing to String." + e.getMessage());
+        }
+    }
+
     private URL getFileFromClasspath(String filename) {
         return JsonReader.class.getClassLoader().getResource(filename);
     }

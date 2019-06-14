@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.domain.account;
 
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.BalanceType;
 import de.adorsys.psd2.xs2a.domain.CashAccountType;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
@@ -44,7 +46,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AccountModelMapperTest {
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
-    private static final String HREF = "href";
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -147,9 +148,9 @@ public class AccountModelMapperTest {
         Map links = thirdAccount.getLinks();
         assertNotNull(links);
 
-        assertEquals("{" + HREF + "=http://scaOAuth.xx}", links.get("scaOAuth").toString());
-        assertEquals("{" + HREF + "=http://linkToStatus.xx}", links.get("status").toString());
-        assertEquals("{" + HREF + "=http://linkToSelf.xx}", links.get("self").toString());
+        assertEquals(new HrefType("http://scaOAuth.xx"), links.get("scaOAuth"));
+        assertEquals(new HrefType("http://linkToStatus.xx"), links.get("status"));
+        assertEquals(new HrefType("http://linkToSelf.xx"), links.get("self"));
 
         assertEquals("CACC", secondAccount.getCashAccountType());
         assertEquals("details2", secondAccount.getDetails());
@@ -245,7 +246,7 @@ public class AccountModelMapperTest {
         assertEquals(expectedPending.size(), actualPending.size());
 
         Map links = result.getLinks();
-        assertEquals("{" + HREF + "=" + accountReport.getLinks().getScaOAuth() + "}", links.get("scaOAuth").toString());
+        assertEquals(accountReport.getLinks().getScaOAuth(), links.get("scaOAuth"));
     }
 
     @Test
@@ -350,17 +351,17 @@ public class AccountModelMapperTest {
 
     private Links createLinks() {
         Links links = new Links();
-        links.setScaOAuth("http://scaOAuth.xx");
-        links.setStatus("http://linkToStatus.xx");
-        links.setSelf("http://linkToSelf.xx");
+        links.setScaOAuth(new HrefType("http://scaOAuth.xx"));
+        links.setStatus(new HrefType("http://linkToStatus.xx"));
+        links.setSelf(new HrefType("http://linkToSelf.xx"));
         return links;
     }
 
     private Map createHrefLinkMap() {
-        Map<String, Map> hrefLinkMap = new HashMap<>();
-        hrefLinkMap.put("scaOAuth", Collections.singletonMap(HREF, "http://scaOAuth.xx"));
-        hrefLinkMap.put("status", Collections.singletonMap(HREF, "http://linkToStatus.xx"));
-        hrefLinkMap.put("self", Collections.singletonMap(HREF, "http://linkToSelf.xx"));
+        Map<String, HrefType> hrefLinkMap = new HashMap<>();
+        hrefLinkMap.put("scaOAuth", new HrefType("http://scaOAuth.xx"));
+        hrefLinkMap.put("status", new HrefType("http://linkToStatus.xx"));
+        hrefLinkMap.put("self", new HrefType("http://linkToSelf.xx"));
         return hrefLinkMap;
     }
 
@@ -374,3 +375,4 @@ public class AccountModelMapperTest {
         return exchangeRate;
     }
 }
+

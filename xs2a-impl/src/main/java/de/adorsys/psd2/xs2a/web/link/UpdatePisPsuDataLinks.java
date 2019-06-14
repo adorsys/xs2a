@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -33,7 +34,7 @@ public class UpdatePisPsuDataLinks extends AbstractLinks {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
 
-        String authorisationLink = buildAuthorisationLink(request);
+        HrefType authorisationLink = buildAuthorisationLink(request);
         setScaStatus(authorisationLink);
 
         if (isScaStatusMethodAuthenticated(scaStatus)) {
@@ -49,7 +50,7 @@ public class UpdatePisPsuDataLinks extends AbstractLinks {
         }
     }
 
-    private String buildAuthorisationLink(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
+    private HrefType buildAuthorisationLink(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         return buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, request.getPaymentService(), request.getPaymentProduct(),
                          request.getPaymentId(), request.getAuthorisationId());
     }
