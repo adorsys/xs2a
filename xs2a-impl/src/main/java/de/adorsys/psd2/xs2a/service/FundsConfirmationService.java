@@ -68,6 +68,7 @@ public class FundsConfirmationService {
     private final PiisConsentService piisConsentService;
     private final Xs2aEventService xs2aEventService;
     private final SpiErrorMapper spiErrorMapper;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Checks if the account balance is sufficient for requested operation
@@ -85,6 +86,8 @@ public class FundsConfirmationService {
 
             if (validationResult.hasError()) {
                 ErrorHolder errorHolder = validationResult.getErrorHolder();
+                log.info("X-Request-ID: [{}]. Check availability of funds validation failed: {}",
+                         requestProviderService.getRequestId(), errorHolder);
                 return ResponseObject.<FundsConfirmationResponse>builder()
                            .fail(new MessageError(errorHolder))
                            .build();
@@ -113,7 +116,8 @@ public class FundsConfirmationService {
         AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
 
         if (selector == null) {
-            log.warn("No account identifier in the request {}", accountReference);
+            log.info("X-Request-ID: [{}]. Check availability of funds failed, because while validate account reference no account identifier found in the request [{}].",
+                     requestProviderService.getRequestId(), accountReference);
             return new PiisConsentValidationResult(ErrorHolder.builder(FORMAT_ERROR).errorType(PIIS_400).build());
         }
 
@@ -143,7 +147,10 @@ public class FundsConfirmationService {
         }
 
         if (fundsSufficientCheck.hasError()) {
-                return new FundsConfirmationResponse(spiErrorMapper.mapToErrorHolder(fundsSufficientCheck, ServiceType.PIIS));
+            ErrorHolder error = spiErrorMapper.mapToErrorHolder(fundsSufficientCheck, ServiceType.PIIS);
+            log.info("X-Request-ID: [{}]. Check availability of funds failed, because perform funds sufficient check failed. Msg error: {}",
+                     requestProviderService.getRequestId(), error);
+                return new FundsConfirmationResponse(error);
         }
 
         return spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(fundsSufficientCheck.getPayload());

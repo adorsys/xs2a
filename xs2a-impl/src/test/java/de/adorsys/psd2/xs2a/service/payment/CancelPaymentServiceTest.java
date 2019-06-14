@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisatio
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
@@ -93,6 +94,8 @@ public class CancelPaymentServiceTest {
     private AuthorisationMethodDecider authorisationMethodDecider;
     @Mock
     private PaymentCancellationAuthorisationService paymentCancellationAuthorisationService;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void setUp() {
@@ -114,6 +117,7 @@ public class CancelPaymentServiceTest {
             .thenReturn(getCancelPaymentResponse(false, ACSC));
         when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, null)), any(SpiPayment.class), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(true, null));
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

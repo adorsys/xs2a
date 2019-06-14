@@ -79,6 +79,8 @@ public class FundsConfirmationServiceTest {
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
     private SpiErrorMapper spiErrorMapper;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @InjectMocks
     private FundsConfirmationService fundsConfirmationService;
@@ -92,6 +94,7 @@ public class FundsConfirmationServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
         when(spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(buildSpiFundsConfirmationResponse()))
             .thenReturn(buildFundsConfirmationResponse());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

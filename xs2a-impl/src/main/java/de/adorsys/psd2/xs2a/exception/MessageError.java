@@ -24,11 +24,9 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
@@ -78,5 +76,16 @@ public class MessageError {
 
     private boolean isNotEmpty(TppMessageInformation... tppMessages) {
         return tppMessages != null && tppMessages.length >= 1;
+    }
+
+    @Override
+    public String toString() {
+        return CollectionUtils.isEmpty(tppMessages)
+                   ? Optional.ofNullable(errorType)
+                         .map(ErrorType::name)
+                         .orElse("")
+                   : tppMessages.stream()
+                         .map(TppMessageInformation::getText)
+                         .collect(Collectors.joining(", "));
     }
 }

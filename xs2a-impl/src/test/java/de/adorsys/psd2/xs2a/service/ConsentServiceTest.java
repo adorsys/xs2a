@@ -160,6 +160,9 @@ public class ConsentServiceTest {
     private GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
     @Mock
     private AisScaAuthorisationService aisScaAuthorisationService;
+    @Mock
+    private RequestProviderService requestProviderService;
+
 
     private AccountConsent accountConsent;
 
@@ -230,6 +233,8 @@ public class ConsentServiceTest {
         when(spiContextDataProvider.provide()).thenReturn(spiContextData);
         when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
         when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(spiContextData);
+
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

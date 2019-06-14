@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
@@ -96,6 +97,8 @@ public class PisScaMethodSelectedStageTest {
     private ApplicationContext applicationContext;
     @Mock
     private Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void setUp() {
@@ -112,6 +115,7 @@ public class PisScaMethodSelectedStageTest {
 
         doNothing()
             .when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

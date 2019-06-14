@@ -17,14 +17,17 @@
 package de.adorsys.psd2.xs2a.service.discovery;
 
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType.*;
 
+@Slf4j
 class ServiceTypeDiscovery {
     private final static AntPathMatcher matcher = new AntPathMatcher();
     private final static Map<String, ServiceType> pathToServiceType;
@@ -46,7 +49,7 @@ class ServiceTypeDiscovery {
      * @param targetPath target path to be checked on pattern matching
      * @return Service Type value
      */
-    static ServiceType getServiceType(String targetPath) {
+    static ServiceType getServiceType(UUID requestId, String targetPath) {
         for (Map.Entry<String, ServiceType> entry : pathToServiceType.entrySet()) {
             String pattern = entry.getKey();
 
@@ -55,6 +58,7 @@ class ServiceTypeDiscovery {
             }
         }
 
+        log.warn("X-Request-ID: [{}]. Can't get ServiceType because illegal path: [{}]", requestId, targetPath);
         throw new IllegalArgumentException("Illegal path: " + targetPath);
     }
 }

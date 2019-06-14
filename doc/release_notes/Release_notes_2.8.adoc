@@ -58,4 +58,3 @@ Consent with `availableAccounts` attribute has access to accounts without balanc
 == Bugfix: Fixed a typo in `preceding`
 
 Fixed a typo in the word `preceding` for the whole project.
-
