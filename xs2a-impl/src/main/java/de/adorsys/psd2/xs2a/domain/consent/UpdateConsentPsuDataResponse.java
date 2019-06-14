@@ -39,8 +39,6 @@ public class UpdateConsentPsuDataResponse implements AuthorisationResponse {
     private String authenticationMethodId;
     private String scaAuthenticationData;
     private Links links;
-
-    private ConsentAuthorizationResponseLinkType responseLinkType;
     private String psuMessage;
 
     private MessageError messageError;

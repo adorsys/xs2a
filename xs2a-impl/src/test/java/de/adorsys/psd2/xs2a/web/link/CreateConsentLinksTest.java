@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -33,7 +34,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateConsentLinksTest {
-    private static final String HTTP_URL = "http://url";
+    private static final String HTTP_URL ="http://url";
     private static final String CONSENT_ID = "9mp1PaotpXSToNCi";
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
     private static final String REDIRECT_LINK = "built_redirect_link";
@@ -62,9 +63,9 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
-        expectedLinks.setStartAuthorisationWithPsuAuthentication("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -74,9 +75,9 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
-        expectedLinks.setStartAuthorisationWithPsuAuthentication("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -89,9 +90,9 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
-        expectedLinks.setStartAuthorisation("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setStartAuthorisation(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -101,10 +102,10 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
-        expectedLinks.setScaStatus("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
-        expectedLinks.setUpdatePsuAuthentication("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
+        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 
@@ -114,10 +115,10 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
-        expectedLinks.setScaStatus("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
-        expectedLinks.setUpdatePsuAuthentication("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
+        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 
@@ -127,9 +128,9 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
-        expectedLinks.setStartAuthorisationWithPsuAuthentication("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -139,9 +140,9 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
-        expectedLinks.setStartAuthorisationWithPsuAuthentication("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -154,9 +155,9 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
-        expectedLinks.setStartAuthorisation("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setStartAuthorisation(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -166,10 +167,10 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
-        expectedLinks.setScaStatus("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
-        expectedLinks.setUpdatePsuAuthentication("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
+        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 
@@ -180,10 +181,10 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
-        expectedLinks.setScaStatus("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
-        expectedLinks.setUpdatePsuAuthentication("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
+        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 
@@ -193,9 +194,9 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
-        expectedLinks.setStartAuthorisation("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setStartAuthorisation(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -206,10 +207,10 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
-        expectedLinks.setScaRedirect(REDIRECT_LINK);
-        expectedLinks.setScaStatus("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setScaRedirect(new HrefType(REDIRECT_LINK));
+        expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 
@@ -221,8 +222,9 @@ public class CreateConsentLinksTest {
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false);
 
-        expectedLinks.setSelf("http://url/v1/consents/9mp1PaotpXSToNCi");
-        expectedLinks.setStatus("http://url/v1/consents/9mp1PaotpXSToNCi/status");
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
         assertEquals(expectedLinks, links);
     }
 }
+

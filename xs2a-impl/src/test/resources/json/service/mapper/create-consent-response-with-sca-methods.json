@@ -11,11 +11,11 @@
       "decoupled": false
     }
   ],
-
   "_links": {
-    "self": "http://localhost"
+    "self": {
+      "href": "http://localhost"
+    }
   },
-
   "psuMessage": "This test message is created in ASPSP and directed to PSU",
   "multilevelScaRequired": false
 }

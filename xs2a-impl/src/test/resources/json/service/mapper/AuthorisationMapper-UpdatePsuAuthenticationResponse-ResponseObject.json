@@ -44,7 +44,9 @@
     "additionalInformation": "some info"
   },
   "links": {
-    "self": "http://localhost"
+    "self": {
+      "href": "http://localhost"
+    }
   },
   "psuData": null
 }

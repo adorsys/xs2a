@@ -17,6 +17,7 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
@@ -24,7 +25,9 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +48,6 @@ import static org.mockito.Mockito.when;
 public class AuthorisationMapperTest {
 
     private static final String SELF_LINK = "self";
-    private static final String HREF = "href";
     private static final String LOCALHOST_LINK = "http://localhost";
 
     private static final de.adorsys.psd2.model.ScaStatus SCA_STATUS = de.adorsys.psd2.model.ScaStatus.RECEIVED;
@@ -63,6 +65,12 @@ public class AuthorisationMapperTest {
 
     @Mock
     private CoreObjectsMapper coreObjectsMapper;
+
+    @Mock
+    private ScaApproachResolver scaApproachResolver;
+
+    @Mock
+    private RedirectLinkBuilder redirectLinkBuilder;
 
     @Before
     public void setUp() {
@@ -143,6 +151,7 @@ public class AuthorisationMapperTest {
     @Test
     public void mapToAisCreateOrUpdateAuthorisationResponse_for_CreateConsentAuthorizationResponse() {
         // Given
+        when(hrefLinkMapper.mapToLinksMap(null)).thenReturn(null);
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse =
             jsonReader.getObjectFromFile("json/service/mapper/AuthorisationMapper-CreateConsentAuthorisationResponse.json", CreateConsentAuthorizationResponse.class);
 
@@ -168,7 +177,7 @@ public class AuthorisationMapperTest {
         assertEquals(expectedChosenScaMethod.getAuthenticationVersion(), actualChosenScaMethod.getAuthenticationVersion());
     }
 
-    private Map<String, Map<String, String>> buildLinks() {
-        return Collections.singletonMap(SELF_LINK, Collections.singletonMap(HREF, LOCALHOST_LINK));
+    private Map<String, HrefType> buildLinks() {
+        return Collections.singletonMap(SELF_LINK, new HrefType(LOCALHOST_LINK));
     }
 }

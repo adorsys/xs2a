@@ -16,9 +16,11 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
+
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
@@ -47,7 +49,6 @@ public class ConsentModelMapperTest {
     private final static String AUTHORISATION_ID = "authorisation ID";
     private final static String PSU_MESSAGE = "This test message is created in ASPSP and directed to PSU";
     private final static String SELF_LINK = "self";
-    private final static String HREF = "href";
     private final static String LOCALHOST_LINK = "http://localhost";
 
     @InjectMocks
@@ -71,8 +72,6 @@ public class ConsentModelMapperTest {
         jsonReader = new JsonReader();
         createConsentResponseWithScaMethods = jsonReader.getObjectFromFile("json/service/mapper/create-consent-response-with-sca-methods.json", CreateConsentResponse.class);
         createConsentResponseWithoutScaMethods = jsonReader.getObjectFromFile("json/service/mapper/create-consent-response-without-sca-methods.json", CreateConsentResponse.class);
-
-        when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
     }
 
     @Test
@@ -81,6 +80,7 @@ public class ConsentModelMapperTest {
         ScaMethods methods = new ScaMethods();
         methods.add(new AuthenticationObject());
         when(scaMethodsMapper.mapToScaMethods(anyList())).thenReturn(methods);
+        when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
 
         // When
         ConsentsResponse201 actual = consentModelMapper.mapToConsentsResponse201(createConsentResponseWithScaMethods);
@@ -92,6 +92,8 @@ public class ConsentModelMapperTest {
 
     @Test
     public void mapToConsentsResponse201_withoutScaMethods_shouldNotReturnEmptyArray() {
+        when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
+
         // When
         ConsentsResponse201 actual = consentModelMapper.mapToConsentsResponse201(createConsentResponseWithoutScaMethods);
 
@@ -147,12 +149,12 @@ public class ConsentModelMapperTest {
         assertFalse(actual.getLinks().isEmpty());
 
         assertNotNull(actual.getLinks().get(SELF_LINK));
-        Map<String, String> selfMap = (Map<String, String>) actual.getLinks().get(SELF_LINK);
-        assertEquals(LOCALHOST_LINK, selfMap.get(HREF));
+        HrefType selfMap = (HrefType) actual.getLinks().get(SELF_LINK);
+        assertEquals(LOCALHOST_LINK, selfMap.getHref());
     }
 
-    private Map<String, Map<String, String>> buildLinks() {
-        return Collections.singletonMap(SELF_LINK, Collections.singletonMap(HREF, LOCALHOST_LINK));
+    private Map<String, HrefType> buildLinks() {
+        return Collections.singletonMap(SELF_LINK, new HrefType(LOCALHOST_LINK));
     }
 
     private Xs2aCreatePisCancellationAuthorisationResponse buildXs2aCreatePisCancellationAuthorisationResponse() {

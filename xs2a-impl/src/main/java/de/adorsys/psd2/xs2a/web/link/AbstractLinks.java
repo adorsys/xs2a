@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.link;
 
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -29,12 +30,11 @@ class AbstractLinks extends Links {
         this.httpUrl = httpUrl;
     }
 
-    String buildPath(String path, Object... params) {
+    HrefType buildPath(String path, Object... params) {
         UriComponentsBuilder uriComponentsBuilder = fromHttpUrl(httpUrl);
-        return uriComponentsBuilder
-                   .path(path)
-                   .buildAndExpand(params)
-                   .toUriString();
+        return new HrefType(uriComponentsBuilder
+                                .path(path)
+                                .buildAndExpand(params)
+                                .toUriString());
     }
-
 }

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
@@ -31,7 +32,7 @@ public class UpdateConsentLinks extends AbstractLinks {
         String authorisationId = response.getAuthorisationId();
         ScaStatus scaStatus = response.getScaStatus();
 
-        String authorisationLink = buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId);
+        HrefType authorisationLink = buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId);
         setScaStatus(authorisationLink);
 
         if (scaStatus == ScaStatus.PSUAUTHENTICATED) {

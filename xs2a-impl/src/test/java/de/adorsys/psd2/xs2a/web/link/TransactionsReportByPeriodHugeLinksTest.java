@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.link;
 
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class TransactionsReportByPeriodHugeLinksTest {
 
         TransactionsReportByPeriodHugeLinks links = new TransactionsReportByPeriodHugeLinks(HTTP_URL, ACCOUNT_ID, withBalance);
 
-        expectedLinks.setDownload("http://url/v1/accounts/33333-999999999/transactions/download");
+        expectedLinks.setDownload(new HrefType("http://url/v1/accounts/33333-999999999/transactions/download"));
         assertEquals(expectedLinks, links);
     }
 
@@ -49,8 +50,8 @@ public class TransactionsReportByPeriodHugeLinksTest {
 
         TransactionsReportByPeriodHugeLinks links = new TransactionsReportByPeriodHugeLinks(HTTP_URL, ACCOUNT_ID, withBalance);
 
-        expectedLinks.setDownload("http://url/v1/accounts/33333-999999999/transactions/download");
-        expectedLinks.setBalances("http://url/v1/accounts/33333-999999999/balances");
+        expectedLinks.setDownload(new HrefType("http://url/v1/accounts/33333-999999999/transactions/download"));
+        expectedLinks.setBalances(new HrefType("http://url/v1/accounts/33333-999999999/balances"));
         assertEquals(expectedLinks, links);
     }
 }

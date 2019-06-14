@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -65,7 +66,7 @@ public class PaymentInitiationLinks extends AbstractLinks {
         } else if (scaApproach == REDIRECT) {
             addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
         } else if (scaApproach == OAUTH) {
-            setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
+            setScaOAuth(new HrefType("scaOAuth")); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
     }
 
@@ -90,7 +91,7 @@ public class PaymentInitiationLinks extends AbstractLinks {
             setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
         } else {
             String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, authorisationId);
-            setScaRedirect(scaRedirectLink);
+            setScaRedirect(new HrefType(scaRedirectLink));
             setScaStatus(
                 buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
         }

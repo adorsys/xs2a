@@ -53,7 +53,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Optional;
 import java.util.UUID;
 
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -151,7 +151,6 @@ public class AisScaAuthenticatedStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
     }
 
     @Test
@@ -202,7 +201,6 @@ public class AisScaAuthenticatedStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
 
         verify(aisConsentService).updateMultilevelScaRequired(CONSENT_ID, true);
     }
@@ -226,7 +224,6 @@ public class AisScaAuthenticatedStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
 
         verify(aisConsentService, never()).updateMultilevelScaRequired(CONSENT_ID, true);
     }
@@ -253,7 +250,6 @@ public class AisScaAuthenticatedStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
 
         verify(aisConsentService).updateConsentStatus(CONSENT_ID, VALID_CONSENT_STATUS);
     }
@@ -277,7 +273,6 @@ public class AisScaAuthenticatedStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
 
         verify(aisConsentService, never()).updateConsentStatus(CONSENT_ID, PARTIALLY_AUTHORISED_CONSENT_STATUS);
     }
