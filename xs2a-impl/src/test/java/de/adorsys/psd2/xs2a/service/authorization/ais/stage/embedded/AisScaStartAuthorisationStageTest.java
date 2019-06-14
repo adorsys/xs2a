@@ -56,8 +56,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
 
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION;
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -258,7 +256,6 @@ public class AisScaStartAuthorisationStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getAvailableScaMethods()).isEqualTo(MULTIPLE_CMS_SCA_METHODS);
         assertThat(actualResponse.getScaStatus()).isEqualTo(AUTHENTICATED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
     }
 
     @Test
@@ -282,7 +279,6 @@ public class AisScaStartAuthorisationStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getChosenScaMethod()).isEqualTo(buildXs2aSmsAuthenticationObject());
         assertThat(actualResponse.getScaStatus()).isEqualTo(METHOD_SELECTED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
     }
 
     @Test
@@ -332,8 +328,6 @@ public class AisScaStartAuthorisationStageTest {
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(ONE_SPI_SCA_METHOD));
 
-        SpiAuthenticationObject scaMethod = ONE_SPI_SCA_METHOD.get(0);
-
         when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(new SpiAuthorizationCodeResult()));
 
@@ -373,7 +367,6 @@ public class AisScaStartAuthorisationStageTest {
         UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
         //Then
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.PSUIDENTIFIED);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
     }
 
     @Test

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +29,6 @@ import static org.junit.Assert.*;
 public class HrefLinkMapperTest {
     private static final String LINK_NAME = "scaStatus";
     private static final String LINK_PATH = "http://localhost/v1/payments/";
-    private static final String HREF = "href";
 
     private HrefLinkMapper hrefMapper;
 
@@ -42,24 +42,24 @@ public class HrefLinkMapperTest {
     public void mapToLinksMap_withValidMap_shouldReturnLinks() {
         // Given
         Links links = new Links();
-        links.setScaStatus(LINK_PATH);
+        links.setScaStatus(new HrefType(LINK_PATH));
 
         //When:
-        Map<String, Map<String, String>> linkMap = hrefMapper.mapToLinksMap(links);
+        Map<String, HrefType> linkMap = hrefMapper.mapToLinksMap(links);
 
         //Then:
         assertNotNull(linkMap);
 
-        Map<String, String> wrappedLink = linkMap.get(LINK_NAME);
+        HrefType wrappedLink = linkMap.get(LINK_NAME);
 
         assertNotNull(wrappedLink);
-        assertEquals(LINK_PATH, wrappedLink.get(HREF));
+        assertEquals(LINK_PATH, wrappedLink.getHref());
     }
 
     @Test
     public void mapToLinksMap_withNullMap_shouldReturnNull() {
         //When:
-        Map<String, Map<String, String>> linkMap = hrefMapper.mapToLinksMap(null);
+        Map<String, HrefType> linkMap = hrefMapper.mapToLinksMap(null);
 
         //Then:
         assertNull(linkMap);

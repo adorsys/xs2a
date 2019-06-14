@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
@@ -57,6 +58,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
@@ -408,6 +410,8 @@ public class PaymentController implements PaymentApi {
     }
 
     private ResponseHeaders buildPaymentInitiationResponseHeaders(PaymentInitiationResponse paymentInitiationResponse) {
-        return paymentInitiationHeadersBuilder.buildInitiatePaymentHeaders(paymentInitiationResponse.getAuthorizationId(), paymentInitiationResponse.getLinks().getSelf());
+        return paymentInitiationHeadersBuilder.buildInitiatePaymentHeaders(paymentInitiationResponse.getAuthorizationId(), Optional.ofNullable(paymentInitiationResponse.getLinks().getSelf())
+                                                                                                                               .map(HrefType::getHref)
+                                                                                                                               .orElse(null));
     }
 }

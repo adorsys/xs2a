@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain.consent;
+package de.adorsys.psd2.xs2a.domain;
 
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.Links;
-import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import lombok.Data;
+import lombok.Value;
 
-@Data
-public class CreateConsentAuthorizationResponse implements AuthorisationResponse {
-    private String consentId;
-    private String authorisationId;
-    private ScaStatus scaStatus;
-    private String psuMessage;
-    private Links links;
+@Value
+public class HrefType {
+    private String href;
 }

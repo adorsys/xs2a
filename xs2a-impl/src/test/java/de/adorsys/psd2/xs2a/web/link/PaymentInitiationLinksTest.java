@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
@@ -92,9 +93,9 @@ public class PaymentInitiationLinksTest {
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, true, null);
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setStartAuthorisation("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setStartAuthorisation(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -105,9 +106,10 @@ public class PaymentInitiationLinksTest {
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, true, null);
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setStartAuthorisationWithPsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations");
+
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -121,9 +123,9 @@ public class PaymentInitiationLinksTest {
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, true, null);
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setStartAuthorisationWithPsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -133,10 +135,10 @@ public class PaymentInitiationLinksTest {
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, false, null);
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
-        expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
+        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 
@@ -149,10 +151,10 @@ public class PaymentInitiationLinksTest {
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, false, null);
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
-        expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
+        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 
@@ -163,9 +165,9 @@ public class PaymentInitiationLinksTest {
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, true, null);
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setStartAuthorisation("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setStartAuthorisation(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -176,9 +178,9 @@ public class PaymentInitiationLinksTest {
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, true, null);
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setStartAuthorisationWithPsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -192,9 +194,9 @@ public class PaymentInitiationLinksTest {
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, true, null);
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setStartAuthorisationWithPsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -204,10 +206,10 @@ public class PaymentInitiationLinksTest {
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, false, null);
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
-        expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
+        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 
@@ -220,10 +222,10 @@ public class PaymentInitiationLinksTest {
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, false, null);
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
-        expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
+        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 
@@ -234,9 +236,9 @@ public class PaymentInitiationLinksTest {
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, false, null);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setScaOAuth("scaOAuth");
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setScaOAuth(new HrefType("scaOAuth"));
         assertEquals(expectedLinks, links);
     }
 
@@ -246,9 +248,9 @@ public class PaymentInitiationLinksTest {
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, true, ScaRedirectFlow.REDIRECT);
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setStartAuthorisation("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations");
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setStartAuthorisation(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations"));
         assertEquals(expectedLinks, links);
     }
 
@@ -259,10 +261,10 @@ public class PaymentInitiationLinksTest {
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
                                            response, false, ScaRedirectFlow.REDIRECT);
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setScaRedirect(REDIRECT_LINK);
-        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
+        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
+        expectedLinks.setScaRedirect(new HrefType(REDIRECT_LINK));
+        expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 }

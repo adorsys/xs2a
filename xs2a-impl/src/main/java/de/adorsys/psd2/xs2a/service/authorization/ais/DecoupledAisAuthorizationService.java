@@ -32,8 +32,6 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.UPDATE_PSU_AUTHENTICATION;
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.UPDATE_PSU_IDENTIFICATION;
 
 @Service
 @RequiredArgsConstructor
@@ -64,7 +62,6 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
                        resp.setConsentId(consentId);
                        resp.setAuthorisationId(auth.getAuthorizationId());
                        resp.setScaStatus(auth.getScaStatus());
-                       resp.setResponseLinkType(getResponseLinkType(psuData, psuData));
 
                        return resp;
                    });
@@ -122,17 +119,5 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
     @Override
     public ScaApproach getScaApproachServiceType() {
         return ScaApproach.DECOUPLED;
-    }
-
-    private ConsentAuthorizationResponseLinkType getResponseLinkType(PsuIdData psuIdDataConsent, PsuIdData psuIdDataAuthorisation) {
-        return isPsuExist(psuIdDataConsent) || isPsuExist(psuIdDataAuthorisation)
-                   ? UPDATE_PSU_AUTHENTICATION
-                   : UPDATE_PSU_IDENTIFICATION;
-    }
-
-    private boolean isPsuExist(PsuIdData psuIdData) {
-        return Optional.ofNullable(psuIdData)
-                   .map(PsuIdData::isNotEmpty)
-                   .orElse(false);
     }
 }

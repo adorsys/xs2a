@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -68,7 +69,7 @@ public class PaymentInitiationLinks extends AbstractLinks {
         } else if (scaApproach == REDIRECT) {
             addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
         } else if (scaApproach == OAUTH) {
-            setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
+            setScaOAuth(new HrefType("scaOAuth")); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
     }
 
