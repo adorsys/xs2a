@@ -97,4 +97,4 @@ For commercial support please contact **[adorsys Team](https://adorsys.de/en/psd
 
 ## License
 
-This project is licensed under the Apache License version 2.0 - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the Apache License version 2.0 - see the [LICENSE](LICENSE) file for details
