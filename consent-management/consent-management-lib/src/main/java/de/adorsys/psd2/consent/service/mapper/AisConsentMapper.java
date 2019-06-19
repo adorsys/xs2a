@@ -73,7 +73,6 @@ public class AisConsentMapper {
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
             consent.isMultilevelScaRequired(),
             mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
-            calculateUsageCounter(usageCounterMap),
             usageCounterMap,
             consent.getCreationTimestamp(),
             consent.getStatusChangeTimestamp());
@@ -103,7 +102,6 @@ public class AisConsentMapper {
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
             consent.isMultilevelScaRequired(),
             mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
-            calculateUsageCounter(usageCounterMap),
             usageCounterMap,
             consent.getCreationTimestamp(),
             consent.getStatusChangeTimestamp());
@@ -180,11 +178,11 @@ public class AisConsentMapper {
         AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
 
         return new AspspAccountAccess(selector.getAccountValue(),
-            typeAccess,
-            selector.getAccountReferenceType(),
-            accountReference.getCurrency(),
-            accountReference.getResourceId(),
-            accountReference.getAspspAccountId());
+                                      typeAccess,
+                                      selector.getAccountReferenceType(),
+                                      accountReference.getCurrency(),
+                                      accountReference.getResourceId(),
+                                      accountReference.getAspspAccountId());
     }
 
     private String getAccessType(AccountAccessType type) {
@@ -208,10 +206,5 @@ public class AisConsentMapper {
         return Optional.ofNullable(aisConsentAuthorisation)
                    .map(auth -> new AisAccountConsentAuthorisation(psuDataMapper.mapToPsuIdData(auth.getPsuData()), auth.getScaStatus()))
                    .orElse(null);
-    }
-
-    // TODO should be deleted in 2.8: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/817
-    private int calculateUsageCounter(Map<String, Integer> usageCounterMap) {
-        return usageCounterMap.values().stream().mapToInt(i -> i).sum();
     }
 }

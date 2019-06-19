@@ -153,7 +153,6 @@ public class AisConsentMapperTest {
         assertEquals(PSU_ID_DATA, aisAccountConsentAuthorisation.getPsuIdData());
         assertEquals(aisConsentAuthorization.getScaStatus(), aisAccountConsentAuthorisation.getScaStatus());
         assertEquals(USAGE_COUNTER, aisAccountConsent.getUsageCounterMap());
-        assertEquals(9, aisAccountConsent.getUsageCounter());
         assertEquals(aisConsent.getCreationTimestamp(), aisAccountConsent.getCreationTimestamp());
         assertEquals(aisConsent.getStatusChangeTimestamp(), aisAccountConsent.getStatusChangeTimestamp());
     }
