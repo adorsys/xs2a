@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisTppInfoValidator;
@@ -41,8 +42,9 @@ import java.util.Collections;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetAccountDetailsValidatorTest {
@@ -66,6 +68,8 @@ public class GetAccountDetailsValidatorTest {
     @Mock
     private AisTppInfoValidator aisTppInfoValidator;
     @Mock
+    private AccountReferenceAccessValidator accountReferenceAccessValidator;
+    @Mock
     private PermittedAccountReferenceValidator permittedAccountReferenceValidator;
     @Mock
     private AccountAccessValidator accountAccessValidator;
@@ -87,14 +91,16 @@ public class GetAccountDetailsValidatorTest {
     public void validate_withInvalidAccountReference_shouldReturnInvalid() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
-        when(permittedAccountReferenceValidator.validate(accountConsent, accountConsent.getAccess().getAccounts(), ACCOUNT_ID, WITH_BALANCE))
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getAccounts(), ACCOUNT_ID))
+            .thenReturn(ValidationResult.valid());
+        when(permittedAccountReferenceValidator.validate(accountConsent, ACCOUNT_ID, WITH_BALANCE))
             .thenReturn(ValidationResult.invalid(PERMITTED_ACCOUNT_REFERENCE_VALIDATION_ERROR));
 
         // When
         ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
 
         // Then
-        verify(permittedAccountReferenceValidator).validate(accountConsent, accountConsent.getAccess().getAccounts(), ACCOUNT_ID, WITH_BALANCE);
+        verify(permittedAccountReferenceValidator).validate(accountConsent, ACCOUNT_ID, WITH_BALANCE);
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -105,7 +111,9 @@ public class GetAccountDetailsValidatorTest {
     public void validate_withValidConsentObject_shouldReturnValid() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
-        when(permittedAccountReferenceValidator.validate(accountConsent, accountConsent.getAccess().getAccounts(), ACCOUNT_ID, WITH_BALANCE))
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getAccounts(), ACCOUNT_ID))
+            .thenReturn(ValidationResult.valid());
+        when(permittedAccountReferenceValidator.validate(accountConsent, ACCOUNT_ID, WITH_BALANCE))
             .thenReturn(ValidationResult.valid());
         when(accountAccessValidator.validate(accountConsent, accountConsent.isWithBalance()))
             .thenReturn(ValidationResult.valid());
@@ -121,6 +129,27 @@ public class GetAccountDetailsValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isValid());
         assertNull(validationResult.getMessageError());
+    }
+
+    @Test
+    public void validate_withInvalidAccountReferenceAccess_error() {
+        // Given
+        AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getAccounts(), ACCOUNT_ID))
+            .thenReturn(ValidationResult.invalid(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID)));
+
+        // When
+        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
+
+        // Then
+        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertFalse(validationResult.isValid());
+
+        verify(permittedAccountReferenceValidator, never()).validate(any(AccountConsent.class), anyString(), anyBoolean());
+        verify(accountAccessValidator, never()).validate(any(AccountConsent.class), anyBoolean());
+        verify(accountConsentValidator, never()).validate(any(AccountConsent.class), anyString());
     }
 
     @Test
