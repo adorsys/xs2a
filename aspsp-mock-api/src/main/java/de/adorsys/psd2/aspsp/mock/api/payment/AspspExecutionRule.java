@@ -24,13 +24,13 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * \"following\" or \"preceeding\" supported as values. This data attribute defines the behavior when recurring
- * payment dates falls on a weekend or bank holiday. The payment is then executed either the \"preceeding\" or
+ * \"following\" or \"preceding\" supported as values. This data attribute defines the behavior when recurring
+ * payment dates falls on a weekend or bank holiday. The payment is then executed either the \"preceding\" or
  * \"following\" working day. ASPSP might reject the request due to the communicated value, if rules in
  * Online-Banking are not supporting this execution rule.
  */
 public enum AspspExecutionRule {
-    FOLLOWING("following"), PRECEEDING("preceeding");
+    FOLLOWING("following"), PRECEDING("preceding");
     private String value;
 
     private final static Map<String, AspspExecutionRule> container = new HashMap<>();
