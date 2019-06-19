@@ -667,7 +667,7 @@ public class CmsPsuAisServiceTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false, Collections.emptyList(), 0, Collections.emptyMap(), OffsetDateTime.now(),
+                                     false, false, null, null, null, false, Collections.emptyList(), Collections.emptyMap(), OffsetDateTime.now(),
                                      OffsetDateTime.now());
     }
 

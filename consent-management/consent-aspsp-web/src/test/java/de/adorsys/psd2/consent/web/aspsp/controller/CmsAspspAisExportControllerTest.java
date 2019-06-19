@@ -138,6 +138,6 @@ public class CmsAspspAisExportControllerTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false, Collections.emptyList(), 0, new HashMap<>(), CREATION_DATE_TIME, STATUS_CHANGE_DATE_TIME);
+                                     false, false, null, null, null, false, Collections.emptyList(), new HashMap<>(), CREATION_DATE_TIME, STATUS_CHANGE_DATE_TIME);
     }
 }
