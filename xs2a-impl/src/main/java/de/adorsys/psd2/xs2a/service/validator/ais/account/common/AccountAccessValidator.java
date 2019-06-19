@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
@@ -34,6 +35,10 @@ public class AccountAccessValidator {
             Xs2aAccountAccess accountAccess = accountConsent.getAccess();
 
             if (accountAccess.getAllPsd2() != null) {
+                return ValidationResult.valid();
+            }
+
+            if (accountAccess.getAvailableAccountsWithBalances() == AccountAccessType.ALL_ACCOUNTS) {
                 return ValidationResult.valid();
             }
 

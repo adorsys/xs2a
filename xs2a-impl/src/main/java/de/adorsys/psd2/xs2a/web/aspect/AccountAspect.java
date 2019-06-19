@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.*;
@@ -59,8 +60,12 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
             Xs2aAccountListHolder body = result.getBody();
             List<Xs2aAccountDetails> accountDetails = body.getAccountDetails();
             Xs2aAccountAccess xs2aAccountAccess = body.getAccountConsent().getAccess();
-            accountDetails.forEach(acc -> acc.setLinks(new AccountDetailsLinks(getHttpUrl(), acc.getResourceId(),
-                                                                               xs2aAccountAccess)));
+            if (body.getAccountConsent().getAisConsentRequestType() == AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS) {
+                accountDetails.forEach(acc -> acc.setLinks(null));
+            } else {
+                accountDetails.forEach(acc -> acc.setLinks(new AccountDetailsLinks(getHttpUrl(), acc.getResourceId(),
+                                                                                   xs2aAccountAccess)));
+            }
             return result;
         }
         return enrichErrorTextMessage(result);

@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.rest.client.AccountRestClient;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.exception.RestException;
@@ -38,6 +39,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
 import static de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType.BANK_OFFERED;
 import static de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType.GLOBAL;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -58,7 +60,7 @@ public class AccountSpiImpl implements AccountSpi {
         try {
             List<SpiAccountDetails> accountDetailsList;
 
-            if (EnumSet.of(GLOBAL, BANK_OFFERED).contains(accountConsent.getAisConsentRequestType())) {
+            if (EnumSet.of(GLOBAL, BANK_OFFERED, ALL_AVAILABLE_ACCOUNTS).contains(accountConsent.getAisConsentRequestType())) {
                 accountDetailsList = getAccountDetailsByPsuId(accountConsent);
             } else {
                 accountDetailsList = getAccountDetailsFromReferences(accountConsent);
@@ -283,8 +285,7 @@ public class AccountSpiImpl implements AccountSpi {
     private List<SpiAccountDetails> filterAccountDetailsByWithBalance(boolean withBalance, List<SpiAccountDetails> details,
                                                                       SpiAccountAccess spiAccountAccess) {
 
-        boolean isConsentGlobal = spiAccountAccess.getAllPsd2() != null;
-        if (isConsentGlobal && withBalance) {
+        if (withBalance && isConsentSupportedBalances(spiAccountAccess)) {
             return details;
         }
 
@@ -297,6 +298,12 @@ public class AccountSpiImpl implements AccountSpi {
         }
 
         return details;
+    }
+
+    private boolean isConsentSupportedBalances(SpiAccountAccess spiAccountAccess) {
+        boolean isConsentGlobal = spiAccountAccess.getAllPsd2() != null;
+        boolean isConsentForAvailableAccountsWithBalances = spiAccountAccess.getAvailableAccountsWithBalances() == AccountAccessType.ALL_ACCOUNTS;
+        return isConsentGlobal || isConsentForAvailableAccountsWithBalances;
     }
 
     private boolean isValidAccountByAccess(String accountId, List<SpiAccountReference> allowedAccountData) {
