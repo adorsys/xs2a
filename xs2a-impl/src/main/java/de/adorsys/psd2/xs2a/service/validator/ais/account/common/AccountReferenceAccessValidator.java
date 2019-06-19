@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
@@ -38,7 +40,7 @@ public class AccountReferenceAccessValidator {
             return ValidationResult.valid();
         }
 
-        if (!isValidAccountByAccess(accountId, references)) {
+        if (isConsentForAllAvailableAccounts(accountAccess) || !isValidAccountByAccess(accountId, references)) {
             return ValidationResult.invalid(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
         }
 
@@ -49,5 +51,10 @@ public class AccountReferenceAccessValidator {
         return CollectionUtils.isNotEmpty(allowedAccountData)
                    && allowedAccountData.stream()
                           .anyMatch(a -> a.getResourceId().equals(accountId));
+    }
+
+    private boolean isConsentForAllAvailableAccounts(Xs2aAccountAccess accountAccess) {
+        return Arrays.asList(accountAccess.getAvailableAccounts(), accountAccess.getAvailableAccountsWithBalances())
+                   .contains(AccountAccessType.ALL_ACCOUNTS);
     }
 }

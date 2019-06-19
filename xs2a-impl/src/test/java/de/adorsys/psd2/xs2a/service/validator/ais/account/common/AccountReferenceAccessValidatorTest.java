@@ -72,4 +72,24 @@ public class AccountReferenceAccessValidatorTest {
         assertEquals(ErrorType.AIS_401, validationResult.getMessageError().getErrorType());
         assertEquals(CONSENT_INVALID, validationResult.getMessageError().getTppMessage().getMessageErrorCode());
     }
+
+    @Test
+    public void validate_notValidAvailableAccount() {
+        accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access-available_accounts.json", Xs2aAccountAccess.class);
+        ValidationResult validationResult = validator.validate(accountAccess, Collections.emptyList(), ACCOUNT_ID);
+
+        assertFalse(validationResult.isValid());
+        assertEquals(ErrorType.AIS_401, validationResult.getMessageError().getErrorType());
+        assertEquals(CONSENT_INVALID, validationResult.getMessageError().getTppMessage().getMessageErrorCode());
+    }
+
+    @Test
+    public void validate_notValidAvailableAccountWithValances() {
+        accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access-available_accounts_with_balances.json", Xs2aAccountAccess.class);
+        ValidationResult validationResult = validator.validate(accountAccess, Collections.emptyList(), ACCOUNT_ID);
+
+        assertFalse(validationResult.isValid());
+        assertEquals(ErrorType.AIS_401, validationResult.getMessageError().getErrorType());
+        assertEquals(CONSENT_INVALID, validationResult.getMessageError().getTppMessage().getMessageErrorCode());
+    }
 }
