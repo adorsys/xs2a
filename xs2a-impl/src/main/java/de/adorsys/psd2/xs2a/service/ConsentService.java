@@ -83,7 +83,6 @@ public class ConsentService {
     private final Xs2aEventService xs2aEventService;
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
     private final SpiErrorMapper spiErrorMapper;
-    private final ScaApproachResolver scaApproachResolver;
 
     private final CreateConsentRequestValidator createConsentRequestValidator;
     private final GetAccountConsentsStatusByIdValidator getAccountConsentsStatusByIdValidator;
