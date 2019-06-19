@@ -59,10 +59,6 @@ public class AccountServiceTest {
     public void setUp() {
         List<Psu> psuList = new ArrayList<>();
         psuList.add(getPsuWithRightAccounts());
-        when(psuRepository.findOne(PSU_ID))
-            .thenReturn(getPsuWithRightAccounts());
-        when(psuRepository.findOne(WRONG_PSU_ID))
-            .thenReturn(null);
         when(psuRepository.findPsuByAccountDetailsList_Iban(IBAN))
             .thenReturn(Optional.of(getPsuWithRightAccounts()));
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN))
@@ -81,6 +77,7 @@ public class AccountServiceTest {
     public void addAccount() {
         //Given
         AspspAccountDetails expectedAspspAccountDetails = getAspspAccountDetails_1();
+        when(psuRepository.findOne(PSU_ID)).thenReturn(getPsuWithRightAccounts());
 
         //When
         AspspAccountDetails actualAspspAccountDetails = accountService.addAccount(PSU_ID, expectedAspspAccountDetails).get();
@@ -160,8 +157,12 @@ public class AccountServiceTest {
 
     @Test
     public void getAccountsByPsuId() {
+        //Given
+        when(psuRepository.findByPsuId(PSU_ID)).thenReturn(Optional.of(getPsuWithRightAccounts()));
+
         //When:
         List<AspspAccountDetails> actualList = accountService.getAccountsByPsuId(PSU_ID);
+
         //Then:
         assertThat(actualList).isNotNull();
         assertThat(actualList).isNotEmpty();

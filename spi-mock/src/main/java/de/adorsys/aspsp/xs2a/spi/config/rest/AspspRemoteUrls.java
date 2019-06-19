@@ -18,6 +18,9 @@ package de.adorsys.aspsp.xs2a.spi.config.rest;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.time.LocalDate;
 
 @Component
 public class AspspRemoteUrls {
@@ -109,8 +112,11 @@ public class AspspRemoteUrls {
      *
      * @return URL with path parameter
      */
-    public String readTransactionsByPeriod() {
-        return spiMockBaseUrl + "/transaction/{account-id}";
+    public String readTransactionsByPeriod(String resourceId, LocalDate dateFrom, LocalDate dateTo) {
+        return UriComponentsBuilder.fromHttpUrl(spiMockBaseUrl + "/transaction/{account-id}")
+                   .queryParam("dateFrom", dateFrom)
+                   .queryParam("dateTo", dateTo)
+                   .buildAndExpand(resourceId).toUriString();
     }
 
     /**

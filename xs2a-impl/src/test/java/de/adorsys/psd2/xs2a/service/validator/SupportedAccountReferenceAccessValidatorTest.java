@@ -46,7 +46,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SupportedAccountReferenceValidatorTest {
+public class SupportedAccountReferenceAccessValidatorTest {
     private static final String ATTRIBUTE_NOT_SUPPORTED_MESSAGE = "Attribute %s is not supported by the ASPSP";
     private static final String ONLY_ONE_ATTRIBUTE_ALLOWED_MESSAGE = "Only one account reference parameter is allowed";
     private static final String IBAN_NOT_SUPPORTED_MESSAGE = String.format(ATTRIBUTE_NOT_SUPPORTED_MESSAGE, "IBAN");

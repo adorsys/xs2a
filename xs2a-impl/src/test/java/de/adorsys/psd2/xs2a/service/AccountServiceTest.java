@@ -67,6 +67,8 @@ import java.util.*;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -93,6 +95,7 @@ public class AccountServiceTest {
     private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();
     private static final List<SpiAccountDetails> EMPTY_ACCOUNT_DETAILS_LIST = Collections.emptyList();
     private static final SpiAccountReference SPI_ACCOUNT_REFERENCE = buildSpiAccountReference();
+    private static final SpiAccountReference SPI_ACCOUNT_REFERENCE_GLOBAL = buildSpiAccountReferenceGlobal();
     private static final AccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
     private static final AccountReference XS2A_ACCOUNT_REFERENCE_WITHOUT_ASPSP_IDS = buildXs2aAccountReferenceWithoutAspspIds();
     private static final SpiTransactionReport SPI_TRANSACTION_REPORT = buildSpiTransactionReport();
@@ -519,7 +522,7 @@ public class AccountServiceTest {
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
-        when(getBalancesReportValidator.validate(new CommonAccountBalanceRequestObject(accountConsent, REQUEST_URI)))
+        when(getBalancesReportValidator.validate(new CommonAccountBalanceRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI)))
             .thenReturn(ValidationResult.invalid(CONSENT_INVALID_MESSAGE_ERROR));
 
         ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
@@ -568,12 +571,13 @@ public class AccountServiceTest {
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
+        when(getBalancesReportValidator.validate(new CommonAccountBalanceRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI)))
+            .thenReturn(ValidationResult.invalid(CONSENT_INVALID_MESSAGE_ERROR));
 
         ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
-
         assertThat(actualResponse.getError()).isEqualTo(CONSENT_INVALID_MESSAGE_ERROR);
     }
 
@@ -655,7 +659,7 @@ public class AccountServiceTest {
         ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
 
         // Then
-        verify(getBalancesReportValidator).validate(new CommonAccountBalanceRequestObject(accountConsent, REQUEST_URI));
+        verify(getBalancesReportValidator).validate(new CommonAccountBalanceRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI));
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
@@ -784,6 +788,52 @@ public class AccountServiceTest {
     }
 
     @Test
+    public void getTransactionsReportByPeriod_WhenConsentIsGlobal_Success() {
+        AccountConsent accountConsent = createConsent(CONSENT_ID, createGlobalAccountAccess(XS2A_ACCOUNT_REFERENCE));
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        doNothing()
+            .when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
+
+        when(aspspProfileService.isTransactionsWithoutBalancesSupported())
+            .thenReturn(true);
+
+        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
+            .thenReturn(ASPSP_CONSENT_DATA);
+
+        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, SPI_ACCOUNT_REFERENCE_GLOBAL, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
+
+        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
+
+        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.emptyList(), null))
+            .thenReturn(Optional.of(xs2aAccountReport));
+
+        when(referenceMapper.mapToXs2aAccountReference(SPI_ACCOUNT_REFERENCE_GLOBAL))
+            .thenReturn(XS2A_ACCOUNT_REFERENCE);
+
+        when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))
+            .thenReturn(Collections.emptyList());
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
+
+        assertNotNull(actualResponse);
+        assertThat(actualResponse.hasError()).isFalse();
+
+        Xs2aTransactionsReport body = actualResponse.getBody();
+
+        assertThat(body).isNotNull();
+        assertThat(body.getAccountReport()).isEqualTo(xs2aAccountReport);
+        assertThat(body.getAccountReference()).isEqualTo(XS2A_ACCOUNT_REFERENCE);
+        assertTrue(CollectionUtils.isEqualCollection(body.getBalances(), Collections.emptyList()));
+    }
+
+    @Test
     public void getTransactionsReportByPeriod_Success_ShouldRecordEvent() {
         AccountConsent accountConsent = createConsent(CONSENT_ID, createAccountAccess(XS2A_ACCOUNT_REFERENCE));
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
@@ -848,7 +898,7 @@ public class AccountServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
 
-        when(getTransactionDetailsValidator.validate(new CommonAccountTransactionsRequestObject(accountConsent, REQUEST_URI)))
+        when(getTransactionDetailsValidator.validate(new CommonAccountTransactionsRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI)))
             .thenReturn(ValidationResult.invalid(CONSENT_INVALID_MESSAGE_ERROR));
 
         ResponseObject<Transactions> actualResponse = accountService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID, REQUEST_URI);
@@ -901,7 +951,7 @@ public class AccountServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
 
-        when(getTransactionDetailsValidator.validate(new CommonAccountTransactionsRequestObject(accountConsent, REQUEST_URI)))
+        when(getTransactionDetailsValidator.validate(new CommonAccountTransactionsRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI)))
             .thenReturn(ValidationResult.invalid(CONSENT_INVALID_MESSAGE_ERROR));
 
         ResponseObject<Transactions> actualResponse = accountService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID, REQUEST_URI);
@@ -990,7 +1040,7 @@ public class AccountServiceTest {
         ResponseObject<Transactions> actualResponse = accountService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID, REQUEST_URI);
 
         // Then
-        verify(getTransactionDetailsValidator).validate(new CommonAccountTransactionsRequestObject(accountConsent, REQUEST_URI));
+        verify(getTransactionDetailsValidator).validate(new CommonAccountTransactionsRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI));
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
@@ -1087,6 +1137,10 @@ public class AccountServiceTest {
         return new SpiAccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
     }
 
+    private static SpiAccountReference buildSpiAccountReferenceGlobal() {
+        return new SpiAccountReference(ACCOUNT_ID, null, null, null, null, null, null);
+    }
+
     private static AccountReference buildXs2aAccountReference() {
         return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
     }
@@ -1132,6 +1186,10 @@ public class AccountServiceTest {
     }
 
     private static Xs2aAccountAccess createAccountAccess(AccountReference accountReference) {
-        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS);
+        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), null, null, null);
+    }
+
+    private static Xs2aAccountAccess createGlobalAccountAccess(AccountReference accountReference) {
+        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS, null);
     }
 }

@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.TransactionReportAcceptHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
@@ -54,6 +55,7 @@ public class GetTransactionsReportValidator extends AbstractAisTppValidator<Tran
     private final AccountConsentValidator accountConsentValidator;
     private final AspspProfileServiceWrapper aspspProfileService;
     private final TransactionReportAcceptHeaderValidator transactionReportAcceptHeaderValidator;
+    private final AccountReferenceAccessValidator accountReferenceAccessValidator;
 
     /**
      * Validates get transactions report request
@@ -76,8 +78,14 @@ public class GetTransactionsReportValidator extends AbstractAisTppValidator<Tran
 
         AccountConsent accountConsent = requestObject.getAccountConsent();
 
+        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAccess(),
+                                                                                                     requestObject.getTransactions(), requestObject.getAccountId());
+        if (accountReferenceValidationResult.isNotValid()) {
+            return accountReferenceValidationResult;
+        }
+
         ValidationResult permittedAccountReferenceValidationResult =
-            permittedAccountReferenceValidator.validate(accountConsent, requestObject.getTransactions(), requestObject.getAccountId(), requestObject.isWithBalance());
+            permittedAccountReferenceValidator.validate(accountConsent, requestObject.getAccountId(), requestObject.isWithBalance());
 
         if (permittedAccountReferenceValidationResult.isNotValid()) {
             return permittedAccountReferenceValidationResult;
