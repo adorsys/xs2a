@@ -28,7 +28,6 @@ import java.util.Optional;
  * \"following\" working day. ASPSP might reject the request due to the communicated value, if rules in
  * Online-Banking are not supporting this execution rule.
  */
-// TODO rename type 'preceeding' to 'preceding' https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/842
 public enum PisExecutionRule {
     FOLLOWING("following"), PRECEDING("preceding");
 

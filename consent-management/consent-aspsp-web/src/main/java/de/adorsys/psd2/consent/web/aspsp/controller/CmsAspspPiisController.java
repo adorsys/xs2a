@@ -44,7 +44,7 @@ public class CmsAspspPiisController {
         @ApiResponse(code = 201, message = "Created", response = String.class),
         @ApiResponse(code = 400, message = "Bad Request")})
     public ResponseEntity<CreatePiisConsentResponse> createConsent(@RequestBody CreatePiisConsentRequest request,
-                                                                   @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceeding AIS service in the same session. ")
+                                                                   @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
                                                                    @RequestHeader(value = "psu-id", required = false) String psuId,
                                                                    @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
                                                                    @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
@@ -65,7 +65,7 @@ public class CmsAspspPiisController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<List<PiisConsent>> getConsentsForPsu(
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceeding AIS service in the same session. ")
+        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
         @RequestHeader(value = "psu-id", required = false) String psuId,
         @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
         @RequestHeader(value = "psu-id-type", required = false) String psuIdType,

@@ -10,6 +10,7 @@
 * Change String type of fields in Links to HrefType
 * Bugfix: Global consent applies on all PSD2 related account information requests
 * Bugfix: List of Available Accounts Consent should apply only on Account List
+* Bugfix: Fixed a typo in `preceding`
 
 == Update version of jackson-databind to 2.9.9
 
@@ -53,3 +54,8 @@ From now on, if consent is global - it will imply a consent on all available acc
 From now on, Consent on Account List of Available Accounts can get only a list of accounts (GET `v1/accounts`).
 Another information about account details, balances or transactions is not permitted and TPP in this case will receive 401 response code with `CONSENT_INVALID` message.
 Consent with `availableAccounts` attribute has access to accounts without balances and consent with `availableAccountsWithBalances` attribute has access to accounts with balances.
+
+== Bugfix: Fixed a typo in `preceding`
+
+Fixed a typo in the word `preceding` for the whole project.
+

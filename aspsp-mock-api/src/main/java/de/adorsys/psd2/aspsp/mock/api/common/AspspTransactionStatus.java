@@ -29,7 +29,7 @@ public enum AspspTransactionStatus {
     PDNG("Pending"),  //Payment initiation or individual transaction included in the payment initiation is pending. Further checks and status update will be performed
     RJCT("Rejected"),  //Payment initiation or individual transaction included in the payment initiation has been rejected
     CANC("Canceled"),  //Canceled
-    ACFC("AcceptedFundsChecked"), //Preceeding check of technical validation and customer profile was successful and an automatic funds check was positive
+    ACFC("AcceptedFundsChecked"), //Preceding check of technical validation and customer profile was successful and an automatic funds check was positive
     PATC("PartiallyAcceptedTechnicalCorrect"); // The payment initiation needs multiple authentications, where some but not yet all have been performed. Syntactical and semantical validations are successful.
 
     private String name;
