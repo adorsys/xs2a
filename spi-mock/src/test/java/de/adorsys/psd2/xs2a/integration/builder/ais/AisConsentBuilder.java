@@ -73,7 +73,6 @@ public class AisConsentBuilder {
                             TPP_INFO,
                             false,
                             Collections.singletonList(new AisAccountConsentAuthorisation(PSU_DATA, ScaStatus.RECEIVED)),
-                            0,
                             Collections.emptyMap(),
                             OffsetDateTime.now(),
                             OffsetDateTime.now()
