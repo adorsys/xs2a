@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountRequestObject;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class GetAccountDetailsValidator extends AbstractAisTppValidator<CommonAc
     private final PermittedAccountReferenceValidator permittedAccountReferenceValidator;
     private final AccountConsentValidator accountConsentValidator;
     private final AccountAccessValidator accountAccessValidator;
+    private final AccountReferenceAccessValidator accountReferenceAccessValidator;
 
     /**
      * Validates get account details request
@@ -48,8 +50,14 @@ public class GetAccountDetailsValidator extends AbstractAisTppValidator<CommonAc
     protected ValidationResult executeBusinessValidation(CommonAccountRequestObject commonAccountRequestObject) {
         AccountConsent accountConsent = commonAccountRequestObject.getAccountConsent();
 
+        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAccess(),
+                                                                                                     commonAccountRequestObject.getAccounts(), commonAccountRequestObject.getAccountId());
+        if (accountReferenceValidationResult.isNotValid()) {
+            return accountReferenceValidationResult;
+        }
+
         ValidationResult permittedAccountReferenceValidationResult =
-            permittedAccountReferenceValidator.validate(accountConsent, commonAccountRequestObject.getAccounts(), commonAccountRequestObject.getAccountId(), commonAccountRequestObject.isWithBalance());
+            permittedAccountReferenceValidator.validate(accountConsent, commonAccountRequestObject.getAccountId(), commonAccountRequestObject.isWithBalance());
 
         if (permittedAccountReferenceValidationResult.isNotValid()) {
             return permittedAccountReferenceValidationResult;

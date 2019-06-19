@@ -16,32 +16,38 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
 
 @Component
-public class AccountAccessValidator {
+@RequiredArgsConstructor
+public class AccountReferenceAccessValidator {
 
-    public ValidationResult validate(AccountConsent accountConsent, boolean withBalance) {
-        if (withBalance) {
-            Xs2aAccountAccess accountAccess = accountConsent.getAccess();
+    public ValidationResult validate(Xs2aAccountAccess accountAccess, List<AccountReference> references, String accountId) {
+        if (accountAccess.getAllPsd2() != null) {
+            return ValidationResult.valid();
+        }
 
-            if (accountAccess.getAllPsd2() != null) {
-                return ValidationResult.valid();
-            }
-
-            if (CollectionUtils.isEmpty(accountAccess.getBalances())) {
-                return ValidationResult.invalid(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
-            }
+        if (!isValidAccountByAccess(accountId, references)) {
+            return ValidationResult.invalid(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
         }
 
         return ValidationResult.valid();
+    }
+
+    private boolean isValidAccountByAccess(String accountId, List<AccountReference> allowedAccountData) {
+        return CollectionUtils.isNotEmpty(allowedAccountData)
+                   && allowedAccountData.stream()
+                          .anyMatch(a -> a.getResourceId().equals(accountId));
     }
 }

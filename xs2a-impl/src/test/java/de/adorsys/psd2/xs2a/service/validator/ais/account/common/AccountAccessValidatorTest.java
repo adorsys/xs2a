@@ -16,38 +16,38 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class AccountAccessValidatorTest {
 
-    private static final String AUTHORISATION_NUMBER = "authorisation number";
     private static final MessageError AIS_VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
 
-    @InjectMocks
     private AccountAccessValidator accountAccessValidator;
+
+    private JsonReader jsonReader;
+    private AccountConsent accountConsent;
+
+    @Before
+    public void setUp() {
+        accountAccessValidator = new AccountAccessValidator();
+        jsonReader = new JsonReader();
+    }
 
     @Test
     public void testValidate_withoutBalance_shouldReturnValid() {
         // Given
-        AccountConsent accountConsent = buildAccountConsent();
+        accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent.json", AccountConsent.class);
 
         // When
         ValidationResult actual = accountAccessValidator.validate(accountConsent, false);
@@ -57,9 +57,10 @@ public class AccountAccessValidatorTest {
     }
 
     @Test
-    public void testValidate_withBalanceAndEmptyAccess_shouldReturnError() {
+    public void testValidate_withBalanceAndNullBalances_shouldReturnError() {
         // Given
-        AccountConsent accountConsent = buildAccountConsentEmptyAccesses();
+        accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent.json", AccountConsent.class);
+        accountConsent.getAccess().getBalances().clear();
 
         // When
         ValidationResult actual = accountAccessValidator.validate(accountConsent, true);
@@ -70,36 +71,28 @@ public class AccountAccessValidatorTest {
     }
 
     @Test
-    public void testValidate_withBalanceAndNullBalances_shouldReturnError() {
+    public void testValidate_globalConsent_withBalanceAndNullBalances_shouldReturnError() {
         // Given
-        AccountConsent accountConsent = buildAccountConsent();
+        accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent-global.json", AccountConsent.class);
+        assertNull(accountConsent.getAccess().getBalances());
 
         // When
         ValidationResult actual = accountAccessValidator.validate(accountConsent, true);
 
         // Then
-        assertTrue(actual.isNotValid());
-        assertEquals(AIS_VALIDATION_ERROR, actual.getMessageError());
+        assertTrue(actual.isValid());
     }
 
+    @Test
+    public void testValidate_globalConsent_withoutBalanceAndNullBalances_shouldReturnError() {
+        // Given
+        accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent-global.json", AccountConsent.class);
+        assertNull(accountConsent.getAccess().getBalances());
 
-    private AccountConsent buildAccountConsent() {
-        return new AccountConsent("id", null, false, null, 0,
-                                  null, null, false, false,
-                                  Collections.emptyList(), buildTppInfo(), null, false,
-                                  Collections.emptyList(), null, Collections.emptyMap());
-    }
+        // When
+        ValidationResult actual = accountAccessValidator.validate(accountConsent, false);
 
-    private AccountConsent buildAccountConsentEmptyAccesses() {
-        return new AccountConsent("id", new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null), false, null, 0,
-                                  null, null, false, false,
-                                  Collections.emptyList(), buildTppInfo(), null, false,
-                                  Collections.emptyList(), null, Collections.emptyMap());
-    }
-
-    private static TppInfo buildTppInfo() {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber(AUTHORISATION_NUMBER);
-        return tppInfo;
+        // Then
+        assertTrue(actual.isValid());
     }
 }

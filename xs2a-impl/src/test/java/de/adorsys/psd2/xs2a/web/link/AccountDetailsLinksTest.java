@@ -31,18 +31,29 @@ public class AccountDetailsLinksTest {
     private static final String WRONG_ACCOUNT_ID = "wrong_account_id";
 
     private Xs2aAccountAccess xs2aAccountAccess;
+    private Xs2aAccountAccess xs2aAccountAccessGlobal;
     private Links expectedLinks;
 
     @Before
     public void setUp() {
         JsonReader jsonReader = new JsonReader();
         xs2aAccountAccess = jsonReader.getObjectFromFile("json/link/account_access.json", Xs2aAccountAccess.class);
+        xs2aAccountAccessGlobal = jsonReader.getObjectFromFile("json/link/account_access-global.json", Xs2aAccountAccess.class);
         expectedLinks = new Links();
     }
 
     @Test
     public void create_success() {
         AccountDetailsLinks links = new AccountDetailsLinks(HTTP_URL, ACCOUNT_ID, xs2aAccountAccess);
+
+        expectedLinks.setBalances(new HrefType("http://url/v1/accounts/33333-999999999/balances"));
+        expectedLinks.setTransactions(new HrefType("http://url/v1/accounts/33333-999999999/transactions"));
+        assertEquals(expectedLinks, links);
+    }
+
+    @Test
+    public void create_globalConsent_success() {
+        AccountDetailsLinks links = new AccountDetailsLinks(HTTP_URL, ACCOUNT_ID, xs2aAccountAccessGlobal);
 
         expectedLinks.setBalances(new HrefType("http://url/v1/accounts/33333-999999999/balances"));
         expectedLinks.setTransactions(new HrefType("http://url/v1/accounts/33333-999999999/transactions"));

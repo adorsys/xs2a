@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
-import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
+import de.adorsys.aspsp.xs2a.spi.rest.client.AccountRestClient;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.exception.RestException;
@@ -30,16 +30,9 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -58,9 +51,7 @@ public class AccountSpiImpl implements AccountSpi {
     private static final String DEFAULT_ACCEPT_MEDIA_TYPE = MediaType.APPLICATION_JSON_VALUE;
     private static final String WILDCARD_ACCEPT_HEADER = "*/*";
 
-    private final AspspRemoteUrls remoteSpiUrls;
-    @Qualifier("aspspRestTemplate")
-    private final RestTemplate aspspRestTemplate;
+    private final AccountRestClient accountRestClient;
 
     @Override
     public SpiResponse<List<SpiAccountDetails>> requestAccountList(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
@@ -91,7 +82,7 @@ public class AccountSpiImpl implements AccountSpi {
     @Override
     public SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
-            SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountReference.getResourceId());
+            SpiAccountDetails accountDetails = accountRestClient.getAccountDetailsById(accountReference.getResourceId());
 
             if (!withBalance) {
                 accountDetails.emptyBalances();
@@ -115,17 +106,9 @@ public class AccountSpiImpl implements AccountSpi {
     @Override
     public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, BookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
-            SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountReference.getResourceId());
+            SpiAccountDetails accountDetails = accountRestClient.getAccountDetailsById(accountReference.getResourceId());
 
-            Map<String, String> uriParams = new HashMap<>();
-            uriParams.put("account-id", accountReference.getResourceId());
-
-            UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(remoteSpiUrls.readTransactionsByPeriod())
-                                              .queryParam("dateFrom", dateFrom)
-                                              .queryParam("dateTo", dateTo)
-                                              .buildAndExpand(uriParams);
-
-            List<SpiTransaction> transactions = getFilteredTransactions(uriComponents, bookingStatus);
+            List<SpiTransaction> transactions = getFilteredTransactions(accountReference.getResourceId(), dateFrom, dateTo, bookingStatus);
             List<SpiAccountBalance> balances = getBalances(withBalance, accountDetails);
 
             SpiResponse.SpiResponseBuilder<SpiTransactionReport> responseBuilder =
@@ -195,7 +178,7 @@ public class AccountSpiImpl implements AccountSpi {
     @Override
     public SpiResponse<SpiTransaction> requestTransactionForAccountByTransactionId(@NotNull SpiContextData contextData, @NotNull String transactionId, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
-            SpiTransaction transaction = aspspRestTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountReference.getResourceId());
+            SpiTransaction transaction = accountRestClient.getTransactionByIdAndResourceId(transactionId, accountReference.getResourceId());
             return SpiResponse.<SpiTransaction>builder()
                        .payload(transaction)
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
@@ -214,14 +197,7 @@ public class AccountSpiImpl implements AccountSpi {
     @Override
     public SpiResponse<List<SpiAccountBalance>> requestBalancesForAccount(@NotNull SpiContextData contextData, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
-            List<SpiAccountBalance> accountBalances = aspspRestTemplate.exchange(
-                remoteSpiUrls.getBalancesByAccountId(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<SpiAccountBalance>>() {
-                },
-                accountReference.getResourceId()
-            ).getBody();
+            List<SpiAccountBalance> accountBalances = accountRestClient.getBalancesByResourceId(accountReference.getResourceId());
 
             return SpiResponse.<List<SpiAccountBalance>>builder()
                        .payload(accountBalances)
@@ -238,20 +214,10 @@ public class AccountSpiImpl implements AccountSpi {
         }
     }
 
-    private List<SpiTransaction> getFilteredTransactions(UriComponents uriComponents, BookingStatus bookingStatus) {
-        return Optional.ofNullable(getTransactionsFromAspsp(uriComponents))
+    private List<SpiTransaction> getFilteredTransactions(String resourceId, LocalDate dateFrom, LocalDate dateTo, BookingStatus bookingStatus) {
+        return Optional.ofNullable(accountRestClient.getTransactionsByResourceIdAndPeriod(resourceId, dateFrom, dateTo))
                    .map(t -> filterByBookingStatus(t, bookingStatus))
                    .orElse(Collections.emptyList());
-    }
-
-    private List<SpiTransaction> getTransactionsFromAspsp(UriComponents uriComponents) {
-        return aspspRestTemplate.exchange(
-            uriComponents.toUriString(),
-            HttpMethod.GET,
-            null,
-            new ParameterizedTypeReference<List<SpiTransaction>>() {
-            }
-        ).getBody();
     }
 
     private List<SpiTransaction> filterByBookingStatus(List<SpiTransaction> transactionList, BookingStatus bookingStatus) {
@@ -276,15 +242,11 @@ public class AccountSpiImpl implements AccountSpi {
                            ? accountConsent.getPsuData().get(0).getPsuId()
                            : null;
 
-        return Optional.ofNullable(aspspRestTemplate.exchange(
-            remoteSpiUrls.getAccountDetailsByPsuId(),
-            HttpMethod.GET,
-            null,
-            new ParameterizedTypeReference<List<SpiAccountDetails>>() {
-            },
-            psuId
-        ).getBody())
-                   .orElseGet(Collections::emptyList);
+        List<SpiAccountDetails> spiAccountDetails = new ArrayList<>();
+        List<SpiAccountDetails> spiAccountDetailsByPsuId = Optional.ofNullable(accountRestClient.getAccountDetailsByPsuId(psuId)).orElseGet(Collections::emptyList);
+
+        spiAccountDetailsByPsuId.forEach(a -> spiAccountDetails.add(accountRestClient.getAccountDetailsById(a.getResourceId())));
+        return spiAccountDetails;
     }
 
     private List<SpiAccountDetails> getAccountDetailsFromReferences(SpiAccountConsent accountConsent) { // TODO remove consentId param, when SpiAccountConsent contains it https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/430
@@ -311,15 +273,7 @@ public class AccountSpiImpl implements AccountSpi {
 
         // TODO don't use IBAN as an account identifier https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
         List<SpiAccountDetails> accountDetails = Optional.ofNullable(
-            aspspRestTemplate.exchange(
-                remoteSpiUrls.getAccountDetailsByIban(),
-                HttpMethod.GET,
-                new HttpEntity<>(null), new ParameterizedTypeReference<List<SpiAccountDetails>>() {
-                },
-                reference.getIban()
-            ).getBody()
-        )
-                                                     .orElseGet(Collections::emptyList);
+            accountRestClient.getAccountDetailsByIban(reference.getIban())).orElseGet(Collections::emptyList);
 
         return accountDetails.stream()
                    .filter(acc -> acc.getResourceId().equals(reference.getResourceId()))
@@ -328,6 +282,11 @@ public class AccountSpiImpl implements AccountSpi {
 
     private List<SpiAccountDetails> filterAccountDetailsByWithBalance(boolean withBalance, List<SpiAccountDetails> details,
                                                                       SpiAccountAccess spiAccountAccess) {
+
+        boolean isConsentGlobal = spiAccountAccess.getAllPsd2() != null;
+        if (isConsentGlobal && withBalance) {
+            return details;
+        }
 
         List<SpiAccountReference> balanceReferences = spiAccountAccess.getBalances();
 

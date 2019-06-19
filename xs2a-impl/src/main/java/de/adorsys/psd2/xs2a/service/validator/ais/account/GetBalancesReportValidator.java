@@ -16,9 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountBalanceRequestObject;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +33,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class GetBalancesReportValidator extends AbstractAisTppValidator<CommonAccountBalanceRequestObject> {
     private final AccountConsentValidator accountConsentValidator;
+    private final AccountReferenceAccessValidator accountReferenceAccessValidator;
+
 
     /**
      * Validates get balances report request
@@ -41,6 +45,13 @@ public class GetBalancesReportValidator extends AbstractAisTppValidator<CommonAc
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(CommonAccountBalanceRequestObject consentObject) {
+        Xs2aAccountAccess accountAccess = consentObject.getAccountConsent().getAccess();
+        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountAccess,
+                                                                                                     accountAccess.getBalances(), consentObject.getAccountId());
+        if (accountReferenceValidationResult.isNotValid()) {
+            return accountReferenceValidationResult;
+        }
+
         return accountConsentValidator.validate(consentObject.getAccountConsent(), consentObject.getRequestUri());
     }
 }

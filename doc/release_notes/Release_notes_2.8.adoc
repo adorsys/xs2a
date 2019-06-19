@@ -8,6 +8,7 @@
 * Bugfix: Changed the allowed length for some HTTP headers
 * Bugfix: Error on creating AIS consent with availableAccountsWithBalances attribute in the access property
 * Change String type of fields in Links to HrefType
+* Bugfix: Global consent applies on all PSD2 related account information requests
 
 == Update version of jackson-databind to 2.9.9
 
@@ -34,9 +35,15 @@ From now on, while sending HTTP requests to the XS2A the maximum length of `tpp-
 headers is extended to 255 symbols. Header `authorization` is not validated for length.
 
 == Bugfix: Error on creating AIS consent with availableAccountsWithBalances attribute in the access property
+
 From now on, TPP is able to create AIS consent with `availableAccountsWithBalances` attribute in the access property.
 As a result, creation of AIS Consent with `allAccountsWithBalances` value in `availableAccounts` field is no longer allowed.
 
 == Change String type of fields in Links to HrefType
 
 From now on, object de.adorsys.psd2.xs2a.domain.Links has new HrefType for all fields to simplify serialization to json.
+
+== Bugfix: Global consent applies on all PSD2 related account information services
+
+From now on, if consent is global - it will imply a consent on all available accounts of the PSU on all PSD2 related account information services.
+
