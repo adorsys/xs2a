@@ -28,18 +28,20 @@ public class AccountDetailsLinks extends AbstractLinks {
     public AccountDetailsLinks(String httpUrl, String accountId, Xs2aAccountAccess xs2aAccountAccess) {
         super(httpUrl);
 
-        if (isValidAccountByAccess(accountId, xs2aAccountAccess.getBalances())) {
+        boolean isConsentGlobal = xs2aAccountAccess.getAllPsd2() != null;
+        if (isValidAccountByAccess(accountId, xs2aAccountAccess.getBalances(), isConsentGlobal)) {
             setBalances(buildPath(UrlHolder.ACCOUNT_BALANCES_URL, accountId));
         }
 
-        if (isValidAccountByAccess(accountId, xs2aAccountAccess.getTransactions())) {
+        if (isValidAccountByAccess(accountId, xs2aAccountAccess.getTransactions(), isConsentGlobal)) {
             setTransactions(buildPath(UrlHolder.ACCOUNT_TRANSACTIONS_URL, accountId));
         }
     }
 
-    private boolean isValidAccountByAccess(String accountId, List<AccountReference> allowedAccountData) {
-        return CollectionUtils.isNotEmpty(allowedAccountData)
-                   && allowedAccountData.stream()
-                          .anyMatch(a -> accountId.equals(a.getResourceId()));
+    private boolean isValidAccountByAccess(String accountId, List<AccountReference> allowedAccountData, boolean isConsentGlobal) {
+        return isConsentGlobal ||
+                   CollectionUtils.isNotEmpty(allowedAccountData)
+                       && allowedAccountData.stream()
+                              .anyMatch(a -> accountId.equals(a.getResourceId()));
     }
 }

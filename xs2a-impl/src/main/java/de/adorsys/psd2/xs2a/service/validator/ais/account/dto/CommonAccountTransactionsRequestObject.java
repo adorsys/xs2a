@@ -25,6 +25,7 @@ import lombok.Value;
 public class CommonAccountTransactionsRequestObject implements TppInfoProvider {
 
     private AccountConsent accountConsent;
+    private String accountId;
     private String requestUri;
 
     @Override

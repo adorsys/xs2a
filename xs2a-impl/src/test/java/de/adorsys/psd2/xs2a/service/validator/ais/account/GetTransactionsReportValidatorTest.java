@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.TransactionReportAcceptHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
@@ -91,6 +92,8 @@ public class GetTransactionsReportValidatorTest {
     @Mock
     private AisTppInfoValidator aisTppInfoValidator;
     @Mock
+    private AccountReferenceAccessValidator accountReferenceAccessValidator;
+    @Mock
     private PermittedAccountReferenceValidator permittedAccountReferenceValidator;
     @Mock
     private TransactionReportAcceptHeaderValidator transactionReportAcceptHeaderValidator;
@@ -121,14 +124,15 @@ public class GetTransactionsReportValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
 
         when(transactionReportAcceptHeaderValidator.validate(MediaType.APPLICATION_JSON_VALUE)).thenReturn(ValidationResult.valid());
-        when(permittedAccountReferenceValidator.validate(accountConsent, accountConsent.getAccess().getTransactions(), ACCOUNT_ID, WITH_BALANCE))
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
+        when(permittedAccountReferenceValidator.validate(accountConsent, ACCOUNT_ID, WITH_BALANCE))
             .thenReturn(ValidationResult.invalid(PERMITTED_ACCOUNT_REFERENCE_VALIDATION_ERROR));
 
         // When
         ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS));
 
         // Then
-        verify(permittedAccountReferenceValidator).validate(accountConsent, accountConsent.getAccess().getTransactions(), ACCOUNT_ID, WITH_BALANCE);
+        verify(permittedAccountReferenceValidator).validate(accountConsent, ACCOUNT_ID, WITH_BALANCE);
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -141,7 +145,8 @@ public class GetTransactionsReportValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
 
         when(transactionReportAcceptHeaderValidator.validate(MediaType.APPLICATION_JSON_VALUE)).thenReturn(ValidationResult.valid());
-        when(permittedAccountReferenceValidator.validate(accountConsent, accountConsent.getAccess().getTransactions(), ACCOUNT_ID, WITH_BALANCE))
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
+        when(permittedAccountReferenceValidator.validate(accountConsent, ACCOUNT_ID, WITH_BALANCE))
             .thenReturn(ValidationResult.valid());
         when(accountConsentValidator.validate(accountConsent, REQUEST_URI))
             .thenReturn(ValidationResult.valid());
@@ -171,11 +176,33 @@ public class GetTransactionsReportValidatorTest {
 
         // Then
         verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
-        verify(permittedAccountReferenceValidator, never()).validate(accountConsent, accountConsent.getAccess().getTransactions(), ACCOUNT_ID, WITH_BALANCE);
+        verify(permittedAccountReferenceValidator, never()).validate(accountConsent,  ACCOUNT_ID, WITH_BALANCE);
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(REQUESTED_FORMATS_INVALID_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    public void validate_withInvalidAccountReferenceAccess_error() {
+        // Given
+        AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+
+        when(transactionReportAcceptHeaderValidator.validate(MediaType.APPLICATION_JSON_VALUE)).thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID))
+            .thenReturn(ValidationResult.invalid(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID)));
+
+        // When
+        ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS));
+
+        // Then
+        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertFalse(validationResult.isValid());
+
+        verify(permittedAccountReferenceValidator, never()).validate(any(AccountConsent.class), anyString(), anyBoolean());
+        verify(accountConsentValidator, never()).validate(any(AccountConsent.class), anyString());
     }
 
     @Test
@@ -276,7 +303,8 @@ public class GetTransactionsReportValidatorTest {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(transactionReportAcceptHeaderValidator.validate(MediaType.APPLICATION_JSON_VALUE)).thenReturn(ValidationResult.valid());
-        when(permittedAccountReferenceValidator.validate(accountConsent, accountConsent.getAccess().getTransactions(), ACCOUNT_ID, WITH_BALANCE))
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
+        when(permittedAccountReferenceValidator.validate(accountConsent, ACCOUNT_ID, WITH_BALANCE))
             .thenReturn(ValidationResult.valid());
 
         // When
