@@ -29,7 +29,7 @@
   },
   "endDate": "2018-03-03",
   "endToEndIdentification": "RI-123456789",
-  "executionRule": "preceeding",
+  "executionRule": "preceding",
   "frequency": "ANNUAL",
   "instructedAmount": {
     "amount": "1000.00",
