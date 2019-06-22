@@ -49,7 +49,7 @@ deploy:
       condition: >-
                   ( ( $TRAVIS_TAG =~ ^([[:digit:]]+\.)+[[:digit:]]+(-(RC)?[[:digit:]]+)?([\.-]([[:digit:]]+\.)+[[:digit:]]+(-[[:digit:]]+)?)?$
                     || "$TRAVIS_BRANCH" = "develop" )
-                  && "$TRAVIS_JDK_VERSION" = "oraclejdk8" )
+                  && "$TRAVIS_JDK_VERSION" = "openjdk8" )
   - provider: pages
     skip-cleanup: true
     github-token: $GITHUB_PAGES_TOKEN
@@ -58,4 +58,4 @@ deploy:
     on:
       branch: develop
       condition: >-
-        ( "$TRAVIS_JDK_VERSION" = "oraclejdk8" )
+        ( "$TRAVIS_JDK_VERSION" = "openjdk8" )
