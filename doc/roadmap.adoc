@@ -2,6 +2,7 @@
 
 == Versions in progress
 
+
 === version 2.8 (Planned date 21.06.2019)
 * Bugfix: Ignore multilevel flag for AllAvailableAccounts Consent when SCA is not needed 
 * Bugfix: Wrong links in Start Authorisation Response 
