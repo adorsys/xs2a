@@ -2,19 +2,24 @@
 
 ## Versions in progress
 
-### version 2.8 (Planned date 21.06.2019)
-- Bugfix: Ignore multilevel flag for AllAvailableAccounts Consent when SCA is not needed 
-- Bugfix: Wrong links in Start Authorisation Response 
-- Bugfix: Global consent should imply on all PSD2 related account information services 
-- Bugfix: Error on creating AIS consent with availableAccountsWithBalances attribute in the access property
-- Bugfix: accountApi._getTransactionDetails return malformed json 
-- Bugfix: List of Available Accounts Consent should apply only on Account List 
+### version 2.9 (Planned date 05.07.2019)
 - Extend logging with technical activities 
+- Bugfix: Fix the payment ID transfer flow during payment cancellation
+- Bugfix: Read account list from another TPP responds with 401 instead 400
+- Bugfix: Missing validation for 'withBalance' with multiple accounts
+- Bugfix: Confirmation of funds responds with 403 when using No PIIS certificate
+- Bugfix: BankOffered consent after authorisation should allow accesses according to chosen by PSU 
+- Bugfix: PIIS should validate IBAN 
+- Bugfix: aspspAccountId no longer available for SPI 
+- Remove deprecated method in SpiPaymentInitiationResponse in v. 2.9 
+- Delete extra constructor in SpiInitiateAisConsentResponse in v 2.9 
+- Delete fileds in CryptoAlgorithm in v.2.9
 
-### version 3.6 (Planned date 21.06.2019)
-- All bugfixes from version 2.8
-- Change the logic of SpiResponseStatus to MessageErrorCode mapping
-- Forced mode of Start of authorisation
+
+### version 3.7 (Planned date 05.07.2019)
+- All bugfixes from version 2.9
+- Redirect timeout shall not be the same value as authorisation timeout 
+
 
 # Further development
 Starting 15th of March 2019 XS2A Team is going to provide development within two branches:
@@ -25,27 +30,18 @@ Stable branch 2.x will be supported at least till 01.09.2019
 
 
 
-
-### version 2.9 (Planned date 05.07.2019)
-- Delete unused field in AisAccountConsent in v.2.8 
-- Bugfix: Check incoming requests to have required information
-- Bugfix: PIIS should validate IBAN 
-- Bugfix: aspspAccountId no longer available for SPI 
-- Bugfix: Consents without successful authorisation should expire with status Rejected
-- Remove deprecated method in SpiPaymentInitiationResponse in v. 2.9 
-- Delete extra constructor in SpiInitiateAisConsentResponse in v 2.9 
-- Delete fileds in CryptoAlgorithm in v.2.9
-
 ### version 2.10 (Planned date 19.07.2019)
+- Bugfix: supportedTransactionApplicationTypes in profile should be String 
+- Bugfix: Empty array "account" in Read Balances and Read Transaction List responses
+- Bugfix: Check incoming requests to have required information
+- Bugfix: Consents without successful authorisation should expire with status Rejected
 - Bugfix: Incorrect response for Update PSU data for payment initiation request without psuId in header (Decoupled Implicit/Explicit) 
-- Bugfix: Wrong response body for Start Payment Authorisation request Redirect Explicit approach
-- Bugfix: Retrieve payment data by redirect-id with correct endpoint
-- Bugfix: Incorrect response for Start authorisation request without psuId in header (Redirect Explicit)
 - Bugfix: Populating PSU_DATA table with excessive data
 - Bugfix: Provide correct PSU Data to the SPI in SpiContextData
+- Remove deprecate enum `ALL_ACCOUNTS_WITH_BALANCES` in `AccountAccessType` class in v.2.10
 
 ### version 2.11 (Planned date 02.08.2019)
-- Bugfix: scaStatus link not available in response for Update PSU data for payment initiation (Decoupled Implicit) 
+- Bugfix: Only Pending transactions should be available in getTransactionList response when query param set to "pending"
 - Bugfix: Bad request when TPP enters an unknown user in the AIS consent embedded approach
 - Bugfix: Wrong response for provision of an invalid TAN or password 
 - Bugfix: Wrong Error code in payment initiation respond for not supported xml product types 
@@ -53,7 +49,6 @@ Stable branch 2.x will be supported at least till 01.09.2019
 
 
 ### Upcoming features 2.x/3.x (Priorities may be changed)
-- Bugfix: Field dateTo should not be mandated in Read transaction list of an account request 
 - Payment Authorisations and Payment Cancellation Authorisations should be separated from AIS Consent Authorisations 
 - Provide creation date and time in SPIrequest 
 - add the request execution duration to the log  
@@ -65,27 +60,33 @@ Development branch is oriented on implementation of new features and optional en
 No backward compatibility with 2.x is guaranteed.
 
 
-### version 3.7 (Planned date 05.07.2019)
-- Redirect timeout shall not be the same value as authorisation timeout  
-- AspspConsentData refactoring
-- Remove deprecated AspspConsentData updates in v.3.6
-
-
 ### version 3.8 (Planned date 19.07.2019)
-- Execute payment without sca in OAuth approach 
-- Validation of authorisation sub-resources
-- Multilevel SCA for Payment Initiation in Redirect approach
-- Multilevel SCA for Establish Consent in Redirect approach 
+- All bugfixes from version 2.10
+- AspspConsentData refactoring
+- Support of download link 
+
 
 ### version 3.9 (Planned date 02.08.2019)
+- All bugfixes from version 2.11
+- Remove deprecated AspspConsentData updates in v.3.6
+- Execute payment without sca in OAuth approach 
+- Validation of authorisation sub-resources
+
+
+### version 3.10 (Planned date 16.08.2019)
+- Multilevel SCA for Payment Initiation in Redirect approach
+- Multilevel SCA for Establish Consent in Redirect approach 
 - Restructure profile by services 
+
+
+### version 3.11 (Planned date 30.08.2019)
 - Move AuthenticationObject to xs2a-core 
 - Move PaymentAuthorisationType to the xs2a-core 
 - Support delta access for transaction list 
 
+
 ### Upcoming features 3.x (Priorities may be changed)
 - Refactor CMS: return ResponseObject instead of Strings, Enums, Booleans etc.
-- Support of download link 
 - Redesign of error handlers on SPI level 
 - Optional SCA for Access to all Accounts for all PSD2 defined AIS – Global Consent 
 - Go through code and aggregate all messages sent to PSU to message bundle  
@@ -105,8 +106,7 @@ No backward compatibility with 2.x is guaranteed.
 - Add to events rejected requests 
 - Extract events to separate module in CMS 
 - Refactoring of payment saving Part 2 
-- Refactor field validators (especially IBAN) to perform validation in Spring Component, not in static context 
-- Recoverability 
+- Refactor field validators (especially IBAN) to perform validation in Spring Component, not in static context - Recoverability 
 - Implement CommonPaymentSpi interface in connector 
 - Support all 3 formats of ISODateTime 
 - Add service to delete consents and payments after period of time 
@@ -141,4 +141,3 @@ No backward compatibility with 2.x is guaranteed.
 - Implement Read Card Account Details request
 - Implement Read Card Account Balance request
 - Implement Read Card Account Transaction List request
-
