@@ -114,7 +114,7 @@ No backward compatibility with 2.x is guaranteed.
 - Support OAuth sca for Payment cancellation
 - Support OAuth sca for AIS 
 
-###### Support of Signing Basket
+### Support of Signing Basket
 - Implement Establish Signing Basket request
 - Implement Get Signing Basket request
 - Get Signing Basket Status Request
@@ -125,7 +125,7 @@ No backward compatibility with 2.x is guaranteed.
 - Support Signing Basket in Decoupled approach with multilevel sca
 - Support Signing Basket in Redirect approach with multilevel sca
 
-###### Support of FundsConfirmation Consent:
+### Support of FundsConfirmation Consent:
 - Establish FundsConfirmationConsent 
 - Get FundsConfirmationConsent Status + object
 - Revoke FundsConfirmationConsent
@@ -136,7 +136,7 @@ No backward compatibility with 2.x is guaranteed.
 - Get Sca Status request for FundsConfirmationConsent 
 - Create interface in cms-aspsp-api to get FundsConfirmationConsent 
 
-###### Support of Card Accounts:
+### Support of Card Accounts:
 - Implement Read Card Account List request
 - Implement Read Card Account Details request
 - Implement Read Card Account Balance request
