@@ -26,7 +26,7 @@ before_script:
 # JavaDocs are broken in Java 11 and fixed only in Java 12 : https://bugs.openjdk.java.net/browse/JDK-8212233
 script:
   - mvn -B -V clean install
-  - "if [ $TRAVIS_JDK_VERSION == oraclejdk8 ]; then mvn -B -V javadoc:javadoc; fi;"
+  - "if [ $TRAVIS_JDK_VERSION == openjdk8 ]; then mvn -B -V javadoc:javadoc; fi;"
   - mvn -B -V pmd:check
   - echo "TRAVIS_JDK_VERSION is $TRAVIS_JDK_VERSION"
 
@@ -46,4 +46,4 @@ deploy:
       condition: >-
                   ( ( $TRAVIS_TAG =~ ^([[:digit:]]+\.)+[[:digit:]]+(-(RC)?[[:digit:]]+)?(-([[:digit:]]+\.)+[[:digit:]]+(-[[:digit:]]+)?)?$
                     || "$TRAVIS_BRANCH" = "develop" )
-                  && "$TRAVIS_JDK_VERSION" = "oraclejdk8" )
+                  && "$TRAVIS_JDK_VERSION" = "openjdk8" )
