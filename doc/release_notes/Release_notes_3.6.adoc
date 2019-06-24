@@ -4,6 +4,15 @@
 * Update version of jackson-databind to 2.9.9
 * Forced mode for starting authorisation
 * Change the logic of SpiResponseStatus to MessageErrorCode mapping
+* Bugfix: Wrong links in start authorisation response
+* Bugfix: Balances link is not present in Read Transaction List with Balances
+* Bugfix: Ignore multilevel flag for one-off Consent on Account List of Available Accounts when SCA is not needed
+* Bugfix: Changed the allowed length for some HTTP headers
+* Bugfix: Error on creating AIS consent with availableAccountsWithBalances attribute in the access property
+* Change String type of fields in Links to HrefType
+* Bugfix: Global consent applies on all PSD2 related account information requests
+* Bugfix: List of Available Accounts Consent should apply only on Account List
+* Bugfix: Fixed a typo in `preceding`
 
 == Update version of jackson-databind to 2.9.9
 
@@ -29,3 +38,46 @@ This means that if `SpiResponse` will contain any errors (populated via `SpiResp
 returned to the TPP in the response with error codes provided by the SPI Developer.
 
 Order of the messages matters, as the HTTP status code in response will be determined based on the first error.
+
+== Bugfix: Wrong links in start authorisation response
+
+From now on, all authorisation responses will contain `scaStatus` link instead of `self` and `status`.
+
+== Bugfix: Balances link is not present in Read Transaction List with Balances
+
+From now on, the endpoint for reading transaction list (POST `/v1/accounts/{{account_id}}/transactions?withBalance=true`) returns correct response with link `balances`.
+
+== Bugfix: Ignore multilevel flag for one-off Consent on Account List of Available Accounts when SCA is not needed
+
+When TPP sends `Create AIS Consent` request (`POST /v1/consents`) for one-off Consent on Account List of Available Accounts and for this request ASPSP
+returns SpiInitiateAisConsentResponse with `multilevelScaRequired` parameter set to true, if in ASPSP Profile parameter `scaByOneTimeAvailableAccountsConsentRequired`
+set to false, then `multilevelScaRequired` parameter will be ignored because SCA is not needed at all.
+
+== Bugfix: Changed the allowed length for some HTTP headers
+
+From now on, while sending HTTP requests to the XS2A the maximum length of `tpp-redirect-uri` and `tpp-nok-redirect-uri`
+headers is extended to 255 symbols. Header `authorization` is not validated for length.
+
+== Bugfix: Error on creating AIS consent with availableAccountsWithBalances attribute in the access property
+
+From now on, TPP is able to create AIS consent with `availableAccountsWithBalances` attribute in the access property.
+As a result, creation of AIS Consent with `allAccountsWithBalances` value in `availableAccounts` field is no longer allowed.
+
+== Change String type of fields in Links to HrefType
+
+From now on, object de.adorsys.psd2.xs2a.domain.Links has new HrefType for all fields to simplify serialization to json.
+
+== Bugfix: Global consent applies on all PSD2 related account information services
+
+From now on, if consent is global - it will imply a consent on all available accounts of the PSU on all PSD2 related account information services.
+
+== Bugfix: List of Available Accounts Consent should apply only on Account List
+
+From now on, Consent on Account List of Available Accounts can get only a list of accounts (GET `v1/accounts`).
+Another information about account details, balances or transactions is not permitted and TPP in this case will receive 401 response code with `CONSENT_INVALID` message.
+Consent with `availableAccounts` attribute has access to accounts without balances and consent with `availableAccountsWithBalances` attribute has access to accounts with balances.
+
+== Bugfix: Fixed a typo in `preceding`
+
+Fixed a typo in the word `preceding` for the whole project.
+
