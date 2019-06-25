@@ -8,7 +8,7 @@ entity CMS
 entity Online_banking
 entity Core_banking
 note right of CMS
-For an Authorithation Call
+For an Authorisation Call
 CMS-PSU-API is used
 end note
 PSU->TPP: Initiate an Account information access

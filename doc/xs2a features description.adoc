@@ -139,7 +139,7 @@ Depending on SpiPaymentCancellationResponse properties *transactionStatus* and *
 |with authorisation
 |===
 
-image::PaymentCancellation_Redirect.png[Payment Cancellation in Redirect Approach, title="Payment Cancellation in Redirect Approach", align="center"]
+image::PaymentCancellation Redirect.png[Payment Cancellation in Redirect Approach, title="Payment Cancellation in Redirect Approach", align="center"]
 
 == Account Information Service
 === Establish account information consent
