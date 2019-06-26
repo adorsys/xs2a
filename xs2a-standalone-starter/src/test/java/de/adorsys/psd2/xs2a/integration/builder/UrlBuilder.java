@@ -62,4 +62,10 @@ public class UrlBuilder {
                    .buildAndExpand(paymentType, paymentProduct, encrPaymentId)
                    .toUriString();
     }
+
+    public static String buildCancellationPaymentUrl(String paymentType, String paymentProduct, String encryptedPaymentId) {
+        return UriComponentsBuilder.fromPath(UrlHolder.PAYMENT_LINK_URL)
+                   .buildAndExpand(paymentType, paymentProduct, encryptedPaymentId)
+                   .toUriString();
+    }
 }

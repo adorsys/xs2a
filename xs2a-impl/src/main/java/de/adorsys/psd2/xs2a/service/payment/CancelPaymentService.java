@@ -76,7 +76,7 @@ public class CancelPaymentService {
                        .build();
         }
 
-        CancelPaymentResponse cancelPaymentResponse = spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(spiResponse.getPayload(), payment, psuData);
+        CancelPaymentResponse cancelPaymentResponse = spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(spiResponse.getPayload(), payment, psuData, encryptedPaymentId);
         TransactionStatus resultStatus = cancelPaymentResponse.getTransactionStatus();
 
         if (resultStatus != null) {
