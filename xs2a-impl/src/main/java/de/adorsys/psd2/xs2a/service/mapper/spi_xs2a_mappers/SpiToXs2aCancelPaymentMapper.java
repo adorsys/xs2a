@@ -27,5 +27,6 @@ import org.mapstruct.Mapping;
 public interface SpiToXs2aCancelPaymentMapper {
 
     @Mapping(target = "startAuthorisationRequired", source = "spiCancelPayment.cancellationAuthorisationMandated")
-    CancelPaymentResponse mapToCancelPaymentResponse(SpiPaymentCancellationResponse spiCancelPayment, SpiPayment payment, PsuIdData psuData);
+    @Mapping(target = "paymentId", source = "encryptedPaymentId")
+    CancelPaymentResponse mapToCancelPaymentResponse(SpiPaymentCancellationResponse spiCancelPayment, SpiPayment payment, PsuIdData psuData, String encryptedPaymentId);
 }

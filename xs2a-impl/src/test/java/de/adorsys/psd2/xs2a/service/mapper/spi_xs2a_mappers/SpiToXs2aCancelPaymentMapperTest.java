@@ -32,6 +32,9 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {SpiToXs2aCancelPaymentMapperImpl.class})
 public class SpiToXs2aCancelPaymentMapperTest {
+    private static final String INTERNAL_PAYMENT_ID = "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGz";
+    private static final String ENCRYPTED_PAYMENT_ID = "m7yCLQAd0eYCRm0GQlpSUkdX0zMvJvyxMZP5Y9t3_LXc-bUD1r4ipjym9p0cP3rgqC7ZF9NIw_bZTnhXSEbGFg==_=_psGLvQpt9Q";
+
     @Autowired
     private SpiToXs2aCancelPaymentMapper mapper;
     private JsonReader jsonReader = new JsonReader();
@@ -39,7 +42,7 @@ public class SpiToXs2aCancelPaymentMapperTest {
     @Test
     public void mapToCancelPaymentResponse_success() {
         SpiSinglePayment spiSinglePayment = new SpiSinglePayment("product");
-        spiSinglePayment.setPaymentId("2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGz");
+        spiSinglePayment.setPaymentId(INTERNAL_PAYMENT_ID);
 
         SpiPaymentCancellationResponse spiCancelPayment =
             jsonReader.getObjectFromFile("json/service/mapper/single-payment-cancellation-response.json", SpiPaymentCancellationResponse.class);
@@ -48,7 +51,7 @@ public class SpiToXs2aCancelPaymentMapperTest {
             jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
 
         CancelPaymentResponse actualResponse =
-            mapper.mapToCancelPaymentResponse(spiCancelPayment, spiSinglePayment, psuData);
+            mapper.mapToCancelPaymentResponse(spiCancelPayment, spiSinglePayment, psuData, ENCRYPTED_PAYMENT_ID);
 
         CancelPaymentResponse expectedResponse =
             jsonReader.getObjectFromFile("json/service/mapper/cancel-payment-response.json", CancelPaymentResponse.class);

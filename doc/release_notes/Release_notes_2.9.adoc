@@ -1,3 +1,8 @@
 = Release notes v.2.9
 
 == Table of Contents
+* Bugfix: Fix the payment ID transfer flow during payment cancellation
+
+== Bugfix: Fix the payment ID transfer flow during payment cancellation
+From now on, response to the Payment Cancellation Request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`)
+will contain links with external (encrypted) payment ID instead of internal one.

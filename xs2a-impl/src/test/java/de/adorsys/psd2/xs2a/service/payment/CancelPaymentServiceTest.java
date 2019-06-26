@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,9 +50,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
@@ -70,7 +68,6 @@ public class CancelPaymentServiceTest {
     private static final String AUTHORISATION_ID = "auth id";
     private static final String PAYMENT_NOT_FOUND_MESSAGE = "Payment not found";
     private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "some consent id");
-    private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
     private static final PsuIdData PSU_DATA = buildPsuIdData();
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_DATA.getPsuId(), PSU_DATA.getPsuIdType(), PSU_DATA.getPsuCorporateId(), PSU_DATA.getPsuCorporateIdType());
@@ -105,17 +102,17 @@ public class CancelPaymentServiceTest {
             .thenReturn(true);
         when(authorisationMethodDecider.isImplicitMethod(false, false))
             .thenReturn(false);
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.CANC)), eq(getSpiPayment(PAYMENT_ID, CANC)), eq(PSU_DATA)))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.CANC)), eq(getSpiPayment(PAYMENT_ID, CANC)), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(false, CANC));
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.ACTC)), eq(getSpiPayment(PAYMENT_ID, ACTC)), eq(PSU_DATA)))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.ACTC)), eq(getSpiPayment(PAYMENT_ID, ACTC)), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(false, ACTC));
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, TransactionStatus.ACTC)), eq(getSpiPayment(PAYMENT_ID, ACTC)), eq(PSU_DATA)))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, TransactionStatus.ACTC)), eq(getSpiPayment(PAYMENT_ID, ACTC)), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(true, ACTC));
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, RCVD)), eq(getSpiPayment(PAYMENT_ID, RCVD)), eq(PSU_DATA)))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, RCVD)), eq(getSpiPayment(PAYMENT_ID, RCVD)), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(false, RCVD));
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, ACSC)), eq(getSpiPayment(PAYMENT_ID, ACSC)), eq(PSU_DATA)))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, ACSC)), eq(getSpiPayment(PAYMENT_ID, ACSC)), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(false, ACSC));
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, null)), any(SpiPayment.class), eq(PSU_DATA)))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, null)), any(SpiPayment.class), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(true, null));
     }
 
@@ -153,12 +150,12 @@ public class CancelPaymentServiceTest {
         SpiPayment spiPayment = getSpiPayment(PAYMENT_ID, ACTC);
 
         SpiResponse<SpiResponse.VoidResponse> spiErrorResponse = SpiResponse.<SpiResponse.VoidResponse>builder()
-                                                        .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                        .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+                                                                     .aspspConsentData(ASPSP_CONSENT_DATA)
+                                                                     .fail(SpiResponseStatus.TECHNICAL_FAILURE);
 
         ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-                                        .messages(Collections.singletonList(PAYMENT_NOT_FOUND_MESSAGE))
-                                        .build();
+                                      .messages(Collections.singletonList(PAYMENT_NOT_FOUND_MESSAGE))
+                                      .build();
 
         MessageError expectedError = new MessageError(errorHolder);
 
@@ -358,9 +355,9 @@ public class CancelPaymentServiceTest {
         SpiPayment spiPayment = getSpiPayment(PAYMENT_ID, ACTC);
 
         when(paymentCancellationAuthorisationService.createPisCancellationAuthorization(ENCRYPTED_PAYMENT_ID, PSU_DATA, spiPayment.getPaymentType(), spiPayment.getPaymentProduct()))
-            .thenReturn( ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                             .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
-                             .build());
+            .thenReturn(ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                            .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
+                            .build());
 
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(spiPayment), any()))
             .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
@@ -392,6 +389,10 @@ public class CancelPaymentServiceTest {
         CancelPaymentResponse response = new CancelPaymentResponse();
         response.setStartAuthorisationRequired(authorisationRequired);
         response.setTransactionStatus(transactionStatus);
+
+        if (authorisationRequired) {
+            response.setPaymentId(ENCRYPTED_PAYMENT_ID);
+        }
         return response;
     }
 

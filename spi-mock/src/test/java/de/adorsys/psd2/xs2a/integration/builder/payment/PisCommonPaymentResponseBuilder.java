@@ -16,18 +16,24 @@
 
 package de.adorsys.psd2.xs2a.integration.builder.payment;
 
+import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Currency;
 
 public class PisCommonPaymentResponseBuilder {
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
     private static final PaymentType PAYMENT_TYPE = PaymentType.SINGLE;
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final String PAYMENT_CURRENCY_CODE = "EUR";
+    private static final BigDecimal PAYMENT_AMOUNT = BigDecimal.TEN;
 
     public static PisCommonPaymentResponse buildPisCommonPaymentResponse() {
         PisCommonPaymentResponse commonPaymentResponse = new PisCommonPaymentResponse();
@@ -37,5 +43,17 @@ public class PisCommonPaymentResponseBuilder {
         commonPaymentResponse.setTppInfo(TppInfoBuilder.buildTppInfo());
         commonPaymentResponse.setPsuData(Collections.singletonList(PsuIdDataBuilder.buildPsuIdData()));
         return commonPaymentResponse;
+    }
+
+    public static PisCommonPaymentResponse buildPisCommonPaymentResponseWithPayment() {
+        PisPayment pisPayment = new PisPayment();
+        pisPayment.setCurrency(Currency.getInstance(PAYMENT_CURRENCY_CODE));
+        pisPayment.setAmount(PAYMENT_AMOUNT);
+        pisPayment.setDebtorAccount(new AccountReference());
+        pisPayment.setCreditorAccount(new AccountReference());
+
+        PisCommonPaymentResponse pisCommonPaymentResponse = buildPisCommonPaymentResponse();
+        pisCommonPaymentResponse.setPayments(Collections.singletonList(pisPayment));
+        return pisCommonPaymentResponse;
     }
 }
