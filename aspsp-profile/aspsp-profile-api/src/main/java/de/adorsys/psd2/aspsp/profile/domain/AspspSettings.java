@@ -18,13 +18,15 @@ package de.adorsys.psd2.aspsp.profile.domain;
 
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Value
+@Data
+@AllArgsConstructor
 public class AspspSettings {
     private int frequencyPerDay;
     private boolean combinedServiceIndicator;

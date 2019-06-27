@@ -148,6 +148,7 @@ public class CancelPaymentTest {
     @Test
     public void cancelPayment_explicit_redirect_withMandatedAuthorisation_successful() throws Exception {
         // Given
+        aspspProfileService.getAspspSettings().setSigningBasketSupported(true);
         cancelPayment_withMandatedAuthorisation_successful(httpHeadersExplicit, REDIRECT_SCA_APPROACH, REDIRECT_EXPLICIT_CANCELLATION_RESP);
     }
 
@@ -166,6 +167,7 @@ public class CancelPaymentTest {
     @Test
     public void cancelPayment_explicit_embedded_withNotMandatedAuthorisation_successful() throws Exception {
         // Given
+        aspspProfileService.getAspspSettings().setSigningBasketSupported(true);
         cancelPayment_withMandatedAuthorisation_successful(httpHeadersExplicit, EMBEDDED_SCA_APPROACH, EMBEDDED_EXPLICIT_CANCELLATION_RESP);
     }
 
