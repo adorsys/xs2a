@@ -34,22 +34,23 @@ public class PaymentInitiationLinks extends AbstractLinks {
 
     private ScaApproachResolver scaApproachResolver;
     private RedirectLinkBuilder redirectLinkBuilder;
-    private boolean isExplicitMethod;
+    private boolean explicitMethod;
     private ScaRedirectFlow scaRedirectFlow;
 
     public PaymentInitiationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
                                   PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body,
-                                  boolean isExplicitMethod, ScaRedirectFlow scaRedirectFlow) {
+                                  boolean explicitMethod, boolean signingBasketModeActive,
+                                  ScaRedirectFlow scaRedirectFlow) {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
-        this.isExplicitMethod = isExplicitMethod;
+        this.explicitMethod = explicitMethod;
         this.scaRedirectFlow = scaRedirectFlow;
 
-        buildPaymentLinks(paymentRequestParameters, body);
+        buildPaymentLinks(paymentRequestParameters, body, signingBasketModeActive);
     }
 
-    private void buildPaymentLinks(PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body) {
+    private void buildPaymentLinks(PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body, boolean signingBasketModeActive) {
         if (RJCT == body.getTransactionStatus()) {
             return;
         }
@@ -57,15 +58,13 @@ public class PaymentInitiationLinks extends AbstractLinks {
         String paymentProduct = paymentRequestParameters.getPaymentProduct();
         String paymentId = body.getPaymentId();
         String authorisationId = body.getAuthorizationId();
-        // TODO refactor isSigningBasketSupported https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/811
-        boolean isSigningBasketSupported = !body.isMultilevelScaRequired();
 
         setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
         setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
 
         ScaApproach scaApproach = scaApproachResolver.resolveScaApproach();
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproach)) {
-            addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, isSigningBasketSupported);
+            addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, signingBasketModeActive);
         } else if (scaApproach == REDIRECT) {
             addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
         } else if (scaApproach == OAUTH) {
@@ -74,9 +73,9 @@ public class PaymentInitiationLinks extends AbstractLinks {
     }
 
     private void addEmbeddedDecoupledRelatedLinks(String paymentService, String paymentProduct, String paymentId,
-                                                  String authorisationId, boolean isSigningBasketSupported) {
-        if (isExplicitMethod) {
-            if (isSigningBasketSupported) { // no more data needs to be updated
+                                                  String authorisationId, boolean signingBasketModeActive) {
+        if (explicitMethod) {
+            if (signingBasketModeActive) { // no more data needs to be updated
                 setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
             } else {
                 setStartAuthorisationWithPsuAuthentication(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
@@ -90,7 +89,7 @@ public class PaymentInitiationLinks extends AbstractLinks {
     }
 
     private void addRedirectRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorisationId) {
-        if (isExplicitMethod) {
+        if (explicitMethod) {
             setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
         } else {
             setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, authorisationId));
