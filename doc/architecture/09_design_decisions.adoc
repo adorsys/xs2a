@@ -2,5 +2,37 @@
 [[section-design-decisions]]
 == Design Decisions
 
+=== ASPSP Consent Data
 
+ASPSP Consent Data represents a holder for session information storage between synchronous unauthorised API requests.
 
+I.e. getting information about transactions and balances about some account requires authorisation in some banking systems,
+given by the account holder or some banking subsystem.
+Such authorisation is performed in XS2A using the consents. If TPP has got a valid consent, authorised by PSU,
+he should be able to access the data about accounts listed in this consent. To provide a technical possibility for such access,
+some authorisation information shall be stored between TPP requests using the consent.
+
+The XS2A Service itself is stateless, request from TPP is proxied to SPI-Connector level, that is supposed to obtain necessary information from the banking system and deliver it back.
+The only one place to save such information is the Consent (Payment in case of PIS Use-case) record in CMS.
+Therefore we provide the ASPSP Consent Data concept to store and use such information from CMS, linked to the Consent/Payment record.
+
+The rules are:
+
+1. ASPSP Consent Data is a raw array of bytes. XS2A doesn't parse or use this data.
+It is a decision of SPI-Connector developer what to put into the ASPSP Consent Data and what format to use.
+
+2. ASPSP Consent Data is accessible inside the every call to SPI API, so that any connector method has access to the scope of request.
+
+3. Developer of SPI-Connector is responsible to update/delete ASPSP Consent data to update/revoke access to accounts.
+
+4. ASPSP Consent data is stored per Consent/Payment and delivered to SPI Level based on corresponding Consent ID.
+
+5. ASPSP Consent Data is stored encrypted in CMS. Encryption key is not available in the bank side.
+
+==== Encryption of ASPSP Consent Data
+
+<TODO>
+
+=== TPP Authorisation
+
+<TODO>
