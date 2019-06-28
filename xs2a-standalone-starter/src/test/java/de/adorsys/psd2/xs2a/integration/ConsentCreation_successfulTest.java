@@ -72,6 +72,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode.EXPLICIT;
 import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
@@ -104,6 +105,7 @@ public class ConsentCreation_successfulTest {
     private static final String CREATE_CONSENT_IMPLICIT_REDIRECT_OAUTH_RESPONSE_PATH = "/json/account/res/CreateAisConsent_implicit_redirect_oauth_response.json";
     private static final String CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH = "/json/account/res/CreateAisConsent_explicit_embedded_response.json";
     private static final String CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH = "/json/account/res/CreateAisConsent_explicit_redirect_response.json";
+    private static final String CREATE_CONSENT_EXPLICIT_EMBEDDED_SIGNING_BASKET_RESPONSE_PATH = "/json/account/res/CreateAisConsent_explicit_redirect_response.json";
 
     private static final String ENCRYPT_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
@@ -220,44 +222,70 @@ public class ConsentCreation_successfulTest {
     //
     @Test
     public void creation_dedicated_consent_explicit_embedded_successful() throws Exception {
-        // TODO make 'SigningBasket support' case for each consent type https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/810
-        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
+        aspspProfileService.getAspspSettings().setStartAuthorisationMode(EXPLICIT);
+        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH);
+    }
+
+    @Test
+    public void creation_dedicated_consent_explicit_embedded_signingBasket_successful() throws Exception {
+        aspspProfileService.getAspspSettings().setStartAuthorisationMode(EXPLICIT);
+        aspspProfileService.getAspspSettings().setSigningBasketSupported(true);
+        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_SIGNING_BASKET_RESPONSE_PATH);
     }
 
     @Test
     public void creation_dedicated_consent_explicit_redirect_successful() throws Exception {
+        aspspProfileService.getAspspSettings().setStartAuthorisationMode(EXPLICIT);
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
     public void creation_global_consent_explicit_embedded_successful() throws Exception {
-        // TODO make 'SigningBasket support' case for each consent type https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/810
-        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
+        aspspProfileService.getAspspSettings().setStartAuthorisationMode(EXPLICIT);
+        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH);
+    }
+
+    @Test
+    public void creation_global_consent_explicit_embedded_signingBasket_successful() throws Exception {
+        aspspProfileService.getAspspSettings().setStartAuthorisationMode(EXPLICIT);
+        aspspProfileService.getAspspSettings().setSigningBasketSupported(true);
+        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_SIGNING_BASKET_RESPONSE_PATH);
     }
 
     @Test
     public void creation_global_consent_explicit_redirect_successful() throws Exception {
+        aspspProfileService.getAspspSettings().setStartAuthorisationMode(EXPLICIT);
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
     public void creation_bank_offered_consent_explicit_redirect_successful() throws Exception {
+        aspspProfileService.getAspspSettings().setStartAuthorisationMode(EXPLICIT);
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, BANK_OFFERED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
     public void creation_all_available_account_consent_explicit_embedded_successful() throws Exception {
-        // TODO make 'SigningBasket support' case for each consent type https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/810
-        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
+        aspspProfileService.getAspspSettings().setStartAuthorisationMode(EXPLICIT);
+        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH);
+    }
+
+    @Test
+    public void creation_all_available_account_consent_explicit_embedded_signingBasket_successful() throws Exception {
+        aspspProfileService.getAspspSettings().setStartAuthorisationMode(EXPLICIT);
+        aspspProfileService.getAspspSettings().setSigningBasketSupported(true);
+        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_SIGNING_BASKET_RESPONSE_PATH);
     }
 
     @Test
     public void creation_all_available_account_consent_explicit_redirect_successful() throws Exception {
+        aspspProfileService.getAspspSettings().setStartAuthorisationMode(EXPLICIT);
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
     public void creation_all_available_with_balances_account_consent_explicit_redirect_successful() throws Exception {
+        aspspProfileService.getAspspSettings().setStartAuthorisationMode(EXPLICIT);
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_WITH_BALANCES_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 

@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -118,6 +119,7 @@ public class InitiatePayments_successfulTest {
     private HttpHeaders httpHeadersExplicitNoPsuData = new HttpHeaders();
     private MultiKeyMap responseMap = new MultiKeyMap();
     private MultiKeyMap responseMapOauth = new MultiKeyMap();
+    private MultiKeyMap responseMapSigningBasketMode = new MultiKeyMap();
 
     @Autowired
     private MockMvc mockMvc;
@@ -133,11 +135,11 @@ public class InitiatePayments_successfulTest {
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
-    private  SinglePaymentSpi singlePaymentSpi;
+    private SinglePaymentSpi singlePaymentSpi;
     @MockBean
-    private  PeriodicPaymentSpi periodicPaymentSpi;
+    private PeriodicPaymentSpi periodicPaymentSpi;
     @MockBean
-    private  BulkPaymentSpi bulkPaymentSpi;
+    private BulkPaymentSpi bulkPaymentSpi;
 
     @MockBean
     @Qualifier("consentRestTemplate")
@@ -175,34 +177,35 @@ public class InitiatePayments_successfulTest {
         httpHeadersExplicitNoPsuData.remove("PSU-Corporate-ID");
         httpHeadersExplicitNoPsuData.remove("PSU-Corporate-ID-Type");
 
-        responseMap.put(httpHeadersImplicit, PaymentType.SINGLE, ScaApproach.REDIRECT, "", "", "/json/payment/res/implicit/SinglePaymentInitiate_redirect_implicit_response.json");
-        responseMap.put(httpHeadersImplicitNoPsuData, PaymentType.SINGLE, ScaApproach.REDIRECT, "", "psuIdDataIsEmpty", "/json/payment/res/implicit/SinglePaymentInitiate_redirect_implicit_psuIdDataIsEmpty_response.json");
-        responseMap.put(httpHeadersImplicit, PaymentType.SINGLE, ScaApproach.REDIRECT, "multilevelSca", "", "/json/payment/res/implicit/SinglePaymentInitiate_redirect_implicit_multilevelSca_response.json");
-        responseMap.put(httpHeadersImplicitNoPsuData, PaymentType.SINGLE, ScaApproach.REDIRECT, "multilevelSca", "psuIdDataIsEmpty", "/json/payment/res/implicit/SinglePaymentInitiate_redirect_implicit_multilevelSca_psuIdDataIsEmpty_response.json");
-        responseMap.put(httpHeadersImplicit, PaymentType.SINGLE, ScaApproach.EMBEDDED, "", "", "/json/payment/res/implicit/SinglePaymentInitiate_embedded_implicit_response.json");
-        responseMap.put(httpHeadersImplicitNoPsuData, PaymentType.SINGLE, ScaApproach.EMBEDDED, "", "psuIdDataIsEmpty", "/json/payment/res/implicit/SinglePaymentInitiate_embedded_implicit_psuIdDataIsEmpty_response.json");
-        responseMap.put(httpHeadersImplicit, PaymentType.SINGLE, ScaApproach.EMBEDDED, "multilevelSca", "", "/json/payment/res/implicit/SinglePaymentInitiate_embedded_implicit_multilevelSca_response.json");
-        responseMap.put(httpHeadersImplicitNoPsuData, PaymentType.SINGLE, ScaApproach.EMBEDDED, "multilevelSca", "psuIdDataIsEmpty", "/json/payment/res/implicit/SinglePaymentInitiate_embedded_implicit_multilevelSca_psuIdDataIsEmpty_response.json");
-        responseMap.put(httpHeadersImplicit, PaymentType.PERIODIC, ScaApproach.REDIRECT, "/json/payment/res/implicit/PeriodicPaymentInitiate_redirect_implicit_response.json");
-        responseMap.put(httpHeadersImplicit, PaymentType.PERIODIC, ScaApproach.EMBEDDED, "/json/payment/res/implicit/PeriodicPaymentInitiate_embedded_implicit_response.json");
-        responseMap.put(httpHeadersImplicit, PaymentType.BULK, ScaApproach.REDIRECT, "/json/payment/res/implicit/BulkPaymentInitiate_redirect_implicit_response.json");
-        responseMap.put(httpHeadersImplicit, PaymentType.BULK, ScaApproach.EMBEDDED, "/json/payment/res/implicit/BulkPaymentInitiate_embedded_implicit_response.json");
+        responseMap.put(false, PaymentType.SINGLE, ScaApproach.REDIRECT, "", "", "/json/payment/res/implicit/SinglePaymentInitiate_redirect_implicit_response.json");
+        responseMap.put(false, PaymentType.SINGLE, ScaApproach.REDIRECT, "", "psuIdDataIsEmpty", "/json/payment/res/implicit/SinglePaymentInitiate_redirect_implicit_psuIdDataIsEmpty_response.json");
+        responseMap.put(false, PaymentType.SINGLE, ScaApproach.REDIRECT, "multilevelSca", "", "/json/payment/res/implicit/SinglePaymentInitiate_redirect_implicit_multilevelSca_response.json");
+        responseMap.put(false, PaymentType.SINGLE, ScaApproach.REDIRECT, "multilevelSca", "psuIdDataIsEmpty", "/json/payment/res/implicit/SinglePaymentInitiate_redirect_implicit_multilevelSca_psuIdDataIsEmpty_response.json");
+        responseMap.put(false, PaymentType.SINGLE, ScaApproach.EMBEDDED, "", "", "/json/payment/res/implicit/SinglePaymentInitiate_embedded_implicit_response.json");
+        responseMap.put(false, PaymentType.SINGLE, ScaApproach.EMBEDDED, "", "psuIdDataIsEmpty", "/json/payment/res/implicit/SinglePaymentInitiate_embedded_implicit_psuIdDataIsEmpty_response.json");
+        responseMap.put(false, PaymentType.SINGLE, ScaApproach.EMBEDDED, "multilevelSca", "", "/json/payment/res/implicit/SinglePaymentInitiate_embedded_implicit_multilevelSca_response.json");
+        responseMap.put(false, PaymentType.SINGLE, ScaApproach.EMBEDDED, "multilevelSca", "psuIdDataIsEmpty", "/json/payment/res/implicit/SinglePaymentInitiate_embedded_implicit_multilevelSca_psuIdDataIsEmpty_response.json");
+        responseMap.put(false, PaymentType.PERIODIC, ScaApproach.REDIRECT, "/json/payment/res/implicit/PeriodicPaymentInitiate_redirect_implicit_response.json");
+        responseMap.put(false, PaymentType.PERIODIC, ScaApproach.EMBEDDED, "/json/payment/res/implicit/PeriodicPaymentInitiate_embedded_implicit_response.json");
+        responseMap.put(false, PaymentType.BULK, ScaApproach.REDIRECT, "/json/payment/res/implicit/BulkPaymentInitiate_redirect_implicit_response.json");
+        responseMap.put(false, PaymentType.BULK, ScaApproach.EMBEDDED, "/json/payment/res/implicit/BulkPaymentInitiate_embedded_implicit_response.json");
 
-        // TODO make 'SigningBasket support' case for each payment type https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/810
-        responseMap.put(httpHeadersExplicit, PaymentType.SINGLE, ScaApproach.REDIRECT, "","", "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_response.json");
-        responseMap.put(httpHeadersExplicitNoPsuData, PaymentType.SINGLE, ScaApproach.REDIRECT, "","psuIdDataIsEmpty", "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_psuIdDataIsEmpty_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.SINGLE, ScaApproach.REDIRECT,"multilevelSca", "", "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_multilevelSca_response.json");
-        responseMap.put(httpHeadersExplicitNoPsuData, PaymentType.SINGLE, ScaApproach.REDIRECT,"multilevelSca", "psuIdDataIsEmpty", "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_multilevelSca_psuIdDataIsEmpty_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.SINGLE, ScaApproach.EMBEDDED, "","", "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_response.json");
-        responseMap.put(httpHeadersExplicitNoPsuData, PaymentType.SINGLE, ScaApproach.EMBEDDED, "","psuIdDataIsEmpty", "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_psuIdDataIsEmpty_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.SINGLE, ScaApproach.EMBEDDED, "multilevelSca","", "/json/payment/res/explicit/SinglePaymentInitiate_embedded_explicit_multilevelSca_response.json");
-        responseMap.put(httpHeadersExplicitNoPsuData, PaymentType.SINGLE, ScaApproach.EMBEDDED, "multilevelSca","psuIdDataIsEmpty", "/json/payment/res/explicit/SinglePaymentInitiate_embedded_explicit_multilevelSca_psuIdDataIsEmpty_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.PERIODIC, ScaApproach.REDIRECT, "/json/payment/res/explicit/PeriodicPaymentInitiate_redirect_explicit_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.PERIODIC, ScaApproach.EMBEDDED, "/json/payment/res/explicit/PeriodicPaymentInitiate_redirect_explicit_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.BULK, ScaApproach.REDIRECT, "/json/payment/res/explicit/BulkPaymentInitiate_redirect_explicit_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.BULK, ScaApproach.EMBEDDED, "/json/payment/res/explicit/BulkPaymentInitiate_redirect_explicit_response.json");
+        responseMap.put(true, PaymentType.SINGLE, ScaApproach.REDIRECT, "", "", "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_response.json");
+        responseMap.put(true, PaymentType.SINGLE, ScaApproach.REDIRECT, "", "psuIdDataIsEmpty", "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_psuIdDataIsEmpty_response.json");
+        responseMap.put(true, PaymentType.SINGLE, ScaApproach.REDIRECT, "multilevelSca", "", "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_multilevelSca_response.json");
+        responseMap.put(true, PaymentType.SINGLE, ScaApproach.REDIRECT, "multilevelSca", "psuIdDataIsEmpty", "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_multilevelSca_psuIdDataIsEmpty_response.json");
+        responseMap.put(true, PaymentType.SINGLE, ScaApproach.EMBEDDED, "", "", "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_response.json");
+        responseMap.put(true, PaymentType.SINGLE, ScaApproach.EMBEDDED, "", "psuIdDataIsEmpty", "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_psuIdDataIsEmpty_response.json");
+        responseMap.put(true, PaymentType.SINGLE, ScaApproach.EMBEDDED, "multilevelSca", "", "/json/payment/res/explicit/SinglePaymentInitiate_embedded_explicit_multilevelSca_response.json");
+        responseMap.put(true, PaymentType.SINGLE, ScaApproach.EMBEDDED, "multilevelSca", "psuIdDataIsEmpty", "/json/payment/res/explicit/SinglePaymentInitiate_embedded_explicit_multilevelSca_psuIdDataIsEmpty_response.json");
+        responseMap.put(true, PaymentType.PERIODIC, ScaApproach.REDIRECT, "/json/payment/res/explicit/PeriodicPaymentInitiate_redirect_explicit_response.json");
+        responseMap.put(true, PaymentType.PERIODIC, ScaApproach.EMBEDDED, "/json/payment/res/explicit/PeriodicPaymentInitiate_redirect_explicit_response.json");
+        responseMap.put(true, PaymentType.BULK, ScaApproach.REDIRECT, "/json/payment/res/explicit/BulkPaymentInitiate_redirect_explicit_response.json");
+        responseMap.put(true, PaymentType.BULK, ScaApproach.EMBEDDED, "/json/payment/res/explicit/BulkPaymentInitiate_redirect_explicit_response.json");
 
         responseMapOauth.put(httpHeadersImplicit, PaymentType.SINGLE, ScaApproach.REDIRECT, "/json/payment/res/implicit/SinglePaymentInitiate_redirect_oauth_implicit_response.json");
+        responseMapSigningBasketMode.put(true, PaymentType.SINGLE, ScaApproach.EMBEDDED, "multilevelSca", "psuIdDataIsEmpty", "/json/payment/res/explicit/SinglePaymentInitiate_embedded_explicit_multilevelSca_psuIdDataIsEmpty_signingBasketActive_response.json");
+        responseMapSigningBasketMode.put(true, PaymentType.SINGLE, ScaApproach.EMBEDDED, "multilevelSca", "", "/json/payment/res/explicit/SinglePaymentInitiate_embedded_explicit_multilevelSca_signingBasketActive_response.json");
 
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
@@ -217,6 +220,7 @@ public class InitiatePayments_successfulTest {
 
         given(pisCommonPaymentServiceEncrypted.createCommonPayment(any(PisPaymentInfo.class)))
             .willReturn(Optional.of(new CreatePisCommonPaymentResponse(ENCRYPT_PAYMENT_ID)));
+
     }
 
     // =============== IMPLICIT MODE
@@ -335,6 +339,7 @@ public class InitiatePayments_successfulTest {
 
     @Test
     public void initiateSinglePayment_explicit_embedded_multilevelSca_successful() throws Exception {
+        aspspProfileService.getAspspSettings().setSigningBasketSupported(false);
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
             .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiateSinglePayment_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, true, false);
@@ -342,9 +347,26 @@ public class InitiatePayments_successfulTest {
 
     @Test
     public void initiateSinglePayment_explicit_embedded_multilevelSca_psuIdDataIsEmpty_successful() throws Exception {
+
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequestWithEmptyPsuIdData(ScaApproach.EMBEDDED)))
             .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiateSinglePayment_successful(httpHeadersExplicitNoPsuData, ScaApproach.EMBEDDED, true, true);
+    }
+
+    @Test
+    public void initiateSinglePayment_explicit_embedded_multilevelSca_psuIdDataIsEmpty_signingBasketActive_successful() throws Exception {
+        aspspProfileService.getAspspSettings().setSigningBasketSupported(true);
+        given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequestWithEmptyPsuIdData(ScaApproach.EMBEDDED)))
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
+        initiateSinglePayment_successful(httpHeadersExplicitNoPsuData, ScaApproach.EMBEDDED, true, true);
+    }
+
+    @Test
+    public void initiateSinglePayment_explicit_embedded_multilevelSca_signingBasketActive_successful() throws Exception {
+        aspspProfileService.getAspspSettings().setSigningBasketSupported(true);
+        given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
+        initiateSinglePayment_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, true, false);
     }
 
     @Test
@@ -429,11 +451,15 @@ public class InitiatePayments_successfulTest {
         // When
         ResultActions resultActions = mockMvc.perform(requestBuilder);
 
+
+        String filePath = isSigningBasketModeActive(headers)
+                              ? (String) responseMapSigningBasketMode.get(isExplicitMethod(headers, multilevelSca), PaymentType.SINGLE, scaApproach, multilevelScaKey(multilevelSca), psuIdDataEmptyKey(isPsuIdDataEmpty))
+                              : (String) responseMap.get(isExplicitMethod(headers, multilevelSca), PaymentType.SINGLE, scaApproach, multilevelScaKey(multilevelSca), psuIdDataEmptyKey(isPsuIdDataEmpty));
+
         //Then
         resultActions.andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(content().json(IOUtils.resourceToString(
-                (String) responseMap.get(headers, PaymentType.SINGLE, scaApproach, multilevelSca ? "multilevelSca" : "", isPsuIdDataEmpty ? "psuIdDataIsEmpty" : ""), UTF_8)));
+            .andExpect(content().json(IOUtils.resourceToString(filePath, UTF_8)));
     }
 
     private void initiateSinglePaymentOauth_successful(HttpHeaders headers, ScaApproach scaApproach) throws Exception {
@@ -482,7 +508,7 @@ public class InitiatePayments_successfulTest {
         //Then
         resultActions.andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(content().json(IOUtils.resourceToString((String) responseMap.get(headers, PaymentType.PERIODIC, scaApproach), UTF_8)));
+            .andExpect(content().json(IOUtils.resourceToString((String) responseMap.get(isExplicitMethod(headers, false), PaymentType.PERIODIC, scaApproach), UTF_8)));
     }
 
     private void initiateBulkPayment_successful(HttpHeaders headers, ScaApproach scaApproach) throws Exception {
@@ -510,7 +536,28 @@ public class InitiatePayments_successfulTest {
         //Then
         resultActions.andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(content().json(IOUtils.resourceToString((String) responseMap.get(headers, PaymentType.BULK, scaApproach), UTF_8)));
+            .andExpect(content().json(IOUtils.resourceToString((String) responseMap.get(isExplicitMethod(headers, false), PaymentType.BULK, scaApproach), UTF_8)));
+    }
+
+    private String multilevelScaKey(boolean multilevelSca) {
+        return multilevelSca ? "multilevelSca" : "";
+    }
+
+    private String psuIdDataEmptyKey(boolean isPsuIdDataEmpty) {
+        return isPsuIdDataEmpty ? "psuIdDataIsEmpty" : "";
+    }
+
+    public boolean isExplicitMethod(HttpHeaders headers, boolean multilevelScaRequired) {
+        StartAuthorisationMode startAuthorisationMode = aspspProfileService.getAspspSettings().getStartAuthorisationMode();
+
+        if (StartAuthorisationMode.AUTO.equals(startAuthorisationMode)) {
+            return multilevelScaRequired || isSigningBasketModeActive(headers);
+        }
+        return StartAuthorisationMode.EXPLICIT.equals(startAuthorisationMode);
+    }
+
+    public boolean isSigningBasketModeActive(HttpHeaders headers) {
+        boolean tppExplicitAuthorisationPreferred = Boolean.valueOf(headers.toSingleValueMap().get("TPP-Explicit-Authorisation-Preferred"));
+        return tppExplicitAuthorisationPreferred && aspspProfileService.getAspspSettings().isSigningBasketSupported();
     }
 }
-

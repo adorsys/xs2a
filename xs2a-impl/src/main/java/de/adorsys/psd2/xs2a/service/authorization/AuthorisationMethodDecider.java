@@ -43,8 +43,7 @@ public class AuthorisationMethodDecider {
     public boolean isExplicitMethod(boolean tppExplicitAuthorisationPreferred, boolean multilevelScaRequired) {
         StartAuthorisationMode startAuthorisationMode = aspspProfileService.getStartAuthorisationMode();
         if (StartAuthorisationMode.AUTO.equals(startAuthorisationMode)) {
-            return multilevelScaRequired
-                       || tppExplicitAuthorisationPreferred && aspspProfileService.isSigningBasketSupported();
+            return multilevelScaRequired || isSigningBasketModeActive(tppExplicitAuthorisationPreferred);
         }
         return StartAuthorisationMode.EXPLICIT.equals(startAuthorisationMode);
     }
@@ -67,5 +66,17 @@ public class AuthorisationMethodDecider {
      */
     public boolean isImplicitMethod(boolean tppExplicitAuthorisationPreferred, boolean multilevelScaRequired) {
         return !isExplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
+    }
+
+    /**
+     * Decides whether signing basket mode activate will be used
+     * tppExplicitAuthorisationPreferred and signingBasketSupported values.
+     * Signing basket mode is not active in case of tppExplicitAuthorisationPreferred is false
+     *
+     * @param tppExplicitAuthorisationPreferred value of TPP's choice of authorisation method
+     * @return is signing basket mode activate for authorisation
+     */
+    public boolean isSigningBasketModeActive(boolean tppExplicitAuthorisationPreferred) {
+        return tppExplicitAuthorisationPreferred && aspspProfileService.isSigningBasketSupported();
     }
 }
