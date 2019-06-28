@@ -26,9 +26,8 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.IBANValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,9 +39,12 @@ import java.util.stream.Stream;
 @Component
 public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implements ConsentBodyValidator {
 
+    private final AccountReferenceValidator accountReferenceValidator;
+
     @Autowired
-    public AccountAccessValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper) {
+    public AccountAccessValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper, AccountReferenceValidator accountReferenceValidator) {
         super(errorBuildingService, objectMapper);
+        this.accountReferenceValidator = accountReferenceValidator;
     }
 
     @Override
@@ -75,7 +77,7 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
 
             allReferences.distinct()
                 .filter(Objects::nonNull)
-                .forEach(ar -> validateAccountReference(ar, messageError));
+                .forEach(ar -> accountReferenceValidator.validate(ar, messageError));
 
             CreateConsentReq createConsent = mapToCreateConsentReq(consents, messageError);
 
@@ -95,54 +97,6 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
 
     private boolean areFlagsEmpty(Xs2aAccountAccess access) {
         return Objects.isNull(access.getAvailableAccounts()) && Objects.isNull(access.getAllPsd2());
-    }
-
-    private void validateAccountReference(AccountReference accountReference, MessageError messageError) {
-        if (StringUtils.isNotBlank(accountReference.getIban()) && !isValidIban(accountReference.getIban())) {
-            errorBuildingService.enrichMessageError(messageError, "Invalid IBAN format");
-        }
-        if (StringUtils.isNotBlank(accountReference.getBban()) && !isValidBban(accountReference.getBban())) {
-            errorBuildingService.enrichMessageError(messageError, "Invalid BBAN format");
-        }
-        checkOptionalFieldForMaxLength(accountReference.getPan(), "PAN", 35, messageError);
-        checkOptionalFieldForMaxLength(accountReference.getMaskedPan(), "Masked PAN", 35, messageError);
-        checkOptionalFieldForMaxLength(accountReference.getMsisdn(), "MSISDN", 35, messageError);
-
-        if (Objects.nonNull(accountReference.getCurrency())) {
-            validateCurrency(accountReference.getCurrency(), messageError);
-        }
-    }
-
-    private void validateCurrency(String currency, MessageError messageError) {
-        if (!isValidCurrency(currency)) {
-            errorBuildingService.enrichMessageError(messageError, "Invalid currency code format");
-        }
-    }
-
-    // TODO: create an opportunity to disable this IBAN validation for test purposes.
-    // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/839
-    // Example, implement it as separate bean and inject it here.
-    private boolean isValidIban(String iban) {
-        IBANValidator validator = IBANValidator.getInstance();
-        return validator.isValid(iban);
-    }
-
-    private boolean isValidBban(String bban) {
-        return normalizeString(bban).length() >= 11
-                   && normalizeString(bban).length() <= 28; // Can be extended with aprox 50 country specific masks
-    }
-
-    private boolean isValidCurrency(String currency) {
-        try {
-            Currency.getInstance(currency);
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-        return true;
-    }
-
-    private String normalizeString(String string) {
-        return string.replaceAll("[^a-zA-Z0-9]", "");
     }
 
     private CreateConsentReq mapToCreateConsentReq(Consents consent, MessageError messageError) {
@@ -165,7 +119,7 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
                                 mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
                                 mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2()),
                                 mapToAccountAccessTypeFromAvailableAccountsWithBalances(acs.getAvailableAccountsWithBalances())
-                   ))
+                            ))
                    .orElse(null);
     }
 
