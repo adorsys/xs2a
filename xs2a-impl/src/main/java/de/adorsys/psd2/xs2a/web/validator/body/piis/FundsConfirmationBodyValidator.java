@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.validator.body.payment;
+package de.adorsys.psd2.xs2a.web.validator.body.piis;
 
 import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
 
 /**
- * Interface for validating the body of PIS payments (JSON deserializing and inner fields correctness).
+ * Interface for validating the body of funds confirmation request (JSON deserializing and inner fields correctness).
  */
-public interface PaymentBodyValidator extends BodyValidator {
+public interface FundsConfirmationBodyValidator extends BodyValidator {
 }
