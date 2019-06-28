@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.validator.body.payment;
+package de.adorsys.psd2.xs2a.web.validator;
 
-import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
+import de.adorsys.psd2.xs2a.exception.MessageError;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Interface for validating the body of PIS payments (JSON deserializing and inner fields correctness).
+ * General interface, used to validate some part of the request
  */
-public interface PaymentBodyValidator extends BodyValidator {
+public interface ObjectValidator<T> {
+    void validate(@NotNull T object, @NotNull MessageError messageError);
 }
