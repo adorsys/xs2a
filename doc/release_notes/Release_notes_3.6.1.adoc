@@ -1,0 +1,8 @@
+= Release notes v. 3.6.1
+
+
+== Bugfix: Incorrect link generation when signing basket is not supported but the explicit mode is forced
+
+From now on, while creating the consent or payment, every response has changed a link generation.
+This link generation depends on values of authorisation mode, and if it is "explicit" and "signing basket mode" is activated then in response
+"startAuthorisation" link will be generated, in other cases, when "signing basket mode" is not activated _links in response contain "startAuthorisationWithPsuAuthentication" link.
