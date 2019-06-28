@@ -38,6 +38,7 @@ import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuAisServiceInternal;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
@@ -95,6 +96,9 @@ public class CmsPsuAisServiceTest {
     private AisConsentUsageService aisConsentUsageService;
     @Mock
     private CmsPsuService cmsPsuService;
+    @Mock
+    private AisConsentRequestTypeService aisConsentRequestTypeService;
+
 
     private AisConsent aisConsent;
     private List<AisConsent> aisConsents;
@@ -499,7 +503,7 @@ public class CmsPsuAisServiceTest {
         AccountReference accountReference = getAccountReference(iban, currency);
         AisAccountAccess aisAccountAccess = getAisAccountAccess(accountReference);
         Set<AspspAccountAccess> aspspAccountAccesses = getAspspAccountAccesses(aisAccountAccess);
-        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(aisAccountAccess, validUntil, frequencyPerDay);
+        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(aisAccountAccess, validUntil, frequencyPerDay, Boolean.TRUE, Boolean.TRUE);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
         when(aisConsentRepository.findOne(any(Specification.class))).thenReturn(aisConsent);
         when(aisConsentMapper.mapAspspAccountAccesses(aisAccountAccess)).thenReturn(aspspAccountAccesses);
@@ -514,6 +518,9 @@ public class CmsPsuAisServiceTest {
         assertSame(argument.getValue().getExpireDate(), validUntil);
         assertEquals(argument.getValue().getAllowedFrequencyPerDay(), frequencyPerDay);
         assertEquals(getUsageCounter(argument.getValue()), frequencyPerDay);
+        assertTrue(argument.getValue().isRecurringIndicator());
+        assertTrue(argument.getValue().isCombinedServiceIndicator());
+        assertNotEquals(AisConsentRequestType.BANK_OFFERED, argument.getValue().getAisConsentRequestType());
         assertTrue(saved);
     }
 
@@ -561,7 +568,7 @@ public class CmsPsuAisServiceTest {
     @Test
     public void saveAccountAccessInConsent_Consent_Finalised_Failed() {
         //Given
-        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1);
+        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1, null, null);
         //When
         boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, "");
         //Then
@@ -571,9 +578,20 @@ public class CmsPsuAisServiceTest {
     @Test
     public void saveAccountAccessInConsent_Consent_Unknown_Failed() {
         //Given
-        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1);
+        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1, null, null);
         //When
         boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID_NOT_EXIST, accountAccessRequest, "");
+        //Then
+        assertFalse(saved);
+    }
+
+    @Test
+    public void saveAccountAccessInConsent_AccessIsNull() {
+        //Given
+        when(aisConsentRepository.findOne(any(Specification.class))).thenReturn(aisConsent);
+        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1, null, null);
+        //When
+        boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, DEFAULT_SERVICE_INSTANCE_ID);
         //Then
         assertFalse(saved);
     }
@@ -649,6 +667,7 @@ public class CmsPsuAisServiceTest {
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
         aisConsent.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
         aisConsent.setTppInfo(buildTppInfoEntity());
+        aisConsent.setAisConsentRequestType(AisConsentRequestType.BANK_OFFERED);
         return aisConsent;
     }
 
