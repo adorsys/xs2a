@@ -22,6 +22,10 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
+import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.OptionalFieldMaxLengthValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.StringMaxLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,6 +46,7 @@ public class AccountAccessValidatorImplTest {
     private Consents consents;
     private MessageError messageError;
     private JsonReader jsonReader;
+    private AccountReferenceValidator accountReferenceValidator;
 
     @Before
     public void setUp() {
@@ -49,6 +54,9 @@ public class AccountAccessValidatorImplTest {
         consents = jsonReader.getObjectFromFile("json/validation/ais/consents.json", Consents.class);
         messageError = new MessageError();
         request = new MockHttpServletRequest();
+        ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
+        OptionalFieldMaxLengthValidator stringValidator = new OptionalFieldMaxLengthValidator(new StringMaxLengthValidator(errorService));
+        accountReferenceValidator = new AccountReferenceValidator(errorService, stringValidator);
 
         validator = createValidator(consents);
     }
@@ -157,7 +165,7 @@ public class AccountAccessValidatorImplTest {
     }
 
     private AccountAccessValidatorImpl createValidator(Consents consents) {
-        return new AccountAccessValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), new ObjectMapper()) {
+        return new AccountAccessValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), new ObjectMapper(), accountReferenceValidator) {
             @SuppressWarnings("unchecked")
             @Override
             protected <T> Optional<T> mapBodyToInstance(HttpServletRequest request, MessageError messageError, Class<T> clazz) {
