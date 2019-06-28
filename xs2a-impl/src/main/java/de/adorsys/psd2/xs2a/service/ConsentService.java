@@ -280,7 +280,7 @@ public class ConsentService {
     public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_AIS_CONSENT_REQUEST_RECEIVED);
 
-        Optional<AccountConsent> consentOptional = aisConsentService.getInitialAccountConsentById(consentId);
+        Optional<AccountConsent> consentOptional = aisConsentService.getAccountConsentById(consentId);
 
         if (!consentOptional.isPresent()) {
             return ResponseObject.<AccountConsent>builder()

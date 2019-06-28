@@ -119,6 +119,9 @@ public class AisConsentServiceInternalTest {
 
     @Mock
     private ScaMethodMapper scaMethodMapper;
+    @Mock
+    private AisConsentRequestTypeService aisConsentRequestTypeService;
+
 
     @Before
     public void setUp() {

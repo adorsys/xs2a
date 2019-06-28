@@ -711,7 +711,7 @@ public class ConsentServiceTest {
     @Test
     public void getAccountConsentsById_withUnknownConsent_shouldReturnConsentUnknownError() {
         // Given
-        when(aisConsentService.getInitialAccountConsentById(WRONG_CONSENT_ID)).thenReturn(Optional.empty());
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(Optional.empty());
 
         // When
         ResponseObject response = consentService.getAccountConsentById(WRONG_CONSENT_ID);
