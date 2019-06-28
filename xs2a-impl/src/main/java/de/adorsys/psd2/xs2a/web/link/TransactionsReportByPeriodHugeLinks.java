@@ -25,7 +25,6 @@ public class TransactionsReportByPeriodHugeLinks extends AbstractLinks {
 
         // TODO we need return only download link without transactions info https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
         // TODO further we should implement real flow for downloading file https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
-        setDownload(buildPath(UrlHolder.ACCOUNT_TRANSACTIONS_DOWNLOAD_URL, accountId));
 
         if (withBalance) {
             setBalances(buildPath(UrlHolder.ACCOUNT_BALANCES_URL, accountId));

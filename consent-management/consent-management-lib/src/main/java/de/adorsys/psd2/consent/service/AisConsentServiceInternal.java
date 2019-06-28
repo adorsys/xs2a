@@ -35,13 +35,10 @@ import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
-import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,6 +64,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final TppInfoMapper tppInfoMapper;
     private final CmsPsuService cmsPsuService;
     private final AisConsentUsageService aisConsentUsageService;
+    private final AisConsentRequestTypeService aisConsentRequestTypeService;
 
     /**
      * Create AIS consent
@@ -298,7 +296,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setRecurringIndicator(request.isRecurringIndicator());
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
-        consent.setAisConsentRequestType(getRequestTypeFromAccess(request.getAccess()));
+        consent.setAisConsentRequestType(aisConsentRequestTypeService.getRequestTypeFromAccess(request.getAccess()));
         consent.setAvailableAccounts(request.getAccess().getAvailableAccounts());
         consent.setAllPsd2(request.getAccess().getAllPsd2());
         consent.setAvailableAccountsWithBalances(request.getAccess().getAvailableAccountsWithBalances());
@@ -315,24 +313,6 @@ public class AisConsentServiceInternal implements AisConsentService {
         //Expire date is inclusive and TPP can access AIS consent from current date
         LocalDate lifeTimeDate = LocalDate.now().plusDays(lifetime - 1L);
         return lifeTimeDate.isBefore(validUntil) ? lifeTimeDate : validUntil;
-    }
-
-    private AisConsentRequestType getRequestTypeFromAccess(AisAccountAccessInfo accessInfo) {
-        if (accessInfo.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
-            return AisConsentRequestType.GLOBAL;
-        } else if (AccountAccessType.ALL_ACCOUNTS == accessInfo.getAvailableAccounts()
-                       || AccountAccessType.ALL_ACCOUNTS == accessInfo.getAvailableAccountsWithBalances()) {
-            return AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
-        } else if (isEmptyAccess(accessInfo)) {
-            return AisConsentRequestType.BANK_OFFERED;
-        }
-        return AisConsentRequestType.DEDICATED_ACCOUNTS;
-    }
-
-    private boolean isEmptyAccess(AisAccountAccessInfo accessInfo) {
-        return CollectionUtils.isEmpty(accessInfo.getAccounts())
-                   && CollectionUtils.isEmpty(accessInfo.getBalances())
-                   && CollectionUtils.isEmpty(accessInfo.getTransactions());
     }
 
     private ActionStatus resolveConsentActionStatus(AisConsentActionRequest request, AisConsent consent) {

@@ -3,6 +3,7 @@
 == Table of Contents
 * Bugfix: Fix the payment ID transfer flow during payment cancellation
 * Bugfix: Account reference is properly validated during confirmation of funds
+* Bugfix: BankOffered consent after authorisation should allow accesses according to chosen by PSU
 
 == Bugfix: Fix the payment ID transfer flow during payment cancellation
 From now on, response to the Payment Cancellation Request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`)
@@ -11,3 +12,14 @@ will contain links with external (encrypted) payment ID instead of internal one.
 == Bugfix: Account reference is properly validated during confirmation of funds
 From now on, account reference in the Funds Confirmation Request (`POST /v1/funds-confirmations`)
 will be properly validated (both account identifier and currency).
+
+== Bugfix: BankOffered consent after authorisation should allow accesses according to chosen by PSU
+From now on, request for changing AIS Consent accesses in CMS (`PUT /psu-api/v1/ais/consent/{consent-id}/save-access`) can get
+`combinedServiceIndicator` and `recurringIndicator` parameters.
+Based on new incoming data of accesses Consent changes `AisConsentRequestType` field to any of next values:
+
+ - GLOBAL
+ - ALL_AVAILABLE_ACCOUNTS
+ - DEDICATED_ACCOUNTS
+
+And when TPP requests to `Read Account Data` with this Consent ID xs2a will respond according to updated authorised accesses.
