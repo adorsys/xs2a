@@ -190,7 +190,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         PisAuthorization authorisation = pisAuthorisationOptional.get();
         closePreviousAuthorisationsByPsu(authorisation, request.getPsuData());
 
-        ScaStatus scaStatus = doUpdateConsentAuthorisation(request, authorisation);
+        ScaStatus scaStatus = doUpdatePaymentAuthorisation(request, authorisation);
         return Optional.of(new UpdatePisCommonPaymentPsuDataResponse(scaStatus));
     }
 
@@ -216,7 +216,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         PisAuthorization authorisation = pisAuthorisationOptional.get();
         closePreviousAuthorisationsByPsu(authorisation, request.getPsuData());
 
-        ScaStatus scaStatus = doUpdateConsentAuthorisation(request, authorisation);
+        ScaStatus scaStatus = doUpdatePaymentAuthorisation(request, authorisation);
         return Optional.of(new UpdatePisCommonPaymentPsuDataResponse(scaStatus));
     }
 
@@ -226,7 +226,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @param request   PIS common payment request for update payment data
      * @param paymentId common payment ID
      */
-    // TODO return correct error code in case consent was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408
+    // TODO return correct error code in case payment was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408
     @Override
     @Transactional
     public void updateCommonPayment(PisCommonPaymentRequest request, String paymentId) {
@@ -298,7 +298,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     }
 
     /**
-     * Reads Psu data list by payment Id
+     * Reads PSU data list by payment Id
      *
      * @param paymentId id of the payment
      * @return response contains data of Psu list
@@ -412,14 +412,14 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     }
 
     /**
-     * Creates PIS consent authorisation entity and stores it into database
+     * Creates {@link PisAuthorization} entity and stores it into database
      *
      * @param paymentData PIS payment data, for which authorisation is performed
      * @param request     needed parameters for creating PIS authorisation
      * @return PisAuthorization
      */
     private PisAuthorization saveNewAuthorisation(PisCommonPaymentData paymentData, CreatePisAuthorisationRequest request) {
-        PisAuthorization consentAuthorisation = new PisAuthorization();
+        PisAuthorization pisAuthorization = new PisAuthorization();
         Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData()), paymentData.getPsuDataList());
 
         ScaStatus scaStatus = ScaStatus.RECEIVED;
@@ -427,18 +427,19 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         if (psuDataOptional.isPresent()) {
             PsuData psuData = psuDataOptional.get();
             paymentData.setPsuDataList(cmsPsuService.enrichPsuData(psuData, paymentData.getPsuDataList()));
-            consentAuthorisation.setPsuData(psuData);
+            pisAuthorization.setPsuData(psuData);
             scaStatus = ScaStatus.PSUIDENTIFIED;
         }
 
-        consentAuthorisation.setExternalId(UUID.randomUUID().toString());
-        consentAuthorisation.setScaStatus(scaStatus);
-        consentAuthorisation.setAuthorizationType(request.getAuthorizationType());
-        consentAuthorisation.setRedirectUrlExpirationTimestamp(countRedirectUrlExpirationTimestampForAuthorisationType(request.getAuthorizationType()));
-        consentAuthorisation.setScaApproach(request.getScaApproach());
-        consentAuthorisation.setPaymentData(paymentData);
+        pisAuthorization.setExternalId(UUID.randomUUID().toString());
+        pisAuthorization.setScaStatus(scaStatus);
+        pisAuthorization.setAuthorizationType(request.getAuthorizationType());
+        pisAuthorization.setRedirectUrlExpirationTimestamp(countRedirectUrlExpirationTimestampForAuthorisationType(request.getAuthorizationType()));
+        pisAuthorization.setAuthorisationExpirationTimestamp(countAuthorisationExpirationTimestamp());
+        pisAuthorization.setScaApproach(request.getScaApproach());
+        pisAuthorization.setPaymentData(paymentData);
 
-        return pisAuthorisationRepository.save(consentAuthorisation);
+        return pisAuthorisationRepository.save(pisAuthorization);
     }
 
     private OffsetDateTime countRedirectUrlExpirationTimestampForAuthorisationType(CmsAuthorisationType authorisationType) {
@@ -451,6 +452,12 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         }
 
         return OffsetDateTime.now().plus(redirectUrlExpirationTimeMs, ChronoUnit.MILLIS);
+    }
+
+    private OffsetDateTime countAuthorisationExpirationTimestamp() {
+        long authorisationExpirationTimeMs = aspspProfileService.getAspspSettings().getAuthorisationExpirationTimeMs();
+
+        return OffsetDateTime.now().plus(authorisationExpirationTimeMs, ChronoUnit.MILLIS);
     }
 
     private void closePreviousAuthorisationsByPsu(PisAuthorization authorisation, PsuIdData psuIdData) {
@@ -467,9 +474,8 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     private void closePreviousAuthorisationsByPsu(List<PisAuthorization> authorisations, CmsAuthorisationType authorisationType, PsuIdData psuIdData) {
         PsuData psuData = psuDataMapper.mapToPsuData(psuIdData);
 
-        if (Objects.isNull(psuData)
-                || psuData.isEmpty()) {
-            log.info("Close previous authorisations by psu failed, because psuData is not allowed");
+        if (psuData == null || psuData.isEmpty()) {
+            log.info("Close previous authorisations by PSU failed because PSU data is not allowed");
             return;
         }
 
@@ -497,7 +503,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
                    .collect(Collectors.toList());
     }
 
-    private ScaStatus doUpdateConsentAuthorisation(UpdatePisCommonPaymentPsuDataRequest request, PisAuthorization pisAuthorisation) {
+    private ScaStatus doUpdatePaymentAuthorisation(UpdatePisCommonPaymentPsuDataRequest request, PisAuthorization pisAuthorisation) {
         if (pisAuthorisation.getScaStatus().isFinalisedStatus()) {
             return pisAuthorisation.getScaStatus();
         }
@@ -508,7 +514,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         if (ScaStatus.RECEIVED == pisAuthorisation.getScaStatus()) {
 
             if (!cmsPsuService.isPsuDataRequestCorrect(psuDataInRequest, psuDataInAuthorisation)) {
-                log.info("Authorisation ID: [{}], SCA status: [{}]. Update consent authorisation failed, because psu data request does not match stored psu data",
+                log.info("Authorisation ID: [{}], SCA status: [{}]. Update payment authorisation failed, because PSU data request does not match stored PSU data",
                          pisAuthorisation.getExternalId(), pisAuthorisation.getScaStatus().getValue());
                 return pisAuthorisation.getScaStatus();
             }
@@ -528,7 +534,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
                                        && Objects.nonNull(psuDataInRequest)
                                        && psuDataInAuthorisation.contentEquals(psuDataInRequest);
             if (!isPsuCorrect) {
-                log.info("Authorisation ID: [{}], SCA status: [{}]. Update consent authorisation failed, because psu data request does not match stored psu data",
+                log.info("Authorisation ID: [{}], SCA status: [{}]. Update payment authorisation failed, because PSU data request does not match stored PSU data",
                          pisAuthorisation.getExternalId(), pisAuthorisation.getScaStatus().getValue());
                 return pisAuthorisation.getScaStatus();
             }

@@ -52,6 +52,7 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.isPaymentCancellationAuthorizationMandated(),
             setting.isPiisConsentSupported(),
             setting.getRedirectUrlExpirationTimeMs(),
+            setting.getAuthorisationExpirationTimeMs(),
             setting.getPisPaymentCancellationRedirectUrlToAspsp(),
             setting.getNotConfirmedConsentExpirationPeriodMs(),
             setting.getNotConfirmedPaymentExpirationPeriodMs(),

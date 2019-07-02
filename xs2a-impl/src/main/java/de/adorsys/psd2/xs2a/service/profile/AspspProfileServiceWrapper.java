@@ -166,6 +166,15 @@ public class AspspProfileServiceWrapper {
     }
 
     /**
+     * Reads authorisation expiration time in milliseconds
+     *
+     * @return long value of authorisation expiration time
+     */
+    public long getAuthorisationExpirationTimeMs() {
+        return readAspspSettings().getAuthorisationExpirationTimeMs();
+    }
+
+    /**
      * Reads get PIS payment cancellation redirect url to aspsp from ASPSP profile service
      *
      * @return Url in order to redirect SCA approach

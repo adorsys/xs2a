@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -73,6 +74,7 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setPiisConsentSupported(aspspSettings.isPiisConsentSupported());
         setting.setDeltaListSupported(aspspSettings.isDeltaListSupported());
         setting.setRedirectUrlExpirationTimeMs(aspspSettings.getRedirectUrlExpirationTimeMs());
+        setting.setAuthorisationExpirationTimeMs(aspspSettings.getAuthorisationExpirationTimeMs());
         setting.setPisPaymentCancellationRedirectUrlToAspsp(aspspSettings.getPisPaymentCancellationRedirectUrlToAspsp());
         setting.setNotConfirmedConsentExpirationPeriodMs(aspspSettings.getNotConfirmedConsentExpirationPeriodMs());
         setting.setNotConfirmedPaymentExpirationPeriodMs(aspspSettings.getNotConfirmedPaymentExpirationPeriodMs());
@@ -86,6 +88,6 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setScaRedirectFlow(aspspSettings.getScaRedirectFlow());
         setting.setEntryReferenceFromSupported(aspspSettings.isEntryReferenceFromSupported());
         setting.setSupportedTransactionApplicationTypes(aspspSettings.getSupportedTransactionApplicationTypes());
-        setting.setStartAuthorisationMode(aspspSettings.getStartAuthorisationMode().getValue());
+        setting.setStartAuthorisationMode(aspspSettings.getStartAuthorisationMode() == null ? StartAuthorisationMode.AUTO.getValue() : aspspSettings.getStartAuthorisationMode().getValue());
     }
 }

@@ -18,8 +18,10 @@ package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
-import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentResponse;
+import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
+import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
+import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +39,7 @@ public interface CmsPsuAisService {
      * @param instanceId      optional ID of particular service instance
      * @return <code>true</code> if consent was found and data was updated. <code>false</code> otherwise.
      */
-    boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId);
+    boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException;
 
     /**
      * Returns AIS Consent object by its ID
@@ -51,6 +53,16 @@ public interface CmsPsuAisService {
     Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**
+     * Returns Authorisation object by its ID
+     *
+     * @param authorisationId  ID of authorisation
+     * @param instanceId optional ID of particular service instance
+     * @return Authorisation object if it was found
+     */
+    @NotNull
+    Optional<CmsAisPsuDataAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId);
+
+    /**
      * Updates a Status of AIS Consent Authorisation by its ID and PSU ID
      *
      * @param psuIdData       PSU credentials data
@@ -60,7 +72,7 @@ public interface CmsPsuAisService {
      * @param instanceId      optional ID of particular service instance
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      */
-    boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId);
+    boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId) throws AuthorisationIsExpiredException;
 
 
     /**
@@ -104,14 +116,14 @@ public interface CmsPsuAisService {
     boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**
-     * Returns CMS AIS consent response object by redirect id if redirect id has not expired
+     * Returns CMS AIS consent identifier by redirect ID if redirect ID has not expired
      *
      * @param redirectId ID of redirect
      * @param instanceId optional ID of particular service instance
-     * @return CMS AIS consent response object if it has been found
+     * @return CMS AIS consent identifier if it has been found
      */
     @NotNull
-    Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull String redirectId, @NotNull String instanceId);
+    Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull String redirectId, @NotNull String instanceId) throws RedirectUrlIsExpiredException;
 
     /**
      * Stores account access to Consent in CMS. Any existing account accesses will be removed and overwritten.

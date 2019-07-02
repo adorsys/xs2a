@@ -27,6 +27,7 @@ setting:
  piisConsentSupported: false
  deltaReportSupported: false
  redirectUrlExpirationTimeMs: 600000
+ authorisationExpirationTimeMs: 86400000
  notConfirmedConsentExpirationPeriodMs: 86400000
  notConfirmedPaymentExpirationPeriodMs: 86400000
  supportedPaymentTypeAndProductMatrix:

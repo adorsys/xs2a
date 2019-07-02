@@ -61,6 +61,7 @@ public class AspspProfileControllerTest {
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
     private static final boolean DELTA_LIST_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
+    private static final long AUTHORISATION_EXPIRATION_TIME_MS = 86400000;
     private static final long NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS = 86400000;
     private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS = 86400000;
     private static final String PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP = "https://localhost/payment/cancellation/";
@@ -135,6 +136,7 @@ public class AspspProfileControllerTest {
             PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
             PIIS_CONSENT_SUPPORTED,
             REDIRECT_URL_EXPIRATION_TIME_MS,
+            AUTHORISATION_EXPIRATION_TIME_MS,
             PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP,
             NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS,
             NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS,

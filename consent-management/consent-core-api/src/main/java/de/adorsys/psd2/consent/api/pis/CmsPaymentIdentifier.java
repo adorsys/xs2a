@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.psu.api.ais;
+package de.adorsys.psd2.consent.api.pis;
 
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
+import java.util.Optional;
+
 @Value
 @RequiredArgsConstructor
-public class CmsAisConsentResponse {
-    private AisAccountConsent accountConsent;
+public class CmsPaymentIdentifier {
+    private String paymentId;
     private String authorisationId;
     private String tppOkRedirectUri;
     private String tppNokRedirectUri;
 
-    public CmsAisConsentResponse(String tppNokRedirectUri) {
-        this(null, null, null, tppNokRedirectUri);
+    public CmsPaymentIdentifier(CmsPaymentResponse cmsPaymentResponse) {
+        this.paymentId = cmsPaymentResponse.getPayment().getPaymentId();
+        this.authorisationId = cmsPaymentResponse.getAuthorisationId();
+        this.tppOkRedirectUri = Optional.ofNullable(cmsPaymentResponse.getTppOkRedirectUri()).orElse(null);
+        this.tppNokRedirectUri = Optional.ofNullable(cmsPaymentResponse.getTppNokRedirectUri()).orElse(null);
     }
 }
