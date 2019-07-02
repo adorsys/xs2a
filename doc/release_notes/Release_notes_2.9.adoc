@@ -7,6 +7,7 @@
 * Extend logging for XS2A
 * Delete `isTransactionFeeIndicator` method in SpiPaymentInitiationResponse
 * Delete extra constructor in SpiInitiateAisConsentResponse
+* Bugfix: Read or update info by another TPP
 
 == Bugfix: Fix the payment ID transfer flow during payment cancellation
 From now on, response to the Payment Cancellation Request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`)
@@ -45,3 +46,13 @@ use `getTransactionFeeIndicator` method instead.
 
 `SpiInitiateAisConsentResponse(SpiAccountAccess, boolean)` constructor was removed from SpiInitiateAisConsentResponse
 and `SpiInitiateAisConsentResponse(SpiAccountAccess, boolean, String)` was replaced with the Lombok `@AllArgsConstructor` version.
+
+
+== Bugfix: Read or update info by another TPP
+
+From now on, while sending HTTP requests to the XS2A for all components (AIS, or PIIS)
+where TPP info from certificate is not correct validators will return an error with HTTP code 400 and message 'CONSENT_UNKNOWN'
+
+== Feature: Requests with custom 'tpp-qwac-certificate' header
+
+From now on, all HTTP requests to the XS2A could contain custom 'tpp-qwac-certificate' header even if 'mockspi' profile is used
