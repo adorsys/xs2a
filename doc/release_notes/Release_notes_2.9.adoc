@@ -4,6 +4,8 @@
 * Bugfix: Fix the payment ID transfer flow during payment cancellation
 * Bugfix: Account reference is properly validated during confirmation of funds
 * Bugfix: BankOffered consent after authorisation should allow accesses according to chosen by PSU
+* Delete `isTransactionFeeIndicator` method in SpiPaymentInitiationResponse
+* Delete extra constructor in SpiInitiateAisConsentResponse
 
 == Bugfix: Fix the payment ID transfer flow during payment cancellation
 From now on, response to the Payment Cancellation Request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`)
@@ -23,3 +25,13 @@ Based on new incoming data of accesses Consent changes `AisConsentRequestType` f
  - DEDICATED_ACCOUNTS
 
 And when TPP requests to `Read Account Data` with this Consent ID xs2a will respond according to updated authorised accesses.
+
+== Delete `isTransactionFeeIndicator` method in SpiPaymentInitiationResponse
+
+Method `isTransactionFeeIndicator` in SpiPaymentInitiationResponse was removed. From now on,
+use `getTransactionFeeIndicator` method instead.
+
+== Delete extra constructor in SpiInitiateAisConsentResponse
+
+`SpiInitiateAisConsentResponse(SpiAccountAccess, boolean)` constructor was removed from SpiInitiateAisConsentResponse
+and `SpiInitiateAisConsentResponse(SpiAccountAccess, boolean, String)` was replaced with the Lombok `@AllArgsConstructor` version.

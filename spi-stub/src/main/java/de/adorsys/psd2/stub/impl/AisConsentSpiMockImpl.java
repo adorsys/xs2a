@@ -57,7 +57,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
         access.setTransactions(Collections.singletonList(accountReference));
 
         return SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                   .payload(new SpiInitiateAisConsentResponse(access, false))
+                   .payload(new SpiInitiateAisConsentResponse(access, false, ""))
                    .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                    .success();
     }
