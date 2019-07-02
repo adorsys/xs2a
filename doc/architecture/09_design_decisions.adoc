@@ -29,6 +29,10 @@ It is a decision of SPI-Connector developer what to put into the ASPSP Consent D
 
 5. ASPSP Consent Data is stored encrypted in CMS. Encryption key is not available in the bank side.
 
+The principle how SpiAspspConsentDataProvider is instantiated and used on SPI Connector level is displayed on diagram:
+
+image::09_AspspConsentDataProvider.png[AspspConsentDataProvider, title="AspspConsentDataProvider", align="center"]
+
 ==== Encryption of ASPSP Consent Data
 
 <TODO>

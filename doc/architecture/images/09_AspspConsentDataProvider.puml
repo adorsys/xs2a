@@ -1,0 +1,45 @@
+@startuml
+
+
+
+
+package "XS2A-Impl" {
+
+    class ConcreteProvider {
+
+    }
+
+    class SomeXs2aService {
+        callSomeSpiCallHere
+    }
+
+    ConcreteProvider <.. SomeXs2aService : uses
+
+}
+
+package "SPI-API" {
+    interface SpiAspspConsentDataProvider {
+        +loadAspspConsentData()
+        +updateAspspConsentData()
+        +clearAspspConsentData()
+    }
+
+    interface SomeSpi {
+        +doSomeWork(aspspConsentDataProvider)
+    }
+
+    SpiAspspConsentDataProvider <.. SomeSpi : refers
+}
+
+ConcreteProvider -|> SpiAspspConsentDataProvider
+SomeXs2aService .> SomeSpi : calls
+
+package "SPI Implementation" {
+    class SomeSpiImpl {
+        doSomeWork(aspspConsentDataProvider)
+    }
+}
+
+SomeSpi <|-- SomeSpiImpl
+
+@enduml
