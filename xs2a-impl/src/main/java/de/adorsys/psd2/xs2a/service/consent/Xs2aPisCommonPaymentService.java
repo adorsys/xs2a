@@ -29,19 +29,23 @@ import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class Xs2aPisCommonPaymentService {
     private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    private final RequestProviderService requestProviderService;
     private final Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
     private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
 
@@ -59,7 +63,11 @@ public class Xs2aPisCommonPaymentService {
 
     public CreatePisCommonPaymentResponse createCommonPayment(PisPaymentInfo request) {
         return pisCommonPaymentServiceEncrypted.createCommonPayment(request)
-                   .orElse(null);
+                   .orElseGet(() -> {
+                       log.info("X-Request-ID: [{}], Payment ID: [{}]. Pis common payment cannot be created, because can't save to cms DB",
+                                requestProviderService.getRequestId(), request.getPaymentId());
+                       return null;
+                   });
     }
 
     public CreatePisCommonPaymentResponse createCommonPayment(PaymentInitiationParameters parameters, TppInfo tppInfo, byte[] paymentData) {
@@ -70,8 +78,7 @@ public class Xs2aPisCommonPaymentService {
         request.setPaymentData(paymentData);
         request.setTppInfo(tppInfo);
         request.setPsuDataList(Collections.singletonList(parameters.getPsuData()));
-        return pisCommonPaymentServiceEncrypted.createCommonPayment(request)
-                   .orElse(null);
+        return createCommonPayment(request);
     }
 
     public Optional<PisCommonPaymentResponse> getPisCommonPaymentById(String paymentId) {

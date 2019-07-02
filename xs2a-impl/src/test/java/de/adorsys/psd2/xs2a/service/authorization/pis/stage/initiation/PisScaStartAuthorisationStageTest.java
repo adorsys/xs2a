@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
@@ -124,6 +125,8 @@ public class PisScaStartAuthorisationStageTest {
     private ScaApproachResolver scaApproachResolver;
     @Mock
     private PisCommonDecoupledService pisCommonDecoupledService;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Mock
     private Xs2aUpdatePisCommonPaymentPsuDataRequest request;
@@ -154,13 +157,11 @@ public class PisScaStartAuthorisationStageTest {
 
         when(pisAspspDataService.getAspspConsentData(PAYMENT_ID)).thenReturn(ASPSP_CONSENT_DATA);
         when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class))).thenReturn(CONTEXT_DATA);
-
-
         when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
             .thenReturn(spiAspspConsentDataProvider);
-
         doNothing()
             .when(spiAspspConsentDataProvider).updateAspspConsentData(any());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
 
     }
 

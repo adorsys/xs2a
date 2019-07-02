@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -37,6 +38,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapp
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -44,12 +46,16 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 
+@Slf4j
 @Service("AIS_SCAMETHODSELECTED")
 public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
+
     private final SpiContextDataProvider spiContextDataProvider;
+    private final RequestProviderService requestProviderService;
 
     public AisScaAuthenticatedStage(Xs2aAisConsentService aisConsentService,
                                     AisConsentDataService aisConsentDataService,
+                                    RequestProviderService requestProviderService,
                                     AisConsentSpi aisConsentSpi,
                                     Xs2aAisConsentMapper aisConsentMapper,
                                     Xs2aToSpiPsuDataMapper psuDataMapper,
@@ -58,6 +64,7 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
                                     SpiErrorMapper spiErrorMapper) {
         super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper, spiErrorMapper);
         this.spiContextDataProvider = spiContextDataProvider;
+        this.requestProviderService = requestProviderService;
     }
 
     /**
@@ -74,6 +81,8 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
         if (!accountConsentOptional.isPresent()) {
+            log.warn("X-Request-ID: [{}], Consent-ID [{}]. AIS_SCAMETHODSELECTED stage. Apply Authorisation when update consent PSU data has failed. Consent not found by id.",
+                     requestProviderService.getRequestId(), consentId);
             MessageError messageError = new MessageError(ErrorType.AIS_400, of(MessageErrorCode.CONSENT_UNKNOWN_400));
             return createFailedResponse(messageError, Collections.emptyList(), request);
         }
@@ -86,6 +95,8 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
 
         if (spiResponse.hasError()) {
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));
+            log.warn("X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_SCAMETHODSELECTED stage. Verify Sca Authorisation when Apply Authorisation has failed. Error msg: {}.",
+                     requestProviderService.getRequestId(), consentId, request.getAuthorizationId(), psuData.getPsuId(), messageError);
             return createFailedResponse(messageError, spiResponse.getMessages(), request);
         }
 

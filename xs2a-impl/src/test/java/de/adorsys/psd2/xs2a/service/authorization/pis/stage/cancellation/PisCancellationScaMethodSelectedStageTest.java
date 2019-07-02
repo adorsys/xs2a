@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
@@ -45,10 +46,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -85,6 +83,8 @@ public class PisCancellationScaMethodSelectedStageTest {
     private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     @Mock
     private ApplicationContext applicationContext;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void setUp() {
@@ -99,6 +99,7 @@ public class PisCancellationScaMethodSelectedStageTest {
             .thenReturn(Optional.of(buildGetPisAuthorisationResponse()));
 
         when(pisAspspDataService.getAspspConsentData(PAYMENT_ID)).thenReturn(ASPSP_CONSENT_DATA);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

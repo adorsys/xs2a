@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.pis.*;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
@@ -124,12 +125,15 @@ public class ScaPaymentServiceTest {
     private InitialSpiAspspConsentDataProvider initialSpiAspspConsentDataProvider;
     @Mock
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void init() {
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
         when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
             .thenReturn(initialSpiAspspConsentDataProvider);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

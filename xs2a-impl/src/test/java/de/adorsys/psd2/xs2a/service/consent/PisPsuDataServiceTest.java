@@ -2,6 +2,8 @@ package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -11,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -26,6 +29,13 @@ public class PisPsuDataServiceTest {
 
     @Mock
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    @Mock
+    private RequestProviderService requestProviderService;
+
+    @Before
+    public void setUp() {
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+    }
 
     @Test
     public void getPsuDataByPaymentId_success() {

@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -92,7 +93,8 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     @Mock
     private SpiErrorMapper spiErrorMapper;
-
+    @Mock
+    private RequestProviderService requestProviderService;
     @Mock
     private Xs2aUpdatePisCommonPaymentPsuDataRequest request;
     @Mock
@@ -138,6 +140,8 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
 
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(Collections.singletonList(PSU_ID_DATA)))
             .thenReturn(Collections.singletonList(SPI_PSU_DATA));
+
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

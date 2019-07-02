@@ -18,11 +18,13 @@ package de.adorsys.psd2.xs2a.service.authorization.pis;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
@@ -33,10 +35,12 @@ import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PisCommonDecoupledService {
@@ -45,6 +49,7 @@ public class PisCommonDecoupledService {
     private final SpiContextDataProvider spiContextDataProvider;
     private final PisAspspDataService pisAspspDataService;
     private final SpiErrorMapper spiErrorMapper;
+    private final RequestProviderService requestProviderService;
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledInitiation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment) {
         return proceedDecoupledInitiation(request, payment, null);
@@ -63,25 +68,32 @@ public class PisCommonDecoupledService {
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupled(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId, PaymentAuthorisationType scaType) {
+        String authenticationId = request.getAuthorisationId();
+        String paymentId = request.getPaymentId();
         PsuIdData psuData = request.getPsuData();
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(request.getPaymentId());
         SpiResponse<SpiAuthorisationDecoupledScaResponse> spiResponse = null;
 
         switch (scaType) {
             case INITIATION:
-                spiResponse = paymentAuthorisationSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), request.getAuthorisationId(), authenticationMethodId, payment, aspspConsentData);
+                spiResponse = paymentAuthorisationSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), authenticationId, authenticationMethodId, payment, aspspConsentData);
                 break;
             case CANCELLATION:
-                spiResponse = paymentCancellationSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), request.getAuthorisationId(), authenticationMethodId, payment, aspspConsentData);
+                spiResponse = paymentCancellationSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), authenticationId, authenticationMethodId, payment, aspspConsentData);
                 break;
             default:
+                log.info("X-Request-ID: [{}], Payment-ID [{}]. Payment Authorisation Type {} is not supported.",
+                         requestProviderService.getRequestId(), paymentId, scaType);
                 throw new IllegalArgumentException("This SCA type is not supported: " + scaType);
         }
 
         pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
-            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS), request.getPaymentId(), request.getAuthorisationId(), psuData);
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. Start SPI Authorisation Decoupled SCA has failed. Error msg: {}.",
+                     requestProviderService.getRequestId(), paymentId, authenticationId, psuData.getPsuId(), errorHolder);
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, psuData);
         }
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED, request.getPaymentId(), request.getAuthorisationId(), psuData);

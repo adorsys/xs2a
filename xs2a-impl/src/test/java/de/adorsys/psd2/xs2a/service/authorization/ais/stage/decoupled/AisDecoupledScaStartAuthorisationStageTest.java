@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
@@ -99,6 +100,8 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     private CommonDecoupledAisService commonDecoupledAisService;
     @Mock
     private AisScaAuthorisationService aisScaAuthorisationService;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void setUp() {
@@ -131,6 +134,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
 
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

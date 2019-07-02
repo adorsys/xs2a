@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
@@ -112,6 +113,8 @@ public class PisCancellationScaStartAuthorisationStageTest {
     private CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
     @Mock
     private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void setUp() {
@@ -129,6 +132,7 @@ public class PisCancellationScaStartAuthorisationStageTest {
         when(getPisAuthorisationResponse.getPayments()).thenReturn(Collections.singletonList(PIS_PAYMENT));
         when(cmsToXs2aPaymentMapper.mapToSinglePayment(PIS_PAYMENT)).thenReturn(XS2A_PAYMENT);
         when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(XS2A_PAYMENT, PAYMENT_PRODUCT)).thenReturn(buildSpiPayment());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

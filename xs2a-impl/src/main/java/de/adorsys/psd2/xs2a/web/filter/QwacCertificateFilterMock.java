@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.filter;
 
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import org.springframework.context.annotation.Profile;
@@ -32,8 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class QwacCertificateFilterMock extends QwacCertificateFilter {
 
-    public QwacCertificateFilterMock(TppRoleValidationService tppRoleMatcher, TppInfoHolder tppInfoHolder) {
-        super(tppRoleMatcher, tppInfoHolder);
+    public QwacCertificateFilterMock(TppRoleValidationService tppRoleMatcher, TppInfoHolder tppInfoHolder, RequestProviderService requestProviderService) {
+        super(tppRoleMatcher, tppInfoHolder, requestProviderService);
     }
 
     @Override

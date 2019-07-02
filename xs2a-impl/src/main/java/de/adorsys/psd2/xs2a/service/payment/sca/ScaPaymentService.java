@@ -18,7 +18,9 @@ package de.adorsys.psd2.xs2a.service.payment.sca;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.pis.*;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.ScaApproachServiceTypeProvider;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
@@ -36,8 +38,10 @@ import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public abstract class ScaPaymentService implements ScaApproachServiceTypeProvider {
@@ -53,6 +57,7 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
     private final SpiContextDataProvider spiContextDataProvider;
     private final SpiErrorMapper spiErrorMapper;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    private final RequestProviderService requestProviderService;
 
     public SinglePaymentInitiationResponse createSinglePayment(SinglePayment payment, TppInfo tppInfo, String paymentProduct, PsuIdData psuIdData) {
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuIdData);
@@ -67,7 +72,10 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
         }
 
         if (spiResponse.hasError()) {
-            return new SinglePaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. CREATE SINGLE Payment failed. Can't initiate Payment at SPI-level. Error msg: {}.",
+                     requestProviderService.getRequestId(), payment.getPaymentId(), errorHolder);
+            return new SinglePaymentInitiationResponse(errorHolder);
         }
 
         return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), aspspConsentDataProvider);
@@ -86,7 +94,10 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
         }
 
         if (spiResponse.hasError()) {
-            return new PeriodicPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. CREATE PERIODIC Payment failed. Can't initiate Payment at SPI-level. Error msg: {}.",
+                     requestProviderService.getRequestId(), payment.getPaymentId(), errorHolder);
+            return new PeriodicPaymentInitiationResponse(errorHolder);
         }
 
         return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), aspspConsentDataProvider);
@@ -105,7 +116,10 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
         }
 
         if (spiResponse.hasError()) {
-            return new BulkPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. CREATE BULK Payment failed. Can't initiate Payment at SPI-level. Error msg: {}.",
+                     requestProviderService.getRequestId(), bulkPayment.getPaymentId(), errorHolder);
+            return new BulkPaymentInitiationResponse(errorHolder);
         }
 
         return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), aspspConsentDataProvider);
@@ -124,7 +138,10 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
         }
 
         if (spiResponse.hasError()) {
-            return new CommonPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. CREATE COMMON Payment failed. Can't initiate Payment at SPI-level. Error msg: {}.",
+                     requestProviderService.getRequestId(), payment.getPaymentId(), errorHolder);
+            return new CommonPaymentInitiationResponse(errorHolder);
         }
 
         return spiToXs2aPaymentMapper.mapToCommonPaymentInitiateResponse(spiResponse.getPayload(), payment.getPaymentType(), aspspConsentDataProvider);

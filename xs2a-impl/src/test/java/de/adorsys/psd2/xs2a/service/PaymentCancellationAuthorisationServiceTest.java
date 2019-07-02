@@ -49,6 +49,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -95,6 +96,8 @@ public class PaymentCancellationAuthorisationServiceTest {
     private GetPaymentCancellationAuthorisationsValidator getPaymentCancellationAuthorisationsValidator;
     @Mock
     private GetPaymentCancellationAuthorisationScaStatusValidator getPaymentCancellationAuthorisationScaStatusValidator;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void setUp() {
@@ -120,6 +123,7 @@ public class PaymentCancellationAuthorisationServiceTest {
             .thenReturn(ValidationResult.valid());
         when(getPaymentCancellationAuthorisationScaStatusValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

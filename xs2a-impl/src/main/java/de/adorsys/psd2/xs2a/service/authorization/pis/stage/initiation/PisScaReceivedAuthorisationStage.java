@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.stage.PisScaStage;
@@ -52,6 +53,7 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
@@ -62,7 +64,7 @@ import java.util.List;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 
-
+@Slf4j
 @Service("PIS_EMBEDDED_RECEIVED")
 public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisCommonPaymentPsuDataRequest, GetPisAuthorisationResponse, Xs2aUpdatePisCommonPaymentPsuDataResponse> {
     private final PaymentAuthorisationSpi paymentAuthorisationSpi;
@@ -76,11 +78,12 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     private final SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    private final RequestProviderService requestProviderService;
 
     // TODO move all messages to messageBundle!
     private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
 
-    public PisScaReceivedAuthorisationStage(CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted, ApplicationContext applicationContext, PaymentAuthorisationSpi paymentAuthorisationSpi, Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService, PisAspspDataService pisAspspDataService, Xs2aPisCommonPaymentService xs2aPisCommonPaymentService, PisCommonDecoupledService pisCommonDecoupledService, SpiContextDataProvider spiContextDataProvider, ScaApproachResolver scaApproachResolver, SpiErrorMapper spiErrorMapper, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper, SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper, SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory) {
+    public PisScaReceivedAuthorisationStage(CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted, ApplicationContext applicationContext, PaymentAuthorisationSpi paymentAuthorisationSpi, Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService, PisAspspDataService pisAspspDataService, Xs2aPisCommonPaymentService xs2aPisCommonPaymentService, PisCommonDecoupledService pisCommonDecoupledService, SpiContextDataProvider spiContextDataProvider, ScaApproachResolver scaApproachResolver, SpiErrorMapper spiErrorMapper, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper, SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper, SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory, RequestProviderService requestProviderService) {
         super(cmsToXs2aPaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiSinglePaymentMapper, xs2aToSpiBulkPaymentMapper, pisCommonPaymentServiceEncrypted, applicationContext, xs2aToSpiPsuDataMapper);
         this.paymentAuthorisationSpi = paymentAuthorisationSpi;
         this.updatePaymentStatusAfterSpiService = updatePaymentStatusAfterSpiService;
@@ -93,6 +96,7 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
         this.xs2aToSpiPsuDataMapper = xs2aToSpiPsuDataMapper;
         this.spiToXs2aAuthenticationObjectMapper = spiToXs2aAuthenticationObjectMapper;
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
+        this.requestProviderService = requestProviderService;
     }
 
     @Override
@@ -107,6 +111,8 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
         PaymentType paymentType = pisAuthorisationResponse.getPaymentType();
         String paymentProduct = pisAuthorisationResponse.getPaymentProduct();
         SpiPayment payment = mapToSpiPayment(pisAuthorisationResponse, paymentType, paymentProduct);
+        String authenticationId = request.getAuthorisationId();
+        String paymentId = request.getPaymentId();
 
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(request.getPaymentId());
 
@@ -118,7 +124,10 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
         pisAspspDataService.updateAspspConsentData(aspspConsentData);
 
         if (authPsuResponse.hasError()) {
-            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(authPsuResponse, ServiceType.PIS), request.getPaymentId(), request.getAuthorisationId(), psuData);
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(authPsuResponse, ServiceType.PIS);
+            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_RECEIVED stage. Authorise PSU when apply authorisation has failed. Error msg: [{}]",
+                     requestProviderService.getRequestId(), paymentId, authenticationId, psuData.getPsuId(), errorHolder);
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, psuData);
         }
 
         SpiResponse<List<SpiAuthenticationObject>> availableScaMethodsResponse = paymentAuthorisationSpi.requestAvailableScaMethods(contextData, payment, aspspConsentData);
@@ -126,13 +135,17 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
         pisAspspDataService.updateAspspConsentData(availableScaMethodsResponse.getAspspConsentData());
 
         if (availableScaMethodsResponse.hasError()) {
-            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(availableScaMethodsResponse, ServiceType.PIS), request.getPaymentId(), request.getAuthorisationId(), psuData);
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(availableScaMethodsResponse, ServiceType.PIS);
+            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_RECEIVED stage. Request available ScaMethods has failed. Error msg: [{}]",
+                     requestProviderService.getRequestId(), paymentId, authenticationId, psuData.getPsuId(), errorHolder);
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, psuData);
         }
 
         List<SpiAuthenticationObject> spiScaMethods = availableScaMethodsResponse.getPayload();
 
         if (CollectionUtils.isEmpty(spiScaMethods)) {
-
+            log.info("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_RECEIVED stage. Available ScaMethods is empty.",
+                     requestProviderService.getRequestId(), paymentId, authenticationId, psuData.getPsuId());
             return buildUpdateResponseWhenScaMethodsAreEmpty(request, pisAuthorisationResponse, psuData, paymentType, payment, contextData);
         } else if (isSingleScaMethod(spiScaMethods)) {
 
@@ -141,6 +154,9 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
 
             return buildUpdateResponseWhenScaMethodsAreMultiple(request, psuData, spiScaMethods);
         }
+
+        log.info("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. PIS_EMBEDDED_RECEIVED stage. Apply authorisation when update Payment PSU data set ScaStatus failed.",
+                 requestProviderService.getRequestId(), paymentId, authenticationId);
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FAILED, request.getPaymentId(), request.getAuthorisationId(), psuData);
     }
 
@@ -169,6 +185,8 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
 
     @NotNull
     private Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdateResponseWhenScaMethodsAreEmpty(Xs2aUpdatePisCommonPaymentPsuDataRequest request, GetPisAuthorisationResponse pisAuthorisationResponse, PsuIdData psuData, PaymentType paymentType, SpiPayment payment, SpiContextData contextData) {
+        String authorisationId = request.getAuthorisationId();
+        String paymentId = request.getPaymentId();
 
         final SpiAspspConsentDataProvider aspspConsentDataProvider =
             aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getPaymentId());
@@ -181,24 +199,33 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
         }
 
         if (spiResponse.hasError()) {
-            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS), request.getPaymentId(), request.getAuthorisationId(), psuData);
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_RECEIVED stage. Execute Payment without SCA has failed. Error msg: [{}]",
+                     requestProviderService.getRequestId(), paymentId, authorisationId, psuData.getPsuId(), errorHolder);
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
         }
 
         TransactionStatus paymentStatus = spiResponse.getPayload().getTransactionStatus();
         updatePaymentStatusAfterSpiService.updatePaymentStatus(request.getPaymentId(), paymentStatus);
-        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED, request.getPaymentId(), request.getAuthorisationId(), psuData);
+        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED, paymentId, authorisationId, psuData);
     }
 
     @NotNull
     private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedSingleScaEmbeddedApproach(SpiPayment payment, SpiAuthenticationObject chosenMethod, SpiContextData contextData, AspspConsentData aspspConsentData, Xs2aUpdatePisCommonPaymentPsuDataRequest request, PsuIdData psuData) {
+        String authorisationId = request.getAuthorisationId();
+        String paymentId = request.getPaymentId();
+
         SpiResponse<SpiAuthorizationCodeResult> authCodeResponse = paymentAuthorisationSpi.requestAuthorisationCode(contextData, chosenMethod.getAuthenticationMethodId(), payment, aspspConsentData);
         pisAspspDataService.updateAspspConsentData(authCodeResponse.getAspspConsentData());
 
         if (authCodeResponse.hasError()) {
-            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(authCodeResponse, ServiceType.PIS), request.getPaymentId(), request.getAuthorisationId(), psuData);
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(authCodeResponse, ServiceType.PIS);
+            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_RECEIVED stage. Proceed single SCA embedded approach when performs authorisation has failed. Error msg: [{}]",
+                     requestProviderService.getRequestId(), paymentId, authorisationId, psuData.getPsuId(), errorHolder);
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
         }
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED, request.getPaymentId(), request.getAuthorisationId(), psuData);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED, paymentId, authorisationId, psuData);
         response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(chosenMethod));
         response.setChallengeData(mapToChallengeData(authCodeResponse.getPayload()));
         return response;
@@ -210,6 +237,8 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
                                           .errorType(ErrorType.PIS_400)
                                           .messages(Collections.singletonList(MESSAGE_ERROR_NO_PSU))
                                           .build();
+            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. PIS_EMBEDDED_RECEIVED stage. Apply Identification when update PIS Payment PSU data has failed. No PSU data available in request.",
+                     requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId());
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
         }
 

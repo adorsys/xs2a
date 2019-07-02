@@ -194,6 +194,7 @@ public class AccountServiceTest {
             .thenReturn(ValidationResult.valid());
         when(getTransactionDetailsValidator.validate(any(CommonAccountTransactionsRequestObject.class)))
             .thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.discovery;
 
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class ServiceTypeDiscoveryService {
     private final HttpServletRequest request;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Gets service type from request URI by invoking ServiceTypeDiscovery
@@ -34,7 +36,7 @@ public class ServiceTypeDiscoveryService {
      * @return ServiceType value
      */
     public ServiceType getServiceType() {
-        return ServiceTypeDiscovery.getServiceType(new UrlPathHelper().getPathWithinApplication(request));
+        return ServiceTypeDiscovery.getServiceType(requestProviderService.getRequestId(), new UrlPathHelper().getPathWithinApplication(request));
     }
 }
 
