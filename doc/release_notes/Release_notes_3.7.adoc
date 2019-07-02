@@ -1,0 +1,16 @@
+= Release notes v. 3.7
+
+== Table of Contents
+* Feature: Separated redirect URL timeout and Authorisation expiration timeout
+
+== Feature: Separated redirect URL timeout and Authorisation expiration timeout
+
+From now on, new field is added to bank_profile - `authorisationExpirationTimeMs`. This field indicates the period of authorisation
+expiration in milliseconds and influences payment authorisation, payment cancellation authorisation and consent authorisation.
+All calls for updating data from online-banking to the CMS-PSU-API can be processed until the authorisation timeout is not expired.
+In case this time is expired the `408 REQUEST_TIMEOUT` response is given.
+
+Also, new endpoints were added to CMS-PSU-API in scope of this feature:
+
+ - `GET /psu-api/v1/payment/authorisation/{authorisation-id}` to get PIS authorisation object by its ID,
+ - `GET /psu-api/v1/ais/consent/authorisation/{authorisation-id}` to get AIS authorisation object by its ID.

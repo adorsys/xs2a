@@ -61,6 +61,7 @@ public class AspspProfileServiceTest {
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
     private static final boolean DELTA_LIST_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
+    private static final long AUTHORISATION_EXPIRATION_TIME_MS = 86400000;
     private static final long NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS = 86400000;
     private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS = 86400000;
     private static final Map<PaymentType, Set<String>> SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX = buildSupportedPaymentTypeAndProductMatrix();
@@ -144,6 +145,11 @@ public class AspspProfileServiceTest {
     }
 
     @Test
+    public void getAuthorisationExpirationTimeMs_success() {
+        Assertions.assertThat(actualResponse.getAuthorisationExpirationTimeMs()).isEqualTo(AUTHORISATION_EXPIRATION_TIME_MS);
+    }
+
+    @Test
     public void getAvailableAccountsConsentSupported_success() {
         Assertions.assertThat(actualResponse.isAvailableAccountsConsentSupported()).isEqualTo(AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED);
     }
@@ -204,6 +210,7 @@ public class AspspProfileServiceTest {
         setting.setPiisConsentSupported(PIIS_CONSENT_SUPPORTED);
         setting.setDeltaListSupported(DELTA_LIST_SUPPORTED);
         setting.setRedirectUrlExpirationTimeMs(REDIRECT_URL_EXPIRATION_TIME_MS);
+        setting.setAuthorisationExpirationTimeMs(AUTHORISATION_EXPIRATION_TIME_MS);
         setting.setScaApproaches(Collections.singletonList(REDIRECT_APPROACH));
         setting.setNotConfirmedConsentExpirationPeriodMs(NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS);
         setting.setNotConfirmedPaymentExpirationPeriodMs(NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS);

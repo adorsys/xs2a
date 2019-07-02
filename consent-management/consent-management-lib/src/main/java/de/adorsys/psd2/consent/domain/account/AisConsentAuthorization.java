@@ -58,8 +58,11 @@ public class AisConsentAuthorization extends InstanceDependableEntity {
     @Column(name = "sca_authentication_data")
     private String scaAuthenticationData;
 
-    @Column(name = "expiration_timestamp")
+    @Column(name = "redirect_expiration_timestamp")
     private OffsetDateTime redirectUrlExpirationTimestamp;
+
+    @Column(name = "expiration_timestamp")
+    private OffsetDateTime authorisationExpirationTimestamp;
 
     @ElementCollection
     @CollectionTable(name = "ais_available_sca_method", joinColumns = @JoinColumn(name = "authorisation_id"))
@@ -69,11 +72,11 @@ public class AisConsentAuthorization extends InstanceDependableEntity {
     @Enumerated(value = EnumType.STRING)
     private ScaApproach scaApproach;
 
-    public boolean isExpired() {
-        return redirectUrlExpirationTimestamp.isBefore(OffsetDateTime.now());
+    public boolean isRedirectUrlNotExpired() {
+        return redirectUrlExpirationTimestamp.isAfter(OffsetDateTime.now());
     }
 
-    public boolean isNotExpired() {
-        return !isExpired();
+    public boolean isAuthorisationNotExpired() {
+        return authorisationExpirationTimestamp.isAfter(OffsetDateTime.now());
     }
 }

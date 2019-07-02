@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="hhe@adorsys.com.ua" id="2019-06-24-1">
+        <comment>Add new column to pis_consent_authorization table</comment>
+        <addColumn tableName="pis_consent_authorization">
+            <column name="redirect_expiration_timestamp" type="DATETIME"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="hhe@adorsys.com.ua" id="2019-06-24-2">
+        <comment>Add new column to ais_consent_authorization table</comment>
+        <addColumn tableName="ais_consent_authorization">
+            <column name="redirect_expiration_timestamp" type="DATETIME"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="hhe@adorsys.com.ua" id="2019-06-24-3">
+        <comment>Migrate data from expiration_timestamp column to redirect_expiration_timestamp column in pis_consent_authorization table</comment>
+
+        <sql>
+            UPDATE pis_consent_authorization
+            SET redirect_expiration_timestamp = expiration_timestamp
+        </sql>
+    </changeSet>
+
+    <changeSet author="hhe@adorsys.com.ua" id="2019-06-24-4">
+        <comment>Migrate data from expiration_timestamp column to redirect_expiration_timestamp column in ais_consent_authorization table</comment>
+
+        <sql>
+            UPDATE ais_consent_authorization
+            SET redirect_expiration_timestamp = expiration_timestamp
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

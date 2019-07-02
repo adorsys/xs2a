@@ -33,6 +33,8 @@ import de.adorsys.psd2.consent.repository.specification.PisPaymentDataSpecificat
 import de.adorsys.psd2.consent.service.CommonPaymentDataService;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
+import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -65,18 +67,46 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     @Override
     @Transactional
-    public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) {
-        return pisAuthorisationRepository.findOne(
-            pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)
-        )
+    public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException {
+        return getAuthorisationByExternalId(authorisationId, instanceId)
                    .map(auth -> updatePsuData(auth, psuIdData))
                    .orElseGet(() -> {
                        log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in Payment failed, because authorisation not found",
-                                instanceId, authorisationId);
+                                authorisationId, instanceId);
                        return false;
                    });
     }
 
+    @Override
+    @Transactional
+    public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull String redirectId,
+                                                                            @NotNull String instanceId)
+        throws RedirectUrlIsExpiredException {
+
+        Optional<PisAuthorization> optionalAuthorisation = pisAuthorisationRepository
+                                                               .findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId))
+                                                               .filter(a -> !a.getScaStatus().isFinalisedStatus());
+
+        if (optionalAuthorisation.isPresent()) {
+            PisAuthorization authorisation = optionalAuthorisation.get();
+
+            if (!authorisation.isRedirectUrlNotExpired()) {
+                log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get payment failed, because redirect URL is expired",
+                         authorisation.getId(), instanceId);
+                changeAuthorisationStatusToFailed(authorisation);
+
+                String tppNokRedirectUri = authorisation.getPaymentData().getTppInfo().getNokRedirectUri();
+                throw new RedirectUrlIsExpiredException(tppNokRedirectUri);
+            }
+            return Optional.of(buildCmsPaymentResponse(authorisation, false));
+        }
+
+        log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get payment failed, because authorisation not found or has finalised status",
+                 redirectId, instanceId);
+        return Optional.empty();
+    }
+
+    @Transactional
     @Override
     public @NotNull Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId, @NotNull String instanceId) {
         if (isPsuDataEquals(paymentId, psuIdData)) {
@@ -97,63 +127,59 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     @Override
     @Transactional
-    public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull String redirectId, @NotNull String instanceId) {
-        Optional<PisAuthorization> optionalAuthorisation = pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId))
+    public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPaymentForCancellation(@NotNull String redirectId,
+                                                                                           @NotNull String instanceId)
+        throws RedirectUrlIsExpiredException {
+
+        Optional<PisAuthorization> optionalAuthorisation = pisAuthorisationRepository
+                                                               .findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId))
                                                                .filter(a -> !a.getScaStatus().isFinalisedStatus());
 
         if (optionalAuthorisation.isPresent()) {
             PisAuthorization authorisation = optionalAuthorisation.get();
 
-            if (authorisation.isNotExpired()) {
-                return Optional.of(buildCmsPaymentResponse(authorisation));
-            } else {
-                log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect and get payment failed, because authorisation expired",
-                         redirectId);
+            if (!authorisation.isRedirectUrlNotExpired()) {
+                log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get payment cancellation failed, because authorisation not found or has finalised status",
+                         redirectId, instanceId);
+                changeAuthorisationStatusToFailed(authorisation);
+
+                String tppNokRedirectUri = authorisation.getPaymentData().getTppInfo().getNokRedirectUri();
+                throw new RedirectUrlIsExpiredException(tppNokRedirectUri);
             }
-
-            changeAuthorisationStatusToFailed(authorisation);
-            String tppNokRedirectUri = authorisation.getPaymentData().getTppInfo().getNokRedirectUri();
-
-            return Optional.of(new CmsPaymentResponse(tppNokRedirectUri));
+            return Optional.of(buildCmsPaymentResponse(authorisation, true));
         }
-
-        log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect and get payment failed, because authorisation not found or has finalised status",
+        log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get payment cancellation failed, because authorisation not found or has finalised status",
                  redirectId, instanceId);
         return Optional.empty();
     }
 
     @Override
     @Transactional
-    public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPaymentForCancellation(@NotNull String redirectId, @NotNull String instanceId) {
-        Optional<PisAuthorization> optionalAuthorisation = pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId))
-                                                               .filter(a -> !a.getScaStatus().isFinalisedStatus());
+    public @NotNull Optional<CmsPisPsuDataAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId) {
+        Optional<PisAuthorization> optionalAuthorisation = pisAuthorisationRepository
+                                                               .findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
 
-        if (!optionalAuthorisation.isPresent()) {
-            log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect and get payment cancellation failed, because authorisation is not found or has finalised status",
-                     redirectId, instanceId);
-            return Optional.empty();
+        if (optionalAuthorisation.isPresent()) {
+            PisAuthorization authorisation = optionalAuthorisation.get();
+
+            return Optional.of(new CmsPisPsuDataAuthorisation(psuDataMapper.mapToPsuIdData(authorisation.getPsuData()),
+                                                              authorisation.getExternalId(),
+                                                              authorisation.getScaStatus(),
+                                                              authorisation.getAuthorizationType()));
         }
 
-        PisAuthorization authorisation = optionalAuthorisation.get();
+        log.info("Authorisation ID: [{}], Instance ID: [{}]. Get authorisation failed, because authorisation not found",
+                 authorisationId, instanceId);
 
-        if (authorisation.isExpired()) {
-            changeAuthorisationStatusToFailed(authorisation);
-            log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect and get payment cancellation failed, because authorisation expired",
-                     redirectId, instanceId);
-            return Optional.ofNullable(authorisation.getPaymentData())
-                       .map(PisCommonPaymentData::getTppInfo)
-                       .map(TppInfoEntity::getNokRedirectUri)
-                       .map(CmsPaymentResponse::new);
-        }
+        return Optional.empty();
 
-        return Optional.of(buildCmsPaymentResponseForCancellation(authorisation));
     }
 
     @Override
     @Transactional
     public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId,
-                                             @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId) {
-        Optional<PisAuthorization> pisAuthorisation = pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
+                                             @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId) throws AuthorisationIsExpiredException {
+        Optional<PisAuthorization> pisAuthorisation = getAuthorisationByExternalId(authorisationId, instanceId);
 
         if (!pisAuthorisation.isPresent()) {
             log.info("Authorisation ID [{}], Instance ID: [{}]. Update authorisation status failed, because authorisation not found.",
@@ -171,7 +197,6 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                      authorisationId, instanceId);
             return false;
         }
-
 
         return updateAuthorisationStatusAndSaveAuthorisation(pisAuthorisation.get(), status);
     }
@@ -241,7 +266,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .filter(p -> isPsuDataEquals(p, psuIdData))
                    .map(id -> StringUtils.equals(realPaymentId, id))
                    .orElseGet(() -> {
-                       log.info("Cannot validate given PSU data, because given payment id is null");
+                       log.info("Cannot validate given PSU data, because given payment ID is null");
                        return false;
                    });
     }
@@ -262,12 +287,12 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .map(lst -> lst.stream()
                                    .anyMatch(psu -> psu.contentEquals(psuIdData)))
                    .orElseGet(() -> {
-                       log.info("Payment ID: [{}]. Cannot equal PSU data with payment id, because PSU data list not found by id", paymentId);
+                       log.info("Payment ID: [{}]. Cannot equal PSU data with payment ID, because PSU data list not found by ID", paymentId);
                        return false;
                    });
     }
 
-    private CmsPaymentResponse buildCmsPaymentResponse(PisAuthorization authorisation) {
+    private CmsPaymentResponse buildCmsPaymentResponse(PisAuthorization authorisation, boolean isPaymentCancellation) {
         PisCommonPaymentData commonPayment = authorisation.getPaymentData();
         CmsPayment payment = cmsPsuPisMapper.mapToCmsPayment(commonPayment.getPayments());
         TppInfoEntity tppInfo = commonPayment.getTppInfo();
@@ -278,23 +303,22 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         return new CmsPaymentResponse(
             payment,
             authorisation.getExternalId(),
-            tppOkRedirectUri,
-            tppNokRedirectUri);
-    }
-
-    private CmsPaymentResponse buildCmsPaymentResponseForCancellation(PisAuthorization authorisation) {
-        PisCommonPaymentData commonPayment = authorisation.getPaymentData();
-        CmsPayment payment = cmsPsuPisMapper.mapToCmsPayment(commonPayment.getPayments());
-
-        return new CmsPaymentResponse(
-            payment,
-            authorisation.getExternalId(),
-            null,   // TODO temporary solution to keep the response the same as for payment confirmation (till the specification clarification) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/588
-            null);
+            isPaymentCancellation ? null : tppOkRedirectUri, // TODO temporary solution to keep the response the same as for payment confirmation (till the specification clarification) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/588
+            isPaymentCancellation ? null : tppNokRedirectUri);
     }
 
     private void changeAuthorisationStatusToFailed(PisAuthorization authorisation) {
         authorisation.setScaStatus(ScaStatus.FAILED);
         pisAuthorisationRepository.save(authorisation);
+    }
+
+    private Optional<PisAuthorization> getAuthorisationByExternalId(@NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException {
+        Optional<PisAuthorization> authorization = pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
+
+        if (authorization.isPresent() && !authorization.get().isAuthorisationNotExpired()) {
+            log.info("Authorisation ID [{}], Instance ID: [{}]. Authorisation is expired", authorisationId, instanceId);
+            throw new AuthorisationIsExpiredException(authorization.get().getPaymentData().getTppInfo().getNokRedirectUri());
+        }
+        return authorization;
     }
 }
