@@ -22,17 +22,17 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.springframework.stereotype.Component;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 
 @Component
-public class AisTppInfoValidator extends TppInfoValidator{
-    public AisTppInfoValidator(TppInfoCheckerService tppInfoCheckerService, RequestProviderService requestProviderService) {
+public class PiisTppInfoValidator extends TppInfoValidator {
+    public PiisTppInfoValidator(TppInfoCheckerService tppInfoCheckerService, RequestProviderService requestProviderService) {
         super(tppInfoCheckerService, requestProviderService);
     }
 
     @Override
     ErrorType getErrorType() {
-        return AIS_400;
+        return PIIS_400;
     }
 
     @Override
