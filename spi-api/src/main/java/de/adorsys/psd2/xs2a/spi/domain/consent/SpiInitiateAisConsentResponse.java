@@ -16,11 +16,13 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.consent;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class SpiInitiateAisConsentResponse {
     @Nullable
@@ -28,19 +30,4 @@ public class SpiInitiateAisConsentResponse {
 
     private boolean multilevelScaRequired;
     private String psuMessage;
-
-    // TODO delete this constructor in 2.9 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/847
-    @Deprecated
-    public SpiInitiateAisConsentResponse(@Nullable SpiAccountAccess accountAccess, boolean multilevelScaRequired) {
-        this.accountAccess = accountAccess;
-        this.multilevelScaRequired = multilevelScaRequired;
-    }
-
-    // TODO delete this constructor in 2.9 and add @AllArgsConstructor
-    //  sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/847
-    public SpiInitiateAisConsentResponse(@Nullable SpiAccountAccess accountAccess, boolean multilevelScaRequired, String psuMessage) {
-        this.accountAccess = accountAccess;
-        this.multilevelScaRequired = multilevelScaRequired;
-        this.psuMessage = psuMessage;
-    }
 }
