@@ -82,7 +82,7 @@ public class AisTppInfoValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
 
-        MessageError expectedError = new MessageError(ErrorType.AIS_401, TppMessageInformation.of(MessageErrorCode.UNAUTHORIZED, "Invalid TPP"));
+        MessageError expectedError = new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400, "Invalid TPP"));
         assertEquals(expectedError.getErrorType(), validationResult.getMessageError().getErrorType());
         assertEquals(expectedError.getTppMessage().getMessageErrorCode(), validationResult.getMessageError().getTppMessage().getMessageErrorCode());
     }
