@@ -21,22 +21,22 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.springframework.stereotype.Component;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CERTIFICATE_INVALID;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_401;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_UNKNOWN_400;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 
 @Component
-public class PisTppInfoValidator extends TppInfoValidator {
-    public PisTppInfoValidator(TppInfoCheckerService tppInfoCheckerService, RequestProviderService requestProviderService) {
+public class PiisTppInfoValidator extends TppInfoValidator {
+    public PiisTppInfoValidator(TppInfoCheckerService tppInfoCheckerService, RequestProviderService requestProviderService) {
         super(tppInfoCheckerService, requestProviderService);
     }
 
     @Override
     ErrorType getErrorType() {
-        return PIS_401;
+        return PIIS_400;
     }
 
     @Override
     TppMessageInformation getTppMessageInformation() {
-        return TppMessageInformation.of(CERTIFICATE_INVALID, TPP_ERROR_MESSAGE);
+        return TppMessageInformation.of(CONSENT_UNKNOWN_400, TPP_ERROR_MESSAGE);
     }
 }

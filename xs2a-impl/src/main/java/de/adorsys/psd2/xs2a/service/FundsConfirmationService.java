@@ -36,7 +36,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfirmationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.service.validator.PiisConsentValidationService;
+import de.adorsys.psd2.xs2a.service.validator.piis.PiisConsentValidation;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
@@ -64,7 +64,7 @@ public class FundsConfirmationService {
     private final SpiContextDataProvider spiContextDataProvider;
     private final Xs2aToSpiFundsConfirmationRequestMapper xs2aToSpiFundsConfirmationRequestMapper;
     private final SpiToXs2aFundsConfirmationMapper spiToXs2aFundsConfirmationMapper;
-    private final PiisConsentValidationService piisConsentValidationService;
+    private final PiisConsentValidation piisConsentValidation;
     private final PiisConsentService piisConsentService;
     private final Xs2aEventService xs2aEventService;
     private final SpiErrorMapper spiErrorMapper;
@@ -124,7 +124,7 @@ public class FundsConfirmationService {
         List<PiisConsent> response = piisConsentService.getPiisConsentListByAccountIdentifier(accountReference.getCurrency(),
                                                                                               selector);
 
-        return piisConsentValidationService.validatePiisConsentData(response);
+        return piisConsentValidation.validatePiisConsentData(response);
     }
 
     private FundsConfirmationResponse executeRequest(@NotNull PsuIdData psuIdData,
