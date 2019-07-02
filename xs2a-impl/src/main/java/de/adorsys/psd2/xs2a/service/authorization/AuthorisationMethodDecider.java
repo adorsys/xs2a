@@ -17,14 +17,18 @@
 package de.adorsys.psd2.xs2a.service.authorization;
 
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthorisationMethodDecider {
     private final AspspProfileServiceWrapper aspspProfileService;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Decides whether explicit authorisation method will be used based on bank_profile configuration and
@@ -41,11 +45,18 @@ public class AuthorisationMethodDecider {
      * @return is explicit method of authorisation will be used
      */
     public boolean isExplicitMethod(boolean tppExplicitAuthorisationPreferred, boolean multilevelScaRequired) {
+        boolean explicit = false;
+
         StartAuthorisationMode startAuthorisationMode = aspspProfileService.getStartAuthorisationMode();
         if (StartAuthorisationMode.AUTO.equals(startAuthorisationMode)) {
-            return multilevelScaRequired || isSigningBasketModeActive(tppExplicitAuthorisationPreferred);
+            explicit = multilevelScaRequired || isSigningBasketModeActive(tppExplicitAuthorisationPreferred);
+        } else {
+            explicit = StartAuthorisationMode.EXPLICIT.equals(startAuthorisationMode);
         }
-        return StartAuthorisationMode.EXPLICIT.equals(startAuthorisationMode);
+
+        log.info("X-Request-ID: [{}]. {} authorisation method chosen",
+                 requestProviderService.getRequestId(), explicit ? "EXPLICIT" : "IMPLICIT");
+        return explicit;
     }
 
     /**

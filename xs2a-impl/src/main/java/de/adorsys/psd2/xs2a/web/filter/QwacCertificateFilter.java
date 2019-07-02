@@ -21,6 +21,7 @@ import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +57,7 @@ import java.util.stream.Collectors;
 public class QwacCertificateFilter extends AbstractXs2aFilter {
     private final TppRoleValidationService tppRoleValidationService;
     private final TppInfoHolder tppInfoHolder;
+    private final RequestProviderService requestProviderService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -91,14 +93,14 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                 tppInfo.setTppRoles(xs2aTppRoles);
 
                 if (!tppRoleValidationService.hasAccess(tppInfo, request)) {
-                    log.error("Access forbidden for TPP with authorisation number: {}", tppCertificateData.getPspAuthorisationNumber());
+                    log.info("X-Request-ID: [{}], Access forbidden for TPP with authorisation number: [{}]", requestProviderService.getRequestId(), tppCertificateData.getPspAuthorisationNumber());
                     response.sendError(HttpServletResponse.SC_FORBIDDEN, "You don't have access to this resource");
                     return;
                 }
 
                 tppInfoHolder.setTppInfo(tppInfo);
             } catch (CertificateValidationException e) {
-                log.debug(e.getMessage());
+                log.info("X-Request-ID: [{}], TPP unauthorised because CertificateValidationException: {}", requestProviderService.getRequestId(), e.getMessage());
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
                 return;
             }
@@ -115,6 +117,9 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
         return Optional.ofNullable(date)
                    .map(d -> d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
                    .map(d -> d.isBefore(LocalDateTime.now()))
-                   .orElse(true);
+                   .orElseGet(() -> {
+                       log.info("X-Request-ID: [{}], TPP Certificate is expired", requestProviderService.getRequestId());
+                       return true;
+                   });
     }
 }

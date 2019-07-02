@@ -27,17 +27,20 @@ import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class Xs2aAisConsentService {
@@ -48,6 +51,7 @@ public class Xs2aAisConsentService {
     private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     private final ScaApproachResolver scaApproachResolver;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Sends a POST request to CMS to store created AISconsent
@@ -61,7 +65,11 @@ public class Xs2aAisConsentService {
         int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppInfo, allowedFrequencyPerDay);
         Optional<String> consent = aisConsentService.createConsent(createAisConsentRequest);
-        return consent.orElse(null);
+        return consent.orElseGet(() -> {
+            log.info("X-Request-ID: [{}]. Consent cannot be created, because can't save to cms DB",
+                     requestProviderService.getRequestId());
+            return null;
+        });
     }
 
     /**

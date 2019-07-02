@@ -80,7 +80,10 @@ public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformat
         }
 
         if (spiResponse.hasError()) {
-            return new PaymentInformationResponse<>(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. READ SINGLE Payment failed. Can't get Payment by id at SPI-level. Error msg: [{}]",
+                     requestProviderService.getRequestId(), spiPaymentOptional.get().getPaymentId(), errorHolder);
+            return new PaymentInformationResponse<>(errorHolder);
         }
 
         SpiSinglePayment spiSinglePayment = spiResponse.getPayload();

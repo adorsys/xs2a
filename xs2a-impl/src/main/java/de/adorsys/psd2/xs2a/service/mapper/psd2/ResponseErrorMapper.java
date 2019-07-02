@@ -17,15 +17,19 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2;
 
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ResponseErrorMapper {
     private final ErrorMapperContainer errorMapperContainer;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Generates {@link ResponseEntity} with given error in the body
@@ -35,6 +39,7 @@ public class ResponseErrorMapper {
      */
     public ResponseEntity generateErrorResponse(MessageError error) {
         ErrorMapperContainer.ErrorBody errorBody = errorMapperContainer.getErrorBody(error);
+        log.info("X-Request-ID: [{}]. Generate error: [{}]", requestProviderService.getRequestId(), error);
         return new ResponseEntity<>(errorBody.getBody(), errorBody.getStatus());
     }
 
@@ -47,6 +52,7 @@ public class ResponseErrorMapper {
      */
     public ResponseEntity generateErrorResponse(MessageError error, ResponseHeaders responseHeaders) {
         ErrorMapperContainer.ErrorBody errorBody = errorMapperContainer.getErrorBody(error);
+        log.info("X-Request-ID: [{}]. Generate error: [{}]", requestProviderService.getRequestId(), error);
         return new ResponseEntity<>(errorBody.getBody(), responseHeaders.getHttpHeaders(), errorBody.getStatus());
     }
 }

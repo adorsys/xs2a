@@ -56,6 +56,7 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -157,6 +158,8 @@ public class PaymentServiceTest {
     private CancelPaymentValidator cancelPaymentValidator;
     @Mock
     private InitialSpiAspspConsentDataProvider initialSpiAspspConsentDataProvider;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void setUp() {
@@ -180,6 +183,7 @@ public class PaymentServiceTest {
             .thenReturn(ValidationResult.valid());
         when(cancelPaymentValidator.validate(any(CancelPaymentPO.class)))
             .thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

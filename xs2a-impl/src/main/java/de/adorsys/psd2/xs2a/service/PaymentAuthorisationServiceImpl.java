@@ -37,6 +37,7 @@ import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationService {
@@ -58,6 +60,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     private final UpdatePisCommonPaymentPsuDataValidator updatePisCommonPaymentPsuDataValidator;
     private final GetPaymentInitiationAuthorisationsValidator getPaymentAuthorisationsValidator;
     private final GetPaymentInitiationAuthorisationScaStatusValidator getPaymentAuthorisationScaStatusValidator;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Creates pis authorisation for payment. In case when psu data and password came then second step will be update psu data in created authorisation
@@ -109,6 +112,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(request.getPaymentId());
         if (!pisCommonPaymentResponse.isPresent()) {
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. Update PIS CommonPayment PSU data failed. PIS CommonPayment not found by id", requestProviderService.getRequestId(), request.getPaymentId());
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
@@ -116,6 +120,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(pisCommonPaymentResponse.get(), request.getAuthorisationId()));
         if (validationResult.isNotValid()) {
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of update PIS CommonPayment PSU data failed: {}",
+                     requestProviderService.getRequestId(), request.getPaymentId(), validationResult.getMessageError());
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -146,6 +152,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentResponse.isPresent()) {
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. Get Payment authorisation failed. PIS CommonPayment not found by id", requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<Xs2aAuthorisationSubResources>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
@@ -153,6 +160,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         ValidationResult validationResult = getPaymentAuthorisationsValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
         if (validationResult.isNotValid()) {
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of get payment initiation authorisation failed: {}",
+                     requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
             return ResponseObject.<Xs2aAuthorisationSubResources>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -161,9 +170,13 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
         return pisScaAuthorisationService.getAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
-                   .orElseGet(ResponseObject.<Xs2aAuthorisationSubResources>builder()
+                   .orElseGet(() -> {
+                       log.warn("X-Request-ID: [{}], Payment-ID [{}]. Get payment initiation authorisation has failed. Authorisation not found by payment id.",
+                                requestProviderService.getRequestId(), paymentId);
+                       return ResponseObject.<Xs2aAuthorisationSubResources>builder()
                                   .fail(PIS_404, of(RESOURCE_UNKNOWN_404))
-                                  ::build);
+                                  .build();
+                   });
     }
 
     /**
@@ -179,6 +192,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentResponse.isPresent()) {
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. Get SCA status payment initiation authorisation failed. PIS CommonPayment not found by id", requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<ScaStatus>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
@@ -186,6 +200,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
         if (validationResult.isNotValid()) {
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of get SCA status payment initiation authorisation failed: {}",
+                     requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
             return ResponseObject.<ScaStatus>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -210,6 +226,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentResponse.isPresent()) {
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. Create PIS Authorisation failed. PIS CommonPayment not found by id", requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
@@ -217,6 +234,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
         if (validationResult.isNotValid()) {
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of create PIS Authorisation failed: {}",
+                     requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
             return ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
                        .fail(validationResult.getMessageError())
                        .build();

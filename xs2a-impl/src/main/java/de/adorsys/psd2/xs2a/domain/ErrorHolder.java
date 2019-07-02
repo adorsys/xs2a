@@ -20,10 +20,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ErrorHolder {
@@ -123,5 +120,16 @@ public class ErrorHolder {
                        .map(m -> TppMessageInformation.of(errorCode, m))
                        .collect(Collectors.toList());
         }
+    }
+
+    @Override
+    public String toString() {
+        return CollectionUtils.isEmpty(tppMessageInformationList)
+                   ? Optional.ofNullable(errorType)
+                         .map(ErrorType::name)
+                         .orElse("")
+                   : tppMessageInformationList.stream()
+                         .map(TppMessageInformation::getText)
+                         .collect(Collectors.joining(", "));
     }
 }

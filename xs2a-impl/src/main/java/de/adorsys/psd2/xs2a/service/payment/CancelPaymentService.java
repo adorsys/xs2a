@@ -19,10 +19,12 @@ package de.adorsys.psd2.xs2a.service.payment;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
@@ -36,12 +38,14 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CANCELLATION_INVALID;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_CANC_405;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CancelPaymentService {
@@ -54,13 +58,14 @@ public class CancelPaymentService {
     private final SpiToXs2aCancelPaymentMapper spiToXs2aCancelPaymentMapper;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final PaymentCancellationAuthorisationService paymentCancellationAuthorisationService;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Cancels payment with or without performing strong customer authentication
      *
-     * @param psuData            ASPSP identifier(s) of the psu
-     * @param payment            Payment to be cancelled
-     * @param encryptedPaymentId encrypted identifier of the payment
+     * @param psuData                           ASPSP identifier(s) of the psu
+     * @param payment                           Payment to be cancelled
+     * @param encryptedPaymentId                encrypted identifier of the payment
      * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
      * @return Response containing information about cancelled payment or corresponding error
      */
@@ -71,8 +76,11 @@ public class CancelPaymentService {
         pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Error msg: {}.",
+                     requestProviderService.getRequestId(), encryptedPaymentId, errorHolder);
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS))
+                       .fail(errorHolder)
                        .build();
         }
 
@@ -87,12 +95,14 @@ public class CancelPaymentService {
         }
 
         if (resultStatus == TransactionStatus.CANC) {
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Payment status - CANCELED", requestProviderService.getRequestId(), encryptedPaymentId);
             return ResponseObject.<CancelPaymentResponse>builder()
                        .body(cancelPaymentResponse)
                        .build();
         }
 
         if (resultStatus.isFinalisedStatus()) {
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Payment has finalised status", requestProviderService.getRequestId(), encryptedPaymentId);
             return ResponseObject.<CancelPaymentResponse>builder()
                        .fail(PIS_CANC_405, of(CANCELLATION_INVALID))
                        .build();
@@ -110,6 +120,7 @@ public class CancelPaymentService {
             ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> authorizationResponse = paymentCancellationAuthorisationService.createPisCancellationAuthorization(encryptedPaymentId, psuData, payment.getPaymentType(), payment.getPaymentProduct());
 
             if (authorizationResponse.hasError()) {
+                log.info("X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Can't create implicit authorisation", requestProviderService.getRequestId(), encryptedPaymentId);
                 return ResponseObject.<CancelPaymentResponse>builder()
                            .fail(PIS_CANC_405, of(CANCELLATION_INVALID))
                            .build();
@@ -131,8 +142,11 @@ public class CancelPaymentService {
         pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. Proceed NoSca Cancellation failed. Can't Cancel Payment without SCA at SPI-level. Error msg: {}.",
+                     requestProviderService.getRequestId(), encryptedPaymentId, errorHolder);
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS))
+                       .fail(errorHolder)
                        .build();
         }
 

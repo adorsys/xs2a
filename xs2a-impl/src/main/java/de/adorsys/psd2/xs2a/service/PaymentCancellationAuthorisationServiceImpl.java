@@ -35,6 +35,7 @@ import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -43,6 +44,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentCancellationAuthorisationServiceImpl implements PaymentCancellationAuthorisationService {
@@ -55,6 +57,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     private final UpdatePisCancellationPsuDataValidator updatePisCancellationPsuDataValidator;
     private final GetPaymentCancellationAuthorisationsValidator getPaymentAuthorisationsValidator;
     private final GetPaymentCancellationAuthorisationScaStatusValidator getPaymentAuthorisationScaStatusValidator;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Creates authorisation for payment cancellation request if given psu data is valid
@@ -71,6 +74,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentResponse.isPresent()) {
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. Create PIS Cancellation Authorization has failed. Payment not found by id.", requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
@@ -78,6 +82,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         ValidationResult validationResult = createPisCancellationAuthorisationValidator.validate(new CreatePisCancellationAuthorisationPO(pisCommonPaymentResponse.get(), psuData));
         if (validationResult.isNotValid()) {
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of create PIS cancellation authorisation failed: {}",
+                     requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -106,6 +112,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentResponse.isPresent()) {
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. Update PIS Cancellation PSU Data has failed. Payment not found by id.", requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
@@ -113,6 +120,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(pisCommonPaymentResponse.get(), request.getAuthorisationId()));
         if (validationResult.isNotValid()) {
+            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Validation of update PIS cancellation authorisation failed: {}",
+                     requestProviderService.getRequestId(), paymentId, request.getAuthorisationId(), validationResult.getMessageError());
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -143,6 +152,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentResponse.isPresent()) {
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. Get information PIS Cancellation Authorisation has failed. Payment not found by id.",
+                     requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
@@ -150,6 +161,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         ValidationResult validationResult = getPaymentAuthorisationsValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
         if (validationResult.isNotValid()) {
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of get information PIS cancellation authorisation failed: {}",
+                     requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
             return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -158,9 +171,13 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
         PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
         return pisScaAuthorisationService.getCancellationAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder().body(resp).build())
-                   .orElseGet(ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
+                   .orElseGet(() -> {
+                       log.warn("X-Request-ID: [{}], Payment-ID [{}]. Get information PIS Cancellation Authorisation has failed. Authorisation not found by payment id.",
+                                requestProviderService.getRequestId(), paymentId);
+                       return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
                                   .fail(PIS_404, of(RESOURCE_UNKNOWN_404))
-                                  ::build);
+                                  .build();
+                   });
     }
 
     /**
@@ -176,6 +193,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentResponse.isPresent()) {
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. Get SCA status PIS Cancellation Authorisation has failed. Payment not found by id.",
+                     requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<ScaStatus>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
@@ -183,6 +202,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
         if (validationResult.isNotValid()) {
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of get SCA status PIS cancellation authorisation failed: {}",
+                     requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
             return ResponseObject.<ScaStatus>builder()
                        .fail(validationResult.getMessageError())
                        .build();

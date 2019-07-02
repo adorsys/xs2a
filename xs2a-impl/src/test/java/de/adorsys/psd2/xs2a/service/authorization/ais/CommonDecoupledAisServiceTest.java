@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -74,6 +75,8 @@ public class CommonDecoupledAisServiceTest {
     @Mock
     private AisConsentDataService aisConsentDataService;
     @Mock
+    private RequestProviderService requestProviderService;
+    @Mock
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
@@ -95,6 +98,7 @@ public class CommonDecoupledAisServiceTest {
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

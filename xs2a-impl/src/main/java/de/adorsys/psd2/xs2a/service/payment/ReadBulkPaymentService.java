@@ -78,7 +78,10 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
         }
 
         if (spiResponse.hasError()) {
-            return new PaymentInformationResponse<>(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. READ BULK Payment failed. Can't get Payment by id at SPI-level. Error msg: [{}]",
+                     requestProviderService.getRequestId(), spiPaymentOptional.get().getPaymentId(), errorHolder);
+            return new PaymentInformationResponse<>(errorHolder);
         }
 
         SpiBulkPayment spiResponsePayment = spiResponse.getPayload();
