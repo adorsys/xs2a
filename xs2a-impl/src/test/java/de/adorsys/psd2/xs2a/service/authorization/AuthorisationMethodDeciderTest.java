@@ -16,12 +16,16 @@
 
 package de.adorsys.psd2.xs2a.service.authorization;
 
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.UUID;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
@@ -35,6 +39,13 @@ public class AuthorisationMethodDeciderTest {
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
+    @Mock
+    private RequestProviderService requestProviderService;
+
+    @Before
+    public void setUp() {
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+    }
 
     //Multilevel = true
     @Test

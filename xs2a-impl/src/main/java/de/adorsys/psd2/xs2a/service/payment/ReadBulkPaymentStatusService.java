@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -30,12 +31,14 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service("status-bulk-payments")
 @RequiredArgsConstructor
 public class ReadBulkPaymentStatusService implements ReadPaymentStatusService {
@@ -43,6 +46,7 @@ public class ReadBulkPaymentStatusService implements ReadPaymentStatusService {
     private final SpiPaymentFactory spiPaymentFactory;
     private final SpiErrorMapper spiErrorMapper;
     private final BulkPaymentSpi bulkPaymentSpi;
+    private final RequestProviderService requestProviderService;
 
     @Override
     public ReadPaymentStatusResponse readPaymentStatus(List<PisPayment> pisPayments, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData) {
@@ -60,7 +64,10 @@ public class ReadBulkPaymentStatusService implements ReadPaymentStatusService {
         pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
-            return new ReadPaymentStatusResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. READ BULK Payment STATUS failed. Can't get Payment status by id at SPI-level. Error msg: [{}]",
+                     requestProviderService.getRequestId(), spiBulkPaymentOptional.get().getPaymentId(), errorHolder);
+            return new ReadPaymentStatusResponse(errorHolder);
         }
 
         return new ReadPaymentStatusResponse(spiResponse.getPayload());

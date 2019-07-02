@@ -18,8 +18,10 @@ package de.adorsys.psd2.xs2a.domain;
 
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ErrorHolder {
     private final List<String> messages;
@@ -73,5 +75,14 @@ public class ErrorHolder {
         public ErrorHolder build() {
             return new ErrorHolder(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return StringUtils.isBlank(this.getMessage())
+                   ? Optional.ofNullable(getErrorCode())
+                         .map(MessageErrorCode::getName)
+                         .orElse("")
+                   : this.getMessage();
     }
 }

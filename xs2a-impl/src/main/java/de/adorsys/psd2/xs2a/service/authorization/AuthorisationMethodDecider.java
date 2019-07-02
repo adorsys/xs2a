@@ -16,26 +16,35 @@
 
 package de.adorsys.psd2.xs2a.service.authorization;
 
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthorisationMethodDecider {
     private final AspspProfileServiceWrapper aspspProfileService;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Decides whether explicit authorisation method will be used based on tppExplicitAuthorisationPreferred and signingBasketSupported values.
      * Explicit authorisation will be used in case if tppExplicitAuthorisationPreferred = true and signingBasketSupported = true or in case of multilevel SCA
      *
      * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
-     * @param multilevelScaRequired does response have multilevel SCA
+     * @param multilevelScaRequired             does response have multilevel SCA
      * @return is explicit method of authorisation will be used
      */
     public boolean isExplicitMethod(boolean tppExplicitAuthorisationPreferred, boolean multilevelScaRequired) {
-        return multilevelScaRequired
-                   || tppExplicitAuthorisationPreferred && aspspProfileService.isSigningBasketSupported();
+
+        boolean isExplicit = multilevelScaRequired
+                                 || tppExplicitAuthorisationPreferred && aspspProfileService.isSigningBasketSupported();
+
+        log.info("X-Request-ID: [{}]. {} authorisation method chosen",
+                 requestProviderService.getRequestId(), isExplicit ? "EXPLICIT" : "IMPLICIT");
+        return isExplicit;
     }
 
     /**
@@ -44,7 +53,7 @@ public class AuthorisationMethodDecider {
      * Implicit approach is impossible in case of multilevel SCA
      *
      * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
-     * @param multilevelScaRequired does response have multilevel SCA
+     * @param multilevelScaRequired             does response have multilevel SCA
      * @return is implicit method of authorisation will be used
      */
     public boolean isImplicitMethod(boolean tppExplicitAuthorisationPreferred, boolean multilevelScaRequired) {

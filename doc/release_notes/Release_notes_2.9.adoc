@@ -4,6 +4,7 @@
 * Bugfix: Fix the payment ID transfer flow during payment cancellation
 * Bugfix: Account reference is properly validated during confirmation of funds
 * Bugfix: BankOffered consent after authorisation should allow accesses according to chosen by PSU
+* Extend logging for XS2A
 * Delete `isTransactionFeeIndicator` method in SpiPaymentInitiationResponse
 * Delete extra constructor in SpiInitiateAisConsentResponse
 
@@ -25,6 +26,15 @@ Based on new incoming data of accesses Consent changes `AisConsentRequestType` f
  - DEDICATED_ACCOUNTS
 
 And when TPP requests to `Read Account Data` with this Consent ID xs2a will respond according to updated authorised accesses.
+
+== Extend logging for XS2A
+Logs for XS2A `Authorisation`, `AIS`, `PIS`, `PIIS` and `Validation` services were extended with
+covering so-called “unhappy paths”.
+Logs provides important IDs, but never log request data like payment data or consent accounts.
+For filtering through specific request each log were specified by `X-Request-ID` parameter.
+Logging is used `INFO` level. You can find other settings at `logback-spring.xml`.
+Logs are printed to Console and stored to main project directory “logs” folder.
+Each day are stored separately at file like `2019-06-19.0.log` with 10Mb max size.
 
 == Delete `isTransactionFeeIndicator` method in SpiPaymentInitiationResponse
 

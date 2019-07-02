@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.*;
@@ -111,6 +112,8 @@ public class AccountService {
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (!accountConsentOptional.isPresent()) {
+            log.info("X-Request-ID: [{}], Consent-ID [{}]. Get account list failed. Account consent not found by id",
+                     requestProviderService.getRequestId(), consentId);
             return ResponseObject.<Xs2aAccountListHolder>builder()
                        .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                        .build();
@@ -120,6 +123,8 @@ public class AccountService {
 
         ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, withBalance, requestUri));
         if (validationResult.isNotValid()) {
+            log.info("X-Request-ID: [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get account list validation failed: {}",
+                     requestProviderService.getRequestId(), consentId, withBalance, requestUri, validationResult.getMessageError());
             return ResponseObject.<Xs2aAccountListHolder>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -134,8 +139,11 @@ public class AccountService {
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
+            log.info("X-Request-ID: [{}], Consent-ID: [{}]. Get account list failed: couldn't get accounts. Error msg: [{}]",
+                     requestProviderService.getRequestId(), consentId, errorHolder);
             return ResponseObject.<Xs2aAccountListHolder>builder()
-                       .fail(new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)))
+                       .fail(new MessageError(errorHolder))
                        .build();
         }
 
@@ -144,6 +152,8 @@ public class AccountService {
         Optional<AccountConsent> accountConsentUpdated = accountReferenceUpdater.updateAccountReferences(consentId, accountConsent.getAccess(), accountDetails);
 
         if (!accountConsentUpdated.isPresent()) {
+            log.info("X-Request-ID: [{}], Consent-ID: [{}]. Get account list failed: couldn't update account consent access. Actual consent not found by id",
+                     requestProviderService.getRequestId(), consentId);
             return ResponseObject.<Xs2aAccountListHolder>builder()
                        .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                        .build();
@@ -179,6 +189,8 @@ public class AccountService {
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (!accountConsentOptional.isPresent()) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}]. Get account details failed. Account consent not found by id",
+                     requestProviderService.getRequestId(), accountId, consentId);
             return ResponseObject.<Xs2aAccountDetailsHolder>builder()
                        .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                        .build();
@@ -188,6 +200,8 @@ public class AccountService {
 
         ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, accountId, withBalance, requestUri));
         if (validationResult.isNotValid()) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get account details validation failed: {}",
+                     requestProviderService.getRequestId(), accountId, consentId, withBalance, requestUri, validationResult.getMessageError());
             return ResponseObject.<Xs2aAccountDetailsHolder>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -204,14 +218,19 @@ public class AccountService {
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get account details failed: couldn't get account details. Error msg: [{}]",
+                     requestProviderService.getRequestId(), accountId, consentId, errorHolder);
             return ResponseObject.<Xs2aAccountDetailsHolder>builder()
-                       .fail(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS))
+                       .fail(errorHolder)
                        .build();
         }
 
         SpiAccountDetails spiAccountDetails = spiResponse.getPayload();
 
         if (spiAccountDetails == null) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get account details failed: account details empty for consent.",
+                     requestProviderService.getRequestId(), accountId, consentId);
             return ResponseObject.<Xs2aAccountDetailsHolder>builder()
                        .fail(ErrorType.AIS_404, of(RESOURCE_UNKNOWN_404))
                        .build();
@@ -244,6 +263,8 @@ public class AccountService {
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (!accountConsentOptional.isPresent()) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}]. Get balances report failed. Account consent not found by id",
+                     requestProviderService.getRequestId(), accountId, consentId);
             return ResponseObject.<Xs2aBalancesReport>builder()
                        .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                        .build();
@@ -253,6 +274,8 @@ public class AccountService {
 
         ValidationResult validationResult = getBalancesReportValidator.validate(new CommonAccountBalanceRequestObject(accountConsent, accountId, requestUri));
         if (validationResult.isNotValid()) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], RequestUri [{}]. Get balances report validation failed: {}",
+                     requestProviderService.getRequestId(), accountId, consentId, requestUri, validationResult.getMessageError());
             return ResponseObject.<Xs2aBalancesReport>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -268,12 +291,16 @@ public class AccountService {
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get balances report failed: couldn't get balances by account id.",
+                     requestProviderService.getRequestId(), accountId, consentId);
             return ResponseObject.<Xs2aBalancesReport>builder()
                        .fail(new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)))
                        .build();
         }
 
         if (spiResponse.getPayload() == null) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get balances report failed: balances empty for account.",
+                     requestProviderService.getRequestId(), accountId, consentId);
             return ResponseObject.<Xs2aBalancesReport>builder()
                        .fail(ErrorType.AIS_404, of(RESOURCE_UNKNOWN_404))
                        .build();
@@ -302,19 +329,21 @@ public class AccountService {
      * @return TransactionsReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances
      * sections is added
      */
-    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(Xs2aTransactionsReportByPeriodRequest request) {
+    // TODO need refactoring - 99 lines. PMD block from 100 lines https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/912
+    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(Xs2aTransactionsReportByPeriodRequest request) { //NOPMD
         String consentId = request.getConsentId();
-
+        String accountId = request.getAccountId();
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_TRANSACTION_LIST_REQUEST_RECEIVED);
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (!accountConsentOptional.isPresent()) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}]. Get transactions report by period failed. Account consent not found by id",
+                     requestProviderService.getRequestId(), accountId, consentId);
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                        .build();
         }
 
-        String accountId = request.getAccountId();
         String requestUri = request.getRequestUri();
         boolean withBalance = request.isWithBalance();
         AccountConsent accountConsent = accountConsentOptional.get();
@@ -326,6 +355,8 @@ public class AccountService {
                                                                                                 request.getBookingStatus());
         ValidationResult validationResult = getTransactionsReportValidator.validate(validatorObject);
         if (validationResult.isNotValid()) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get transactions report by period validation failed: {}",
+                     requestProviderService.getRequestId(), accountId, consentId, withBalance, requestUri, validationResult.getMessageError());
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -342,7 +373,6 @@ public class AccountService {
 
         boolean isTransactionsShouldContainBalances =
             !aspspProfileService.isTransactionsWithoutBalancesSupported() || withBalance;
-
         SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
 
         SpiResponse<SpiTransactionReport> spiResponse = accountSpi.requestTransactionsForAccount(
@@ -359,18 +389,26 @@ public class AccountService {
         if (spiResponse.hasError()) {
             // in this particular call we use NOT_SUPPORTED to indicate that requested Content-type is not ok for us
             if (spiResponse.getResponseStatus() == SpiResponseStatus.NOT_SUPPORTED) {
+                log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transactions report by period failed: requested content-type not json or text.",
+                         requestProviderService.getRequestId(), accountId, consentId);
                 return ResponseObject.<Xs2aTransactionsReport>builder()
                            .fail(ErrorType.AIS_406, of(REQUESTED_FORMATS_INVALID))
                            .build();
             }
+
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transactions report by period failed: Request transactions for account fail at SPI level: {}",
+                     requestProviderService.getRequestId(), accountId, consentId, errorHolder);
             return ResponseObject.<Xs2aTransactionsReport>builder()
-                       .fail(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS))
+                       .fail(errorHolder)
                        .build();
         }
 
         SpiTransactionReport spiTransactionReport = spiResponse.getPayload();
 
         if (spiTransactionReport == null) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transactions report by period failed: transactions empty for account.",
+                     requestProviderService.getRequestId(), accountId, consentId);
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(ErrorType.AIS_404, of(RESOURCE_UNKNOWN_404))
                        .build();
@@ -410,6 +448,8 @@ public class AccountService {
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (!accountConsentOptional.isPresent()) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}]. Get transaction details failed. Account consent not found by id",
+                     requestProviderService.getRequestId(), accountId, consentId);
             return ResponseObject.<Transactions>builder()
                        .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                        .build();
@@ -419,6 +459,8 @@ public class AccountService {
 
         ValidationResult validationResult = getTransactionDetailsValidator.validate(new CommonAccountTransactionsRequestObject(accountConsent, accountId, requestUri));
         if (validationResult.isNotValid()) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], RequestUri [{}]. Get transaction details validation failed: {}",
+                     requestProviderService.getRequestId(), accountId, consentId, requestUri, validationResult.getMessageError());
             return ResponseObject.<Transactions>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -435,14 +477,19 @@ public class AccountService {
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transaction details failed: Request transactions for account fail at SPI level: {}",
+                     requestProviderService.getRequestId(), accountId, consentId, errorHolder);
             return ResponseObject.<Transactions>builder()
-                       .fail(new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)))
+                       .fail(new MessageError(errorHolder))
                        .build();
         }
 
         SpiTransaction payload = spiResponse.getPayload();
 
         if (payload == null) {
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transaction details failed: transaction details empty for account and transaction.",
+                     requestProviderService.getRequestId(), accountId, consentId);
             return ResponseObject.<Transactions>builder()
                        .fail(ErrorType.AIS_404, of(RESOURCE_UNKNOWN_404))
                        .build();
