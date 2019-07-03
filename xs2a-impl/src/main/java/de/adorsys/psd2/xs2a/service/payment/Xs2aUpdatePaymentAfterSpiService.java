@@ -16,18 +16,23 @@
 
 package de.adorsys.psd2.xs2a.service.payment;
 
-import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class Xs2aUpdatePaymentStatusAfterSpiService {
-    private final UpdatePaymentStatusAfterSpiServiceEncrypted updatePaymentStatusAfterSpiService;
+public class Xs2aUpdatePaymentAfterSpiService {
+    private final UpdatePaymentAfterSpiServiceEncrypted updatePaymentStatusAfterSpiService;
 
     public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
         return updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, status);
+    }
+
+    public boolean updatePaymentCancellationTppRedirectUri(@NotNull String paymentId, @NotNull TppRedirectUri tppRedirectUri) {
+        return updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(paymentId, tppRedirectUri);
     }
 }

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
@@ -30,6 +31,7 @@ import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -137,6 +139,17 @@ public class PaymentModelMapperPsd2 {
         parameters.setTppExplicitAuthorisationPreferred(tppExplicitAuthorisationPreferred);
         parameters.setPsuData(psuData);
         return parameters;
+    }
+
+    public PisPaymentCancellationRequest mapToPaymentCancellationRequest(String paymentProduct, String paymentService, String paymentId,
+                                                                         Boolean tppExplicitAuthorisationPreferred,
+                                                                         String tpPRedirectURI, String tpPNokRedirectURI){
+        return new PisPaymentCancellationRequest(
+            PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")),
+            Optional.ofNullable(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")),
+            paymentId,
+            BooleanUtils.isTrue(tppExplicitAuthorisationPreferred),
+            tppRedirectUriMapper.mapToTppRedirectUri(tpPRedirectURI, tpPNokRedirectURI));
     }
 
     public PaymentInitiationCancelResponse202 mapToPaymentInitiationCancelResponse(CancelPaymentResponse cancelPaymentResponse) {

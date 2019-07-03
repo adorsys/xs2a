@@ -274,25 +274,23 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         CmsPayment payment = cmsPsuPisMapper.mapToCmsPayment(commonPayment.getPayments());
         TppInfoEntity tppInfo = commonPayment.getTppInfo();
 
-        String tppOkRedirectUri = tppInfo.getRedirectUri();
-        String tppNokRedirectUri = tppInfo.getNokRedirectUri();
-
         return new CmsPaymentResponse(
             payment,
             authorisation.getExternalId(),
-            tppOkRedirectUri,
-            tppNokRedirectUri);
+            tppInfo.getRedirectUri(),
+            tppInfo.getNokRedirectUri());
     }
 
     private CmsPaymentResponse buildCmsPaymentResponseForCancellation(PisAuthorization authorisation) {
         PisCommonPaymentData commonPayment = authorisation.getPaymentData();
         CmsPayment payment = cmsPsuPisMapper.mapToCmsPayment(commonPayment.getPayments());
+        TppInfoEntity tppInfo = commonPayment.getTppInfo();
 
         return new CmsPaymentResponse(
             payment,
             authorisation.getExternalId(),
-            null,   // TODO temporary solution to keep the response the same as for payment confirmation (till the specification clarification) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/588
-            null);
+            tppInfo.getCancelRedirectUri(),
+            tppInfo.getCancelNokRedirectUri());
     }
 
     private void changeAuthorisationStatusToFailed(PisAuthorization authorisation) {

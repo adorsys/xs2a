@@ -1,0 +1,10 @@
+{
+  "paymentType": "payments",
+  "paymentProduct": "sepa-credit-transfers",
+  "encryptedPaymentId": "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b",
+  "tppExplicitAuthorisationPreferred": true,
+  "tppRedirectUri": {
+    "uri": "ok_url",
+    "nokUri": "nok_url"
+  }
+}
