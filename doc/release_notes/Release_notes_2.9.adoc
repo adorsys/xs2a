@@ -8,9 +8,9 @@
 * Delete `isTransactionFeeIndicator` method in SpiPaymentInitiationResponse
 * Delete extra constructor in SpiInitiateAisConsentResponse
 * Bugfix: Read or update info by another TPP
-* Bugfix: Fix saving of tpp redirect URIs after payment cancellation
 * Bugfix: Fix saving of TPP redirect URIs after payment cancellation
 * Bugfix: Missing validation for 'withBalance' with multiple accounts
+* Delete deprecated columns in `crypto_algorithm` table
 
 == Bugfix: Fix the payment ID transfer flow during payment cancellation
 From now on, response to the Payment Cancellation Request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`)
@@ -50,7 +50,6 @@ use `getTransactionFeeIndicator` method instead.
 `SpiInitiateAisConsentResponse(SpiAccountAccess, boolean)` constructor was removed from SpiInitiateAisConsentResponse
 and `SpiInitiateAisConsentResponse(SpiAccountAccess, boolean, String)` was replaced with the Lombok `@AllArgsConstructor` version.
 
-
 == Bugfix: Read or update info by another TPP
 
 From now on, while sending HTTP requests to the XS2A for all components (AIS, or PIIS)
@@ -60,7 +59,6 @@ where TPP info from certificate is not correct validators will return an error w
 
 From now on, all HTTP requests to the XS2A could contain custom 'tpp-qwac-certificate' header even if 'mockspi' profile is used
 
-== Bugfix: Fix saving of tpp redirect URIs after payment cancellation
 == Bugfix: Fix saving of TPP redirect URIs after payment cancellation
 Headers `TPP-Redirect-URI` and `TPP-Nok-Redirect-URI` for Payment Cancellation Request (`DELETE /v1/{payment_service}/{payment_product}/{payment_id}`) are stored in `tpp_info` table.
 Added validators for headers: `tpp-redirect-uri`, `x-request-id` and `tpp-explicit-authorisation-preferred` for Cancellation Payment Request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`).
@@ -69,3 +67,8 @@ Added validators for headers: `tpp-redirect-uri`, `x-request-id` and `tpp-explic
 From now on, when TPP sends `Account List` (`GET /v1/accounts`) request with `withBalance` parameter
 and AIS Consent access rights given to dedicated accounts and number of accounts exceeds number of balances,
 TPP in this case will receive 401 response code with `CONSENT_INVALID` message.
+
+== Delete deprecated columns in `crypto_algorithm` table
+
+Columns `algorithm`, `version`, `key_length_in_bytes`, `hash_iterations`, `skf_algorithm` were deleted in `crypto_algorithm`
+table. Corresponding liquibase script file `0068-remove-deprecated-columns-from-crypto-algorithm-table.xml` was added.
