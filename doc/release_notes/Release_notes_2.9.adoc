@@ -12,6 +12,7 @@
 * Bugfix: Missing validation for 'withBalance' with multiple accounts
 * Delete deprecated columns in `crypto_algorithm` table
 * Bugfix: field `aspspAccountId` no longer available for SPI.
+* Bugfix: Xs2a should respond with error 401 'CERTIFICATE_INVALID' if TPP has no appropriate role for requested service
 
 == Bugfix: Fix the payment ID transfer flow during payment cancellation
 From now on, response to the Payment Cancellation Request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`)
@@ -77,3 +78,9 @@ table. Corresponding liquibase script file `0068-remove-deprecated-columns-from-
 == Bugfix: field `aspspAccountId` no longer available for SPI.
 
 From now on, the `aspspAccoundId` field is present on SPI level and can be read by using CMS-PSU-API.
+
+== Bugfix: Xs2a should respond with error 401 'CERTIFICATE_INVALID' if TPP has no appropriate role for requested service
+
+From now on, while sending HTTP requests to the XS2A for all components (AIS, PIS or PIIS)
+where TPP does not have roles for using current endpoint then response contains an error 'CERTIFICATE_INVALID' and HTTP code is 401
+
