@@ -55,6 +55,7 @@ public class PaymentModelMapperPsd2 {
     private final HrefLinkMapper hrefLinkMapper;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final ScaMethodsMapper scaMethodsMapper;
+    private final Xs2aAddressMapper xs2aAddressMapper;
 
     public Object mapToGetPaymentResponse(Object payment, PaymentType type, String paymentProduct) {
         if (standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct)) {
@@ -66,12 +67,12 @@ public class PaymentModelMapperPsd2 {
             SinglePayment xs2aPayment = (SinglePayment) payment;
             PaymentInitiationWithStatusResponse paymentResponse = new PaymentInitiationWithStatusResponse();
             paymentResponse.setEndToEndIdentification(xs2aPayment.getEndToEndIdentification());
-            paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference12(xs2aPayment.getDebtorAccount()));
+            paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getDebtorAccount()));
             paymentResponse.setInstructedAmount(amountModelMapper.mapToAmount(xs2aPayment.getInstructedAmount()));
-            paymentResponse.setCreditorAccount(accountModelMapper.mapToAccountReference12(xs2aPayment.getCreditorAccount()));
+            paymentResponse.setCreditorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getCreditorAccount()));
             paymentResponse.setCreditorAgent(xs2aPayment.getCreditorAgent());
             paymentResponse.setCreditorName(xs2aPayment.getCreditorName());
-            paymentResponse.setCreditorAddress(accountModelMapper.mapToAddress12(xs2aPayment.getCreditorAddress()));
+            paymentResponse.setCreditorAddress(xs2aAddressMapper.mapToAddress(xs2aPayment.getCreditorAddress()));
             paymentResponse.setRemittanceInformationUnstructured(xs2aPayment.getRemittanceInformationUnstructured());
             paymentResponse.setTransactionStatus(mapToTransactionStatus(xs2aPayment.getTransactionStatus()));
             return paymentResponse;
@@ -80,12 +81,12 @@ public class PaymentModelMapperPsd2 {
             PeriodicPaymentInitiationWithStatusResponse paymentResponse = new PeriodicPaymentInitiationWithStatusResponse();
 
             paymentResponse.setEndToEndIdentification(xs2aPayment.getEndToEndIdentification());
-            paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference12(xs2aPayment.getDebtorAccount()));
+            paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getDebtorAccount()));
             paymentResponse.setInstructedAmount(amountModelMapper.mapToAmount(xs2aPayment.getInstructedAmount()));
-            paymentResponse.setCreditorAccount(accountModelMapper.mapToAccountReference12(xs2aPayment.getCreditorAccount()));
+            paymentResponse.setCreditorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getCreditorAccount()));
             paymentResponse.setCreditorAgent(xs2aPayment.getCreditorAgent());
             paymentResponse.setCreditorName(xs2aPayment.getCreditorName());
-            paymentResponse.setCreditorAddress(accountModelMapper.mapToAddress12(xs2aPayment.getCreditorAddress()));
+            paymentResponse.setCreditorAddress(xs2aAddressMapper.mapToAddress(xs2aPayment.getCreditorAddress()));
             paymentResponse.setRemittanceInformationUnstructured(xs2aPayment.getRemittanceInformationUnstructured());
             paymentResponse.setStartDate(xs2aPayment.getStartDate());
             paymentResponse.setEndDate(xs2aPayment.getEndDate());
@@ -100,7 +101,7 @@ public class PaymentModelMapperPsd2 {
 
             paymentResponse.setBatchBookingPreferred(xs2aPayment.getBatchBookingPreferred());
             paymentResponse.setRequestedExecutionDate(xs2aPayment.getRequestedExecutionDate());
-            paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference12(xs2aPayment.getDebtorAccount()));
+            paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getDebtorAccount()));
             paymentResponse.setPayments(mapToBulkPartList(xs2aPayment.getPayments()));
             paymentResponse.setTransactionStatus(mapToTransactionStatus(xs2aPayment.getTransactionStatus()));
             return paymentResponse;
@@ -171,10 +172,10 @@ public class PaymentModelMapperPsd2 {
     private PaymentInitiationBulkElementJson mapToBulkPart(SinglePayment payment) {
         PaymentInitiationBulkElementJson bulkPart = new PaymentInitiationBulkElementJson().endToEndIdentification(payment.getEndToEndIdentification());
         bulkPart.setInstructedAmount(amountModelMapper.mapToAmount(payment.getInstructedAmount()));
-        bulkPart.setCreditorAccount(accountModelMapper.mapToAccountReference12(payment.getCreditorAccount()));
+        bulkPart.setCreditorAccount(accountModelMapper.mapToAccountReference(payment.getCreditorAccount()));
         bulkPart.setCreditorAgent(payment.getCreditorAgent());
         bulkPart.setCreditorName(payment.getCreditorName());
-        bulkPart.setCreditorAddress(accountModelMapper.mapToAddress12(payment.getCreditorAddress()));
+        bulkPart.setCreditorAddress(xs2aAddressMapper.mapToAddress(payment.getCreditorAddress()));
         bulkPart.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         return bulkPart;
     }

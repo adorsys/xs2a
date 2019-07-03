@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.core.profile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -34,7 +33,6 @@ import java.util.stream.Stream;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(value = "aspspAccountId", allowSetters = true)
 @ApiModel(description = "Account Reference", value = "AccountReference")
 public class AccountReference {
     @ApiModelProperty(example = "123-DEDE89370400440532013000-EUR")
