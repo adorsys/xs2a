@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
@@ -33,11 +32,12 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
-import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
+import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -90,7 +90,10 @@ public class PaymentModelMapperTest {
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
 
     @Spy
-    AccountModelMapper accountModelMapper = new AccountModelMapper(amountModelMapper, new HrefLinkMapper(new ObjectMapper()));
+    AccountModelMapper accountModelMapper = new AccountModelMapperImpl();
+
+    @Spy
+    Xs2aAddressMapper xs2aAddressMapper = Mappers.getMapper(Xs2aAddressMapper.class);
 
     @Before
     public void setUp() {
