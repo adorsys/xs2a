@@ -22,7 +22,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
-import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
@@ -112,7 +112,7 @@ public class CancelPaymentTest {
     @MockBean
     private PaymentCancellationSpi paymentCancellationSpi;
     @MockBean
-    private UpdatePaymentStatusAfterSpiServiceEncrypted updatePaymentStatusAfterSpiServiceEncrypted;
+    private UpdatePaymentAfterSpiServiceEncrypted updatePaymentStatusAfterSpiServiceEncrypted;
 
     @Before
     public void init() {
@@ -140,6 +140,8 @@ public class CancelPaymentTest {
         httpHeadersExplicit.add("PSU-Corporate-ID", "Some corporate id");
         httpHeadersExplicit.add("PSU-Corporate-ID-Type", "Some corporate id type");
         httpHeadersExplicit.add("PSU-IP-Address", "1.1.1.1");
+        httpHeadersExplicit.add("TPP-Redirect-URI", "ok.uri");
+        httpHeadersExplicit.add("TPP-Nok-Redirect-URI", "nok.uri");
 
         // when we use Explicit auth mode we need to set 'true' and value 'signingBasketSupported' in profile also should be 'true'
         httpHeadersExplicit.add("TPP-Explicit-Authorisation-Preferred", "true");

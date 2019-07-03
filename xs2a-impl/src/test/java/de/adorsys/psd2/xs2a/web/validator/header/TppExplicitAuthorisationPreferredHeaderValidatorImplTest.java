@@ -29,15 +29,15 @@ import static de.adorsys.psd2.xs2a.web.validator.header.AbstractHeaderValidatorI
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TppExplicitAuthorisationPrefferredHeaderValidatorImplTest {
+public class TppExplicitAuthorisationPreferredHeaderValidatorImplTest {
 
-    private TppExplicitAuthorisationPrefferredHeaderValidatorImpl validator;
+    private TppExplicitAuthorisationPreferredHeaderValidatorImpl validator;
     private MessageError messageError;
     private Map<String, String> headers;
 
     @Before
     public void setUp() {
-        validator = new TppExplicitAuthorisationPrefferredHeaderValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400));
+        validator = new TppExplicitAuthorisationPreferredHeaderValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400));
         messageError = new MessageError();
         headers = new HashMap<>();
     }

@@ -17,8 +17,8 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -52,8 +52,8 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
         this.authorisationMethodDecider = authorisationMethodDecider;
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args( paymentType, paymentProduct, paymentId,tppExplicitAuthorisationPreferred)", returning = "result", argNames = "result,paymentType,paymentProduct,paymentId,tppExplicitAuthorisationPreferred")
-    public ResponseObject<CancelPaymentResponse> cancelPayment(ResponseObject<CancelPaymentResponse> result, PaymentType paymentType, String paymentProduct, String paymentId, Boolean tppExplicitAuthorisationPreferred) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args(paymentCancellationRequest)", returning = "result", argNames = "result,paymentCancellationRequest")
+    public ResponseObject<CancelPaymentResponse> cancelPayment(ResponseObject<CancelPaymentResponse> result, PisPaymentCancellationRequest paymentCancellationRequest) {
         if (!result.hasError()) {
             CancelPaymentResponse response = result.getBody();
 
@@ -61,7 +61,7 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
             if (isStartAuthorisationLinksNeeded(isScaRequired, response.getTransactionStatus())) {
 
                 // in payment cancellation case 'multilevelScaRequired' is always false
-                boolean isExplicitMethod = authorisationMethodDecider.isExplicitMethod(tppExplicitAuthorisationPreferred, false);
+                boolean isExplicitMethod = authorisationMethodDecider.isExplicitMethod(paymentCancellationRequest.getTppExplicitAuthorisationPreferred(), false);
                 response.setLinks(new PaymentCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
                                                                response, isExplicitMethod));
             }

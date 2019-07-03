@@ -16,10 +16,11 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiService;
-import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiService;
+import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -30,9 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UpdatePaymentStatusAfterSpiServiceInternalEncrypted implements UpdatePaymentStatusAfterSpiServiceEncrypted {
+public class UpdatePaymentAfterSpiServiceInternalEncrypted implements UpdatePaymentAfterSpiServiceEncrypted {
     private final SecurityDataService securityDataService;
-    private final UpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    private final UpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
 
     @Override
     @Transactional
@@ -41,6 +42,18 @@ public class UpdatePaymentStatusAfterSpiServiceInternalEncrypted implements Upda
                    .map(id -> updatePaymentStatusAfterSpiService.updatePaymentStatus(id, status))
                    .orElseGet(() -> {
                        log.info("Encrypted Payment ID [{}]. Update payment status by id failed, couldn't decrypt payment id",
+                                encryptedPaymentId);
+                       return false;
+                   });
+    }
+
+    @Override
+    @Transactional
+    public boolean updatePaymentCancellationTppRedirectUri(@NotNull String encryptedPaymentId, @NotNull TppRedirectUri tppRedirectUri) {
+        return securityDataService.decryptId(encryptedPaymentId)
+                   .map(id -> updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(id, tppRedirectUri))
+                   .orElseGet(() -> {
+                       log.info("Encrypted Payment ID [{}]. Update cancellation payment tpp redirect URIs by id failed, couldn't decrypt payment id",
                                 encryptedPaymentId);
                        return false;
                    });

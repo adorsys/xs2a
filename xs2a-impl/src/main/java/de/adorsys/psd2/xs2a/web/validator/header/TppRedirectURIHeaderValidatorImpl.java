@@ -16,31 +16,38 @@
 
 package de.adorsys.psd2.xs2a.web.validator.header;
 
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_EXPLICIT_AUTHORISATION_PREFERRED;
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_REDIRECT_PREFERRED;
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_REDIRECT_URI;
 
 @Component
-public class TppExplicitAuthorisationPrefferredHeaderValidatorImpl extends AbstractHeaderValidatorImpl
-    implements ConsentHeaderValidator, PaymentHeaderValidator {
+public class TppRedirectURIHeaderValidatorImpl extends AbstractHeaderValidatorImpl
+    implements CancelPaymentHeaderValidator {
 
     @Autowired
-    public TppExplicitAuthorisationPrefferredHeaderValidatorImpl(ErrorBuildingService errorBuildingService) {
+    public TppRedirectURIHeaderValidatorImpl(ErrorBuildingService errorBuildingService) {
         super(errorBuildingService);
     }
 
     @Override
     protected String getHeaderName() {
-        return TPP_EXPLICIT_AUTHORISATION_PREFERRED;
+        return TPP_REDIRECT_URI;
     }
 
     @Override
-    public void validate(Map<String, String> headers, MessageError messageError) {
-        checkBooleanFormat(headers, messageError);
+    protected ValidationResult validate(Map<String, String> headers) {
+        String tppRedirectPreferredHeader = headers.get(TPP_REDIRECT_PREFERRED);
+        if (BooleanUtils.toBoolean(tppRedirectPreferredHeader)) {
+            return checkIfHeaderIsPresented(headers);
+        }
+
+        return ValidationResult.valid();
     }
 }

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.api.service;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,10 +27,10 @@ import org.jetbrains.annotations.NotNull;
  * This is base version of the service that contains all method declarations.
  * Should not be implemented directly, consider using one of the interfaces that extends this one.
  *
- * @see de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiService
- * @see de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEncrypted
+ * @see UpdatePaymentAfterSpiService
+ * @see UpdatePaymentAfterSpiServiceEncrypted
  */
-interface UpdatePaymentStatusAfterSpiServiceBase {
+interface UpdatePaymentAfterSpiServiceBase {
 
     /**
      * Updates a Status of Payment object by its ID and PSU ID
@@ -39,4 +40,13 @@ interface UpdatePaymentStatusAfterSpiServiceBase {
      * @return          true if the status was updated, false otherwise
      */
     boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status);
+
+    /**
+     * Updates a Tpp Info of Payment object by its ID
+     *
+     * @param paymentId      ID of Payment
+     * @param tppRedirectUri Tpp redirect URIs
+     * @return true if the status was updated, false otherwise
+     */
+    boolean updatePaymentCancellationTppRedirectUri(@NotNull String paymentId, @NotNull TppRedirectUri tppRedirectUri);
 }

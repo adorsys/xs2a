@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.api.PaymentApi;
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import de.adorsys.psd2.model.PaymentInitiationCancelResponse202;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
@@ -199,7 +200,19 @@ public class PaymentController implements PaymentApi {
 
     // Method for raw payment products
     @Override
-    public ResponseEntity<PaymentInitationRequestResponse201> initiatePayment(String body, UUID xRequestID, String psUIPAddress, String paymentService, String paymentProduct, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String consentID, Boolean tpPRedirectPreferred, String tpPRedirectURI, String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred, String tpPRejectionNoFundsPreferred, String tpPNotificationURI, String tpPNotificationContentPreferred, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity<PaymentInitationRequestResponse201> initiatePayment(String body, UUID xRequestID, String psUIPAddress,
+                                                                              String paymentService, String paymentProduct,
+                                                                              String digest, String signature, byte[] tpPSignatureCertificate,
+                                                                              String PSU_ID, String psUIDType, String psUCorporateID,
+                                                                              String psUCorporateIDType, String consentID, Boolean tpPRedirectPreferred,
+                                                                              String tpPRedirectURI, String tpPNokRedirectURI,
+                                                                              Boolean tpPExplicitAuthorisationPreferred,
+                                                                              String tpPRejectionNoFundsPreferred,
+                                                                              String tpPNotificationURI, String tpPNotificationContentPreferred,
+                                                                              String psUIPPort, String psUAccept, String psUAcceptCharset,
+                                                                              String psUAcceptEncoding, String psUAcceptLanguage,
+                                                                              String psUUserAgent, String psUHttpMethod,
+                                                                              UUID psUDeviceID, String psUGeoLocation) {
         // As this method is mapped to '/v1/{payment-service}/{payment-product}' path, we need to check payment-service value to be compliant with spec
         if (!PaymentType.getByValue(paymentService).isPresent()) {
             ResponseObject<TransactionStatus> responseObject = ResponseObject.<TransactionStatus>builder()
@@ -234,8 +247,9 @@ public class PaymentController implements PaymentApi {
                                         String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage,
                                         String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation, Boolean tppExplicitAuthorisationPreferred) {
 
+        PisPaymentCancellationRequest paymentCancellationRequest = paymentModelMapperPsd2.mapToPaymentCancellationRequest(paymentProduct, paymentService, paymentId, tppExplicitAuthorisationPreferred, tpPRedirectURI, tpPNokRedirectURI);
         ResponseObject<CancelPaymentResponse> serviceResponse = PaymentType.getByValue(paymentService)
-                                                                    .map(type -> xs2aPaymentService.cancelPayment(type, paymentProduct, paymentId, BooleanUtils.isTrue(tppExplicitAuthorisationPreferred)))
+                                                                    .map(type -> xs2aPaymentService.cancelPayment(paymentCancellationRequest))
                                                                     .orElseGet(ResponseObject.<CancelPaymentResponse>builder()
                                                                                    .fail(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR))::build);
 
@@ -333,6 +347,7 @@ public class PaymentController implements PaymentApi {
                                           .build(), responseHeaders);
     }
 
+    //TODO: Remove headers `tpPRedirectURI` and `tpPNokRedirectURI` https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/913
     @Override
     public ResponseEntity startPaymentInitiationCancellationAuthorisation(String paymentService, String paymentProduct,
                                                                           String paymentId, UUID xRequestID, String digest,

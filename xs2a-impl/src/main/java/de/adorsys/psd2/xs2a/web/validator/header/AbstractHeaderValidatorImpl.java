@@ -59,7 +59,7 @@ public abstract class AbstractHeaderValidatorImpl {
         return ValidationResult.valid();
     }
 
-    private ValidationResult checkIfHeaderIsPresented(Map<String, String> headers) {
+    protected ValidationResult checkIfHeaderIsPresented(Map<String, String> headers) {
         if (!headers.containsKey(getHeaderName())) {
             return ValidationResult.invalid(
                 errorBuildingService.buildErrorType(), TppMessageInformation.of(FORMAT_ERROR,

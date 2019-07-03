@@ -87,7 +87,7 @@ public class CancelPaymentServiceTest {
     @Mock
     private SpiErrorMapper spiErrorMapper;
     @Mock
-    private Xs2aUpdatePaymentStatusAfterSpiService xs2aUpdatePaymentStatusAfterSpiService;
+    private Xs2aUpdatePaymentAfterSpiService xs2AUpdatePaymentAfterSpiService;
     @Mock
     private PaymentCancellationAuthorisationNeededDecider paymentCancellationAuthorisationNeededDecider;
     @Mock
@@ -142,7 +142,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
 
         // Then
         assertThat(response.hasError()).isFalse();
@@ -181,7 +182,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
 
         // Then
         assertThat(response.hasError()).isTrue();
@@ -201,7 +203,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
 
         // Then
         assertThat(response.hasError()).isFalse();
@@ -228,7 +231,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
 
         // Then
         assertThat(response.hasError()).isFalse();
@@ -251,7 +255,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
 
         // Then
         assertThat(response.hasError()).isFalse();
@@ -271,7 +276,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
 
         // Then
         assertThat(response.hasError()).isTrue();
@@ -294,7 +300,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
         // Then
         assertThat(response.hasError()).isTrue();
     }
@@ -316,7 +323,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
         // Then
         assertThat(response.hasError()).isFalse();
         assertThat(response.getBody()).isEqualTo(getCancelPaymentResponse(true, ACWC));
@@ -348,7 +356,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          true);
+                                                                                                          true,
+                                                                                                          null);
         // Then
         assertThat(response.hasError()).isFalse();
         assertThat(response.getBody()).isEqualTo(cancelPaymentResponseExpected);
@@ -376,7 +385,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          true);
+                                                                                                          true,
+                                                                                                          null);
         // Then
         assertThat(response.hasError()).isTrue();
         assertThat(response.getError().getErrorType()).isEqualTo(PIS_CANC_405);

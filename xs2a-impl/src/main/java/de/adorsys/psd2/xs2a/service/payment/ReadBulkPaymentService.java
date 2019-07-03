@@ -47,7 +47,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformationResponse<BulkPayment>> {
     private final SpiContextDataProvider spiContextDataProvider;
-    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    private final Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
     private final BulkPaymentSpi bulkPaymentSpi;
     private final SpiToXs2aBulkPaymentMapper spiToXs2aBulkPaymentMapper;
     private final SpiErrorMapper spiErrorMapper;
