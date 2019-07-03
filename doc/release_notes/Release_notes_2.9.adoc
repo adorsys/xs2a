@@ -8,6 +8,8 @@
 * Delete `isTransactionFeeIndicator` method in SpiPaymentInitiationResponse
 * Delete extra constructor in SpiInitiateAisConsentResponse
 * Bugfix: Read or update info by another TPP
+* Bugfix: Fix saving of TPP redirect URIs after payment cancellation
+* Bugfix: Missing validation for 'withBalance' with multiple accounts
 
 == Bugfix: Fix the payment ID transfer flow during payment cancellation
 From now on, response to the Payment Cancellation Request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`)
@@ -56,3 +58,12 @@ where TPP info from certificate is not correct validators will return an error w
 == Feature: Requests with custom 'tpp-qwac-certificate' header
 
 From now on, all HTTP requests to the XS2A could contain custom 'tpp-qwac-certificate' header even if 'mockspi' profile is used
+
+== Bugfix: Fix saving of TPP redirect URIs after payment cancellation
+Headers `TPP-Redirect-URI` and `TPP-Nok-Redirect-URI` for Payment Cancellation Request (`DELETE /v1/{payment_service}/{payment_product}/{payment_id}`) are stored in `tpp_info` table.
+Added validators for headers: `tpp-redirect-uri`, `x-request-id` and `tpp-explicit-authorisation-preferred` for Cancellation Payment Request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`).
+
+== Bugfix: Missing validation for 'withBalance' with multiple accounts
+From now on, when TPP sends `Account List` (`GET /v1/accounts`) request with `withBalance` parameter
+and AIS Consent access rights given to dedicated accounts and number of accounts exceeds number of balances,
+TPP in this case will receive 401 response code with `CONSENT_INVALID` message.
