@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -33,6 +34,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
@@ -64,6 +67,8 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     private PisEndpointAccessCheckerService pisEndpointAccessCheckerService;
     @Mock
     PaymentTypeAndProductValidator paymentProductAndTypeValidator;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @InjectMocks
     private UpdatePisCancellationPsuDataValidator updatePisCancellationPsuDataValidator;
@@ -86,6 +91,7 @@ public class UpdatePisCancellationPsuDataValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(paymentProductAndTypeValidator.validateTypeAndProduct(PaymentType.SINGLE, WRONG_PAYMENT_PRODUCT))
             .thenReturn(ValidationResult.invalid(PAYMENT_PRODUCT_VALIDATION_ERROR));
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test
