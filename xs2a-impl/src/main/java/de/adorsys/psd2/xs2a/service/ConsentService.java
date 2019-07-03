@@ -114,7 +114,7 @@ public class ConsentService {
 
         ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(request, psuData));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}]. Create account consent with response validation failed: {}",
+            log.info("X-Request-ID: [{}]. Create account consent with response - validation failed: {}",
                      requestProviderService.getRequestId(), validationResult.getMessageError());
             return ResponseObject.<CreateConsentResponse>builder()
                        .fail(validationResult.getMessageError())
@@ -213,7 +213,7 @@ public class ConsentService {
 
         ValidationResult validationResult = getAccountConsentsStatusByIdValidator.validate(new CommonConsentObject(validatedAccountConsent));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}]. Create account consent with response validation failed: {}",
+            log.info("X-Request-ID: [{}]. Create account consents status - validation failed: {}",
                      requestProviderService.getRequestId(), validationResult.getMessageError());
             return ResponseObject.<ConsentStatusResponse>builder()
                        .fail(validationResult.getMessageError())
@@ -261,7 +261,7 @@ public class ConsentService {
             AccountConsent accountConsent = accountConsentOptional.get();
             ValidationResult validationResult = deleteAccountConsentsByIdValidator.validate(new CommonConsentObject(accountConsent));
             if (validationResult.isNotValid()) {
-                log.info("X-Request-ID: [{}], Consent-ID: [{}]. Delete account consent validation failed: {}",
+                log.info("X-Request-ID: [{}], Consent-ID: [{}]. Delete account consent - validation failed: {}",
                          requestProviderService.getRequestId(), accountConsent.getId(), validationResult.getMessageError());
                 return ResponseObject.<Void>builder()
                            .fail(validationResult.getMessageError())
@@ -319,7 +319,7 @@ public class ConsentService {
 
         ValidationResult validationResult = getAccountConsentByIdValidator.validate(new CommonConsentObject(consent));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], Consent-ID: [{}]. Get account consent validation failed: {}",
+            log.info("X-Request-ID: [{}], Consent-ID: [{}]. Get account consent - validation failed: {}",
                      requestProviderService.getRequestId(), consentId, validationResult.getMessageError());
             return ResponseObject.<AccountConsent>builder()
                        .fail(validationResult.getMessageError())
@@ -412,7 +412,7 @@ public class ConsentService {
 
         ValidationResult validationResult = createConsentAuthorisationValidator.validate(new CommonConsentObject(accountConsent.get()));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], Consent-ID: [{}]. Create consent authorisation with response validation failed: {}",
+            log.info("X-Request-ID: [{}], Consent-ID: [{}]. Create consent authorisation with response - validation failed: {}",
                      requestProviderService.getRequestId(), consentId, validationResult.getMessageError());
             return ResponseObject.<CreateConsentAuthorizationResponse>builder()
                        .fail(validationResult.getMessageError())
@@ -461,7 +461,7 @@ public class ConsentService {
 
         ValidationResult validationResult = updateConsentPsuDataValidator.validate(new CommonConsentObject(accountConsent.get()));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data validation failed: {}",
+            log.info("X-Request-ID: [{}], Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data - validation failed: {}",
                      requestProviderService.getRequestId(), consentId, authorisationId, validationResult.getMessageError());
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(validationResult.getMessageError())
@@ -516,7 +516,7 @@ public class ConsentService {
 
         ValidationResult validationResult = getConsentAuthorisationsValidator.validate(new CommonConsentObject(accountConsent.get()));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], Consent-ID: [{}]. Get consent authorisations validation failed: {}",
+            log.info("X-Request-ID: [{}], Consent-ID: [{}]. Get consent authorisations - validation failed: {}",
                      requestProviderService.getRequestId(), consentId, validationResult.getMessageError());
             return ResponseObject.<Xs2aAuthorisationSubResources>builder()
                        .fail(validationResult.getMessageError())
@@ -554,7 +554,7 @@ public class ConsentService {
 
         ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new CommonConsentObject(accountConsent.get()));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], Consent-ID: [{}], Authorisation-ID [{}]. Get consent authorisation SCA status validation failed: {}",
+            log.info("X-Request-ID: [{}], Consent-ID: [{}], Authorisation-ID [{}]. Get consent authorisation SCA status - validation failed: {}",
                      requestProviderService.getRequestId(), consentId, authorisationId, validationResult.getMessageError());
             return ResponseObject.<ScaStatus>builder()
                        .fail(validationResult.getMessageError())

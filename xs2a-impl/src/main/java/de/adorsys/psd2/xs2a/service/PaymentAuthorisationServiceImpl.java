@@ -120,7 +120,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(pisCommonPaymentResponse.get(), request.getAuthorisationId()));
         if (validationResult.isNotValid()) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of update PIS CommonPayment PSU data failed: {}",
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Update PIS CommonPayment PSU data - validation failed: {}",
                      requestProviderService.getRequestId(), request.getPaymentId(), validationResult.getMessageError());
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(validationResult.getMessageError())
@@ -160,7 +160,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         ValidationResult validationResult = getPaymentAuthorisationsValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
         if (validationResult.isNotValid()) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of get payment initiation authorisation failed: {}",
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Get payment initiation authorisation - validation failed: {}",
                      requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
             return ResponseObject.<Xs2aAuthorisationSubResources>builder()
                        .fail(validationResult.getMessageError())
@@ -200,7 +200,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
         if (validationResult.isNotValid()) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of get SCA status payment initiation authorisation failed: {}",
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Get SCA status payment initiation authorisation - validation failed: {}",
                      requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
             return ResponseObject.<ScaStatus>builder()
                        .fail(validationResult.getMessageError())
@@ -234,7 +234,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
         if (validationResult.isNotValid()) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of create PIS Authorisation failed: {}",
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Create PIS Authorisation - validation failed: {}",
                      requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
             return ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
                        .fail(validationResult.getMessageError())

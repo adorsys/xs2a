@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
@@ -34,7 +35,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.servlet.*;
+import javax.servlet.http.*;
 import javax.validation.Validation;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.Principal;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -44,7 +56,7 @@ public class PaymentModelMapperXs2aTest {
 
     @Autowired
     private PaymentModelMapper paymentModelMapper;
-
+    private RequestProviderService requestProviderService;
     private PaymentModelMapperXs2a paymentModelMapperXs2a;
     private PaymentInitiationParameters paymentInitiationParameters;
     private JsonReader jsonReader = new JsonReader();
@@ -52,8 +64,7 @@ public class PaymentModelMapperXs2aTest {
     @Before
     public void setUp() {
         paymentInitiationParameters = new PaymentInitiationParameters();
-
-        ValueValidatorService validatorService = new ValueValidatorService(
+        ValueValidatorService validatorService = new ValueValidatorService(requestProviderService,
             Validation.buildDefaultValidatorFactory().getValidator());
         paymentModelMapperXs2a = new PaymentModelMapperXs2a(new ObjectMapper(), validatorService,
             null, null, paymentModelMapper);

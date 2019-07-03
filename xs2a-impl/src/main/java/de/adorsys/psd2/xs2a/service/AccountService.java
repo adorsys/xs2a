@@ -123,7 +123,7 @@ public class AccountService {
 
         ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, withBalance, requestUri));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get account list validation failed: {}",
+            log.info("X-Request-ID: [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get account list - validation failed: {}",
                      requestProviderService.getRequestId(), consentId, withBalance, requestUri, validationResult.getMessageError());
             return ResponseObject.<Xs2aAccountListHolder>builder()
                        .fail(validationResult.getMessageError())
@@ -200,7 +200,7 @@ public class AccountService {
 
         ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, accountId, withBalance, requestUri));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get account details validation failed: {}",
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get account details - validation failed: {}",
                      requestProviderService.getRequestId(), accountId, consentId, withBalance, requestUri, validationResult.getMessageError());
             return ResponseObject.<Xs2aAccountDetailsHolder>builder()
                        .fail(validationResult.getMessageError())
@@ -274,7 +274,7 @@ public class AccountService {
 
         ValidationResult validationResult = getBalancesReportValidator.validate(new CommonAccountBalanceRequestObject(accountConsent, accountId, requestUri));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], RequestUri [{}]. Get balances report validation failed: {}",
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], RequestUri [{}]. Get balances report - validation failed: {}",
                      requestProviderService.getRequestId(), accountId, consentId, requestUri, validationResult.getMessageError());
             return ResponseObject.<Xs2aBalancesReport>builder()
                        .fail(validationResult.getMessageError())
@@ -355,7 +355,7 @@ public class AccountService {
                                                                                                 request.getBookingStatus());
         ValidationResult validationResult = getTransactionsReportValidator.validate(validatorObject);
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get transactions report by period validation failed: {}",
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get transactions report by period - validation failed: {}",
                      requestProviderService.getRequestId(), accountId, consentId, withBalance, requestUri, validationResult.getMessageError());
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(validationResult.getMessageError())
@@ -459,7 +459,7 @@ public class AccountService {
 
         ValidationResult validationResult = getTransactionDetailsValidator.validate(new CommonAccountTransactionsRequestObject(accountConsent, accountId, requestUri));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], RequestUri [{}]. Get transaction details validation failed: {}",
+            log.info("X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], RequestUri [{}]. Get transaction details - validation failed: {}",
                      requestProviderService.getRequestId(), accountId, consentId, requestUri, validationResult.getMessageError());
             return ResponseObject.<Transactions>builder()
                        .fail(validationResult.getMessageError())

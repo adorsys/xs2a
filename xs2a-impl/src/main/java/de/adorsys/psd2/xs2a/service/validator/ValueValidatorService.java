@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,15 +29,17 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 
+@Slf4j
 @Service
 public class ValueValidatorService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValueValidatorService.class);
+    private final RequestProviderService requestProviderService;
 
     private Validator validator;
 
     @Autowired
-    public ValueValidatorService(Validator validator) {
+    public ValueValidatorService(RequestProviderService requestProviderService, Validator validator) {
         this.validator = validator;
+        this.requestProviderService = requestProviderService;
     }
 
     public void validateAccountIdPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
@@ -63,7 +65,7 @@ public class ValueValidatorService {
                                             .collect(Collectors.toList());
 
         if (!violations.isEmpty()) {
-            LOGGER.debug(violations.toString());
+            log.debug("X-Request-ID: [{}]. Value validation failed: {}", requestProviderService.getRequestId(), violations.toString());
             throw new ValidationException(FORMAT_ERROR.name() + ": " + violations);
         }
     }
