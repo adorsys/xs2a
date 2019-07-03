@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.web.filter.QwacCertificateFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Profile("mockspi")
 @Component
+@PropertySource("classpath:qwac.properties")
 public class QwacCertificateFilterMock extends QwacCertificateFilter {
     @Value("${qwac-certificate-mock}")
     private String qwacCertificateMock;
