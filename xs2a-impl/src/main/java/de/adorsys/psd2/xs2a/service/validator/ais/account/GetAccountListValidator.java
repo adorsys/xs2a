@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessMultipleAccountsValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetAccountListConsentObject;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Component;
 public class GetAccountListValidator extends AbstractAisTppValidator<GetAccountListConsentObject> {
     private final AccountConsentValidator accountConsentValidator;
     private final AccountAccessValidator accountAccessValidator;
+    private final AccountAccessMultipleAccountsValidator accountAccessMultipleAccountsValidator;
     /**
      * Validates get account list request  by checking whether:
      * <ul>
@@ -54,6 +56,11 @@ public class GetAccountListValidator extends AbstractAisTppValidator<GetAccountL
         ValidationResult accountAccessValidationResult = accountAccessValidator.validate(consentObject.getAccountConsent(), consentObject.isWithBalance());
         if (accountAccessValidationResult.isNotValid()) {
             return accountAccessValidationResult;
+        }
+
+        ValidationResult accountAccessMultipleAccountsValidatorResult = accountAccessMultipleAccountsValidator.validate(consentObject.getAccountConsent(), consentObject.isWithBalance());
+        if (accountAccessMultipleAccountsValidatorResult.isNotValid()) {
+            return accountAccessMultipleAccountsValidatorResult;
         }
 
         return ValidationResult.valid();
