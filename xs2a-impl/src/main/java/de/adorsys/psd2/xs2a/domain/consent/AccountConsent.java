@@ -86,4 +86,9 @@ public class AccountConsent {
     public boolean isConsentForAllAvailableAccounts() {
         return getAisConsentRequestType() == AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
     }
+
+    @JsonIgnore
+    public boolean isConsentForDedicatedAccounts() {
+        return getAisConsentRequestType() == AisConsentRequestType.DEDICATED_ACCOUNTS;
+    }
 }
