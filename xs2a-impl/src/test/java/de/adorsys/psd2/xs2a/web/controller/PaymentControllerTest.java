@@ -16,11 +16,13 @@
 
 package de.adorsys.psd2.xs2a.web.controller;
 
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -43,7 +45,9 @@ import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -126,15 +130,13 @@ public class PaymentControllerTest {
     public void setUp() {
         when(xs2aPaymentService.getPaymentById(eq(SINGLE), eq(PRODUCT), eq(CORRECT_PAYMENT_ID)))
             .thenReturn(ResponseObject.builder().body(getXs2aPayment()).build());
-    }
 
-    @Before
-    public void setUpPaymentServiceMock() {
         when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(CORRECT_PAYMENT_ID)))
             .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
         when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(WRONG_PAYMENT_ID)))
             .thenReturn(ResponseObject.<TransactionStatus>builder().fail(PIS_403,
                                                                          TppMessageInformation.of(RESOURCE_UNKNOWN_403)).build());
+
     }
 
     @Test
@@ -233,7 +235,10 @@ public class PaymentControllerTest {
 
     @Test
     public void cancelPayment_WithoutAuthorisation_Success() {
-        when(xs2aPaymentService.cancelPayment(SINGLE, PRODUCT, CORRECT_PAYMENT_ID, EXPLICIT_PREFERRED_FALSE)).thenReturn(getCancelPaymentResponseObject(false));
+        PisPaymentCancellationRequest paymentCancellationRequest = new PisPaymentCancellationRequest(SINGLE, PRODUCT, CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), new TppRedirectUri(null, null));
+        when(paymentModelMapperPsd2.mapToPaymentCancellationRequest(PRODUCT, SINGLE.getValue(), CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), null, null))
+            .thenReturn(paymentCancellationRequest);
+        when(xs2aPaymentService.cancelPayment(paymentCancellationRequest)).thenReturn(getCancelPaymentResponseObject(false));
 
         // Given
         PaymentInitiationCancelResponse202 response = getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.CANC);
@@ -256,9 +261,13 @@ public class PaymentControllerTest {
 
     @Test
     public void cancelPayment_WithAuthorisation_Success() {
+        PisPaymentCancellationRequest paymentCancellationRequest = new PisPaymentCancellationRequest(SINGLE, PRODUCT, CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), new TppRedirectUri(null, null));
+
         when(responseMapper.accepted(any()))
             .thenReturn(new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.ACTC), HttpStatus.ACCEPTED));
-        when(xs2aPaymentService.cancelPayment(SINGLE, PRODUCT, CORRECT_PAYMENT_ID, EXPLICIT_PREFERRED_FALSE)).thenReturn(getCancelPaymentResponseObject(true));
+        when(paymentModelMapperPsd2.mapToPaymentCancellationRequest(PRODUCT, SINGLE.getValue(), CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), null, null))
+            .thenReturn(paymentCancellationRequest);
+        when(xs2aPaymentService.cancelPayment(paymentCancellationRequest)).thenReturn(getCancelPaymentResponseObject(true));
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;
@@ -283,7 +292,6 @@ public class PaymentControllerTest {
         ResponseEntity expectedResult = ResponseEntity.status(BAD_REQUEST).build();
         PaymentType paymentType = SINGLE;
 
-        when(xs2aPaymentService.cancelPayment(SINGLE, PRODUCT, CORRECT_PAYMENT_ID, EXPLICIT_PREFERRED_FALSE)).thenReturn(cancelPaymentResponse);
         when(responseErrorMapper.generateErrorResponse(cancelPaymentResponse.getError())).thenReturn(expectedResult);
 
         // Given
@@ -300,7 +308,11 @@ public class PaymentControllerTest {
 
     @Test
     public void cancelPayment_WithAuthorisation_Fail_FinalisedStatus() {
-        when(xs2aPaymentService.cancelPayment(SINGLE, PRODUCT, CORRECT_PAYMENT_ID, EXPLICIT_PREFERRED_FALSE)).thenReturn(getErrorOnPaymentCancellation());
+        PisPaymentCancellationRequest paymentCancellationRequest = new PisPaymentCancellationRequest(SINGLE, PRODUCT, CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), new TppRedirectUri(null, null));
+
+        when(paymentModelMapperPsd2.mapToPaymentCancellationRequest(PRODUCT, SINGLE.getValue(), CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), null, null))
+            .thenReturn(paymentCancellationRequest);
+        when(xs2aPaymentService.cancelPayment(paymentCancellationRequest)).thenReturn(getErrorOnPaymentCancellation());
         when(responseErrorMapper.generateErrorResponse(createMessageError(ErrorType.PIS_400, FORMAT_ERROR))).thenReturn(ResponseEntity.status(BAD_REQUEST).build());
 
         // Given

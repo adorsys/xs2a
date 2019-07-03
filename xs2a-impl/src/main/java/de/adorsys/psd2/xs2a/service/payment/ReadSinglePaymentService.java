@@ -48,7 +48,7 @@ import java.util.Optional;
 public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformationResponse<SinglePayment>> {
     private final PisAspspDataService pisAspspDataService;
     private final SpiContextDataProvider spiContextDataProvider;
-    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    private final Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
     private final SinglePaymentSpi singlePaymentSpi;
     private final SpiToXs2aSinglePaymentMapper spiToXs2aSinglePaymentMapper;
     private final SpiErrorMapper spiErrorMapper;

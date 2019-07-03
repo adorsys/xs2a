@@ -18,10 +18,12 @@ package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -72,6 +74,7 @@ public class PaymentCancellationAspectTest {
 
     private AspspSettings aspspSettings;
     private ResponseObject responseObject;
+    private PisPaymentCancellationRequest paymentCancellationRequest;
 
     @Before
     public void setUp() {
@@ -91,6 +94,9 @@ public class PaymentCancellationAspectTest {
         response.setPaymentType(PaymentType.SINGLE);
         response.setPsuData(PSU_DATA);
         response.setTransactionStatus(TransactionStatus.ACCP);
+
+        paymentCancellationRequest = new PisPaymentCancellationRequest(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID,
+                                                                       false, new TppRedirectUri("ok_url", "nok_url"));
     }
 
     @Test
@@ -102,7 +108,7 @@ public class PaymentCancellationAspectTest {
                              .body(response)
                              .build();
         // When
-        ResponseObject actualResponse = aspect.cancelPayment(responseObject, PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID, false);
+        ResponseObject actualResponse = aspect.cancelPayment(responseObject, paymentCancellationRequest);
 
         // Then
         assertFalse(actualResponse.hasError());
@@ -117,7 +123,7 @@ public class PaymentCancellationAspectTest {
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
                              .body(response)
                              .build();
-        ResponseObject<CancelPaymentResponse>  actualResponse = aspect.cancelPayment(responseObject, PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID, false);
+        ResponseObject<CancelPaymentResponse>  actualResponse = aspect.cancelPayment(responseObject, paymentCancellationRequest);
 
         verify(aspspProfileService, times(1)).getAspspSettings();
 
@@ -134,7 +140,7 @@ public class PaymentCancellationAspectTest {
         responseObject = ResponseObject.builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                              .build();
-        ResponseObject actualResponse = aspect.cancelPayment(responseObject, PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID, false);
+        ResponseObject actualResponse = aspect.cancelPayment(responseObject, paymentCancellationRequest);
 
         // Then
         assertTrue(actualResponse.hasError());

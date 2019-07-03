@@ -91,5 +91,6 @@
     <!-- moved this patсh to the end of the list according to order of applying-->
     <include relativeToChangelogFile="true" file="migration/0058-drop-table-piis_consent-acc-reference.xml"/>
     <include relativeToChangelogFile="true" file="migration/0065-add-accounts-with-balances-column-to-ais-consent.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0067-add-cancel-tpp-redirect-urls-columns-to-tpp-info.xml"/>
 
 </databaseChangeLog>

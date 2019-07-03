@@ -17,10 +17,12 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
-import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(value = "api/v1/pis", tags = "PIS, Payments", description = "Provides access to consent management system for PIS")
 public class PisPaymentController {
     private final PisCommonPaymentServiceEncrypted pisCommonPaymentService;
-    private final UpdatePaymentStatusAfterSpiServiceEncrypted updatePaymentStatusAfterSpiService;
+    private final UpdatePaymentAfterSpiServiceEncrypted updatePaymentStatusAfterSpiService;
 
     @GetMapping(path = "/payment/{payment-id}")
     @ApiOperation(value = "Get inner payment id by encrypted string")
@@ -57,6 +59,23 @@ public class PisPaymentController {
         @ApiParam(value = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.", allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC")
         @PathVariable("status") String status) {
         return updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status))
+                   ? ResponseEntity.ok().build()
+                   : ResponseEntity.badRequest().build();
+    }
+
+    @PutMapping(path = "/payment/{payment-id}/cancellation/redirects")
+    @ApiOperation(value = "Updates payment cancellation redirect URIs after SPI service. Should not be used for any other purposes!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Bad Request")})
+    public ResponseEntity<Void> updatePaymentCancellationTppRedirectUri(
+        @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.")
+        @PathVariable("payment-id") String paymentId,
+        @RequestHeader(value = "TPP-Redirect-URI", required = false) String tpPRedirectURI,
+        @RequestHeader(value = "TPP-Nok-Redirect-URI", required = false) String tpPNokRedirectURI) {
+        return updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(paymentId,
+                                                                                          new TppRedirectUri(StringUtils.defaultIfBlank(tpPRedirectURI, null),
+                                                                                                             StringUtils.defaultIfBlank(tpPNokRedirectURI, null)))
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
     }

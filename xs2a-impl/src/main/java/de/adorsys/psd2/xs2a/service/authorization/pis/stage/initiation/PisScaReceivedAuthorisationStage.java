@@ -40,7 +40,7 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
-import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentStatusAfterSpiService;
+import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
@@ -66,7 +66,7 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 @Service("PIS_EMBEDDED_RECEIVED")
 public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisCommonPaymentPsuDataRequest, GetPisAuthorisationResponse, Xs2aUpdatePisCommonPaymentPsuDataResponse> {
     private final PaymentAuthorisationSpi paymentAuthorisationSpi;
-    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    private final Xs2aUpdatePaymentAfterSpiService updatePaymentAfterSpiService;
     private final PisAspspDataService pisAspspDataService;
     private final Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
     private final PisCommonDecoupledService pisCommonDecoupledService;
@@ -78,10 +78,10 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
     private final RequestProviderService requestProviderService;
     private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
 
-    public PisScaReceivedAuthorisationStage(CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted, ApplicationContext applicationContext, PaymentAuthorisationSpi paymentAuthorisationSpi, Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService, PisAspspDataService pisAspspDataService, Xs2aPisCommonPaymentService xs2aPisCommonPaymentService, PisCommonDecoupledService pisCommonDecoupledService, SpiContextDataProvider spiContextDataProvider, ScaApproachResolver scaApproachResolver, SpiErrorMapper spiErrorMapper, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper, SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper, RequestProviderService requestProviderService) {
+    public PisScaReceivedAuthorisationStage(CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted, ApplicationContext applicationContext, PaymentAuthorisationSpi paymentAuthorisationSpi, Xs2aUpdatePaymentAfterSpiService updatePaymentAfterSpiService, PisAspspDataService pisAspspDataService, Xs2aPisCommonPaymentService xs2aPisCommonPaymentService, PisCommonDecoupledService pisCommonDecoupledService, SpiContextDataProvider spiContextDataProvider, ScaApproachResolver scaApproachResolver, SpiErrorMapper spiErrorMapper, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper, SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper, RequestProviderService requestProviderService) {
         super(cmsToXs2aPaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiSinglePaymentMapper, xs2aToSpiBulkPaymentMapper, pisCommonPaymentServiceEncrypted, applicationContext, xs2aToSpiPsuDataMapper);
         this.paymentAuthorisationSpi = paymentAuthorisationSpi;
-        this.updatePaymentStatusAfterSpiService = updatePaymentStatusAfterSpiService;
+        this.updatePaymentAfterSpiService = updatePaymentAfterSpiService;
         this.pisAspspDataService = pisAspspDataService;
         this.xs2aPisCommonPaymentService = xs2aPisCommonPaymentService;
         this.pisCommonDecoupledService = pisCommonDecoupledService;
@@ -195,7 +195,7 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
         }
 
         TransactionStatus paymentStatus = spiResponse.getPayload().getTransactionStatus();
-        updatePaymentStatusAfterSpiService.updatePaymentStatus(request.getPaymentId(), paymentStatus);
+        updatePaymentAfterSpiService.updatePaymentStatus(request.getPaymentId(), paymentStatus);
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED, paymentId, authorisationId, psuData);
     }
 
