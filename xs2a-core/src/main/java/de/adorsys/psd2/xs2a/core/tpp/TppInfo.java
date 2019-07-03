@@ -64,6 +64,10 @@ public class TppInfo {
     @ApiModelProperty(value = "TPP redirect URIs")
     private TppRedirectUri tppRedirectUri;
 
+    @Nullable
+    @ApiModelProperty(value = "Cancel TPP redirect URIs")
+    private TppRedirectUri cancelTppRedirectUri;
+
     @ApiModelProperty(value = "Issuer CN", required = true, example = "Authority CA Domain Name")
     private String issuerCN;
 

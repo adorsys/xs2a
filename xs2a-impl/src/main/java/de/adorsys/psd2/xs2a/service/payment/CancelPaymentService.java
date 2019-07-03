@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
@@ -51,7 +52,7 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_CANC_405;
 public class CancelPaymentService {
     private final PaymentCancellationSpi paymentCancellationSpi;
     private final PisAspspDataService pisAspspDataService;
-    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    private final Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
     private final PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider;
     private final SpiContextDataProvider spiContextDataProvider;
     private final SpiErrorMapper spiErrorMapper;
@@ -63,13 +64,16 @@ public class CancelPaymentService {
     /**
      * Cancels payment with or without performing strong customer authentication
      *
-     * @param psuData                           ASPSP identifier(s) of the psu
-     * @param payment                           Payment to be cancelled
-     * @param encryptedPaymentId                encrypted identifier of the payment
+     * @param psuData            ASPSP identifier(s) of the psu
+     * @param payment            Payment to be cancelled
+     * @param encryptedPaymentId encrypted identifier of the payment
      * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
+     * @param tppRedirectUri TPP's redirect URIs
      * @return Response containing information about cancelled payment or corresponding error
      */
-    public ResponseObject<CancelPaymentResponse> initiatePaymentCancellation(PsuIdData psuData, SpiPayment payment, String encryptedPaymentId, Boolean tppExplicitAuthorisationPreferred) {
+    public ResponseObject<CancelPaymentResponse> initiatePaymentCancellation(PsuIdData psuData, SpiPayment payment,
+                                                                             String encryptedPaymentId, Boolean tppExplicitAuthorisationPreferred,
+                                                                             TppRedirectUri tppRedirectUri) {
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuData);
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(encryptedPaymentId);
         SpiResponse<SpiPaymentCancellationResponse> spiResponse = paymentCancellationSpi.initiatePaymentCancellation(spiContextData, payment, aspspConsentData);
@@ -93,6 +97,8 @@ public class CancelPaymentService {
             resultStatus = payment.getPaymentStatus();
             cancelPaymentResponse.setTransactionStatus(resultStatus);
         }
+
+        updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(encryptedPaymentId, tppRedirectUri);
 
         if (resultStatus == TransactionStatus.CANC) {
             log.info("X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Payment status - CANCELED", requestProviderService.getRequestId(), encryptedPaymentId);

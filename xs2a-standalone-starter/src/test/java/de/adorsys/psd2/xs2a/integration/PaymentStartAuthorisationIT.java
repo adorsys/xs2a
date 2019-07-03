@@ -27,7 +27,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
-import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
@@ -131,7 +131,7 @@ public class PaymentStartAuthorisationIT {
     @MockBean
     private CommonPaymentSpi commonPaymentSpi;
     @MockBean
-    private UpdatePaymentStatusAfterSpiServiceEncrypted updatePaymentStatusAfterSpiService;
+    private UpdatePaymentAfterSpiServiceEncrypted updatePaymentAfterSpiService;
     @MockBean
     private PaymentAuthorisationSpi paymentAuthorisationSpi;
 
@@ -194,7 +194,7 @@ public class PaymentStartAuthorisationIT {
                             .aspspConsentData(aspspConsentData)
                             .success());
         given(aspspDataService.updateAspspConsentData(eq(aspspConsentData))).willReturn(true);
-        given(updatePaymentStatusAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP)).willReturn(true);
+        given(updatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP)).willReturn(true);
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildPaymentStartAuthorisationUrl(
             SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, PAYMENT_ID));

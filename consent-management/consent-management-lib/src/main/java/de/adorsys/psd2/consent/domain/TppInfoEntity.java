@@ -71,4 +71,10 @@ public class TppInfoEntity extends InstanceDependableEntity {
 
     @Column(name = "nok_redirect_uri")
     private String nokRedirectUri;
+
+    @Column(name = "cancel_redirect_uri")
+    private String cancelRedirectUri;
+
+    @Column(name = "cancel_nok_redirect_uri")
+    private String cancelNokRedirectUri;
 }

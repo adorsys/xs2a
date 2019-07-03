@@ -31,7 +31,8 @@ import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.X_
 
 @Component
 public class XRequestIdHeaderValidatorImpl extends AbstractHeaderValidatorImpl
-    implements ConsentHeaderValidator, PaymentHeaderValidator, TransactionListHeaderValidator, FundsConfirmationHeaderValidator {
+    implements ConsentHeaderValidator, PaymentHeaderValidator, TransactionListHeaderValidator, FundsConfirmationHeaderValidator,
+                   CancelPaymentHeaderValidator {
 
     private static final String UUID_REGEX = "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\\z";
     private static final Pattern PATTERN = Pattern.compile(UUID_REGEX, Pattern.CASE_INSENSITIVE);

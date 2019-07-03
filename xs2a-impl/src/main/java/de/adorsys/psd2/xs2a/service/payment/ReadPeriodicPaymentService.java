@@ -50,7 +50,7 @@ import java.util.Optional;
 public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInformationResponse<PeriodicPayment>> {
     private final PisAspspDataService pisAspspDataService;
     private final SpiContextDataProvider spiContextDataProvider;
-    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    private final Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
     private final PeriodicPaymentSpi periodicPaymentSpi;
     private final SpiToXs2aPeriodicPaymentMapper spiToXs2aPeriodicPaymentMapper;
     private final SpiErrorMapper spiErrorMapper;

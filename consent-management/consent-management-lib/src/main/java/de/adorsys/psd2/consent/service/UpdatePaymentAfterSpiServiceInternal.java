@@ -16,9 +16,10 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiService;
+import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiService;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UpdatePaymentStatusAfterSpiServiceInternal implements UpdatePaymentStatusAfterSpiService {
+public class UpdatePaymentAfterSpiServiceInternal implements UpdatePaymentAfterSpiService {
     private final CommonPaymentDataService commonPaymentDataService;
 
     @Override
@@ -45,5 +46,18 @@ public class UpdatePaymentStatusAfterSpiServiceInternal implements UpdatePayment
         }
 
         return commonPaymentDataService.updateStatusInPaymentData(paymentDataOptional.get(), status);
+    }
+
+    @Override
+    @Transactional
+    public boolean updatePaymentCancellationTppRedirectUri(@NotNull String paymentId, @NotNull TppRedirectUri tppRedirectUri) {
+        Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
+        if (!paymentDataOptional.isPresent() || paymentDataOptional.get().isFinalised()) {
+            log.info("Payment ID [{}]. Update payment status by id failed, because pis payment data not found or payment is finalized",
+                     paymentId);
+            return false;
+        }
+        Long tppInfoId = paymentDataOptional.get().getTppInfo().getId();
+        return commonPaymentDataService.updateCancelTppRedirectURIs(tppInfoId, tppRedirectUri);
     }
 }

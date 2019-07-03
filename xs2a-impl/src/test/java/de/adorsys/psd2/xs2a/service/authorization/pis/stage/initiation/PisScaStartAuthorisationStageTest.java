@@ -44,9 +44,9 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
-import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentStatusAfterSpiService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
+import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
@@ -120,7 +120,7 @@ public class PisScaStartAuthorisationStageTest {
     @Mock
     private Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
     @Mock
-    private Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    private Xs2aUpdatePaymentAfterSpiService updatePaymentAfterSpiService;
     @Mock
     private ScaApproachResolver scaApproachResolver;
     @Mock
@@ -359,7 +359,7 @@ public class PisScaStartAuthorisationStageTest {
         when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any()))
             .thenReturn(executePaymentWithoutScaResponse);
 
-        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP))
+        when(updatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP))
             .thenReturn(true);
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
