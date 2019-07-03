@@ -92,5 +92,7 @@
     <include relativeToChangelogFile="true" file="migration/0058-drop-table-piis_consent-acc-reference.xml"/>
     <include relativeToChangelogFile="true" file="migration/0065-add-accounts-with-balances-column-to-ais-consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0066-add-redirect-exp-column-to-auth-tables.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0067-add-cancel-tpp-redirect-urls-columns-to-tpp-info.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0068-remove-deprecated-columns-from-crypto-algorithm-table.xml"/>
 
 </databaseChangeLog>
