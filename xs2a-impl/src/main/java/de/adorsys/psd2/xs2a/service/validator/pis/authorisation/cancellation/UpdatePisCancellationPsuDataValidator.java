@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -36,6 +37,7 @@ import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.SERVICE_BLOCKED;
 @RequiredArgsConstructor
 public class UpdatePisCancellationPsuDataValidator extends AbstractPisTppValidator<UpdatePisCancellationPsuDataPO> {
     private final PisEndpointAccessCheckerService pisEndpointAccessCheckerService;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Validates update PSU Data in payment authorisation request by checking whether:
@@ -51,7 +53,7 @@ public class UpdatePisCancellationPsuDataValidator extends AbstractPisTppValidat
         String authorisationId = paymentObject.getAuthorisationId();
         if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, PaymentAuthorisationType.CANCELLATION)) {
             log.info("X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS cancellation authorisation PSU Data has failed: endpoint is not accessible for authorisation",
-                     authorisationId);
+                     requestProviderService.getRequestId(), authorisationId);
             return ValidationResult.invalid(ErrorType.PIS_403, TppMessageInformation.of(SERVICE_BLOCKED));
         }
 
