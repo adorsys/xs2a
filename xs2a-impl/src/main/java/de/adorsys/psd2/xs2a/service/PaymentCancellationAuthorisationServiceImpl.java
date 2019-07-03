@@ -82,7 +82,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         ValidationResult validationResult = createPisCancellationAuthorisationValidator.validate(new CreatePisCancellationAuthorisationPO(pisCommonPaymentResponse.get(), psuData));
         if (validationResult.isNotValid()) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of create PIS cancellation authorisation failed: {}",
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Create PIS cancellation authorisation - validation failed: {}",
                      requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                        .fail(validationResult.getMessageError())
@@ -120,7 +120,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(pisCommonPaymentResponse.get(), request.getAuthorisationId()));
         if (validationResult.isNotValid()) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Validation of update PIS cancellation authorisation failed: {}",
+            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Update PIS cancellation authorisation - validation failed: {}",
                      requestProviderService.getRequestId(), paymentId, request.getAuthorisationId(), validationResult.getMessageError());
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(validationResult.getMessageError())
@@ -161,7 +161,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         ValidationResult validationResult = getPaymentAuthorisationsValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
         if (validationResult.isNotValid()) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of get information PIS cancellation authorisation failed: {}",
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Get information PIS cancellation authorisation - validation failed: {}",
                      requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
             return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
                        .fail(validationResult.getMessageError())
@@ -202,7 +202,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
         if (validationResult.isNotValid()) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Validation of get SCA status PIS cancellation authorisation failed: {}",
+            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Get SCA status PIS cancellation authorisation - validation failed: {}",
                      requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
             return ResponseObject.<ScaStatus>builder()
                        .fail(validationResult.getMessageError())
