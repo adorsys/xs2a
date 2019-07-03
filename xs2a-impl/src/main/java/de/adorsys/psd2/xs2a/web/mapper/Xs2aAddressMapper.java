@@ -30,6 +30,9 @@ public interface Xs2aAddressMapper {
     @Mapping(target = "country", source = "address", qualifiedByName = "mapToXs2aCountryCode")
     Xs2aAddress mapToXs2aAddress(Address address);
 
+    @Mapping(target = "country", source = "country.code")
+    Address mapToAddress(Xs2aAddress address);
+
     default Xs2aCountryCode mapToXs2aCountryCode(Address address) {
         return new Xs2aCountryCode(address.getCountry());
     }

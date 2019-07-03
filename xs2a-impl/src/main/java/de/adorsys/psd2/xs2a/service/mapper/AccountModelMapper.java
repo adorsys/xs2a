@@ -16,36 +16,40 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import de.adorsys.psd2.model.AccountStatus;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import de.adorsys.psd2.xs2a.domain.Xs2aExchangeRate;
 import de.adorsys.psd2.xs2a.domain.account.*;
-import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
-import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Slf4j
-@Component
-@RequiredArgsConstructor
-// TODO split mapper into smaller part https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/875
-public class AccountModelMapper {
-    private final AmountModelMapper amountModelMapper;
-    private final HrefLinkMapper hrefLinkMapper;
+@Mapper(componentModel = "spring", uses = {AmountModelMapper.class})
+public abstract class AccountModelMapper {
+
+    @Autowired
+    protected HrefLinkMapper hrefLinkMapper;
+
+    @Mapping(target = "currency", source = "currency.currencyCode")
+    public abstract de.adorsys.psd2.model.AccountReference mapToAccountReference(AccountReference accountReference);
+
+    public abstract List<de.adorsys.psd2.model.AccountReference> mapToAccountReferences(List<AccountReference> accountReferences);
 
     public AccountList mapToAccountList(Xs2aAccountListHolder xs2aAccountListHolder) {
         List<Xs2aAccountDetails> accountDetailsList = xs2aAccountListHolder.getAccountDetails();
@@ -60,24 +64,66 @@ public class AccountModelMapper {
         return mapToAccountDetails(xs2aAccountDetailsHolder.getAccountDetails());
     }
 
-    private AccountDetails mapToAccountDetails(Xs2aAccountDetails accountDetails) {
-        AccountDetails target = new AccountDetails();
+    @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(accountDetails.getLinks()))")
+    @Mapping(target = "status", source = "accountStatus")
+    @Mapping(target = "usage", source = "usageType")
+    public abstract AccountDetails mapToAccountDetails(Xs2aAccountDetails accountDetails);
 
-        BeanUtils.copyProperties(accountDetails, target);
+    @Mapping(target = "balanceType", expression = "java(mapToBalanceType(balance.getBalanceType()))")
+    @Mapping(target = "lastChangeDateTime", expression = "java(mapToOffsetDateTime(balance.getLastChangeDateTime()))")
+    public abstract Balance mapToBalance(Xs2aBalance balance);
 
-        target.resourceId(accountDetails.getResourceId())
-            .currency(accountDetails.getCurrency() != null ? accountDetails.getCurrency().getCurrencyCode() : null)
-            .cashAccountType(Optional.ofNullable(accountDetails.getCashAccountType())
-                                 .map(Enum::name)
-                                 .orElse(null))
-            .usage(mapToAccountDetailsUsageEnum(accountDetails.getUsageType()))
-            .status(mapToAccountStatus(accountDetails.getAccountStatus()));
-        return target
-                   .balances(mapToBalanceList(accountDetails.getBalances()))
-                   ._links(hrefLinkMapper.mapToLinksMap(accountDetails.getLinks()));
+    @Mapping(target = "account", source = "xs2aAccountReference")
+    public abstract ReadAccountBalanceResponse200 mapToBalance(Xs2aBalancesReport balancesReport);
+
+    @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(accountReport.getLinks()))")
+    public abstract AccountReport mapToAccountReport(Xs2aAccountReport accountReport);
+
+    @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(transactionsReport.getLinks()))")
+    @Mapping(target = "transactions", source = "accountReport")
+    @Mapping(target = "account", source = "accountReference")
+    public abstract TransactionsResponse200Json mapToTransactionsResponse200Json(Xs2aTransactionsReport transactionsReport);
+
+    public byte[] mapToTransactionsResponseRaw(Xs2aTransactionsReport transactionsReport) {
+        return transactionsReport.getAccountReport().getTransactionsRaw();
     }
 
-    private BalanceList mapToBalanceList(List<Xs2aBalance> balances) {
+    @Mapping(target = "purposeCode", expression = "java(mapToPurposeCode(transactions.getPurposeCode()))")
+    @Mapping(target = "currencyExchange", expression = "java(mapToReportExchanges(transactions.getExchangeRate()))")
+    @Mapping(target = "bankTransactionCode", source = "bankTransactionCodeCode.code")
+    @Mapping(target = "transactionAmount", source = "amount")
+    @Mapping(target = "links", ignore = true)
+    public abstract TransactionDetails mapToTransaction(Transactions transactions);
+
+    public Map<String, TransactionDetails> mapToTransactionDetails(Transactions transactions) {
+        //TODO Change to an appropriate object when it will be possible https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/574
+        Map<String, TransactionDetails> transactionDetails = new HashMap<>();
+        transactionDetails.put("transactionsDetails", mapToTransaction(transactions));
+        return transactionDetails;
+    }
+
+    protected PurposeCode mapToPurposeCode(Xs2aPurposeCode xs2aPurposeCode) {
+        return PurposeCode.fromValue(Optional.ofNullable(xs2aPurposeCode)
+                                         .map(Xs2aPurposeCode::getCode)
+                                         .orElse(null));
+    }
+
+    protected OffsetDateTime mapToOffsetDateTime(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return null;
+        }
+        List<ZoneOffset> validOffsets = ZoneId.systemDefault().getRules().getValidOffsets(localDateTime);
+        return localDateTime.atOffset(validOffsets.get(0));
+    }
+
+    protected BalanceType mapToBalanceType(de.adorsys.psd2.xs2a.domain.BalanceType balanceType) {
+        if (balanceType == null) {
+            return null;
+        }
+        return BalanceType.fromValue(balanceType.getValue());
+    }
+
+    protected BalanceList mapToBalanceList(List<Xs2aBalance> balances) {
         BalanceList balanceList = null;
 
         if (CollectionUtils.isNotEmpty(balances)) {
@@ -91,179 +137,7 @@ public class AccountModelMapper {
         return balanceList;
     }
 
-    private AccountDetails.UsageEnum mapToAccountDetailsUsageEnum(Xs2aUsageType usageType) {
-        return Optional.ofNullable(usageType)
-                   .map(Xs2aUsageType::getValue)
-                   .map(AccountDetails.UsageEnum::fromValue)
-                   .orElse(null);
-    }
-
-    private AccountStatus mapToAccountStatus(de.adorsys.psd2.xs2a.domain.account.AccountStatus accountStatus) {
-        return Optional.ofNullable(accountStatus)
-                   .map(de.adorsys.psd2.xs2a.domain.account.AccountStatus::getValue)
-                   .map(AccountStatus::fromValue)
-                   .orElse(null);
-    }
-
-    public ReadAccountBalanceResponse200 mapToBalance(Xs2aBalancesReport balancesReport) {
-        BalanceList balanceList = new BalanceList();
-        balancesReport.getBalances().forEach(balance -> balanceList.add(mapToBalance(balance)));
-
-        return new ReadAccountBalanceResponse200()
-                   .balances(balanceList)
-                   .account(mapToAccountReference(balancesReport.getXs2aAccountReference()));
-    }
-
-    public Balance mapToBalance(Xs2aBalance balance) {
-        Balance target = new Balance();
-        BeanUtils.copyProperties(balance, target);
-
-        target.setBalanceAmount(amountModelMapper.mapToAmount(balance.getBalanceAmount()));
-
-        Optional.ofNullable(balance.getBalanceType())
-            .ifPresent(balanceType -> target.setBalanceType(BalanceType.fromValue(balanceType.getValue())));
-
-        Optional.ofNullable(balance.getLastChangeDateTime())
-            .ifPresent(lastChangeDateTime -> {
-                List<ZoneOffset> validOffsets = ZoneId.systemDefault().getRules().getValidOffsets(lastChangeDateTime);
-                target.setLastChangeDateTime(lastChangeDateTime.atOffset(validOffsets.get(0)));
-            });
-
-        return target;
-    }
-
-    public AccountReport mapToAccountReport(Xs2aAccountReport accountReport) {
-        TransactionList booked = mapToTransactionList(accountReport.getBooked());
-        TransactionList pending = mapToTransactionList(accountReport.getPending());
-
-        return new AccountReport()
-                   .booked(booked)
-                   .pending(pending)
-                   ._links(hrefLinkMapper.mapToLinksMap(accountReport.getLinks()));
-    }
-
-    public TransactionDetails mapToTransaction(Transactions transactions) {
-        TransactionDetails target = new TransactionDetails();
-        BeanUtils.copyProperties(transactions, target);
-
-        target.setCreditorAccount(mapToAccountReference(transactions.getCreditorAccount()));
-        target.setDebtorAccount(mapToAccountReference(transactions.getDebtorAccount()));
-
-        Optional.ofNullable(transactions.getExchangeRate())
-            .ifPresent(xs2aExchangeRates -> {
-                ReportExchangeRateList exchangeRates = xs2aExchangeRates.stream()
-                                                           .map(this::mapToReportExchangeRate)
-                                                           .collect(Collectors.toCollection(ReportExchangeRateList::new));
-                target.setCurrencyExchange(exchangeRates);
-            });
-
-        Optional.ofNullable(transactions.getAmount())
-            .ifPresent(amount -> target.setTransactionAmount(amountModelMapper.mapToAmount(amount)));
-
-        target.setPurposeCode(PurposeCode.fromValue(Optional.ofNullable(transactions.getPurposeCode())
-                                                        .map(Xs2aPurposeCode::getCode)
-                                                        .orElse(null)));
-
-        Optional.ofNullable(transactions.getBankTransactionCodeCode())
-            .ifPresent(transactionCode -> target.setBankTransactionCode(transactionCode.getCode()));
-
-        return target;
-    }
-
-    // TODO rename class to avoid putting full path https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/603
-    public de.adorsys.psd2.model.AccountReference mapToAccountReference12(AccountReference reference) {
-        if (reference == null) {
-            return null;
-        }
-        de.adorsys.psd2.model.AccountReference accountReference = new de.adorsys.psd2.model.AccountReference();
-        accountReference.setIban(reference.getIban());
-        accountReference.setBban(reference.getBban());
-        if (reference.getCurrency() != null) {
-            accountReference.setCurrency(reference.getCurrency().getCurrencyCode());
-        }
-        accountReference.setMaskedPan(reference.getMaskedPan());
-        accountReference.setMsisdn(reference.getMsisdn());
-        accountReference.setPan(reference.getPan());
-
-        return accountReference;
-    }
-
-    public Address mapToAddress12(Xs2aAddress address) {
-        Address targetAddress = new Address().street(address.getStreet());
-        targetAddress.setStreet(address.getStreet());
-        targetAddress.setBuildingNumber(address.getBuildingNumber());
-        targetAddress.setCity(address.getCity());
-        targetAddress.setPostalCode(address.getPostalCode());
-        targetAddress.setCountry(
-            Optional.ofNullable(address.getCountry())
-                .map(Xs2aCountryCode::getCode)
-                .orElse(null));
-        return targetAddress;
-    }
-
-    public TransactionsResponse200Json mapToTransactionsResponse200Json(Xs2aTransactionsReport transactionsReport) {
-        TransactionsResponse200Json transactionsResponse200Json = new TransactionsResponse200Json();
-        transactionsResponse200Json.setTransactions(mapToAccountReport(transactionsReport.getAccountReport()));
-        transactionsResponse200Json.setBalances(mapToBalanceList(transactionsReport.getBalances()));
-        transactionsResponse200Json.setAccount(mapToAccountReference12(transactionsReport.getAccountReference()));
-        transactionsResponse200Json.setLinks(hrefLinkMapper.mapToLinksMap(transactionsReport.getLinks()));
-        return transactionsResponse200Json;
-
-    }
-
-    public byte[] mapToTransactionsResponseRaw(Xs2aTransactionsReport transactionsReport) {
-        return transactionsReport.getAccountReport().getTransactionsRaw();
-    }
-
-
-    public Map<String, TransactionDetails> mapToTransactionDetails(Transactions transactions) {
-        //TODO Change to an appropriate object when it will be possible https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/574
-        Map<String, TransactionDetails> transactionDetails = new HashMap<>();
-        transactionDetails.put("transactionsDetails", mapToTransaction(transactions));
-        return transactionDetails;
-    }
-
-    public List<de.adorsys.psd2.model.AccountReference> mapToAccountReferences(List<AccountReference> accountReferences) {
-        if (CollectionUtils.isEmpty(accountReferences)) {
-            return Collections.emptyList();
-        }
-        return accountReferences.stream()
-                   .map(this::mapToAccountReference)
-                   .collect(Collectors.toList());
-    }
-
-    public de.adorsys.psd2.model.AccountReference mapToAccountReference(AccountReference accountReference) {
-        return Optional.ofNullable(accountReference)
-                   .map(account -> {
-                       de.adorsys.psd2.model.AccountReference reference = new de.adorsys.psd2.model.AccountReference();
-                       reference.setIban(account.getIban());
-                       reference.setBban(account.getBban());
-                       if (account.getCurrency() != null) {
-                           reference.setCurrency(account.getCurrency().getCurrencyCode());
-                       }
-                       reference.setMaskedPan(account.getMaskedPan());
-                       reference.setMsisdn(account.getMsisdn());
-                       reference.setPan(account.getPan());
-
-                       return reference;
-                   })
-                   .orElse(null);
-    }
-
-    private ReportExchangeRate mapToReportExchangeRate(Xs2aExchangeRate xs2aExchangeRate) {
-        ReportExchangeRate exchangeRate = new ReportExchangeRate();
-
-        exchangeRate.setContractIdentification(xs2aExchangeRate.getContractIdentification());
-        exchangeRate.setUnitCurrency(xs2aExchangeRate.getUnitCurrency());
-        exchangeRate.setExchangeRate(xs2aExchangeRate.getExchangeRate());
-        exchangeRate.setSourceCurrency(xs2aExchangeRate.getSourceCurrency());
-        exchangeRate.setTargetCurrency(xs2aExchangeRate.getTargetCurrency());
-        exchangeRate.quotationDate(xs2aExchangeRate.getQuotationDate());
-
-        return exchangeRate;
-    }
-
-    private @Nullable TransactionList mapToTransactionList(@Nullable List<Transactions> transactions) {
+    protected @Nullable TransactionList mapToTransactionList(@Nullable List<Transactions> transactions) {
         if (CollectionUtils.isEmpty(transactions)) {
             return null;
         }
@@ -276,4 +150,18 @@ public class AccountModelMapper {
         transactionList.addAll(transactionDetails);
         return transactionList;
     }
+
+    protected ReportExchangeRateList mapToReportExchanges(List<Xs2aExchangeRate> xs2aExchangeRates) {
+        if (CollectionUtils.isEmpty(xs2aExchangeRates)) {
+            return null;
+        }
+
+        return xs2aExchangeRates.stream()
+                   .map(this::mapToReportExchangeRate)
+                   .collect(Collectors.toCollection(ReportExchangeRateList::new));
+    }
+
+    protected abstract ReportExchangeRate mapToReportExchangeRate(Xs2aExchangeRate xs2aExchangeRate);
+
 }
+

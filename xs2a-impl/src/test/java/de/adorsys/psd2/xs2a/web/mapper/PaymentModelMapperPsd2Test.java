@@ -19,12 +19,8 @@ package de.adorsys.psd2.xs2a.web.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
-import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
-import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
-import org.hibernate.validator.internal.engine.ValidatorImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +32,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {CoreObjectsMapper.class, TppRedirectUriMapper.class, ObjectMapper.class,
-    HrefLinkMapper.class, StandardPaymentProductsResolver.class, ScaMethodsMapperImpl.class})
+    HrefLinkMapper.class, StandardPaymentProductsResolver.class, ScaMethodsMapperImpl.class, Xs2aAddressMapperImpl.class})
 public class PaymentModelMapperPsd2Test {
 
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
@@ -53,6 +49,8 @@ public class PaymentModelMapperPsd2Test {
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
     @Autowired
     private ScaMethodsMapper scaMethodsMapper;
+    @Autowired
+    private Xs2aAddressMapper xs2aAddressMapper;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -60,7 +58,7 @@ public class PaymentModelMapperPsd2Test {
     public void setUp() {
         mapper = new PaymentModelMapperPsd2(coreObjectsMapper, null, tppRedirectUriMapper,
                                             null, hrefLinkMapper, standardPaymentProductsResolver,
-                                            scaMethodsMapper);
+                                            scaMethodsMapper, xs2aAddressMapper);
     }
 
     @Test
