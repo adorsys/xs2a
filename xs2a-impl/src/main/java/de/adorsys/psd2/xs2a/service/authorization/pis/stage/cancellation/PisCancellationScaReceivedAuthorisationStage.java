@@ -105,13 +105,13 @@ public class PisCancellationScaReceivedAuthorisationStage extends PisScaStage<Xs
                                           .errorType(ErrorType.PIS_400)
                                           .messages(Collections.singletonList(MESSAGE_ERROR_NO_PSU))
                                           .build();
-            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. PIS_CANCELLATION_EMBEDDED_RECEIVED stage. Apply Identification when update PIS Payment PSU data has failed. No PSU data available in request.",
+            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. PIS_CANCELLATION_EMBEDDED_RECEIVED stage. Apply identification when update payment PSU data has failed. No PSU data available in request.",
                      requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId());
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
         }
 
         if (!isPsuDataCorrect(request.getPaymentId(), request.getPsuData())) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_CANCELLATION_EMBEDDED_RECEIVED stage. Apply Identification when update PIS Payment PSU data has failed. PSU credentials invalid.",
+            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_CANCELLATION_EMBEDDED_RECEIVED stage. Apply Identification when update payment PSU data has failed. PSU credentials invalid.",
                      requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId(), request.getPsuData().getPsuId());
             ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.PSU_CREDENTIALS_INVALID)
                                           .errorType(ErrorType.PIS_401)
@@ -151,7 +151,7 @@ public class PisCancellationScaReceivedAuthorisationStage extends PisScaStage<Xs
 
         if (availableScaMethodsResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(availableScaMethodsResponse, ServiceType.PIS);
-            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_CANCELLATION_EMBEDDED_RECEIVED stage. Request available ScaMethods has failed. Error msg: [{}]",
+            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_CANCELLATION_EMBEDDED_RECEIVED stage. Request available SCA methods has failed. Error msg: [{}]",
                      requestProviderService.getRequestId(), paymentId, authorisationId, psuData.getPsuId(), errorHolder);
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, request.getPaymentId(), request.getAuthorisationId(), psuData);
         }
@@ -159,14 +159,14 @@ public class PisCancellationScaReceivedAuthorisationStage extends PisScaStage<Xs
         List<SpiAuthenticationObject> spiScaMethods = availableScaMethodsResponse.getPayload();
 
         if (CollectionUtils.isEmpty(spiScaMethods)) {
-            log.info("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_CANCELLATION_EMBEDDED_RECEIVED stage. Available ScaMethods is empty.",
+            log.info("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_CANCELLATION_EMBEDDED_RECEIVED stage. Available SCA methods is empty.",
                      requestProviderService.getRequestId(), paymentId, authorisationId, psuData.getPsuId());
             SpiResponse<SpiResponse.VoidResponse> executePaymentResponse = paymentCancellationSpi.cancelPaymentWithoutSca(spiContextData, payment, availableScaMethodsResponse.getAspspConsentData());
             pisAspspDataService.updateAspspConsentData(executePaymentResponse.getAspspConsentData());
 
             if (executePaymentResponse.hasError()) {
                 ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(executePaymentResponse, ServiceType.PIS);
-                log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_CANCELLATION_EMBEDDED_RECEIVED stage. Cancel Payment without SCA has failed. Error msg: [{}]",
+                log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_CANCELLATION_EMBEDDED_RECEIVED stage. Cancel payment without SCA has failed. Error msg: [{}]",
                          requestProviderService.getRequestId(), paymentId, authorisationId, psuData.getPsuId(), errorHolder);
                 return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, request.getPaymentId(), request.getAuthorisationId(), psuData);
             }
@@ -194,7 +194,7 @@ public class PisCancellationScaReceivedAuthorisationStage extends PisScaStage<Xs
             return response;
         }
 
-        log.info("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. PIS_CANCELLATION_EMBEDDED_RECEIVED stage. Apply authorisation when update Payment PSU data set ScaStatus failed.",
+        log.info("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. PIS_CANCELLATION_EMBEDDED_RECEIVED stage. Apply authorisation when update payment PSU data set SCA status failed.",
                  requestProviderService.getRequestId(), paymentId, authorisationId);
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FAILED, request.getPaymentId(), request.getAuthorisationId(), psuData);
     }
