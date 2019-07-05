@@ -8,9 +8,11 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaAuthenticatedStage;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,6 +24,7 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
@@ -57,6 +60,13 @@ public class DecoupledAisAuthorizationServiceTest {
     private AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
     @Mock
     private AisScaAuthenticatedStage aisScaAuthenticatedStage;
+    @Mock
+    private RequestProviderService requestProviderService;
+
+    @Before
+    public void setUp() {
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+    }
 
     @Test
     public void createConsentAuthorization_success() {

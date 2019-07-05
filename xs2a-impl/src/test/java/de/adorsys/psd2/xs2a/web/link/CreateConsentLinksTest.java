@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateConsentLinksTest {
-    private static final String HTTP_URL ="http://url";
+    private static final String HTTP_URL = "http://url";
     private static final String CONSENT_ID = "9mp1PaotpXSToNCi";
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
     private static final String REDIRECT_LINK = "built_redirect_link";
@@ -60,8 +61,7 @@ public class CreateConsentLinksTest {
     @Test
     public void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndExplicitMethodAndPsuDataIsEmptyAndMultiLevelRequired() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
-
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
@@ -73,7 +73,7 @@ public class CreateConsentLinksTest {
     public void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndExplicitMethodAndPsuDataIsNotEmptyAndMultiLevelRequired() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
@@ -88,7 +88,23 @@ public class CreateConsentLinksTest {
 
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true, false);
+
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations"));
+        assertEquals(expectedLinks, links);
+    }
+
+
+    @Test
+    public void isScaStatusMethodAuthenticated_Embedded_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
+        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, false);
+        response.setAuthorizationId(AUTHORISATION_ID);
+
+        when(scaApproachResolver.getInitiationScaApproach(Matchers.eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
+
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true, true);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
@@ -100,7 +116,7 @@ public class CreateConsentLinksTest {
     public void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndImplicitMethodAndPsuDataIsEmpty() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
@@ -113,7 +129,7 @@ public class CreateConsentLinksTest {
     public void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndImplicitMethodAndPsuDataIsNotEmpty() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
@@ -126,7 +142,7 @@ public class CreateConsentLinksTest {
     public void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndExplicitMethodAndPsuDataIsEmptyAndMultiLevelRequired() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
@@ -138,7 +154,7 @@ public class CreateConsentLinksTest {
     public void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndExplicitMethodAndPsuDataIsNotEmptyAndMultiLevelRequired() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
@@ -153,7 +169,22 @@ public class CreateConsentLinksTest {
 
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true, false);
+
+        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
+        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
+        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations"));
+        assertEquals(expectedLinks, links);
+    }
+
+    @Test
+    public void isScaStatusMethodAuthenticated_Decoupled_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
+        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, false);
+        response.setAuthorizationId(AUTHORISATION_ID);
+
+        when(scaApproachResolver.getInitiationScaApproach(Matchers.eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
+
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true, true);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
@@ -165,7 +196,7 @@ public class CreateConsentLinksTest {
     public void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndImplicitMethodAndPsuDataIsEmpty() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
@@ -179,7 +210,7 @@ public class CreateConsentLinksTest {
 
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
@@ -192,7 +223,7 @@ public class CreateConsentLinksTest {
     public void scaApproachRedirectAndExplicitMethod() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);
 
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, true, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
@@ -205,7 +236,7 @@ public class CreateConsentLinksTest {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);
         when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID))).thenReturn(REDIRECT_LINK);
 
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
@@ -220,7 +251,7 @@ public class CreateConsentLinksTest {
 
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.OAUTH);
 
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false);
+        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, false, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
         expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));

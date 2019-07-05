@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.exception.CertificateException;
+import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,11 +34,17 @@ public class TppService {
     public String getTppId() {
         return Optional.ofNullable(tppInfoHolder.getTppInfo())
                    .map(TppInfo::getAuthorisationNumber)
-                   .orElseThrow(CertificateException::new);
+                   .orElseThrow(() -> {
+                       log.info("Can't get TPP id. Please check TPP Certificate");
+                       return new CertificateException();
+                   });
     }
 
     public TppInfo getTppInfo() {
         return Optional.ofNullable(tppInfoHolder.getTppInfo())
-                   .orElseThrow(CertificateException::new);
+                   .orElseThrow(() -> {
+                       log.info("Can't get TppInfo. Please check TPP Certificate");
+                       return new CertificateException();
+                   });
     }
 }

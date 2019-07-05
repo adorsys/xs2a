@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service.psu;
 
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -32,9 +33,12 @@ import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentAuthorizationSpecification;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
+import de.adorsys.psd2.consent.service.AisConsentRequestTypeService;
 import de.adorsys.psd2.consent.service.AisConsentUsageService;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -49,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
@@ -68,6 +73,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final PsuDataMapper psuDataMapper;
     private final AisConsentUsageService aisConsentUsageService;
     private final CmsPsuService cmsPsuService;
+    private final AisConsentRequestTypeService aisConsentRequestTypeService;
+
     @Override
     @Transactional
     public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) {
@@ -203,7 +210,26 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     private boolean updateAccountAccessInConsent(AisConsent consent, CmsAisConsentAccessRequest request) {
-        Set<AspspAccountAccess> aspspAccountAccesses = consentMapper.mapAspspAccountAccesses(request.getAccountAccess());
+        AisAccountAccess accountAccess = request.getAccountAccess();
+        if (accountAccess == null) {
+            log.info("Consent ID [{}]. Update account access in consent failed, because AIS Account Access is null",
+                     consent.getExternalId());
+            return false;
+        }
+
+        Function<String, AccountAccessType> accountAccessTypeConverter = (description) -> AccountAccessType.getByDescription(description).orElse(null);
+        consent.setAllPsd2(accountAccessTypeConverter.apply(accountAccess.getAllPsd2()));
+        consent.setAvailableAccounts(accountAccessTypeConverter.apply(accountAccess.getAvailableAccounts()));
+        consent.setAvailableAccountsWithBalances(accountAccessTypeConverter.apply(accountAccess.getAvailableAccountsWithBalances()));
+
+        Optional.ofNullable(request.getRecurringIndicator())
+            .ifPresent(consent::setRecurringIndicator);
+        Optional.ofNullable(request.getCombinedServiceIndicator())
+            .ifPresent(consent::setCombinedServiceIndicator);
+
+        Set<AspspAccountAccess> aspspAccountAccesses = consentMapper.mapAspspAccountAccesses(accountAccess);
+        AisConsentRequestType aisConsentRequestType = aisConsentRequestTypeService.getRequestTypeFromConsent(consent);
+        consent.setAisConsentRequestType(aisConsentRequestType);
         consent.addAspspAccountAccess(aspspAccountAccesses);
         consent.setExpireDate(request.getValidUntil());
         consent.setAllowedFrequencyPerDay(request.getFrequencyPerDay());

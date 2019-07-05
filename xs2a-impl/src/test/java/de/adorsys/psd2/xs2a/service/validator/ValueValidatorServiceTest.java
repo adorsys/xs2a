@@ -17,17 +17,21 @@
 package de.adorsys.psd2.xs2a.service.validator;
 
 
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.validation.Validation;
 import javax.validation.ValidationException;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ValueValidatorServiceTest {
@@ -39,9 +43,13 @@ public class ValueValidatorServiceTest {
     @InjectMocks
     private ValueValidatorService valueValidatorService;
 
+    @Mock
+    private RequestProviderService requestProviderService;
+
     @Before
     public void setUp() {
-        valueValidatorService = new ValueValidatorService(Validation.buildDefaultValidatorFactory().getValidator());
+        valueValidatorService = new ValueValidatorService(requestProviderService, Validation.buildDefaultValidatorFactory().getValidator());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
 

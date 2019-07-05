@@ -29,4 +29,8 @@ public class CmsAisConsentAccessRequest {
     private LocalDate validUntil;
     @ApiModelProperty(example = "4")
     private int frequencyPerDay;
+    @ApiModelProperty(example = "true")
+    private Boolean combinedServiceIndicator;
+    @ApiModelProperty(example = "true")
+    private Boolean recurringIndicator;
 }

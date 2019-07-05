@@ -41,7 +41,7 @@ public class AspspSettingsBuilder {
     private static final boolean ALL_PSD_2_SUPPORT = true;
     private static final boolean BANK_OFFERED_CONSENT_SUPPORT = true;
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = false;
-    private static final boolean SIGNING_BASKET_SUPPORTED = true;
+    private static final boolean SIGNING_BASKET_SUPPORTED = false;
     private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
     private static final boolean DELTA_LIST_SUPPORTED = false;

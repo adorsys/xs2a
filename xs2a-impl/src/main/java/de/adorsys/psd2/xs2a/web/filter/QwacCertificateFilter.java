@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.xs2a.web.filter;
 
-import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
 import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +42,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CERTIFICATE_EXPIRED;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CERTIFICATE_INVALID;
+import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
+
 /**
  * The intent of this Class is to get the Qwac certificate from header, extract
  * the information inside and set an Authentication Object with extracted data
@@ -56,6 +60,7 @@ import java.util.stream.Collectors;
 public class QwacCertificateFilter extends AbstractXs2aFilter {
     private final TppRoleValidationService tppRoleValidationService;
     private final TppInfoHolder tppInfoHolder;
+    private final RequestProviderService requestProviderService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -67,8 +72,10 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                 TppCertificateData tppCertificateData = CertificateExtractorUtil.extract(encodedTppQwacCert);
 
                 if (isCertificateExpired(tppCertificateData.getNotAfter())) {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                                       CertificateErrorMsgCode.CERTIFICATE_EXPIRED.toString());
+                    log.info("X-Request-ID: [{}], TPP Certificate is expired", requestProviderService.getRequestId());
+
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().print(new TppErrorMessage(ERROR, CERTIFICATE_EXPIRED, "Certificate is expired"));
                     return;
                 }
 
@@ -91,15 +98,17 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                 tppInfo.setTppRoles(xs2aTppRoles);
 
                 if (!tppRoleValidationService.hasAccess(tppInfo, request)) {
-                    log.error("Access forbidden for TPP with authorisation number: {}", tppCertificateData.getPspAuthorisationNumber());
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "You don't have access to this resource");
+                    log.info("X-Request-ID: [{}], Access forbidden for TPP with authorisation number: [{}]", requestProviderService.getRequestId(), tppCertificateData.getPspAuthorisationNumber());
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().print(new TppErrorMessage(ERROR, CERTIFICATE_INVALID, "You don't have access to this resource"));
                     return;
                 }
 
                 tppInfoHolder.setTppInfo(tppInfo);
             } catch (CertificateValidationException e) {
-                log.debug(e.getMessage());
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+                log.info("X-Request-ID: [{}], TPP unauthorised because CertificateValidationException: {}", requestProviderService.getRequestId(), e.getMessage());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().print(new TppErrorMessage(ERROR, CERTIFICATE_INVALID, "You don't have access to this resource"));
                 return;
             }
         }

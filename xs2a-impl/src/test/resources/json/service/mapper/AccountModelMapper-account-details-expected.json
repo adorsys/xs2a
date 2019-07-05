@@ -1,0 +1,86 @@
+{
+  "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+  "currency": "EUR",
+  "iban": "DE52500105173911841934",
+  "bban": "Test BBAN",
+  "msisdn": "0172/1111111",
+  "name": "Main Account",
+  "product": "Girokonto",
+  "cashAccountType": "CASH",
+  "status": "enabled",
+  "bic": "EDEKDEHHXXX",
+  "linkedAccounts": "Linked Accounts",
+  "usage": "PRIV",
+  "details": "Details",
+  "_links": {
+    "scaRedirect": {
+      "href": "http://scaRedirect"
+    },
+    "scaOAuth": {
+      "href": "http://scaOAuth"
+    },
+    "updatePsuIdentification": {
+      "href": "http://updatePsuIdentification"
+    },
+    "updateProprietaryData": {
+      "href": "http://updateProprietaryData"
+    },
+    "updatePsuAuthentication": {
+      "href": "http://updatePsuAuthentication"
+    },
+    "selectAuthenticationMethod": {
+      "href": "http://selectAuthenticationMethod"
+    },
+    "self": {
+      "href": "http://self"
+    },
+    "status": {
+      "href": "http://status"
+    },
+    "account": {
+      "href": "http://account"
+    },
+    "balances": {
+      "href": "http://balances"
+    },
+    "transactions": {
+      "href": "http://transactions"
+    },
+    "first": {
+      "href": "http://first"
+    },
+    "next": {
+      "href": "http://next"
+    },
+    "previous": {
+      "href": "http://previous"
+    },
+    "last": {
+      "href": "http://last"
+    },
+    "download": {
+      "href": "http://download"
+    },
+    "startAuthorisation": {
+      "href": "http://startAuthorisation"
+    },
+    "startAuthorisationWithPsuIdentification": {
+      "href": "http://startAuthorisationWithPsuIdentification"
+    },
+    "startAuthorisationWithPsuAuthentication": {
+      "href": "http://startAuthorisationWithPsuAuthentication"
+    },
+    "startAuthorisationWithAuthenticationMethodSelection": {
+      "href": "http://startAuthorisationWithAuthenticationMethodSelection"
+    },
+    "startAuthorisationWithTransactionAuthorisation": {
+      "href": "http://startAuthorisationWithTransactionAuthorisation"
+    },
+    "scaStatus": {
+      "href": "http://scaStatus"
+    },
+    "authoriseTransaction": {
+      "href": "http://authoriseTransaction"
+    }
+  }
+}

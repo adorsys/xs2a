@@ -33,7 +33,7 @@ public enum ContentType {
     private static final Map<String, ContentType> CONTAINER = new HashMap<>();
 
     static {
-        for (ContentType t: values()) {
+        for (ContentType t : values()) {
             CONTAINER.put(t.getType(), t);
         }
     }

@@ -36,7 +36,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfirmationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.service.validator.PiisConsentValidationService;
+import de.adorsys.psd2.xs2a.service.validator.piis.PiisConsentValidation;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
@@ -64,10 +64,11 @@ public class FundsConfirmationService {
     private final SpiContextDataProvider spiContextDataProvider;
     private final Xs2aToSpiFundsConfirmationRequestMapper xs2aToSpiFundsConfirmationRequestMapper;
     private final SpiToXs2aFundsConfirmationMapper spiToXs2aFundsConfirmationMapper;
-    private final PiisConsentValidationService piisConsentValidationService;
+    private final PiisConsentValidation piisConsentValidation;
     private final PiisConsentService piisConsentService;
     private final Xs2aEventService xs2aEventService;
     private final SpiErrorMapper spiErrorMapper;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Checks if the account balance is sufficient for requested operation
@@ -85,6 +86,8 @@ public class FundsConfirmationService {
 
             if (validationResult.hasError()) {
                 ErrorHolder errorHolder = validationResult.getErrorHolder();
+                log.info("X-Request-ID: [{}]. Check availability of funds validation failed: {}",
+                         requestProviderService.getRequestId(), errorHolder);
                 return ResponseObject.<FundsConfirmationResponse>builder()
                            .fail(new MessageError(errorHolder))
                            .build();
@@ -113,14 +116,15 @@ public class FundsConfirmationService {
         AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
 
         if (selector == null) {
-            log.warn("No account identifier in the request {}", accountReference);
+            log.info("X-Request-ID: [{}]. Check availability of funds failed, because while validate account reference no account identifier found in the request [{}].",
+                     requestProviderService.getRequestId(), accountReference);
             return new PiisConsentValidationResult(ErrorHolder.builder(FORMAT_ERROR).errorType(PIIS_400).build());
         }
 
         List<PiisConsent> response = piisConsentService.getPiisConsentListByAccountIdentifier(accountReference.getCurrency(),
                                                                                               selector);
 
-        return piisConsentValidationService.validatePiisConsentData(response);
+        return piisConsentValidation.validatePiisConsentData(response);
     }
 
     private FundsConfirmationResponse executeRequest(@NotNull PsuIdData psuIdData,
@@ -143,7 +147,10 @@ public class FundsConfirmationService {
         }
 
         if (fundsSufficientCheck.hasError()) {
-                return new FundsConfirmationResponse(spiErrorMapper.mapToErrorHolder(fundsSufficientCheck, ServiceType.PIIS));
+            ErrorHolder error = spiErrorMapper.mapToErrorHolder(fundsSufficientCheck, ServiceType.PIIS);
+            log.info("X-Request-ID: [{}]. Check availability of funds failed, because perform funds sufficient check failed. Msg error: {}",
+                     requestProviderService.getRequestId(), error);
+                return new FundsConfirmationResponse(error);
         }
 
         return spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(fundsSufficientCheck.getPayload());

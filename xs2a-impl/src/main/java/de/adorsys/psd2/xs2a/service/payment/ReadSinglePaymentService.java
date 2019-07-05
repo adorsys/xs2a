@@ -48,7 +48,7 @@ import java.util.Optional;
 public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformationResponse<SinglePayment>> {
     private final PisAspspDataService pisAspspDataService;
     private final SpiContextDataProvider spiContextDataProvider;
-    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    private final Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
     private final SinglePaymentSpi singlePaymentSpi;
     private final SpiToXs2aSinglePaymentMapper spiToXs2aSinglePaymentMapper;
     private final SpiErrorMapper spiErrorMapper;
@@ -73,7 +73,10 @@ public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformat
         pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
-            return new PaymentInformationResponse<>(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. READ SINGLE Payment failed. Can't get Payment by id at SPI-level. Error msg: [{}]",
+                     requestProviderService.getRequestId(), spiPaymentOptional.get().getPaymentId(), errorHolder);
+            return new PaymentInformationResponse<>(errorHolder);
         }
 
         SpiSinglePayment spiSinglePayment = spiResponse.getPayload();

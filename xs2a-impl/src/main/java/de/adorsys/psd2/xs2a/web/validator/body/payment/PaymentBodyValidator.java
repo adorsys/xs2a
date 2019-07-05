@@ -20,7 +20,6 @@ import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
 
 /**
  * Interface for validating the body of PIS payments (JSON deserializing and inner fields correctness).
- *
  */
 public interface PaymentBodyValidator extends BodyValidator {
 }

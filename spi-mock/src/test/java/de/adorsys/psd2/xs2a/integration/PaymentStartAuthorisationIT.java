@@ -28,7 +28,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
-import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.event.Event;
@@ -130,7 +130,7 @@ public class PaymentStartAuthorisationIT {
     @MockBean
     private CommonPaymentSpi commonPaymentSpi;
     @MockBean
-    private UpdatePaymentStatusAfterSpiServiceEncrypted updatePaymentStatusAfterSpiService;
+    private UpdatePaymentAfterSpiServiceEncrypted updatePaymentStatusAfterSpiService;
     @MockBean
     private PaymentAuthorisationSpi paymentAuthorisationSpi;
 
