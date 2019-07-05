@@ -21,6 +21,22 @@ From now on, new field is added to bank_profile - `authorisationExpirationTimeMs
 expiration in milliseconds and influences payment authorisation, payment cancellation authorisation and consent authorisation.
 All calls for updating data from online-banking to the CMS-PSU-API can be processed until the authorisation timeout is not expired.
 In case this time is expired the `408 REQUEST_TIMEOUT` response is given.
+When PSU is redirected to Online-Banking, there should be two calls from Online-Banking to CMS. For example:
+
+for payment initiation:
+
+ - getPaymentIdByRedirectId – response has payment ID, authorisation ID, TPP payment redirect URIs,
+ - getPaymentByPaymentId – response has payment object;
+
+for payment cancellation:
+
+ - getPaymentIdByRedirectIdForCancellation – response has payment ID, cancellation ID, TPP cancellation redirect URIs,
+ - getPaymentByPaymentIdForCancellation – response has payment object;
+
+for consent creation:
+
+ - getConsentIdByRedirectId – response has consent ID, authorisation ID and TPP consent redirect URIs,
+ - getConsentByConsentId – response has consent object.
 
 Also, new endpoints were added to CMS-PSU-API in scope of this feature:
 
