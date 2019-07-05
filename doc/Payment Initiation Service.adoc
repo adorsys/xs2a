@@ -18,10 +18,10 @@ Current version of the XS2A Interface supports the following types of payments:
 * Single payment
 * Future dated single payment
 * Bulk payment
-* Recurring payment
+* Periodic payment
 
 
-== SCA Approacches fo PIS
+== SCA Approaches fo PIS
 === Payment Initiation Service in Redirect Approach
 
 image::paymentInitRedirect.png[Payment Initiation in Redirect Approach, title='Payment Initiation in Redirect Approach', align='center']
@@ -50,7 +50,7 @@ The transaction statuses of the payment initiation resource which are defined as
 * *Rejected* (Payment initiation or individual transaction included in the payment initiation has been rejected).
 * *AcceptedSettlementCompleted* (indicating that the money has been booked already from the debtor account).
 
-After setting finalised status for payment :
+After setting finalised status for payment:
 
 * status isn't allowed to be changed in CMS any more (except the case when ASPSP updates is directly in CMS)
 * new authorisation sub-resource can't be created
