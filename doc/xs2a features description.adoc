@@ -9,7 +9,7 @@
 
 toc::[]
 
-== xref:Strong customer authentication[Strong customer authentication]
+== xref:Strong customer authentication.adoc[Strong customer authentication]
 
 == xref:Payment Initiation Service.adoc[Payment Initiation Service]
 
