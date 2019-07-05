@@ -50,7 +50,7 @@ import java.util.Optional;
 public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInformationResponse<PeriodicPayment>> {
     private final PisAspspDataService pisAspspDataService;
     private final SpiContextDataProvider spiContextDataProvider;
-    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    private final Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
     private final PeriodicPaymentSpi periodicPaymentSpi;
     private final SpiToXs2aPeriodicPaymentMapper spiToXs2aPeriodicPaymentMapper;
     private final SpiErrorMapper spiErrorMapper;
@@ -83,7 +83,10 @@ public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInform
         }
 
         if (spiResponse.hasError()) {
-            return new PaymentInformationResponse<>(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. READ PERIODIC Payment failed. Can't get Payment by id at SPI-level. Error msg: [{}]",
+                     requestProviderService.getRequestId(), spiPaymentOptional.get().getPaymentId(), errorHolder);
+            return new PaymentInformationResponse<>(errorHolder);
         }
 
         SpiPeriodicPayment spiResponsePayment = spiResponse.getPayload();

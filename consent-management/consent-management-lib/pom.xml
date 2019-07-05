@@ -21,7 +21,7 @@
     <parent>
         <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>3.6.1</version>
+        <version>3.7</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -38,25 +38,25 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-xs2a-api</artifactId>
-            <version>3.6.1</version>
+            <version>3.7</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-aspsp-api</artifactId>
-            <version>3.6.1</version>
+            <version>3.7</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-api</artifactId>
-            <version>3.6.1</version>
+            <version>3.7</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-psu-api</artifactId>
-            <version>3.6.1</version>
+            <version>3.7</version>
         </dependency>
 
         <!-- spring dependencies -->
@@ -115,7 +115,18 @@
             <artifactId>commons-collections4</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-jdk8</artifactId>
+        </dependency>
+
         <!-- test dependencies -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

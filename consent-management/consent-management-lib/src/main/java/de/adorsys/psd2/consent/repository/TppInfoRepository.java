@@ -18,10 +18,21 @@ package de.adorsys.psd2.consent.repository;
 
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
 public interface TppInfoRepository extends CrudRepository<TppInfoEntity, Long> {
     Optional<TppInfoEntity> findFirstByAuthorisationNumberAndAuthorityIdAndInstanceId(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId);
+
+    @Modifying
+    @Query(value = "UPDATE tpp_info " +
+                       "SET cancelRedirectUri = :cancelRedirectUri, cancelNokRedirectUri = :cancelNokRedirectUri " +
+                       "WHERE id = :id")
+    int updateCancelRedirectUrisById(@Param("id") Long id,
+                                     @Param("cancelRedirectUri") String cancelRedirectUri,
+                                     @Param("cancelNokRedirectUri") String cancelNokRedirectUri);
 }

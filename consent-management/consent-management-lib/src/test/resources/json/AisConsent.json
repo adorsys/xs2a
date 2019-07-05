@@ -1,0 +1,17 @@
+{
+  "id": 1,
+  "externalId": "4b112130-6a96-4941-a220-2da8a4af2c65",
+  "psuDataList": [
+    {
+      "psuId": "987654321",
+      "psuIdType": "",
+      "psuCorporateId": "",
+      "psuCorporateIdType": ""
+    }
+  ],
+  "consentStatus": "RECEIVED",
+  "tppInfo": {
+    "redirectUri": "Mock tppOkRedirectUri",
+    "nokRedirectUri":  "Mock tppNokRedirectUri"
+  }
+}

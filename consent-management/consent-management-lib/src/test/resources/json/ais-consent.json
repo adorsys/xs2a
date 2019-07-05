@@ -1,0 +1,12 @@
+{
+  "aspspAccountAccesses": [
+    {
+      "accountIdentifier": "DE89876442804656108109",
+      "currency": "EUR",
+      "typeAccess": "ACCOUNT",
+      "accountReferenceType": "iban",
+      "resourceId": "resource id",
+      "aspspAccountId": "aspsp account id"
+    }
+  ]
+}

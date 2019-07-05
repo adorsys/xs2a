@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -80,11 +81,15 @@ public class ReadSinglePaymentStatusServiceTest {
     private SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory;
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void init(){
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
             .thenReturn(spiAspspConsentDataProvider);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
     }
 
     @Test

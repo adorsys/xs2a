@@ -58,8 +58,11 @@ public class PisAuthorization extends InstanceDependableEntity {
     @Enumerated(value = EnumType.STRING)
     private CmsAuthorisationType authorizationType;
 
-    @Column(name = "expiration_timestamp")
+    @Column(name = "redirect_expiration_timestamp")
     private OffsetDateTime redirectUrlExpirationTimestamp;
+
+    @Column(name = "expiration_timestamp")
+    private OffsetDateTime authorisationExpirationTimestamp;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id", nullable = false)
@@ -76,11 +79,11 @@ public class PisAuthorization extends InstanceDependableEntity {
     @Enumerated(value = EnumType.STRING)
     private ScaApproach scaApproach;
 
-    public boolean isExpired() {
-        return !isNotExpired();
+    public boolean isRedirectUrlNotExpired() {
+        return redirectUrlExpirationTimestamp.isAfter(OffsetDateTime.now());
     }
 
-    public boolean isNotExpired() {
-        return redirectUrlExpirationTimestamp.isAfter(OffsetDateTime.now());
+    public boolean isAuthorisationNotExpired() {
+        return authorisationExpirationTimestamp.isAfter(OffsetDateTime.now());
     }
 }

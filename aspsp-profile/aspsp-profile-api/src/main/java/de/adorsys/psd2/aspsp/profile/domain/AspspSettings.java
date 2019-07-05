@@ -47,6 +47,7 @@ public class AspspSettings {
     private boolean paymentCancellationAuthorizationMandated;
     private boolean piisConsentSupported;
     private long redirectUrlExpirationTimeMs;
+    private long authorisationExpirationTimeMs;
     private String pisPaymentCancellationRedirectUrlToAspsp;
     private long notConfirmedConsentExpirationPeriodMs;
     private long notConfirmedPaymentExpirationPeriodMs;

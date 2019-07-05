@@ -1,7 +1,7 @@
 // toc-title definition MUST follow document title without blank line!
 = XS2A. Details of realisation
 :toc-title:
-:imagesdir: images
+:imagesdir: usecases/diagrams
 :toc: left
 
 // horizontal line
@@ -139,7 +139,7 @@ Depending on SpiPaymentCancellationResponse properties *transactionStatus* and *
 |with authorisation
 |===
 
-image::PaymentCancellation_Redirect.png[Payment Cancellation in Redirect Approach, title="Payment Cancellation in Redirect Approach", align="center"]
+image::PaymentCancellation Redirect.png[Payment Cancellation in Redirect Approach, title="Payment Cancellation in Redirect Approach", align="center"]
 
 == Account Information Service
 === Establish account information consent

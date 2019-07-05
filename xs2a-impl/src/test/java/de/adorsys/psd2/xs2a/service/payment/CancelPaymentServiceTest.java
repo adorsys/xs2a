@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisatio
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
@@ -50,9 +51,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
@@ -88,13 +87,15 @@ public class CancelPaymentServiceTest {
     @Mock
     private SpiErrorMapper spiErrorMapper;
     @Mock
-    private Xs2aUpdatePaymentStatusAfterSpiService xs2aUpdatePaymentStatusAfterSpiService;
+    private Xs2aUpdatePaymentAfterSpiService xs2AUpdatePaymentAfterSpiService;
     @Mock
     private PaymentCancellationAuthorisationNeededDecider paymentCancellationAuthorisationNeededDecider;
     @Mock
     private AuthorisationMethodDecider authorisationMethodDecider;
     @Mock
     private PaymentCancellationAuthorisationService paymentCancellationAuthorisationService;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void setUp() {
@@ -104,18 +105,19 @@ public class CancelPaymentServiceTest {
             .thenReturn(true);
         when(authorisationMethodDecider.isImplicitMethod(false, false))
             .thenReturn(false);
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.CANC)), eq(getSpiPayment(PAYMENT_ID, CANC)), eq(PSU_DATA)))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.CANC)), eq(getSpiPayment(PAYMENT_ID, CANC)), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(false, CANC));
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.ACTC)), eq(getSpiPayment(PAYMENT_ID, ACTC)), eq(PSU_DATA)))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.ACTC)), eq(getSpiPayment(PAYMENT_ID, ACTC)), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(false, ACTC));
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, TransactionStatus.ACTC)), eq(getSpiPayment(PAYMENT_ID, ACTC)), eq(PSU_DATA)))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, TransactionStatus.ACTC)), eq(getSpiPayment(PAYMENT_ID, ACTC)), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(true, ACTC));
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, RCVD)), eq(getSpiPayment(PAYMENT_ID, RCVD)), eq(PSU_DATA)))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, RCVD)), eq(getSpiPayment(PAYMENT_ID, RCVD)), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(false, RCVD));
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, ACSC)), eq(getSpiPayment(PAYMENT_ID, ACSC)), eq(PSU_DATA)))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, ACSC)), eq(getSpiPayment(PAYMENT_ID, ACSC)), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(false, ACSC));
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, null)), any(SpiPayment.class), eq(PSU_DATA)))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, null)), any(SpiPayment.class), eq(PSU_DATA), eq(ENCRYPTED_PAYMENT_ID)))
             .thenReturn(getCancelPaymentResponse(true, null));
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test
@@ -140,7 +142,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
 
         // Then
         assertThat(response.hasError()).isFalse();
@@ -152,12 +155,12 @@ public class CancelPaymentServiceTest {
         SpiPayment spiPayment = getSpiPayment(PAYMENT_ID, ACTC);
 
         SpiResponse<SpiResponse.VoidResponse> spiErrorResponse = SpiResponse.<SpiResponse.VoidResponse>builder()
-                                                        .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                        .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+                                                                     .aspspConsentData(ASPSP_CONSENT_DATA)
+                                                                     .fail(SpiResponseStatus.TECHNICAL_FAILURE);
 
         ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-                                        .messages(Collections.singletonList(PAYMENT_NOT_FOUND_MESSAGE))
-                                        .build();
+                                      .messages(Collections.singletonList(PAYMENT_NOT_FOUND_MESSAGE))
+                                      .build();
 
         MessageError expectedError = new MessageError(errorHolder);
 
@@ -179,7 +182,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
 
         // Then
         assertThat(response.hasError()).isTrue();
@@ -199,7 +203,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
 
         // Then
         assertThat(response.hasError()).isFalse();
@@ -226,7 +231,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
 
         // Then
         assertThat(response.hasError()).isFalse();
@@ -249,7 +255,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
 
         // Then
         assertThat(response.hasError()).isFalse();
@@ -269,7 +276,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
 
         // Then
         assertThat(response.hasError()).isTrue();
@@ -292,7 +300,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
         // Then
         assertThat(response.hasError()).isTrue();
     }
@@ -314,7 +323,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          false);
+                                                                                                          false,
+                                                                                                          null);
         // Then
         assertThat(response.hasError()).isFalse();
         assertThat(response.getBody()).isEqualTo(getCancelPaymentResponse(true, ACWC));
@@ -346,7 +356,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          true);
+                                                                                                          true,
+                                                                                                          null);
         // Then
         assertThat(response.hasError()).isFalse();
         assertThat(response.getBody()).isEqualTo(cancelPaymentResponseExpected);
@@ -357,9 +368,9 @@ public class CancelPaymentServiceTest {
         SpiPayment spiPayment = getSpiPayment(PAYMENT_ID, ACTC);
 
         when(paymentCancellationAuthorisationService.createPisCancellationAuthorization(ENCRYPTED_PAYMENT_ID, PSU_DATA, spiPayment.getPaymentType(), spiPayment.getPaymentProduct()))
-            .thenReturn( ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                             .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
-                             .build());
+            .thenReturn(ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                            .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
+                            .build());
 
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(spiPayment), any()))
             .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
@@ -374,7 +385,8 @@ public class CancelPaymentServiceTest {
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(PSU_DATA,
                                                                                                           spiPayment,
                                                                                                           ENCRYPTED_PAYMENT_ID,
-                                                                                                          true);
+                                                                                                          true,
+                                                                                                          null);
         // Then
         assertThat(response.hasError()).isTrue();
         assertThat(response.getError().getErrorType()).isEqualTo(PIS_CANC_405);
@@ -391,6 +403,10 @@ public class CancelPaymentServiceTest {
         CancelPaymentResponse response = new CancelPaymentResponse();
         response.setStartAuthorisationRequired(authorisationRequired);
         response.setTransactionStatus(transactionStatus);
+
+        if (authorisationRequired) {
+            response.setPaymentId(ENCRYPTED_PAYMENT_ID);
+        }
         return response;
     }
 

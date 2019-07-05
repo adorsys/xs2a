@@ -16,38 +16,27 @@
 
 package de.adorsys.psd2.xs2a.service.validator.tpp;
 
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_INVALID;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_401;
 
-@Slf4j
 @Component
-@RequiredArgsConstructor
-public class PisTppInfoValidator {
-    private final TppInfoCheckerService tppInfoCheckerService;
-    private final RequestProviderService requestProviderService;
+public class PisTppInfoValidator extends TppInfoValidator {
+    public PisTppInfoValidator(TppInfoCheckerService tppInfoCheckerService, RequestProviderService requestProviderService) {
+        super(tppInfoCheckerService, requestProviderService);
+    }
 
-    /**
-     * Validates the TPP object contained in the payment by checking whether it matches current TPP
-     *
-     * @param tppInfoInPayment TPP Info object contained in the payment
-     * @return validation result
-     */
-    public ValidationResult validateTpp(@Nullable TppInfo tppInfoInPayment) {
-        if (tppInfoCheckerService.differsFromTppInRequest(tppInfoInPayment)) {
-            log.info("X-Request-ID: [{}]. TPP validation has failed: TPP in payment doesn't match the TPP in request",
-                     requestProviderService.getRequestId());
-            return ValidationResult.invalid(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED, "TPP certificate doesn’t match the initial request"));
-        }
+    @Override
+    ErrorType getErrorType() {
+        return PIS_401;
+    }
 
-        return ValidationResult.valid();
+    @Override
+    TppMessageInformation getTppMessageInformation() {
+        return TppMessageInformation.of(CERTIFICATE_INVALID, TPP_ERROR_MESSAGE);
     }
 }

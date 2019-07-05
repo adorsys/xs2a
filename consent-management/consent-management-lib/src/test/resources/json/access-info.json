@@ -1,0 +1,11 @@
+{
+  "accounts": [
+    {
+      "accountIdentifier": "DE89876442804656108109",
+      "currency": "EUR",
+      "accountType": "iban",
+      "resourceId": "resource id",
+      "aspspAccountId": "aspsp account id"
+    }
+  ]
+}

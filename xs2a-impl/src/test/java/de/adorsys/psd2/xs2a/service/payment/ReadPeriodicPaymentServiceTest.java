@@ -71,7 +71,7 @@ public class ReadPeriodicPaymentServiceTest {
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
-    private Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    private Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
     @Mock
     private PeriodicPaymentSpi periodicPaymentSpi;
     @Mock

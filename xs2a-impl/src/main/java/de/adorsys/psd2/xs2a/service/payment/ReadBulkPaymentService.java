@@ -47,7 +47,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformationResponse<BulkPayment>> {
     private final SpiContextDataProvider spiContextDataProvider;
-    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    private final Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
     private final BulkPaymentSpi bulkPaymentSpi;
     private final SpiToXs2aBulkPaymentMapper spiToXs2aBulkPaymentMapper;
     private final SpiErrorMapper spiErrorMapper;
@@ -78,7 +78,10 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
         }
 
         if (spiResponse.hasError()) {
-            return new PaymentInformationResponse<>(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+            log.info("X-Request-ID: [{}], Payment-ID [{}]. READ BULK Payment failed. Can't get Payment by id at SPI-level. Error msg: [{}]",
+                     requestProviderService.getRequestId(), spiPaymentOptional.get().getPaymentId(), errorHolder);
+            return new PaymentInformationResponse<>(errorHolder);
         }
 
         SpiBulkPayment spiResponsePayment = spiResponse.getPayload();

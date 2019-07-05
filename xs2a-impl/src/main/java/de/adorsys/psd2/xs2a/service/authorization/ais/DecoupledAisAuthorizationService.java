@@ -21,11 +21,13 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaMethodSelectedStage;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -34,9 +36,11 @@ import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactor
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class DecoupledAisAuthorizationService implements AisAuthorizationService {
     private final Xs2aAisConsentService aisConsentService;
+    private final RequestProviderService requestProviderService;
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
 
@@ -52,6 +56,8 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (!accountConsentOptional.isPresent()) {
+            log.info("X-Request-ID: [{}], Consent-ID [{}]. Create consent authorisation has failed. Consent not found by id.",
+                     requestProviderService.getRequestId(), consentId);
             return Optional.empty();
         }
 
@@ -84,7 +90,10 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
         AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + getScaApproachServiceType().name() + SEPARATOR + consentAuthorization.getScaStatus().name());
         UpdateConsentPsuDataResponse response = service.apply(updatePsuData);
 
-        if (!response.hasError()) {
+        if (response.hasError()) {
+            log.warn("X-Request-ID: [{}], Consent-ID [{}], Authentication-ID [{}], PSU-ID [{}]. Update consent authorisation has failed. Error msg: {}.",
+                     requestProviderService.getRequestId(), updatePsuData.getConsentId(), updatePsuData.getAuthorizationId(), updatePsuData.getPsuData().getPsuId(), response.getMessageError());
+        } else {
             aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, updatePsuData));
         }
 

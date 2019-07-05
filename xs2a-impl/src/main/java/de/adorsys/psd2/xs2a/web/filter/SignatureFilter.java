@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
 import de.adorsys.psd2.validator.signature.TppSignatureValidator;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SignatureFilter extends AbstractXs2aFilter {
     private final AspspProfileServiceWrapper aspspProfileService;
-
+    private final RequestProviderService requestProviderService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -51,15 +52,19 @@ public class SignatureFilter extends AbstractXs2aFilter {
         }
 
         String signature = request.getHeader("signature");
+        String errText;
+
         if (StringUtils.isBlank(signature)) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                               CertificateErrorMsgCode.SIGNATURE_MISSING.toString());
+            errText = CertificateErrorMsgCode.SIGNATURE_MISSING.toString();
+            log.info("X-Request-ID: [{}]. TPP unauthorized: {}", requestProviderService.getRequestId(), errText);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, errText);
             return;
         }
 
         if (digestContainsErrors(request)) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                               CertificateErrorMsgCode.FORMAT_ERROR.toString());
+            errText = CertificateErrorMsgCode.FORMAT_ERROR.toString();
+                log.info("X-Request-ID: [{}], TPP unauthorized: {}", requestProviderService.getRequestId(), errText);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, errText);
             return;
         }
 
@@ -70,8 +75,9 @@ public class SignatureFilter extends AbstractXs2aFilter {
         if (tppSignatureValidator.verifySignature(signature, encodedTppCert, headers)) {
             chain.doFilter(request, response);
         } else {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                               CertificateErrorMsgCode.SIGNATURE_INVALID.toString());
+            errText = CertificateErrorMsgCode.SIGNATURE_INVALID.toString();
+                log.info("X-Request-ID: [{}], TPP unauthorized: {}", requestProviderService.getRequestId(), errText);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, errText);
         }
     }
 

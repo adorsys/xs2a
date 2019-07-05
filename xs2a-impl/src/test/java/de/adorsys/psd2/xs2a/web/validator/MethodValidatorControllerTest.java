@@ -31,6 +31,7 @@ public class MethodValidatorControllerTest {
         List<MethodValidator> methodValidators = new ArrayList<>();
         methodValidators.add(new ConsentMethodValidatorImpl(null, null));
         methodValidators.add(new PaymentMethodValidatorImpl(null, null));
+        methodValidators.add(new CancelPaymentMethodValidatorImpl(null));
         DefaultMethodValidatorImpl defaultMethodValidator = new DefaultMethodValidatorImpl(null);
         MethodValidatorController controller = new MethodValidatorController(methodValidators, defaultMethodValidator);
 
@@ -39,6 +40,9 @@ public class MethodValidatorControllerTest {
 
         methodValidator = controller.getMethod("_initiatePayment");
         assertTrue(methodValidator instanceof PaymentMethodValidatorImpl);
+
+        methodValidator = controller.getMethod("_cancelPayment");
+        assertTrue(methodValidator instanceof CancelPaymentMethodValidatorImpl);
 
         methodValidator = controller.getMethod("");
         assertTrue(methodValidator instanceof DefaultMethodValidatorImpl);

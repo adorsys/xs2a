@@ -47,7 +47,21 @@ public class Xs2aAddressMapperTest {
     @Test
     public void mapToXs2aAddress_nullValue() {
         Xs2aAddress xs2aAddress = xs2aAddressMapper.mapToXs2aAddress(null);
+        assertNull(xs2aAddress);
+    }
 
-        assertEquals(null, xs2aAddress);
+    @Test
+    public void mapToAddress_success() {
+        Address address = xs2aAddressMapper.mapToAddress(
+            jsonReader.getObjectFromFile("json/service/mapper/expected-address.json", Xs2aAddress.class));
+
+        assertEquals(jsonReader.getObjectFromFile("json/service/mapper/address.json", Address.class),
+                     address);
+    }
+
+    @Test
+    public void mapToAddress_nullValue() {
+        Address address = xs2aAddressMapper.mapToAddress(null);
+        assertNull(address);
     }
 }

@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
@@ -82,6 +83,8 @@ public class ReadCommonPaymentStatusServiceTest {
     private SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory;
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void init(){
@@ -91,6 +94,7 @@ public class ReadCommonPaymentStatusServiceTest {
             .thenReturn(COMMON_PAYMENT);
         when(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(COMMON_PAYMENT))
             .thenReturn(SPI_PAYMENT_INFO);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

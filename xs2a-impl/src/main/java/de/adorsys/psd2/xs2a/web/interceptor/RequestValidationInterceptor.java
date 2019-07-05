@@ -17,10 +17,12 @@
 package de.adorsys.psd2.xs2a.web.interceptor;
 
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.MethodValidator;
 import de.adorsys.psd2.xs2a.web.validator.MethodValidatorController;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -41,9 +43,10 @@ import java.io.IOException;
  * bank-profile configuration). It is implemented in the controllers and services layers.
  */
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class RequestValidationInterceptor extends HandlerInterceptorAdapter {
-
+    private final RequestProviderService requestProviderService;
     private final ErrorBuildingService errorBuildingService;
     private final MethodValidatorController methodValidatorController;
 
@@ -67,6 +70,8 @@ public class RequestValidationInterceptor extends HandlerInterceptorAdapter {
 
             if (!initialMessageError.getTppMessages().isEmpty()) {
                 // Last part of all validations: if there is at least one error - we build response with HTTP code 400.
+                log.warn("X-Request-ID: [{}]. Validation of incoming request failed. Error msg: [{}]",
+                         requestProviderService.getRequestId(), initialMessageError);
                 errorBuildingService.buildErrorResponse(response, initialMessageError);
                 return false;
             }

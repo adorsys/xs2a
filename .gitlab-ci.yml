@@ -108,6 +108,11 @@ Compile Java8:
   variables:
     JAVA_VERSION: "system@1.8"
   <<: *build_java
+  artifacts:
+    paths:
+      - "xs2a-impl/target/aspsp-xs2a.jar"
+    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}"
+    expire_in: "10 day"
 
 Compile Java11:
   stage: "Compile"

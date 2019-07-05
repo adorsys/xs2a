@@ -40,7 +40,6 @@ public class TransactionsReportByPeriodHugeLinksTest {
 
         TransactionsReportByPeriodHugeLinks links = new TransactionsReportByPeriodHugeLinks(HTTP_URL, ACCOUNT_ID, withBalance);
 
-        expectedLinks.setDownload(new HrefType("http://url/v1/accounts/33333-999999999/transactions/download"));
         assertEquals(expectedLinks, links);
     }
 
@@ -50,7 +49,6 @@ public class TransactionsReportByPeriodHugeLinksTest {
 
         TransactionsReportByPeriodHugeLinks links = new TransactionsReportByPeriodHugeLinks(HTTP_URL, ACCOUNT_ID, withBalance);
 
-        expectedLinks.setDownload(new HrefType("http://url/v1/accounts/33333-999999999/transactions/download"));
         expectedLinks.setBalances(new HrefType("http://url/v1/accounts/33333-999999999/balances"));
         assertEquals(expectedLinks, links);
     }

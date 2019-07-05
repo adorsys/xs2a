@@ -34,26 +34,6 @@ public class CryptoAlgorithm {
     @Column(name = "external_id", nullable = false, unique = true)
     private String cryptoProviderId;
 
-    @Deprecated // TODO delete this field in 2.9 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/851
-    @Column(name = "algorithm", nullable = false)
-    private String algorithm;
-
-    @Deprecated // TODO delete this field in 2.9 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/851
-    @Column(name = "version", nullable = false)
-    private String version;
-
-    @Deprecated // TODO delete this field in 2.9 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/851
-    @Column(name = "key_length_in_bytes", nullable = false)
-    private int keyLength;
-
-    @Deprecated // TODO delete this field in 2.9 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/851
-    @Column(name = "hash_iterations", nullable = false)
-    private int hashIterations;
-
-    @Deprecated // TODO delete this field in 2.9 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/851
-    @Column(name = "skf_algorithm", nullable = false)
-    private String skfAlgorithm;
-
     @Column(name = "encryptor_class", nullable = false)
     private String encryptorClass;
 

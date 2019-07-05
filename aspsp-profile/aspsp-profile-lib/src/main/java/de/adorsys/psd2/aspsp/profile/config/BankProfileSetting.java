@@ -129,6 +129,11 @@ public class BankProfileSetting {
     private long redirectUrlExpirationTimeMs;
 
     /**
+     * The limit of authorisation time for PIS authorisation, PIS cancellation authorisation and AIS authorisation. Set in milliseconds.
+     */
+    private long authorisationExpirationTimeMs;
+
+    /**
      * URL to ASPSP service in order to to work with PIS payment cancellation
      */
     private String pisPaymentCancellationRedirectUrlToAspsp;

@@ -22,11 +22,13 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -37,6 +39,7 @@ import java.util.Optional;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_BLOCKED;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 
+@Slf4j
 @RequiredArgsConstructor
 public class TppStopListInterceptor extends HandlerInterceptorAdapter {
     private static final String STOP_LIST_ERROR_MESSAGE = "Signature/corporate seal certificate has been blocked by the ASPSP";
@@ -47,6 +50,7 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
     private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
     private final ServiceTypeToErrorTypeMapper errorTypeMapper;
     private final ObjectMapper objectMapper;
+    private final RequestProviderService requestProviderService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -56,6 +60,8 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
             response.getWriter().write(objectMapper.writeValueAsString(createError()));
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(CERTIFICATE_BLOCKED.getCode());
+
+            log.info("X-Request-ID: [{}]. TPP {}.", requestProviderService.getRequestId(), STOP_LIST_ERROR_MESSAGE);
             return false;
         }
 

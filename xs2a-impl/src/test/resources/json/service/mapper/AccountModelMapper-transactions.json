@@ -1,0 +1,65 @@
+{
+  "transactionId": "1",
+  "entryReference": "2",
+  "endToEndId": "3",
+  "mandateId": "4",
+  "checkId": "5",
+  "creditorId": "6",
+  "bookingDate": "2017-01-01",
+  "valueDate": "2017-01-01",
+  "amount": {
+    "currency": "USD",
+    "amount": "100"
+  },
+  "exchangeRate": [
+    {
+      "sourceCurrency": "USD",
+      "exchangeRate": "27",
+      "unitCurrency": "UAH",
+      "targetCurrency": "UAH",
+      "quotationDate": "2018-02-02",
+      "contractIdentification": "identification"
+    }
+  ],
+  "creditorName": "Vasiliy",
+  "creditorAccount": {
+    "aspspAccountId": "1234567890",
+    "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+    "currency": "EUR",
+    "iban": "DE52500105173911841934",
+    "bban": "Test BBAN",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "pan": "1111"
+  },
+  "ultimateCreditor": "Petro",
+  "debtorName": "Pavlo",
+  "debtorAccount": {
+    "aspspAccountId": "111234567890",
+    "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+    "currency": "USD",
+    "iban": "DE52500105173911841934",
+    "bban": "Test BBAN",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "pan": "2222"
+  },
+  "ultimateDebtor": "Vasisualiy",
+  "remittanceInformationUnstructured": "escrte foin",
+  "remittanceInformationStructured": "secret info",
+  "purposeCode": {
+    "code": "BKDF"
+  },
+  "bankTransactionCodeCode": {
+    "code": "some bank code"
+  },
+  "proprietaryBankTransactionCode": "very secret code",
+  "_links": {
+    "balances": {
+      "href": "http://localhost/api/v1/accounts/33333-999999999/balances"
+    },
+    "transactions": {
+      "href": "http://localhost/api/v1/accounts/33333-999999999/transactions"
+    }
+  }
+}

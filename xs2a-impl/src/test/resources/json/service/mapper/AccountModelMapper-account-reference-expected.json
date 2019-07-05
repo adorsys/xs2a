@@ -1,0 +1,8 @@
+{
+  "currency": "EUR",
+  "iban": "DE52500105173911841934",
+  "bban": "Test BBAN",
+  "maskedPan": "23456xxxxxx1234",
+  "msisdn": "0172/1111111",
+  "pan": "1111"
+}

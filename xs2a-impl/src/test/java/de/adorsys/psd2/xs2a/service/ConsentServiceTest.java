@@ -163,6 +163,9 @@ public class ConsentServiceTest {
     private GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
     @Mock
     private AisScaAuthorisationService aisScaAuthorisationService;
+    @Mock
+    private RequestProviderService requestProviderService;
+
 
     private AccountConsent accountConsent;
 
@@ -233,6 +236,8 @@ public class ConsentServiceTest {
         when(spiContextDataProvider.provide()).thenReturn(spiContextData);
         when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
         when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(spiContextData);
+
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test
@@ -711,7 +716,7 @@ public class ConsentServiceTest {
     @Test
     public void getAccountConsentsById_withUnknownConsent_shouldReturnConsentUnknownError() {
         // Given
-        when(aisConsentService.getInitialAccountConsentById(WRONG_CONSENT_ID)).thenReturn(Optional.empty());
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(Optional.empty());
 
         // When
         ResponseObject response = consentService.getAccountConsentById(WRONG_CONSENT_ID);

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
@@ -63,6 +64,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private final ErrorMapperContainer errorMapperContainer;
     private final ObjectMapper objectMapper;
     private final RequestValidationInterceptor requestValidationInterceptor;
+    private final RequestProviderService requestProviderService;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -80,7 +82,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new PaymentLoggingInterceptor(tppService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
         registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService)).addPathPatterns(SIGNING_BASKETS_PATH);
 
-        registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, objectMapper))
+        registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, objectMapper, requestProviderService))
             .addPathPatterns(getAllXs2aEndpointPaths());
 
         registry.addInterceptor(requestValidationInterceptor).addPathPatterns(getAllXs2aEndpointPaths());

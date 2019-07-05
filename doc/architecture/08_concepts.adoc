@@ -6,18 +6,18 @@
 
 
 
-=== _<Concept 1>_
+=== Embeddable services
 
 _<explanation>_
 
 
 
-=== _<Concept 2>_
+=== Multi-tenancy for CMS Database
 
 _<explanation>_
 
-...
 
-=== _<Concept n>_
+
+=== Database schema migrations
 
 _<explanation>_

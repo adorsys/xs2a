@@ -18,18 +18,25 @@ package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PisPsuDataService {
     private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    private final RequestProviderService requestProviderService;
 
     public List<PsuIdData> getPsuDataByPaymentId(String paymentId) {
         return pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(paymentId)
-                   .orElse(null);
+                   .orElseGet(() -> {
+                       log.info("X-Request-ID [{}], Payment-ID [{}]. Can't get PsuData by payment ID because PsuData list not found by id at cms.", requestProviderService.getRequestId(), paymentId);
+                       return null;
+                   });
     }
 }
