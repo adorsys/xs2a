@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -85,7 +86,7 @@ public class MessageError {
                          .map(ErrorType::name)
                          .orElse("")
                    : tppMessages.stream()
-                         .map(TppMessageInformation::getText)
+                         .map(info -> StringUtils.defaultIfBlank(info.getText(), info.getMessageErrorCode().getName()))
                          .collect(Collectors.joining(", "));
     }
 }
