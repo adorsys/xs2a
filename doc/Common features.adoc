@@ -1,0 +1,46 @@
+// toc-title definition MUST follow document title without blank line!
+= Common features
+:toc-title:
+:imagesdir: usecases/diagrams
+:toc: left
+
+// horizontal line
+***
+
+toc::[]
+== Support of Relative and Global links in responses
+In https://github.com/adorsys/xs2a/tree/develop/aspsp-profile[ASPSP Profile] support of relative links look like:
+```
+forceXs2aBaseLinksUrl: true
+xs2aBaseLinksUrl: "/"
+```
+- If `forceXs2aBaseLinksUrl` is set to `true`, links in responses (except "scaRedirect") shall be generated with the base URL set by `xs2aBaseLinksUrl`:
+
+1. xs2aBaseLinksUrl="/" - for relative link;
+2. xs2aBaseLinksUrl="`http://myhost.com/`" - for global link;
+
+- If `forceXs2aBaseLinksUrl` is set to `false`, links in responses (except "scaRedirect") shall be generated with the base URL of controller (as it is now)
+
+- Default value for `forceXs2aBaseLinksUrl` is `false`
+
+|===
+|Option in Profile | | | |
+
+|forceXs2aBaseLinksUrl
+|true
+|true
+|false
+|false
+
+|xs2aBaseLinksUrl
+|"/"
+|"http://..."
+|"/"
+|"http://..."
+
+|
+|relative link
+|global link
+|Link based on URL of controller
+|Link based on URL of controller
+|===
