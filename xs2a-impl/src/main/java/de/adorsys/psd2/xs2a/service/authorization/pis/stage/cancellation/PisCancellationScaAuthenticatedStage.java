@@ -112,7 +112,7 @@ public class PisCancellationScaAuthenticatedStage extends PisScaStage<Xs2aUpdate
         SpiAuthorizationCodeResult authorizationCodeResult = spiResponse.getPayload();
 
         if (authorizationCodeResult.isEmpty()) {
-            log.info("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_CANCELLATION_EMBEDDED_PSUAUTHENTICATED stage. Proceed embedded approach when update Payment PSU data has failed. SCA_METHOD_UNKNOWN",
+            log.info("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_CANCELLATION_EMBEDDED_PSUAUTHENTICATED stage. Proceed embedded approach when update payment PSU data has failed. SCA_METHOD_UNKNOWN",
                      requestProviderService.getRequestId(), paymentId, authenticationId, psuData.getPsuId());
             ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.SCA_METHOD_UNKNOWN)
                                           .build();
