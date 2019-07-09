@@ -84,6 +84,25 @@ public class AccountLoggingInterceptorTest {
     }
 
     @Test
+    public void preHandle_pathVariableIsNull() {
+        when(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(null);
+        when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
+        when(request.getRemoteAddr()).thenReturn(TPP_IP);
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(request.getHeader(CONSENT_ID_HEADER_NAME)).thenReturn(CONSENT_ID_HEADER_VALUE);
+
+        interceptor.preHandle(request, response, null);
+
+        verify(request, times(1)).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        verify(tppService, times(1)).getTppId();
+        verify(tppService).getTppInfo();
+        verify(request, times(1)).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
+        verify(request, times(1)).getHeader(eq(CONSENT_ID_HEADER_NAME));
+        verify(request, times(1)).getRemoteAddr();
+        verify(request, times(1)).getRequestURI();
+    }
+
+    @Test
     public void afterCompletion_success() {
         when(response.getStatus()).thenReturn(HttpServletResponse.SC_OK);
 
