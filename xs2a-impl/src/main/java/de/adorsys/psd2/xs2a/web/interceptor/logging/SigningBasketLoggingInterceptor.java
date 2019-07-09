@@ -28,16 +28,21 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
 public class SigningBasketLoggingInterceptor extends HandlerInterceptorAdapter {
+    private static final String NOT_EXIST_IN_URI = "Not exist in URI";
     private final TppService tppService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         Map<String, String> pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         TppInfo tppInfo = tppService.getTppInfo();
+        String basketId = Optional.ofNullable(pathVariables)
+                              .map(pv -> pv.get("basketId"))
+                              .orElse(NOT_EXIST_IN_URI);
 
         TppLogger.logRequest()
             .withParam("TPP ID", tppService.getTppId())
@@ -45,7 +50,7 @@ public class SigningBasketLoggingInterceptor extends HandlerInterceptorAdapter {
             .withParam("TPP Roles", StringUtils.join(tppInfo.getTppRoles(), ","))
             .withParam("X-Request-ID", request.getHeader("X-Request-ID"))
             .withParam("URI", request.getRequestURI())
-            .withParam("Basket ID", pathVariables.getOrDefault("basketId", "Not exist in URI"))
+            .withParam("Basket ID", basketId)
             .perform();
 
         return true;
