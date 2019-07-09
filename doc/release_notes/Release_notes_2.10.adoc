@@ -1,3 +1,7 @@
 = Release notes v.2.10
 
 == Table of Contents
+* Include TPP roles in all access-log for all request entries
+
+== Include TPP roles in all access-log for all request entries
+From now on, request entries in access-log will also contain list of TPP roles, extracted from the certificate.
