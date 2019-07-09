@@ -1,0 +1,36 @@
+@startuml
+start
+:Read <Server Key> from Configuration<
+
+:Get <EncryptedConsentID> from TPP;
+
+-> <EncryptedConsentID>;
+
+:Extract <IDs' encryption algorithm> from
+<EncryptedConsentID>;
+
+-> <EncryptedConsentID>,
+<IDs' encryption algorithm>;
+
+:Decrypt <ConsentID+Encryption key> using
+<IDs' encryption algorithm> with
+<Server Key>;
+
+-> <Consent ID>,
+<Encryption key>;
+
+:Consent ID/
+
+:Load <Encrypted AspspConsentData>,
+<Encryption algorithm> by
+<Consent ID>;
+
+:Decrypt <AspspConsentData> using
+<Encryption algorithm> with
+secret <Encryption key>;
+
+:AspspConsentData/
+
+:Return <AspspConsentData> to SPI-Level;
+end
+@enduml

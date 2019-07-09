@@ -35,7 +35,40 @@ image::09_AspspConsentDataProvider.png[AspspConsentDataProvider, title="AspspCon
 
 ==== Encryption of ASPSP Consent Data
 
-<TODO>
+*Problem:*
+Since ASPSP Consent Data might contain important customer information or access data (logins, passwords, tokens etc.),
+it should be stored encrypted without a possibility to access and use this data without appropriate request from TPP.
+
+*Solution:*
+In order to achieve this we allow TPP to save the encryption key and do not hold it on our side.
+Since Berlin Group specification contains no separate field for it, we use Consent ID (Payment ID for PIS use-case)
+to store encryption key in it.
+
+*Problem:*
+The encryption algorithms are subject to change in a while. And old data,
+encrypted with old algorithm shall be still possible to use.
+
+*Solution:*
+Since consents normally live not more than 90 days, we can simply fix the encryption algorithm used for each particular consent.
+
+*Problem:*
+Encryption key shall not be available in any place in ASPSP systems, also not in the log-files.
+
+*Solution:*
+Consent ID and encryption key are concatenated and encrypted again with second symmetric key (predefined).
+
+
+===== Encryption of AspspConsentData
+Encryption is solved in CMS library and contains of several steps:
+
+image::09_AspspConsentData_Encryption.png[AspspConsentData Encryption, title="AspspConsentData Encryption", align="center"]
+
+===== Decryption of AspspConsentData
+Decryption is solved in CMS library and contains of several steps:
+
+image::09_AspspConsentData_Decryption.png[AspspConsentData Decryption, title="AspspConsentData Decryption", align="center"]
+
+
 
 === TPP Authorisation
 
