@@ -1,0 +1,8 @@
+{
+  "authorisationNumber": "111",
+  "tppRoles": [
+    "AISP",
+    "PISP",
+    "PIISP"
+  ]
+}
