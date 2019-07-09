@@ -238,6 +238,8 @@ Sonarcube Tests:
 AsciiDoc Test:
   stage: "Test"
   image: adorsys/arc42-tools
+  variables:
+    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   script:
     - make pages
 
