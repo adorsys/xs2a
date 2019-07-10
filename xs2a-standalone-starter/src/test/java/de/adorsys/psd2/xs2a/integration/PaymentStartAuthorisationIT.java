@@ -108,8 +108,6 @@ public class PaymentStartAuthorisationIT {
     private static final String PSU_ID = "PSU-123";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String PSU_PASS = "09876";
-
-
     private static final String AUTH_REQ = "/json/payment/req/auth_request.json";
     private static final String AUTH_RESP = "/json/payment/res/explicit/auth_response.json";
 
@@ -171,29 +169,20 @@ public class PaymentStartAuthorisationIT {
             .willReturn(Optional.of(buildGetPisAuthorisationResponse(ScaStatus.PSUIDENTIFIED)));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
-
-        AspspConsentData aspspConsentData = new AspspConsentData("data".getBytes(), CONSENT_ID);
-        given(aspspDataService.readAspspConsentData(PAYMENT_ID)).willReturn(Optional.of(aspspConsentData));
-
-        given(paymentAuthorisationSpi.authorisePsu(any(SpiContextData.class), any(SpiPsuData.class), eq(PSU_PASS), any(SpiPayment.class), eq(aspspConsentData)))
+        given(paymentAuthorisationSpi.authorisePsu(any(SpiContextData.class), any(SpiPsuData.class), eq(PSU_PASS), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiAuthorisationStatus>builder()
                             .payload(SpiAuthorisationStatus.SUCCESS)
-                            .aspspConsentData(aspspConsentData)
-                            .success());
-        given(paymentAuthorisationSpi.requestAvailableScaMethods(any(SpiContextData.class), any(SpiPayment.class), eq(aspspConsentData)))
+                            .build());
+        given(paymentAuthorisationSpi.requestAvailableScaMethods(any(SpiContextData.class), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<List<SpiAuthenticationObject>>builder()
                             .payload(Collections.emptyList())
-                            .aspspConsentData(aspspConsentData)
-                            .success());
+                            .build());
         given(aspspDataService.updateAspspConsentData(any(AspspConsentData.class))).willReturn(true);
-
 
         given(commonPaymentSpi.executePaymentWithoutSca(any(SpiContextData.class), any(SpiPaymentInfo.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                             .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
-                            .aspspConsentData(aspspConsentData)
-                            .success());
-        given(aspspDataService.updateAspspConsentData(eq(aspspConsentData))).willReturn(true);
+                            .build());
         given(updatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP)).willReturn(true);
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildPaymentStartAuthorisationUrl(

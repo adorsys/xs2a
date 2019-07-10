@@ -65,7 +65,7 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
 
         return SpiResponse.<SpiBulkPaymentInitiationResponse>builder()
                    .payload(response)
-                   .success();
+                   .build();
     }
 
     @Override
@@ -75,7 +75,7 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
 
         return SpiResponse.<SpiBulkPayment>builder()
                    .payload(payment)
-                   .success();
+                   .build();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
 
         return SpiResponse.<TransactionStatus>builder()
                    .payload(payment.getPaymentStatus())
-                   .success();
+                   .build();
     }
 
     @Override
@@ -95,7 +95,7 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
 
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
                    .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
-                   .success();
+                   .build();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
 
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
                    .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
-                   .success();
+                   .build();
     }
 
     private SpiSinglePayment buildSpiSinglePayment(String paymentId) {

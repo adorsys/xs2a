@@ -1,3 +1,15 @@
 = Release notes v. 3.8
 
 == Table of Contents
+* Refactor: ASPSP consent data refactoring
+
+== Refactor: ASPSP consent data refactoring
+
+From now on, the data in SPI level communication is changed. Before, we used `AspspConsentData` object to store the byte array of ASPSP consent data and this object was used in all SPI methods signature as a parameter.
+After this refactoring, new provider is used instead of this object: `SpiAspspConsentDataProvider`. This provider is transferred from XS2A
+to SPI level and can be used for storing (`updateAspspConsentData` method) and loading (`loadAspspConsentData` method) the ASPSP consent data.
+So, now the SPI developers should change their connectors according to these changes: replace the `AspspConsentData` parameter with
+`SpiAspspConsentDataProvider` parameter in the SPI implementation.
+Also, field `aspspConsentData` and method `success()` were removed as deprecated from `SpiResponse` entity. Please use method `build()` instead.
+
+Please note: from now on, the SPI developers are responsible for saving the ASPSP consent data to the database. XS2A-Core provides this possibility, but if no updateAspspConsentData call happens, no data will be saved.

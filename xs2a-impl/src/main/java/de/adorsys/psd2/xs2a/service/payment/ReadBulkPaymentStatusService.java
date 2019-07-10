@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -44,7 +43,6 @@ import java.util.Optional;
 @Service("status-bulk-payments")
 @RequiredArgsConstructor
 public class ReadBulkPaymentStatusService implements ReadPaymentStatusService {
-    private final PisAspspDataService pisAspspDataService;
     private final SpiPaymentFactory spiPaymentFactory;
     private final SpiErrorMapper spiErrorMapper;
     private final BulkPaymentSpi bulkPaymentSpi;
@@ -67,11 +65,6 @@ public class ReadBulkPaymentStatusService implements ReadPaymentStatusService {
             aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(encryptedPaymentId);
 
         SpiResponse<TransactionStatus> spiResponse = bulkPaymentSpi.getPaymentStatusById(spiContextData, spiBulkPaymentOptional.get(), aspspConsentDataProvider);
-
-        // TODO remove aspspConsentData from SPI Response in version 3.4 or later https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/786
-        if (spiResponse.getAspspConsentData() != null) {
-            aspspConsentDataProvider.updateAspspConsentData(spiResponse.getAspspConsentData().getAspspConsentData());
-        }
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);

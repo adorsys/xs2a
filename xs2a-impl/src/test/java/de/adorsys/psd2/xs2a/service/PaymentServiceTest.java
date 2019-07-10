@@ -33,7 +33,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
@@ -57,7 +56,6 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,7 +71,8 @@ import java.util.*;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_CANC_405;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -529,7 +528,14 @@ public class PaymentServiceTest {
     }
 
     private SpiResponse<TransactionStatus> buildSpiResponseTransactionStatus() {
-        return new SpiResponse<>(TransactionStatus.ACCP, null);
+        return buildSuccessSpiResponse(TransactionStatus.ACCP);
+    }
+
+    // Needed because SpiResponse is final, so it's impossible to mock it
+    private <T> SpiResponse<T> buildSuccessSpiResponse(T payload) {
+        return SpiResponse.<T>builder()
+                   .payload(payload)
+                   .build();
     }
 
     private static SinglePayment getSinglePayment(String iban, String amountToPay) {
@@ -621,10 +627,6 @@ public class PaymentServiceTest {
         return bulkPayment;
     }
 
-    private Xs2aPisCommonPayment getXs2aPisCommonPayment() {
-        return new Xs2aPisCommonPayment("TEST", PSU_ID_DATA);
-    }
-
     private PaymentInitiationParameters buildPaymentInitiationParameters(PaymentType type) {
         PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
         requestParameters.setPaymentType(type);
@@ -647,20 +649,12 @@ public class PaymentServiceTest {
         return response;
     }
 
-    private ResponseObject<SinglePaymentInitiationResponse> buildFailedSinglePaymentInitiationResponse() {
-        return ResponseObject.<SinglePaymentInitiationResponse>builder().fail(PIS_400).build();
-    }
-
     private PeriodicPaymentInitiationResponse buildPeriodicPaymentInitiationResponse() {
         PeriodicPaymentInitiationResponse response = new PeriodicPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
         response.setTransactionStatus(TransactionStatus.RCVD);
         response.setAspspConsentDataProvider(initialSpiAspspConsentDataProvider);
         return response;
-    }
-
-    private ResponseObject<PeriodicPaymentInitiationResponse> buildFailedPeriodicPaymentInitiationResponse() {
-        return ResponseObject.<PeriodicPaymentInitiationResponse>builder().fail(PIS_400).build();
     }
 
     private ResponseObject<BulkPaymentInitiationResponse> getValidResponse() {

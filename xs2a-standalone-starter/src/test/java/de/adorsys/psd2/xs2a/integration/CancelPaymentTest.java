@@ -177,9 +177,8 @@ public class CancelPaymentTest {
         // Given
         SpiPaymentCancellationResponse spiPaymentCancellationResponse = SpiPaymentCancellationResponseBuilder.buildSpiPaymentCancellationResponse(true);
         SpiResponse<SpiPaymentCancellationResponse> spiResponse = SpiResponse.<SpiPaymentCancellationResponse>builder()
-                                                                      .aspspConsentData(ASPSP_CONSENT_DATA)
                                                                       .payload(spiPaymentCancellationResponse)
-                                                                      .success();
+                                                                      .build();
         given(paymentCancellationSpi.initiatePaymentCancellation(any(), any(), any()))
             .willReturn(spiResponse);
 
@@ -204,15 +203,13 @@ public class CancelPaymentTest {
 
         SpiPaymentCancellationResponse spiPaymentCancellationResponse = SpiPaymentCancellationResponseBuilder.buildSpiPaymentCancellationResponse(false);
         SpiResponse<SpiPaymentCancellationResponse> spiInitiatePaymentCancellationResponse = SpiResponse.<SpiPaymentCancellationResponse>builder()
-                                                                                                 .aspspConsentData(ASPSP_CONSENT_DATA)
                                                                                                  .payload(spiPaymentCancellationResponse)
-                                                                                                 .success();
+                                                                                                 .build();
         given(paymentCancellationSpi.initiatePaymentCancellation(any(), any(), any())).willReturn(spiInitiatePaymentCancellationResponse);
 
         SpiResponse<SpiResponse.VoidResponse> spiCancelPaymentResponse = SpiResponse.<SpiResponse.VoidResponse>builder()
-                                                                             .aspspConsentData(ASPSP_CONSENT_DATA)
                                                                              .payload(SpiResponse.voidResponse())
-                                                                             .success();
+                                                                             .build();
 
         given(paymentCancellationSpi.cancelPaymentWithoutSca(any(), any(), any())).willReturn(spiCancelPaymentResponse);
 

@@ -96,7 +96,7 @@ public class ReadPeriodicPaymentServiceTest {
         when(periodicPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPeriodicPayment>builder()
                             .payload(SPI_PERIODIC_PAYMENT)
-                            .success());
+                            .build());
         when(spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(SPI_PERIODIC_PAYMENT))
             .thenReturn(PERIODIC_PAYMENT);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());

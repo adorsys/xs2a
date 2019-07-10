@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded;
 
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -31,7 +30,6 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
-import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -40,6 +38,8 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
@@ -70,7 +70,7 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
     private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
 
     public AisScaReceivedAuthorisationStage(Xs2aAisConsentService aisConsentService,
-                                            AisConsentDataService aisConsentDataService,
+                                            SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
                                             AisConsentSpi aisConsentSpi,
                                             Xs2aAisConsentMapper aisConsentMapper,
                                             Xs2aToSpiPsuDataMapper psuDataMapper,
@@ -81,7 +81,7 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
                                             CommonDecoupledAisService commonDecoupledAisService,
                                             AisScaAuthorisationService aisScaAuthorisationService,
                                             RequestProviderService requestProviderService) {
-        super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper, spiErrorMapper);
+        super(aisConsentService, aspspConsentDataProviderFactory, aisConsentSpi, aisConsentMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper, spiErrorMapper);
         this.spiContextDataProvider = spiContextDataProvider;
         this.scaApproachResolver = scaApproachResolver;
         this.commonDecoupledAisService = commonDecoupledAisService;
@@ -122,8 +122,7 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
         AccountConsent accountConsent = accountConsentOptional.get();
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
 
-        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(spiContextDataProvider.provideWithPsuIdData(psuData), psuDataMapper.mapToSpiPsuData(psuData), request.getPassword(), spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
-        aisConsentDataService.updateAspspConsentData(authorisationStatusSpiResponse.getAspspConsentData());
+        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(spiContextDataProvider.provideWithPsuIdData(psuData), psuDataMapper.mapToSpiPsuData(psuData), request.getPassword(), spiAccountConsent, aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
 
         if (authorisationStatusSpiResponse.hasError()) {
             if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
@@ -151,8 +150,7 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
             return response;
         }
 
-        SpiResponse<List<SpiAuthenticationObject>> spiResponse = aisConsentSpi.requestAvailableScaMethods(spiContextDataProvider.provideWithPsuIdData(psuData), spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
-        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<List<SpiAuthenticationObject>> spiResponse = aisConsentSpi.requestAvailableScaMethods(spiContextDataProvider.provideWithPsuIdData(psuData), spiAccountConsent, aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
 
         if (spiResponse.hasError()) {
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(authorisationStatusSpiResponse, ServiceType.AIS));
@@ -210,9 +208,8 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
     private UpdateConsentPsuDataResponse proceedEmbeddedScaApproach(UpdateConsentPsuDataReq request, SpiAccountConsent spiAccountConsent, SpiAuthenticationObject scaMethod) {
         PsuIdData psuData = request.getPsuData();
         String authenticationMethodId = scaMethod.getAuthenticationMethodId();
-        AspspConsentData aspspConsentData = aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId());
-        SpiResponse<SpiAuthorizationCodeResult> spiResponse = aisConsentSpi.requestAuthorisationCode(spiContextDataProvider.provideWithPsuIdData(psuData), authenticationMethodId, spiAccountConsent, aspspConsentData);
-        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+        SpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getConsentId());
+        SpiResponse<SpiAuthorizationCodeResult> spiResponse = aisConsentSpi.requestAuthorisationCode(spiContextDataProvider.provideWithPsuIdData(psuData), authenticationMethodId, spiAccountConsent, aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));

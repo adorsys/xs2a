@@ -8,10 +8,10 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -27,10 +27,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommonDecoupledAisService {
     private final AisConsentSpi aisConsentSpi;
-    private final AisConsentDataService aisConsentDataService;
     private final RequestProviderService requestProviderService;
     private final SpiErrorMapper spiErrorMapper;
-
+    private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final SpiContextDataProvider spiContextDataProvider;
 
     public UpdateConsentPsuDataResponse proceedDecoupledApproach(UpdateConsentPsuDataReq request, SpiAccountConsent spiAccountConsent, PsuIdData psuData) {
@@ -40,8 +39,8 @@ public class CommonDecoupledAisService {
     public UpdateConsentPsuDataResponse proceedDecoupledApproach(UpdateConsentPsuDataReq request, SpiAccountConsent spiAccountConsent, String authenticationMethodId, PsuIdData psuData) {
         String consentId = request.getConsentId();
         String authorisationId = request.getAuthorizationId();
-        SpiResponse<SpiAuthorisationDecoupledScaResponse> spiResponse = aisConsentSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), authorisationId, authenticationMethodId, spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
-        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<SpiAuthorisationDecoupledScaResponse> spiResponse = aisConsentSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), authorisationId, authenticationMethodId, spiAccountConsent, aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
+
         if (spiResponse.hasError()) {
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));
             log.warn("X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}], Authentication-Method-ID [{}]. Notifies a decoupled app about starting SCA when proceed decoupled approach has failed. Error msg: {}.",

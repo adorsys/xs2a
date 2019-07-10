@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -48,7 +47,6 @@ import java.util.Optional;
 @Service("periodic-payments")
 @RequiredArgsConstructor
 public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInformationResponse<PeriodicPayment>> {
-    private final PisAspspDataService pisAspspDataService;
     private final SpiContextDataProvider spiContextDataProvider;
     private final Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
     private final PeriodicPaymentSpi periodicPaymentSpi;
@@ -76,11 +74,6 @@ public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInform
             aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(encryptedPaymentId);
 
         SpiResponse<SpiPeriodicPayment> spiResponse = periodicPaymentSpi.getPaymentById(spiContextData, spiPaymentOptional.get(), aspspConsentDataProvider);
-
-        // TODO remove aspspConsentData from SPI Response in version 3.4 or later https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/786
-        if (spiResponse.getAspspConsentData() != null) {
-            aspspConsentDataProvider.updateAspspConsentData(spiResponse.getAspspConsentData().getAspspConsentData());
-        }
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
