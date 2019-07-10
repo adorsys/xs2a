@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage.cancellation;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -31,7 +30,6 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -41,6 +39,8 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticat
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
@@ -48,7 +48,6 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,14 +69,12 @@ public class PisCancellationScaStartAuthorisationStageTest {
     private static final String PASSWORD = "Test password";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfer";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Test paymentId");
     private static final PaymentType PAYMENT_TYPE = PaymentType.SINGLE;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final PsuIdData PSU_ID_DATA_WRONG = new PsuIdData("Wrong PSU", null, null, null);
     private static final TransactionStatus PAYMENT_STATUS = TransactionStatus.RCVD;
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID());
-    private static final SpiResponseStatus FAILURE_STATUS = SpiResponseStatus.UNAUTHORIZED_FAILURE;
     private static final List<SpiAuthenticationObject> MULTIPLE_SPI_SCA_METHODS = Arrays.asList(buildSpiSmsAuthenticationObject(), buildSpiPhotoAuthenticationObject());
     private static final List<SpiAuthenticationObject> ONE_SPI_SCA_METHOD = Collections.singletonList(buildSpiSmsAuthenticationObject());
     private static final List<SpiAuthenticationObject> NONE_SPI_SCA_METHOD = Collections.emptyList();
@@ -96,8 +93,6 @@ public class PisCancellationScaStartAuthorisationStageTest {
     @Mock
     private PisPsuDataService pisPsuDataService;
     @Mock
-    private PisAspspDataService pisAspspDataService;
-    @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
@@ -115,6 +110,10 @@ public class PisCancellationScaStartAuthorisationStageTest {
     private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    @Mock
+    private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
     @Before
     public void setUp() {
@@ -123,16 +122,15 @@ public class PisCancellationScaStartAuthorisationStageTest {
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPassword()).thenReturn(PASSWORD);
         when(getPisAuthorisationResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
         when(getPisAuthorisationResponse.getPaymentType()).thenReturn(PAYMENT_TYPE);
-        when(pisAspspDataService.getAspspConsentData(PAYMENT_ID)).thenReturn(ASPSP_CONSENT_DATA);
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA)).thenReturn(SPI_CONTEXT_DATA);
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuData(PSU_ID_DATA)).thenReturn(SPI_PSU_DATA);
-        doNothing().when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
         when(xs2aPisCommonPaymentService.saveAuthenticationMethods(any(), anyListOf(Xs2aAuthenticationObject.class))).thenReturn(true);
         when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID)).thenReturn(Optional.of(buildGetPisAuthorisationResponse()));
         when(getPisAuthorisationResponse.getPayments()).thenReturn(Collections.singletonList(PIS_PAYMENT));
         when(cmsToXs2aPaymentMapper.mapToSinglePayment(PIS_PAYMENT)).thenReturn(XS2A_PAYMENT);
         when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(XS2A_PAYMENT, PAYMENT_PRODUCT)).thenReturn(buildSpiPayment());
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
     }
 
     @Test
@@ -177,9 +175,9 @@ public class PisCancellationScaStartAuthorisationStageTest {
     public void apply_Authorisation_NoAvailableScaMethod_success() {
         //Given
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.isUpdatePsuIdentification()).thenReturn(false);
-        when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, buildSpiPayment(), ASPSP_CONSENT_DATA)).thenReturn(buildSuccessfulSpiResponse(SpiAuthorisationStatus.SUCCESS));
-        when(paymentCancellationSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, buildSpiPayment(), ASPSP_CONSENT_DATA)).thenReturn(buildSuccessfulSpiResponse(NONE_SPI_SCA_METHOD));
-        when(paymentCancellationSpi.cancelPaymentWithoutSca(SPI_CONTEXT_DATA, buildSpiPayment(), ASPSP_CONSENT_DATA)).thenReturn(buildSuccessfulSpiResponse(SpiResponse.voidResponse()));
+        when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(SpiAuthorisationStatus.SUCCESS));
+        when(paymentCancellationSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(NONE_SPI_SCA_METHOD));
+        when(paymentCancellationSpi.cancelPaymentWithoutSca(SPI_CONTEXT_DATA, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(SpiResponse.voidResponse()));
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.CANC)).thenReturn(true);
 
         //When
@@ -194,9 +192,9 @@ public class PisCancellationScaStartAuthorisationStageTest {
     public void apply_Authorisation_SingleAvailableScaMethod_success() {
         //Given
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.isUpdatePsuIdentification()).thenReturn(false);
-        when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, buildSpiPayment(), ASPSP_CONSENT_DATA)).thenReturn(buildSuccessfulSpiResponse(SpiAuthorisationStatus.SUCCESS));
-        when(paymentCancellationSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, buildSpiPayment(), ASPSP_CONSENT_DATA)).thenReturn(buildSuccessfulSpiResponse(ONE_SPI_SCA_METHOD));
-        when(paymentCancellationSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, buildSpiSmsAuthenticationObject().getAuthenticationMethodId(), buildSpiPayment(), ASPSP_CONSENT_DATA))
+        when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(SpiAuthorisationStatus.SUCCESS));
+        when(paymentCancellationSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(ONE_SPI_SCA_METHOD));
+        when(paymentCancellationSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, buildSpiSmsAuthenticationObject().getAuthenticationMethodId(), buildSpiPayment(), spiAspspConsentDataProvider))
             .thenReturn(buildSuccessfulSpiResponse(new SpiAuthorizationCodeResult()));
         when(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(buildSpiSmsAuthenticationObject())).thenReturn(buildXs2aSmsAuthenticationObject());
 
@@ -213,8 +211,8 @@ public class PisCancellationScaStartAuthorisationStageTest {
     public void apply_Authorisation_MultipleAvailableScaMethod_success() {
         //Given
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.isUpdatePsuIdentification()).thenReturn(false);
-        when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, buildSpiPayment(), ASPSP_CONSENT_DATA)).thenReturn(buildSuccessfulSpiResponse(SpiAuthorisationStatus.SUCCESS));
-        when(paymentCancellationSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, buildSpiPayment(), ASPSP_CONSENT_DATA)).thenReturn(buildSuccessfulSpiResponse(MULTIPLE_SPI_SCA_METHODS));
+        when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(SpiAuthorisationStatus.SUCCESS));
+        when(paymentCancellationSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(MULTIPLE_SPI_SCA_METHODS));
         when(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(MULTIPLE_SPI_SCA_METHODS)).thenReturn(MULTIPLE_XS2A_SCA_METHODS);
 
         //When
@@ -229,8 +227,7 @@ public class PisCancellationScaStartAuthorisationStageTest {
     private <T> SpiResponse<T> buildSuccessfulSpiResponse(T payload) {
         return SpiResponse.<T>builder()
                    .payload(payload)
-                   .aspspConsentData(ASPSP_CONSENT_DATA)
-                   .success();
+                   .build();
     }
 
     private SpiSinglePayment buildSpiPayment() {

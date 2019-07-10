@@ -16,11 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.payment;
 
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
@@ -28,11 +27,12 @@ import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
-import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCancelPaymentMapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -51,7 +51,6 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_CANC_405;
 @RequiredArgsConstructor
 public class CancelPaymentService {
     private final PaymentCancellationSpi paymentCancellationSpi;
-    private final PisAspspDataService pisAspspDataService;
     private final Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
     private final PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider;
     private final SpiContextDataProvider spiContextDataProvider;
@@ -60,24 +59,27 @@ public class CancelPaymentService {
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final PaymentCancellationAuthorisationService paymentCancellationAuthorisationService;
     private final RequestProviderService requestProviderService;
+    private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
 
     /**
      * Cancels payment with or without performing strong customer authentication
      *
-     * @param psuData            ASPSP identifier(s) of the psu
-     * @param payment            Payment to be cancelled
-     * @param encryptedPaymentId encrypted identifier of the payment
+     * @param psuData                           ASPSP identifier(s) of the psu
+     * @param payment                           Payment to be cancelled
+     * @param encryptedPaymentId                encrypted identifier of the payment
      * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
-     * @param tppRedirectUri TPP's redirect URIs
+     * @param tppRedirectUri                    TPP's redirect URIs
      * @return Response containing information about cancelled payment or corresponding error
      */
     public ResponseObject<CancelPaymentResponse> initiatePaymentCancellation(PsuIdData psuData, SpiPayment payment,
                                                                              String encryptedPaymentId, Boolean tppExplicitAuthorisationPreferred,
                                                                              TppRedirectUri tppRedirectUri) {
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuData);
-        AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(encryptedPaymentId);
-        SpiResponse<SpiPaymentCancellationResponse> spiResponse = paymentCancellationSpi.initiatePaymentCancellation(spiContextData, payment, aspspConsentData);
-        pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+
+        SpiAspspConsentDataProvider aspspConsentDataProvider =
+            aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(encryptedPaymentId);
+
+        SpiResponse<SpiPaymentCancellationResponse> spiResponse = paymentCancellationSpi.initiatePaymentCancellation(spiContextData, payment, aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
@@ -117,7 +119,7 @@ public class CancelPaymentService {
         if (resultStatus == TransactionStatus.RCVD
                 || cancellationScaNeededDecider.isNoScaRequired(cancelPaymentResponse.isStartAuthorisationRequired())) {
             payment.setPaymentStatus(resultStatus);
-            return proceedNoScaCancellation(payment, spiContextData, aspspConsentData, encryptedPaymentId);
+            return proceedNoScaCancellation(payment, spiContextData, aspspConsentDataProvider, encryptedPaymentId);
         }
 
         // in payment cancellation case 'multilevelScaRequired' is always false
@@ -143,9 +145,8 @@ public class CancelPaymentService {
 
     }
 
-    private ResponseObject<CancelPaymentResponse> proceedNoScaCancellation(SpiPayment payment, SpiContextData spiContextData, AspspConsentData aspspConsentData, String encryptedPaymentId) {
-        SpiResponse<SpiResponse.VoidResponse> spiResponse = paymentCancellationSpi.cancelPaymentWithoutSca(spiContextData, payment, aspspConsentData);
-        pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+    private ResponseObject<CancelPaymentResponse> proceedNoScaCancellation(SpiPayment payment, SpiContextData spiContextData, SpiAspspConsentDataProvider aspspConsentDataProvider, String encryptedPaymentId) {
+        SpiResponse<SpiResponse.VoidResponse> spiResponse = paymentCancellationSpi.cancelPaymentWithoutSca(spiContextData, payment, aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);

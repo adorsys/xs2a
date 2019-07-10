@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
@@ -41,53 +41,48 @@ interface AuthorisationSpi<T> {
     /**
      * Authorises psu and returns current authorisation status. Used only with embedded SCA Approach.
      *
-     * @param contextData      holder of call's context data (e.g. about PSU and TPP)
-     * @param psuLoginData     ASPSP identifier(s) of the psu, provided by TPP within this request.
-     * @param password         Psu's password
-     * @param businessObject   generic consent/payment object
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
-     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param psuLoginData             ASPSP identifier(s) of the psu, provided by TPP within this request.
+     * @param password                 Psu's password
+     * @param businessObject           generic consent/payment object
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
      * @return success or failure authorization status
      */
-    SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuLoginData, String password, T businessObject, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuLoginData, String password, T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Returns a list of SCA methods for PSU by its login. Used only with embedded SCA Approach.
      *
-     * @param contextData      holder of call's context data (e.g. about PSU and TPP)
-     * @param businessObject   generic consent/payment object
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
-     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param businessObject           generic consent/payment object
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
      * @return a list of SCA methods applicable for specified PSU
      */
-    SpiResponse<List<SpiAuthenticationObject>> requestAvailableScaMethods(@NotNull SpiContextData contextData, T businessObject, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<List<SpiAuthenticationObject>> requestAvailableScaMethods(@NotNull SpiContextData contextData, T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Performs strong customer authorisation depending on selected SCA method. Used only with embedded SCA Approach.
      *
-     * @param contextData            holder of call's context data (e.g. about PSU and TPP)
-     * @param authenticationMethodId Id of a chosen sca method
-     * @param businessObject         generic consent/payment object
-     * @param aspspConsentData       Encrypted data that may stored in the consent management system in the consent linked to a request.
-     *                               May be null if consent does not contain such data, or request isn't done from a workflow with a consent
-     * @return Return a positive or negative response as part of SpiResponse. If authentication method is unknown, then empty SpiAuthorizationCodeResult should be returned.
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param authenticationMethodId   Id of a chosen sca method
+     * @param businessObject           generic consent/payment object
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
      */
     @NotNull
-    SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiContextData contextData, @NotNull String authenticationMethodId, @NotNull T businessObject, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiContextData contextData, @NotNull String authenticationMethodId, @NotNull T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Notifies a decoupled app about starting SCA. AuthorisationId is provided to allow the app to access CMS(the same way like redirectId is used in Redirect Approach). Used only with decoupled SCA Approach.
      *
-     * @param contextData            holder of call's context data (e.g. about PSU and TPP)
-     * @param authorisationId        a unique identifier of authorisation process
-     * @param authenticationMethodId Id of a chosen sca method(for a decoupled SCA method within embedded approach)
-     * @param businessObject         generic consent/payment object
-     * @param aspspConsentData       Encrypted data that may stored in the consent management system in the consent linked to a request.
-     *                               May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param authorisationId          a unique identifier of authorisation process
+     * @param authenticationMethodId   Id of a chosen sca method(for a decoupled SCA method within embedded approach)
+     * @param businessObject           generic consent/payment object
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
      * @return Return a response object, containing a message from ASPSP to PSU, giving him instructions regarding decoupled SCA starting.
      */
     @NotNull
-    default SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @Nullable String authenticationMethodId, @NotNull T businessObject, @NotNull AspspConsentData aspspConsentData) {
+    default SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @Nullable String authenticationMethodId, @NotNull T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 }

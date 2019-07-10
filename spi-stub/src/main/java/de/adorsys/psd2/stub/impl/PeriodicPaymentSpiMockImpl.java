@@ -48,7 +48,7 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
         aspspConsentDataProvider.updateAspspConsentData(TEST_ASPSP_DATA.getBytes());
         return SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
                    .payload(response)
-                   .success();
+                   .build();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
 
         return SpiResponse.<SpiPeriodicPayment>builder()
                    .payload(payment)
-                   .success();
+                   .build();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
 
         return SpiResponse.<TransactionStatus>builder()
                    .payload(payment.getPaymentStatus())
-                   .success();
+                   .build();
     }
 
     @Override
@@ -78,7 +78,7 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
 
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
                    .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
-                   .success();
+                   .build();
     }
 
     @Override
@@ -88,6 +88,6 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
 
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
                    .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
-                   .success();
+                   .build();
     }
 }

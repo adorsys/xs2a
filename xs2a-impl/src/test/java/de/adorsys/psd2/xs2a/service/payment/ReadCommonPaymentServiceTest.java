@@ -94,7 +94,7 @@ public class ReadCommonPaymentServiceTest {
         when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPaymentInfo>builder()
                             .payload(SPI_PAYMENT_INFO)
-                            .success());
+                            .build());
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
             .thenReturn(spiAspspConsentDataProvider);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());

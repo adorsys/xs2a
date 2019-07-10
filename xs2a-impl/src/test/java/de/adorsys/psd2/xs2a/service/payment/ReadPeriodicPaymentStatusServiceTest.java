@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -55,7 +54,6 @@ import static org.mockito.Mockito.when;
 public class ReadPeriodicPaymentStatusServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private final static UUID X_REQUEST_ID = UUID.randomUUID();
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
     private static final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final SpiPeriodicPayment SPI_PERIODIC_PAYMENT = new SpiPeriodicPayment(PRODUCT);
@@ -156,14 +154,12 @@ public class ReadPeriodicPaymentStatusServiceTest {
 
     private static SpiResponse<TransactionStatus> buildSpiResponseTransactionStatus() {
         return SpiResponse.<TransactionStatus>builder()
-            .aspspConsentData(ASPSP_CONSENT_DATA)
             .payload(TRANSACTION_STATUS)
-            .success();
+            .build();
     }
 
     private static SpiResponse<TransactionStatus> buildFailSpiResponseTransactionStatus() {
         return SpiResponse.<TransactionStatus>builder()
-            .aspspConsentData(ASPSP_CONSENT_DATA)
             .fail(SpiResponseStatus.LOGICAL_FAILURE);
     }
 

@@ -50,7 +50,7 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
 
         return SpiResponse.<SpiPaymentInitiationResponse>builder()
                    .payload(response)
-                   .success();
+                   .build();
     }
 
     @Override
@@ -60,7 +60,7 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
 
         return SpiResponse.<SpiPaymentInfo>builder()
                    .payload(payment)
-                   .success();
+                   .build();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
 
         return SpiResponse.<TransactionStatus>builder()
                    .payload(payment.getPaymentStatus())
-                   .success();
+                   .build();
     }
 
     @Override
@@ -80,7 +80,7 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
 
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
                    .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
-                   .success();
+                   .build();
     }
 
     @Override
@@ -90,6 +90,6 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
 
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
                    .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
-                   .success();
+                   .build();
     }
 }

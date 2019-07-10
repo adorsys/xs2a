@@ -17,7 +17,7 @@
 package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
@@ -40,8 +40,8 @@ import java.util.List;
 @Service
 public class AccountSpiMockImpl implements AccountSpi {
     @Override
-    public SpiResponse<List<SpiAccountDetails>> requestAccountList(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
-        log.info("AccountSpi#requestAccountList: contextData {}, withBalance {}, accountConsent-id {}, aspspConsent-id {}", contextData, withBalance, accountConsent.getId(), aspspConsentData.getConsentId());
+    public SpiResponse<List<SpiAccountDetails>> requestAccountList(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("AccountSpi#requestAccountList: contextData {}, withBalance {}, accountConsent-id {}, aspspConsentData {}", contextData, withBalance, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
         SpiAccountDetails details = new SpiAccountDetails("11111-11118", "10023-999999999", "DE52500105173911841934",
                                                           "52500105173911841934", "AEYPM5403H", "PM5403H****", null, Currency.getInstance("EUR"), "Müller",
                                                           "SCT", null, null, "DEUTDE8EXXX", null,
@@ -49,13 +49,12 @@ public class AccountSpiMockImpl implements AccountSpi {
 
         return SpiResponse.<List<SpiAccountDetails>>builder()
                    .payload(Collections.singletonList(details))
-                   .aspspConsentData(aspspConsentData)
-                   .success();
+                   .build();
     }
 
     @Override
-    public SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
-        log.info("AccountSpi#requestAccountDetailForAccount: contextData {}, withBalance {}, accountReference {}, accountConsent-id {}, aspspConsent-id {}", contextData, accountReference, accountConsent.getId(), aspspConsentData.getConsentId());
+    public SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("AccountSpi#requestAccountDetailForAccount: contextData {}, withBalance {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, withBalance, accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
         SpiAccountDetails accountDetails = new SpiAccountDetails("11111-11118", "10023-999999999", "DE52500105173911841934",
                                                                  null, null, null, null, Currency.getInstance("EUR"), "Müller",
                                                                  "SCT", null, null, "DEUTDE8EXXX", null,
@@ -63,39 +62,35 @@ public class AccountSpiMockImpl implements AccountSpi {
 
         return SpiResponse.<SpiAccountDetails>builder()
                    .payload(accountDetails)
-                   .aspspConsentData(aspspConsentData)
-                   .success();
+                   .build();
     }
 
     @Override
-    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull BookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
-        log.info("AccountSpi#requestTransactionsForAccount: contextData {}, acceptMediaType {}, withBalance {}, dateFrom {}, dateTo {}, bookingStatus {}, accountReference {}, accountConsent-id {}, aspspConsent-id {}", contextData, acceptMediaType, withBalance, dateFrom, dateTo, bookingStatus, accountReference, accountConsent.getId(), aspspConsentData.getConsentId());
+    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull BookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("AccountSpi#requestTransactionsForAccount: contextData {}, acceptMediaType {}, withBalance {}, dateFrom {}, dateTo {}, bookingStatus {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, acceptMediaType, withBalance, dateFrom, dateTo, bookingStatus, accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
 
 
         return SpiResponse.<SpiTransactionReport>builder()
-                   .aspspConsentData(aspspConsentData)
                    .payload(new SpiTransactionReport(buildSpiTransactionList(), Collections.singletonList(buildSpiAccountBalance()), "application/json", null))
-                   .success();
+                   .build();
     }
 
     @Override
-    public SpiResponse<SpiTransaction> requestTransactionForAccountByTransactionId(@NotNull SpiContextData contextData, @NotNull String transactionId, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
-        log.info("AccountSpi#requestTransactionForAccountByTransactionId: contextData {}, aspspConsent-id {}, accountReference {}, accountConsent-id {}, aspspConsent-id {}", contextData, transactionId, accountReference, accountConsent.getId(), aspspConsentData.getConsentId());
+    public SpiResponse<SpiTransaction> requestTransactionForAccountByTransactionId(@NotNull SpiContextData contextData, @NotNull String transactionId, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("AccountSpi#requestTransactionForAccountByTransactionId: contextData {}, aspspConsent-id {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, transactionId, accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiTransaction>builder()
                    .payload(buildSpiTransactionById("0001"))
-                   .aspspConsentData(aspspConsentData)
-                   .success();
+                   .build();
     }
 
     @Override
-    public SpiResponse<List<SpiAccountBalance>> requestBalancesForAccount(@NotNull SpiContextData contextData, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
-        log.info("AccountSpi#requestBalancesForAccount: contextData {}, accountReference {}, accountConsent-id {}, aspspConsent-id {}", contextData, accountReference, accountConsent.getId(), aspspConsentData.getConsentId());
+    public SpiResponse<List<SpiAccountBalance>> requestBalancesForAccount(@NotNull SpiContextData contextData, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("AccountSpi#requestBalancesForAccount: contextData {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<List<SpiAccountBalance>>builder()
                    .payload(Collections.singletonList(buildSpiAccountBalance()))
-                   .aspspConsentData(aspspConsentData)
-                   .success();
+                   .build();
     }
 
     private SpiAccountBalance buildSpiAccountBalance() {

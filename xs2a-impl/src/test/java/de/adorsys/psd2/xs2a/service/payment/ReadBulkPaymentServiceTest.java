@@ -64,7 +64,6 @@ public class ReadBulkPaymentServiceTest {
     private static final BulkPayment BULK_PAYMENT = new BulkPayment();
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final SpiBulkPayment SPI_BULK_PAYMENT = new SpiBulkPayment();
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
     private static final SpiResponse<SpiBulkPayment> BULK_PAYMENT_SPI_RESPONSE = buildSpiResponse();
     private static final String SOME_ENCRYPTED_PAYMENT_ID = "Encrypted Payment Id";
 
@@ -138,7 +137,6 @@ public class ReadBulkPaymentServiceTest {
     public void getPayment_bulkPaymentSpi_getPaymentById_failed() {
         //Given
         SpiResponse<SpiBulkPayment> spiResponseError = SpiResponse.<SpiBulkPayment>builder()
-                                                           .aspspConsentData(ASPSP_CONSENT_DATA)
                                                            .fail(SpiResponseStatus.LOGICAL_FAILURE);
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
                                         .messages(Collections.singletonList("Payment not found"))
@@ -191,8 +189,7 @@ public class ReadBulkPaymentServiceTest {
 
     private static SpiResponse<SpiBulkPayment> buildSpiResponse() {
         return SpiResponse.<SpiBulkPayment>builder()
-                   .aspspConsentData(ASPSP_CONSENT_DATA)
                    .payload(SPI_BULK_PAYMENT)
-                   .success();
+                   .build();
     }
 }

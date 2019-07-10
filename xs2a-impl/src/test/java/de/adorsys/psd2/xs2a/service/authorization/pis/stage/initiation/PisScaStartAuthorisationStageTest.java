@@ -34,7 +34,6 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
-import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
@@ -44,9 +43,9 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
+import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
-import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
@@ -101,8 +100,6 @@ public class PisScaStartAuthorisationStageTest {
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
-    private PisAspspDataService pisAspspDataService;
-    @Mock
     private PaymentAuthorisationSpi paymentAuthorisationSpi;
     @Mock
     private SpiErrorMapper spiErrorMapper;
@@ -154,13 +151,9 @@ public class PisScaStartAuthorisationStageTest {
 
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIS)))
             .thenReturn(errorHolder);
-
-        when(pisAspspDataService.getAspspConsentData(PAYMENT_ID)).thenReturn(ASPSP_CONSENT_DATA);
         when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class))).thenReturn(CONTEXT_DATA);
         when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
             .thenReturn(spiAspspConsentDataProvider);
-        doNothing()
-            .when(spiAspspConsentDataProvider).updateAspspConsentData(any());
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
 
     }
@@ -193,8 +186,6 @@ public class PisScaStartAuthorisationStageTest {
     public void apply_paymentAuthorisationSpi_authorisePsu_fail() {
         String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         SpiResponse<SpiAuthorisationStatus> spiErrorMessage = SpiResponse.<SpiAuthorisationStatus>builder()
-                                                                  .message(ERROR_MESSAGE_TEXT)
-                                                                  .aspspConsentData(ASPSP_CONSENT_DATA)
                                                                   .fail(SpiResponseStatus.LOGICAL_FAILURE);
 
         // generate an error
@@ -215,15 +206,13 @@ public class PisScaStartAuthorisationStageTest {
         String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
-                                                            .aspspConsentData(ASPSP_CONSENT_DATA).success();
+                                                            .build();
 
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any()))
             .thenReturn(spiStatus);
 
         // generate an error
         SpiResponse<List<SpiAuthenticationObject>> spiErrorMessage = SpiResponse.<List<SpiAuthenticationObject>>builder()
-                                                                         .message(ERROR_MESSAGE_TEXT)
-                                                                         .aspspConsentData(ASPSP_CONSENT_DATA)
                                                                          .fail(SpiResponseStatus.TECHNICAL_FAILURE);
 
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any()))
@@ -243,13 +232,12 @@ public class PisScaStartAuthorisationStageTest {
         String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
-                                                            .aspspConsentData(ASPSP_CONSENT_DATA).success();
+                                                            .build();
 
 
         SpiResponse<List<SpiAuthenticationObject>> availableScaMethodsResponse = SpiResponse.<List<SpiAuthenticationObject>>builder()
                                                                                      .payload(ONE_SPI_SCA_METHOD_EMBEDDED)
-                                                                                     .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                                                     .success();
+                                                                                     .build();
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any()))
             .thenReturn(spiStatus);
 
@@ -264,8 +252,6 @@ public class PisScaStartAuthorisationStageTest {
 
         // generate an error
         SpiResponse<SpiAuthorizationCodeResult> spiErrorMessage = SpiResponse.<SpiAuthorizationCodeResult>builder()
-                                                                      .message(ERROR_MESSAGE_TEXT)
-                                                                      .aspspConsentData(ASPSP_CONSENT_DATA)
                                                                       .fail(SpiResponseStatus.TECHNICAL_FAILURE);
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any()))
             .thenReturn(spiErrorMessage);
@@ -285,13 +271,12 @@ public class PisScaStartAuthorisationStageTest {
         String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
-                                                            .aspspConsentData(ASPSP_CONSENT_DATA).success();
+                                                            .build();
 
 
         SpiResponse<List<SpiAuthenticationObject>> availableScaMethodsResponse = SpiResponse.<List<SpiAuthenticationObject>>builder()
                                                                                      .payload(NONE_SPI_SCA_METHOD)
-                                                                                     .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                                                     .success();
+                                                                                     .build();
 
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any()))
             .thenReturn(spiStatus);
@@ -308,8 +293,6 @@ public class PisScaStartAuthorisationStageTest {
 
         // generate an error
         SpiResponse<SpiPaymentExecutionResponse> spiErrorMessage = SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                       .message(ERROR_MESSAGE_TEXT)
-                                                                       .aspspConsentData(ASPSP_CONSENT_DATA)
                                                                        .fail(SpiResponseStatus.TECHNICAL_FAILURE);
 
         when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any()))
@@ -328,13 +311,11 @@ public class PisScaStartAuthorisationStageTest {
     public void apply_noneScaMethods_Success() {
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
-                                                            .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                            .success();
+                                                            .build();
 
         SpiResponse<List<SpiAuthenticationObject>> availableScaMethodsResponse = SpiResponse.<List<SpiAuthenticationObject>>builder()
                                                                                      .payload(NONE_SPI_SCA_METHOD)
-                                                                                     .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                                                     .success();
+                                                                                     .build();
 
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any()))
             .thenReturn(spiStatus);
@@ -353,8 +334,7 @@ public class PisScaStartAuthorisationStageTest {
 
         SpiResponse<SpiPaymentExecutionResponse> executePaymentWithoutScaResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                         .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
-                                                                                        .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                                                        .success();
+                                                                                        .build();
 
         when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any()))
             .thenReturn(executePaymentWithoutScaResponse);
@@ -373,13 +353,11 @@ public class PisScaStartAuthorisationStageTest {
     public void apply_singleScaMethod_decoupled_Success() {
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
-                                                            .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                            .success();
+                                                            .build();
 
         SpiResponse<List<SpiAuthenticationObject>> availableScaMethodsResponse = SpiResponse.<List<SpiAuthenticationObject>>builder()
                                                                                      .payload(ONE_SPI_SCA_METHOD_DECOUPLED)
-                                                                                     .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                                                     .success();
+                                                                                     .build();
 
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any()))
             .thenReturn(spiStatus);
@@ -413,13 +391,11 @@ public class PisScaStartAuthorisationStageTest {
     public void apply_singleScaMethod_embedded_Success() {
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
-                                                            .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                            .success();
+                                                            .build();
 
         SpiResponse<List<SpiAuthenticationObject>> availableScaMethodsResponse = SpiResponse.<List<SpiAuthenticationObject>>builder()
                                                                                      .payload(ONE_SPI_SCA_METHOD_EMBEDDED)
-                                                                                     .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                                                     .success();
+                                                                                     .build();
 
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any()))
             .thenReturn(spiStatus);
@@ -438,10 +414,9 @@ public class PisScaStartAuthorisationStageTest {
 
         SpiResponse<SpiAuthorizationCodeResult> authorisationCodeSpiResponse = SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                    .payload(mockedSpiAuthorizationCodeResult)
-                                                                                   .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                                                   .success();
+                                                                                   .build();
 
-        when(paymentAuthorisationSpi.requestAuthorisationCode(any(), eq(AUTHENTICATION_METHOD_ID), any(), eq(ASPSP_CONSENT_DATA)))
+        when(paymentAuthorisationSpi.requestAuthorisationCode(any(), eq(AUTHENTICATION_METHOD_ID), any(), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(authorisationCodeSpiResponse);
 
         when(mockedSpiAuthorizationCodeResult.isEmpty())
@@ -466,13 +441,11 @@ public class PisScaStartAuthorisationStageTest {
     public void apply_multipleScaMethod_Success() {
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
-                                                            .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                            .success();
+                                                            .build();
 
         SpiResponse<List<SpiAuthenticationObject>> availableScaMethodsResponse = SpiResponse.<List<SpiAuthenticationObject>>builder()
                                                                                      .payload(MULTIPLE_SPI_SCA_METHODS)
-                                                                                     .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                                                     .success();
+                                                                                     .build();
 
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any()))
             .thenReturn(spiStatus);

@@ -18,17 +18,18 @@
 package de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded;
 
 
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
-import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -37,6 +38,8 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
@@ -69,7 +72,6 @@ public class AisScaMethodSelectedStageTest {
     private static final MessageErrorCode ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final PsuIdData PSU_DATA = new PsuIdData("some psuId", null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID());
     private static final ScaStatus FAILED_SCA_STATUS = ScaStatus.FAILED;
     private static final String PSU_SUCCESS_MESSAGE = "Test psuSuccessMessage";
@@ -80,8 +82,6 @@ public class AisScaMethodSelectedStageTest {
 
     @Mock
     private Xs2aAisConsentService aisConsentService;
-    @Mock
-    private AisConsentDataService aisConsentDataService;
     @Mock
     private AisConsentSpi aisConsentSpi;
     @Mock
@@ -106,6 +106,10 @@ public class AisScaMethodSelectedStageTest {
     private CommonDecoupledAisService commonDecoupledAisService;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    @Mock
+    private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
     @Before
     public void setUp() {
@@ -130,23 +134,19 @@ public class AisScaMethodSelectedStageTest {
         when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(spiAccountConsent);
 
-        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
-            .thenReturn(ASPSP_CONSENT_DATA);
-
         when(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(buildSpiAuthenticationObject()))
             .thenReturn(buildXs2aAuthenticationObject());
-
-        doNothing()
-            .when(aisConsentDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
 
         when(spiContextDataProvider.provideWithPsuIdData(any()))
             .thenReturn(SPI_CONTEXT_DATA);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
     }
 
     @Test
     public void apply_Success() {
-        when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(buildSpiAuthorizationCodeResult()));
 
         UpdateConsentPsuDataResponse actualResponse = scaMethodSelectedStage.apply(request);
@@ -182,7 +182,7 @@ public class AisScaMethodSelectedStageTest {
 
     @Test
     public void apply_Failure_SpiResponseWithError() {
-        when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildErrorSpiResponse());
 
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(), ServiceType.AIS))
@@ -227,14 +227,12 @@ public class AisScaMethodSelectedStageTest {
     private <T> SpiResponse<T> buildSuccessSpiResponse(T payload) {
         return SpiResponse.<T>builder()
                    .payload(payload)
-                   .aspspConsentData(ASPSP_CONSENT_DATA)
-                   .success();
+                   .build();
     }
 
     // Needed because SpiResponse is final, so it's impossible to mock it
     private SpiResponse<SpiAuthorizationCodeResult> buildErrorSpiResponse() {
         return SpiResponse.<SpiAuthorizationCodeResult>builder()
-                   .aspspConsentData(ASPSP_CONSENT_DATA)
                    .fail(RESPONSE_STATUS);
     }
 

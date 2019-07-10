@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.spi.service;
 
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -31,65 +31,65 @@ public interface AccountSpi {
     /**
      * Requests a list of account details
      *
-     * @param contextData      known Context of this call
-     * @param withBalance      boolean representing if the responded AccountDetails should contain balance
-     * @param accountConsent   SpiAccountConsent
-     * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
+     * @param contextData              known Context of this call
+     * @param withBalance              boolean representing if the responded AccountDetails should contain balance
+     * @param accountConsent           SpiAccountConsent
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return List of account details
      */
-    SpiResponse<List<SpiAccountDetails>> requestAccountList(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<List<SpiAccountDetails>> requestAccountList(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Requests an account detail for account
      *
-     * @param contextData      known Context of this call
-     * @param withBalance      Boolean representing if the responded AccountDetails should contain balance
-     * @param accountReference SpiAccountReference
-     * @param accountConsent   SpiAccountConsent
-     * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
+     * @param contextData              known Context of this call
+     * @param withBalance              Boolean representing if the responded AccountDetails should contain balance
+     * @param accountReference         SpiAccountReference
+     * @param accountConsent           SpiAccountConsent
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return Account detail
      */
-    SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Requests a list of transactions
      *
-     * @param contextData      known Context of this call
-     * @param acceptMediaType  requested by TPP response media type e.g. text/plain. Shall be propagated to response. This string may contain several content-types according to HTTP "Accept"-Header format.
-     *                         If desired media type is not possible to provide, NOT_SUPPORTED error to be returned. To provide formats other than JSON, use {@link SpiTransactionReport#transactionsRaw}
-     * @param withBalance      boolean representing if the responded AccountDetails should contain balance
-     * @param dateFrom         Date representing the beginning of the search period.<br>
-     *                         If null, transactions will not be limited by start date
-     * @param dateTo           Date representing the ending of the search period. <br>
-     *                         If null, transactions will not be limited by end date
-     * @param bookingStatus    booking status of the requested transations, e.g. PENDING
-     * @param accountReference SpiAccountReference
-     * @param accountConsent   SpiAccountConsent
-     * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
+     * @param contextData              known Context of this call
+     * @param acceptMediaType          requested by TPP response media type e.g. text/plain. Shall be propagated to response. This string may contain several content-types according to HTTP "Accept"-Header format.
+     *                                 If desired media type is not possible to provide, NOT_SUPPORTED error to be returned. To provide formats other than JSON, use {@link SpiTransactionReport#transactionsRaw}
+     * @param withBalance              boolean representing if the responded AccountDetails should contain balance
+     * @param dateFrom                 Date representing the beginning of the search period.<br>
+     *                                 If null, transactions will not be limited by start date
+     * @param dateTo                   Date representing the ending of the search period. <br>
+     *                                 If null, transactions will not be limited by end date
+     * @param bookingStatus            booking status of the requested transations, e.g. PENDING
+     * @param accountReference         SpiAccountReference
+     * @param accountConsent           SpiAccountConsent
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return List of transactions
      */
-    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull BookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull BookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Requests an transaction by transactionId
      *
-     * @param contextData      known Context of this call
-     * @param transactionId    String representation of ASPSP transaction primary identifier
-     * @param accountReference SpiAccountReference
-     * @param accountConsent   SpiAccountConsent
-     * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
+     * @param contextData              known Context of this call
+     * @param transactionId            String representation of ASPSP transaction primary identifier
+     * @param accountReference         SpiAccountReference
+     * @param accountConsent           SpiAccountConsent
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return Transaction
      */
-    SpiResponse<SpiTransaction> requestTransactionForAccountByTransactionId(@NotNull SpiContextData contextData, @NotNull String transactionId, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransaction> requestTransactionForAccountByTransactionId(@NotNull SpiContextData contextData, @NotNull String transactionId, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Requests a list of account balances
      *
-     * @param contextData      known Context of this call
-     * @param accountReference SpiAccountReference
-     * @param accountConsent   SpiAccountConsent
-     * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
+     * @param contextData              known Context of this call
+     * @param accountReference         SpiAccountReference
+     * @param accountConsent           SpiAccountConsent
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return List of account balances
      */
-    SpiResponse<List<SpiAccountBalance>> requestBalancesForAccount(@NotNull SpiContextData contextData, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<List<SpiAccountBalance>> requestBalancesForAccount(@NotNull SpiContextData contextData, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 }

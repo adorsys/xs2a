@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
@@ -39,7 +38,6 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SpiErrorMapperTest {
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(null, "777");
     @InjectMocks
     private SpiErrorMapper spiErrorMapper;
 
@@ -69,7 +67,7 @@ public class SpiErrorMapperTest {
         String message = "error";
         MessageErrorCode messageErrorCode = MessageErrorCode.PSU_CREDENTIALS_INVALID;
         ErrorType errorType = ErrorType.PIS_401;
-        SpiResponse spiResponse = new SpiResponse<>(null, ASPSP_CONSENT_DATA, SpiResponseStatus.UNAUTHORIZED_FAILURE, Collections.singletonList(message));
+        SpiResponse spiResponse = buildSpiResponseTransactionStatus();
 
         //When:
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
@@ -78,7 +76,6 @@ public class SpiErrorMapperTest {
         assertNotNull(errorHolder);
         assertEquals(messageErrorCode, errorHolder.getErrorCode());
         assertEquals(errorType, errorHolder.getErrorType());
-        assertEquals(message, errorHolder.getMessage());
     }
 
     @Test
@@ -118,4 +115,10 @@ public class SpiErrorMapperTest {
         //When:
         spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
     }
+
+    private static SpiResponse<SpiResponseStatus> buildSpiResponseTransactionStatus() {
+        return SpiResponse.<SpiResponseStatus>builder()
+                   .fail(SpiResponseStatus.UNAUTHORIZED_FAILURE);
+    }
+
 }

@@ -42,26 +42,6 @@ public class AspspConsentData {
     private final String consentId;
 
     /**
-     * To be used in cases where binary data should be updated and new instance should be returned.
-     * ConsentId value will be copied from the existing one.
-     *
-     * @param responseAspspConsentData binary data
-     * @return AspspConsentData instance with provided binary data and the copied consentId
-     */
-    public final AspspConsentData respondWith(byte[] responseAspspConsentData) {
-        return new AspspConsentData(responseAspspConsentData, this.consentId);
-    }
-
-    /**
-     * Returns consent data without information. To be used in case when need to create empty object.
-     *
-     * @return empty AspspConsentData
-     */
-    public static AspspConsentData emptyConsentData() {
-        return new AspspConsentData(null, "");
-    }
-
-    /**
      * Checks whether consent data is contains information or not
      *
      * @return <code>true</code> if consent data is empty. <code>false</code> otherwise.

@@ -439,8 +439,8 @@ public class InitiatePayments_successfulTest {
 
         given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse(multilevelSca));
-        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
-            .willReturn(ResponseEntity.ok(Void.class));
+        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class), any(String.class)))
+            .willReturn(ResponseEntity.ok(Boolean.TRUE));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 
@@ -469,8 +469,8 @@ public class InitiatePayments_successfulTest {
         given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse(false));
 
-        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
-            .willReturn(ResponseEntity.ok(Void.class));
+        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class), any(String.class)))
+            .willReturn(ResponseEntity.ok(Boolean.TRUE));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 
@@ -493,8 +493,8 @@ public class InitiatePayments_successfulTest {
         given(periodicPaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiPeriodicPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildPeriodicPaymentResponse());
 
-        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
-            .willReturn(ResponseEntity.ok(Void.class));
+        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class), any(String.class)))
+            .willReturn(ResponseEntity.ok(Boolean.TRUE));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 
@@ -521,8 +521,8 @@ public class InitiatePayments_successfulTest {
         given(bulkPaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiBulkPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildBulkPaymentResponse());
 
-        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
-            .willReturn(ResponseEntity.ok(Void.class));
+        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class), any(String.class)))
+            .willReturn(ResponseEntity.ok(Boolean.TRUE));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 
