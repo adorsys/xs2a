@@ -6,7 +6,7 @@ cache:
   paths:
     - .m2/repository
 
-image: "adorsys/ci-build"
+image: "adorsys/ci-build:201907"
 
 # ------------------------------------------------------------------
 # stages
