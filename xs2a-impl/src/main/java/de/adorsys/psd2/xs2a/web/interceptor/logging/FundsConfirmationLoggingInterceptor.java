@@ -16,11 +16,9 @@
 
 package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
-import de.adorsys.psd2.xs2a.component.TppLogger;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.component.logger.TppLogger;
 import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -34,14 +32,10 @@ public class FundsConfirmationLoggingInterceptor extends HandlerInterceptorAdapt
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        TppInfo tppInfo = tppService.getTppInfo();
-
-        TppLogger.logRequest()
-            .withParam("TPP ID", tppService.getTppId())
-            .withParam("TPP IP", request.getRemoteAddr())
-            .withParam("TPP Roles", StringUtils.join(tppInfo.getTppRoles(), ","))
-            .withParam("X-Request-ID", request.getHeader("X-Request-ID"))
-            .withParam("URI", request.getRequestURI())
+        TppLogger.logRequest(request)
+            .withTpp(tppService.getTppInfo())
+            .withXRequestId()
+            .withRequestUri()
             .perform();
 
         return true;
@@ -49,10 +43,10 @@ public class FundsConfirmationLoggingInterceptor extends HandlerInterceptorAdapt
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        TppLogger.logResponse()
-            .withParam("TPP ID", tppService.getTppId())
-            .withParam("X-Request-ID", response.getHeader("X-Request-ID"))
-            .withParam("Status", String.valueOf(response.getStatus()))
+        TppLogger.logResponse(response)
+            .withTpp(tppService.getTppInfo())
+            .withXRequestId()
+            .withResponseStatus()
             .perform();
     }
 }
