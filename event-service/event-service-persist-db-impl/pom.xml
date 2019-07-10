@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>event-service</artifactId>
+        <groupId>de.adorsys.psd2</groupId>
+        <version>3.8-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>event-service-persist-db-impl</artifactId>
+
+    <properties>
+        <ruleset.basedir>../..</ruleset.basedir>
+    </properties>
+
+    <dependencies>
+        <!-- project dependencies -->
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-persist-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- spring dependencies -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.aspectj</groupId>
+                    <artifactId>aspectjrt</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- other dependencies -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-java8</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-jdk8</artifactId>
+        </dependency>
+
+        <!-- Test dependencies-->
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>json-reader</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>de.adorsys.psd2:consent-management</exclude>
+                                        <exclude>de.adorsys.psd2:cms-db-schema</exclude>
+                                        <exclude>de.adorsys.psd2:cms-standalone-service</exclude>
+                                        <exclude>de.adorsys.psd2:consent-aspsp-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-aspsp-web</exclude>
+                                        <exclude>de.adorsys.psd2:consent-core-web</exclude>
+                                        <exclude>de.adorsys.psd2:consent-xs2a-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-xs2a-web</exclude>
+                                        <exclude>de.adorsys.psd2:consent-psu-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-psu-web</exclude>
+                                        <exclude>de.adorsys.psd2:consent-psu-client</exclude>
+                                        <exclude>de.adorsys.psd2:consent-management-lib</exclude>
+                                        <exclude>de.adorsys.psd2:consent-management-remote</exclude>
+                                        <exclude>de.adorsys.psd2:consent-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-management-system</exclude>
+                                        <exclude>de.adorsys.psd2:cms-client</exclude>
+                                        <exclude>de.adorsys.psd2:spring-boot-1.5.x-support</exclude>
+                                        <exclude>de.adorsys.psd2:spring-boot-2.x-support</exclude>
+                                        <exclude>de.adorsys.psd2:xs2a-server-api</exclude>
+                                        <exclude>de.adorsys.psd2:xs2a-impl</exclude>
+                                        <exclude>de.adorsys.psd2:spi-api</exclude>
+                                        <exclude>de.adorsys.psd2:event-service-aspsp-api</exclude>
+                                        <exclude>de.adorsys.psd2:event-service-aspsp-impl</exclude>
+                                        <exclude>de.adorsys.psd2:event-service-xs2a-api</exclude>
+                                        <exclude>de.adorsys.psd2:event-service-xs2a-impl</exclude>
+                                        <exclude>de.adorsys.psd2:event-service-rest-client</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
