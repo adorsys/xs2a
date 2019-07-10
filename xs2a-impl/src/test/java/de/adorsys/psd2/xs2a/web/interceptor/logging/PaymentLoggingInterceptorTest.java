@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.interceptor.logging;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -48,11 +49,14 @@ public class PaymentLoggingInterceptorTest {
     private HttpServletResponse response;
     private JsonReader jsonReader = new JsonReader();
 
+    @Before
+    public void setUp() {
+        when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
+    }
+
     @Test
     public void preHandle_pathVariableIsNull() {
         when(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(null);
-        when(tppService.getTppId()).thenReturn("111");
-        when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
         when(request.getHeader(X_REQUEST_ID)).thenReturn("222");
         when(request.getRemoteAddr()).thenReturn("1.1.1.1");
         when(request.getRequestURI()).thenReturn("request_uri");
@@ -60,8 +64,7 @@ public class PaymentLoggingInterceptorTest {
         interceptor.preHandle(request, response, null);
 
         verify(request, times(1)).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        verify(tppService, times(1)).getTppId();
-        verify(tppService).getTppInfo();
+        verify(tppService, times(1)).getTppInfo();
         verify(request, times(1)).getHeader(eq(X_REQUEST_ID));
         verify(request, times(1)).getRemoteAddr();
         verify(request, times(1)).getRequestURI();
@@ -71,8 +74,6 @@ public class PaymentLoggingInterceptorTest {
     public void preHandle_success() {
         Map<Object, Object> pathVariables = new HashMap<>();
         when(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(pathVariables);
-        when(tppService.getTppId()).thenReturn("111");
-        when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
         when(request.getHeader(X_REQUEST_ID)).thenReturn("222");
         when(request.getRemoteAddr()).thenReturn("1.1.1.1");
         when(request.getRequestURI()).thenReturn("request_uri");
@@ -80,8 +81,7 @@ public class PaymentLoggingInterceptorTest {
         interceptor.preHandle(request, response, null);
 
         verify(request, times(1)).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        verify(tppService, times(1)).getTppId();
-        verify(tppService).getTppInfo();
+        verify(tppService, times(1)).getTppInfo();
         verify(request, times(1)).getHeader(eq(X_REQUEST_ID));
         verify(request, times(1)).getRemoteAddr();
         verify(request, times(1)).getRequestURI();
@@ -89,13 +89,12 @@ public class PaymentLoggingInterceptorTest {
 
     @Test
     public void afterCompletion() {
-        when(tppService.getTppId()).thenReturn("111");
         when(response.getHeader(X_REQUEST_ID)).thenReturn("222");
         when(response.getStatus()).thenReturn(HttpServletResponse.SC_OK);
 
         interceptor.afterCompletion(request, response, null, null);
 
-        verify(tppService, times(1)).getTppId();
+        verify(tppService, times(1)).getTppInfo();
         verify(response, times(1)).getHeader(eq(X_REQUEST_ID));
         verify(response, times(1)).getStatus();
     }

@@ -37,11 +37,10 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountLoggingInterceptorTest {
-    private static final String TPP_ID = "111";
     private static final String TPP_IP = "1.1.1.1";
     private static final String TPP_INFO_JSON = "json/web/interceptor/logging/tpp-info.json";
     private static final String REQUEST_URI = "request_uri";
-    private static final String X_REQUEST_ID_HEADER_NAME = "X-Request-ID";
+    private static final String X_REQUEST_ID_HEADER_NAME = "x-request-id";
     private static final String X_REQUEST_ID_HEADER_VALUE = "222";
     private static final String CONSENT_ID_HEADER_NAME = "Consent-ID";
     private static final String CONSENT_ID_HEADER_VALUE = "some consent id";
@@ -59,7 +58,7 @@ public class AccountLoggingInterceptorTest {
 
     @Before
     public void setUp() {
-        when(tppService.getTppId()).thenReturn(TPP_ID);
+        when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
         when(response.getHeader(X_REQUEST_ID_HEADER_NAME)).thenReturn(X_REQUEST_ID_HEADER_VALUE);
     }
 
@@ -67,7 +66,6 @@ public class AccountLoggingInterceptorTest {
     public void preHandle_success() {
         Map<Object, Object> pathVariables = new HashMap<>();
         when(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(pathVariables);
-        when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
         when(request.getRemoteAddr()).thenReturn(TPP_IP);
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
         when(request.getHeader(CONSENT_ID_HEADER_NAME)).thenReturn(CONSENT_ID_HEADER_VALUE);
@@ -75,8 +73,7 @@ public class AccountLoggingInterceptorTest {
         interceptor.preHandle(request, response, null);
 
         verify(request, times(1)).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        verify(tppService, times(1)).getTppId();
-        verify(tppService).getTppInfo();
+        verify(tppService, times(1)).getTppInfo();
         verify(request, times(1)).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
         verify(request, times(1)).getHeader(eq(CONSENT_ID_HEADER_NAME));
         verify(request, times(1)).getRemoteAddr();
@@ -94,8 +91,7 @@ public class AccountLoggingInterceptorTest {
         interceptor.preHandle(request, response, null);
 
         verify(request, times(1)).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        verify(tppService, times(1)).getTppId();
-        verify(tppService).getTppInfo();
+        verify(tppService, times(1)).getTppInfo();
         verify(request, times(1)).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
         verify(request, times(1)).getHeader(eq(CONSENT_ID_HEADER_NAME));
         verify(request, times(1)).getRemoteAddr();
@@ -108,7 +104,7 @@ public class AccountLoggingInterceptorTest {
 
         interceptor.afterCompletion(request, response, null, null);
 
-        verify(tppService, times(1)).getTppId();
+        verify(tppService, times(1)).getTppInfo();
         verify(response, times(1)).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
         verify(response, times(1)).getStatus();
     }
