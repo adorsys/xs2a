@@ -16,11 +16,9 @@
 
 package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
-import de.adorsys.psd2.xs2a.component.TppLogger;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.component.logger.TppLogger;
 import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -39,17 +37,14 @@ public class AccountLoggingInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         Map<String, String> pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        TppInfo tppInfo = tppService.getTppInfo();
         String accountId = Optional.ofNullable(pathVariables)
                                .map(pv -> pv.get("account-id"))
                                .orElse(NOT_EXIST_IN_URI);
 
-        TppLogger.logRequest()
-            .withParam("TPP ID", tppService.getTppId())
-            .withParam("TPP IP", request.getRemoteAddr())
-            .withParam("TPP Roles", StringUtils.join(tppInfo.getTppRoles(), ","))
-            .withParam("X-Request-ID", request.getHeader("X-Request-ID"))
-            .withParam("URI", request.getRequestURI())
+        TppLogger.logRequest(request)
+            .withTpp(tppService.getTppInfo())
+            .withXRequestId()
+            .withRequestUri()
             .withParam("Account ID", accountId)
             .withParam("Consent ID", request.getHeader("Consent-ID"))
             .perform();
@@ -59,10 +54,10 @@ public class AccountLoggingInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        TppLogger.logResponse()
-            .withParam("TPP ID", tppService.getTppId())
-            .withParam("X-Request-ID", response.getHeader("X-Request-ID"))
-            .withParam("Status", String.valueOf(response.getStatus()))
+        TppLogger.logResponse(response)
+            .withTpp(tppService.getTppInfo())
+            .withXRequestId()
+            .withResponseStatus()
             .perform();
     }
 }
