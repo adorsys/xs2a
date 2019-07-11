@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
+import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
 import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
 import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
@@ -31,6 +32,7 @@ import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.specification.PisAuthorisationSpecification;
 import de.adorsys.psd2.consent.repository.specification.PisPaymentDataSpecification;
 import de.adorsys.psd2.consent.service.CommonPaymentDataService;
+import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
@@ -64,6 +66,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private final PisAuthorisationSpecification pisAuthorisationSpecification;
     private final PisPaymentDataSpecification pisPaymentDataSpecification;
     private final CmsPsuService cmsPsuService;
+    private final CmsPsuAuthorisationMapper cmsPsuPisAuthorisationMapper;
 
     @Override
     @Transactional
@@ -84,8 +87,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         throws RedirectUrlIsExpiredException {
 
         Optional<PisAuthorization> optionalAuthorisation = pisAuthorisationRepository
-                                                               .findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId))
-                                                               .filter(a -> !a.getScaStatus().isFinalisedStatus());
+                                                               .findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId));
 
         if (optionalAuthorisation.isPresent()) {
             PisAuthorization authorisation = optionalAuthorisation.get();
@@ -154,18 +156,13 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     }
 
     @Override
-    @Transactional
-    public @NotNull Optional<CmsPisPsuDataAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId) {
+    public @NotNull Optional<CmsPsuAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId) {
         Optional<PisAuthorization> optionalAuthorisation = pisAuthorisationRepository
                                                                .findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
 
         if (optionalAuthorisation.isPresent()) {
             PisAuthorization authorisation = optionalAuthorisation.get();
-
-            return Optional.of(new CmsPisPsuDataAuthorisation(psuDataMapper.mapToPsuIdData(authorisation.getPsuData()),
-                                                              authorisation.getExternalId(),
-                                                              authorisation.getScaStatus(),
-                                                              authorisation.getAuthorizationType()));
+            return Optional.of(cmsPsuPisAuthorisationMapper.mapToCmsPsuAuthorisationPis(authorisation));
         }
 
         log.info("Authorisation ID: [{}], Instance ID: [{}]. Get authorisation failed, because authorisation not found",
