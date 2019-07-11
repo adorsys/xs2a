@@ -81,7 +81,7 @@ public class PaymentCancellationLinks extends AbstractLinks {
         if (isExplicitMethod) {
             setStartAuthorisation(buildPath(UrlHolder.START_PIS_CANCELLATION_AUTH_URL, paymentService, paymentProduct, paymentId));
         } else {
-            String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, authorisationId);
+            String scaRedirectLink = redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, authorisationId);
             setScaRedirect(new HrefType(scaRedirectLink));
             setScaStatus(
                 buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));

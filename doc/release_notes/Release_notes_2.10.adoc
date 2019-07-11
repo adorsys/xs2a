@@ -3,6 +3,7 @@
 == Table of Contents
 * Include TPP roles in all access-log for all request entries
 * Bugfix: Finalised status of AIS consent changes after expiration
+* Bugfix: Fix `scaRedirect` link in payment cancellation in case of implicit authorisation
 
 == Include TPP roles in all access-log for all request entries
 From now on, request entries in access-log will also contain list of TPP roles, extracted from the certificate.
@@ -11,3 +12,8 @@ From now on, request entries in access-log will also contain list of TPP roles, 
 
 From now on, no changes can be done to the status of consent when it is expired or finalised
 while getting AIS Consent (`GET /psu-api/v1/ais/consent/{consent-id}`) in CMS.
+
+== Bugfix: Fix `scaRedirect` link in payment cancellation in case of implicit authorisation
+From now on, `scaRedirect` link in response to payment cancellation request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`)
+in Redirect approach in case of implicit authorisation will be correctly generated based on the `pisPaymentCancellationRedirectUrlToAspsp`
+property in the ASPSP profile instead of the `pisRedirectUrlToAspsp` one.
