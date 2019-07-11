@@ -76,7 +76,7 @@ public class PaymentCancellationLinksTest {
     public void buildCancellationLinks_redirect_implicit() {
         boolean isExplicitMethod = false;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
-        when(redirectLinkBuilder.buildPaymentScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID))).thenReturn(REDIRECT_LINK.getHref());
+        when(redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID))).thenReturn(REDIRECT_LINK.getHref());
 
         links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, response, isExplicitMethod);
 
