@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
-import de.adorsys.psd2.consent.api.pis.CmsPaymentIdentifier;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
@@ -69,7 +68,7 @@ public class CmsPsuPisController {
     @GetMapping(path = "/redirect/{redirect-id}")
     @ApiOperation(value = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsPaymentIdentifier.class),
+        @ApiResponse(code = 200, message = "OK", response = CmsPaymentResponse.class),
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsPaymentResponse.class)})
     public ResponseEntity getPaymentIdByRedirectId(
@@ -86,8 +85,7 @@ public class CmsPsuPisController {
             }
             CmsPaymentResponse cmsPaymentResponse = response.get();
 
-            CmsPaymentIdentifier cmsPaymentIdentifier = new CmsPaymentIdentifier(cmsPaymentResponse);
-            return new ResponseEntity<>(cmsPaymentIdentifier, HttpStatus.OK);
+            return new ResponseEntity<>(cmsPaymentResponse, HttpStatus.OK);
         } catch (RedirectUrlIsExpiredException e) {
             return new ResponseEntity<>(new CmsPaymentResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
@@ -120,7 +118,7 @@ public class CmsPsuPisController {
     @GetMapping(path = "/cancellation/redirect/{redirect-id}")
     @ApiOperation(value = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsPaymentIdentifier.class),
+        @ApiResponse(code = 200, message = "OK", response = CmsPaymentResponse.class),
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsPaymentResponse.class)})
     public ResponseEntity getPaymentIdByRedirectIdForCancellation(
@@ -136,8 +134,7 @@ public class CmsPsuPisController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             CmsPaymentResponse cmsPaymentResponse = response.get();
-            CmsPaymentIdentifier cmsPaymentIdentifier = new CmsPaymentIdentifier(cmsPaymentResponse);
-            return new ResponseEntity<>(cmsPaymentIdentifier, HttpStatus.OK);
+            return new ResponseEntity<>(cmsPaymentResponse, HttpStatus.OK);
         } catch (RedirectUrlIsExpiredException e) {
             return new ResponseEntity<>(new CmsPaymentResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }

@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
-import de.adorsys.psd2.consent.api.ais.CmsConsentIdentifier;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
@@ -191,7 +190,7 @@ public class CmsPsuAisController {
     @GetMapping(path = "/redirect/{redirect-id}")
     @ApiOperation(value = "Gets consent response by redirect ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsConsentIdentifier.class),
+        @ApiResponse(code = 200, message = "OK", response = CmsAisConsentResponse.class),
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsAisConsentResponse.class)})
     public ResponseEntity getConsentIdByRedirectId(
@@ -207,9 +206,7 @@ public class CmsPsuAisController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             CmsAisConsentResponse cmsAisConsentResponse = response.get();
-
-            CmsConsentIdentifier cmsConsentIdentifier = new CmsConsentIdentifier(cmsAisConsentResponse);
-            return new ResponseEntity<>(cmsConsentIdentifier, HttpStatus.OK);
+            return new ResponseEntity<>(cmsAisConsentResponse, HttpStatus.OK);
         } catch (RedirectUrlIsExpiredException e) {
             return new ResponseEntity<>(new CmsAisConsentResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
