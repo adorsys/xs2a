@@ -35,7 +35,6 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfirmationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.piis.PiisConsentValidation;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -100,14 +99,10 @@ public class FundsConfirmationService {
 
         PsuIdData psuIdData = getPsuIdData(consent);
 
-        InitialSpiAspspConsentDataProvider aspspConsentDataProvider = null;
-
         // We don't transfer provider to the SPI level if there is no PIIS consent. Both PIIS consent and the provider
         // parameters are marked as @Nullable in SPI.
-        if (consent != null) {
-            aspspConsentDataProvider = aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider();
-            aspspConsentDataProvider.saveWith(consent.getId());
-        }
+        SpiAspspConsentDataProvider aspspConsentDataProvider =
+            consent != null ? aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consent.getId()) : null;
 
         FundsConfirmationResponse response = executeRequest(psuIdData, consent, request, aspspConsentDataProvider);
 

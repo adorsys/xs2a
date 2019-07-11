@@ -3,6 +3,7 @@
 == Table of Contents
 * Refactor: ASPSP consent data refactoring
 * Feature: Only authorisation number is used to identify TPP
+* Feature: CMS-PSU-API enriching responses
 
 == Refactor: ASPSP consent data refactoring
 
@@ -20,3 +21,13 @@ Please note: from now on, the SPI developers are responsible for saving the ASPS
 From now on, only authorisation number field in QWAC Certificate is used to identify TPP. Before, national authority id
 was used for TPP identification as well. Column `authority_id` in `tpp_stop_list` table was marked as deprecated and will
 be removed in version 3.11.
+
+== Feature: CMS-PSU-API enriching responses
+
+From now on, responses for 3 endpoints in CMS-PSU-API were enriched:
+
+ - `GET /psu-api/v1/payment/redirect/{redirect-id}`
+ - `GET /psu-api/v1/payment/cancellation/redirect/{redirect-id}`
+ - `GET /psu-api/v1/ais/consent/redirect/{redirect-id}`
+
+Now payment endpoints return the following: payment object, payment ID, authorisation ID, TPP payment redirect URIs, status change timestamp and TPP info. And the AIS consent endpoint returns: consent object, consent ID, authorisation ID, TPP consent redirect URIs, status change timestamp and TPP info.
