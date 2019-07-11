@@ -20,14 +20,15 @@ package de.adorsys.psd2.consent.service.psu;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
+import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
-import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
@@ -36,6 +37,7 @@ import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.AisConsentRequestTypeService;
 import de.adorsys.psd2.consent.service.AisConsentUsageService;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
@@ -76,6 +78,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentUsageService aisConsentUsageService;
     private final CmsPsuService cmsPsuService;
     private final AisConsentRequestTypeService aisConsentRequestTypeService;
+    private final CmsPsuAuthorisationMapper cmsPsuPisAuthorisationMapper;
 
     @Override
     @Transactional
@@ -95,8 +98,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
                                                                                @NotNull String instanceId) throws RedirectUrlIsExpiredException {
 
         Optional<AisConsentAuthorization> optionalAuthorisation = aisConsentAuthorisationRepository
-                                                                      .findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId))
-                                                                      .filter(a -> a.getScaStatus().isNotFinalisedStatus());
+                                                                      .findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId));
 
         if (optionalAuthorisation.isPresent()) {
             AisConsentAuthorization authorisation = optionalAuthorisation.get();
@@ -126,18 +128,13 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     @Override
-    @Transactional
-    public @NotNull Optional<CmsAisPsuDataAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId) {
+    public @NotNull Optional<CmsPsuAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId) {
         Optional<AisConsentAuthorization> optionalAuthorisation = aisConsentAuthorisationRepository
                                                                       .findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
 
         if (optionalAuthorisation.isPresent()) {
             AisConsentAuthorization authorisation = optionalAuthorisation.get();
-
-            return Optional.of(new CmsAisPsuDataAuthorisation(psuDataMapper.mapToPsuIdData(authorisation.getPsuData()),
-                                                              authorisation.getExternalId(),
-                                                              authorisation.getScaStatus(),
-                                                              CmsAuthorisationType.CREATED));
+            return Optional.of(cmsPsuPisAuthorisationMapper.mapToCmsPsuAuthorisationAis(authorisation));
         }
 
         log.info("Authorisation ID: [{}], Instance ID: [{}]. Get authorisation failed, because authorisation not found",

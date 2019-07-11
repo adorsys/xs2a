@@ -417,7 +417,6 @@ public class CmsPsuAisServiceTest {
     public void getConsentByRedirectId_Fail_RedirectExpire() throws RedirectUrlIsExpiredException {
         // Given
         when(mockAisConsentAuthorization.getConsent()).thenReturn(aisConsent);
-        when(mockAisConsentAuthorization.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
 
         // When
         cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -427,7 +426,6 @@ public class CmsPsuAisServiceTest {
     public void getConsentByRedirectId_Fail_NullAisConsent() throws RedirectUrlIsExpiredException {
         // Given
         when(mockAisConsentAuthorization.isRedirectUrlNotExpired()).thenReturn(true);
-        when(mockAisConsentAuthorization.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
         when(mockAisConsentAuthorization.getConsent()).thenReturn(null);
 
         // When
@@ -443,7 +441,6 @@ public class CmsPsuAisServiceTest {
     public void getConsentByRedirectId_Success() throws RedirectUrlIsExpiredException {
         // Given
         when(mockAisConsentAuthorization.isRedirectUrlNotExpired()).thenReturn(true);
-        when(mockAisConsentAuthorization.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
         when(mockAisConsentAuthorization.getConsent()).thenReturn(aisConsent);
         when(aisConsentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(mockAisAccountConsent);
         when(mockAisAccountConsent.getTppInfo()).thenReturn(tppInfo);

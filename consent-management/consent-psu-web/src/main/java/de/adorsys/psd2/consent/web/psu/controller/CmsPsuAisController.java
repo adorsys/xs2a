@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.api.ais.CmsConsentIdentifier;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
+import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
@@ -240,14 +241,14 @@ public class CmsPsuAisController {
     @GetMapping(path = "authorisation/{authorisation-id}")
     @ApiOperation(value = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsAisPsuDataAuthorisation.class),
+        @ApiResponse(code = 200, message = "OK", response = CmsPsuAuthorisation.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<CmsAisPsuDataAuthorisation> getAuthorisationByAuthorisationId(
+    public ResponseEntity<CmsPsuAuthorisation> getAuthorisationByAuthorisationId(
         @ApiParam(name = "authorisation-id", value = "The authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("authorisation-id") String aithorisationId,
+        @PathVariable("authorisation-id") String authorisationId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
-        return cmsPsuAisService.getAuthorisationByAuthorisationId(aithorisationId, instanceId)
+        return cmsPsuAisService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
                    .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
