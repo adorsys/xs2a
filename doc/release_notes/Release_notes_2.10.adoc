@@ -2,6 +2,12 @@
 
 == Table of Contents
 * Include TPP roles in all access-log for all request entries
+* Bugfix: Finalised status of AIS consent changes after expiration
 
 == Include TPP roles in all access-log for all request entries
 From now on, request entries in access-log will also contain list of TPP roles, extracted from the certificate.
+
+== Bugfix: Finalised status of AIS consent changes after expiration
+
+From now on, no changes can be done to the status of consent when it is expired or finalised
+while getting AIS Consent (`GET /psu-api/v1/ais/consent/{consent-id}`) in CMS.
