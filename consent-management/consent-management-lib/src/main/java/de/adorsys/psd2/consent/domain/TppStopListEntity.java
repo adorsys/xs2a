@@ -40,6 +40,8 @@ public class TppStopListEntity extends InstanceDependableEntity {
     @Column(name = "tpp_authorisation_number", nullable = false)
     private String tppAuthorisationNumber;
 
+    // TODO delete this field in 3.11 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/937
+    @Deprecated
     @Column(name = "authority_id", nullable = false)
     private String nationalAuthorityId;
 

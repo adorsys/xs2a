@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
@@ -105,16 +104,16 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
     /**
      * Returns specification for PiisConsentEntity for filtering consents by PsuIdData, TppInfo and AccountReference.
      *
-     * @param psuIdData        mandatory PSU ID data
-     * @param tppInfo          mandatory TPP Info
-     * @param accountReference mandatory PIIS Account Reference
+     * @param psuIdData              mandatory PSU ID data
+     * @param tppAuthorisationNumber mandatory TPP authorisation number
+     * @param accountReference       mandatory PIIS Account Reference
      * @return resulting specification for PiisConsentEntity
      */
     public Specification<PiisConsentEntity> byPsuIdDataAndTppInfoAndAccountReference(@NotNull PsuIdData psuIdData,
-                                                                                     @NotNull TppInfo tppInfo,
+                                                                                     @NotNull String tppAuthorisationNumber,
                                                                                      @NotNull AccountReference accountReference) {
         return Specifications.<PiisConsentEntity>where(byPsuIdData(psuIdData))
-                   .and(byTppInfo(tppInfo))
+                   .and(byTppAuthorisationNumber(tppAuthorisationNumber))
                    .and(byAccountReference(accountReference));
     }
 

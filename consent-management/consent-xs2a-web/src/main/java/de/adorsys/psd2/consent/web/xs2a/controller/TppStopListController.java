@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.service.TppStopListService;
-import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -42,12 +41,9 @@ public class TppStopListController {
     @ApiResponse(code = 200, message = "OK")
     public ResponseEntity<Boolean> checkIfTppBlocked(
         @ApiParam(value = "ID of TPP", example = "12345987")
-        @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
-        @ApiParam(value = "National competent authority id", example = "authority id")
-        @RequestHeader(value = "authority-id") String nationalAuthorityId) {
-        TppUniqueParamsHolder tppUniqueParams = new TppUniqueParamsHolder(tppAuthorisationNumber, nationalAuthorityId);
+        @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber) {
 
-        boolean isTppBlocked = tppStopListService.checkIfTppBlocked(tppUniqueParams);
+        boolean isTppBlocked = tppStopListService.checkIfTppBlocked(tppAuthorisationNumber);
         return new ResponseEntity<>(isTppBlocked, HttpStatus.OK);
     }
 }

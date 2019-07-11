@@ -19,7 +19,6 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.consent.domain.TppStopListEntity;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
-import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,14 +36,14 @@ public class TppStopListServiceInternal implements TppStopListService {
     private String serviceInstanceId;
 
     @Override
-    public boolean checkIfTppBlocked(TppUniqueParamsHolder tppUniqueParams) {
-        Optional<TppStopListEntity> stopListEntityOptional = tppStopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppUniqueParams.getAuthorisationNumber(), tppUniqueParams.getAuthorityId(), serviceInstanceId);
+    public boolean checkIfTppBlocked(String tppAuthorisationNumber) {
+        Optional<TppStopListEntity> stopListEntityOptional = tppStopListRepository.findByTppAuthorisationNumberAndInstanceId(tppAuthorisationNumber, serviceInstanceId);
 
         return stopListEntityOptional
                    .filter(TppStopListEntity::isBlocked)
                    .map(sl -> {
-                       log.info("TPP ID: [{}], Authority ID: [{}]. TPP has been blocked, because it's in stop list",
-                                tppUniqueParams.getAuthorisationNumber(), tppUniqueParams.getAuthorityId());
+                       log.info("TPP ID: [{}]. TPP has been blocked, because it's in stop list",
+                                tppAuthorisationNumber);
                        return true;
                    })
                    .orElse(false);

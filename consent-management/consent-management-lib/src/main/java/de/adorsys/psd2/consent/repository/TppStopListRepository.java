@@ -29,5 +29,7 @@ public interface TppStopListRepository extends CrudRepository<TppStopListEntity,
 
     Optional<TppStopListEntity> findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId);
 
+    Optional<TppStopListEntity> findByTppAuthorisationNumberAndInstanceId(@NotNull String tppAuthorisationNumber, @NotNull String instanceId);
+
     List<TppStopListEntity> findAllByStatusAndBlockingExpirationTimestampLessThanEqual(@NotNull TppStatus tppStatus, @NotNull OffsetDateTime dateTimeToCompare);
 }

@@ -38,14 +38,12 @@ public interface AisConsentRepository extends CrudRepository<AisConsent, Long>, 
             "join c.psuDataList psuList " +
             "where psuList.psuId in :psuIds " +
             "and c.tppInfo.authorisationNumber = :authorisationNumber " +
-            "and c.tppInfo.authorityId = :authorityId " +
             "and c.instanceId = :instanceId " +
             "and c.consentStatus in :consentStatuses " +
             "and c.externalId <> :newConsentId"
     )
     List<AisConsent> findOldConsentsByNewConsentParams(@Param("psuIds") Set<String> psuIds,
                                                        @Param("authorisationNumber") String tppAuthorisationNumber,
-                                                       @Param("authorityId") String tppAuthorityId,
                                                        @Param("instanceId") String instanceId,
                                                        @Param("newConsentId") String newConsentId,
                                                        @Param("consentStatuses") Set<ConsentStatus> consentStatuses);

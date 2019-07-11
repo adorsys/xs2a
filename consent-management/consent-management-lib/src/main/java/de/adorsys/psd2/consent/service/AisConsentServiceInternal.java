@@ -188,7 +188,6 @@ public class AisConsentServiceInternal implements AisConsentService {
 
         List<AisConsent> oldConsents = aisConsentRepository.findOldConsentsByNewConsentParams(psuIds,
                                                                                               tppInfo.getAuthorisationNumber(),
-                                                                                              tppInfo.getAuthorityId(),
                                                                                               newConsent.getInstanceId(),
                                                                                               newConsent.getExternalId(),
                                                                                               EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID));

@@ -38,7 +38,6 @@ public class TppInfo {
     @ApiModelProperty(value = "Tpp role", required = true)
     private List<TppRole> tppRoles;
 
-    @EqualsAndHashCode.Include
     @ApiModelProperty(value = "National competent authority id", required = true, example = "authority id")
     private String authorityId;
 
@@ -78,7 +77,6 @@ public class TppInfo {
 
     @JsonIgnore
     public boolean isValid() {
-        return StringUtils.isNotBlank(authorisationNumber)
-                   && StringUtils.isNotBlank(authorityId);
+        return StringUtils.isNotBlank(authorisationNumber);
     }
 }

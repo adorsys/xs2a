@@ -138,7 +138,7 @@ public class ContextPathTest {
             .willReturn(TPP_INFO);
         given(tppService.getTppId())
             .willReturn(TPP_INFO.getAuthorisationNumber());
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.buildTppUniqueParamsHolder()))
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(Event.class)))
             .willReturn(true);

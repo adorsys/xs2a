@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.integration.builder;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
 
 public class TppInfoBuilder {
     private static final String TPP_ID = "Test TppId";
@@ -36,7 +35,7 @@ public class TppInfoBuilder {
         return new TppRedirectUri("redirectUri", "nokRedirectUri");
     }
     
-    public static TppUniqueParamsHolder buildTppUniqueParamsHolder() {
-        return new TppUniqueParamsHolder(TPP_ID, AUTHORITY_ID);
+    public static String getTppInfo() {
+        return TPP_ID;
     }
 }

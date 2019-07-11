@@ -45,7 +45,7 @@ public class TppInfoEntity extends InstanceDependableEntity {
     @Enumerated(value = EnumType.STRING)
     private List<TppRole> tppRoles;
 
-    @Column(name = "authority_id", nullable = false)
+    @Column(name = "authority_id")
     private String authorityId;
 
     @Column(name = "authority_name")

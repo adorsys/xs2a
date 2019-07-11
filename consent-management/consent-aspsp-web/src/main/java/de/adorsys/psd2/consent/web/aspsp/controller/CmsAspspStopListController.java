@@ -41,6 +41,7 @@ public class CmsAspspStopListController {
     public ResponseEntity<TppStopListRecord> getTppStopListRecord(
         @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
+        // TODO delete this request header in 3.11 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/937
         @ApiParam(value = "National competent authority id", example = "authority id")
         @RequestHeader(value = "authority-id") String nationalAuthorityId,
         @ApiParam(value = "Service instance id", example = "instance id")
@@ -56,6 +57,7 @@ public class CmsAspspStopListController {
     public ResponseEntity<Boolean> blockTpp(
         @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
+        // TODO delete this request header in 3.11 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/937
         @ApiParam(value = "National competent authority id", example = "authority id")
         @RequestHeader(value = "authority-id") String nationalAuthorityId,
         @ApiParam(value = "Service instance id", example = "instance id")
@@ -73,6 +75,7 @@ public class CmsAspspStopListController {
     public ResponseEntity<Boolean> unblockTpp(
         @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
+        // TODO delete this request header in 3.11 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/937
         @ApiParam(value = "National competent authority id", example = "authority id")
         @RequestHeader(value = "authority-id") String nationalAuthorityId,
         @ApiParam(value = "Service instance id", example = "instance id")

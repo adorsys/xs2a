@@ -120,7 +120,7 @@ public class CancelPaymentTest {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppService.getTppInfo()).willReturn(TPP_INFO);
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.buildTppUniqueParamsHolder()))
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(Event.class)))
             .willReturn(true);

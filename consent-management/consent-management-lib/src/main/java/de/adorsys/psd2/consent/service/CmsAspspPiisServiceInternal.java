@@ -30,7 +30,6 @@ import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +67,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
             return Optional.empty();
         }
 
-        closePreviousPiisConsents(psuIdData, request.getTppInfo(), request.getAccount());
+        closePreviousPiisConsents(psuIdData, request.getTppInfo().getAuthorisationNumber(), request.getAccount());
 
         PiisConsentEntity consent = buildPiisConsent(psuIdData, request);
         PiisConsentEntity saved = piisConsentRepository.save(consent);
@@ -113,8 +112,8 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         return true;
     }
 
-    private void closePreviousPiisConsents(PsuIdData psuIdData, TppInfo tppInfo, AccountReference accountReference) {
-        Specification<PiisConsentEntity> specification = piisConsentEntitySpecification.byPsuIdDataAndTppInfoAndAccountReference(psuIdData, tppInfo, accountReference);
+    private void closePreviousPiisConsents(PsuIdData psuIdData, String authorisationNumber, AccountReference accountReference) {
+        Specification<PiisConsentEntity> specification = piisConsentEntitySpecification.byPsuIdDataAndTppInfoAndAccountReference(psuIdData, authorisationNumber, accountReference);
         List<PiisConsentEntity> piisConsentEntities = piisConsentRepository.findAll(specification);
         piisConsentEntities.forEach(con -> con.setConsentStatus(ConsentStatus.REVOKED_BY_PSU));
         piisConsentRepository.saveAll(piisConsentEntities);

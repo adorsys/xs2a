@@ -67,7 +67,6 @@ public class CmsAspspPiisServiceInternalTest {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
     private static final OffsetDateTime CREATION_TIMESTAMP = OffsetDateTime.of(2019, 2, 4, 12, 0, 0, 0, ZoneOffset.UTC);
     private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
-    private static final String TPP_AUTHORITY_ID = "authority id";
     private static final String CARD_NUMBER = "1234567891234";
     private static final LocalDate CARD_EXPIRY_DATE = LocalDate.now().plusDays(1);
     private static final String CARD_INFORMATION = "MyMerchant Loyalty Card";
@@ -141,7 +140,7 @@ public class CmsAspspPiisServiceInternalTest {
         PsuIdData psuIdData = buildPsuIdData();
         AccountReference accountReference = buildAccountReference();
 
-        when(piisConsentEntitySpecification.byPsuIdDataAndTppInfoAndAccountReference(psuIdData, tppInfo, accountReference))
+        when(piisConsentEntitySpecification.byPsuIdDataAndTppInfoAndAccountReference(psuIdData, tppInfo.getAuthorisationNumber(), accountReference))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         List<PiisConsentEntity> piisConsentEntities = Arrays.asList(buildPiisConsentEntity(), buildPiisConsentEntity());
         //noinspection unchecked
@@ -161,7 +160,7 @@ public class CmsAspspPiisServiceInternalTest {
         assertEquals(piisConsentEntities.size(), previousPiisConsent.size());
 
         verify(piisConsentEntitySpecification, times(1))
-            .byPsuIdDataAndTppInfoAndAccountReference(psuIdData, tppInfo, accountReference);
+            .byPsuIdDataAndTppInfoAndAccountReference(psuIdData, tppInfo.getAuthorisationNumber(), accountReference);
 
         Set<ConsentStatus> consentStatuses = previousPiisConsent.stream()
                                                  .map(PiisConsentEntity::getConsentStatus)
@@ -456,14 +455,12 @@ public class CmsAspspPiisServiceInternalTest {
     private TppInfo buildTppInfo() {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber(TPP_AUTHORISATION_NUMBER);
-        tppInfo.setAuthorityId(TPP_AUTHORITY_ID);
         return tppInfo;
     }
 
     private TppInfoEntity buildTppInfoEntity() {
         TppInfoEntity tppInfo = new TppInfoEntity();
         tppInfo.setAuthorisationNumber(TPP_AUTHORISATION_NUMBER);
-        tppInfo.setAuthorityId(TPP_AUTHORITY_ID);
         return tppInfo;
     }
 

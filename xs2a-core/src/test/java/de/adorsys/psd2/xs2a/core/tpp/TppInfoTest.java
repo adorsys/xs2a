@@ -24,14 +24,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 public class TppInfoTest {
-    private static final String AUTHORITY_ID = "authority id";
-    private static final String AUTHORITY_ID_2 = "authority id 2";
     private static final String AUTHORISATION_NUMBER = "authorisation number";
     private static final String AUTHORISATION_NUMBER_2 = "authorisation number 2";
 
     @Test
     public void equals_withOnlyAuthorisationNumberAndAuthorityIdSame_shouldReturnTrue() {
-        TppInfo tppInfoFirst = buildTppInfo(AUTHORISATION_NUMBER, AUTHORITY_ID);
+        TppInfo tppInfoFirst = buildTppInfo(AUTHORISATION_NUMBER);
+        tppInfoFirst.setAuthorityId("authorisation number");
         tppInfoFirst.setTppName("some tpp name");
         tppInfoFirst.setTppRoles(Collections.singletonList(TppRole.PISP));
         tppInfoFirst.setAuthorityName("some authority name");
@@ -43,7 +42,8 @@ public class TppInfoTest {
         tppInfoFirst.setTppRedirectUri(new TppRedirectUri("some uri", "some nok uri"));
         tppInfoFirst.setIssuerCN("some issuer CN");
 
-        TppInfo tppInfoSecond = buildTppInfo(AUTHORISATION_NUMBER, AUTHORITY_ID);
+        TppInfo tppInfoSecond = buildTppInfo(AUTHORISATION_NUMBER);
+        tppInfoSecond.setAuthorityId("authorisation number");
         tppInfoSecond.setTppName("some other tpp name");
         tppInfoSecond.setTppRoles(Collections.singletonList(TppRole.PISP));
         tppInfoSecond.setAuthorityName("some other authority name");
@@ -60,32 +60,16 @@ public class TppInfoTest {
 
     @Test
     public void equals_withDifferentAuthorisationNumber_shouldReturnFalse() {
-        TppInfo tppInfoFirst = buildTppInfo(AUTHORISATION_NUMBER, AUTHORITY_ID);
-        TppInfo tppInfoSecond = buildTppInfo(AUTHORISATION_NUMBER_2, AUTHORITY_ID);
+        TppInfo tppInfoFirst = buildTppInfo(AUTHORISATION_NUMBER);
+        TppInfo tppInfoSecond = buildTppInfo(AUTHORISATION_NUMBER_2);
 
         assertNotEquals(tppInfoFirst, tppInfoSecond);
     }
 
-    @Test
-    public void equals_withDifferentAuthorityId_shouldReturnFalse() {
-        TppInfo tppInfoFirst = buildTppInfo(AUTHORISATION_NUMBER, AUTHORITY_ID);
-        TppInfo tppInfoSecond = buildTppInfo(AUTHORISATION_NUMBER, AUTHORITY_ID_2);
-
-        assertNotEquals(tppInfoFirst, tppInfoSecond);
-    }
-
-    @Test
-    public void equals_withDifferentAuthorisationNumberAndAuthorityId_shouldReturnFalse() {
-        TppInfo tppInfoFirst = buildTppInfo(AUTHORISATION_NUMBER, AUTHORITY_ID);
-        TppInfo tppInfoSecond = buildTppInfo(AUTHORISATION_NUMBER_2, AUTHORITY_ID_2);
-
-        assertNotEquals(tppInfoFirst, tppInfoSecond);
-    }
-
-    private TppInfo buildTppInfo(String authorisationNumber, String authorityId) {
+    private TppInfo buildTppInfo(String authorisationNumber) {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber(authorisationNumber);
-        tppInfo.setAuthorityId(authorityId);
+
         return tppInfo;
     }
 }
