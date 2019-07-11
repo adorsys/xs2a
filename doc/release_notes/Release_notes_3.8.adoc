@@ -2,6 +2,7 @@
 
 == Table of Contents
 * Refactor: ASPSP consent data refactoring
+* Feature: Only authorisation number is used to identify TPP
 
 == Refactor: ASPSP consent data refactoring
 
@@ -13,3 +14,9 @@ So, now the SPI developers should change their connectors according to these cha
 Also, field `aspspConsentData` and method `success()` were removed as deprecated from `SpiResponse` entity. Please use method `build()` instead.
 
 Please note: from now on, the SPI developers are responsible for saving the ASPSP consent data to the database. XS2A-Core provides this possibility, but if no updateAspspConsentData call happens, no data will be saved.
+
+== Feature: Only authorisation number is used to identify TPP
+
+From now on, only authorisation number field in QWAC Certificate is used to identify TPP. Before, national authority id
+was used for TPP identification as well. Column `authority_id` in `tpp_stop_list` table was marked as deprecated and will
+be removed in version 3.11.

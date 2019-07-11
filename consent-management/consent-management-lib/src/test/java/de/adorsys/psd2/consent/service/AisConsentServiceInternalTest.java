@@ -356,7 +356,7 @@ public class AisConsentServiceInternalTest {
         boolean result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
 
         assertFalse(result);
-        verify(aisConsentRepository, never()).findOldConsentsByNewConsentParams(any(), any(), any(), any(), any(), any());
+        verify(aisConsentRepository, never()).findOldConsentsByNewConsentParams(any(), any(), any(), any(), any());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -380,9 +380,6 @@ public class AisConsentServiceInternalTest {
 
         when(tppInfoMocked.getAuthorisationNumber())
             .thenReturn(AUTHORISATION_NUMBER);
-
-        when(tppInfoMocked.getAuthorityId())
-            .thenReturn(AUTHORISATION_ID);
 
         when(aisConsentMocked.getInstanceId())
             .thenReturn(INSTANCE_ID);
@@ -413,9 +410,6 @@ public class AisConsentServiceInternalTest {
         when(tppInfoMocked.getAuthorisationNumber())
             .thenReturn(AUTHORISATION_NUMBER);
 
-        when(tppInfoMocked.getAuthorityId())
-            .thenReturn(AUTHORISATION_ID);
-
         when(aisConsentMocked.getInstanceId())
             .thenReturn(INSTANCE_ID);
 
@@ -427,7 +421,7 @@ public class AisConsentServiceInternalTest {
 
         AisConsent oldConsent = buildConsent(EXTERNAL_CONSENT_ID_NOT_EXIST);
         List<AisConsent> oldConsents = Collections.singletonList(oldConsent);
-        when(aisConsentRepository.findOldConsentsByNewConsentParams(Collections.singleton(PSU_ID), AUTHORISATION_NUMBER, AUTHORISATION_ID, INSTANCE_ID, EXTERNAL_CONSENT_ID, EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED, ConsentStatus.VALID)))
+        when(aisConsentRepository.findOldConsentsByNewConsentParams(Collections.singleton(PSU_ID), AUTHORISATION_NUMBER, INSTANCE_ID, EXTERNAL_CONSENT_ID, EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED, ConsentStatus.VALID)))
             .thenReturn(oldConsents);
 
         when(aisConsentRepository.saveAll(oldConsents)).thenReturn(oldConsents);
@@ -455,8 +449,6 @@ public class AisConsentServiceInternalTest {
             .thenReturn(PSU_ID);
         when(tppInfoMocked.getAuthorisationNumber())
             .thenReturn(AUTHORISATION_NUMBER);
-        when(tppInfoMocked.getAuthorityId())
-            .thenReturn(AUTHORISATION_ID);
         when(aisConsentMocked.getInstanceId())
             .thenReturn(INSTANCE_ID);
         when(aisConsentMocked.getExternalId())

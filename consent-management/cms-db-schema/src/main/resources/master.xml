@@ -94,5 +94,6 @@
     <include relativeToChangelogFile="true" file="migration/0066-add-redirect-exp-column-to-auth-tables.xml"/>
     <include relativeToChangelogFile="true" file="migration/0067-add-cancel-tpp-redirect-urls-columns-to-tpp-info.xml"/>
     <include relativeToChangelogFile="true" file="migration/0068-remove-deprecated-columns-from-crypto-algorithm-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0069-remove-authority-id-column-from-unique-constraint-in-tpp-stop-list-table.xml"/>
 
 </databaseChangeLog>

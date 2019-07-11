@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Duration;
 import java.util.Optional;
 
+// TODO delete nationalAuthorityId parameter in all methods in 3.11 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/937
 public interface CmsAspspTppService {
 
     /**
