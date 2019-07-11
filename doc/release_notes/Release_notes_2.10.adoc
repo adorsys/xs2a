@@ -3,10 +3,16 @@
 == Table of Contents
 * Include TPP roles in all access-log for all request entries
 * Bugfix: Finalised status of AIS consent changes after expiration
+* Bugfix: Payment and Consent initiation request where field X-Request-ID contains an invalid UUID return internal server error
 * Bugfix: Fix `scaRedirect` link in payment cancellation in case of implicit authorisation
 
 == Include TPP roles in all access-log for all request entries
 From now on, request entries in access-log will also contain list of TPP roles, extracted from the certificate.
+
+== Bugfix: Payment and Consent initiation request where field X-Request-ID contains an invalid UUID return internal server error
+
+From now on, while initiate payment or consent with invalid field `X-Request-ID` we'll see `400 FROMAT_ERROR` response with validator message instead
+`500 Internal Server Error`
 
 == Bugfix: Finalised status of AIS consent changes after expiration
 
