@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.web.interceptor;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.web.validator.DefaultMethodValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.MethodValidator;
@@ -39,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static org.junit.Assert.*;
@@ -66,8 +64,6 @@ public class RequestValidationInterceptorTest {
     private HttpServletResponse response;
     @Mock
     private HandlerMethod handler;
-    @Mock
-    private RequestProviderService requestProviderService;
 
     private MethodValidator methodValidator;
 
@@ -84,8 +80,6 @@ public class RequestValidationInterceptorTest {
                 messageError.addTppMessage(TppMessageInformation.of(FORMAT_ERROR, ERROR_MESSAGE));
             }
         };
-
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     public String publicMethod() {
