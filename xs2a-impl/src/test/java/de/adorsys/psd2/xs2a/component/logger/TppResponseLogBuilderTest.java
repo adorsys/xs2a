@@ -46,6 +46,7 @@ public class TppResponseLogBuilderTest {
         tppResponseLogBuilder.withTpp(tppInfo);
 
         // Then
+        //noinspection ResultOfMethodCallIgnored
         verify(tppInfo).getAuthorisationNumber();
         verifyNoMoreInteractions(tppInfo);
         verifyZeroInteractions(httpServletResponse);

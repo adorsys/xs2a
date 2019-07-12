@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
@@ -42,6 +43,7 @@ public class SigningBasketLoggingInterceptorTest {
     private static final String REQUEST_URI = "request_uri";
     private static final String X_REQUEST_ID_HEADER_NAME = "x-request-id";
     private static final String X_REQUEST_ID_HEADER_VALUE = "222";
+    private static final String REDIRECT_ID = "redirect-id";
 
     @InjectMocks
     private SigningBasketLoggingInterceptor interceptor;
@@ -51,6 +53,8 @@ public class SigningBasketLoggingInterceptorTest {
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
+    @Mock
+    private RedirectIdService redirectIdService;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -95,11 +99,13 @@ public class SigningBasketLoggingInterceptorTest {
     @Test
     public void afterCompletion_success() {
         when(response.getStatus()).thenReturn(HttpServletResponse.SC_OK);
+        when(redirectIdService.getRedirectId()).thenReturn(REDIRECT_ID);
 
         interceptor.afterCompletion(request, response, null, null);
 
         verify(tppService, times(1)).getTppInfo();
         verify(response, times(1)).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
         verify(response, times(1)).getStatus();
+        verify(redirectIdService).getRedirectId();
     }
 }

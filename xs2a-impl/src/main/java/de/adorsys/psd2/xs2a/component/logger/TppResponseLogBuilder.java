@@ -18,12 +18,14 @@ package de.adorsys.psd2.xs2a.component.logger;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
+import org.jetbrains.annotations.Nullable;
 
 import javax.servlet.http.HttpServletResponse;
 
 public class TppResponseLogBuilder extends TppLogger.TppLogBuilder<TppResponseLogBuilder> {
     private static final String TPP_ID = "TPP ID";
     private static final String RESPONSE_STATUS = "Status";
+    private static final String REDIRECT_ID = "Redirect-ID";
 
     private HttpServletResponse response;
 
@@ -39,6 +41,14 @@ public class TppResponseLogBuilder extends TppLogger.TppLogBuilder<TppResponseLo
 
     public TppResponseLogBuilder withResponseStatus() {
         putLogParameter(RESPONSE_STATUS, String.valueOf(response.getStatus()));
+        return this;
+    }
+
+    public TppResponseLogBuilder withOptionalRedirectId(@Nullable String redirectId) {
+        if (redirectId != null) {
+            putLogParameter(REDIRECT_ID, redirectId);
+        }
+
         return this;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package de.adorsys.psd2.xs2a.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
+import de.adorsys.psd2.xs2a.domain.RedirectIdHolder;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
@@ -65,6 +67,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private final ObjectMapper objectMapper;
     private final RequestValidationInterceptor requestValidationInterceptor;
     private final RequestProviderService requestProviderService;
+    private final RedirectIdService redirectIdService;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -77,10 +80,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         // The interceptors are executed in the order in which they are declared for preHandle(...) and vice versa for postHandle(...).
         // Logging interceptors:
         registry.addInterceptor(new AccountLoggingInterceptor(tppService)).addPathPatterns(ACCOUNTS_PATH);
-        registry.addInterceptor(new ConsentLoggingInterceptor(tppService)).addPathPatterns(CONSENTS_PATH);
+        registry.addInterceptor(new ConsentLoggingInterceptor(tppService, redirectIdService)).addPathPatterns(CONSENTS_PATH);
         registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService)).addPathPatterns(FUNDS_CONFIRMATION_PATH);
-        registry.addInterceptor(new PaymentLoggingInterceptor(tppService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
-        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService)).addPathPatterns(SIGNING_BASKETS_PATH);
+        registry.addInterceptor(new PaymentLoggingInterceptor(tppService, redirectIdService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
+        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService, redirectIdService)).addPathPatterns(SIGNING_BASKETS_PATH);
 
         registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, objectMapper, requestProviderService))
             .addPathPatterns(getAllXs2aEndpointPaths());
@@ -122,6 +125,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @RequestScope
     public ScaApproachHolder getScaApproachHolder() {
         return new ScaApproachHolder();
+    }
+
+    @Bean
+    @RequestScope
+    public RedirectIdHolder getRedirectIdHolder() {
+        return new RedirectIdHolder();
     }
 
     @Override

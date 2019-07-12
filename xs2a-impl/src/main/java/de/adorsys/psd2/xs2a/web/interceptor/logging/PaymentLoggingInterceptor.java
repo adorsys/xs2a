@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
 import de.adorsys.psd2.xs2a.component.logger.TppLogger;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,7 @@ import java.util.Optional;
 public class PaymentLoggingInterceptor extends HandlerInterceptorAdapter {
     private static final String NOT_EXIST_IN_URI = "Not exist in URI";
     private final TppService tppService;
+    private final RedirectIdService redirectIdService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -57,6 +59,7 @@ public class PaymentLoggingInterceptor extends HandlerInterceptorAdapter {
             .withTpp(tppService.getTppInfo())
             .withXRequestId()
             .withResponseStatus()
+            .withOptionalRedirectId(redirectIdService.getRedirectId())
             .perform();
     }
 }

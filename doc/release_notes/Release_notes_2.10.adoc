@@ -5,6 +5,7 @@
 * Bugfix: Finalised status of AIS consent changes after expiration
 * Bugfix: Payment and Consent initiation request where field X-Request-ID contains an invalid UUID return internal server error
 * Bugfix: Fix `scaRedirect` link in payment cancellation in case of implicit authorisation
+* Include Redirect-ID in all access-log for the responses where applicable
 
 == Include TPP roles in all access-log for all request entries
 From now on, request entries in access-log will also contain list of TPP roles, extracted from the certificate.
@@ -23,3 +24,6 @@ while getting AIS Consent (`GET /psu-api/v1/ais/consent/{consent-id}`) in CMS.
 From now on, `scaRedirect` link in response to payment cancellation request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`)
 in Redirect approach in case of implicit authorisation will be correctly generated based on the `pisPaymentCancellationRedirectUrlToAspsp`
 property in the ASPSP profile instead of the `pisRedirectUrlToAspsp` one.
+
+== Include Redirect-ID in all access-log for the responses where applicable
+From now on, response entries in access-log will also contain redirect ID, if it's present in the response.
