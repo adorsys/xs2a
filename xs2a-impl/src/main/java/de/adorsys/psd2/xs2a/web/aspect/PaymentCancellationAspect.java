@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
@@ -36,20 +37,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentController> {
     private final PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider;
-    private ScaApproachResolver scaApproachResolver;
+    private final ScaApproachResolver scaApproachResolver;
     private final RedirectLinkBuilder redirectLinkBuilder;
-    private AuthorisationMethodDecider authorisationMethodDecider;
+    private final AuthorisationMethodDecider authorisationMethodDecider;
+    private final RedirectIdService redirectIdService;
 
     public PaymentCancellationAspect(MessageService messageService, PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider,
                                      AspspProfileService aspspProfileService,
                                      ScaApproachResolver scaApproachResolver,
                                      RedirectLinkBuilder redirectLinkBuilder,
-                                     AuthorisationMethodDecider authorisationMethodDecider) {
+                                     AuthorisationMethodDecider authorisationMethodDecider,
+                                     RedirectIdService redirectIdService) {
         super(messageService, aspspProfileService);
         this.cancellationScaNeededDecider = cancellationScaNeededDecider;
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.authorisationMethodDecider = authorisationMethodDecider;
+        this.redirectIdService = redirectIdService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args(paymentCancellationRequest)", returning = "result", argNames = "result,paymentCancellationRequest")
@@ -63,7 +67,7 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
                 // in payment cancellation case 'multilevelScaRequired' is always false
                 boolean isExplicitMethod = authorisationMethodDecider.isExplicitMethod(paymentCancellationRequest.getTppExplicitAuthorisationPreferred(), false);
                 response.setLinks(new PaymentCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
-                                                               response, isExplicitMethod));
+                                                               redirectIdService, response, isExplicitMethod));
             }
 
             return result;
