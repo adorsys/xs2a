@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +34,12 @@ public class RedirectLinkBuilder {
      * Variables "{redirect-id}" and {encrypted-consent-id} may be used in template.
      *
      * @param encryptedConsentId - Encrypted Payment ID provided to TPP
-     * @param authorisationId    - ID of Authorisation, used as redirect-id
+     * @param redirectId         - Redirect ID
      * @return redirect link
      */
-    public String buildConsentScaRedirectLink(String encryptedConsentId, String authorisationId) {
+    public String buildConsentScaRedirectLink(String encryptedConsentId, String redirectId) {
         return aspspProfileService.getAisRedirectUrlToAspsp()
-                   .replace(REDIRECT_URL, authorisationId)
+                   .replace(REDIRECT_URL, redirectId)
                    .replace(ENCRYPTED_CONSENT_ID, encryptedConsentId);
     }
 
@@ -48,12 +48,12 @@ public class RedirectLinkBuilder {
      * Variables "{redirect-id}" and {encrypted-payment-id} may be used in template.
      *
      * @param encryptedPaymentId - Encrypted Payment ID provided to TPP
-     * @param authorisationId    - ID of Authorisation, used as redirect-id
+     * @param redirectId         - Redirect ID
      * @return redirect link
      */
-    public String buildPaymentScaRedirectLink(String encryptedPaymentId, String authorisationId) {
+    public String buildPaymentScaRedirectLink(String encryptedPaymentId, String redirectId) {
         return aspspProfileService.getPisRedirectUrlToAspsp()
-                   .replace(REDIRECT_URL, authorisationId)
+                   .replace(REDIRECT_URL, redirectId)
                    .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId);
     }
 
@@ -62,12 +62,12 @@ public class RedirectLinkBuilder {
      * Variables "{redirect-id}" and {encrypted-payment-id} may be used in template.
      *
      * @param encryptedPaymentId - Encrypted Payment ID provided to TPP
-     * @param authorisationId    - ID of Authorisation, used as redirect-id
+     * @param redirectId         - Redirect ID
      * @return redirect link
      */
-    public String buildPaymentCancellationScaRedirectLink(String encryptedPaymentId, String authorisationId) {
+    public String buildPaymentCancellationScaRedirectLink(String encryptedPaymentId, String redirectId) {
         return aspspProfileService.getPisPaymentCancellationRedirectUrlToAspsp()
-                   .replace(REDIRECT_URL, authorisationId)
+                   .replace(REDIRECT_URL, redirectId)
                    .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId);
     }
 }

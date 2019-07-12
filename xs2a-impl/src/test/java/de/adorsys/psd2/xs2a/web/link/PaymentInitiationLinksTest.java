@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
@@ -51,6 +52,8 @@ public class PaymentInitiationLinksTest {
     private ScaApproachResolver scaApproachResolver;
     @Mock
     private RedirectLinkBuilder redirectLinkBuilder;
+    @Mock
+    private RedirectIdService redirectIdService;
 
     private PsuIdData psuIdData;
     private PaymentInitiationLinks links;
@@ -81,7 +84,7 @@ public class PaymentInitiationLinksTest {
     public void transactionRejected() {
         response.setTransactionStatus(TransactionStatus.RJCT);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, true, false);
         assertEquals(expectedLinks, links);
     }
@@ -91,7 +94,7 @@ public class PaymentInitiationLinksTest {
         response.setMultilevelScaRequired(false);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, true, false);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
@@ -104,7 +107,7 @@ public class PaymentInitiationLinksTest {
         response.setMultilevelScaRequired(false);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, true, true);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
@@ -117,7 +120,7 @@ public class PaymentInitiationLinksTest {
         response.setMultilevelScaRequired(true);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, true, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
@@ -134,7 +137,7 @@ public class PaymentInitiationLinksTest {
         response.setMultilevelScaRequired(true);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, true, false);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
@@ -146,7 +149,7 @@ public class PaymentInitiationLinksTest {
     public void scaApproachEmbeddedAndImplicitMethodAndPsuDataIsEmpty() {
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, false, false);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
@@ -162,7 +165,7 @@ public class PaymentInitiationLinksTest {
 
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, false, false);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
@@ -176,7 +179,7 @@ public class PaymentInitiationLinksTest {
         response.setMultilevelScaRequired(false);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, true, false);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
@@ -189,7 +192,7 @@ public class PaymentInitiationLinksTest {
         response.setMultilevelScaRequired(false);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, true, true);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
@@ -203,7 +206,7 @@ public class PaymentInitiationLinksTest {
         response.setMultilevelScaRequired(true);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, true, false);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
@@ -219,7 +222,7 @@ public class PaymentInitiationLinksTest {
         response.setMultilevelScaRequired(true);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, true, false);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
@@ -231,7 +234,7 @@ public class PaymentInitiationLinksTest {
     public void scaApproachDecoupledAndImplicitMethodAndPsuDataIsEmpty() {
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, false, false);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
@@ -247,7 +250,7 @@ public class PaymentInitiationLinksTest {
 
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, false, false);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
@@ -260,7 +263,7 @@ public class PaymentInitiationLinksTest {
     public void scaApproachOAuth() {
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.OAUTH);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, false, false);
 
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
@@ -273,8 +276,8 @@ public class PaymentInitiationLinksTest {
     public void scaApproachRedirectAndExplicitMethod() {
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
-                                           response, true,false);
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
+                                           response, true, false);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
         expectedLinks.setStartAuthorisation(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations"));
@@ -284,9 +287,10 @@ public class PaymentInitiationLinksTest {
     @Test
     public void scaApproachRedirectAndImplicitMethod() {
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+        when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildPaymentScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID))).thenReturn(REDIRECT_LINK);
 
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, paymentRequestParameters,
+        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, false, false);
         expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
         expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
