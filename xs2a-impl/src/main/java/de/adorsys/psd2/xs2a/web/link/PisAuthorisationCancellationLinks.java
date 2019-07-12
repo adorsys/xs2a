@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.HrefType;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
@@ -29,11 +30,14 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 public class PisAuthorisationCancellationLinks extends AbstractLinks {
 
     private RedirectLinkBuilder redirectLinkBuilder;
+    private RedirectIdService redirectIdService;
 
     public PisAuthorisationCancellationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
-                                             String paymentService, String paymentProduct, String paymentId, String authorisationId) {
+                                             RedirectIdService redirectIdService, String paymentService, String paymentProduct,
+                                             String paymentId, String authorisationId) {
         super(httpUrl);
         this.redirectLinkBuilder = redirectLinkBuilder;
+        this.redirectIdService = redirectIdService;
 
         setScaStatus(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
 
@@ -48,7 +52,8 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
     }
 
     private void addRedirectRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorizationId) {
-        String link = redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, authorizationId);
+        String redirectId = redirectIdService.generateRedirectId(authorizationId);
+        String link = redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId);
         setScaRedirect(new HrefType(link));
         setScaStatus(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorizationId));
     }

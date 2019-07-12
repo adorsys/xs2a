@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.link;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
@@ -30,7 +31,8 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 public class CreatePisAuthorisationLinks extends AbstractLinks {
 
     public CreatePisAuthorisationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
-                                       Xs2aCreatePisAuthorisationRequest createRequest, String authorisationId) {
+                                       RedirectIdService redirectIdService, Xs2aCreatePisAuthorisationRequest createRequest,
+                                       String authorisationId) {
         super(httpUrl);
 
         String paymentId = createRequest.getPaymentId();
@@ -44,7 +46,8 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
             String path = UrlHolder.PIS_AUTHORISATION_LINK_URL;
             setUpdatePsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorisationId));
         } else if (initiationScaApproach == REDIRECT) {
-            String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, authorisationId);
+            String redirectId = redirectIdService.generateRedirectId(authorisationId);
+            String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId);
             setScaRedirect(new HrefType(scaRedirectLink));
         }
     }

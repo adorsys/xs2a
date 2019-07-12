@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.link;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
@@ -31,13 +32,16 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 public class PaymentCancellationLinks extends AbstractLinks {
     private ScaApproachResolver scaApproachResolver;
     private RedirectLinkBuilder redirectLinkBuilder;
+    private RedirectIdService redirectIdService;
     private boolean isExplicitMethod;
 
     public PaymentCancellationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
-                                    CancelPaymentResponse response, boolean isExplicitMethod) {
+                                    RedirectIdService redirectIdService, CancelPaymentResponse response,
+                                    boolean isExplicitMethod) {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
+        this.redirectIdService = redirectIdService;
         this.isExplicitMethod = isExplicitMethod;
 
         buildCancellationLinks(response);
@@ -81,7 +85,8 @@ public class PaymentCancellationLinks extends AbstractLinks {
         if (isExplicitMethod) {
             setStartAuthorisation(buildPath(UrlHolder.START_PIS_CANCELLATION_AUTH_URL, paymentService, paymentProduct, paymentId));
         } else {
-            String scaRedirectLink = redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, authorisationId);
+            String redirectId = redirectIdService.generateRedirectId(authorisationId);
+            String scaRedirectLink = redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId);
             setScaRedirect(new HrefType(scaRedirectLink));
             setScaStatus(
                 buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
