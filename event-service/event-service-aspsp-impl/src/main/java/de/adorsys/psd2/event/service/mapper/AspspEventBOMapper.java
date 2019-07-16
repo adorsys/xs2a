@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
-public abstract class EventBOMapper {
+public abstract class AspspEventBOMapper {
 
     @Autowired
     protected JsonConverterService jsonConverterService;

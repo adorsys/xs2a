@@ -18,7 +18,7 @@ package de.adorsys.psd2.event.service;
 
 import de.adorsys.psd2.event.persist.EventRepository;
 import de.adorsys.psd2.event.persist.model.EventPO;
-import de.adorsys.psd2.event.service.mapper.EventBOMapper;
+import de.adorsys.psd2.event.service.mapper.Xs2aEventBOMapper;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class Xs2aEventServiceImplTest {
     @Mock
     private EventRepository eventRepository;
     @Mock
-    private EventBOMapper mapper;
+    private Xs2aEventBOMapper mapper;
 
     private JsonReader jsonReader = new JsonReader();
 

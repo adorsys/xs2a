@@ -39,7 +39,13 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-core-api</artifactId>
-            <version>3.8-SNAPSHOT</version>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-xs2a-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!--3rd party dependencies -->

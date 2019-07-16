@@ -16,14 +16,15 @@
 
 package de.adorsys.psd2.xs2a.service.event;
 
-import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
-import de.adorsys.psd2.xs2a.core.event.Event;
-import de.adorsys.psd2.xs2a.core.event.EventOrigin;
-import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.event.core.model.EventOrigin;
+import de.adorsys.psd2.event.core.model.EventType;
+import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
+import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.xs2a.domain.RequestData;
 import de.adorsys.psd2.xs2a.domain.event.RequestEventPayload;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.event.mapper.EventMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -37,8 +38,9 @@ import java.time.OffsetDateTime;
 @RequiredArgsConstructor
 public class Xs2aEventService {
     private final TppService tppService;
-    private final EventServiceEncrypted eventService;
+    private final Xs2aEventServiceEncrypted eventService;
     private final RequestProviderService requestProviderService;
+    private final EventMapper eventMapper;
 
     /**
      * Records TPP request to the AIS in the CMS in form of TPP event for given consent id and event type
@@ -58,7 +60,7 @@ public class Xs2aEventService {
      * @param body      Body of the request
      */
     public void recordAisTppRequest(@NotNull String consentId, @NotNull EventType eventType, @Nullable Object body) {
-        Event event = buildTppEvent(eventType, body);
+        EventBO event = buildTppEvent(eventType, body);
         event.setConsentId(consentId);
 
         recordEventInCms(event);
@@ -82,7 +84,7 @@ public class Xs2aEventService {
      * @param body      Body of the request
      */
     public void recordPisTppRequest(@NotNull String paymentId, @NotNull EventType eventType, @Nullable Object body) {
-        Event event = buildTppEvent(eventType, body);
+        EventBO event = buildTppEvent(eventType, body);
         event.setPaymentId(paymentId);
 
         recordEventInCms(event);
@@ -104,26 +106,26 @@ public class Xs2aEventService {
      * @param body      Body of the request
      */
     public void recordTppRequest(@NotNull EventType eventType, @Nullable Object body) {
-        Event event = buildTppEvent(eventType, body);
+        EventBO event = buildTppEvent(eventType, body);
 
         recordEventInCms(event);
     }
 
-    private void recordEventInCms(Event event) {
+    private void recordEventInCms(EventBO event) {
         boolean recorded = eventService.recordEvent(event);
         if (!recorded) {
             log.info("X-REQUEST-ID: [{}], TPP ID: [{}]. Couldn't record event from TPP request: {}", event.getXRequestId(), event.getTppAuthorisationNumber(), event);
         }
     }
 
-    private Event buildTppEvent(EventType eventType, Object body) {
+    private EventBO buildTppEvent(EventType eventType, Object body) {
         RequestData requestData = requestProviderService.getRequestData();
 
-        Event event = Event.builder()
+        EventBO event = EventBO.builder()
                           .timestamp(OffsetDateTime.now())
                           .eventOrigin(EventOrigin.TPP)
                           .eventType(eventType)
-                          .psuIdData(requestData.getPsuIdData())
+                          .psuIdData(eventMapper.toEventPsuIdData(requestData.getPsuIdData()))
                           .xRequestId(requestData.getRequestId())
                           .tppAuthorisationNumber(tppService.getTppInfo().getAuthorisationNumber())
                           .build();

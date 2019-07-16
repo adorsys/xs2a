@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.event.persist.mapper;
+package de.adorsys.psd2.xs2a.service.event.mapper;
 
-import de.adorsys.psd2.event.persist.entity.EventEntity;
-import de.adorsys.psd2.event.persist.model.EventPO;
-import org.mapstruct.*;
-
-import java.util.List;
+import de.adorsys.psd2.event.service.model.PsuIdDataBO;
+import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface EventDBMapper {
+public interface EventMapper {
 
-    @Mapping(target="psuData", source="psuIdData")
-    @Mapping(target="instanceId", defaultValue = "UNDEFINED")
-    EventEntity toEventEntity(EventPO eventPO);
-
-    @InheritInverseConfiguration
-    EventPO toEventPO(EventEntity eventEntity);
-
-    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-    List<EventPO> toEventPOList(List<EventEntity> eventEntities);
+    default PsuIdDataBO toEventPsuIdData(de.adorsys.psd2.xs2a.core.psu.PsuIdData xs2aPsuIdData) {
+        if (xs2aPsuIdData == null) {
+            return null;
+        }
+        return new PsuIdDataBO(xs2aPsuIdData.getPsuId(),
+                               xs2aPsuIdData.getPsuIdType(),
+                               xs2aPsuIdData.getPsuCorporateId(),
+                               xs2aPsuIdData.getPsuCorporateIdType());
+    }
 }

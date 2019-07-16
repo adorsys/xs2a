@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
-public abstract class EventBOMapper {
+public abstract class Xs2aEventBOMapper {
 
     @Autowired
     protected JsonConverterService jsonConverterService;

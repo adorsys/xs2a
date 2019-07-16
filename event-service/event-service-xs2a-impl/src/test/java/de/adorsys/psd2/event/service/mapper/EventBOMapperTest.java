@@ -30,12 +30,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {EventBOMapperImpl.class, JsonConverterService.class, ObjectMapper.class})
+@ContextConfiguration(classes = {Xs2aEventBOMapperImpl.class, JsonConverterService.class, ObjectMapper.class})
 public class EventBOMapperTest {
     private static final String PAYLOAD = "payload";
 
     @Autowired
-    private EventBOMapper mapper;
+    private Xs2aEventBOMapper mapper;
 
     private JsonReader jsonReader = new JsonReader();
     private ObjectMapper objectMapper = new ObjectMapper();

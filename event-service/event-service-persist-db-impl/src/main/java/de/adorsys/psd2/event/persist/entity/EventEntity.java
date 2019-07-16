@@ -26,7 +26,7 @@ import java.time.OffsetDateTime;
 @Data
 @Entity(name = "event")
 public class EventEntity {
-    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
+    static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "event_generator")

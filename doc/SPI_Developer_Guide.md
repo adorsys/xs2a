@@ -278,3 +278,13 @@ After the Payment Initiation is created, it has to be authorise from the PSU. In
 ## Special modes
 
 ### Multi-tenancy support
+
+### Getting events
+
+Use endpoint for getting events by period and `instance_id` (GET `aspsp-api/v1/events`). Request parameters are passed as headers:
+
+| Header      | Required | Default value |
+|-------------|----------|---------------|
+| start-date  | true     |               |
+| end-date    | true     |               |
+| instance-id | false    | UNDEFINED     |

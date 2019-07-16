@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.service.EventService;
-import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
-import de.adorsys.psd2.xs2a.core.event.Event;
+import de.adorsys.psd2.event.service.Xs2aEventService;
+import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
+import de.adorsys.psd2.event.service.model.EventBO;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -29,17 +29,17 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class EventServiceInternalEncrypted implements EventServiceEncrypted {
+public class EventServiceEncryptedImpl implements Xs2aEventServiceEncrypted {
     private final SecurityDataService securityDataService;
-    private final EventService eventService;
+    private final Xs2aEventService eventService;
 
     @Override
     @Transactional
-    public boolean recordEvent(@NotNull Event event) {
+    public boolean recordEvent(@NotNull EventBO event) {
         String decryptedConsentId = decryptId(event.getConsentId());
         String decryptedPaymentId = decryptId(event.getPaymentId());
 
-        Event decryptedEvent = Event.builder()
+        EventBO decryptedEvent = EventBO.builder()
                                    .timestamp(event.getTimestamp())
                                    .consentId(decryptedConsentId)
                                    .paymentId(decryptedPaymentId)

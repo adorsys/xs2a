@@ -20,7 +20,7 @@ import de.adorsys.psd2.event.persist.EventRepository;
 import de.adorsys.psd2.event.core.model.EventOrigin;
 import de.adorsys.psd2.event.persist.model.EventPO;
 import de.adorsys.psd2.event.core.model.EventType;
-import de.adorsys.psd2.event.service.mapper.EventBOMapper;
+import de.adorsys.psd2.event.service.mapper.AspspEventBOMapper;
 import de.adorsys.psd2.event.service.model.EventBO;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AspspEventServiceImpl implements AspspEventService {
     private final EventRepository eventRepository;
-    private final EventBOMapper eventBOMapper;
+    private final AspspEventBOMapper eventBOMapper;
 
     @Override
     public List<EventBO> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId) {

@@ -21,3 +21,15 @@ _<explanation>_
 === Database schema migrations
 
 _<explanation>_
+
+
+=== Event API structure
+
+Event functionality is extracted in separate module. There are `event-service-xs2a-api` and `event-service-aspsp-api` services are presented.
+Currently event module is a part of CMS and connects with XS2A using REST API. All events are stored to the database.
+
+image::08_XS2A_HTTP_Event_Service.png[Event workflow using HTTP, title="Event workflow using HTTP", align="center"]
+
+Event service is able to work without CMS. In this case event service is linked as maven dependency directly in XS2A.
+
+image::08_XS2A_Embedded_Event_Service.png[Event workflow embedded mode, title="Event workflow embedded mode", align="center"]

@@ -45,25 +45,31 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-remote</artifactId>
-            <version>3.8-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-xs2a-client</artifactId>
-            <version>3.8-SNAPSHOT</version>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-rest-client</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-impl</artifactId>
-            <version>3.8-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>spi-stub</artifactId>
-            <version>3.8-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- test dependencies -->

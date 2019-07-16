@@ -33,13 +33,13 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {EventBOMapperImpl.class, JsonConverterService.class, ObjectMapper.class})
+@ContextConfiguration(classes = {AspspEventBOMapperImpl.class, JsonConverterService.class, ObjectMapper.class})
 public class EventBOMapperTest {
 
     private static final String PAYLOAD = "payload";
 
     @Autowired
-    private EventBOMapper mapper;
+    private AspspEventBOMapper mapper;
 
     private JsonReader jsonReader = new JsonReader();
     private ObjectMapper objectMapper = new ObjectMapper();

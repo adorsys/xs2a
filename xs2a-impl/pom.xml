@@ -37,38 +37,44 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-server-api</artifactId>
-            <version>3.8-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-core</artifactId>
-            <version>3.8-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-xs2a-api</artifactId>
-            <version>3.8-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>spi-api</artifactId>
-            <version>3.8-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-api</artifactId>
-            <version>3.8-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>psd2-validator</artifactId>
-			<version>3.8-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-xs2a-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- other dependencies -->
         <dependency>
