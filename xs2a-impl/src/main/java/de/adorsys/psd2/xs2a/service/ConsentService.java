@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;

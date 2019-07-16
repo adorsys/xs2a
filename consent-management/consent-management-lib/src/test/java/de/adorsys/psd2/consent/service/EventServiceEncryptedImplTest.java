@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.service.EventService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
-import de.adorsys.psd2.xs2a.core.event.Event;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.event.service.Xs2aEventService;
+import de.adorsys.psd2.event.service.model.EventBO;
+import de.adorsys.psd2.event.service.model.PsuIdDataBO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,13 +31,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class EventServiceInternalEncryptedTest {
+public class EventServiceEncryptedImplTest {
     private static final String ENCRYPTED_CONSENT_ID = "encrypted consent id";
     private static final String UNDECRYPTABLE_CONSENT_ID = "undecryptable consent id";
     private static final String DECRYPTED_CONSENT_ID = "255574b2-f115-4f3c-8d77-c1897749c060";
@@ -54,58 +52,60 @@ public class EventServiceInternalEncryptedTest {
     private static final UUID REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
 
     @InjectMocks
-    private EventServiceInternalEncrypted eventServiceInternalEncrypted;
+    private EventServiceEncryptedImpl eventServiceEncryptedImpl;
     @Mock
-    private EventService eventService;
+    private Xs2aEventService eventService;
     @Mock
     private SecurityDataService securityDataService;
+    private EventBO decryptedEvent;
+    private EventBO event;
 
     @Before
     public void setUp() {
-        when(eventService.recordEvent(buildEvent(DECRYPTED_CONSENT_ID, DECRYPTED_PAYMENT_ID))).thenReturn(true);
-        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
-        when(securityDataService.decryptId(UNDECRYPTABLE_PAYMENT_ID)).thenReturn(Optional.empty());
-        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
-        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID)).thenReturn(Optional.empty());
+        decryptedEvent = buildEvent(DECRYPTED_CONSENT_ID, DECRYPTED_PAYMENT_ID);
+        event = buildEvent(ENCRYPTED_CONSENT_ID, ENCRYPTED_PAYMENT_ID);
     }
 
     @Test
     public void recordEvent_success() {
         // Given
-        Event event = buildEvent(ENCRYPTED_CONSENT_ID, ENCRYPTED_PAYMENT_ID);
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(eventService.recordEvent(decryptedEvent)).thenReturn(true);
 
         // When
-        boolean actual = eventServiceInternalEncrypted.recordEvent(event);
+        boolean actual = eventServiceEncryptedImpl.recordEvent(event);
 
         // Then
         assertTrue(actual);
-        verify(eventService, times(1))
-            .recordEvent(buildEvent(DECRYPTED_CONSENT_ID, DECRYPTED_PAYMENT_ID));
+        verify(eventService, times(1)).recordEvent(decryptedEvent);
     }
 
     @Test
     public void recordEvent_fail_recordingFailed() {
-        when(eventService.recordEvent(any())).thenReturn(false);
-
         // Given
-        Event event = buildEvent(ENCRYPTED_CONSENT_ID, ENCRYPTED_PAYMENT_ID);
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(eventService.recordEvent(decryptedEvent)).thenReturn(false);
 
         // When
-        boolean actual = eventServiceInternalEncrypted.recordEvent(event);
+        boolean actual = eventServiceEncryptedImpl.recordEvent(event);
 
         // Then
         assertFalse(actual);
-        verify(eventService, times(1))
-            .recordEvent(buildEvent(DECRYPTED_CONSENT_ID, DECRYPTED_PAYMENT_ID));
+        verify(eventService, times(1)).recordEvent(decryptedEvent);
     }
 
     @Test
     public void recordEvent_fail_decryptionFailed() {
         // Given
-        Event event = buildEvent(UNDECRYPTABLE_CONSENT_ID, UNDECRYPTABLE_PAYMENT_ID);
+        EventBO event = buildEvent(UNDECRYPTABLE_CONSENT_ID, UNDECRYPTABLE_PAYMENT_ID);
+        when(securityDataService.decryptId(UNDECRYPTABLE_PAYMENT_ID)).thenReturn(Optional.empty());
+        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID)).thenReturn(Optional.empty());
+        when(eventService.recordEvent(buildEvent())).thenReturn(false);
 
         // When
-        boolean actual = eventServiceInternalEncrypted.recordEvent(event);
+        boolean actual = eventServiceEncryptedImpl.recordEvent(event);
 
         // Then
         assertFalse(actual);
@@ -115,24 +115,27 @@ public class EventServiceInternalEncryptedTest {
     @Test
     public void recordEvent_CheckEventBuilder() {
         // Given
-        Event event = buildEvent(ENCRYPTED_CONSENT_ID, ENCRYPTED_PAYMENT_ID);
-        ArgumentCaptor<Event> argumentCaptor = ArgumentCaptor.forClass(Event.class);
+        ArgumentCaptor<EventBO> argumentCaptor = ArgumentCaptor.forClass(EventBO.class);
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(eventService.recordEvent(argumentCaptor.capture())).thenReturn(true);
 
         // When
-        boolean actual = eventServiceInternalEncrypted.recordEvent(event);
+        boolean actual = eventServiceEncryptedImpl.recordEvent(event);
 
         // Then
         assertTrue(actual);
         verify(eventService).recordEvent(argumentCaptor.capture());
-        assertEquals(buildEvent(DECRYPTED_CONSENT_ID, DECRYPTED_PAYMENT_ID), argumentCaptor.getValue());
+        verify(eventService, times(1)).recordEvent(decryptedEvent);
+        assertEquals(decryptedEvent, argumentCaptor.getValue());
     }
 
-    private Event buildEvent() {
+    private EventBO buildEvent() {
         return buildEvent(null, null);
     }
 
-    private Event buildEvent(String consentId, String paymentId) {
-        return Event.builder()
+    private EventBO buildEvent(String consentId, String paymentId) {
+        return EventBO.builder()
                    .consentId(consentId)
                    .paymentId(paymentId)
                    .psuIdData(buildPsuIdData())
@@ -141,7 +144,7 @@ public class EventServiceInternalEncryptedTest {
                    .build();
     }
 
-    private PsuIdData buildPsuIdData() {
-        return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+    private PsuIdDataBO buildPsuIdData() {
+        return new PsuIdDataBO(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
     }
 }

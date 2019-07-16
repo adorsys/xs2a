@@ -18,7 +18,7 @@ package de.adorsys.psd2.event.service;
 
 import de.adorsys.psd2.event.persist.EventRepository;
 import de.adorsys.psd2.event.persist.model.EventPO;
-import de.adorsys.psd2.event.service.mapper.EventBOMapper;
+import de.adorsys.psd2.event.service.mapper.Xs2aEventBOMapper;
 import de.adorsys.psd2.event.service.model.EventBO;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class Xs2aEventServiceImpl implements Xs2aEventService {
     private final EventRepository eventRepository;
-    private final EventBOMapper eventBOMapper;
+    private final Xs2aEventBOMapper eventBOMapper;
 
     @Override
     public boolean recordEvent(@NotNull EventBO eventBO) {

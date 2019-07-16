@@ -53,6 +53,20 @@ public class EventDBMapperTest {
     }
 
     @Test
+    public void toEventEntity_instanceIdNotSet() {
+        EventPO eventPO = jsonReader.getObjectFromFile("json/event.json", EventPO.class);
+        eventPO.setPayload(PAYLOAD);
+        eventPO.setInstanceId(null);
+
+        EventEntity actualEventEntity = mapper.toEventEntity(eventPO);
+
+        EventEntity expectedEventEntity = jsonReader.getObjectFromFile("json/event-entity.json", EventEntity.class);
+        expectedEventEntity.setPayload(PAYLOAD);
+        expectedEventEntity.setInstanceId("UNDEFINED");
+        assertEquals(expectedEventEntity, actualEventEntity);
+    }
+
+    @Test
     public void toEventEntity_nullValue() {
         EventEntity actualEventEntity = mapper.toEventEntity(null);
         assertNull(actualEventEntity);

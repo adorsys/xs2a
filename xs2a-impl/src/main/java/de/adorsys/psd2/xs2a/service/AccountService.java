@@ -19,8 +19,8 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
-import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;

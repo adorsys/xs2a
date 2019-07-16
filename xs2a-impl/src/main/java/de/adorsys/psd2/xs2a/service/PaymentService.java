@@ -21,7 +21,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentStatusFactory;
-import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;

@@ -22,12 +22,12 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
+import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.*;
-import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
@@ -46,17 +46,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -64,6 +68,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
@@ -92,7 +97,6 @@ public class PaymentControllerTest {
     private static final String ENCRYPT_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String CANCELLATION_ID = "cancellationId";
-    private static final String HREF = "href";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
@@ -110,13 +114,16 @@ public class PaymentControllerTest {
     @MockBean
     private TppStopListService tppStopListService;
     @MockBean
-    private EventServiceEncrypted eventServiceEncrypted;
+    private Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
     private SinglePaymentSpi singlePaymentSpi;
     @MockBean
     private AspspDataService aspspDataService;
+    @MockBean
+    @Qualifier("consentRestTemplate")
+    private RestTemplate consentRestTemplate;
 
     @Before
     public void init() {
@@ -127,7 +134,7 @@ public class PaymentControllerTest {
         given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(false);
-        given(eventServiceEncrypted.recordEvent(any(Event.class)))
+        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
 
         given(pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(any()))
@@ -135,6 +142,8 @@ public class PaymentControllerTest {
 
         given(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(any(), any()))
             .willReturn(Optional.of(new CreatePisAuthorisationResponse(CANCELLATION_ID, SCA_STATUS)));
+        given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
+            .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
 
         httpHeadersExplicit.add("Content-Type", "application/json");
         httpHeadersExplicit.add("tpp-qwac-certificate", "qwac certificate");

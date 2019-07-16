@@ -19,5 +19,5 @@ package de.adorsys.psd2.event.service;
 /**
  * Xs2aEventService with enabled encryption and decryption
  */
-public interface Xs2aEventServiceEncrypted extends Xs2aEventService {
+public interface Xs2aEventServiceEncrypted extends Xs2aEventServiceBase {
 }

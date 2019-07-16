@@ -16,20 +16,9 @@
 
 package de.adorsys.psd2.event.service;
 
-import de.adorsys.psd2.event.service.model.EventBO;
-import org.jetbrains.annotations.NotNull;
-
 /**
  * Base version of Xs2aEventService that contains all method declarations.
  * Should not be implemented directly, consider using one of the interfaces that extends this one.
- *
  */
-public interface Xs2aEventService {
-    /**
-     * Records new Event in the CMS
-     *
-     * @param event Event to be recorded
-     * @return <code>true</code> if the event was recorded. <code>false</code> otherwise.
-     */
-    boolean recordEvent(@NotNull EventBO event);
+public interface Xs2aEventService extends Xs2aEventServiceBase {
 }

@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
-import de.adorsys.psd2.consent.aspsp.api.CmsAspspEventService;
-import de.adorsys.psd2.xs2a.core.event.Event;
+import de.adorsys.psd2.event.service.AspspEventService;
+import de.adorsys.psd2.event.service.model.EventBO;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -36,13 +36,13 @@ import java.util.List;
 @RequestMapping(path = "aspsp-api/v1/events")
 @Api(value = "aspsp-api/v1/events", tags = "ASPSP Events", description = "Provides access to the consent management system for ASPSP Events")
 public class CmsAspspEventController {
-    private final CmsAspspEventService cmsAspspEventService;
+    private final AspspEventService aspspEventService;
 
     @GetMapping(path = "/")
     @ApiOperation(value = "Returns a list of Event objects between two dates")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<List<Event>> getEventsForDates(
+    public ResponseEntity<List<EventBO>> getEventsForDates(
         @ApiParam(value = "Start date", example = "2010-01-01T00:00:00Z", required = true)
         @RequestHeader(value = "start-date")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime start,
@@ -50,8 +50,8 @@ public class CmsAspspEventController {
         @RequestHeader(value = "end-date")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime end,
         @ApiParam(value = "Bank instance ID")
-        @RequestHeader(value = "instance-id", required = false) String instanceId) {
-        List<Event> events = cmsAspspEventService.getEventsForPeriod(start, end, instanceId);
+        @RequestHeader(value = "instance-id", required = false, defaultValue = "UNDEFINED") String instanceId) {
+        List<EventBO> events = aspspEventService.getEventsForPeriod(start, end, instanceId);
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 }

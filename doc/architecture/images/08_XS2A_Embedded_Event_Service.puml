@@ -1,0 +1,26 @@
+@startuml
+
+title Event workflow embedded mode
+
+cloud "TPP"{
+}
+
+package "XS2A" {
+  [event-service-persist-api]
+  [event-service-xs2a-api]
+}
+
+
+database "Database"
+queue "Queue"
+folder "File system" AS FS
+
+TPP --> XS2A
+
+[event-service-xs2a-api] --> [event-service-persist-api]
+
+[event-service-persist-api] --> Database
+[event-service-persist-api] --> Queue
+[event-service-persist-api] --> FS
+
+@enduml

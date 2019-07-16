@@ -19,7 +19,7 @@ package de.adorsys.psd2.event.service;
 import de.adorsys.psd2.event.persist.EventRepository;
 import de.adorsys.psd2.event.core.model.EventOrigin;
 import de.adorsys.psd2.event.core.model.EventType;
-import de.adorsys.psd2.event.service.mapper.EventBOMapper;
+import de.adorsys.psd2.event.service.mapper.AspspEventBOMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mapstruct.factory.Mappers;
@@ -48,7 +48,7 @@ public class AspspEventServiceImplTest {
     @Mock
     private EventRepository eventRepository;
     @Spy
-    private EventBOMapper mapper = Mappers.getMapper(EventBOMapper.class);
+    private AspspEventBOMapper mapper = Mappers.getMapper(AspspEventBOMapper.class);
 
     @Test
     public void getEventsForPeriod() {

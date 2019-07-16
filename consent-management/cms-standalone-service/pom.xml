@@ -39,35 +39,53 @@
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>consent-management-lib</artifactId>
-			<version>3.8-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>consent-xs2a-web</artifactId>
-			<version>3.8-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>consent-psu-web</artifactId>
-			<version>3.8-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>consent-aspsp-web</artifactId>
-			<version>3.8-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>aspsp-profile-remote</artifactId>
-			<version>3.8-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>cms-db-schema</artifactId>
-			<version>3.8-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-xs2a-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-aspsp-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-persist-db-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 
 		<!-- other dependencies -->

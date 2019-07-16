@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.service;
+package de.adorsys.psd2.event.service;
 
-import de.adorsys.psd2.xs2a.core.event.Event;
+import de.adorsys.psd2.event.service.model.EventBO;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Base version of EventService that contains all method declarations.
- * Should not be implemented directly, consider using one of the interfaces that extends this one.
- *
- * @see de.adorsys.psd2.consent.api.service.EventService
- * @see de.adorsys.psd2.consent.api.service.EventServiceEncrypted
- */
-interface EventServiceBase {
+public interface Xs2aEventServiceBase {
     /**
      * Records new Event in the CMS
      *
      * @param event Event to be recorded
      * @return <code>true</code> if the event was recorded. <code>false</code> otherwise.
      */
-    boolean recordEvent(@NotNull Event event);
+    boolean recordEvent(@NotNull EventBO event);
 }

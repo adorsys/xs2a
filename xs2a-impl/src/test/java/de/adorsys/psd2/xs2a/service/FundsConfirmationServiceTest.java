@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
