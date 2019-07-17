@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,8 @@ public class EventServiceEncryptedImplTest {
     private static final String PSU_CORPORATE_ID = "CORPORATE_ID";
     private static final String PSU_CORPORATE_ID_TYPE = "CORPORATE_ID_TYPE";
     private static final String AUTHORISATION_NUMBER = "999";
-    private static final UUID REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
+    private static final UUID X_REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
+    private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("b571c834-4eb1-468f-91b0-f5e83589bc22");
 
     @InjectMocks
     private EventServiceEncryptedImpl eventServiceEncryptedImpl;
@@ -140,7 +141,8 @@ public class EventServiceEncryptedImplTest {
                    .paymentId(paymentId)
                    .psuIdData(buildPsuIdData())
                    .tppAuthorisationNumber(AUTHORISATION_NUMBER)
-                   .xRequestId(REQUEST_ID)
+                   .xRequestId(X_REQUEST_ID)
+                   .internalRequestId(INTERNAL_REQUEST_ID)
                    .build();
     }
 

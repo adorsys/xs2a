@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,8 @@ public class Xs2aEventServiceTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String PAYMENT_ID = "0795805d-651b-4e00-88fb-a34248337bbd";
     private static final String URI = "/v1/consents";
-    private static final UUID REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
+    private static final UUID X_REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
+    private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("9fe83704-6019-46fa-b8aa-53fb8fa667ea");
     private static final String TPP_IP = "1.2.3.4";
     private static final EventType EVENT_TYPE = EventType.PAYMENT_INITIATION_REQUEST_RECEIVED;
     private static final String AUTHORISATION_NUMBER = "999";
@@ -97,7 +98,8 @@ public class Xs2aEventServiceTest {
         assertThat(capturedEvent.getPayload()).isNotNull();
         assertThat(capturedEvent.getPsuIdData()).isEqualTo(psuIdData);
         assertThat(capturedEvent.getTppAuthorisationNumber()).isEqualTo(AUTHORISATION_NUMBER);
-        assertThat(capturedEvent.getXRequestId()).isEqualTo(REQUEST_ID);
+        assertThat(capturedEvent.getXRequestId()).isEqualTo(X_REQUEST_ID);
+        assertThat(capturedEvent.getInternalRequestId()).isEqualTo(INTERNAL_REQUEST_ID);
         assertThat(((RequestEventPayload) capturedEvent.getPayload()).getBody()).isEqualTo(BODY);
     }
 
@@ -117,7 +119,8 @@ public class Xs2aEventServiceTest {
         assertThat(capturedEvent.getPayload()).isNotNull();
         assertThat(capturedEvent.getPsuIdData()).isEqualTo(psuIdData);
         assertThat(capturedEvent.getTppAuthorisationNumber()).isEqualTo(AUTHORISATION_NUMBER);
-        assertThat(capturedEvent.getXRequestId()).isEqualTo(REQUEST_ID);
+        assertThat(capturedEvent.getXRequestId()).isEqualTo(X_REQUEST_ID);
+        assertThat(capturedEvent.getInternalRequestId()).isEqualTo(INTERNAL_REQUEST_ID);
         assertThat(((RequestEventPayload) capturedEvent.getPayload()).getBody()).isNull();
     }
 
@@ -137,7 +140,8 @@ public class Xs2aEventServiceTest {
         assertThat(capturedEvent.getPayload()).isNotNull();
         assertThat(capturedEvent.getPsuIdData()).isEqualTo(psuIdData);
         assertThat(capturedEvent.getTppAuthorisationNumber()).isEqualTo(AUTHORISATION_NUMBER);
-        assertThat(capturedEvent.getXRequestId()).isEqualTo(REQUEST_ID);
+        assertThat(capturedEvent.getXRequestId()).isEqualTo(X_REQUEST_ID);
+        assertThat(capturedEvent.getInternalRequestId()).isEqualTo(INTERNAL_REQUEST_ID);
         assertThat(((RequestEventPayload) capturedEvent.getPayload()).getBody()).isEqualTo(BODY);
     }
 
@@ -157,7 +161,8 @@ public class Xs2aEventServiceTest {
         assertThat(capturedEvent.getPayload()).isNotNull();
         assertThat(capturedEvent.getPsuIdData()).isEqualTo(psuIdData);
         assertThat(capturedEvent.getTppAuthorisationNumber()).isEqualTo(AUTHORISATION_NUMBER);
-        assertThat(capturedEvent.getXRequestId()).isEqualTo(REQUEST_ID);
+        assertThat(capturedEvent.getXRequestId()).isEqualTo(X_REQUEST_ID);
+        assertThat(capturedEvent.getInternalRequestId()).isEqualTo(INTERNAL_REQUEST_ID);
         assertThat(((RequestEventPayload) capturedEvent.getPayload()).getBody()).isNull();
     }
 
@@ -177,7 +182,8 @@ public class Xs2aEventServiceTest {
         assertThat(capturedEvent.getPayload()).isNotNull();
         assertThat(capturedEvent.getPsuIdData()).isEqualTo(psuIdData);
         assertThat(capturedEvent.getTppAuthorisationNumber()).isEqualTo(AUTHORISATION_NUMBER);
-        assertThat(capturedEvent.getXRequestId()).isEqualTo(REQUEST_ID);
+        assertThat(capturedEvent.getXRequestId()).isEqualTo(X_REQUEST_ID);
+        assertThat(capturedEvent.getInternalRequestId()).isEqualTo(INTERNAL_REQUEST_ID);
         assertThat(((RequestEventPayload) capturedEvent.getPayload()).getBody()).isEqualTo(BODY);
     }
 
@@ -197,12 +203,13 @@ public class Xs2aEventServiceTest {
         assertThat(capturedEvent.getPayload()).isNotNull();
         assertThat(capturedEvent.getPsuIdData()).isEqualTo(psuIdData);
         assertThat(capturedEvent.getTppAuthorisationNumber()).isEqualTo(AUTHORISATION_NUMBER);
-        assertThat(capturedEvent.getXRequestId()).isEqualTo(REQUEST_ID);
+        assertThat(capturedEvent.getXRequestId()).isEqualTo(X_REQUEST_ID);
+        assertThat(capturedEvent.getInternalRequestId()).isEqualTo(INTERNAL_REQUEST_ID);
         assertThat(((RequestEventPayload) capturedEvent.getPayload()).getBody()).isNull();
     }
 
     private RequestData buildRequestData() {
-        return new RequestData(URI, REQUEST_ID, TPP_IP, Collections.emptyMap(),
+        return new RequestData(URI, INTERNAL_REQUEST_ID, X_REQUEST_ID, TPP_IP, Collections.emptyMap(),
                                jsonReader.getObjectFromFile("json/service/event/psu-id-data.json", PsuIdData.class));
     }
 

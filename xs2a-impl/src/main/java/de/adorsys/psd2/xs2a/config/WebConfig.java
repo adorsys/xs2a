@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
+import de.adorsys.psd2.xs2a.domain.InternalRequestIdHolder;
 import de.adorsys.psd2.xs2a.domain.RedirectIdHolder;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
@@ -81,11 +82,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         // Please, keep this interceptor's order, because it is important, that logging interceptors will be called before the validation ones to log all the requests (even wrong ones).
         // The interceptors are executed in the order in which they are declared for preHandle(...) and vice versa for postHandle(...).
         // Logging interceptors:
-        registry.addInterceptor(new AccountLoggingInterceptor(tppService)).addPathPatterns(ACCOUNTS_PATH);
-        registry.addInterceptor(new ConsentLoggingInterceptor(tppService, redirectIdService)).addPathPatterns(CONSENTS_PATH);
-        registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService)).addPathPatterns(FUNDS_CONFIRMATION_PATH);
-        registry.addInterceptor(new PaymentLoggingInterceptor(tppService, redirectIdService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
-        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService, redirectIdService)).addPathPatterns(SIGNING_BASKETS_PATH);
+        registry.addInterceptor(new AccountLoggingInterceptor(tppService, requestProviderService)).addPathPatterns(ACCOUNTS_PATH);
+        registry.addInterceptor(new ConsentLoggingInterceptor(tppService, redirectIdService, requestProviderService)).addPathPatterns(CONSENTS_PATH);
+        registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService, requestProviderService)).addPathPatterns(FUNDS_CONFIRMATION_PATH);
+        registry.addInterceptor(new PaymentLoggingInterceptor(tppService, redirectIdService, requestProviderService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
+        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService, redirectIdService, requestProviderService)).addPathPatterns(SIGNING_BASKETS_PATH);
 
         registry.addInterceptor(new RequestResponseLoggingInterceptor(requestResponseLogger)).addPathPatterns(getAllXs2aEndpointPaths());
 
@@ -135,6 +136,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @RequestScope
     public RedirectIdHolder getRedirectIdHolder() {
         return new RedirectIdHolder();
+    }
+
+    @Bean
+    @RequestScope
+    public InternalRequestIdHolder getInternalRequestIdHolder() {
+        return new InternalRequestIdHolder();
     }
 
     @Override

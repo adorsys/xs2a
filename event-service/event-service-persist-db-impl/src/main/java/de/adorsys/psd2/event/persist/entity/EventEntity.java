@@ -66,4 +66,6 @@ public class EventEntity {
     @Column(name = "instance_id", nullable = false, updatable = false)
     private String instanceId = DEFAULT_SERVICE_INSTANCE_ID;
 
+    @Column(name = "internal_request_id")
+    private String internalRequestId;
 }
