@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
+import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
 import de.adorsys.psd2.xs2a.domain.RedirectIdHolder;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
@@ -68,6 +69,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private final RequestValidationInterceptor requestValidationInterceptor;
     private final RequestProviderService requestProviderService;
     private final RedirectIdService redirectIdService;
+    private final RequestResponseLogger requestResponseLogger;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -84,6 +86,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService)).addPathPatterns(FUNDS_CONFIRMATION_PATH);
         registry.addInterceptor(new PaymentLoggingInterceptor(tppService, redirectIdService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
         registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService, redirectIdService)).addPathPatterns(SIGNING_BASKETS_PATH);
+
+        registry.addInterceptor(new RequestResponseLoggingInterceptor(requestResponseLogger)).addPathPatterns(getAllXs2aEndpointPaths());
 
         registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, objectMapper, requestProviderService))
             .addPathPatterns(getAllXs2aEndpointPaths());
