@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain.code;
+package de.adorsys.psd2.aspsp.mock.api.payment;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@ApiModel(description = "PurposeCode", value = "Purpose code")
-@AllArgsConstructor
 @NoArgsConstructor
-public class Xs2aPurposeCode {
-
-    // todo documentation doesn't have any definition. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/40
-    @ApiModelProperty(value = "Purpose code", example = "BCENECEQ")
-    private String code;
+public class AspspRemittance {
+    private String reference;
+    private String referenceType;
+    private String referenceIssuer;
 }

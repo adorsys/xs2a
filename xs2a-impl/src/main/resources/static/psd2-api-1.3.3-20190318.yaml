@@ -5682,8 +5682,8 @@ components:
           $ref: "#/components/schemas/accountReference"
 #        debtorId: # N.A. for all, but can be used by ASPSP if needed
 #          $ref: "#/components/schemas/ultimateDebtor"
-#        ultimateDebtor: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/ultimateDebtor"
+        ultimateDebtor: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/ultimateDebtor"
         instructedAmount:
           $ref: "#/components/schemas/amount"
 #        transactionCurrency: # N.A. for all, but can be used by ASPSP if needed
@@ -5702,18 +5702,18 @@ components:
           $ref: "#/components/schemas/address"
 #        creditorNameAndAddress: # N.A. for all, but can be used by ASPSP if needed
 #          $ref: "#/components/schemas/creditorNameAndAddress"
-#        ultimateCreditor: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/ultimateCreditor"
-#        purposeCode: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/purposeCode"
+        ultimateCreditor: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/ultimateCreditor"
+        purposeCode: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/purposeCode"
 #        chargeBearer: #In some payment product N.A. in some Optional in some conditional
 #          $ref: "#/components/schemas/chargeBearer"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
 #        remittanceInformationUnstructuredArray:
 #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
-#        remittanceInformationStructured: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/remittanceInformationStructured"
+        remittanceInformationStructured: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/remittanceInformationStructured"
         requestedExecutionDate: # N.A. for all, but can be used by ASPSP if needed
           type: string
           format: date
@@ -5797,8 +5797,8 @@ components:
         endToEndIdentification:
           type: string
           maxLength: 35
-#        ultimateDebtor: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/ultimateDebtor"
+        ultimateDebtor: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/ultimateDebtor"
         instructedAmount:
           $ref: "#/components/schemas/amount"
 #        transactionCurrency: # N.A. for all, but can be used by ASPSP if needed
@@ -5817,18 +5817,18 @@ components:
           $ref: "#/components/schemas/address"
 #        creditorNameAndAddress: # N.A. for all, but can be used by ASPSP if needed
 #          $ref: "#/components/schemas/creditorNameAndAddress"
-#        ultimateCreditor: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/ultimateCreditor"
-#        purposeCode: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/purposeCode"
+        ultimateCreditor: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/ultimateCreditor"
+        purposeCode: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/purposeCode"
 #        chargeBearer: #In some payment product N.A. in some Optional in some conditional
 #          $ref: "#/components/schemas/chargeBearer"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
 #        remittanceInformationUnstructuredArray:
 #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
-#        remittanceInformationStructured: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/remittanceInformationStructured"
+        remittanceInformationStructured: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/remittanceInformationStructured"
 
 
     periodicPaymentInitiation_json: 
@@ -5912,8 +5912,8 @@ components:
           maxLength: 35
         debtorAccount: 
           $ref: "#/components/schemas/accountReference"
-#        ultimateDebtor: # N.A.
-#          $ref: "#/components/schemas/ultimateDebtor"
+        ultimateDebtor: # N.A.
+          $ref: "#/components/schemas/ultimateDebtor"
         instructedAmount:
           $ref: "#/components/schemas/amount"
         creditorAccount: 
@@ -5924,16 +5924,16 @@ components:
           $ref: "#/components/schemas/creditorName"
         creditorAddress:
           $ref: "#/components/schemas/address"
-#        ultimateCreditor: # N.A.
-#          $ref: "#/components/schemas/ultimateCreditor"
-#        purposeCode: # N.A.
-#          $ref: "#/components/schemas/purposeCode"
+        ultimateCreditor: # N.A.
+          $ref: "#/components/schemas/ultimateCreditor"
+        purposeCode: # N.A.
+          $ref: "#/components/schemas/purposeCode"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
 #        remittanceInformationUnstructuredArray:
 #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
-#        remittanceInformationStructured:  # N.A.
-#          $ref: "#/components/schemas/remittanceInformationStructured"
+        remittanceInformationStructured:  # N.A.
+          $ref: "#/components/schemas/remittanceInformationStructured"
 #        requestedExecutionDate: # N.A.
 #          type: string
 #          format: date
@@ -6309,8 +6309,8 @@ components:
           maxLength: 35
         debtorAccount: 
           $ref: "#/components/schemas/accountReference"
-#        ultimateDebtor: # N.A.
-#          $ref: "#/components/schemas/ultimateDebtor"
+        ultimateDebtor: # N.A.
+          $ref: "#/components/schemas/ultimateDebtor"
         instructedAmount:
           $ref: "#/components/schemas/amount"
         creditorAccount: 
@@ -6321,16 +6321,16 @@ components:
           $ref: "#/components/schemas/creditorName"
         creditorAddress:
           $ref: "#/components/schemas/address"
-#        ultimateCreditor: # N.A.
-#          $ref: "#/components/schemas/ultimateCreditor"
-#        purposeCode: # N.A.
-#          $ref: "#/components/schemas/purposeCode"
+        ultimateCreditor: # N.A.
+          $ref: "#/components/schemas/ultimateCreditor"
+        purposeCode: # N.A.
+          $ref: "#/components/schemas/purposeCode"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
 #        remittanceInformationUnstructuredArray:
 #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
-#        remittanceInformationStructured: # N.A.
-#          $ref: "#/components/schemas/remittanceInformationStructured"
+        remittanceInformationStructured: # N.A.
+          $ref: "#/components/schemas/remittanceInformationStructured"
 #        requestedExecutionDate: # N.A.
 #          type: string
 #          format: date
@@ -6358,8 +6358,8 @@ components:
           maxLength: 35
         debtorAccount: 
           $ref: "#/components/schemas/accountReference"
-#        ultimateDebtor: # N.A.
-#          $ref: "#/components/schemas/ultimateDebtor"
+        ultimateDebtor: # N.A.
+          $ref: "#/components/schemas/ultimateDebtor"
         instructedAmount:
           $ref: "#/components/schemas/amount"
         creditorAccount: 
@@ -6370,16 +6370,16 @@ components:
           $ref: "#/components/schemas/creditorName"
         creditorAddress:
           $ref: "#/components/schemas/address"
-#        ultimateCreditor: # N.A.
-#          $ref: "#/components/schemas/ultimateCreditor"
-#        purposeCode: # N.A.
-#          $ref: "#/components/schemas/purposeCode"
+        ultimateCreditor: # N.A.
+          $ref: "#/components/schemas/ultimateCreditor"
+        purposeCode: # N.A.
+          $ref: "#/components/schemas/purposeCode"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
 #        remittanceInformationUnstructuredArray:
 #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
-#        remittanceInformationStructured: # N.A.
-#          $ref: "#/components/schemas/remittanceInformationStructured"
+        remittanceInformationStructured: # N.A.
+          $ref: "#/components/schemas/remittanceInformationStructured"
 #        requestedExecutionDate:
 #          type: string
 #          format: date

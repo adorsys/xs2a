@@ -27,6 +27,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -89,5 +91,16 @@ public class JsonConverter {
         }
 
         return Optional.empty();
+    }
+
+    public List<String> toJsonGetValuesForField(InputStream stream, String fieldName) {
+        List<String> values = new ArrayList<>();
+        try {
+            JsonNode jsonNode = objectMapper.readTree(stream);
+            values.addAll(jsonNode.findValuesAsText(fieldName));
+        } catch (IOException e) {
+            log.info("Couldn't extract field {} from json: {}", fieldName, e.getMessage());
+        }
+        return values;
     }
 }

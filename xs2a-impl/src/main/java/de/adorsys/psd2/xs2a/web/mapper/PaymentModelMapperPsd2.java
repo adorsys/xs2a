@@ -56,6 +56,8 @@ public class PaymentModelMapperPsd2 {
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final ScaMethodsMapper scaMethodsMapper;
     private final Xs2aAddressMapper xs2aAddressMapper;
+    private final RemittanceMapper remittanceMapper;
+    private final PurposeCodeMapper purposeCodeMapper;
 
     public Object mapToGetPaymentResponse(Object payment, PaymentType type, String paymentProduct) {
         if (standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct)) {
@@ -75,6 +77,10 @@ public class PaymentModelMapperPsd2 {
             paymentResponse.setCreditorAddress(xs2aAddressMapper.mapToAddress(xs2aPayment.getCreditorAddress()));
             paymentResponse.setRemittanceInformationUnstructured(xs2aPayment.getRemittanceInformationUnstructured());
             paymentResponse.setTransactionStatus(mapToTransactionStatus(xs2aPayment.getTransactionStatus()));
+            paymentResponse.setUltimateDebtor(xs2aPayment.getUltimateDebtor());
+            paymentResponse.setUltimateCreditor(xs2aPayment.getUltimateCreditor());
+            paymentResponse.setPurposeCode(purposeCodeMapper.mapToPurposeCode(xs2aPayment.getPurposeCode()));
+            paymentResponse.setRemittanceInformationStructured(remittanceMapper.mapToRemittanceInformationStructured(xs2aPayment.getRemittanceInformationStructured()));
             return paymentResponse;
         } else if (type == PERIODIC) {
             PeriodicPayment xs2aPayment = (PeriodicPayment) payment;
@@ -94,6 +100,10 @@ public class PaymentModelMapperPsd2 {
             paymentResponse.setFrequency(FrequencyCode.valueOf(xs2aPayment.getFrequency().name()));
             paymentResponse.setDayOfExecution(mapToDayOfExecution(xs2aPayment.getDayOfExecution()).orElse(null));
             paymentResponse.setTransactionStatus(mapToTransactionStatus(xs2aPayment.getTransactionStatus()));
+            paymentResponse.setUltimateDebtor(xs2aPayment.getUltimateDebtor());
+            paymentResponse.setUltimateCreditor(xs2aPayment.getUltimateCreditor());
+            paymentResponse.setPurposeCode(purposeCodeMapper.mapToPurposeCode(xs2aPayment.getPurposeCode()));
+            paymentResponse.setRemittanceInformationStructured(remittanceMapper.mapToRemittanceInformationStructured(xs2aPayment.getRemittanceInformationStructured()));
             return paymentResponse;
         } else {
             BulkPayment xs2aPayment = (BulkPayment) payment;
@@ -177,6 +187,10 @@ public class PaymentModelMapperPsd2 {
         bulkPart.setCreditorName(payment.getCreditorName());
         bulkPart.setCreditorAddress(xs2aAddressMapper.mapToAddress(payment.getCreditorAddress()));
         bulkPart.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
+        bulkPart.setUltimateDebtor(payment.getUltimateDebtor());
+        bulkPart.setUltimateCreditor(payment.getUltimateCreditor());
+        bulkPart.setPurposeCode(purposeCodeMapper.mapToPurposeCode(payment.getPurposeCode()));
+        bulkPart.setRemittanceInformationStructured(remittanceMapper.mapToRemittanceInformationStructured(payment.getRemittanceInformationStructured()));
         return bulkPart;
     }
 

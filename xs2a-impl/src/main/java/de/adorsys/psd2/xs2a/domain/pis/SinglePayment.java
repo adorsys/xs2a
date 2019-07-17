@@ -17,13 +17,13 @@
 package de.adorsys.psd2.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.AccountReferenceCollector;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
-import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
 import lombok.Data;
 
 import javax.validation.Valid;
@@ -45,7 +45,6 @@ public class SinglePayment implements AccountReferenceCollector {
     @NotNull
     private AccountReference debtorAccount;
 
-    @Deprecated // Since 1.2
     @Size(max = 70)
     private String ultimateDebtor;
 
@@ -65,17 +64,14 @@ public class SinglePayment implements AccountReferenceCollector {
     @Valid
     private Xs2aAddress creditorAddress;
 
-    @Deprecated // Since 1.2
     @Size(max = 70)
     private String ultimateCreditor;
 
-    @Deprecated // Since 1.2
-    private Xs2aPurposeCode purposeCode;
+    private PurposeCode purposeCode;
 
     @Size(max = 140)
     private String remittanceInformationUnstructured;
 
-    @Deprecated // Since 1.2
     @Valid
     private Remittance remittanceInformationStructured;
 

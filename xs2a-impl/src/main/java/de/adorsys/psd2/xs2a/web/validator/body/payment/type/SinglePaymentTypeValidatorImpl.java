@@ -97,6 +97,10 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         if (isDateInThePast(singlePayment.getRequestedExecutionDate())) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(EXECUTION_DATE_INVALID, "Value 'requestedExecutionDate' should not be in the past"));
         }
+
+        validateUltimateDebtor(singlePayment.getUltimateDebtor(), messageError);
+        validateUltimateCreditor(singlePayment.getUltimateCreditor(), messageError);
+        validateRemittanceInformationStructured(singlePayment.getRemittanceInformationStructured(), messageError);
     }
 
     void validateAddress(Xs2aAddress address, MessageError messageError) {

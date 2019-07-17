@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,7 @@ public class Xs2aToSpiPeriodicPaymentMapper {
     private final Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    private final RemittanceMapper remittanceMapper;
 
     public SpiPeriodicPayment mapToSpiPeriodicPayment(PeriodicPayment payment, String paymentProduct) {
         SpiPeriodicPayment periodic = new SpiPeriodicPayment(paymentProduct);
@@ -52,6 +54,10 @@ public class Xs2aToSpiPeriodicPaymentMapper {
         periodic.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         periodic.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(payment.getPsuDataList()));
         periodic.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
+        periodic.setUltimateDebtor(payment.getUltimateDebtor());
+        periodic.setUltimateCreditor(payment.getUltimateCreditor());
+        periodic.setPurposeCode(payment.getPurposeCode());
+        periodic.setRemittanceInformationStructured(remittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));
         return periodic;
     }
 }

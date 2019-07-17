@@ -38,6 +38,10 @@ public class CmsSinglePayment extends BaseCmsPayment {
     private TransactionStatus paymentStatus;
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
+    private String ultimateDebtor;
+    private String ultimateCreditor;
+    private String purposeCode;
+    private CmsRemittance remittanceInformationStructured;
 
     public CmsSinglePayment(String paymentProduct) {
         setPaymentProduct(paymentProduct);

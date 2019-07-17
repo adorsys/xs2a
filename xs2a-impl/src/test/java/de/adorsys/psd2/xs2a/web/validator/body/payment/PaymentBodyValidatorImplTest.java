@@ -37,6 +37,7 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -60,6 +61,8 @@ public class PaymentBodyValidatorImplTest {
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Cannot deserialize the request body"));
     private static final MessageError DAY_OF_EXECUTION_WRONG_VALUE_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Value 'dayOfExecution' should be a number of day in month"));
+    private static final MessageError PURPOSE_CODE_WRONG_VALUE_ERROR =
+        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, PaymentBodyValidatorImpl.PURPOSE_CODE_ERROR_FORMAT));
 
     private PaymentBodyValidatorImpl validator;
     private MessageError messageError;
@@ -178,6 +181,29 @@ public class PaymentBodyValidatorImplTest {
 
         // When
         validator.validate(mockRequest, messageError);
+    }
+
+    @Test
+    public void validate_purposeCodes_shouldReturnError() throws IOException {
+        // Given
+        String purposeCode = "CDCQ";
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
+        mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
+
+        Object paymentBody = new Object();
+        when(objectMapper.readValue(mockRequest.getInputStream(), Object.class))
+            .thenReturn(paymentBody);
+        when(jsonConverter.toJsonGetValuesForField(any(InputStream.class), anyString()))
+            .thenReturn(Collections.singletonList(purposeCode));
+        when(paymentTypeValidatorContext.getValidator(PAYMENT_SERVICE))
+            .thenReturn(Optional.of(paymentTypeValidator));
+
+        // When
+        validator.validate(mockRequest, messageError);
+
+        // Then
+        assertEquals(PURPOSE_CODE_WRONG_VALUE_ERROR, messageError);
     }
 
     private Map<String, String> buildTemplateVariables(String paymentProduct, String paymentService) {

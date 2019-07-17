@@ -32,7 +32,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-07-11T10:33:19.649103+03:00[Europe/Kiev]")
 
 public class PaymentInitiationWithStatusResponse   {
   @JsonProperty("endToEndIdentification")
@@ -40,6 +40,9 @@ public class PaymentInitiationWithStatusResponse   {
 
   @JsonProperty("debtorAccount")
   private AccountReference debtorAccount = null;
+
+  @JsonProperty("ultimateDebtor")
+  private String ultimateDebtor = null;
 
   @JsonProperty("instructedAmount")
   private Amount instructedAmount = null;
@@ -56,8 +59,17 @@ public class PaymentInitiationWithStatusResponse   {
   @JsonProperty("creditorAddress")
   private Address creditorAddress = null;
 
+  @JsonProperty("ultimateCreditor")
+  private String ultimateCreditor = null;
+
+  @JsonProperty("purposeCode")
+  private PurposeCode purposeCode = null;
+
   @JsonProperty("remittanceInformationUnstructured")
   private String remittanceInformationUnstructured = null;
+
+  @JsonProperty("remittanceInformationStructured")
+  private RemittanceInformationStructured remittanceInformationStructured = null;
 
   @JsonProperty("transactionStatus")
   private TransactionStatus transactionStatus = null;
@@ -106,6 +118,28 @@ public class PaymentInitiationWithStatusResponse   {
 
   public void setDebtorAccount(AccountReference debtorAccount) {
     this.debtorAccount = debtorAccount;
+  }
+
+  public PaymentInitiationWithStatusResponse ultimateDebtor(String ultimateDebtor) {
+    this.ultimateDebtor = ultimateDebtor;
+    return this;
+  }
+
+  /**
+   * Get ultimateDebtor
+   * @return ultimateDebtor
+  **/
+  @ApiModelProperty(value = "")
+
+@Size(max=70) 
+
+  @JsonProperty("ultimateDebtor")
+  public String getUltimateDebtor() {
+    return ultimateDebtor;
+  }
+
+  public void setUltimateDebtor(String ultimateDebtor) {
+    this.ultimateDebtor = ultimateDebtor;
   }
 
   public PaymentInitiationWithStatusResponse instructedAmount(Amount instructedAmount) {
@@ -224,6 +258,51 @@ public class PaymentInitiationWithStatusResponse   {
     this.creditorAddress = creditorAddress;
   }
 
+  public PaymentInitiationWithStatusResponse ultimateCreditor(String ultimateCreditor) {
+    this.ultimateCreditor = ultimateCreditor;
+    return this;
+  }
+
+  /**
+   * Get ultimateCreditor
+   * @return ultimateCreditor
+  **/
+  @ApiModelProperty(value = "")
+
+@Size(max=70) 
+
+  @JsonProperty("ultimateCreditor")
+  public String getUltimateCreditor() {
+    return ultimateCreditor;
+  }
+
+  public void setUltimateCreditor(String ultimateCreditor) {
+    this.ultimateCreditor = ultimateCreditor;
+  }
+
+  public PaymentInitiationWithStatusResponse purposeCode(PurposeCode purposeCode) {
+    this.purposeCode = purposeCode;
+    return this;
+  }
+
+  /**
+   * Get purposeCode
+   * @return purposeCode
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("purposeCode")
+  public PurposeCode getPurposeCode() {
+    return purposeCode;
+  }
+
+  public void setPurposeCode(PurposeCode purposeCode) {
+    this.purposeCode = purposeCode;
+  }
+
   public PaymentInitiationWithStatusResponse remittanceInformationUnstructured(String remittanceInformationUnstructured) {
     this.remittanceInformationUnstructured = remittanceInformationUnstructured;
     return this;
@@ -244,6 +323,29 @@ public class PaymentInitiationWithStatusResponse   {
 
   public void setRemittanceInformationUnstructured(String remittanceInformationUnstructured) {
     this.remittanceInformationUnstructured = remittanceInformationUnstructured;
+  }
+
+  public PaymentInitiationWithStatusResponse remittanceInformationStructured(RemittanceInformationStructured remittanceInformationStructured) {
+    this.remittanceInformationStructured = remittanceInformationStructured;
+    return this;
+  }
+
+  /**
+   * Get remittanceInformationStructured
+   * @return remittanceInformationStructured
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("remittanceInformationStructured")
+  public RemittanceInformationStructured getRemittanceInformationStructured() {
+    return remittanceInformationStructured;
+  }
+
+  public void setRemittanceInformationStructured(RemittanceInformationStructured remittanceInformationStructured) {
+    this.remittanceInformationStructured = remittanceInformationStructured;
   }
 
   public PaymentInitiationWithStatusResponse transactionStatus(TransactionStatus transactionStatus) {
@@ -281,18 +383,22 @@ public class PaymentInitiationWithStatusResponse   {
     PaymentInitiationWithStatusResponse paymentInitiationWithStatusResponse = (PaymentInitiationWithStatusResponse) o;
     return Objects.equals(this.endToEndIdentification, paymentInitiationWithStatusResponse.endToEndIdentification) &&
         Objects.equals(this.debtorAccount, paymentInitiationWithStatusResponse.debtorAccount) &&
+        Objects.equals(this.ultimateDebtor, paymentInitiationWithStatusResponse.ultimateDebtor) &&
         Objects.equals(this.instructedAmount, paymentInitiationWithStatusResponse.instructedAmount) &&
         Objects.equals(this.creditorAccount, paymentInitiationWithStatusResponse.creditorAccount) &&
         Objects.equals(this.creditorAgent, paymentInitiationWithStatusResponse.creditorAgent) &&
         Objects.equals(this.creditorName, paymentInitiationWithStatusResponse.creditorName) &&
         Objects.equals(this.creditorAddress, paymentInitiationWithStatusResponse.creditorAddress) &&
+        Objects.equals(this.ultimateCreditor, paymentInitiationWithStatusResponse.ultimateCreditor) &&
+        Objects.equals(this.purposeCode, paymentInitiationWithStatusResponse.purposeCode) &&
         Objects.equals(this.remittanceInformationUnstructured, paymentInitiationWithStatusResponse.remittanceInformationUnstructured) &&
+        Objects.equals(this.remittanceInformationStructured, paymentInitiationWithStatusResponse.remittanceInformationStructured) &&
         Objects.equals(this.transactionStatus, paymentInitiationWithStatusResponse.transactionStatus);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(endToEndIdentification, debtorAccount, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, remittanceInformationUnstructured, transactionStatus);
+    return Objects.hash(endToEndIdentification, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, transactionStatus);
   }
 
   @Override
@@ -302,12 +408,16 @@ public class PaymentInitiationWithStatusResponse   {
     
     sb.append("    endToEndIdentification: ").append(toIndentedString(endToEndIdentification)).append("\n");
     sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
+    sb.append("    ultimateDebtor: ").append(toIndentedString(ultimateDebtor)).append("\n");
     sb.append("    instructedAmount: ").append(toIndentedString(instructedAmount)).append("\n");
     sb.append("    creditorAccount: ").append(toIndentedString(creditorAccount)).append("\n");
     sb.append("    creditorAgent: ").append(toIndentedString(creditorAgent)).append("\n");
     sb.append("    creditorName: ").append(toIndentedString(creditorName)).append("\n");
     sb.append("    creditorAddress: ").append(toIndentedString(creditorAddress)).append("\n");
+    sb.append("    ultimateCreditor: ").append(toIndentedString(ultimateCreditor)).append("\n");
+    sb.append("    purposeCode: ").append(toIndentedString(purposeCode)).append("\n");
     sb.append("    remittanceInformationUnstructured: ").append(toIndentedString(remittanceInformationUnstructured)).append("\n");
+    sb.append("    remittanceInformationStructured: ").append(toIndentedString(remittanceInformationStructured)).append("\n");
     sb.append("    transactionStatus: ").append(toIndentedString(transactionStatus)).append("\n");
     sb.append("}");
     return sb.toString();

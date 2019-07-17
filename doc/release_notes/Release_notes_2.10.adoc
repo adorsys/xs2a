@@ -8,6 +8,7 @@
 * Include Redirect-ID in all access-log for the responses where applicable
 * Log HTTP requests and responses to a separate logger
 * Bugfix: Fix get common payment by redirect-id
+* Bugfix: Optional fields in JSON structure are commented in yaml
 
 == Include TPP roles in all access-log for all request entries
 From now on, request entries in access-log will also contain list of TPP roles, extracted from the certificate.
@@ -48,3 +49,9 @@ This behaviour can be changed by configuring the `logback-spring.xml`.
 
 Executing GET pain common payment in CMS-PSU-API on `/psu-api/v1/payment/redirect/{redirect-id}` or `/psu-api/v1/payment/cancellation/redirect/{redirect-id}`
 caused internal server error. From now on, this bug is fixed.
+
+== Bugfix: Optional fields in JSON structure are commented in yaml
+From now on, TPP can provide `ultimateDebtor`, `ultimateCreditor`, `purposeCode`, `remittanceInformationStructured` fields
+in request body during payment initiation process (`POST /v1/{payment-service}/{payment-product}`). These fields
+are available in payment objects in SPI API. Added validators for these fields.
+Also these fields present in `CmsPayment` object in CMS-PSU-API and CMS-ASPSP-API.
