@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -24,10 +25,8 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
-import de.adorsys.psd2.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
@@ -120,7 +119,7 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
         assertEquals(START_DATE, spiPeriodicPayment.getStartDate());
         assertEquals(END_DATE, spiPeriodicPayment.getEndDate());
         assertEquals(PisExecutionRule.PRECEDING, spiPeriodicPayment.getExecutionRule());
-        assertEquals(SpiFrequencyCode.MONTHLY, spiPeriodicPayment.getFrequency());
+        assertEquals(FrequencyCode.MONTHLY, spiPeriodicPayment.getFrequency());
         assertEquals(PisDayOfExecution._13, spiPeriodicPayment.getDayOfExecution());
         assertEquals(PAYMENT_ID, spiPeriodicPayment.getPaymentId());
         assertEquals(END_TO_END_IDENTIFICATION, spiPeriodicPayment.getEndToEndIdentification());
@@ -143,7 +142,7 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
         PeriodicPayment periodicPayment = new PeriodicPayment();
         periodicPayment.setStartDate(START_DATE);
         periodicPayment.setEndDate(END_DATE);
-        periodicPayment.setFrequency(Xs2aFrequencyCode.MONTHLY);
+        periodicPayment.setFrequency(FrequencyCode.MONTHLY);
         periodicPayment.setExecutionRule(PisExecutionRule.PRECEDING);
         periodicPayment.setDayOfExecution(PisDayOfExecution._13);
         periodicPayment.setPaymentId(PAYMENT_ID);

@@ -18,17 +18,15 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
-import de.adorsys.psd2.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
@@ -44,12 +42,8 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Currency;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,13 +66,12 @@ public class PaymentModelMapperTest {
     private static final LocalDate START_DATE = LocalDate.of(2020, 1, 2);
     private static final LocalDate END_DATE = LocalDate.of(2020, 6, 2);
     private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.of(2020, 2, 15);
-    private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.of(2020, 2, 15, 12, 0, 0, 0, ZoneOffset.UTC);
     private static final DayOfExecution PSD2_DAY_OF_EXECUTION = DayOfExecution._2;
     private static final ExecutionRule PSD2_EXECUTION_RULE = ExecutionRule.FOLLOWING;
-    private static final FrequencyCode PSD2_FREQUENCY_CODE = FrequencyCode.DAILY;
+    private static final de.adorsys.psd2.model.FrequencyCode PSD2_FREQUENCY_CODE = de.adorsys.psd2.model.FrequencyCode.DAILY;
     private static final PisDayOfExecution XS2A_DAY_OF_EXECUTION = PisDayOfExecution._2;
     private static final PisExecutionRule XS2A_EXECUTION_RULE = PisExecutionRule.FOLLOWING;
-    private static final Xs2aFrequencyCode XS2A_FREQUENCY_CODE = Xs2aFrequencyCode.DAILY;
+    private static final de.adorsys.psd2.xs2a.core.pis.FrequencyCode XS2A_FREQUENCY_CODE = FrequencyCode.DAILY;
 
     @InjectMocks
     PaymentModelMapperPsd2 paymentModelMapperPsd2;
@@ -176,87 +169,6 @@ public class PaymentModelMapperTest {
         assertThat(result).isEqualTo(NON_STANDARD_PAYMENT_DATA_STRING);
     }
 
-    //Static test data
-    private LinkedHashMap<String, Object> getSinglePayment(boolean id, boolean acc, boolean amount, boolean agent, boolean creditorName, boolean credAddres, boolean remitance) {
-        LinkedHashMap<String, Object> payment = new LinkedHashMap<>();
-        payment.put("endToEndIdentification", id ? END_TO_END_IDENTIFICATION : null);
-        payment.put("debtorAccount", acc ? getPsd2AccountReference(true, true) : null);
-        payment.put("instructedAmount", amount ? getAmountMap12(true, true) : null);
-        payment.put("creditorAccount", getPsd2AccountReference(true, true));
-        payment.put("creditorAgent", agent ? "Agent" : null);
-        payment.put("creditorName", creditorName ? "CreditorName" : null);
-        payment.put("creditorAddress", credAddres ? getAddress12Map(true, true, true, true, true) : null);
-        payment.put("remittanceInformationUnstructured", remitance ? "some pmnt info" : null);
-        return payment;
-    }
-
-    private PaymentInitiationJson getSinglePayment12(boolean id, boolean acc, boolean amount, boolean agent, boolean creditorName, boolean credAddres, boolean remitance) {
-        PaymentInitiationJson payment = new PaymentInitiationJson();
-        payment.setEndToEndIdentification(id ? END_TO_END_IDENTIFICATION : null);
-        payment.setDebtorAccount(acc ? getPsd2AccountReference(true, true) : null);
-        payment.setInstructedAmount(amount ? getAmount12(true, true) : null);
-        payment.setCreditorAccount(getPsd2AccountReference(true, true));
-        payment.setCreditorAgent(agent ? "Agent" : null);
-        payment.setCreditorName(creditorName ? "CreditorName" : null);
-        payment.setCreditorAddress(credAddres ? getAddress12(true, true, true, true, true) : null);
-        payment.setRemittanceInformationUnstructured(remitance ? "some pmnt info" : null);
-        return payment;
-    }
-
-    private BulkPaymentInitiationJson getBulkPayment(boolean batchBooking, boolean executionDate,
-                                                     boolean debtorAcc, boolean payments) {
-        BulkPaymentInitiationJson payment = new BulkPaymentInitiationJson();
-        payment.setBatchBookingPreferred(batchBooking ? BATCH_BOOKING_PREFERRED : null);
-        payment.setRequestedExecutionDate(executionDate ? REQUESTED_EXECUTION_DATE : null);
-        payment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
-        payment.setDebtorAccount(debtorAcc ? getPsd2AccountReference(true, true) : null);
-
-        PaymentInitiationBulkElementJson element = new PaymentInitiationBulkElementJson();
-        element.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
-        element.setInstructedAmount(getAmount12(true, true));
-        element.setCreditorAccount(getPsd2AccountReference(true, true));
-        element.setCreditorAgent("Agent");
-        element.setCreditorName("CreditorName");
-        element.setCreditorAddress(getAddress12(true, true, true, true, true));
-        element.setRemittanceInformationUnstructured("some info");
-        List<PaymentInitiationBulkElementJson> elements = Collections.singletonList(element);
-
-        payment.setPayments(payments ? elements : null);
-        return payment;
-    }
-
-    private PeriodicPaymentInitiationJson getPeriodicPayment(boolean id, boolean acc, boolean amount, boolean agent,
-                                                             boolean creditorName, boolean credAddres,
-                                                             boolean remitance, boolean startDate, boolean endDate,
-                                                             boolean execution, boolean frequency,
-                                                             boolean dayOfExecution) {
-        PeriodicPaymentInitiationJson payment = new PeriodicPaymentInitiationJson();
-        payment.setEndToEndIdentification(id ? END_TO_END_IDENTIFICATION : null);
-        payment.setDebtorAccount(acc ? getPsd2AccountReference(true, true) : null);
-        payment.setInstructedAmount(amount ? getAmount12(true, true) : null);
-        payment.setCreditorAccount(getPsd2AccountReference(true, true));
-        payment.setCreditorAgent(agent ? "Agent" : null);
-        payment.setCreditorName(creditorName ? "CreditorName" : null);
-        payment.setCreditorAddress(credAddres ? getAddress12(true, true, true, true, true) : null);
-        payment.setRemittanceInformationUnstructured(remitance ? "some pmnt info" : null);
-        payment.setStartDate(startDate ? START_DATE : null);
-        payment.setEndDate(endDate ? END_DATE : null);
-        payment.setExecutionRule(execution ? ExecutionRule.FOLLOWING : null);
-        payment.setFrequency(frequency ? FrequencyCode.DAILY : null);
-        payment.setDayOfExecution(dayOfExecution ? PSD2_DAY_OF_EXECUTION : null);
-        return payment;
-    }
-
-    private LinkedHashMap<String, Object> getAddress12Map(boolean code, boolean str, boolean bld, boolean city, boolean country) {
-        LinkedHashMap<String, Object> address = new LinkedHashMap<>();
-        address.put("postalCode", code ? "PostalCode" : null);
-        address.put("city", city ? "Kiev" : null);
-        address.put("buildingNumber", bld ? "8" : null);
-        address.put("street", str ? "Esplanadnaya" : null);
-        address.put("country", country ? "Ukraine" : null);
-        return address;
-    }
-
     private Address getAddress12(boolean code, boolean str, boolean bld, boolean city, boolean country) {
         Address address = new Address();
         address.setPostalCode(code ? "PostalCode" : null);
@@ -265,13 +177,6 @@ public class PaymentModelMapperTest {
         address.setStreet(str ? "Esplanadnaya" : null);
         address.setCountry(country ? "Ukraine" : null);
         return address;
-    }
-
-    private LinkedHashMap<String, Object> getAmountMap12(boolean currency, boolean toPay) {
-        LinkedHashMap<String, Object> instructedAmount = new LinkedHashMap<>();
-        instructedAmount.put("currency", currency ? "EUR" : null);
-        instructedAmount.put("amount", toPay ? "123456" : null);
-        return instructedAmount;
     }
 
     private Amount getAmount12(boolean currency, boolean toPay) {
@@ -293,15 +198,6 @@ public class PaymentModelMapperTest {
         accountReference.setIban(iban ? IBAN : null);
         accountReference.setCurrency(currency ? Currency.getInstance(CURRENCY) : null);
         return accountReference;
-    }
-
-    private PaymentInitiationParameters getRequestParameters(PaymentType paymentType) {
-        PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
-        requestParameters.setPaymentType(paymentType);
-        requestParameters.setQwacCertificate("TEST CERTIFICATE");
-        requestParameters.setPaymentProduct("sepa-credit-transfers");
-
-        return requestParameters;
     }
 
     private Xs2aAmount buildXs2aAmount() {

@@ -6,6 +6,7 @@
 * Feature: CMS-PSU-API enriching responses
 * Refactor: Event API refactoring
 * Bugfix: Authorisation ID is missing in update PSU responses
+* Refactor: removed SpiFrequencyCode enumerator
 
 == Refactor: ASPSP consent data refactoring
 
@@ -43,3 +44,8 @@ Event functionality is now implemented in separate module and has `Events-XS2A-A
 Authorisation ID was missing in the responses for POST requests of starting the authorisation with password
 (`POST /v1/{payment_service}/{payment_product}/{payment_id}/authorisations` and `POST /v1/consents/{consent_id}/authorisations`).
 Now this field is present in the upper responses while providing the PSU data in the request bodies.
+
+== Refactor: removed SpiFrequencyCode enumerator
+
+Enumerator SpiFrequencyCode was removed from the package `de.adorsys.psd2.xs2a.spi.domain.code`. New enumerator
+`de.adorsys.psd2.xs2a.core.pis.FrequencyCode` should be used instead, it has the same values.

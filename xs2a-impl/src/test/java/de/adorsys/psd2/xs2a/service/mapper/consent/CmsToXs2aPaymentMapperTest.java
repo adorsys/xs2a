@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -30,7 +31,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
-import de.adorsys.psd2.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -152,8 +152,8 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(EXECUTION_RULE, periodicPayment.getExecutionRule());
         assertEquals(END_DATE, periodicPayment.getEndDate());
 
-        Xs2aFrequencyCode xs2aFrequencyCode = Xs2aFrequencyCode.valueOf(FREQUENCY);
-        assertEquals(xs2aFrequencyCode, periodicPayment.getFrequency());
+        FrequencyCode frequencyCode = FrequencyCode.valueOf(FREQUENCY);
+        assertEquals(frequencyCode, periodicPayment.getFrequency());
 
         assertEquals(DAY_OF_EXECUTION, periodicPayment.getDayOfExecution());
         assertEquals(STATUS_CHANGE_TIMESTAMP, periodicPayment.getStatusChangeTimestamp());

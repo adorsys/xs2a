@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
@@ -80,7 +80,7 @@ public class SpiToXs2aPeriodicPaymentMapperTest {
         payment.setStartDate(LocalDate.of(2017, 3, 3));
         payment.setEndDate(LocalDate.of(2020, 12, 2));
         payment.setExecutionRule(PisExecutionRule.PRECEDING);
-        payment.setFrequency(SpiFrequencyCode.ANNUAL);
+        payment.setFrequency(FrequencyCode.ANNUAL);
         payment.setPaymentStatus(TransactionStatus.ACCP);
         SpiAccountReference accountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json", SpiAccountReference.class);
         payment.setCreditorAccount(accountReference);

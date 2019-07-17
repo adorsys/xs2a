@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain.code;
+package de.adorsys.psd2.xs2a.core.pis;
 
-public enum Xs2aFrequencyCode {
+public enum FrequencyCode {
     DAILY,
     WEEKLY,
     EVERYTWOWEEKS,
