@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -25,8 +24,6 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -39,9 +36,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class AuthorisationMapper {
     private final CoreObjectsMapper coreObjectsMapper;
-    private final ScaApproachResolver scaApproachResolver;
-    private final RedirectLinkBuilder redirectLinkBuilder;
-    private final AspspProfileService aspspProfileService;
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
 
@@ -64,7 +58,10 @@ public class AuthorisationMapper {
             return mapToStartScaProcessResponseFromPis((Xs2aCreatePisAuthorisationResponse) body);
         } else if (body instanceof Xs2aUpdatePisCommonPaymentPsuDataResponse) {
 
-            return mapToPisUpdatePsuAuthenticationResponse((Xs2aUpdatePisCommonPaymentPsuDataResponse) body);
+            Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisCommonPaymentPsuDataResponse = (Xs2aUpdatePisCommonPaymentPsuDataResponse) body;
+            UpdatePsuAuthenticationResponse resp = mapToPisUpdatePsuAuthenticationResponse(updatePisCommonPaymentPsuDataResponse);
+            resp.setAuthorisationId(updatePisCommonPaymentPsuDataResponse.getAuthorisationId());
+            return resp;
         } else {
             return null;
         }
@@ -81,7 +78,10 @@ public class AuthorisationMapper {
             return mapToStartScaProcessResponse((CreateConsentAuthorizationResponse) body);
         } else if (body instanceof UpdateConsentPsuDataResponse) {
 
-            return mapToAisUpdatePsuAuthenticationResponse((UpdateConsentPsuDataResponse) body);
+            UpdatePsuAuthenticationResponse resp = mapToAisUpdatePsuAuthenticationResponse((UpdateConsentPsuDataResponse) body);
+            resp.setAuthorisationId(body.getAuthorisationId());
+            return resp;
+
         } else {
             return null;
         }

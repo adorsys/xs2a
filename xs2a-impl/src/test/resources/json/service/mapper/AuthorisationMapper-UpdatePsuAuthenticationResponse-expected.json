@@ -1,4 +1,5 @@
 {
+  "authorisationId": "a1",
   "chosenScaMethod": {
     "authenticationType": "FLASH",
     "authenticationVersion": "1",
