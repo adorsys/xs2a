@@ -17,8 +17,10 @@
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class SpiRemittance {
     private String reference;
     private String referenceType;

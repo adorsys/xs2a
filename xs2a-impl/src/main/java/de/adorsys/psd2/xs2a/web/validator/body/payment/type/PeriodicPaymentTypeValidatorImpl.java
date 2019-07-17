@@ -76,6 +76,10 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
         if (areDatesInvalidInPeriodicPayment(periodicPayment)) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(PERIOD_INVALID, "Date values has wrong order"));
         }
+
+        validateUltimateDebtor(periodicPayment.getUltimateDebtor(), messageError);
+        validateUltimateCreditor(periodicPayment.getUltimateCreditor(), messageError);
+        validateRemittanceInformationStructured(periodicPayment.getRemittanceInformationStructured(), messageError);
     }
 
     private void validateStartDate(LocalDate startDate, MessageError messageError) {

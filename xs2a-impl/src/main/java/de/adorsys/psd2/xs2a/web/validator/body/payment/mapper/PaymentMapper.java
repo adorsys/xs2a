@@ -28,6 +28,8 @@ import de.adorsys.psd2.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,10 +45,14 @@ import java.util.stream.Collectors;
 public class PaymentMapper {
 
     private ObjectMapper objectMapper;
+    private PurposeCodeMapper purposeCodeMapper;
+    private RemittanceMapper remittanceMapper;
 
     @Autowired
-    public PaymentMapper(ObjectMapper objectMapper) {
+    public PaymentMapper(ObjectMapper objectMapper, PurposeCodeMapper purposeCodeMapper, RemittanceMapper remittanceMapper) {
         this.objectMapper = objectMapper;
+        this.purposeCodeMapper = purposeCodeMapper;
+        this.remittanceMapper = remittanceMapper;
     }
 
     public SinglePayment getSinglePayment(Object body) {
@@ -77,6 +83,10 @@ public class PaymentMapper {
         payment.setCreditorAddress(mapToXs2aAddress(paymentRequest.getCreditorAddress()));
         payment.setRemittanceInformationUnstructured(paymentRequest.getRemittanceInformationUnstructured());
         payment.setRequestedExecutionDate(paymentRequest.getRequestedExecutionDate());
+        payment.setUltimateDebtor(paymentRequest.getUltimateDebtor());
+        payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
+        payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
+        payment.setRemittanceInformationStructured(remittanceMapper.mapToToRemittance(paymentRequest.getRemittanceInformationStructured()));
         return payment;
     }
 
@@ -99,6 +109,10 @@ public class PaymentMapper {
         payment.setEndDate(paymentRequest.getEndDate());
         payment.setFrequency(mapToXs2aFrequencyCode(paymentRequest.getFrequency()));
         payment.setDayOfExecution(mapToPisDayOfExecution(paymentRequest.getDayOfExecution()).orElse(null));
+        payment.setUltimateDebtor(paymentRequest.getUltimateDebtor());
+        payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
+        payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
+        payment.setRemittanceInformationStructured(remittanceMapper.mapToToRemittance(paymentRequest.getRemittanceInformationStructured()));
         return payment;
     }
 
@@ -183,6 +197,10 @@ public class PaymentMapper {
                        payment.setCreditorAddress(mapToXs2aAddress(p.getCreditorAddress()));
                        payment.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
                        payment.setRequestedExecutionTime(paymentRequest.getRequestedExecutionTime());
+                       payment.setUltimateDebtor(p.getUltimateDebtor());
+                       payment.setUltimateCreditor(p.getUltimateCreditor());
+                       payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(p.getPurposeCode()));
+                       payment.setRemittanceInformationStructured(remittanceMapper.mapToToRemittance(p.getRemittanceInformationStructured()));
                        return payment;
                    })
                    .collect(Collectors.toList());

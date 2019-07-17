@@ -32,11 +32,14 @@ import java.util.Objects;
  */
 @ApiModel(description = "Generic body for a bulk payment initation entry.  The bulk entry type is a type which follows the JSON formats for the supported products for single payments excluding the data elements (if supported):   * debtorAccount   * requestedExecutionDate,   * requestedExecutionTime. These data elements may not be contained in any bulk entry.  This data object can be used to represent valid bulk payment initiations entry for the following JSON based payment product,  which where defined in the Implementation Guidelines:    * sepa-credit-transfers   * instant-sepa-credit-transfers   * target-2-payments   * cross-border-credit-transfers  For the convenience of the implementer additional which are already predefinded in the Implementation Guidelines  are included (but commented in source code), such that an ASPSP may add them easily.  Take care: Since the format is intended to fit for all payment products  there are additional conditions which are NOT covered by this specification. Please check the Implementation Guidelines for detailes.   The following data element are depending on the actual payment product available (in source code):             <table style=\"width:100%\">  <tr><th>Data Element</th><th>SCT EU Core</th><th>SCT INST EU Core</th><th>Target2 Paym. Core</th><th>Cross Border CT Core</th></tr>  <tr><td>endToEndIdentification</td><td> optional</td> <td>optional</td> <td>optional</td> <td>n.a.</td> </tr>  <tr><td>debtorId</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>ultimateDebtor</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>instructedAmount</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>transactionCurrency</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>exchangeRateInformation</td> <td>n.a.</td> <td>n.a.</td><td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>creditorAccount</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>creditorAgent</td> <td>optional</td> <td>optional</td> <td>optional</td> <td>conditional </td> </tr>  <tr><td>creditorAgentName</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>creditorName</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>creditorId</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>creditorAddress</td>optional</td> <td>optional</td> <td>optional</td> <td>conditional </td> </tr>  <tr><td>creditorNameAndAddress</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>ultimateCreditor</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>purposeCode</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>chargeBearer</td> <td>n.a.</td> <td>n.a.</td> <td>optional</td> <td>conditional </td> </tr>  <tr><td>remittanceInformationUnstructured</td> <td>optional</td> <td>optional</td> <td> optional</td> <td>optional</td> </tr>  <tr><td>remittanceInformationUnstructuredArray</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>remittanceInformationStructured</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>     </td></tr>   </table>    IMPORTANT: In this API definition the following holds:   *  All data elements mentioned above are defined, but some of them are commented,      i.e. they are only visible in the source code and can be used by uncommenting them.   * Data elements which are mandatory in the table above for all payment products      are set to be mandatory in this specification.   * Data elements which are indicated in the table above as n.a. for all payment products are commented in the source code.   * Data elements which are indicated to be option, conditional or mandatory for at least one payment product      in the table above are set to be optional in the s specification except the case where all are definde to be mandatory.    * Data element which are inticated to be n.a. can be used by the ASPS if needed.      In this case uncomment tthe the relatetd lines in the source code.   * If one uses this data types for some payment products he has to ensure that the used data type is      valid according to the underlying payment product, e.g. by some appropriate validations. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-07-11T10:33:19.649103+03:00[Europe/Kiev]")
 
 public class PaymentInitiationBulkElementJson   {
   @JsonProperty("endToEndIdentification")
   private String endToEndIdentification = null;
+
+  @JsonProperty("ultimateDebtor")
+  private String ultimateDebtor = null;
 
   @JsonProperty("instructedAmount")
   private Amount instructedAmount = null;
@@ -56,8 +59,17 @@ public class PaymentInitiationBulkElementJson   {
   @JsonProperty("creditorAddress")
   private Address creditorAddress = null;
 
+  @JsonProperty("ultimateCreditor")
+  private String ultimateCreditor = null;
+
+  @JsonProperty("purposeCode")
+  private PurposeCode purposeCode = null;
+
   @JsonProperty("remittanceInformationUnstructured")
   private String remittanceInformationUnstructured = null;
+
+  @JsonProperty("remittanceInformationStructured")
+  private RemittanceInformationStructured remittanceInformationStructured = null;
 
   public PaymentInitiationBulkElementJson endToEndIdentification(String endToEndIdentification) {
     this.endToEndIdentification = endToEndIdentification;
@@ -79,6 +91,28 @@ public class PaymentInitiationBulkElementJson   {
 
   public void setEndToEndIdentification(String endToEndIdentification) {
     this.endToEndIdentification = endToEndIdentification;
+  }
+
+  public PaymentInitiationBulkElementJson ultimateDebtor(String ultimateDebtor) {
+    this.ultimateDebtor = ultimateDebtor;
+    return this;
+  }
+
+  /**
+   * Get ultimateDebtor
+   * @return ultimateDebtor
+  **/
+  @ApiModelProperty(value = "")
+
+@Size(max=70) 
+
+  @JsonProperty("ultimateDebtor")
+  public String getUltimateDebtor() {
+    return ultimateDebtor;
+  }
+
+  public void setUltimateDebtor(String ultimateDebtor) {
+    this.ultimateDebtor = ultimateDebtor;
   }
 
   public PaymentInitiationBulkElementJson instructedAmount(Amount instructedAmount) {
@@ -219,6 +253,51 @@ public class PaymentInitiationBulkElementJson   {
     this.creditorAddress = creditorAddress;
   }
 
+  public PaymentInitiationBulkElementJson ultimateCreditor(String ultimateCreditor) {
+    this.ultimateCreditor = ultimateCreditor;
+    return this;
+  }
+
+  /**
+   * Get ultimateCreditor
+   * @return ultimateCreditor
+  **/
+  @ApiModelProperty(value = "")
+
+@Size(max=70) 
+
+  @JsonProperty("ultimateCreditor")
+  public String getUltimateCreditor() {
+    return ultimateCreditor;
+  }
+
+  public void setUltimateCreditor(String ultimateCreditor) {
+    this.ultimateCreditor = ultimateCreditor;
+  }
+
+  public PaymentInitiationBulkElementJson purposeCode(PurposeCode purposeCode) {
+    this.purposeCode = purposeCode;
+    return this;
+  }
+
+  /**
+   * Get purposeCode
+   * @return purposeCode
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("purposeCode")
+  public PurposeCode getPurposeCode() {
+    return purposeCode;
+  }
+
+  public void setPurposeCode(PurposeCode purposeCode) {
+    this.purposeCode = purposeCode;
+  }
+
   public PaymentInitiationBulkElementJson remittanceInformationUnstructured(String remittanceInformationUnstructured) {
     this.remittanceInformationUnstructured = remittanceInformationUnstructured;
     return this;
@@ -241,6 +320,29 @@ public class PaymentInitiationBulkElementJson   {
     this.remittanceInformationUnstructured = remittanceInformationUnstructured;
   }
 
+  public PaymentInitiationBulkElementJson remittanceInformationStructured(RemittanceInformationStructured remittanceInformationStructured) {
+    this.remittanceInformationStructured = remittanceInformationStructured;
+    return this;
+  }
+
+  /**
+   * Get remittanceInformationStructured
+   * @return remittanceInformationStructured
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("remittanceInformationStructured")
+  public RemittanceInformationStructured getRemittanceInformationStructured() {
+    return remittanceInformationStructured;
+  }
+
+  public void setRemittanceInformationStructured(RemittanceInformationStructured remittanceInformationStructured) {
+    this.remittanceInformationStructured = remittanceInformationStructured;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -252,18 +354,22 @@ public class PaymentInitiationBulkElementJson   {
     }
     PaymentInitiationBulkElementJson paymentInitiationBulkElementJson = (PaymentInitiationBulkElementJson) o;
     return Objects.equals(this.endToEndIdentification, paymentInitiationBulkElementJson.endToEndIdentification) &&
+        Objects.equals(this.ultimateDebtor, paymentInitiationBulkElementJson.ultimateDebtor) &&
         Objects.equals(this.instructedAmount, paymentInitiationBulkElementJson.instructedAmount) &&
         Objects.equals(this.creditorAccount, paymentInitiationBulkElementJson.creditorAccount) &&
         Objects.equals(this.creditorAgent, paymentInitiationBulkElementJson.creditorAgent) &&
         Objects.equals(this.creditorAgentName, paymentInitiationBulkElementJson.creditorAgentName) &&
         Objects.equals(this.creditorName, paymentInitiationBulkElementJson.creditorName) &&
         Objects.equals(this.creditorAddress, paymentInitiationBulkElementJson.creditorAddress) &&
-        Objects.equals(this.remittanceInformationUnstructured, paymentInitiationBulkElementJson.remittanceInformationUnstructured);
+        Objects.equals(this.ultimateCreditor, paymentInitiationBulkElementJson.ultimateCreditor) &&
+        Objects.equals(this.purposeCode, paymentInitiationBulkElementJson.purposeCode) &&
+        Objects.equals(this.remittanceInformationUnstructured, paymentInitiationBulkElementJson.remittanceInformationUnstructured) &&
+        Objects.equals(this.remittanceInformationStructured, paymentInitiationBulkElementJson.remittanceInformationStructured);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(endToEndIdentification, instructedAmount, creditorAccount, creditorAgent, creditorAgentName, creditorName, creditorAddress, remittanceInformationUnstructured);
+    return Objects.hash(endToEndIdentification, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorAgentName, creditorName, creditorAddress, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured);
   }
 
   @Override
@@ -272,13 +378,17 @@ public class PaymentInitiationBulkElementJson   {
     sb.append("class PaymentInitiationBulkElementJson {\n");
     
     sb.append("    endToEndIdentification: ").append(toIndentedString(endToEndIdentification)).append("\n");
+    sb.append("    ultimateDebtor: ").append(toIndentedString(ultimateDebtor)).append("\n");
     sb.append("    instructedAmount: ").append(toIndentedString(instructedAmount)).append("\n");
     sb.append("    creditorAccount: ").append(toIndentedString(creditorAccount)).append("\n");
     sb.append("    creditorAgent: ").append(toIndentedString(creditorAgent)).append("\n");
     sb.append("    creditorAgentName: ").append(toIndentedString(creditorAgentName)).append("\n");
     sb.append("    creditorName: ").append(toIndentedString(creditorName)).append("\n");
     sb.append("    creditorAddress: ").append(toIndentedString(creditorAddress)).append("\n");
+    sb.append("    ultimateCreditor: ").append(toIndentedString(ultimateCreditor)).append("\n");
+    sb.append("    purposeCode: ").append(toIndentedString(purposeCode)).append("\n");
     sb.append("    remittanceInformationUnstructured: ").append(toIndentedString(remittanceInformationUnstructured)).append("\n");
+    sb.append("    remittanceInformationStructured: ").append(toIndentedString(remittanceInformationStructured)).append("\n");
     sb.append("}");
     return sb.toString();
   }

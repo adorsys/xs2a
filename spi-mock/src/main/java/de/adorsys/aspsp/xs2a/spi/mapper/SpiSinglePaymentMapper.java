@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.spi.mapper;
 
 import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
@@ -34,6 +35,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SpiSinglePaymentMapper {
     private final SpiPaymentMapper spiPaymentMapper;
+    private final SpiRemittanceMapper spiRemittanceMapper;
 
     public AspspSinglePayment mapToAspspSinglePayment(@NotNull SpiSinglePayment payment, TransactionStatus transactionStatus) {
         AspspSinglePayment single = new AspspSinglePayment();
@@ -49,6 +51,10 @@ public class SpiSinglePaymentMapper {
         single.setPaymentStatus(spiPaymentMapper.mapToAspspTransactionStatus(transactionStatus));
         single.setRequestedExecutionTime(Optional.ofNullable(payment.getRequestedExecutionTime()).map(OffsetDateTime::toLocalDateTime).orElse(null));
         single.setRequestedExecutionDate(payment.getRequestedExecutionDate());
+        single.setUltimateDebtor(payment.getUltimateDebtor());
+        single.setUltimateCreditor(payment.getUltimateCreditor());
+        single.setPurposeCode(Optional.ofNullable(payment.getPurposeCode()).map(PurposeCode::toString).orElse(null));
+        single.setRemittanceInformationStructured(spiRemittanceMapper.mapToAspspRemittance(payment.getRemittanceInformationStructured()));
         return single;
     }
 
@@ -66,6 +72,10 @@ public class SpiSinglePaymentMapper {
         single.setPaymentStatus(spiPaymentMapper.mapToTransactionStatus(payment.getPaymentStatus()));
         single.setRequestedExecutionTime(Optional.ofNullable(payment.getRequestedExecutionTime()).map(t -> t.atOffset(ZoneOffset.UTC)).orElse(null));
         single.setRequestedExecutionDate(payment.getRequestedExecutionDate());
+        single.setUltimateDebtor(payment.getUltimateDebtor());
+        single.setUltimateCreditor(payment.getUltimateCreditor());
+        single.setPurposeCode(PurposeCode.fromValue(payment.getPurposeCode()));
+        single.setRemittanceInformationStructured(spiRemittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));
         return single;
     }
 

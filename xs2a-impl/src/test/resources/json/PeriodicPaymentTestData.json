@@ -35,9 +35,7 @@
     "amount": "1000.00",
     "currency": "EUR"
   },
-  "purposeCode": {
-    "code": "BCENECEQ"
-  },
+  "purposeCode": "CDCS",
   "remittanceInformationStructured": {
     "reference": "Ref Number Merchant",
     "referenceIssuer": "string",

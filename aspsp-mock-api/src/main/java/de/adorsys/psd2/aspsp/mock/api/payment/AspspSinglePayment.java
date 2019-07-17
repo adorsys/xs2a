@@ -34,19 +34,15 @@ public class AspspSinglePayment {
     private String paymentId;
     private String endToEndIdentification;
     private AspspAccountReference debtorAccount;
-    @Deprecated // Since 1.2
     private String ultimateDebtor;
     private AspspAmount instructedAmount;
     private AspspAccountReference creditorAccount;
     private String creditorAgent;
     private String creditorName;
     private AspspAddress creditorAddress;
-    @Deprecated // Since 1.2
     private String ultimateCreditor;
-    @Deprecated // Since 1.2
     private String purposeCode;
     private String remittanceInformationUnstructured;
-    @Deprecated // Since 1.2
     private AspspRemittance remittanceInformationStructured;
     @Deprecated // Since 1.2
     private LocalDate requestedExecutionDate;

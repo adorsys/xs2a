@@ -17,16 +17,16 @@
 package de.adorsys.psd2.xs2a.service.mapper.consent;
 
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
-import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.xs2a.domain.pis.*;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -36,7 +36,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
+@AllArgsConstructor
 public class Xs2aToCmsPisCommonPaymentRequestMapper {
+    private final Xs2aRemittanceMapper xs2aRemittanceMapper;
 
     public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response, byte[] paymentData) {
         PisPaymentInfo paymentInfo = mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response);
@@ -109,12 +111,12 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
                        pisPayment.setCreditorName(pmt.getCreditorName());
                        pisPayment.setCreditorAddress(mapToCmsAddress(pmt.getCreditorAddress()));
                        pisPayment.setRemittanceInformationUnstructured(pmt.getRemittanceInformationUnstructured());
-                       pisPayment.setRemittanceInformationStructured(mapToCmsRemittance(pmt.getRemittanceInformationStructured()));
+                       pisPayment.setRemittanceInformationStructured(xs2aRemittanceMapper.mapToCmsRemittance(pmt.getRemittanceInformationStructured()));
                        pisPayment.setRequestedExecutionDate(pmt.getRequestedExecutionDate());
                        pisPayment.setRequestedExecutionTime(pmt.getRequestedExecutionTime());
                        pisPayment.setUltimateCreditor(pmt.getUltimateCreditor());
                        pisPayment.setPurposeCode(Optional.ofNullable(pmt.getPurposeCode())
-                                                     .map(Xs2aPurposeCode::getCode)
+                                                     .map(PurposeCode::toString)
                                                      .orElse(""));
 
                        return pisPayment;
@@ -138,12 +140,12 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
                        pisPayment.setCreditorName(pmt.getCreditorName());
                        pisPayment.setCreditorAddress(mapToCmsAddress(pmt.getCreditorAddress()));
                        pisPayment.setRemittanceInformationUnstructured(pmt.getRemittanceInformationUnstructured());
-                       pisPayment.setRemittanceInformationStructured(mapToCmsRemittance(pmt.getRemittanceInformationStructured()));
+                       pisPayment.setRemittanceInformationStructured(xs2aRemittanceMapper.mapToCmsRemittance(pmt.getRemittanceInformationStructured()));
                        pisPayment.setRequestedExecutionDate(pmt.getRequestedExecutionDate());
                        pisPayment.setRequestedExecutionTime(pmt.getRequestedExecutionTime());
                        pisPayment.setUltimateCreditor(pmt.getUltimateCreditor());
                        pisPayment.setPurposeCode(Optional.ofNullable(pmt.getPurposeCode())
-                                                     .map(Xs2aPurposeCode::getCode)
+                                                     .map(PurposeCode::toString)
                                                      .orElse(""));
                        pisPayment.setStartDate(pmt.getStartDate());
                        pisPayment.setEndDate(pmt.getEndDate());
@@ -166,17 +168,5 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
                        cmsAddress.setCountry(Optional.ofNullable(adr.getCountry()).map(Xs2aCountryCode::getCode).orElse(null));
                        return cmsAddress;
                    }).orElseGet(CmsAddress::new);
-    }
-
-    private CmsRemittance mapToCmsRemittance(Remittance remittance) {
-        return Optional.ofNullable(remittance)
-                   .map(rm -> {
-                       CmsRemittance cmsRemittance = new CmsRemittance();
-                       cmsRemittance.setReference(rm.getReference());
-                       cmsRemittance.setReferenceIssuer(rm.getReferenceIssuer());
-                       cmsRemittance.setReferenceType(rm.getReferenceType());
-                       return cmsRemittance;
-                   })
-                   .orElseGet(CmsRemittance::new);
     }
 }

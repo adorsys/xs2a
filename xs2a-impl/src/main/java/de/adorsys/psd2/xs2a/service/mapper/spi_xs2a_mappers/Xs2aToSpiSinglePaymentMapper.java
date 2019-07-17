@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,7 @@ public class Xs2aToSpiSinglePaymentMapper {
     private final Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    private final RemittanceMapper remittanceMapper;
 
     public SpiSinglePayment mapToSpiSinglePayment(SinglePayment payment, String paymentProduct) {
         SpiSinglePayment single = new SpiSinglePayment(paymentProduct);
@@ -47,6 +49,10 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         single.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(payment.getPsuDataList()));
         single.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
+        single.setUltimateDebtor(payment.getUltimateDebtor());
+        single.setUltimateCreditor(payment.getUltimateCreditor());
+        single.setPurposeCode(payment.getPurposeCode());
+        single.setRemittanceInformationStructured(remittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));
         return single;
     }
 }

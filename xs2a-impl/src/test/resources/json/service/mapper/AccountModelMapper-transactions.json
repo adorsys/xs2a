@@ -47,9 +47,7 @@
   "ultimateDebtor": "Vasisualiy",
   "remittanceInformationUnstructured": "escrte foin",
   "remittanceInformationStructured": "secret info",
-  "purposeCode": {
-    "code": "BKDF"
-  },
+  "purposeCode": "BKDF",
   "bankTransactionCodeCode": {
     "code": "some bank code"
   },
