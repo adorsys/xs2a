@@ -17,6 +17,7 @@
 package de.adorsys.psd2.event.persist;
 
 import de.adorsys.psd2.event.core.model.EventOrigin;
+import de.adorsys.psd2.event.persist.model.ReportEvent;
 import de.adorsys.psd2.event.persist.model.EventPO;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -73,7 +74,7 @@ public class EventRepositoryImplIT {
 
     @Test
     public void getEventsForPeriod() {
-        List<EventPO> eventsForPeriod = repository.getEventsForPeriod(start, end, INSTANCE_ID);
+        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriod(start, end, INSTANCE_ID);
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
         assertEquals(eventPO, eventsForPeriod.get(0));
@@ -81,7 +82,7 @@ public class EventRepositoryImplIT {
 
     @Test
     public void getEventsForPeriodAndConsentId() {
-        List<EventPO> eventsForPeriod = repository.getEventsForPeriodAndConsentId(start, end, CONSENT_ID, INSTANCE_ID);
+        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndConsentId(start, end, CONSENT_ID, INSTANCE_ID);
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
         assertEquals(eventPO, eventsForPeriod.get(0));
@@ -89,7 +90,7 @@ public class EventRepositoryImplIT {
 
     @Test
     public void getEventsForPeriodAndPaymentId() {
-        List<EventPO> eventsForPeriod = repository.getEventsForPeriodAndPaymentId(start, end, PAYMENT_ID, INSTANCE_ID);
+        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndPaymentId(start, end, PAYMENT_ID, INSTANCE_ID);
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
         assertEquals(eventPO, eventsForPeriod.get(0));
@@ -97,7 +98,7 @@ public class EventRepositoryImplIT {
 
     @Test
     public void getEventsForPeriodAndEventOrigin() {
-        List<EventPO> eventsForPeriod = repository.getEventsForPeriodAndEventOrigin(start, end, EventOrigin.TPP, INSTANCE_ID);
+        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndEventOrigin(start, end, EventOrigin.TPP, INSTANCE_ID);
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
         assertEquals(eventPO, eventsForPeriod.get(0));
@@ -105,7 +106,7 @@ public class EventRepositoryImplIT {
 
     @Test
     public void getEventsForPeriodAndEventType() {
-        List<EventPO> eventsForPeriod = repository.getEventsForPeriodAndEventType(start, end, EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, INSTANCE_ID);
+        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndEventType(start, end, EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, INSTANCE_ID);
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
         assertEquals(eventPO, eventsForPeriod.get(0));

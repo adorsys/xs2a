@@ -25,10 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {EventDBMapperImpl.class})
@@ -70,43 +68,5 @@ public class EventDBMapperTest {
     public void toEventEntity_nullValue() {
         EventEntity actualEventEntity = mapper.toEventEntity(null);
         assertNull(actualEventEntity);
-    }
-
-    @Test
-    public void toEventPO() {
-        EventEntity eventEntity = jsonReader.getObjectFromFile("json/event-entity.json", EventEntity.class);
-        eventEntity.setPayload(PAYLOAD);
-
-        EventPO actualEventPO = mapper.toEventPO(eventEntity);
-
-        EventPO expectedEventPO = jsonReader.getObjectFromFile("json/event.json", EventPO.class);
-        expectedEventPO.setPayload(PAYLOAD);
-        assertEquals(expectedEventPO, actualEventPO);
-    }
-
-    @Test
-    public void toEventPO_nullValue() {
-        EventPO actualEventPO = mapper.toEventPO(null);
-        assertNull(actualEventPO);
-    }
-
-    @Test
-    public void toEventPOList() {
-        EventEntity eventEntity = jsonReader.getObjectFromFile("json/event-entity.json", EventEntity.class);
-        eventEntity.setPayload(PAYLOAD);
-
-        List<EventPO> actualEventPOList = mapper.toEventPOList(Collections.singletonList(eventEntity));
-
-        EventPO expectedEventPO = jsonReader.getObjectFromFile("json/event.json", EventPO.class);
-        expectedEventPO.setPayload(PAYLOAD);
-        assertEquals(1, actualEventPOList.size());
-        assertEquals(expectedEventPO, actualEventPOList.get(0));
-    }
-
-    @Test
-    public void toEventPOList_nullValue() {
-        List<EventPO> actualEventPOList = mapper.toEventPOList(null);
-        assertNotNull(actualEventPOList);
-        assertTrue(actualEventPOList.isEmpty());
     }
 }

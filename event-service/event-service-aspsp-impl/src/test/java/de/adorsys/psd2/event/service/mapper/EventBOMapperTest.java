@@ -17,8 +17,8 @@
 package de.adorsys.psd2.event.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.psd2.event.persist.model.EventPO;
-import de.adorsys.psd2.event.service.model.EventBO;
+import de.adorsys.psd2.event.persist.model.ReportEvent;
+import de.adorsys.psd2.event.service.model.AspspEvent;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,13 +33,13 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {AspspEventBOMapperImpl.class, JsonConverterService.class, ObjectMapper.class})
+@ContextConfiguration(classes = {AspspEventMapperImpl.class, JsonConverterService.class, ObjectMapper.class})
 public class EventBOMapperTest {
 
     private static final String PAYLOAD = "payload";
 
     @Autowired
-    private AspspEventBOMapper mapper;
+    private AspspEventMapper mapper;
 
     private JsonReader jsonReader = new JsonReader();
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -51,39 +51,39 @@ public class EventBOMapperTest {
     }
 
     @Test
-    public void toEventBO() {
-        EventPO eventPO = jsonReader.getObjectFromFile("json/event-po.json", EventPO.class);
-        eventPO.setPayload(payloadAsBytes);
+    public void toAspspEvent() {
+        ReportEvent reportEvent = jsonReader.getObjectFromFile("json/aspsp-event-po.json", ReportEvent.class);
+        reportEvent.setPayload(payloadAsBytes);
 
-        EventBO actualEventBO = mapper.toEventBO(eventPO);
+        AspspEvent actualAspspEvent = mapper.toAspspEvent(reportEvent);
 
-        EventBO expectedEventBO = jsonReader.getObjectFromFile("json/event-bo.json", EventBO.class);
-        assertEquals(expectedEventBO, actualEventBO);
+        AspspEvent expectedEventBO = jsonReader.getObjectFromFile("json/aspsp-event-bo.json", AspspEvent.class);
+        assertEquals(expectedEventBO, actualAspspEvent);
     }
 
     @Test
-    public void toEventBO_nullValue() {
-        EventBO actualEventBO = mapper.toEventBO(null);
+    public void toAspspEvent_nullValue() {
+        AspspEvent actualAspspEvent = mapper.toAspspEvent(null);
 
-        assertNull(actualEventBO);
+        assertNull(actualAspspEvent);
     }
 
     @Test
-    public void toEventBOList() {
-        EventPO eventPO = jsonReader.getObjectFromFile("json/event-po.json", EventPO.class);
-        eventPO.setPayload(payloadAsBytes);
+    public void toAspspEventList() {
+        ReportEvent reportEvent = jsonReader.getObjectFromFile("json/aspsp-event-po.json", ReportEvent.class);
+        reportEvent.setPayload(payloadAsBytes);
 
-        List<EventBO> actualEventBOList = mapper.toEventBOList(Collections.singletonList(eventPO));
+        List<AspspEvent> actualAspspEventList = mapper.toAspspEventList(Collections.singletonList(reportEvent));
 
-        EventBO expectedEventBO = jsonReader.getObjectFromFile("json/event-bo.json", EventBO.class);
-        assertEquals(1, actualEventBOList.size());
-        assertEquals(expectedEventBO, actualEventBOList.get(0));
+        AspspEvent expectedAspspEvent = jsonReader.getObjectFromFile("json/aspsp-event-bo.json", AspspEvent.class);
+        assertEquals(1, actualAspspEventList.size());
+        assertEquals(expectedAspspEvent, actualAspspEventList.get(0));
     }
 
     @Test
-    public void toEventBOList_nullValue() {
-        List<EventBO> actualEventPOList = mapper.toEventBOList(null);
-        assertNotNull(actualEventPOList);
-        assertTrue(actualEventPOList.isEmpty());
+    public void toAspspEventBOList_nullValue() {
+        List<AspspEvent> actualAspspEventList = mapper.toAspspEventList(null);
+        assertNotNull(actualAspspEventList);
+        assertTrue(actualAspspEventList.isEmpty());
     }
 }

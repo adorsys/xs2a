@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.event.service.mapper;
 
-import de.adorsys.psd2.event.persist.model.EventPO;
-import de.adorsys.psd2.event.service.model.EventBO;
-import de.adorsys.psd2.event.service.model.PsuIdDataBO;
+import de.adorsys.psd2.event.persist.model.ReportEvent;
 import de.adorsys.psd2.event.persist.model.PsuIdDataPO;
+import de.adorsys.psd2.event.service.model.AspspEvent;
+import de.adorsys.psd2.event.service.model.AspspPsuIdData;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -27,33 +27,45 @@ import org.mapstruct.NullValueMappingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
-public abstract class AspspEventBOMapper {
+public abstract class AspspEventMapper {
 
     @Autowired
     protected JsonConverterService jsonConverterService;
 
     @Mapping(target = "xRequestId", source = "XRequestId", qualifiedByName = "mapToXRequestId")
-    @Mapping(target = "psuIdData", source = "psuIdData", qualifiedByName = "mapToPduIdData")
-    @Mapping(target = "payload", expression = "java(jsonConverterService.toObject(eventPO.getPayload(), Object.class).orElse(null))")
-    public abstract EventBO toEventBO(EventPO eventPO);
+    @Mapping(target = "psuIdData", source = "psuIdData", qualifiedByName = "mapToPduIdDataSet")
+    @Mapping(target = "payload", expression = "java(jsonConverterService.toObject(event.getPayload(), Object.class).orElse(null))")
+    public abstract AspspEvent toAspspEvent(ReportEvent event);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-    public abstract List<EventBO> toEventBOList(List<EventPO> result);
+    public abstract List<AspspEvent> toAspspEventList(List<ReportEvent> events);
+
+    protected Set<AspspPsuIdData> mapToPduIdDataSet(Set<PsuIdDataPO> psuIdData) {
+        if (psuIdData == null) {
+            return null;
+        }
+
+        return psuIdData.stream()
+                   .map(this::mapToPduIdData)
+                   .collect(Collectors.toSet());
+    }
 
     protected UUID mapToXRequestId(String xRequestId) {
         return xRequestId != null ? UUID.fromString(xRequestId) : null;
     }
 
-    protected PsuIdDataBO mapToPduIdData(PsuIdDataPO psuIdDataPO) {
+    protected AspspPsuIdData mapToPduIdData(PsuIdDataPO psuIdDataPO) {
         if (psuIdDataPO == null) {
             return null;
         }
-        return new PsuIdDataBO(psuIdDataPO.getPsuId(),
-                               psuIdDataPO.getPsuIdType(),
-                               psuIdDataPO.getPsuCorporateId(),
-                               psuIdDataPO.getPsuCorporateIdType());
+        return new AspspPsuIdData(psuIdDataPO.getPsuId(),
+                                  psuIdDataPO.getPsuIdType(),
+                                  psuIdDataPO.getPsuCorporateId(),
+                                  psuIdDataPO.getPsuCorporateIdType());
     }
 }
