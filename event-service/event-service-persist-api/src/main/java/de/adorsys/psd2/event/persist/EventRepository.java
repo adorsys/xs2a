@@ -16,14 +16,15 @@
 
 package de.adorsys.psd2.event.persist;
 
-import java.time.OffsetDateTime;
-import java.util.List;
-
 import de.adorsys.psd2.event.core.model.EventOrigin;
 import de.adorsys.psd2.event.core.model.EventType;
+import de.adorsys.psd2.event.persist.model.ReportEvent;
 import de.adorsys.psd2.event.persist.model.EventPO;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.time.OffsetDateTime;
+import java.util.List;
 
 public interface EventRepository {
 
@@ -41,7 +42,7 @@ public interface EventRepository {
      * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period
      */
-    List<EventPO> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId);
+    List<ReportEvent> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId);
 
     /**
      * Returns a list of Event objects, recorded in given time period and with the given consentId
@@ -52,7 +53,7 @@ public interface EventRepository {
      * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period and with a given consentId
      */
-    List<EventPO> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId, @Nullable String instanceId);
+    List<ReportEvent> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId, @Nullable String instanceId);
 
     /**
      * Returns a list of Event objects, recorded in given time period and with the given paymentId
@@ -63,7 +64,7 @@ public interface EventRepository {
      * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period and with a given paymentId
      */
-    List<EventPO> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId, @Nullable String instanceId);
+    List<ReportEvent> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId, @Nullable String instanceId);
 
     /**
      * Returns a list of Event objects of the specific type, recorded in given time period
@@ -74,7 +75,7 @@ public interface EventRepository {
      * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period and of a specific type
      */
-    List<EventPO> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType, @Nullable String instanceId);
+    List<ReportEvent> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType, @Nullable String instanceId);
 
     /**
      * Returns a list of Event objects from a specific origin, recorded in given time period
@@ -85,5 +86,5 @@ public interface EventRepository {
      * @param instanceId  The id of particular service instance
      * @return List of Event objects, recorded in given time period and from a specific origin
      */
-    List<EventPO> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin, @Nullable String instanceId);
+    List<ReportEvent> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin, @Nullable String instanceId);
 }

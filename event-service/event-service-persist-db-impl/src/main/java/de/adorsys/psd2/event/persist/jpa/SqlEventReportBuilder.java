@@ -14,26 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.event.service.model;
+package de.adorsys.psd2.event.persist.jpa;
 
-import lombok.Value;
-import org.jetbrains.annotations.Nullable;
+public interface SqlEventReportBuilder {
+    SqlEventReportBuilder period();
 
-/**
- * Contains authorisation data about PSU.
- * Normally it comes with the TPP request header.
- */
-@Value
-public class PsuIdDataBO {
-    @Nullable
-    private String psuId;
+    SqlEventReportBuilder instanceId();
 
-    @Nullable
-    private String psuIdType;
+    SqlEventReportBuilder consentId();
 
-    @Nullable
-    private String psuCorporateId;
+    SqlEventReportBuilder paymentId();
 
-    @Nullable
-    private String psuCorporateIdType;
+    SqlEventReportBuilder eventType();
+
+    SqlEventReportBuilder eventOrigin();
+
+    String build();
 }

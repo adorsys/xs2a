@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.event.service;
 
-import de.adorsys.psd2.event.persist.EventRepository;
 import de.adorsys.psd2.event.core.model.EventOrigin;
-import de.adorsys.psd2.event.persist.model.EventPO;
 import de.adorsys.psd2.event.core.model.EventType;
-import de.adorsys.psd2.event.service.mapper.AspspEventBOMapper;
-import de.adorsys.psd2.event.service.model.EventBO;
+import de.adorsys.psd2.event.persist.EventRepository;
+import de.adorsys.psd2.event.persist.model.ReportEvent;
+import de.adorsys.psd2.event.service.mapper.AspspEventMapper;
+import de.adorsys.psd2.event.service.model.AspspEvent;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,35 +34,37 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AspspEventServiceImpl implements AspspEventService {
     private final EventRepository eventRepository;
-    private final AspspEventBOMapper eventBOMapper;
+    private final AspspEventMapper eventBOMapper;
 
     @Override
-    public List<EventBO> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId) {
-        List<EventPO> result = eventRepository.getEventsForPeriod(start, end, instanceId);
-        return eventBOMapper.toEventBOList(result);
+    public List<AspspEvent> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId) {
+        List<ReportEvent> events = eventRepository.getEventsForPeriod(start, end, instanceId);
+
+
+        return eventBOMapper.toAspspEventList(events);
     }
 
     @Override
-    public List<EventBO> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId, @Nullable String instanceId) {
-        List<EventPO> result = eventRepository.getEventsForPeriodAndConsentId(start, end, consentId, instanceId);
-        return eventBOMapper.toEventBOList(result);
+    public List<AspspEvent> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId, @Nullable String instanceId) {
+        List<ReportEvent> result = eventRepository.getEventsForPeriodAndConsentId(start, end, consentId, instanceId);
+        return eventBOMapper.toAspspEventList(result);
     }
 
     @Override
-    public List<EventBO> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId, @Nullable String instanceId) {
-        List<EventPO> result = eventRepository.getEventsForPeriodAndPaymentId(start, end, paymentId, instanceId);
-        return eventBOMapper.toEventBOList(result);
+    public List<AspspEvent> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId, @Nullable String instanceId) {
+        List<ReportEvent> result = eventRepository.getEventsForPeriodAndPaymentId(start, end, paymentId, instanceId);
+        return eventBOMapper.toAspspEventList(result);
     }
 
     @Override
-    public List<EventBO> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType, @Nullable String instanceId) {
-        List<EventPO> result = eventRepository.getEventsForPeriodAndEventType(start, end, eventType, instanceId);
-        return eventBOMapper.toEventBOList(result);
+    public List<AspspEvent> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType, @Nullable String instanceId) {
+        List<ReportEvent> result = eventRepository.getEventsForPeriodAndEventType(start, end, eventType, instanceId);
+        return eventBOMapper.toAspspEventList(result);
     }
 
     @Override
-    public List<EventBO> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin, @Nullable String instanceId) {
-        List<EventPO> result = eventRepository.getEventsForPeriodAndEventOrigin(start, end, eventOrigin, instanceId);
-        return eventBOMapper.toEventBOList(result);
+    public List<AspspEvent> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin, @Nullable String instanceId) {
+        List<ReportEvent> result = eventRepository.getEventsForPeriodAndEventOrigin(start, end, eventOrigin, instanceId);
+        return eventBOMapper.toAspspEventList(result);
     }
 }

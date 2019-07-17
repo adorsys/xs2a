@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -31,7 +32,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @EqualsAndHashCode
-public class EventBO {
+public class AspspEvent {
     /**
      * Date and time indicating when the event has occurred.
      */
@@ -65,9 +66,9 @@ public class EventBO {
     private String instanceId;
 
     /**
-     * PSU data
+     * List of PSU data
      */
-    private PsuIdDataBO psuIdData;
+    private List<AspspPsuIdData> psuIdData;
 
     /**
      * Authorization number of the TPP
@@ -85,7 +86,7 @@ public class EventBO {
      */
     private Object payload;
 
-    private EventBO() {
+    private AspspEvent() {
     }
 
     public static EventBuilder builder() {
@@ -102,7 +103,7 @@ public class EventBO {
         private String instanceId;
         private String tppAuthorisationNumber;
         private UUID xRequestId;
-        private PsuIdDataBO psuIdData;
+        private List<AspspPsuIdData> psuIdData;
 
         private EventBuilder() {
         }
@@ -142,7 +143,7 @@ public class EventBO {
             return this;
         }
 
-        public EventBuilder psuIdData(PsuIdDataBO psuIdData) {
+        public EventBuilder psuIdData(List<AspspPsuIdData> psuIdData) {
             this.psuIdData = psuIdData;
             return this;
         }
@@ -157,8 +158,8 @@ public class EventBO {
             return this;
         }
 
-        public EventBO build() {
-            EventBO event = new EventBO();
+        public AspspEvent build() {
+            AspspEvent event = new AspspEvent();
             event.setTimestamp(timestamp);
             event.setConsentId(consentId);
             event.setPaymentId(paymentId);

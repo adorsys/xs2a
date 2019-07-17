@@ -18,7 +18,7 @@ package de.adorsys.psd2.event.service;
 
 import de.adorsys.psd2.event.core.model.EventOrigin;
 import de.adorsys.psd2.event.core.model.EventType;
-import de.adorsys.psd2.event.service.model.EventBO;
+import de.adorsys.psd2.event.service.model.AspspEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +39,7 @@ public interface AspspEventService {
      * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period
      */
-    List<EventBO> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId);
+    List<AspspEvent> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId);
 
     /**
      * Returns a list of Event objects, recorded in given time period and with the given consentId
@@ -50,7 +50,7 @@ public interface AspspEventService {
      * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period and with a given consentId
      */
-    List<EventBO> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId, @Nullable String instanceId);
+    List<AspspEvent> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId, @Nullable String instanceId);
 
     /**
      * Returns a list of Event objects, recorded in given time period and with the given paymentId
@@ -61,7 +61,7 @@ public interface AspspEventService {
      * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period and with a given paymentId
      */
-    List<EventBO> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId, @Nullable String instanceId);
+    List<AspspEvent> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId, @Nullable String instanceId);
 
     /**
      * Returns a list of Event objects of the specific type, recorded in given time period
@@ -72,7 +72,7 @@ public interface AspspEventService {
      * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period and of a specific type
      */
-    List<EventBO> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType, @Nullable String instanceId);
+    List<AspspEvent> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType, @Nullable String instanceId);
 
     /**
      * Returns a list of Event objects from a specific origin, recorded in given time period
@@ -83,5 +83,5 @@ public interface AspspEventService {
      * @param instanceId  The id of particular service instance
      * @return List of Event objects, recorded in given time period and from a specific origin
      */
-    List<EventBO> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin, @Nullable String instanceId);
+    List<AspspEvent> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin, @Nullable String instanceId);
 }

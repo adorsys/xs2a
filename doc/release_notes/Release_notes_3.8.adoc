@@ -8,6 +8,7 @@
 * Bugfix: Authorisation ID is missing in update PSU responses
 * Refactor: removed SpiFrequencyCode enumerator
 * Bugfix: TPP URIs are validated in REDIRECT approach only
+* Feature: Add to events psuId from payments and consents
 
 == Refactor: ASPSP consent data refactoring
 
@@ -54,3 +55,9 @@ Enumerator SpiFrequencyCode was removed from the package `de.adorsys.psd2.xs2a.s
 == Bugfix: TPP URIs are validated in REDIRECT approach only
 
 From now on, TPP URIs are validated only for REDIRECT approach and for requests: payment initiation, payment cancellation and consent creation.
+
+
+== Feature: Add to events psuId from payments and consents
+
+From now on, response to the `Event objects between two dates` Request (`GET /aspsp-api/v1/events/`) from CMS-ASPSP-API contains psu data list.
+If event does not contain psu data then this event will fetch psu data from payments or consents to which this event is dedicated.

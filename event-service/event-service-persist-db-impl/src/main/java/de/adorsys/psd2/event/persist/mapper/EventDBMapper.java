@@ -16,22 +16,76 @@
 
 package de.adorsys.psd2.event.persist.mapper;
 
+import de.adorsys.psd2.event.core.model.EventOrigin;
+import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.event.persist.entity.EventEntity;
+import de.adorsys.psd2.event.persist.entity.EventEntityForReport;
 import de.adorsys.psd2.event.persist.model.EventPO;
-import org.mapstruct.*;
+import de.adorsys.psd2.event.persist.model.PsuIdDataPO;
+import de.adorsys.psd2.event.persist.model.ReportEvent;
+import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface EventDBMapper {
 
-    @Mapping(target="psuData", source="psuIdData")
-    @Mapping(target="instanceId", defaultValue = "UNDEFINED")
+    @Mapping(target = "psuData", source = "psuIdData")
+    @Mapping(target = "instanceId", defaultValue = "UNDEFINED")
     EventEntity toEventEntity(EventPO eventPO);
 
-    @InheritInverseConfiguration
-    EventPO toEventPO(EventEntity eventEntity);
+    static ReportEvent mapToReportEvent(EventEntityForReport event) {
+        ReportEvent reportEvent = new ReportEvent();
+        reportEvent.setId(event.getId());
+        reportEvent.setTimestamp(event.getTimestamp());
+        reportEvent.setConsentId(event.getConsentId());
+        reportEvent.setPaymentId(event.getPaymentId());
+        reportEvent.setPayload(event.getPayload().getBytes());
+        reportEvent.setEventOrigin(EventOrigin.valueOf(event.getEventOrigin()));
+        reportEvent.setEventType(EventType.valueOf(event.getEventType()));
+        reportEvent.setInstanceId(event.getInstanceId());
+        reportEvent.setTppAuthorisationNumber(event.getTppAuthorisationNumber());
+        reportEvent.setXRequestId(event.getXRequestId());
+        reportEvent.setPsuIdData(getPsuIdDataPOSet(event));
 
-    @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-    List<EventPO> toEventPOList(List<EventEntity> eventEntities);
+        return reportEvent;
+    }
+
+    static Set<PsuIdDataPO> getPsuIdDataPOSet(EventEntityForReport event) {
+        Set<PsuIdDataPO> psus = null;
+
+        if (StringUtils.isNotBlank(event.getPsuId())) {
+            PsuIdDataPO psuIdDataPO = mapToPsuIdDataPO(
+                event.getPsuId(),
+                event.getPsuIdType(),
+                event.getPsuCorporateId(),
+                event.getPsuCorporateIdType());
+
+            psus = new HashSet<>();
+            psus.add(psuIdDataPO);
+        } else if (StringUtils.isNotBlank(event.getPsuExId())) {
+            PsuIdDataPO psuIdDataPO = mapToPsuIdDataPO(
+                event.getPsuExId(),
+                event.getPsuExIdType(),
+                event.getPsuExCorporateId(),
+                event.getPsuExCorporateIdType());
+
+            psus = new HashSet<>();
+            psus.add(psuIdDataPO);
+        }
+
+        return psus;
+    }
+
+    static PsuIdDataPO mapToPsuIdDataPO(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType) {
+        PsuIdDataPO psuIdDataPO = new PsuIdDataPO();
+        psuIdDataPO.setPsuId(psuId);
+        psuIdDataPO.setPsuIdType(psuIdType);
+        psuIdDataPO.setPsuCorporateId(psuCorporateId);
+        psuIdDataPO.setPsuCorporateIdType(psuCorporateIdType);
+        return psuIdDataPO;
+    }
 }
