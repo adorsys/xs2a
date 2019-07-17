@@ -98,7 +98,8 @@ public class CmsPsuAisServiceTest {
     private CmsPsuService cmsPsuService;
     @Mock
     private AisConsentRequestTypeService aisConsentRequestTypeService;
-
+    @Mock
+    private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
 
     private AisConsent aisConsent;
     private List<AisConsent> aisConsents;

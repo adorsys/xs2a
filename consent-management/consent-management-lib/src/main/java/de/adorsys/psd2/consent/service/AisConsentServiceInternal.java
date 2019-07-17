@@ -340,12 +340,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
-        if (consent != null && consent.isStatusNotExpired()
-                && (consent.isExpiredByDate() || consent.isNonReccuringAlreadyUsed())) {
-            consent.setConsentStatus(EXPIRED);
-            consent.setExpireDate(LocalDate.now());
-            consent.setLastActionDate(LocalDate.now());
-            aisConsentRepository.save(consent);
+        if (aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent)) {
+            aisConsentConfirmationExpirationService.expireConsent(consent);
         }
         return consent;
     }

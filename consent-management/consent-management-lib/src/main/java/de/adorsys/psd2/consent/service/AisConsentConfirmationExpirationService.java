@@ -52,6 +52,21 @@ public class AisConsentConfirmationExpirationService {
         return consent != null && consent.isConfirmationExpired(expirationPeriodMs);
     }
 
+    public boolean isConsentExpiredOrFinalised(AisConsent consent) {
+        return consent != null
+                   && !consent.getConsentStatus().isFinalisedStatus()
+                   && consent.isStatusNotExpired()
+                   && (consent.isExpiredByDate() || consent.isNonReccuringAlreadyUsed());
+    }
+
+    @Transactional
+    public void expireConsent(AisConsent consent) {
+        consent.setConsentStatus(ConsentStatus.EXPIRED);
+        consent.setExpireDate(LocalDate.now());
+        consent.setLastActionDate(LocalDate.now());
+        aisConsentRepository.save(consent);
+    }
+
     @Transactional
     public AisConsent updateConsentOnConfirmationExpiration(AisConsent consent) {
         return aisConsentRepository.save(obsoleteConsent(consent));
