@@ -149,6 +149,7 @@ public class ConsentCreation_successfulTest {
         headerMap.put("PSU-Corporate-ID", "Some corporate id");
         headerMap.put("PSU-Corporate-ID-Type", "Some corporate id type");
         headerMap.put("PSU-IP-Address", "1.1.1.1");
+        headerMap.put("TPP-Redirect-URI", "ok.uri");
 
         httpHeadersImplicit.setAll(headerMap);
         // when Implicit auth mode we need to set 'false'

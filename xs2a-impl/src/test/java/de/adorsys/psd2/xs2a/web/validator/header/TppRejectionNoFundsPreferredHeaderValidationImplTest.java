@@ -29,15 +29,15 @@ import static de.adorsys.psd2.xs2a.web.validator.header.AbstractHeaderValidatorI
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TppRejectionNoFundsPrefferedHeaderValidationImplTest {
+public class TppRejectionNoFundsPreferredHeaderValidationImplTest {
 
-    private TppRejectionNoFundsPrefferedHeaderValidationImpl validator;
+    private TppRejectionNoFundsPreferredHeaderValidationImpl validator;
     private MessageError messageError;
     private Map<String, String> headers;
 
     @Before
     public void setUp() {
-        validator = new TppRejectionNoFundsPrefferedHeaderValidationImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400));
+        validator = new TppRejectionNoFundsPreferredHeaderValidationImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400));
         messageError = new MessageError();
         headers = new HashMap<>();
     }

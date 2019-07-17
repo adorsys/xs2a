@@ -35,6 +35,6 @@ public class TppRedirectUriMapper {
     public @Nullable TppRedirectUri mapToTppRedirectUri(@Nullable String redirectUri, @Nullable String nokRedirectUri) {
         return Optional.ofNullable(redirectUri)
                    .map(redirect -> new TppRedirectUri(redirect, nokRedirectUri))
-                   .orElse(null);
+                   .orElse(new TppRedirectUri("", ""));
     }
 }

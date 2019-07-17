@@ -26,11 +26,11 @@ import java.util.Map;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_REJECTION_NO_FUNDS_PREFERRED;
 
 @Component
-public class TppRejectionNoFundsPrefferedHeaderValidationImpl extends AbstractHeaderValidatorImpl
+public class TppRejectionNoFundsPreferredHeaderValidationImpl extends AbstractHeaderValidatorImpl
     implements PaymentHeaderValidator {
 
     @Autowired
-    public TppRejectionNoFundsPrefferedHeaderValidationImpl(ErrorBuildingService errorBuildingService) {
+    public TppRejectionNoFundsPreferredHeaderValidationImpl(ErrorBuildingService errorBuildingService) {
         super(errorBuildingService);
     }
 

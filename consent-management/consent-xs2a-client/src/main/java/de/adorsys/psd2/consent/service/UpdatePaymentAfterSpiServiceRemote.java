@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -56,8 +57,8 @@ public class UpdatePaymentAfterSpiServiceRemote implements UpdatePaymentAfterSpi
     public boolean updatePaymentCancellationTppRedirectUri(@NotNull String encryptedPaymentId, @NotNull TppRedirectUri tppRedirectUri) {
         try {
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("tpp-redirect-uri", tppRedirectUri.getUri());
-            headers.add("tpp-nok-redirect-uri", tppRedirectUri.getNokUri());
+            headers.add("tpp-redirect-uri", StringUtils.defaultIfBlank(tppRedirectUri.getUri(), ""));
+            headers.add("tpp-nok-redirect-uri", StringUtils.defaultIfBlank(tppRedirectUri.getNokUri(), ""));
             consentRestTemplate.exchange(pisPaymentRemoteUrls.updatePaymentCancellationRedirectURIs(), HttpMethod.PUT, new HttpEntity<>(headers), Void.class, encryptedPaymentId);
             return true;
         } catch (CmsRestException e) {

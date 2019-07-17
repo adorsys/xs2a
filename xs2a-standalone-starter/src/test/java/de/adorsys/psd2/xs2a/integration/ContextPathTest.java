@@ -135,6 +135,8 @@ public class ContextPathTest {
         httpHeadersImplicit.add("PSU-Corporate-ID-Type", "Some corporate id type");
         httpHeadersImplicit.add("PSU-IP-Address", "1.1.1.1");
         httpHeadersImplicit.add("TPP-Implicit-Authorisation-Preferred", "false");
+        httpHeadersImplicit.add("TPP-Redirect-URI", "ok.uri");
+
 
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());

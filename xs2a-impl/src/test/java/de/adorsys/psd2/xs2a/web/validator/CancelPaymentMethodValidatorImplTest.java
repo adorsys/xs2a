@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator;
 
+import de.adorsys.psd2.xs2a.web.validator.body.cancelpayment.CancelPaymentBodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.CancelPaymentHeaderValidator;
 import org.junit.Test;
 
@@ -29,11 +30,12 @@ public class CancelPaymentMethodValidatorImplTest {
     @Test
     public void init() {
         List<CancelPaymentHeaderValidator> headerValidators = new ArrayList<>();
-        CancelPaymentMethodValidatorImpl methodValidator = new CancelPaymentMethodValidatorImpl(headerValidators);
+        List<CancelPaymentBodyValidator> bodyValidators = new ArrayList<>();
+        CancelPaymentMethodValidatorImpl methodValidator = new CancelPaymentMethodValidatorImpl(headerValidators, bodyValidators);
 
         assertEquals("_cancelPayment", methodValidator.getMethodName());
         assertSame(headerValidators, methodValidator.getHeaderValidators());
-        assertTrue(methodValidator.getBodyValidators().isEmpty());
+        assertSame(bodyValidators, methodValidator.getBodyValidators());
         assertTrue(methodValidator.getQueryParameterValidators().isEmpty());
     }
 }

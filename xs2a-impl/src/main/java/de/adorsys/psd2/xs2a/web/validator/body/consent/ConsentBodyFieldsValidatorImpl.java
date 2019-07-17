@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -49,17 +50,21 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
     private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
 
     private final JsonConverter jsonConverter;
+    private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
 
     @Autowired
     public ConsentBodyFieldsValidatorImpl(ErrorBuildingService errorBuildingService,
                                           ObjectMapper objectMapper,
-                                          JsonConverter jsonConverter) {
+                                          JsonConverter jsonConverter, TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator) {
         super(errorBuildingService, objectMapper);
         this.jsonConverter = jsonConverter;
+        this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
     }
 
     @Override
     public void validate(HttpServletRequest request, MessageError messageError) {
+        tppRedirectUriBodyValidator.validate(request, messageError);
+
         validateRawAccess(request, messageError);
 
         Optional<Consents> consentsOptional = mapBodyToInstance(request, messageError, Consents.class);
