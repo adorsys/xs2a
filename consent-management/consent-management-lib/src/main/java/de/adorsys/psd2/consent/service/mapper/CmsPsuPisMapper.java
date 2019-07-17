@@ -77,7 +77,7 @@ public class CmsPsuPisMapper {
                    .collect(Collectors.toList());
     }
 
-    private CmsPayment mapPaymentDataToCmsPayment(@NotNull PisCommonPaymentData pisCommonPaymentData) {
+    public CmsPayment mapPaymentDataToCmsPayment(@NotNull PisCommonPaymentData pisCommonPaymentData) {
         List<PisPaymentData> pisPaymentData = pisCommonPaymentData.getPayments();
         if (pisPaymentData.isEmpty()) {
             return mapToCmsPayment(pisCommonPaymentData);
