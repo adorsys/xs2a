@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -93,5 +93,6 @@
     <include relativeToChangelogFile="true" file="migration/0065-add-accounts-with-balances-column-to-ais-consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0067-add-cancel-tpp-redirect-urls-columns-to-tpp-info.xml"/>
     <include relativeToChangelogFile="true" file="migration/0068-remove-deprecated-columns-from-crypto-algorithm-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0069-add-internal-request-id-to-event-table.xml"/>
 
 </databaseChangeLog>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,12 +62,17 @@ public class EventMapper {
         eventEntity.setPsuData(mapToPsuDataEmbeddable(event.getPsuIdData()));
         eventEntity.setTppAuthorisationNumber(event.getTppAuthorisationNumber());
         eventEntity.setXRequestId(event.getXRequestId() != null ? event.getXRequestId().toString() : null);
+
+        UUID internalRequestId = event.getInternalRequestId();
+        eventEntity.setInternalRequestId(internalRequestId != null ? internalRequestId.toString() : null);
+
         return eventEntity;
     }
 
     private Event mapToEvent(@NotNull EventEntity eventEntity) {
         Object payload = jsonConverterService.toObject(eventEntity.getPayload(), Object.class)
                              .orElse(null);
+        String internalRequestId = eventEntity.getInternalRequestId();
         return Event.builder()
                    .timestamp(eventEntity.getTimestamp())
                    .consentId(eventEntity.getConsentId())
@@ -79,6 +84,7 @@ public class EventMapper {
                    .psuIdData(mapToPsuIdData(eventEntity.getPsuData()))
                    .tppAuthorisationNumber(eventEntity.getTppAuthorisationNumber())
                    .xRequestId(eventEntity.getXRequestId() != null ? UUID.fromString(eventEntity.getXRequestId()) : null)
+                   .internalRequestId(internalRequestId != null ? UUID.fromString(internalRequestId) : null)
                    .build();
     }
 

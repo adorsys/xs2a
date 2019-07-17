@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
 import de.adorsys.psd2.xs2a.component.logger.TppLogger;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,7 @@ public class PaymentLoggingInterceptor extends HandlerInterceptorAdapter {
     private static final String NOT_EXIST_IN_URI = "Not exist in URI";
     private final TppService tppService;
     private final RedirectIdService redirectIdService;
+    private final RequestProviderService requestProviderService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -45,6 +47,7 @@ public class PaymentLoggingInterceptor extends HandlerInterceptorAdapter {
 
         TppLogger.logRequest(request)
             .withTpp(tppService.getTppInfo())
+            .withInternalRequestId(requestProviderService.getInternalRequestId())
             .withXRequestId()
             .withRequestUri()
             .withParam("Payment ID", paymentId)
@@ -57,6 +60,7 @@ public class PaymentLoggingInterceptor extends HandlerInterceptorAdapter {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         TppLogger.logResponse(response)
             .withTpp(tppService.getTppInfo())
+            .withInternalRequestId(requestProviderService.getInternalRequestId())
             .withXRequestId()
             .withResponseStatus()
             .withOptionalRedirectId(redirectIdService.getRedirectId())

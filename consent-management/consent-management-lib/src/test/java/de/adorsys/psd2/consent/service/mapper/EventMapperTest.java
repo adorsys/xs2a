@@ -37,7 +37,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -58,8 +59,8 @@ public class EventMapperTest {
     private static final String PSU_CORPORATE_ID = "CORPORATE_ID";
     private static final String PSU_CORPORATE_ID_TYPE = "CORPORATE_ID_TYPE";
     private static final String AUTHORISATION_NUMBER = "999";
-    private static final UUID REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
-
+    private static final UUID X_REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
+    private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("b571c834-4eb1-468f-91b0-f5e83589bc22");
 
     private static final PsuDataEmbeddable PSU_DATA_EMBEDDABLE = new PsuDataEmbeddable(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
 
@@ -91,6 +92,7 @@ public class EventMapperTest {
         assertEquals(EVENT_ORIGIN, event.getEventOrigin());
         assertEquals(EVENT_TYPE, event.getEventType());
         assertEquals(INSTANCE_ID, event.getInstanceId());
+        assertEquals(INTERNAL_REQUEST_ID, event.getInternalRequestId());
     }
 
     @Test
@@ -106,7 +108,8 @@ public class EventMapperTest {
         assertEquals(EVENT_TYPE, eventEntity.getEventType());
         assertEquals(PSU_DATA_EMBEDDABLE, eventEntity.getPsuData());
         assertEquals(AUTHORISATION_NUMBER, eventEntity.getTppAuthorisationNumber());
-        assertEquals(REQUEST_ID, UUID.fromString(eventEntity.getXRequestId()));
+        assertEquals(X_REQUEST_ID, UUID.fromString(eventEntity.getXRequestId()));
+        assertEquals(INTERNAL_REQUEST_ID, UUID.fromString(eventEntity.getInternalRequestId()));
     }
 
     @Test
@@ -128,6 +131,7 @@ public class EventMapperTest {
         eventEntity.setEventOrigin(EVENT_ORIGIN);
         eventEntity.setEventType(EVENT_TYPE);
         eventEntity.setInstanceId(INSTANCE_ID);
+        eventEntity.setInternalRequestId(INTERNAL_REQUEST_ID.toString());
         return eventEntity;
     }
 
@@ -142,7 +146,8 @@ public class EventMapperTest {
                    .instanceId(INSTANCE_ID)
                    .psuIdData(buildPsuIdData())
                    .tppAuthorisationNumber(AUTHORISATION_NUMBER)
-                   .xRequestId(REQUEST_ID)
+                   .xRequestId(X_REQUEST_ID)
+                   .internalRequestId(INTERNAL_REQUEST_ID)
                    .build();
     }
 

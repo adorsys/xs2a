@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.RequestData;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,24 +34,23 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Collections;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Xs2aEventServiceTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String PAYMENT_ID = "0795805d-651b-4e00-88fb-a34248337bbd";
-    private static final String URI = "/v1/consents";
-    private static final UUID REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
-    private static final String TPP_IP = "1.2.3.4";
+    private static final UUID X_REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
+    private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("9fe83704-6019-46fa-b8aa-53fb8fa667ea");
     private static final EventType EVENT_TYPE = EventType.PAYMENT_INITIATION_REQUEST_RECEIVED;
     private static final String AUTHORISATION_NUMBER = "999";
+    private static final String REQUEST_DATA_JSON_PATH = "json/service/event/request-data.json";
     private static PsuIdData PSU_ID_DATA;
+
+    private JsonReader jsonReader = new JsonReader();
 
     @Mock
     private TppService tppService;
@@ -66,7 +66,8 @@ public class Xs2aEventServiceTest {
     public void setUp() {
         PSU_ID_DATA = buildPsuIdData();
         when(eventService.recordEvent(any(Event.class))).thenReturn(true);
-        when(requestProviderService.getRequestData()).thenReturn(buildRequestData());
+        RequestData requestData = jsonReader.getObjectFromFile(REQUEST_DATA_JSON_PATH, RequestData.class);
+        when(requestProviderService.getRequestData()).thenReturn(requestData);
         when(tppService.getTppInfo()).thenReturn(buildTppInfo());
     }
 
@@ -87,7 +88,8 @@ public class Xs2aEventServiceTest {
         assertThat(capturedEvent.getPayload()).isNotNull();
         assertThat(capturedEvent.getPsuIdData()).isEqualTo(PSU_ID_DATA);
         assertThat(capturedEvent.getTppAuthorisationNumber()).isEqualTo(AUTHORISATION_NUMBER);
-        assertThat(capturedEvent.getXRequestId()).isEqualTo(REQUEST_ID);
+        assertThat(capturedEvent.getXRequestId()).isEqualTo(X_REQUEST_ID);
+        assertThat(capturedEvent.getInternalRequestId()).isEqualTo(INTERNAL_REQUEST_ID);
     }
 
     @Test
@@ -107,7 +109,8 @@ public class Xs2aEventServiceTest {
         assertThat(capturedEvent.getPayload()).isNotNull();
         assertThat(capturedEvent.getPsuIdData()).isEqualTo(PSU_ID_DATA);
         assertThat(capturedEvent.getTppAuthorisationNumber()).isEqualTo(AUTHORISATION_NUMBER);
-        assertThat(capturedEvent.getXRequestId()).isEqualTo(REQUEST_ID);
+        assertThat(capturedEvent.getXRequestId()).isEqualTo(X_REQUEST_ID);
+        assertThat(capturedEvent.getInternalRequestId()).isEqualTo(INTERNAL_REQUEST_ID);
     }
 
     @Test
@@ -127,11 +130,8 @@ public class Xs2aEventServiceTest {
         assertThat(capturedEvent.getPayload()).isNotNull();
         assertThat(capturedEvent.getPsuIdData()).isEqualTo(PSU_ID_DATA);
         assertThat(capturedEvent.getTppAuthorisationNumber()).isEqualTo(AUTHORISATION_NUMBER);
-        assertThat(capturedEvent.getXRequestId()).isEqualTo(REQUEST_ID);
-    }
-
-    private RequestData buildRequestData() {
-        return new RequestData(URI, REQUEST_ID, TPP_IP, Collections.emptyMap(), buildPsuIdData());
+        assertThat(capturedEvent.getXRequestId()).isEqualTo(X_REQUEST_ID);
+        assertThat(capturedEvent.getInternalRequestId()).isEqualTo(INTERNAL_REQUEST_ID);
     }
 
     private PsuIdData buildPsuIdData() {
