@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,7 +27,7 @@ import org.mapstruct.NullValueMappingStrategy;
 import java.util.List;
 
 @Mapper(componentModel = "spring",
-    uses = {SpiToXs2aAccountReferenceMapper.class, SpiToXs2aAmountMapper.class, SpiToXs2aAddressMapper.class})
+    uses = {SpiToXs2aAccountReferenceMapper.class, SpiToXs2aAmountMapper.class, SpiToXs2aAddressMapper.class, RemittanceMapper.class})
 public interface SpiToXs2aSinglePaymentMapper {
 
     @Mapping(target = "psuDataList", ignore = true)

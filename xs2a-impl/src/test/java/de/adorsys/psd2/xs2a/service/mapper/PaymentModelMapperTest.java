@@ -27,12 +27,12 @@ import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aFrequencyCode;
-import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
+import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
+import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,6 +79,11 @@ public class PaymentModelMapperTest {
     private static final PisDayOfExecution XS2A_DAY_OF_EXECUTION = PisDayOfExecution._2;
     private static final PisExecutionRule XS2A_EXECUTION_RULE = PisExecutionRule.FOLLOWING;
     private static final Xs2aFrequencyCode XS2A_FREQUENCY_CODE = Xs2aFrequencyCode.DAILY;
+    private static final JsonReader jsonReader = new JsonReader();
+    private static final String ULTIMATE_DEBTOR = "ultimate debtor";
+    private static final String ULTIMATE_CREDITOR = "ultimate creditor";
+    private static final PurposeCode PURPOSE_CODE = PurposeCode.fromValue("BKDF");
+    private static final Remittance REMITTANCE = jsonReader.getObjectFromFile("json/service/mapper/remittance.json", Remittance.class);
 
     @InjectMocks
     PaymentModelMapperPsd2 paymentModelMapperPsd2;
@@ -94,6 +99,12 @@ public class PaymentModelMapperTest {
 
     @Spy
     Xs2aAddressMapper xs2aAddressMapper = Mappers.getMapper(Xs2aAddressMapper.class);
+
+    @Spy
+    PurposeCodeMapper purposeCodeMapper = Mappers.getMapper(PurposeCodeMapper.class);
+
+    @Spy
+    RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
 
     @Before
     public void setUp() {
@@ -118,6 +129,10 @@ public class PaymentModelMapperTest {
         assertThat(result.getCreditorAddress()).isEqualTo(getAddress12(true, true, true, true, true));
         assertThat(result.getRemittanceInformationUnstructured()).isEqualTo(REMITTANCE_INFORMATION_UNSTRUCTED);
         assertThat(result.getTransactionStatus()).isEqualTo(de.adorsys.psd2.model.TransactionStatus.RCVD);
+        assertThat(result.getUltimateDebtor()).isEqualTo(ULTIMATE_DEBTOR);
+        assertThat(result.getUltimateCreditor()).isEqualTo(ULTIMATE_CREDITOR);
+        assertThat(result.getPurposeCode()).isEqualTo(PURPOSE_CODE);
+        assertThat(result.getRemittanceInformationStructured()).isEqualTo(remittanceMapper.mapToRemittanceInformationStructured(REMITTANCE));
     }
 
     @Test
@@ -141,6 +156,10 @@ public class PaymentModelMapperTest {
         assertThat(result.getFrequency()).isEqualTo(PSD2_FREQUENCY_CODE);
         assertThat(result.getDayOfExecution()).isEqualTo(PSD2_DAY_OF_EXECUTION);
         assertThat(result.getTransactionStatus()).isEqualTo(de.adorsys.psd2.model.TransactionStatus.RCVD);
+        assertThat(result.getUltimateDebtor()).isEqualTo(ULTIMATE_DEBTOR);
+        assertThat(result.getUltimateCreditor()).isEqualTo(ULTIMATE_CREDITOR);
+        assertThat(result.getPurposeCode()).isEqualTo(PURPOSE_CODE);
+        assertThat(result.getRemittanceInformationStructured()).isEqualTo(remittanceMapper.mapToRemittanceInformationStructured(REMITTANCE));
     }
 
     @Test
@@ -164,6 +183,10 @@ public class PaymentModelMapperTest {
         assertThat(bulkPaymentPart.getCreditorName()).isEqualTo(CREDITOR_NAME);
         assertThat(bulkPaymentPart.getCreditorAddress()).isEqualTo(getAddress12(true, true, true, true, true));
         assertThat(bulkPaymentPart.getRemittanceInformationUnstructured()).isEqualTo(REMITTANCE_INFORMATION_UNSTRUCTED);
+        assertThat(bulkPaymentPart.getUltimateDebtor()).isEqualTo(ULTIMATE_DEBTOR);
+        assertThat(bulkPaymentPart.getUltimateCreditor()).isEqualTo(ULTIMATE_CREDITOR);
+        assertThat(bulkPaymentPart.getPurposeCode()).isEqualTo(PURPOSE_CODE);
+        assertThat(bulkPaymentPart.getRemittanceInformationStructured()).isEqualTo(remittanceMapper.mapToRemittanceInformationStructured(REMITTANCE));
     }
 
     @Test
@@ -338,6 +361,10 @@ public class PaymentModelMapperTest {
         payment.setCreditorAddress(buildXs2aAddress());
         payment.setRemittanceInformationUnstructured(REMITTANCE_INFORMATION_UNSTRUCTED);
         payment.setTransactionStatus(status);
+        payment.setUltimateDebtor(ULTIMATE_DEBTOR);
+        payment.setUltimateCreditor(ULTIMATE_CREDITOR);
+        payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(PURPOSE_CODE));
+        payment.setRemittanceInformationStructured(REMITTANCE);
         return payment;
     }
 
@@ -357,6 +384,10 @@ public class PaymentModelMapperTest {
         payment.setFrequency(XS2A_FREQUENCY_CODE);
         payment.setDayOfExecution(XS2A_DAY_OF_EXECUTION);
         payment.setTransactionStatus(status);
+        payment.setUltimateDebtor(ULTIMATE_DEBTOR);
+        payment.setUltimateCreditor(ULTIMATE_CREDITOR);
+        payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(PURPOSE_CODE));
+        payment.setRemittanceInformationStructured(REMITTANCE);
         return payment;
     }
 

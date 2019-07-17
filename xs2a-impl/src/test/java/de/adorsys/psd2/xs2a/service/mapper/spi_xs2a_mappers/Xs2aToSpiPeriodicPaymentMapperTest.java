@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -26,17 +27,22 @@ import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.psd2.xs2a.domain.pis.Remittance;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
@@ -82,6 +88,11 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
     private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(LocalDate.now(),
                                                                                     LocalTime.NOON,
                                                                                     ZoneOffset.UTC);
+    private static final JsonReader jsonReader = new JsonReader();
+    private static final String ULTIMATE_DEBTOR = "ultimate debtor";
+    private static final String ULTIMATE_CREDITOR = "ultimate creditor";
+    private static final PurposeCode PURPOSE_CODE = PurposeCode.fromValue("BKDF");
+    private static final Remittance REMITTANCE = jsonReader.getObjectFromFile("json/service/mapper/remittance.json", Remittance.class);
 
     @InjectMocks
     private Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPaymentInfoMapper;
@@ -93,6 +104,8 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
     private Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     @Mock
     private Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
+    @Spy
+    private RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
 
     @Before
     public void setUp() {
@@ -137,6 +150,10 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
         assertEquals(REQUESTED_EXECUTION_TIME, spiPeriodicPayment.getRequestedExecutionTime());
         assertEquals(spiPsuDataList, spiPeriodicPayment.getPsuDataList());
         assertEquals(STATUS_CHANGE_TIMESTAMP, spiPeriodicPayment.getStatusChangeTimestamp());
+        assertEquals(ULTIMATE_DEBTOR, spiPeriodicPayment.getUltimateDebtor());
+        assertEquals(ULTIMATE_CREDITOR, spiPeriodicPayment.getUltimateCreditor());
+        assertEquals(PURPOSE_CODE, spiPeriodicPayment.getPurposeCode());
+        assertEquals(remittanceMapper.mapToSpiRemittance(REMITTANCE), spiPeriodicPayment.getRemittanceInformationStructured());
     }
 
     private PeriodicPayment buildPeriodicPayment() {
@@ -160,6 +177,10 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
         periodicPayment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
         periodicPayment.setPsuDataList(psuDataList);
         periodicPayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
+        periodicPayment.setUltimateDebtor(ULTIMATE_DEBTOR);
+        periodicPayment.setUltimateCreditor(ULTIMATE_CREDITOR);
+        periodicPayment.setPurposeCode(PURPOSE_CODE);
+        periodicPayment.setRemittanceInformationStructured(REMITTANCE);
         return periodicPayment;
     }
 

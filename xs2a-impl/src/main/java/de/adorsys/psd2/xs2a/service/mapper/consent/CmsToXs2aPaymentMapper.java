@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.mapper.consent;
 import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
@@ -27,6 +28,7 @@ import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +37,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
+@AllArgsConstructor
 public class CmsToXs2aPaymentMapper {
+    private final Xs2aRemittanceMapper xs2aRemittanceMapper;
 
     public PeriodicPayment mapToPeriodicPayment(PisPayment payment) {
         return Optional.ofNullable(payment)
@@ -61,6 +65,10 @@ public class CmsToXs2aPaymentMapper {
                        }
                        periodic.setPsuDataList(p.getPsuDataList());
                        periodic.setStatusChangeTimestamp(p.getStatusChangeTimestamp());
+                       periodic.setUltimateDebtor(p.getUltimateDebtor());
+                       periodic.setUltimateCreditor(p.getUltimateCreditor());
+                       periodic.setRemittanceInformationStructured(xs2aRemittanceMapper.mapToRemittance(p.getRemittanceInformationStructured()));
+                       periodic.setPurposeCode(PurposeCode.fromValue(p.getPurposeCode()));
                        return periodic;
                    }).orElse(null);
     }
@@ -84,6 +92,10 @@ public class CmsToXs2aPaymentMapper {
                        single.setTransactionStatus(p.getTransactionStatus());
                        single.setPsuDataList(p.getPsuDataList());
                        single.setStatusChangeTimestamp(p.getStatusChangeTimestamp());
+                       single.setUltimateCreditor(p.getUltimateCreditor());
+                       single.setUltimateDebtor(p.getUltimateDebtor());
+                       single.setRemittanceInformationStructured(xs2aRemittanceMapper.mapToRemittance(p.getRemittanceInformationStructured()));
+                       single.setPurposeCode(PurposeCode.fromValue(p.getPurposeCode()));
                        return single;
                    }).orElse(null);
     }

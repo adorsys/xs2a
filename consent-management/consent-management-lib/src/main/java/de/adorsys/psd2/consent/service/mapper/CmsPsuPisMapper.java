@@ -37,6 +37,7 @@ public class CmsPsuPisMapper {
     private final PisCommonPaymentMapper pisCommonPaymentMapper;
     private final TppInfoMapper tppInfoMapper;
     private final PsuDataMapper psuDataMapper;
+    private final CmsRemittanceMapper cmsRemittanceMapper;
 
         public CmsPayment mapToCmsPayment(@NotNull PisCommonPaymentData paymentData) {
         CmsCommonPayment cmsCommonPayment = new CmsCommonPayment(paymentData.getPaymentProduct());
@@ -111,6 +112,10 @@ public class CmsPsuPisMapper {
             periodicPayment.setCreationTimestamp(paymentData.getCreationTimestamp());
             periodicPayment.setStatusChangeTimestamp(paymentData.getStatusChangeTimestamp());
         }
+        periodicPayment.setUltimateDebtor(pisPaymentData.getUltimateDebtor());
+        periodicPayment.setUltimateCreditor(pisPaymentData.getUltimateCreditor());
+        periodicPayment.setPurposeCode(pisPaymentData.getPurposeCode());
+        periodicPayment.setRemittanceInformationStructured(cmsRemittanceMapper.mapToCmsRemittance(pisPaymentData.getRemittanceInformationStructured()));
         return periodicPayment;
     }
 
@@ -151,7 +156,10 @@ public class CmsPsuPisMapper {
             singlePayment.setCreationTimestamp(paymentData.getCreationTimestamp());
             singlePayment.setStatusChangeTimestamp(paymentData.getStatusChangeTimestamp());
         }
-
+        singlePayment.setUltimateDebtor(pisPaymentData.getUltimateDebtor());
+        singlePayment.setUltimateCreditor(pisPaymentData.getUltimateCreditor());
+        singlePayment.setPurposeCode(pisPaymentData.getPurposeCode());
+        singlePayment.setRemittanceInformationStructured(cmsRemittanceMapper.mapToCmsRemittance(pisPaymentData.getRemittanceInformationStructured()));
         return singlePayment;
     }
 

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator.body;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.xs2a.domain.pis.Remittance;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import org.apache.commons.lang3.StringUtils;
@@ -70,5 +71,21 @@ public class AbstractBodyValidatorImpl {
         }
 
         return Optional.empty();
+    }
+
+    protected void validateUltimateDebtor(String field, MessageError messageError) {
+        checkOptionalFieldForMaxLength(field, "ultimateDebtor", 70, messageError);
+    }
+
+    protected void validateUltimateCreditor(String field, MessageError messageError) {
+        checkOptionalFieldForMaxLength(field, "ultimateCreditor", 70, messageError);
+    }
+
+    protected void validateRemittanceInformationStructured(Remittance remittance, MessageError messageError) {
+        if (remittance != null) {
+            checkRequiredFieldForMaxLength(remittance.getReference(), "reference", 35, messageError);
+            checkOptionalFieldForMaxLength(remittance.getReferenceType(), "referenceType", 35, messageError);
+            checkOptionalFieldForMaxLength(remittance.getReferenceIssuer(), "referenceIssuer", 35, messageError);
+        }
     }
 }

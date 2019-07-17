@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.aspsp.mock.api.payment;
+package de.adorsys.psd2.xs2a.web.mapper;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
+import org.mapstruct.Mapper;
 
-@Data
-@NoArgsConstructor
-public class AspspRemittance {
-    private String reference;
-    private String referenceType;
-    private String referenceIssuer;
+@Mapper(componentModel = "spring")
+public interface PurposeCodeMapper {
+    PurposeCode mapToPurposeCode(de.adorsys.psd2.model.PurposeCode purposeCode);
+    de.adorsys.psd2.model.PurposeCode mapToPurposeCode(PurposeCode purposeCode);
 }

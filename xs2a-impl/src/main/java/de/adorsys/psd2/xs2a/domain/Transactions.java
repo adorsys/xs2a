@@ -18,9 +18,9 @@ package de.adorsys.psd2.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
-import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -100,7 +100,7 @@ public class Transactions {
     private String remittanceInformationStructured;
 
     @ApiModelProperty(value = "Purpose code")
-    private Xs2aPurposeCode purposeCode;
+    private PurposeCode purposeCode;
 
     @ApiModelProperty(value = "Bank transaction code as used by the ASPSP in ISO20022 related formats.")
     private BankTransactionCode bankTransactionCodeCode;

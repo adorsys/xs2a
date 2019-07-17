@@ -32,5 +32,13 @@
     "currency": "EUR"
   },
   "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
-  "startDate": "2017-03-03"
+  "startDate": "2017-03-03",
+  "ultimateDebtor": "ultimateDebtor",
+  "ultimateCreditor": "ultimateCreditor",
+  "purposeCode": "CDQC",
+  "remittanceInformationStructured": {
+    "reference": "reference",
+    "referenceType": "referenceType",
+    "referenceIssuer": "referenceIssuer"
+  }
 }

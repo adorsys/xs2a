@@ -23,13 +23,17 @@ import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.psd2.xs2a.domain.pis.Remittance;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDate;
 
@@ -60,9 +64,11 @@ public class PeriodicPaymentTypeValidatorImplTest {
         address = jsonReader.getObjectFromFile("json/validation/address.json", Xs2aAddress.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
+        PurposeCodeMapper purposeCodeMapper = Mappers.getMapper(PurposeCodeMapper.class);
+        RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
         validator = new PeriodicPaymentTypeValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400),
                                                        objectMapper,
-                                                       new PaymentMapper(objectMapper));
+                                                       new PaymentMapper(objectMapper, purposeCodeMapper, remittanceMapper));
     }
 
     @Test
@@ -333,5 +339,75 @@ public class PeriodicPaymentTypeValidatorImplTest {
         validator.doPeriodicValidation(periodicPayment, messageError);
         assertEquals(MessageErrorCode.PERIOD_INVALID, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Date values has wrong order", messageError.getTppMessage().getText());
+    }
+
+    @Test
+    public void doValidation_ultimate_debtor_error() {
+        periodicPayment.setUltimateDebtor(VALUE_71_LENGHT);
+
+        validator.doSingleValidation(periodicPayment, messageError);
+        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(String.format("Value '%s' should not be more than %s symbols", "ultimateDebtor", 70),
+                     messageError.getTppMessage().getText());
+    }
+
+    @Test
+    public void doValidation_ultimate_creditor_error() {
+        periodicPayment.setUltimateCreditor(VALUE_71_LENGHT);
+
+        validator.doSingleValidation(periodicPayment, messageError);
+        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(String.format("Value '%s' should not be more than %s symbols", "ultimateCreditor", 70),
+                     messageError.getTppMessage().getText());
+    }
+
+    @Test
+    public void doValidation_remittance_no_reference_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference(null);
+        periodicPayment.setRemittanceInformationStructured(remittance);
+
+        validator.doSingleValidation(periodicPayment, messageError);
+        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(String.format("Value '%s' cannot be empty", "reference"),
+                     messageError.getTppMessage().getText());
+    }
+
+    @Test
+    public void doValidation_remittance_reference_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference(VALUE_36_LENGHT);
+        periodicPayment.setRemittanceInformationStructured(remittance);
+
+        validator.doSingleValidation(periodicPayment, messageError);
+        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(String.format("Value '%s' should not be more than %s symbols", "reference", 35),
+                     messageError.getTppMessage().getText());
+    }
+
+    @Test
+    public void doValidation_remittance_reference_type_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference("reference");
+        remittance.setReferenceType(VALUE_36_LENGHT);
+        periodicPayment.setRemittanceInformationStructured(remittance);
+
+        validator.doSingleValidation(periodicPayment, messageError);
+        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(String.format("Value '%s' should not be more than %s symbols", "referenceType", 35),
+                     messageError.getTppMessage().getText());
+    }
+
+    @Test
+    public void doValidation_remittance_reference_tissuer_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference("reference");
+        remittance.setReferenceIssuer(VALUE_36_LENGHT);
+        periodicPayment.setRemittanceInformationStructured(remittance);
+
+        validator.doSingleValidation(periodicPayment, messageError);
+        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(String.format("Value '%s' should not be more than %s symbols", "referenceIssuer", 35),
+                     messageError.getTppMessage().getText());
     }
 }
