@@ -38,6 +38,9 @@ public class UpdatePsuAuthenticationResponse   {
   @JsonProperty("chosenScaMethod")
   private ChosenScaMethod chosenScaMethod = null;
 
+  @JsonProperty("authorisationId")
+  private String authorisationId = null;
+
   @JsonProperty("challengeData")
   private ChallengeData challengeData = null;
 
@@ -53,7 +56,15 @@ public class UpdatePsuAuthenticationResponse   {
   @JsonProperty("psuMessage")
   private String psuMessage = null;
 
-  public UpdatePsuAuthenticationResponse chosenScaMethod(ChosenScaMethod chosenScaMethod) {
+    public String getAuthorisationId() {
+        return authorisationId;
+    }
+
+    public void setAuthorisationId(String authorisationId) {
+        this.authorisationId = authorisationId;
+    }
+
+    public UpdatePsuAuthenticationResponse chosenScaMethod(ChosenScaMethod chosenScaMethod) {
     this.chosenScaMethod = chosenScaMethod;
     return this;
   }

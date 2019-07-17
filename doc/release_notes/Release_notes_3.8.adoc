@@ -5,6 +5,7 @@
 * Feature: Only authorisation number is used to identify TPP
 * Feature: CMS-PSU-API enriching responses
 * Refactor: Event API refactoring
+* Bugfix: Authorisation ID is missing in update PSU responses
 
 == Refactor: ASPSP consent data refactoring
 
@@ -36,3 +37,9 @@ Now payment endpoints return the following: payment object, payment ID, authoris
 == Refactor: Event API refactoring
 
 Event functionality is now implemented in separate module and has `Events-XS2A-API` and `Events-ASPSP-API` modules accordingly. Current behavior is preserved.
+
+== Bugfix: Authorisation ID is missing in update PSU responses
+
+Authorisation ID was missing in the responses for POST requests of starting the authorisation with password
+(`POST /v1/{payment_service}/{payment_product}/{payment_id}/authorisations` and `POST /v1/consents/{consent_id}/authorisations`).
+Now this field is present in the upper responses while providing the PSU data in the request bodies.
