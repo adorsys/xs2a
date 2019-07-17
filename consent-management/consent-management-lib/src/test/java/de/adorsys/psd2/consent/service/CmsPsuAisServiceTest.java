@@ -97,6 +97,8 @@ public class CmsPsuAisServiceTest {
     private CmsPsuService cmsPsuService;
     @Mock
     private AisConsentRequestTypeService aisConsentRequestTypeService;
+    @Mock
+    private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
 
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
