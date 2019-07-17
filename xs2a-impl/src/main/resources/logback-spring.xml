@@ -1,5 +1,5 @@
 ﻿<!--
-  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -50,6 +50,20 @@
         <!--</rollingPolicy>-->
     <!--</appender>-->
 
+    <!-- Uncomment the lines below to make request-logger write logs to the file, specified in <fileNamePattern> tag -->
+    <!--    <appender name="FILE-REQUEST" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+    <!--        <encoder>-->
+    <!--            <pattern>[%-5level][%d{HH:mm:ss.SSS}][%thread] - %msg%n</pattern>-->
+    <!--        </encoder>-->
+
+    <!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+    <!--            <fileNamePattern>${LOGS_HOME}/request/xs2a-request.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+    <!--            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">-->
+    <!--                <maxFileSize>10MB</maxFileSize>-->
+    <!--            </timeBasedFileNamingAndTriggeringPolicy>-->
+    <!--        </rollingPolicy>-->
+    <!--    </appender>-->
+
     <logger name="org.springframework" level="WARN"/>
     <logger name="springfox.documentation" level="OFF"/>
     <logger name="org.hibernate.validator" level="OFF"/>
@@ -67,6 +81,13 @@
         <!-- Uncomment the next line to make access-logger write logs to file, mentioned in FILE-ACCESS inside <fileNamePattern> tag -->
         <!--<appender-ref ref="FILE-ACCESS" />-->
         <appender-ref ref="STDOUT" />
+    </logger>
+
+    <!-- Logger, responsible for logging full payload of XS2A requests and responses -->
+    <logger name="request-log" level="info" additivity="false">
+        <!-- Uncomment the next line to make request-logger write logs to file, mentioned in FILE-REQUEST inside <fileNamePattern> tag -->
+        <!-- <appender-ref ref="FILE-REQUEST" />-->
+        <appender-ref ref="STDOUT"/>
     </logger>
 
 </configuration>

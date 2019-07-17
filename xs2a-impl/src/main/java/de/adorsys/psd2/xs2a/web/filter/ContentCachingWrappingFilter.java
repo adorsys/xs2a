@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletRequest;
+import de.adorsys.psd2.xs2a.component.MultiReadHttpServletResponse;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
@@ -31,6 +32,10 @@ public class ContentCachingWrappingFilter extends AbstractXs2aFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         MultiReadHttpServletRequest multiReadRequest = new MultiReadHttpServletRequest(request);
-        doFilter(multiReadRequest, response, filterChain);
+        MultiReadHttpServletResponse multiReadResponse = new MultiReadHttpServletResponse(response);
+
+        doFilter(multiReadRequest, multiReadResponse, filterChain);
+
+        multiReadResponse.copyBodyToResponse();
     }
 }
