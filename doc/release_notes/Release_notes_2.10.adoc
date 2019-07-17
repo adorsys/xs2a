@@ -7,6 +7,7 @@
 * Bugfix: Fix `scaRedirect` link in payment cancellation in case of implicit authorisation
 * Include Redirect-ID in all access-log for the responses where applicable
 * Log HTTP requests and responses to a separate logger
+* Bugfix: Fix get common payment by redirect-id
 
 == Include TPP roles in all access-log for all request entries
 From now on, request entries in access-log will also contain list of TPP roles, extracted from the certificate.
@@ -42,3 +43,8 @@ At the moment this logger records:
 
 Logging can be configured in the `logback-spring.xml` file. By default, log records from this logger are being written to the console only.
 This behaviour can be changed by configuring the `logback-spring.xml`.
+
+== Bugfix: Fix get common payment by redirect-id
+
+Executing GET pain common payment in CMS-PSU-API on `/psu-api/v1/payment/redirect/{redirect-id}` or `/psu-api/v1/payment/cancellation/redirect/{redirect-id}`
+caused internal server error. From now on, this bug is fixed.
