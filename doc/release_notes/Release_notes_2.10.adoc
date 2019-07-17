@@ -6,6 +6,7 @@
 * Bugfix: Payment and Consent initiation request where field X-Request-ID contains an invalid UUID return internal server error
 * Bugfix: Fix `scaRedirect` link in payment cancellation in case of implicit authorisation
 * Include Redirect-ID in all access-log for the responses where applicable
+* Log HTTP requests and responses to a separate logger
 
 == Include TPP roles in all access-log for all request entries
 From now on, request entries in access-log will also contain list of TPP roles, extracted from the certificate.
@@ -27,3 +28,17 @@ property in the ASPSP profile instead of the `pisRedirectUrlToAspsp` one.
 
 == Include Redirect-ID in all access-log for the responses where applicable
 From now on, response entries in access-log will also contain redirect ID, if it's present in the response.
+
+== Log HTTP requests and responses to a separate logger
+From now, all HTTP requests and responses are being logged to a separate logger (`request-log`).
+At the moment this logger records:
+
+ - request URI with query params
+ - request headers
+ - request payload
+ - response status
+ - response headers
+ - response body
+
+Logging can be configured in the `logback-spring.xml` file. By default, log records from this logger are being written to the console only.
+This behaviour can be changed by configuring the `logback-spring.xml`.
