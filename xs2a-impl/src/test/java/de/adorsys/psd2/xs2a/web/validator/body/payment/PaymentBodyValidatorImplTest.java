@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
+import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidatorContext;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
@@ -77,11 +78,16 @@ public class PaymentBodyValidatorImplTest {
     private PaymentTypeValidator paymentTypeValidator;
     @Mock
     private JsonConverter jsonConverter;
+    @Mock
+    private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
+    private MockHttpServletRequest mockRequest;
 
     @Before
     public void setUp() {
+        mockRequest = new MockHttpServletRequest();
         messageError = new MessageError(ErrorType.PIS_400);
-        validator = new PaymentBodyValidatorImpl(new ErrorBuildingServiceMock(ErrorType.PIS_400), objectMapper, paymentTypeValidatorContext, standardPaymentProductsResolver, jsonConverter);
+        validator = new PaymentBodyValidatorImpl(new ErrorBuildingServiceMock(ErrorType.PIS_400), objectMapper, paymentTypeValidatorContext,
+                                                 standardPaymentProductsResolver, jsonConverter, tppRedirectUriBodyValidator);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(PAIN_PAYMENT_PRODUCT)))
             .thenReturn(true);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(JSON_PAYMENT_PRODUCT)))
@@ -91,12 +97,11 @@ public class PaymentBodyValidatorImplTest {
     @Test
     public void validate_shouldExecuteSpecificValidator() throws IOException {
         // Given
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
 
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
+        doNothing().when(tppRedirectUriBodyValidator).validate(mockRequest, messageError);
         Object paymentBody = new Object();
         when(objectMapper.readValue(mockRequest.getInputStream(), Object.class))
             .thenReturn(paymentBody);
@@ -108,16 +113,17 @@ public class PaymentBodyValidatorImplTest {
         validator.validate(mockRequest, messageError);
 
         // Then
+        verify(tppRedirectUriBodyValidator, times(1)).validate(mockRequest, messageError);
         verify(paymentTypeValidator).validate(paymentBody, messageError);
     }
 
     @Test
     public void validate_wrongRequestBody_shouldReturnError() throws IOException {
         // Given
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
+        doNothing().when(tppRedirectUriBodyValidator).validate(mockRequest, messageError);
         when(objectMapper.readValue(mockRequest.getInputStream(), Object.class))
             .thenThrow(new IOException());
 
@@ -125,16 +131,17 @@ public class PaymentBodyValidatorImplTest {
         validator.validate(mockRequest, messageError);
 
         // Then
+        verify(tppRedirectUriBodyValidator, times(1)).validate(mockRequest, messageError);
         assertEquals(DESERIALISATION_ERROR, messageError);
     }
 
     @Test
     public void validate_dayOfExecutionWrongValue_shouldReturnError() throws IOException {
         // Given
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
+        doNothing().when(tppRedirectUriBodyValidator).validate(mockRequest, messageError);
         Object paymentBody = new Object();
         when(objectMapper.readValue(mockRequest.getInputStream(), Object.class))
             .thenReturn(paymentBody);
@@ -146,15 +153,16 @@ public class PaymentBodyValidatorImplTest {
         validator.validate(mockRequest, messageError);
 
         // Then
+        verify(tppRedirectUriBodyValidator, times(1)).validate(mockRequest, messageError);
         assertEquals(DAY_OF_EXECUTION_WRONG_VALUE_ERROR, messageError);
     }
 
     @Test
     public void validate_rawPaymentProduct_shouldNotBeValidated() throws IOException {
         // Given
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         Map<String, String> templates = buildTemplateVariables(PAIN_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
+        doNothing().when(tppRedirectUriBodyValidator).validate(mockRequest, messageError);
 
         // When
         validator.validate(mockRequest, messageError);
@@ -163,15 +171,16 @@ public class PaymentBodyValidatorImplTest {
         assertTrue(messageError.getTppMessages().isEmpty());
         // noinspection unchecked
         verify(objectMapper, never()).readValue(any(InputStream.class), any(Class.class));
+        verify(tppRedirectUriBodyValidator, times(1)).validate(mockRequest, messageError);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void validate_unsupportedPaymentService_shouldThrowException() throws IOException {
         // Given
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, INVALID_PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
+        doNothing().when(tppRedirectUriBodyValidator).validate(mockRequest, messageError);
         Object paymentBody = new Object();
         when(objectMapper.readValue(mockRequest.getInputStream(), Object.class))
             .thenReturn(paymentBody);
@@ -181,6 +190,7 @@ public class PaymentBodyValidatorImplTest {
 
         // When
         validator.validate(mockRequest, messageError);
+        verify(tppRedirectUriBodyValidator, times(1)).validate(mockRequest, messageError);
     }
 
     @Test

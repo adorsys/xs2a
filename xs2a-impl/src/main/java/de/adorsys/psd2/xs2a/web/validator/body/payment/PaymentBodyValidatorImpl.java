@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidatorContext;
 import org.jetbrains.annotations.NotNull;
@@ -51,21 +52,25 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
 
     private final JsonConverter jsonConverter;
+    private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
 
     @Autowired
     public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
                                     PaymentTypeValidatorContext paymentTypeValidatorContext,
                                     StandardPaymentProductsResolver standardPaymentProductsResolver,
-                                    JsonConverter jsonConverter) {
+                                    JsonConverter jsonConverter, TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator) {
         super(errorBuildingService, objectMapper);
         this.paymentTypeValidatorContext = paymentTypeValidatorContext;
         this.standardPaymentProductsResolver = standardPaymentProductsResolver;
         this.jsonConverter = jsonConverter;
+        this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
     }
 
     @Override
     public void validate(HttpServletRequest request, MessageError messageError) {
+        tppRedirectUriBodyValidator.validate(request, messageError);
+
         Map<String, String> pathParametersMap = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
         if (isRawPaymentProduct(pathParametersMap)) {

@@ -31,7 +31,7 @@ public class MethodValidatorControllerTest {
         List<MethodValidator> methodValidators = new ArrayList<>();
         methodValidators.add(new ConsentMethodValidatorImpl(null, null));
         methodValidators.add(new PaymentMethodValidatorImpl(null, null));
-        methodValidators.add(new CancelPaymentMethodValidatorImpl(null));
+        methodValidators.add(new CancelPaymentMethodValidatorImpl(null, null));
         DefaultMethodValidatorImpl defaultMethodValidator = new DefaultMethodValidatorImpl(null);
         MethodValidatorController controller = new MethodValidatorController(methodValidators, defaultMethodValidator);
 

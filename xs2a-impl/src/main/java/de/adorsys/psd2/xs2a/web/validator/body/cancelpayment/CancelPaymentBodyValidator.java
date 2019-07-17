@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.validator.body.payment;
+package de.adorsys.psd2.xs2a.web.validator.body.cancelpayment;
 
 import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
 

@@ -74,8 +74,8 @@ public class PisPaymentController {
         @RequestHeader(value = "TPP-Redirect-URI", required = false) String tpPRedirectURI,
         @RequestHeader(value = "TPP-Nok-Redirect-URI", required = false) String tpPNokRedirectURI) {
         return updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(paymentId,
-                                                                                          new TppRedirectUri(StringUtils.defaultIfBlank(tpPRedirectURI, null),
-                                                                                                             StringUtils.defaultIfBlank(tpPNokRedirectURI, null)))
+                                                                                          new TppRedirectUri(StringUtils.defaultIfBlank(tpPRedirectURI, ""),
+                                                                                                             StringUtils.defaultIfBlank(tpPNokRedirectURI, "")))
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
     }

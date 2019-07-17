@@ -7,6 +7,7 @@
 * Refactor: Event API refactoring
 * Bugfix: Authorisation ID is missing in update PSU responses
 * Refactor: removed SpiFrequencyCode enumerator
+* Bugfix: TPP URIs are validated in REDIRECT approach only
 
 == Refactor: ASPSP consent data refactoring
 
@@ -49,3 +50,7 @@ Now this field is present in the upper responses while providing the PSU data in
 
 Enumerator SpiFrequencyCode was removed from the package `de.adorsys.psd2.xs2a.spi.domain.code`. New enumerator
 `de.adorsys.psd2.xs2a.core.pis.FrequencyCode` should be used instead, it has the same values.
+
+== Bugfix: TPP URIs are validated in REDIRECT approach only
+
+From now on, TPP URIs are validated only for REDIRECT approach and for requests: payment initiation, payment cancellation and consent creation.

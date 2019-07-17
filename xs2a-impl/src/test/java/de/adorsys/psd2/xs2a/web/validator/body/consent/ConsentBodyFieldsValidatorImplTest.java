@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,8 +45,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentBodyFieldsValidatorImplTest {
@@ -62,6 +62,8 @@ public class ConsentBodyFieldsValidatorImplTest {
     private JsonConverter jsonConverter;
     @Mock
     private ObjectMapper objectMapper;
+    @Mock
+    private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
 
     @Before
     public void setUp() throws IOException {
@@ -78,7 +80,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         byte[] requestContent = jsonReader.getBytesFromFile("json/validation/ais/consents.json");
         this.request = buildRequestWithContent(requestContent);
 
-        validator = new ConsentBodyFieldsValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), objectMapper, jsonConverter);
+        validator = new ConsentBodyFieldsValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), objectMapper, jsonConverter, tppRedirectUriBodyValidator);
     }
 
     @Test
@@ -97,6 +99,7 @@ public class ConsentBodyFieldsValidatorImplTest {
 
         // Then
         assertTrue(messageError.getTppMessages().isEmpty());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -119,6 +122,7 @@ public class ConsentBodyFieldsValidatorImplTest {
 
         // Then
         assertTrue(messageError.getTppMessages().isEmpty());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -141,6 +145,7 @@ public class ConsentBodyFieldsValidatorImplTest {
 
         // Then
         assertTrue(messageError.getTppMessages().isEmpty());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -163,6 +168,7 @@ public class ConsentBodyFieldsValidatorImplTest {
 
         // Then
         assertTrue(messageError.getTppMessages().isEmpty());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -172,6 +178,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         validator.validate(request, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Value 'recurringIndicator' should not be null", messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -181,15 +188,18 @@ public class ConsentBodyFieldsValidatorImplTest {
         validator.validate(request, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Value 'validUntil' should not be null", messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
     public void validate_validUntil_inPast_error() {
         consents.setValidUntil(LocalDate.now().minusDays(1));
+        doNothing().when(tppRedirectUriBodyValidator).validate(request, messageError);
 
         validator.validate(request, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Value 'validUntil' should not be in the past", messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -199,6 +209,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         validator.validate(request, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Value 'frequencyPerDay' should not be null", messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -208,6 +219,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         validator.validate(request, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Value 'frequencyPerDay' should not be lower than 1", messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -217,6 +229,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         validator.validate(request, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Value 'frequencyPerDay' should not be lower than 1", messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -239,6 +252,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Wrong value for availableAccounts", messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -262,6 +276,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Wrong value for availableAccounts", messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -285,6 +300,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Wrong value for allPsd2", messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -308,6 +324,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Wrong value for allPsd2", messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -330,6 +347,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Wrong value for availableAccountsWithBalances", messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -353,6 +371,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Wrong value for availableAccountsWithBalances", messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -368,6 +387,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals(DESERIALIZATION_ERROR, messageError.getTppMessage().getText());
+        verify(tppRedirectUriBodyValidator, times(1)).validate(malformedRequest, messageError);
     }
 
     private HttpServletRequest buildRequestWithContent(byte[] content) {

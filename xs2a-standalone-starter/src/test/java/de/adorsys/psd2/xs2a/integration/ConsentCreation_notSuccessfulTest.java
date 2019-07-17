@@ -175,6 +175,8 @@ public class ConsentCreation_notSuccessfulTest {
     public void creation_consent_withoutPsuIpAddress_notSuccessful() throws Exception {
         //Given
         MockHttpServletRequestBuilder requestBuilder = makeRequestBuilder(UrlBuilder.buildConsentCreation(), httpHeadersWithoutPsuIpAddress, resourceToString(BANK_OFFERED_CONSENT_REQUEST_JSON_PATH, UTF_8));
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
+
         //When
         ResultActions resultActions = mockMvc.perform(requestBuilder);
         //Then
