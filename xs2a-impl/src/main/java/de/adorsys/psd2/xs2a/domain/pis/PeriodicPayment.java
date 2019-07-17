@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.domain.pis;
 
+import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
-import de.adorsys.psd2.xs2a.domain.code.Xs2aFrequencyCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -35,7 +35,7 @@ public class PeriodicPayment extends SinglePayment {
     private LocalDate endDate;
 
     @NotNull
-    private Xs2aFrequencyCode frequency;
+    private FrequencyCode frequency;
 
     private PisDayOfExecution dayOfExecution;
 }

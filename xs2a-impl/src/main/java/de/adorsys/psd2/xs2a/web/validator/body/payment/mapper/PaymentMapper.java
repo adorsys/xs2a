@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
-import de.adorsys.psd2.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
@@ -97,7 +96,7 @@ public class PaymentMapper {
         payment.setStartDate(paymentRequest.getStartDate());
         payment.setExecutionRule(mapToPisExecutionRule(paymentRequest.getExecutionRule()).orElse(null));
         payment.setEndDate(paymentRequest.getEndDate());
-        payment.setFrequency(mapToXs2aFrequencyCode(paymentRequest.getFrequency()));
+        payment.setFrequency(mapToFrequencyCode(paymentRequest.getFrequency()));
         payment.setDayOfExecution(mapToPisDayOfExecution(paymentRequest.getDayOfExecution()).orElse(null));
         return payment;
     }
@@ -112,8 +111,8 @@ public class PaymentMapper {
                    .flatMap(PisExecutionRule::getByValue);
     }
 
-    private Xs2aFrequencyCode mapToXs2aFrequencyCode(FrequencyCode frequency) {
-        return Xs2aFrequencyCode.valueOf(frequency.name());
+    private de.adorsys.psd2.xs2a.core.pis.FrequencyCode mapToFrequencyCode(FrequencyCode frequency) {
+        return de.adorsys.psd2.xs2a.core.pis.FrequencyCode.valueOf(frequency.name());
     }
 
     private Optional<PisDayOfExecution> mapToPisDayOfExecution(DayOfExecution dayOfExecution) {

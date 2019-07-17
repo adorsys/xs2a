@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.pis;
 
+import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -31,7 +32,7 @@ public class CmsPeriodicPayment extends CmsSinglePayment {
     private LocalDate startDate;
     private LocalDate endDate;
     private PisExecutionRule executionRule;
-    private CmsFrequencyCode frequency;
+    private FrequencyCode frequency;
     private PisDayOfExecution dayOfExecution;
 
     public CmsPeriodicPayment(String paymentProduct) {

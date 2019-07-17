@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.pis.*;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
+import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -102,7 +103,7 @@ public class CmsPsuPisMapper {
         periodicPayment.setStartDate(pisPaymentData.getStartDate());
         periodicPayment.setEndDate(pisPaymentData.getEndDate());
         periodicPayment.setExecutionRule(pisPaymentData.getExecutionRule());
-        periodicPayment.setFrequency(CmsFrequencyCode.valueOf(pisPaymentData.getFrequency()));
+        periodicPayment.setFrequency(FrequencyCode.valueOf(pisPaymentData.getFrequency()));
         PisCommonPaymentData paymentData = pisPaymentData.getPaymentData();
         if (Objects.nonNull(paymentData)) {
             periodicPayment.setTppInfo(tppInfoMapper.mapToTppInfo(paymentData.getTppInfo()));

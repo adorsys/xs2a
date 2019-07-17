@@ -17,12 +17,9 @@
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -49,10 +46,7 @@ public class Xs2aToSpiPeriodicPaymentMapper {
         if (payment.getTransactionStatus() != null) {
             periodic.setPaymentStatus(payment.getTransactionStatus());
         }
-        // TODO delete SpiFrequencyCode and remake mapping https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/668
-        periodic.setFrequency(Optional.ofNullable(payment.getFrequency())
-                                  .map(fr -> SpiFrequencyCode.valueOf(fr.name()))
-                                  .orElse(null));
+        periodic.setFrequency(payment.getFrequency());
         periodic.setDayOfExecution(payment.getDayOfExecution());
         periodic.setRequestedExecutionTime(payment.getRequestedExecutionTime());
         periodic.setRequestedExecutionDate(payment.getRequestedExecutionDate());
