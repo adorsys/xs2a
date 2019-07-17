@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
@@ -32,9 +33,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SigningBasketLoggingInterceptorTest {
@@ -44,6 +47,7 @@ public class SigningBasketLoggingInterceptorTest {
     private static final String X_REQUEST_ID_HEADER_NAME = "x-request-id";
     private static final String X_REQUEST_ID_HEADER_VALUE = "222";
     private static final String REDIRECT_ID = "redirect-id";
+    private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("b571c834-4eb1-468f-91b0-f5e83589bc22");
 
     @InjectMocks
     private SigningBasketLoggingInterceptor interceptor;
@@ -55,6 +59,8 @@ public class SigningBasketLoggingInterceptorTest {
     private HttpServletResponse response;
     @Mock
     private RedirectIdService redirectIdService;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -62,6 +68,7 @@ public class SigningBasketLoggingInterceptorTest {
     public void setUp() {
         when(response.getHeader(X_REQUEST_ID_HEADER_NAME)).thenReturn(X_REQUEST_ID_HEADER_VALUE);
         when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
+        when(requestProviderService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
     }
 
     @Test
@@ -73,11 +80,12 @@ public class SigningBasketLoggingInterceptorTest {
 
         interceptor.preHandle(request, response, null);
 
-        verify(request, times(1)).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        verify(tppService, times(1)).getTppInfo();
-        verify(request, times(1)).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
-        verify(request, times(1)).getRemoteAddr();
-        verify(request, times(1)).getRequestURI();
+        verify(request).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        verify(tppService).getTppInfo();
+        verify(requestProviderService).getInternalRequestId();
+        verify(request).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
+        verify(request).getRemoteAddr();
+        verify(request).getRequestURI();
     }
 
     @Test
@@ -89,11 +97,12 @@ public class SigningBasketLoggingInterceptorTest {
 
         interceptor.preHandle(request, response, null);
 
-        verify(request, times(1)).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        verify(tppService, times(1)).getTppInfo();
-        verify(request, times(1)).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
-        verify(request, times(1)).getRemoteAddr();
-        verify(request, times(1)).getRequestURI();
+        verify(request).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        verify(tppService).getTppInfo();
+        verify(requestProviderService).getInternalRequestId();
+        verify(request).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
+        verify(request).getRemoteAddr();
+        verify(request).getRequestURI();
     }
 
     @Test
@@ -103,9 +112,10 @@ public class SigningBasketLoggingInterceptorTest {
 
         interceptor.afterCompletion(request, response, null, null);
 
-        verify(tppService, times(1)).getTppInfo();
-        verify(response, times(1)).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
-        verify(response, times(1)).getStatus();
+        verify(tppService).getTppInfo();
+        verify(requestProviderService).getInternalRequestId();
+        verify(response).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
+        verify(response).getStatus();
         verify(redirectIdService).getRedirectId();
     }
 }

@@ -9,6 +9,7 @@
 * Log HTTP requests and responses to a separate logger
 * Bugfix: Fix get common payment by redirect-id
 * Bugfix: Optional fields in JSON structure are commented in yaml
+* New internal request id
 
 == Include TPP roles in all access-log for all request entries
 From now on, request entries in access-log will also contain list of TPP roles, extracted from the certificate.
@@ -55,3 +56,9 @@ From now on, TPP can provide `ultimateDebtor`, `ultimateCreditor`, `purposeCode`
 in request body during payment initiation process (`POST /v1/{payment-service}/{payment-product}`). These fields
 are available in payment objects in SPI API. Added validators for these fields.
 Also these fields present in `CmsPayment` object in CMS-PSU-API and CMS-ASPSP-API.
+
+== New internal request ID
+From now on, XS2A generates internal request ID (`InR-Id`) for each incoming request from TPP in order to uniquely identify requests.
+Unlike the `X-Request-ID`, which is generated and provided by the TPP, `InR-Id` is guaranteed to be unique.
+This internal request ID is now provided to the SPI inside the `de.adorsys.psd2.xs2a.spi.domain.SpiContextData`.
+It was also added to the events and `access-log`.
