@@ -16,23 +16,29 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
+import de.adorsys.psd2.xs2a.domain.pis.Remittance;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
@@ -76,6 +82,11 @@ public class Xs2aToSpiSinglePaymentMapperTest {
     private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(LocalDate.now(),
                                                                                     LocalTime.NOON,
                                                                                     ZoneOffset.UTC);
+    private static final JsonReader jsonReader = new JsonReader();
+    private static final String ULTIMATE_DEBTOR = "ultimate debtor";
+    private static final String ULTIMATE_CREDITOR = "ultimate creditor";
+    private static final PurposeCode PURPOSE_CODE = PurposeCode.fromValue("BKDF");
+    private static final Remittance REMITTANCE = jsonReader.getObjectFromFile("json/service/mapper/remittance.json", Remittance.class);
 
     @InjectMocks
     private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
@@ -87,6 +98,8 @@ public class Xs2aToSpiSinglePaymentMapperTest {
     private Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     @Mock
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    @Spy
+    private RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
 
     @Before
     public void setUp() {
@@ -126,6 +139,10 @@ public class Xs2aToSpiSinglePaymentMapperTest {
         assertEquals(REQUESTED_EXECUTION_TIME, spiSinglePayment.getRequestedExecutionTime());
         assertEquals(spiPsuDataList, spiSinglePayment.getPsuDataList());
         assertEquals(STATUS_CHANGE_TIMESTAMP, singlePayment.getStatusChangeTimestamp());
+        assertEquals(ULTIMATE_DEBTOR, spiSinglePayment.getUltimateDebtor());
+        assertEquals(ULTIMATE_CREDITOR, spiSinglePayment.getUltimateCreditor());
+        assertEquals(PURPOSE_CODE, spiSinglePayment.getPurposeCode());
+        assertEquals(remittanceMapper.mapToSpiRemittance(REMITTANCE), spiSinglePayment.getRemittanceInformationStructured());
     }
 
     private SinglePayment buildSinglePayment() {
@@ -144,6 +161,10 @@ public class Xs2aToSpiSinglePaymentMapperTest {
         singlePayment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
         singlePayment.setPsuDataList(psuDataList);
         singlePayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
+        singlePayment.setUltimateDebtor(ULTIMATE_DEBTOR);
+        singlePayment.setUltimateCreditor(ULTIMATE_CREDITOR);
+        singlePayment.setPurposeCode(PURPOSE_CODE);
+        singlePayment.setRemittanceInformationStructured(REMITTANCE);
         return singlePayment;
     }
 
@@ -181,7 +202,6 @@ public class Xs2aToSpiSinglePaymentMapperTest {
     private SpiAccountReference buildSpiAccountReference() {
         return new SpiAccountReference(RESOURCE_ID, IBAN, null, null, null, null, EUR_CURRENCY);
     }
-
 
     private PsuIdData buildPsu(String psuId) {
         return new PsuIdData(psuId, null, null, null);

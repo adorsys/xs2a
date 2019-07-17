@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.validator.body.payment;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -34,17 +35,18 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implements PaymentBodyValidator {
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
     private static final String DAY_OF_EXECUTION_FIELD_NAME = "dayOfExecution";
+    private static final String PURPOSE_CODE_FIELD_NAME = "purposeCode";
     private static final String DAY_OF_MONTH_REGEX = "(0?[1-9]|[12]\\d|3[01])";
     private static final String DAY_OF_EXECUTION_WRONG_VALUE_ERROR = "Value 'dayOfExecution' should be a number of day in month";
     private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
+    static final String PURPOSE_CODE_ERROR_FORMAT = "Field 'purposeCode' has wrong value";
 
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
 
@@ -100,6 +102,18 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     private void validateRawData(HttpServletRequest request, MessageError messageError) {
         String dayOfExecution = extractDayOfExecution(request, messageError);
         validateDayOfExecutionValue(dayOfExecution, messageError);
+        List<String> purposeCodes = extractPurposeCodes(request, messageError);
+        validatePurposeCodes(purposeCodes, messageError);
+    }
+
+    private void validatePurposeCodes(List<String> purposeCodes, MessageError messageError) {
+        boolean isPurposeCodesNotValid = purposeCodes.stream()
+                                             .map(PurposeCode::fromValue)
+                                             .anyMatch(Objects::isNull);
+
+        if (isPurposeCodesNotValid) {
+            enrichFormatMessageError(PURPOSE_CODE_ERROR_FORMAT, messageError);
+        }
     }
 
     private void validateDayOfExecutionValue(String value, MessageError messageError) {
@@ -108,8 +122,12 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         }
 
         if (!isNumberADayOfMonth(value)) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, DAY_OF_EXECUTION_WRONG_VALUE_ERROR));
+            enrichFormatMessageError(DAY_OF_EXECUTION_WRONG_VALUE_ERROR, messageError);
         }
+    }
+
+    private void enrichFormatMessageError(String message, MessageError messageError) {
+        errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, message));
     }
 
     private boolean isNumberADayOfMonth(@NotNull String value) {
@@ -128,5 +146,15 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         }
 
         return dayOfExecutionOptional.orElse(null);
+    }
+
+    private List<String> extractPurposeCodes(HttpServletRequest request, MessageError messageError) {
+        List<String> purposeCodes = new ArrayList<>();
+        try {
+            purposeCodes.addAll(jsonConverter.toJsonGetValuesForField(request.getInputStream(), PURPOSE_CODE_FIELD_NAME));
+        } catch (IOException e) {
+            errorBuildingService.enrichMessageError(messageError, BODY_DESERIALIZATION_ERROR);
+        }
+        return purposeCodes;
     }
 }

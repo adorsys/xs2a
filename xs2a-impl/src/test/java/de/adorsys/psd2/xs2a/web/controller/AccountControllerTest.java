@@ -28,7 +28,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
-import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.AccountService;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
@@ -441,7 +441,7 @@ public class AccountControllerTest {
         transaction.setDebtorAccount(debtor);
         transaction.setRemittanceInformationStructured("Ref Number Merchant");
         transaction.setRemittanceInformationUnstructured("Ref Number Merchant");
-        transaction.setPurposeCode(new Xs2aPurposeCode("BKDF"));
+        transaction.setPurposeCode(PurposeCode.fromValue("BKDF"));
         transaction.setBankTransactionCodeCode(new BankTransactionCode("BankTransactionCode"));
 
         return ResponseObject.<Transactions>builder()

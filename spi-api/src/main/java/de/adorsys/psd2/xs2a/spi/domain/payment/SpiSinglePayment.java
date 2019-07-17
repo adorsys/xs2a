@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
@@ -45,6 +46,10 @@ public class SpiSinglePayment implements SpiPayment {
     private OffsetDateTime requestedExecutionTime;
     private List<SpiPsuData> psuDataList;
     private OffsetDateTime statusChangeTimestamp;
+    private String ultimateDebtor;
+    private String ultimateCreditor;
+    private PurposeCode purposeCode;
+    private SpiRemittance remittanceInformationStructured;
 
     public SpiSinglePayment(String paymentProduct) {
         this.paymentProduct = paymentProduct;

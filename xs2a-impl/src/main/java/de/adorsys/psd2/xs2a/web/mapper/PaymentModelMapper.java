@@ -28,7 +28,7 @@ import org.mapstruct.MappingTarget;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
-@Mapper(componentModel = "spring", uses = {Xs2aAddressMapper.class})
+@Mapper(componentModel = "spring", uses = {Xs2aAddressMapper.class, RemittanceMapper.class, PurposeCodeMapper.class})
 public interface PaymentModelMapper {
 
     PeriodicPayment mapToXs2aPayment(PeriodicPaymentInitiationJson paymentRequest);
