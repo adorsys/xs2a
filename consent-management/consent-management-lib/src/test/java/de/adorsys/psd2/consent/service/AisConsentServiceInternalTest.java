@@ -101,7 +101,6 @@ public class AisConsentServiceInternalTest {
     private AspspProfileService aspspProfileService;
     @Mock
     private AisConsentAuthorisationRepository aisConsentAuthorisationRepository;
-
     @Mock
     private AisConsent aisConsentMocked;
     @Mock
@@ -151,19 +150,20 @@ public class AisConsentServiceInternalTest {
     @Test
     public void getAisAccountConsentById_checkAndUpdateOnExpirationInvoked() {
         // When
-        ArgumentCaptor<AisConsent> argumentCaptor = ArgumentCaptor.forClass(AisConsent.class);
         AisConsent aisConsent = buildConsent(EXTERNAL_CONSENT_ID, Collections.singletonList(psuDataMocked), LocalDate.now().minusDays(1));
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(aisConsent)).thenReturn(aisConsent);
         when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(buildSpiAccountConsent());
+        when(aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(aisConsent))
+            .thenReturn(true);
+        doNothing().when(aisConsentConfirmationExpirationService).expireConsent(aisConsent);
 
         // Then
         Optional<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
-        verify(aisConsentRepository).save(argumentCaptor.capture());
 
         // Assert
         assertTrue(retrievedConsent.isPresent());
-        assertEquals(ConsentStatus.EXPIRED, argumentCaptor.getValue().getConsentStatus());
+        verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(aisConsent);
     }
 
     @Test
@@ -191,15 +191,15 @@ public class AisConsentServiceInternalTest {
             .thenReturn(Optional.of(consent));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent))
             .thenReturn(consent);
-
-        ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
+        when(aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent))
+            .thenReturn(true);
+        doNothing().when(aisConsentConfirmationExpirationService).expireConsent(consent);
 
         // When
         aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
 
         // Then
-        verify(aisConsentRepository).save(aisConsentCaptor.capture());
-        assertEquals(ConsentStatus.EXPIRED, aisConsentCaptor.getValue().getConsentStatus());
+        verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(consent);
     }
 
     @Test
@@ -506,15 +506,15 @@ public class AisConsentServiceInternalTest {
             .thenReturn(Optional.of(consent));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent))
             .thenReturn(consent);
-
-        ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
+        when(aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent))
+            .thenReturn(true);
+        doNothing().when(aisConsentConfirmationExpirationService).expireConsent(consent);
 
         // When
         aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, "/uri", false));
 
         // Then
-        verify(aisConsentRepository).save(aisConsentCaptor.capture());
-        assertEquals(ConsentStatus.EXPIRED, aisConsentCaptor.getValue().getConsentStatus());
+        verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(consent);
     }
 
     @Test
@@ -526,18 +526,17 @@ public class AisConsentServiceInternalTest {
             .thenReturn(Optional.of(consent));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent))
             .thenReturn(consent);
-
-        ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
+        when(aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent))
+            .thenReturn(true);
+        doNothing().when(aisConsentConfirmationExpirationService).expireConsent(consent);
 
         // When
         Optional<ConsentStatus> consentStatusById = aisConsentService.getConsentStatusById(EXTERNAL_CONSENT_ID);
 
         // Then
-        verify(aisConsentRepository).save(aisConsentCaptor.capture());
-        assertEquals(ConsentStatus.EXPIRED, aisConsentCaptor.getValue().getConsentStatus());
 
         assertTrue(consentStatusById.isPresent());
-        assertEquals(ConsentStatus.EXPIRED, consentStatusById.get());
+        verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(consent);
     }
 
     @Test
@@ -547,15 +546,15 @@ public class AisConsentServiceInternalTest {
 
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(consent));
-
-        ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
+        when(aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent))
+            .thenReturn(true);
+        doNothing().when(aisConsentConfirmationExpirationService).expireConsent(consent);
 
         // When
         aisConsentService.getInitialAisAccountConsentById(EXTERNAL_CONSENT_ID);
 
         // Then
-        verify(aisConsentRepository).save(aisConsentCaptor.capture());
-        assertEquals(ConsentStatus.EXPIRED, aisConsentCaptor.getValue().getConsentStatus());
+        verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(consent);
     }
 
     @NotNull

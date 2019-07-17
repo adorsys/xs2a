@@ -21,7 +21,7 @@ From now on, while initiate payment or consent with invalid field `X-Request-ID`
 == Bugfix: Finalised status of AIS consent changes after expiration
 
 From now on, no changes can be done to the status of consent when it is expired or finalised
-while getting AIS Consent (`GET /psu-api/v1/ais/consent/{consent-id}`) in CMS.
+while getting AIS Consent (`GET /psu-api/v1/ais/consent/{consent-id}` or `GET /api/v1/ais/consent/{consent-id}`) in CMS.
 
 == Bugfix: Fix `scaRedirect` link in payment cancellation in case of implicit authorisation
 From now on, `scaRedirect` link in response to payment cancellation request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`)
