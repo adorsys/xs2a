@@ -44,11 +44,12 @@ public class RequestProviderService {
     private final HttpServletRequest httpServletRequest;
 
     public Optional<Boolean> resolveTppRedirectPreferred() {
-        Map<String, String> headers = getRequestData().getHeaders();
-        if (headers == null || !headers.containsKey(TPP_REDIRECT_PREFERRED_HEADER)) {
+
+        String header = getHeader(TPP_REDIRECT_PREFERRED_HEADER);
+        if (header == null) {
             return Optional.empty();
         }
-        return Optional.of(Boolean.valueOf(headers.get(TPP_REDIRECT_PREFERRED_HEADER)));
+        return Optional.of(Boolean.valueOf(header));
     }
 
     public RequestData getRequestData() {
