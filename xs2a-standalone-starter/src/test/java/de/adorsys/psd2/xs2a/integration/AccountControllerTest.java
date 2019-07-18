@@ -19,8 +19,8 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
-import de.adorsys.psd2.consent.service.AisConsentServiceRemote;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
@@ -114,7 +114,7 @@ public class AccountControllerTest {
     @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
-    private AisConsentServiceRemote aisConsentServiceRemote;
+    private AisConsentServiceEncrypted aisConsentServiceEncrypted;
     @MockBean
     private Xs2aAisConsentMapper xs2aAisConsentMapper;
     @MockBean
@@ -142,7 +142,7 @@ public class AccountControllerTest {
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
-        given(aisConsentServiceRemote.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(new AisAccountConsent()));
+        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(new AisAccountConsent()));
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
         given(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).willReturn(aspspConsentDataProvider);
@@ -223,8 +223,8 @@ public class AccountControllerTest {
         given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
 
         AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
-        given(aisConsentServiceRemote.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
-        given(aisConsentServiceRemote.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
+        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
+        given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
             .willReturn(Optional.of(aisAccountConsent));
         AccountConsent accountConsent = buildAccountConsent(aisAccountConsent.getUsageCounterMap());
         given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
@@ -255,8 +255,8 @@ public class AccountControllerTest {
 
         for (int usage = 2; usage >= 0; usage--) {
             AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", usage));
-            given(aisConsentServiceRemote.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
-            given(aisConsentServiceRemote.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
+            given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
+            given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
                 .willReturn(Optional.of(aisAccountConsent));
             AccountConsent accountConsent = buildAccountConsent(aisAccountConsent.getUsageCounterMap());
             given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
