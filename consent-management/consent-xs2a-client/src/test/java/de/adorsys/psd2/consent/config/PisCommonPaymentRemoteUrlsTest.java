@@ -23,7 +23,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.junit.Assert.*;
 
 public class PisCommonPaymentRemoteUrlsTest {
-
     private static final String BASE_URL = "http://base.url";
 
     private PisCommonPaymentRemoteUrls pisCommonPaymentRemoteUrls;
@@ -37,138 +36,138 @@ public class PisCommonPaymentRemoteUrlsTest {
     @Test
     public void createPisCommonPayment() {
         assertEquals("http://base.url/pis/common-payments/",
-            pisCommonPaymentRemoteUrls.createPisCommonPayment());
+                     pisCommonPaymentRemoteUrls.createPisCommonPayment());
     }
 
     @Test
     public void updatePisCommonPaymentStatus() {
         assertEquals("http://base.url/pis/common-payments/{paymentId}/status/{status}",
-            pisCommonPaymentRemoteUrls.updatePisCommonPaymentStatus());
+                     pisCommonPaymentRemoteUrls.updatePisCommonPaymentStatus());
     }
 
     @Test
     public void getPisCommonPaymentStatusById() {
         assertEquals("http://base.url/pis/common-payments/{paymentId}/status",
-            pisCommonPaymentRemoteUrls.getPisCommonPaymentStatusById());
+                     pisCommonPaymentRemoteUrls.getPisCommonPaymentStatusById());
     }
 
     @Test
     public void getPisCommonPaymentById() {
         assertEquals("http://base.url/pis/common-payments/{paymentId}",
-            pisCommonPaymentRemoteUrls.getPisCommonPaymentById());
+                     pisCommonPaymentRemoteUrls.getPisCommonPaymentById());
     }
 
     @Test
     public void createPisAuthorisation() {
         assertEquals("http://base.url/pis/common-payments/{payment-id}/authorizations",
-            pisCommonPaymentRemoteUrls.createPisAuthorisation());
+                     pisCommonPaymentRemoteUrls.createPisAuthorisation());
     }
 
     @Test
     public void createPisAuthorisationCancellation() {
         assertEquals("http://base.url/pis/common-payments/{payment-id}/cancellation-authorisations",
-            pisCommonPaymentRemoteUrls.createPisAuthorisationCancellation());
+                     pisCommonPaymentRemoteUrls.createPisAuthorisationCancellation());
     }
 
     @Test
     public void getCancellationAuthorisationSubResources() {
         assertEquals("http://base.url/pis/common-payments/{payment-id}/cancellation-authorisations",
-            pisCommonPaymentRemoteUrls.getCancellationAuthorisationSubResources());
+                     pisCommonPaymentRemoteUrls.getCancellationAuthorisationSubResources());
     }
 
     @Test
     public void updatePisAuthorisation() {
         assertEquals("http://base.url/pis/common-payments/authorizations/{authorization-id}",
-            pisCommonPaymentRemoteUrls.updatePisAuthorisation());
+                     pisCommonPaymentRemoteUrls.updatePisAuthorisation());
     }
 
     @Test
     public void updatePisCancellationAuthorisation() {
         assertEquals("http://base.url/pis/common-payments/cancellation-authorisations/{cancellation-id}",
-            pisCommonPaymentRemoteUrls.updatePisCancellationAuthorisation());
+                     pisCommonPaymentRemoteUrls.updatePisCancellationAuthorisation());
     }
 
     @Test
     public void getPisAuthorisationById() {
         assertEquals("http://base.url/pis/common-payments/authorizations/{authorization-id}",
-            pisCommonPaymentRemoteUrls.getPisAuthorisationById());
+                     pisCommonPaymentRemoteUrls.getPisAuthorisationById());
     }
 
     @Test
     public void getPisCancellationAuthorisationById() {
         assertEquals("http://base.url/pis/common-payments/cancellation-authorisations/{cancellation-id}",
-            pisCommonPaymentRemoteUrls.getPisCancellationAuthorisationById());
+                     pisCommonPaymentRemoteUrls.getPisCancellationAuthorisationById());
     }
 
     @Test
     public void getPaymentIdByEncryptedString() {
         assertEquals("http://base.url/pis/payment/{payment-id}",
-            pisCommonPaymentRemoteUrls.getPaymentIdByEncryptedString());
+                     pisCommonPaymentRemoteUrls.getPaymentIdByEncryptedString());
     }
 
     @Test
     public void updatePisCommonPayment() {
         assertEquals("http://base.url/pis/common-payments/{consent-id}/payment",
-            pisCommonPaymentRemoteUrls.updatePisCommonPayment());
+                     pisCommonPaymentRemoteUrls.updatePisCommonPayment());
     }
 
     @Test
     public void getPsuDataByCommonPaymentId() {
         assertEquals("http://base.url/pis/common-payments/{consent-id}/psu-data",
-            pisCommonPaymentRemoteUrls.getPsuDataByCommonPaymentId());
+                     pisCommonPaymentRemoteUrls.getPsuDataByCommonPaymentId());
     }
 
     @Test
     public void getPsuDataByPaymentId() {
         assertEquals("http://base.url/pis/payment/{payment-id}/psu-data",
-            pisCommonPaymentRemoteUrls.getPsuDataByPaymentId());
+                     pisCommonPaymentRemoteUrls.getPsuDataByPaymentId());
     }
 
     @Test
     public void getAuthorisationSubResources() {
         assertEquals("http://base.url/pis/common-payments/{payment-id}/authorisations",
-            pisCommonPaymentRemoteUrls.getAuthorisationSubResources());
+                     pisCommonPaymentRemoteUrls.getAuthorisationSubResources());
     }
 
     @Test
     public void getAuthorisationScaStatus() {
         assertEquals("http://base.url/pis/common-payments/{payment-id}/authorisations/{authorisation-id}/status",
-            pisCommonPaymentRemoteUrls.getAuthorisationScaStatus());
+                     pisCommonPaymentRemoteUrls.getAuthorisationScaStatus());
     }
 
     @Test
     public void getCancellationAuthorisationScaStatus() {
         assertEquals("http://base.url/pis/common-payments/{payment-id}/cancellation-authorisations/{cancellation-id}/status",
-            pisCommonPaymentRemoteUrls.getCancellationAuthorisationScaStatus());
+                     pisCommonPaymentRemoteUrls.getCancellationAuthorisationScaStatus());
     }
 
     @Test
     public void isAuthenticationMethodDecoupled() {
         assertEquals("http://base.url/pis/common-payments/authorisations/{authorisation-id}/authentication-methods/{authentication-method-id}",
-            pisCommonPaymentRemoteUrls.isAuthenticationMethodDecoupled());
+                     pisCommonPaymentRemoteUrls.isAuthenticationMethodDecoupled());
     }
 
     @Test
     public void saveAuthenticationMethods() {
         assertEquals("http://base.url/pis/common-payments/authorisations/{authorisation-id}/authentication-methods",
-            pisCommonPaymentRemoteUrls.saveAuthenticationMethods());
+                     pisCommonPaymentRemoteUrls.saveAuthenticationMethods());
     }
 
     @Test
     public void updateScaApproach() {
         assertEquals("http://base.url/pis/common-payments/authorisations/{authorisation-id}/sca-approach/{sca-approach}",
-            pisCommonPaymentRemoteUrls.updateScaApproach());
+                     pisCommonPaymentRemoteUrls.updateScaApproach());
     }
 
     @Test
     public void getAuthorisationScaApproach() {
         assertEquals("http://base.url/pis/common-payments/authorisations/{authorisation-id}/sca-approach",
-            pisCommonPaymentRemoteUrls.getAuthorisationScaApproach());
+                     pisCommonPaymentRemoteUrls.getAuthorisationScaApproach());
     }
 
     @Test
     public void getCancellationAuthorisationScaApproach() {
         assertEquals("http://base.url/pis/common-payments/cancellation-authorisations/{authorisation-id}/sca-approach",
-            pisCommonPaymentRemoteUrls.getCancellationAuthorisationScaApproach());
+                     pisCommonPaymentRemoteUrls.getCancellationAuthorisationScaApproach());
     }
 }

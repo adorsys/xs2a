@@ -23,7 +23,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.junit.Assert.*;
 
 public class AisConsentRemoteUrlsTest {
-
     private static final String BASE_URL = "http://base.url";
 
     private AisConsentRemoteUrls aisConsentRemoteUrls;
@@ -37,114 +36,114 @@ public class AisConsentRemoteUrlsTest {
     @Test
     public void createAisConsent() {
         assertEquals("http://base.url/ais/consent/",
-            aisConsentRemoteUrls.createAisConsent());
+                     aisConsentRemoteUrls.createAisConsent());
     }
 
     @Test
     public void getAisConsentById() {
         assertEquals("http://base.url/ais/consent/{consent-id}",
-            aisConsentRemoteUrls.getAisConsentById());
+                     aisConsentRemoteUrls.getAisConsentById());
     }
 
     @Test
     public void getInitialAisConsentById() {
         assertEquals("http://base.url/ais/consent/initial/{consent-id}",
-            aisConsentRemoteUrls.getInitialAisConsentById());
+                     aisConsentRemoteUrls.getInitialAisConsentById());
     }
 
     @Test
     public void getAisConsentStatusById() {
         assertEquals("http://base.url/ais/consent/{consent-id}/status",
-            aisConsentRemoteUrls.getAisConsentStatusById());
+                     aisConsentRemoteUrls.getAisConsentStatusById());
     }
 
     @Test
     public void updateAisConsentStatus() {
         assertEquals("http://base.url/ais/consent/{consent-id}/status/{status}",
-            aisConsentRemoteUrls.updateAisConsentStatus());
+                     aisConsentRemoteUrls.updateAisConsentStatus());
     }
 
     @Test
     public void findAndTerminateOldConsentsByNewConsentId() {
         assertEquals("http://base.url/ais/consent/{consent-id}/old-consents",
-            aisConsentRemoteUrls.findAndTerminateOldConsentsByNewConsentId());
+                     aisConsentRemoteUrls.findAndTerminateOldConsentsByNewConsentId());
     }
 
     @Test
     public void consentActionLog() {
         assertEquals("http://base.url/ais/consent/action",
-            aisConsentRemoteUrls.consentActionLog());
+                     aisConsentRemoteUrls.consentActionLog());
     }
 
     @Test
     public void createAisConsentAuthorization() {
         assertEquals("http://base.url/ais/consent/{consent-id}/authorizations",
-            aisConsentRemoteUrls.createAisConsentAuthorization());
+                     aisConsentRemoteUrls.createAisConsentAuthorization());
     }
 
     @Test
     public void updateAisConsentAuthorization() {
         assertEquals("http://base.url/ais/consent/authorizations/{authorization-id}",
-            aisConsentRemoteUrls.updateAisConsentAuthorization());
+                     aisConsentRemoteUrls.updateAisConsentAuthorization());
     }
 
     @Test
     public void getAisConsentAuthorizationById() {
         assertEquals("http://base.url/ais/consent/{consent-id}/authorizations/{authorization-id}",
-            aisConsentRemoteUrls.getAisConsentAuthorizationById());
+                     aisConsentRemoteUrls.getAisConsentAuthorizationById());
     }
 
     @Test
     public void updateAisAccountAccess() {
         assertEquals("http://base.url/ais/consent/{consent-id}/access",
-            aisConsentRemoteUrls.updateAisAccountAccess());
+                     aisConsentRemoteUrls.updateAisAccountAccess());
     }
 
     @Test
     public void getPsuDataByConsentId() {
         assertEquals("http://base.url/ais/consent/{consent-id}/psu-data",
-            aisConsentRemoteUrls.getPsuDataByConsentId());
+                     aisConsentRemoteUrls.getPsuDataByConsentId());
     }
 
     @Test
     public void getAuthorisationSubResources() {
         assertEquals("http://base.url/ais/consent/{consent-id}/authorisations",
-            aisConsentRemoteUrls.getAuthorisationSubResources());
+                     aisConsentRemoteUrls.getAuthorisationSubResources());
     }
 
     @Test
     public void getAuthorisationScaStatus() {
         assertEquals("http://base.url/ais/consent/{consent-id}/authorisations/{authorisation-id}/status",
-            aisConsentRemoteUrls.getAuthorisationScaStatus());
+                     aisConsentRemoteUrls.getAuthorisationScaStatus());
     }
 
     @Test
     public void isAuthenticationMethodDecoupled() {
         assertEquals("http://base.url/ais/consent/authorisations/{authorisation-id}/authentication-methods/{authentication-method-id}",
-            aisConsentRemoteUrls.isAuthenticationMethodDecoupled());
+                     aisConsentRemoteUrls.isAuthenticationMethodDecoupled());
     }
 
     @Test
     public void saveAuthenticationMethods() {
         assertEquals("http://base.url/ais/consent/authorisations/{authorisation-id}/authentication-methods",
-            aisConsentRemoteUrls.saveAuthenticationMethods());
+                     aisConsentRemoteUrls.saveAuthenticationMethods());
     }
 
     @Test
     public void updateScaApproach() {
         assertEquals("http://base.url/ais/consent/authorisations/{authorisation-id}/sca-approach/{sca-approach}",
-            aisConsentRemoteUrls.updateScaApproach());
+                     aisConsentRemoteUrls.updateScaApproach());
     }
 
     @Test
     public void updateMultilevelScaRequired() {
         assertEquals("http://base.url/ais/consent/{consent-id}/multilevel-sca?multilevel-sca={multilevel-sca}",
-            aisConsentRemoteUrls.updateMultilevelScaRequired());
+                     aisConsentRemoteUrls.updateMultilevelScaRequired());
     }
 
     @Test
     public void getAuthorisationScaApproach() {
         assertEquals("http://base.url/ais/consent/authorisations/{authorisation-id}/sca-approach",
-            aisConsentRemoteUrls.getAuthorisationScaApproach());
+                     aisConsentRemoteUrls.getAuthorisationScaApproach());
     }
 }
