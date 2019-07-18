@@ -30,13 +30,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 @Component
-public class DefaultMethodValidatorImpl extends AbstractMethodValidator<HeaderValidator, BodyValidator, QueryParameterValidator> {
+public class DefaultMethodValidatorImpl extends AbstractMethodValidator<HeaderValidator, RawBodyValidator, BodyValidator, QueryParameterValidator> {
 
     private XRequestIdHeaderValidatorImpl xRequestIdHeaderValidator;
 
     @Autowired
     public DefaultMethodValidatorImpl(XRequestIdHeaderValidatorImpl xRequestIdHeaderValidator) {
-        super(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+        super(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
         this.xRequestIdHeaderValidator = xRequestIdHeaderValidator;
     }
 

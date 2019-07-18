@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator;
 
 import de.adorsys.psd2.xs2a.web.validator.body.consent.ConsentBodyValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.raw.ConsentRawBodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.ConsentHeaderValidator;
 import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +27,15 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class ConsentMethodValidatorImpl extends AbstractMethodValidator<ConsentHeaderValidator, ConsentBodyValidator, QueryParameterValidator> {
+public class ConsentMethodValidatorImpl extends AbstractMethodValidator<ConsentHeaderValidator, ConsentRawBodyValidator, ConsentBodyValidator, QueryParameterValidator> {
 
     private static final String METHOD_NAME = "_createConsent";
 
     @Autowired
     public ConsentMethodValidatorImpl(List<ConsentHeaderValidator> headerValidators,
+                                      List<ConsentRawBodyValidator> rawBodyValidators,
                                       List<ConsentBodyValidator> bodyValidators) {
-        super(headerValidators, bodyValidators, Collections.emptyList());
+        super(headerValidators, rawBodyValidators, bodyValidators, Collections.emptyList());
     }
 
     @Override
