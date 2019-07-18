@@ -34,13 +34,10 @@ import java.util.Objects;
 @Component
 public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl {
 
-    private PaymentMapper paymentMapper;
-
     @Autowired
     public BulkPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
                                         PaymentMapper paymentMapper) {
         super(errorBuildingService, objectMapper, paymentMapper);
-        this.paymentMapper = paymentMapper;
     }
 
     @Override

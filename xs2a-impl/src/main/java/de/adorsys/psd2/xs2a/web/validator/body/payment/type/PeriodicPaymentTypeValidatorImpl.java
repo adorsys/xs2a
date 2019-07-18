@@ -34,13 +34,10 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PERIOD_INVALID;
 
 @Component
 public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl {
-    private PaymentMapper paymentMapper;
 
     @Autowired
-    public PeriodicPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
-                                            PaymentMapper paymentMapper) {
+    public PeriodicPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper, PaymentMapper paymentMapper) {
         super(errorBuildingService, objectMapper, paymentMapper);
-        this.paymentMapper = paymentMapper;
     }
 
     @Override

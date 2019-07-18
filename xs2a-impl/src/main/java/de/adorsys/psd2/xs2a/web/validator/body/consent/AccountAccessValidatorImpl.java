@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,19 +37,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS;
+
 @Component
 public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implements ConsentBodyValidator {
 
     private final AccountReferenceValidator accountReferenceValidator;
 
+    private DateFieldValidator dateFieldValidator;
+
     @Autowired
-    public AccountAccessValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper, AccountReferenceValidator accountReferenceValidator) {
+    public AccountAccessValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper, AccountReferenceValidator accountReferenceValidator, DateFieldValidator dateFieldValidator) {
         super(errorBuildingService, objectMapper);
         this.accountReferenceValidator = accountReferenceValidator;
+        this.dateFieldValidator = dateFieldValidator;
     }
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
+    public void validateBodyFields(HttpServletRequest request, MessageError messageError) {
 
         Optional<Consents> consentsOptional = mapBodyToInstance(request, messageError, Consents.class);
 
@@ -64,6 +70,11 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
         } else {
             validateAccountAccess(consents, messageError);
         }
+    }
+
+    @Override
+    public void validateRawData(HttpServletRequest request, MessageError messageError) {
+        dateFieldValidator.validateDateFormat(request, AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError);
     }
 
     private void validateAccountAccess(Consents consents, MessageError messageError) {

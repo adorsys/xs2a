@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
@@ -27,9 +26,9 @@ import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidatorContext;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
@@ -38,18 +37,18 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.PAYMENT_DATE_FIELDS;
+
 @Component
 public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implements PaymentBodyValidator {
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
-    private static final String DAY_OF_EXECUTION_FIELD_NAME = "dayOfExecution";
     private static final String PURPOSE_CODE_FIELD_NAME = "purposeCode";
-    private static final String DAY_OF_MONTH_REGEX = "(0?[1-9]|[12]\\d|3[01])";
-    private static final String DAY_OF_EXECUTION_WRONG_VALUE_ERROR = "Value 'dayOfExecution' should be a number of day in month";
     private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
     static final String PURPOSE_CODE_ERROR_FORMAT = "Field 'purposeCode' has wrong value";
 
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
+    private DateFieldValidator dateFieldValidator;
 
     private final JsonConverter jsonConverter;
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
@@ -59,16 +58,18 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
                                     PaymentTypeValidatorContext paymentTypeValidatorContext,
                                     StandardPaymentProductsResolver standardPaymentProductsResolver,
-                                    JsonConverter jsonConverter, TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator) {
+                                    JsonConverter jsonConverter, TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
+                                    DateFieldValidator dateFieldValidator) {
         super(errorBuildingService, objectMapper);
         this.paymentTypeValidatorContext = paymentTypeValidatorContext;
         this.standardPaymentProductsResolver = standardPaymentProductsResolver;
+        this.dateFieldValidator = dateFieldValidator;
         this.jsonConverter = jsonConverter;
         this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
     }
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
+    public void validateBodyFields(HttpServletRequest request, MessageError messageError) {
         tppRedirectUriBodyValidator.validate(request, messageError);
 
         Map<String, String> pathParametersMap = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
@@ -84,9 +85,15 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
             return;
         }
 
-        validateRawData(request, messageError);
-
         validateInitiatePaymentBody(bodyOptional.get(), pathParametersMap, messageError);
+    }
+
+    @Override
+    public void validateRawData(HttpServletRequest request, MessageError messageError) {
+        dateFieldValidator.validateDayOfExecution(request, messageError);
+        dateFieldValidator.validateDateFormat(request, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
+        List<String> purposeCodes = extractPurposeCodes(request, messageError);
+        validatePurposeCodes(purposeCodes, messageError);
     }
 
     private void validateInitiatePaymentBody(Object body, Map<String, String> pathParametersMap, MessageError messageError) {
@@ -104,13 +111,6 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         return standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct);
     }
 
-    private void validateRawData(HttpServletRequest request, MessageError messageError) {
-        String dayOfExecution = extractDayOfExecution(request, messageError);
-        validateDayOfExecutionValue(dayOfExecution, messageError);
-        List<String> purposeCodes = extractPurposeCodes(request, messageError);
-        validatePurposeCodes(purposeCodes, messageError);
-    }
-
     private void validatePurposeCodes(List<String> purposeCodes, MessageError messageError) {
         boolean isPurposeCodesNotValid = purposeCodes.stream()
                                              .map(PurposeCode::fromValue)
@@ -121,36 +121,8 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         }
     }
 
-    private void validateDayOfExecutionValue(String value, MessageError messageError) {
-        if (value == null) {
-            return;
-        }
-
-        if (!isNumberADayOfMonth(value)) {
-            enrichFormatMessageError(DAY_OF_EXECUTION_WRONG_VALUE_ERROR, messageError);
-        }
-    }
-
     private void enrichFormatMessageError(String message, MessageError messageError) {
         errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, message));
-    }
-
-    private boolean isNumberADayOfMonth(@NotNull String value) {
-        return value.matches(DAY_OF_MONTH_REGEX);
-    }
-
-    private String extractDayOfExecution(HttpServletRequest request, MessageError messageError) {
-        Optional<String> dayOfExecutionOptional = Optional.empty();
-        try {
-            // TODO: create common class with Jackson's functionality instead of two: JsonConverter and ObjectMapper.
-            //  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/870
-            dayOfExecutionOptional = jsonConverter.toJsonField(request.getInputStream(), DAY_OF_EXECUTION_FIELD_NAME, new TypeReference<String>() {
-            });
-        } catch (IOException e) {
-            errorBuildingService.enrichMessageError(messageError, BODY_DESERIALIZATION_ERROR);
-        }
-
-        return dayOfExecutionOptional.orElse(null);
     }
 
     private List<String> extractPurposeCodes(HttpServletRequest request, MessageError messageError) {
