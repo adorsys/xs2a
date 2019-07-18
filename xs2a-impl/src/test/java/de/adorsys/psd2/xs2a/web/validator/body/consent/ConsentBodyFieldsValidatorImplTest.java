@@ -21,9 +21,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
+import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
+import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
@@ -50,7 +54,13 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentBodyFieldsValidatorImplTest {
     private static final String ACCESS_FIELD = "access";
+    private static final String VALID_UNTIL_FIELD_NAME = "validUntil";
+    private static final String CORRECT_FORMAT_DATE = "2021-10-10";
+    private static final String WRONG_FORMAT_DATE = "07/01/2019 00:00:00";
     private static final String DESERIALIZATION_ERROR = "Cannot deserialize the request body";
+
+    private static final MessageError VALID_UNTIL_DATE_WRONG_VALUE_ERROR =
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Wrong format for 'validUntil': value should be ISO_DATE 'YYYY-MM-DD' format."));
 
     private HttpServletRequest request;
     private ConsentBodyFieldsValidatorImpl validator;
@@ -74,13 +84,13 @@ public class ConsentBodyFieldsValidatorImplTest {
         consents = jsonReader.getObjectFromFile("json/validation/ais/consents.json", Consents.class);
         when(objectMapper.readValue(any(InputStream.class), eq(Consents.class)))
             .thenReturn(consents);
-
-        messageError = new MessageError();
+        ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
+        messageError = new MessageError(ErrorType.AIS_400);
 
         byte[] requestContent = jsonReader.getBytesFromFile("json/validation/ais/consents.json");
         this.request = buildRequestWithContent(requestContent);
 
-        validator = new ConsentBodyFieldsValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), objectMapper, jsonConverter, tppRedirectUriBodyValidator);
+        validator = new ConsentBodyFieldsValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), objectMapper, jsonConverter, tppRedirectUriBodyValidator, new DateFieldValidator(errorService, jsonConverter, new LocalDateConverter()));
     }
 
     @Test
@@ -237,8 +247,6 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccounts-invalidValue.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
-        when(objectMapper.readValue(any(InputStream.class), eq(Consents.class)))
-            .thenReturn(consents);
 
         Map<String, Object> accessMap = new HashMap<>();
         accessMap.put("availableAccounts", "Accounts");
@@ -252,7 +260,6 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Wrong value for availableAccounts", messageError.getTppMessage().getText());
-        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -260,8 +267,6 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccounts-invalidValue.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
-        when(objectMapper.readValue(any(InputStream.class), eq(Consents.class)))
-            .thenReturn(consents);
 
         Map<String, Object> accessMap = new HashMap<>();
         accessMap.put("availableAccounts", 1);
@@ -276,7 +281,6 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Wrong value for availableAccounts", messageError.getTppMessage().getText());
-        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -284,8 +288,6 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Given
         String jsonFilePath = "json/validation/ais/consents-allPsd2-invalidValue.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
-        when(objectMapper.readValue(any(InputStream.class), eq(Consents.class)))
-            .thenReturn(consents);
 
         Map<String, Object> accessMap = new HashMap<>();
         accessMap.put("allPsd2", "AllAccounts");
@@ -300,7 +302,6 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Wrong value for allPsd2", messageError.getTppMessage().getText());
-        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -308,8 +309,6 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Given
         String jsonFilePath = "json/validation/ais/consents-allPsd2-invalidType.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
-        when(objectMapper.readValue(any(InputStream.class), eq(Consents.class)))
-            .thenReturn(consents);
 
         Map<String, Object> accessMap = new HashMap<>();
         accessMap.put("allPsd2", 1);
@@ -324,7 +323,6 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Wrong value for allPsd2", messageError.getTppMessage().getText());
-        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -332,8 +330,6 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccountsWithBalances-invalidValue.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
-        when(objectMapper.readValue(any(InputStream.class), eq(Consents.class)))
-            .thenReturn(consents);
 
         Map<String, Object> accessMap = new HashMap<>();
         accessMap.put("availableAccountsWithBalances", "Accounts");
@@ -347,7 +343,6 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Wrong value for availableAccountsWithBalances", messageError.getTppMessage().getText());
-        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -355,8 +350,6 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccountsWithBalances-invalidType.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
-        when(objectMapper.readValue(any(InputStream.class), eq(Consents.class)))
-            .thenReturn(consents);
 
         Map<String, Object> accessMap = new HashMap<>();
         accessMap.put("availableAccountsWithBalances", 1);
@@ -371,7 +364,6 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Wrong value for availableAccountsWithBalances", messageError.getTppMessage().getText());
-        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
     @Test
@@ -387,7 +379,30 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals(DESERIALIZATION_ERROR, messageError.getTppMessage().getText());
-        verify(tppRedirectUriBodyValidator, times(1)).validate(malformedRequest, messageError);
+    }
+
+    @Test
+    public void validate_validUntilDateWrongValue_wrongFormat_error() {
+        // Given
+        when(jsonConverter.toJsonField(any(InputStream.class), eq(VALID_UNTIL_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_DATE));
+
+        // When
+        validator.validate(request, messageError);
+
+        // Then
+        assertEquals(VALID_UNTIL_DATE_WRONG_VALUE_ERROR, messageError);
+    }
+
+    @Test
+    public void validate_requestedExecutionDateCorrectValue_success() {
+        // Given
+        when(jsonConverter.toJsonField(any(InputStream.class), eq(VALID_UNTIL_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_DATE));
+
+        // When
+        validator.validate(request, messageError);
+
+        // Then
+        assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     private HttpServletRequest buildRequestWithContent(byte[] content) {

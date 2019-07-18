@@ -67,8 +67,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         PurposeCodeMapper purposeCodeMapper = Mappers.getMapper(PurposeCodeMapper.class);
         RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
         validator = new PeriodicPaymentTypeValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400),
-                                                       objectMapper,
-                                                       new PaymentMapper(objectMapper, purposeCodeMapper, remittanceMapper));
+                                                         objectMapper,
+                                                         new PaymentMapper(objectMapper, purposeCodeMapper, remittanceMapper));
     }
 
     @Test

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.validator.body.payment.type;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
@@ -27,6 +28,7 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
@@ -60,6 +62,8 @@ public class SinglePaymentTypeValidatorImplTest {
         address = jsonReader.getObjectFromFile("json/validation/address.json", Xs2aAddress.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
+        JsonConverter jsonConverter = new JsonConverter(objectMapper);
+        LocalDateConverter localDateConverter = new LocalDateConverter();
         PurposeCodeMapper purposeCodeMapper = Mappers.getMapper(PurposeCodeMapper.class);
         RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
         validator = new SinglePaymentTypeValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400),
