@@ -27,6 +27,7 @@ import java.util.List;
 
 @Component
 public class CancelPaymentMethodValidatorImpl extends AbstractMethodValidator<CancelPaymentHeaderValidator,
+                                                                                 RawBodyValidator,
                                                                                  CancelPaymentBodyValidator,
                                                                                  QueryParameterValidator> {
 
@@ -34,7 +35,7 @@ public class CancelPaymentMethodValidatorImpl extends AbstractMethodValidator<Ca
 
     @Autowired
     protected CancelPaymentMethodValidatorImpl(List<CancelPaymentHeaderValidator> headerValidators) {
-        super(headerValidators, Collections.emptyList(), Collections.emptyList());
+        super(headerValidators, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
     }
 
     @Override

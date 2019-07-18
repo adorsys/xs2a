@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,6 +38,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS;
+
 @Component
 public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl implements ConsentBodyValidator {
     private static final String ACCESS_FIELD_NAME = "access";
@@ -48,20 +51,21 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
     private static final String AVAILABLE_ACCOUNTS_WITH_BALANCES_WRONG_VALUE_ERROR = "Wrong value for availableAccountsWithBalances";
     private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
 
-    private final JsonConverter jsonConverter;
+    private JsonConverter jsonConverter;
+    private DateFieldValidator dateFieldValidator;
 
     @Autowired
     public ConsentBodyFieldsValidatorImpl(ErrorBuildingService errorBuildingService,
                                           ObjectMapper objectMapper,
-                                          JsonConverter jsonConverter) {
+                                          JsonConverter jsonConverter,
+                                          DateFieldValidator dateFieldValidator) {
         super(errorBuildingService, objectMapper);
+        this.dateFieldValidator = dateFieldValidator;
         this.jsonConverter = jsonConverter;
     }
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
-        validateRawAccess(request, messageError);
-
+    public void validateBodyFields(HttpServletRequest request, MessageError messageError) {
         Optional<Consents> consentsOptional = mapBodyToInstance(request, messageError, Consents.class);
 
         // In case of wrong JSON - we don't proceed the inner fields validation.
@@ -86,6 +90,12 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
         } else {
             validateFrequencyPerDay(consents.getFrequencyPerDay(), messageError);
         }
+    }
+
+    @Override
+    public void validateRawData(HttpServletRequest request, MessageError messageError) {
+        validateRawAccess(request, messageError);
+        dateFieldValidator.validateDateFormat(request, AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError);
     }
 
     private void validateValidUntil(LocalDate validUntil, MessageError messageError) {

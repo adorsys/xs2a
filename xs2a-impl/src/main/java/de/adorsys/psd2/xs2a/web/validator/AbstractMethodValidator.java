@@ -23,15 +23,18 @@ import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractMethodValidator<H extends HeaderValidator, B extends BodyValidator, P extends QueryParameterValidator> implements MethodValidator {
+public abstract class AbstractMethodValidator<H extends HeaderValidator, R extends RawBodyValidator, B extends BodyValidator, P extends QueryParameterValidator> implements MethodValidator {
     @Getter(AccessLevel.PACKAGE)
     private final List<H> headerValidators;
+    @Getter(AccessLevel.PACKAGE)
+    private final List<R> rawBodyValidators;
     @Getter(AccessLevel.PACKAGE)
     private final List<B> bodyValidators;
     @Getter(AccessLevel.PACKAGE)
@@ -53,9 +56,14 @@ public abstract class AbstractMethodValidator<H extends HeaderValidator, B exten
         TreeMap<String, String> caseInsensitiveHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         caseInsensitiveHeaders.putAll(headers);
 
-        Map<String, List<String>> queryParameters = extractQueryParameters(request);
-
         getHeaderValidators().forEach(v -> v.validate(caseInsensitiveHeaders, messageError));
+
+        getRawBodyValidators().forEach(v -> v.validate(request, messageError));
+        if (!CollectionUtils.isEmpty(messageError.getTppMessages())) {
+            return;
+        }
+
+        Map<String, List<String>> queryParameters = extractQueryParameters(request);
         getBodyValidators().forEach(v -> v.validate(request, messageError));
         getQueryParameterValidators().forEach(v -> v.validate(queryParameters, messageError));
     }

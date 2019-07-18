@@ -44,7 +44,7 @@ import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.EXECUTION_DATE_INVALI
 @Component
 public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl implements PaymentTypeValidator {
 
-    private PaymentMapper paymentMapper;
+    PaymentMapper paymentMapper;
 
     @Autowired
     public SinglePaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,

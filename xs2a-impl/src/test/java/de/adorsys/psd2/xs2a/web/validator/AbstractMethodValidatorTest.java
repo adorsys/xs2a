@@ -44,6 +44,8 @@ public class AbstractMethodValidatorTest {
     @Mock
     private HeaderValidator headerValidator;
     @Mock
+    private RawBodyValidator rawBodyValidator;
+    @Mock
     private BodyValidator bodyValidator;
     @Mock
     private QueryParameterValidator queryParameterValidator;
@@ -67,6 +69,7 @@ public class AbstractMethodValidatorTest {
         request.addParameter(QUERY_PARAMETER_NAME, QUERY_PARAMETER_VALUE);
 
         methodValidator = new AbstractMethodValidator(Collections.singletonList(headerValidator),
+                                                      Collections.singletonList(rawBodyValidator),
                                                       Collections.singletonList(bodyValidator),
                                                       Collections.singletonList(queryParameterValidator)) {
             @Override

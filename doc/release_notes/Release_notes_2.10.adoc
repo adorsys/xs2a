@@ -5,6 +5,7 @@
 * Bugfix: Finalised status of AIS consent changes after expiration
 * Bugfix: Payment and Consent initiation request where field X-Request-ID contains an invalid UUID return internal server error
 * Bugfix: Fix `scaRedirect` link in payment cancellation in case of implicit authorisation
+* Bugfix: Using invalid date format in request body results in internal server error being returned to the TPP
 * Include Redirect-ID in all access-log for the responses where applicable
 * Log HTTP requests and responses to a separate logger
 * Bugfix: Fix get common payment by redirect-id
@@ -28,6 +29,15 @@ while getting AIS Consent (`GET /psu-api/v1/ais/consent/{consent-id}` or `GET /a
 From now on, `scaRedirect` link in response to payment cancellation request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`)
 in Redirect approach in case of implicit authorisation will be correctly generated based on the `pisPaymentCancellationRedirectUrlToAspsp`
 property in the ASPSP profile instead of the `pisRedirectUrlToAspsp` one.
+
+== Bugfix: Using invalid date format in request body results in internal server error being returned to the TPP
+From now on, using invalid `ISODate` format in request body of PIS and AIS return
+
+ HTTP 400 FORMAT_ERROR "Wrong format for 'validUntil': value should be ISO_DATE 'YYYY-MM-DD' format."
+
+Using invalid `ISODateTime` format in request body of PIS return
+
+ HTTP 400 FORMAT_ERROR "Wrong format for 'requestedExecutionTime': value should be ISO_DATE_TIME 'YYYY-MM-DD'T'HH:mm:ssZ' format."
 
 == Include Redirect-ID in all access-log for the responses where applicable
 From now on, response entries in access-log will also contain redirect ID, if it's present in the response.

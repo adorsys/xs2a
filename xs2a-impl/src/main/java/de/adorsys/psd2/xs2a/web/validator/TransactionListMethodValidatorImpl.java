@@ -25,12 +25,12 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class TransactionListMethodValidatorImpl extends AbstractMethodValidator<TransactionListHeaderValidator, BodyValidator, TransactionListQueryParamsValidator> {
+public class TransactionListMethodValidatorImpl extends AbstractMethodValidator<TransactionListHeaderValidator, RawBodyValidator, BodyValidator, TransactionListQueryParamsValidator> {
     private static final String METHOD_NAME = "_getTransactionList";
 
     protected TransactionListMethodValidatorImpl(List<TransactionListHeaderValidator> headerValidators,
                                                  List<TransactionListQueryParamsValidator> queryParamsValidator) {
-        super(headerValidators, Collections.emptyList(), queryParamsValidator);
+        super(headerValidators, Collections.emptyList(), Collections.emptyList(), queryParamsValidator);
     }
 
     @Override
