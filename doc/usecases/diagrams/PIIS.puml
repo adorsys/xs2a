@@ -1,0 +1,96 @@
+@startuml
+entity TPP as tpp
+entity XS2A as xs2a
+entity SPI as spi
+entity CMS_ASPSP_API as cms
+entity CMS_PSU_API as cmspsu
+entity Core_banking as cb
+entity Online_banking as ob
+== Establish PIIS Consent ==
+group piisConsentSupported = TRUE
+|||
+cb->cms: Create PIIS Consent\nPOST "aspsp-api/v1/piis/consents"
+|||
+note right of spi
+PIIS Consent with TPP-Authorisation-Number for dedicated TPP
+|||
+PIIS Consent without TPP-Authorisation-Number for ANY TPP
+end note
+activate cb
+activate cms
+|||
+cms-->cb: Response\n"**http Codes: 201 successful with consentId or 400 error**"
+|||
+deactivate cms
+deactivate cb
+ob->cmspsu: Update ASPSP Consent Data\nPUT "/psu-api/v1/aspsp-consent-data/consents/{consent-id}"
+activate cmspsu
+activate ob
+|||
+cmspsu-->ob: Response\n"**http Codes: 200 successful or 400 error**"
+deactivate cmspsu
+deactivate ob
+|||
+==Perform Funds Confirmation ==
+
+tpp -> xs2a: REST Call Initiate Funds Confirmation Request\nPOST "/v1/funds-confirmations"
+activate tpp
+activate xs2a
+|||
+group ASPSP doesn't provide PIIS consent to the CMS
+|||
+xs2a-->tpp: **ERROR with http code 400 "NO_PIIS_ACTIVATION"**
+|||
+end
+|||
+group PIIS Consent Valid
+|||
+xs2a->spi: Java Call Initiate performFundsSuffiecientCheck\n"SpiContexData\nPiiSConsent\nSpiFundsConfirmationRequest\nSpiAspspConsentDataProvider"
+activate spi
+|||
+spi->cb: REST Call FundsConfirmation Request
+activate cb
+|||
+cb-->spi: FundsAvailable True/False
+deactivate cb
+|||
+spi-->xs2a: SpiFundsConfirmation Response
+deactivate spi
+|||
+end
+|||
+|||
+xs2a-->tpp:Funds Confirmation Response
+deactivate xs2a
+deactivate tpp
+|||
+end
+|||
+== PIIS consent is not stored in CMS    ANY TPP may request Funds Confirmation ==
+|||
+group piisConsentSupported = FALSE
+|||
+tpp -> xs2a: REST Call Initiate Funds Confirmation Request\nPOST "/v1/funds-confirmations"
+activate xs2a
+activate tpp
+|||
+xs2a->spi: Java Call Initiate performFundsSuffiecientCheck\n"SpiContexData\nSpiFundsConfirmationRequest\nSpiAspspConsentDataProvider=NULL"
+activate spi
+|||
+spi->cb: REST Call FundsConfirmation Request
+activate cb
+|||
+cb-->spi: FundsAvailable True/False
+deactivate cb
+|||
+spi-->xs2a: SpiFundsConfirmation Response
+|||
+deactivate spi
+|||
+xs2a-->tpp:Funds Confirmation Response
+|||
+deactivate xs2a
+deactivate tpp
+|||
+end
+@enduml
