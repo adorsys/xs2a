@@ -359,3 +359,22 @@ Use endpoint for getting events by period and `instance_id` (GET `aspsp-api/v1/e
 | start-date  | true     |               |
 | end-date    | true     |               |
 | instance-id | false    | UNDEFINED     |
+
+
+### How to add new custom payment-product
+
+Xs2a has implementation to support custom payment-products which are different from Berlin Group list.
+To use for example "new-payment-product", open bank-profile.yaml and add it to supportedPaymentTypeAndProductMatrix:
+```
+  SINGLE:
+   - new-payment-product
+  PERIODIC:
+   - new-payment-product
+  BULK:
+   - new-payment-product
+```
+If "new-payment-product" supports JSON format and should be parsed in xs2a, add in de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver :
+```
+STANDARD_PAYMENT_PRODUCTS.add(“new-payment-product”); 
+```
+Besides custom payment-products should be passed to de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi and appropriate interfaces should be implemented there.
