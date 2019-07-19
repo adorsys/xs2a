@@ -1,0 +1,37 @@
+@startuml
+
+actor TPP
+
+node "API Gateway" as node_gw {
+    interface XS2A
+}
+
+TPP ..> XS2A: HTTP/TLS
+
+
+node "ASPSP-Profile" {
+    artifact "ASPSPProfile"
+}
+
+node "XS2A-Service" as node_xs2a {
+    artifact XS2AService
+}
+
+XS2A ..> XS2AService : "HTTP            \n(XS2A API)      "
+
+
+node "Consent Management System" {
+    artifact "Consent-management-system" as CMS
+}
+
+ASPSPProfile <.. CMS : "HTTP/REST"
+ASPSPProfile <.. XS2AService: "HTTP/REST"
+XS2AService .> CMS : "       HTTP/REST      "
+
+node Database {
+    database ConsentDB
+}
+
+CMS ..> ConsentDB: JDBC
+
+@enduml
