@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
@@ -32,10 +32,14 @@ public interface FundsConfirmationSpi {
      * @param contextData                 holder of call's context data (e.g. about PSU and TPP)
      * @param piisConsent                 PIIS Consent object. May be null if the request is done from a workflow without a consent.
      * @param spiFundsConfirmationRequest Object, that contains all request data from TPP
-     * @param aspspConsentData            Encrypted data that may be stored in the consent management system in the consent linked to a request.<br>
-     *                                    May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @param aspspConsentDataProvider    Provides access to read/write encrypted data to be stored in the consent
+     *                                    management system. May be null if PIIS consent is null, because we can't save
+     *                                    anything in ASPSP consent data in case when there is no PIIS consent.
      * @return Funds confirmation response with information whether the requested amount can be booked on the account or not
      */
     @NotNull
-    SpiResponse<SpiFundsConfirmationResponse> performFundsSufficientCheck(@NotNull SpiContextData contextData, @Nullable PiisConsent piisConsent, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiFundsConfirmationResponse> performFundsSufficientCheck(@NotNull SpiContextData contextData,
+                                                                          @Nullable PiisConsent piisConsent,
+                                                                          @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest,
+                                                                          @Nullable SpiAspspConsentDataProvider aspspConsentDataProvider);
 }

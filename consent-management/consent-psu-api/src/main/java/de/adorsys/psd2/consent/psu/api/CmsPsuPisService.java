@@ -79,7 +79,7 @@ public interface CmsPsuPisService {
      * @return Authorisation object if it was found
      */
     @NotNull
-    Optional<CmsPisPsuDataAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId);
+    Optional<CmsPsuAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId);
 
     /**
      * Updates a Status of Payment's authorisation by its ID and PSU ID

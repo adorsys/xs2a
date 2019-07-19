@@ -29,5 +29,13 @@
     "postalCode": "90543",
     "street": "WBG Straße"
   },
-  "remittanceInformationUnstructured": "Ref. Number WBG-1222"
+  "remittanceInformationUnstructured": "Ref. Number WBG-1222",
+  "ultimateDebtor": "ultimateDebtor",
+  "ultimateCreditor": "ultimateCreditor",
+  "purposeCode": "CDQC",
+  "remittanceInformationStructured": {
+    "reference": "reference",
+    "referenceType": "referenceType",
+    "referenceIssuer": "referenceIssuer"
+  }
 }

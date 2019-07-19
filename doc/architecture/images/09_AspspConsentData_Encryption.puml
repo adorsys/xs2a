@@ -1,0 +1,56 @@
+@startuml
+start
+:Read <Server Key> from Configuration<
+
+:Get <Consent ID> from SPI-Level;
+
+-> <Consent ID>;
+
+:Generate secret <Encryption key>;
+
+-> <Consent ID>,
+<Encryption key>;
+
+:Choose AspspConsentData encryption algorithm;
+
+-> <Consent ID>,
+<Encryption key>,
+<Encryption algorithm>;
+
+:Encrypt AspspConsentData using
+<Encryption algorithm> with
+secret <Encryption key>;
+
+:Encrypted AspspConsentData/
+
+:Store <Encrypted AspspConsentData> and
+<Encryption algorithm> in DB;
+
+-> <Consent ID>,
+<Encryption key>;
+
+:Concatenate <Consent ID> and <Encryption key>;
+
+-> <ConsentID+Encryption key>;
+
+:Choose IDs' encryption algorithm;
+
+-> <ConsentID+Encryption key>,
+<IDs' encryption algorithm>;
+
+:Encrypt <ConsentID+Encryption key> using
+<IDs' encryption algorithm> with
+secret <Server Key>;
+
+-> <Encrypted ConsentID+Encryption key>;
+
+:Concatenate
+<Encrypted ConsentID+Encryption key> with
+<IDs' encryption algorithm>;
+
+:EncryptedConsentID/
+
+:Return <EncryptedConsentID> to TPP;
+
+end
+@enduml

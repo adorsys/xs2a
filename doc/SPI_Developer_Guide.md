@@ -278,3 +278,103 @@ After the Payment Initiation is created, it has to be authorise from the PSU. In
 ## Special modes
 
 ### Multi-tenancy support
+
+### Configure `event-service` in embedded mode
+
+XS2A is started as a standalone application in embedded mode (`Xs2aStandaloneStarter`). CMS does not start at all.
+`Xs2aStandaloneStarter` application has database configuration, event service and CMS parts inside.
+
+
+ * Update **application.properties** of `xs2a-standalone-starter` by adding database configuration: 
+   ```
+    spring.datasource.url=jdbc:postgresql://localhost/consent
+    spring.datasource.username=cms
+    spring.datasource.password=cms
+   ```
+ * Remove maven dependencies in `xs2a-standalone-starter` pom.xml: 
+   ``` 
+      <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-xs2a-client</artifactId>
+            <version>${project.version}</version>
+       </dependency>
+                      
+       <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-rest-client</artifactId>
+            <version>${project.version}</version>
+      </dependency>                   
+   ```
+ * Add maven dependencies in `xs2a-standalone-starter` pom.xml:
+   ```
+      <dependency>
+           <groupId>org.springframework.boot</groupId>
+           <artifactId>spring-boot-starter-data-jpa</artifactId>
+      </dependency>
+      
+      <dependency>
+          <groupId>de.adorsys.psd2</groupId>
+          <artifactId>event-service-xs2a-impl</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>de.adorsys.psd2</groupId>
+          <artifactId>event-service-aspsp-impl</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>de.adorsys.psd2</groupId>
+          <artifactId>event-service-persist-db-impl</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>de.adorsys.psd2</groupId>
+          <artifactId>consent-management-lib</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>de.adorsys.psd2</groupId>
+          <artifactId>consent-aspsp-web</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+   ```
+ * Update scan annotations in `Xs2aStandaloneStarter.java`:
+    ```
+       @ComponentScan(basePackages = "de.adorsys.psd2")
+       @EnableTransactionManagement
+       @EnableJpaRepositories(basePackages = {"de.adorsys.psd2.consent.repository", "de.adorsys.psd2.event"})
+       @EntityScan({"de.adorsys.psd2.consent.domain", "de.adorsys.psd2.event.persist.entity"}) 
+    ```
+
+### Getting events
+
+Use endpoint for getting events by period and `instance_id` (GET `aspsp-api/v1/events`). Request parameters are passed as headers:
+
+| Header      | Required | Default value |
+|-------------|----------|---------------|
+| start-date  | true     |               |
+| end-date    | true     |               |
+| instance-id | false    | UNDEFINED     |
+
+
+### How to add new custom payment-product
+
+Xs2a has implementation to support custom payment-products which are different from Berlin Group list.
+To use for example "new-payment-product", open bank-profile.yaml and add it to supportedPaymentTypeAndProductMatrix:
+```
+  SINGLE:
+   - new-payment-product
+  PERIODIC:
+   - new-payment-product
+  BULK:
+   - new-payment-product
+```
+If "new-payment-product" supports JSON format and should be parsed in xs2a, add in de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver :
+```
+STANDARD_PAYMENT_PRODUCTS.add(“new-payment-product”); 
+```
+Besides custom payment-products should be passed to de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi and appropriate interfaces should be implemented there.

@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.link;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.domain.HrefType;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
@@ -31,13 +32,16 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
 
     private RedirectLinkBuilder redirectLinkBuilder;
     private ScaRedirectFlow scaRedirectFlow;
+    private RedirectIdService redirectIdService;
 
     public PisAuthorisationCancellationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
+                                             RedirectIdService redirectIdService,
                                              String paymentService, String paymentProduct, String paymentId,
                                              String authorisationId, ScaRedirectFlow scaRedirectFlow) {
         super(httpUrl);
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.scaRedirectFlow = scaRedirectFlow;
+        this.redirectIdService = redirectIdService;
 
         setScaStatus(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
 
@@ -52,7 +56,8 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
     }
 
     private void addRedirectRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorizationId) {
-        setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, authorizationId));
+        String redirectId = redirectIdService.generateRedirectId(authorizationId);
+        setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId));
 
         setScaStatus(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorizationId));
     }

@@ -24,14 +24,14 @@ import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRespo
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
+import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
+import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -61,17 +61,21 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
@@ -79,6 +83,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -108,8 +113,6 @@ public class PaymentStartAuthorisationIT {
     private static final String PSU_ID = "PSU-123";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String PSU_PASS = "09876";
-
-
     private static final String AUTH_REQ = "/json/payment/req/auth_request.json";
     private static final String AUTH_RESP = "/json/payment/res/explicit/auth_response.json";
 
@@ -123,7 +126,7 @@ public class PaymentStartAuthorisationIT {
     @MockBean
     private AspspProfileService aspspProfileService;
     @MockBean
-    private EventServiceEncrypted eventServiceEncrypted;
+    private Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
@@ -134,6 +137,9 @@ public class PaymentStartAuthorisationIT {
     private UpdatePaymentAfterSpiServiceEncrypted updatePaymentAfterSpiService;
     @MockBean
     private PaymentAuthorisationSpi paymentAuthorisationSpi;
+    @MockBean
+    @Qualifier("consentRestTemplate")
+    private RestTemplate consentRestTemplate;
 
     @Captor
     private ArgumentCaptor<CreatePisAuthorisationRequest> createPisAuthorisationRequestCaptor;
@@ -150,7 +156,7 @@ public class PaymentStartAuthorisationIT {
 
         given(tppService.getTppInfo()).willReturn(TPP_INFO);
         given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.buildTppUniqueParamsHolder())).willReturn(false);
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo())).willReturn(false);
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
     }
 
@@ -159,7 +165,7 @@ public class PaymentStartAuthorisationIT {
         //Given
         String request = IOUtils.resourceToString(AUTH_REQ, UTF_8);
 
-        given(eventServiceEncrypted.recordEvent(any(Event.class))).willReturn(true);
+        given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
             .willReturn(Optional.of(buildPisCommonPaymentResponse()));
 
@@ -171,30 +177,23 @@ public class PaymentStartAuthorisationIT {
             .willReturn(Optional.of(buildGetPisAuthorisationResponse(ScaStatus.PSUIDENTIFIED)));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
-
-        AspspConsentData aspspConsentData = new AspspConsentData("data".getBytes(), CONSENT_ID);
-        given(aspspDataService.readAspspConsentData(PAYMENT_ID)).willReturn(Optional.of(aspspConsentData));
-
-        given(paymentAuthorisationSpi.authorisePsu(any(SpiContextData.class), any(SpiPsuData.class), eq(PSU_PASS), any(SpiPayment.class), eq(aspspConsentData)))
+        given(paymentAuthorisationSpi.authorisePsu(any(SpiContextData.class), any(SpiPsuData.class), eq(PSU_PASS), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiAuthorisationStatus>builder()
                             .payload(SpiAuthorisationStatus.SUCCESS)
-                            .aspspConsentData(aspspConsentData)
-                            .success());
-        given(paymentAuthorisationSpi.requestAvailableScaMethods(any(SpiContextData.class), any(SpiPayment.class), eq(aspspConsentData)))
+                            .build());
+        given(paymentAuthorisationSpi.requestAvailableScaMethods(any(SpiContextData.class), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<List<SpiAuthenticationObject>>builder()
                             .payload(Collections.emptyList())
-                            .aspspConsentData(aspspConsentData)
-                            .success());
+                            .build());
         given(aspspDataService.updateAspspConsentData(any(AspspConsentData.class))).willReturn(true);
-
 
         given(commonPaymentSpi.executePaymentWithoutSca(any(SpiContextData.class), any(SpiPaymentInfo.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                             .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
-                            .aspspConsentData(aspspConsentData)
-                            .success());
-        given(aspspDataService.updateAspspConsentData(eq(aspspConsentData))).willReturn(true);
+                            .build());
         given(updatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP)).willReturn(true);
+        given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
+            .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildPaymentStartAuthorisationUrl(
             SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, PAYMENT_ID));

@@ -8,9 +8,15 @@
 
 === Infrastructure Level 1
 
+One of the main goals is to make this project adaptable to environment of customer.
+Therefore we provide a set of Java libraries dependent on spring framework.
+The decision of the ways to include these libraries and how to deploy is on the integration project (SPI Development).
 
+Nevertheless we highlight some major scenarios how we see the possible deployment of the application.
 
-_**<Overview Diagram>**_
+==== Multiservice deployment
+
+image::07_multiservice_deployment.png[Multiservice deployment, title="Multiservice deployment", align="center"]
 
 Motivation::
 
@@ -23,21 +29,10 @@ _<explanation in text form>_
 Mapping of Building Blocks to Infrastructure::
 _<description of the mapping>_
 
+==== Single-service deployment
 
-=== Infrastructure Level 2
+image::07_single_service_deployment.png[Single service deployment, title="Single service deployment", align="center"]
 
+==== Multiple instances deployment with one database
 
-
-==== _<Infrastructure Element 1>_
-
-_<diagram + explanation>_
-
-==== _<Infrastructure Element 2>_
-
-_<diagram + explanation>_
-
-...
-
-==== _<Infrastructure Element n>_
-
-_<diagram + explanation>_
+image::07_multiinstance_deployment.png[Multiple instances deployment, title="Multiple instances deployment", align="center"]

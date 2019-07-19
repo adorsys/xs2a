@@ -60,7 +60,7 @@ public interface CmsPsuAisService {
      * @return Authorisation object if it was found
      */
     @NotNull
-    Optional<CmsAisPsuDataAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId);
+    Optional<CmsPsuAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId);
 
     /**
      * Updates a Status of AIS Consent Authorisation by its ID and PSU ID

@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.converter;
 import org.junit.Test;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import static org.junit.Assert.assertEquals;
@@ -43,5 +44,14 @@ public class LocalDateConverterTest {
     public void convert_withMalformedString_shouldThrowDateTimeParseException() {
         // When
         localDateConverter.convert(MALFORMED_STRING);
+    }
+
+    @Test
+    public void convert_DateTimeFormatter() {
+        LocalDate convertedDate = localDateConverter.convert("2020-04-02", DateTimeFormatter.ISO_LOCAL_DATE);
+        assertEquals(EXPECTED_LOCAL_DATE, convertedDate);
+
+        convertedDate = localDateConverter.convert("20200402", DateTimeFormatter.BASIC_ISO_DATE);
+        assertEquals(EXPECTED_LOCAL_DATE, convertedDate);
     }
 }

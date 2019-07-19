@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.validator.header;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
@@ -28,7 +27,7 @@ public class ErrorBuildingServiceMock extends ErrorBuildingService {
     private ErrorType errorType;
 
     public ErrorBuildingServiceMock(ErrorType errorType) {
-        super(new ServiceTypeDiscoveryService(new MockHttpServletRequest(), new RequestProviderService(new MockHttpServletRequest())), new ServiceTypeToErrorTypeMapper(),
+        super(new ServiceTypeDiscoveryService(new MockHttpServletRequest()), new ServiceTypeToErrorTypeMapper(),
               null, new ObjectMapper());
         this.errorType = errorType;
     }

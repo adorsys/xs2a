@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import org.junit.Before;
@@ -45,6 +46,8 @@ public class PisAuthorisationCancellationLinksTest {
     private ScaApproachResolver scaApproachResolver;
     @Mock
     private RedirectLinkBuilder redirectLinkBuilder;
+    @Mock
+    private RedirectIdService redirectIdService;
 
     private PisAuthorisationCancellationLinks links;
 
@@ -59,7 +62,7 @@ public class PisAuthorisationCancellationLinksTest {
     public void scaApproachEmbeddedAndPsuDataIsEmpty() {
         when(scaApproachResolver.getCancellationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder,
+        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
                                                       null);
 
@@ -72,7 +75,7 @@ public class PisAuthorisationCancellationLinksTest {
     public void scaApproachEmbeddedAndPsuDataIsNotEmpty() {
         when(scaApproachResolver.getCancellationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder,
+        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
                                                       null);
 
@@ -85,7 +88,7 @@ public class PisAuthorisationCancellationLinksTest {
     public void scaApproachDecoupledAndPsuDataIsEmpty() {
         when(scaApproachResolver.getCancellationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder,
+        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
                                                       null);
 
@@ -98,7 +101,7 @@ public class PisAuthorisationCancellationLinksTest {
     public void scaApproachDecoupledAndPsuDataIsNotEmpty() {
         when(scaApproachResolver.getCancellationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder,
+        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
                                                       null);
 
@@ -110,9 +113,10 @@ public class PisAuthorisationCancellationLinksTest {
     @Test
     public void scaApproachRedirect() {
         when(scaApproachResolver.getCancellationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);
+        when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID))).thenReturn(REDIRECT_LINK);
 
-        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder,
+        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
                                                       ScaRedirectFlow.REDIRECT);
 
@@ -125,7 +129,7 @@ public class PisAuthorisationCancellationLinksTest {
     public void scaApproachOAuth() {
         when(scaApproachResolver.getCancellationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.OAUTH);
 
-        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder,
+        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
                                                       null);
 

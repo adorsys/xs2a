@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage.initiation;
 
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
@@ -27,12 +26,13 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.stage.PisScaStage;
-import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -51,20 +51,20 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED;
 @Service("PIS_DECOUPLED_RECEIVED")
 public class PisDecoupledScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisCommonPaymentPsuDataRequest, GetPisAuthorisationResponse, Xs2aUpdatePisCommonPaymentPsuDataResponse> {
     private final PaymentAuthorisationSpi paymentAuthorisationSpi;
-    private final PisAspspDataService pisAspspDataService;
     private final RequestProviderService requestProviderService;
     private final PisCommonDecoupledService pisCommonDecoupledService;
     private final SpiContextDataProvider spiContextDataProvider;
+    private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     private final SpiErrorMapper spiErrorMapper;
     private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
 
-    public PisDecoupledScaReceivedAuthorisationStage(CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted, ApplicationContext applicationContext, PaymentAuthorisationSpi paymentAuthorisationSpi, PisAspspDataService pisAspspDataService, RequestProviderService requestProviderService, PisCommonDecoupledService pisCommonDecoupledService, SpiContextDataProvider spiContextDataProvider, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper, SpiErrorMapper spiErrorMapper) {
+    public PisDecoupledScaReceivedAuthorisationStage(CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted, ApplicationContext applicationContext, PaymentAuthorisationSpi paymentAuthorisationSpi, RequestProviderService requestProviderService, PisCommonDecoupledService pisCommonDecoupledService, SpiContextDataProvider spiContextDataProvider, SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper, SpiErrorMapper spiErrorMapper) {
         super(cmsToXs2aPaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiSinglePaymentMapper, xs2aToSpiBulkPaymentMapper, pisCommonPaymentServiceEncrypted, applicationContext, xs2aToSpiPsuDataMapper);
         this.paymentAuthorisationSpi = paymentAuthorisationSpi;
-        this.pisAspspDataService = pisAspspDataService;
         this.pisCommonDecoupledService = pisCommonDecoupledService;
         this.spiContextDataProvider = spiContextDataProvider;
+        this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
         this.xs2aToSpiPsuDataMapper = xs2aToSpiPsuDataMapper;
         this.spiErrorMapper = spiErrorMapper;
         this.requestProviderService = requestProviderService;
@@ -82,14 +82,12 @@ public class PisDecoupledScaReceivedAuthorisationStage extends PisScaStage<Xs2aU
         String paymentProduct = pisAuthorisationResponse.getPaymentProduct();
         SpiPayment payment = mapToSpiPayment(pisAuthorisationResponse, paymentType, paymentProduct);
 
-        AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(request.getPaymentId());
+        SpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getPaymentId());
 
         SpiPsuData psuData = xs2aToSpiPsuDataMapper.mapToSpiPsuData(request.getPsuData());
         SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(request.getPsuData());
 
-        SpiResponse<SpiAuthorisationStatus> authPsuResponse = paymentAuthorisationSpi.authorisePsu(contextData, psuData, request.getPassword(), payment, aspspConsentData);
-        aspspConsentData = authPsuResponse.getAspspConsentData();
-        pisAspspDataService.updateAspspConsentData(aspspConsentData);
+        SpiResponse<SpiAuthorisationStatus> authPsuResponse = paymentAuthorisationSpi.authorisePsu(contextData, psuData, request.getPassword(), payment, aspspConsentDataProvider);
 
         if (authPsuResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(authPsuResponse, ServiceType.PIS);

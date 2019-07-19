@@ -26,10 +26,11 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aDecoupledUpdatePisCommonPayme
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
@@ -61,7 +62,6 @@ public class PisCommonDecoupledServiceTest {
     private static final String DECOUPLED_PSU_MESSAGE = "Please use your BankApp for transaction Authorisation";
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
     private static final SpiResponse<SpiAuthorisationDecoupledScaResponse> AUTH_DECOUPLED_RESPONSE = buildSpiResponse();
     private static final SpiResponse<SpiAuthorisationDecoupledScaResponse> AUTH_DECOUPLED_RESPONSE_FAIL = buildSpiResponseFail();
     private static final Xs2aUpdatePisCommonPaymentPsuDataRequest UPDATE_PIS_COMMON_PAYMENT_REQUEST = buildUpdatePisCommonPaymentPsuDataRequest(null);
@@ -80,25 +80,26 @@ public class PisCommonDecoupledServiceTest {
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
-    private PisAspspDataService pisAspspDataService;
-    @Mock
     RequestProviderService requestProviderService;
     @Mock
     private SpiErrorMapper spiErrorMapper;
+    @Mock
+    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    @Mock
+    private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
     @Before
     public void init() {
-        when(pisAspspDataService.getAspspConsentData(PAYMENT_ID))
-            .thenReturn(ASPSP_CONSENT_DATA);
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
     }
 
     @Test
     public void proceedDecoupledInitiation_success() {
         //Given
-        when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
+        when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
 
         //When
@@ -116,7 +117,7 @@ public class PisCommonDecoupledServiceTest {
                                         .messages(Collections.singletonList("Payment not found"))
                                         .build();
 
-        when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
+        when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
         when(spiErrorMapper.mapToErrorHolder(AUTH_DECOUPLED_RESPONSE_FAIL, ServiceType.PIS))
             .thenReturn(expectedError);
@@ -132,7 +133,7 @@ public class PisCommonDecoupledServiceTest {
     @Test
     public void proceedDecoupledInitiation_authenticationMethodId_success() {
         //Given
-        when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
+        when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
 
         //When
@@ -150,7 +151,7 @@ public class PisCommonDecoupledServiceTest {
                                         .messages(Collections.singletonList("Payment not found"))
                                         .build();
 
-        when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
+        when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
         when(spiErrorMapper.mapToErrorHolder(AUTH_DECOUPLED_RESPONSE_FAIL, ServiceType.PIS))
             .thenReturn(expectedError);
@@ -166,7 +167,7 @@ public class PisCommonDecoupledServiceTest {
     @Test
     public void proceedDecoupledCancellation_success() {
         //Given
-        when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
+        when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
 
         //When
@@ -184,7 +185,7 @@ public class PisCommonDecoupledServiceTest {
                                         .messages(Collections.singletonList("Payment not found"))
                                         .build();
 
-        when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
+        when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
         when(spiErrorMapper.mapToErrorHolder(AUTH_DECOUPLED_RESPONSE_FAIL, ServiceType.PIS))
             .thenReturn(expectedError);
@@ -200,7 +201,7 @@ public class PisCommonDecoupledServiceTest {
     @Test
     public void proceedDecoupledCancellation_authenticationMethodId_success() {
         //Given
-        when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
+        when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
 
         //When
@@ -218,7 +219,7 @@ public class PisCommonDecoupledServiceTest {
                                         .messages(Collections.singletonList("Payment not found"))
                                         .build();
 
-        when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
+        when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
         when(spiErrorMapper.mapToErrorHolder(AUTH_DECOUPLED_RESPONSE_FAIL, ServiceType.PIS))
             .thenReturn(expectedError);
@@ -256,13 +257,11 @@ public class PisCommonDecoupledServiceTest {
         SpiAuthorisationDecoupledScaResponse response = new SpiAuthorisationDecoupledScaResponse(DECOUPLED_PSU_MESSAGE);
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
                    .payload(response)
-                   .aspspConsentData(ASPSP_CONSENT_DATA)
-                   .success();
+                   .build();
     }
 
     private static SpiResponse<SpiAuthorisationDecoupledScaResponse> buildSpiResponseFail() {
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
-                   .aspspConsentData(ASPSP_CONSENT_DATA)
                    .fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 

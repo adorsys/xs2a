@@ -24,12 +24,12 @@ import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
+import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.*;
-import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
@@ -77,6 +77,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -131,7 +133,7 @@ public class InitiatePayments_successfulTest {
     @MockBean
     private TppStopListService tppStopListService;
     @MockBean
-    private EventServiceEncrypted eventServiceEncrypted;
+    private Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
@@ -156,6 +158,7 @@ public class InitiatePayments_successfulTest {
         headerMap.put("PSU-Corporate-ID", "Some corporate id");
         headerMap.put("PSU-Corporate-ID-Type", "Some corporate id type");
         headerMap.put("PSU-IP-Address", "1.1.1.1");
+        headerMap.put("TPP-Redirect-URI", "ok.uri");
 
         httpHeadersImplicit.setAll(headerMap);
         // when Implicit auth mode we need to set 'false'
@@ -213,10 +216,12 @@ public class InitiatePayments_successfulTest {
             .willReturn(TPP_INFO);
         given(tppService.getTppId())
             .willReturn(TPP_INFO.getAuthorisationNumber());
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.buildTppUniqueParamsHolder()))
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(false);
-        given(eventServiceEncrypted.recordEvent(any(Event.class)))
+        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
+        given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
+            .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
 
         given(pisCommonPaymentServiceEncrypted.createCommonPayment(any(PisPaymentInfo.class)))
             .willReturn(Optional.of(new CreatePisCommonPaymentResponse(ENCRYPT_PAYMENT_ID)));
@@ -439,8 +444,8 @@ public class InitiatePayments_successfulTest {
 
         given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse(multilevelSca));
-        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
-            .willReturn(ResponseEntity.ok(Void.class));
+        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class), any(String.class)))
+            .willReturn(ResponseEntity.ok(Boolean.TRUE));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 
@@ -469,8 +474,8 @@ public class InitiatePayments_successfulTest {
         given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse(false));
 
-        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
-            .willReturn(ResponseEntity.ok(Void.class));
+        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class), any(String.class)))
+            .willReturn(ResponseEntity.ok(Boolean.TRUE));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 
@@ -493,8 +498,8 @@ public class InitiatePayments_successfulTest {
         given(periodicPaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiPeriodicPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildPeriodicPaymentResponse());
 
-        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
-            .willReturn(ResponseEntity.ok(Void.class));
+        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class), any(String.class)))
+            .willReturn(ResponseEntity.ok(Boolean.TRUE));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 
@@ -521,8 +526,8 @@ public class InitiatePayments_successfulTest {
         given(bulkPaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiBulkPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildBulkPaymentResponse());
 
-        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
-            .willReturn(ResponseEntity.ok(Void.class));
+        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class), any(String.class)))
+            .willReturn(ResponseEntity.ok(Boolean.TRUE));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 

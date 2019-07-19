@@ -22,7 +22,6 @@ import org.springframework.util.AntPathMatcher;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType.*;
@@ -49,7 +48,7 @@ class ServiceTypeDiscovery {
      * @param targetPath target path to be checked on pattern matching
      * @return Service Type value
      */
-    static ServiceType getServiceType(UUID requestId, String targetPath) {
+    static ServiceType getServiceType(String requestId, String targetPath) {
         for (Map.Entry<String, ServiceType> entry : pathToServiceType.entrySet()) {
             String pattern = entry.getKey();
 

@@ -17,11 +17,11 @@
 package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
-import de.adorsys.psd2.consent.api.pis.CmsPaymentIdentifier;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
 import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
+import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -68,7 +68,7 @@ public class CmsPsuPisController {
     @GetMapping(path = "/redirect/{redirect-id}")
     @ApiOperation(value = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsPaymentIdentifier.class),
+        @ApiResponse(code = 200, message = "OK", response = CmsPaymentResponse.class),
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsPaymentResponse.class)})
     public ResponseEntity getPaymentIdByRedirectId(
@@ -85,8 +85,7 @@ public class CmsPsuPisController {
             }
             CmsPaymentResponse cmsPaymentResponse = response.get();
 
-            CmsPaymentIdentifier cmsPaymentIdentifier = new CmsPaymentIdentifier(cmsPaymentResponse);
-            return new ResponseEntity<>(cmsPaymentIdentifier, HttpStatus.OK);
+            return new ResponseEntity<>(cmsPaymentResponse, HttpStatus.OK);
         } catch (RedirectUrlIsExpiredException e) {
             return new ResponseEntity<>(new CmsPaymentResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
@@ -119,7 +118,7 @@ public class CmsPsuPisController {
     @GetMapping(path = "/cancellation/redirect/{redirect-id}")
     @ApiOperation(value = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsPaymentIdentifier.class),
+        @ApiResponse(code = 200, message = "OK", response = CmsPaymentResponse.class),
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsPaymentResponse.class)})
     public ResponseEntity getPaymentIdByRedirectIdForCancellation(
@@ -135,8 +134,7 @@ public class CmsPsuPisController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             CmsPaymentResponse cmsPaymentResponse = response.get();
-            CmsPaymentIdentifier cmsPaymentIdentifier = new CmsPaymentIdentifier(cmsPaymentResponse);
-            return new ResponseEntity<>(cmsPaymentIdentifier, HttpStatus.OK);
+            return new ResponseEntity<>(cmsPaymentResponse, HttpStatus.OK);
         } catch (RedirectUrlIsExpiredException e) {
             return new ResponseEntity<>(new CmsPaymentResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
@@ -170,14 +168,14 @@ public class CmsPsuPisController {
     @GetMapping(path = "authorisation/{authorisation-id}")
     @ApiOperation(value = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsPisPsuDataAuthorisation.class),
+        @ApiResponse(code = 200, message = "OK", response = CmsPsuAuthorisation.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<CmsPisPsuDataAuthorisation> getAuthorisationByAuthorisationId(
+    public ResponseEntity<CmsPsuAuthorisation> getAuthorisationByAuthorisationId(
         @ApiParam(name = "authorisation-id", value = "The authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("authorisation-id") String aithorisationId,
+        @PathVariable("authorisation-id") String authorisationId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
-        return cmsPsuPisService.getAuthorisationByAuthorisationId(aithorisationId, instanceId)
+        return cmsPsuPisService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
                    .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }

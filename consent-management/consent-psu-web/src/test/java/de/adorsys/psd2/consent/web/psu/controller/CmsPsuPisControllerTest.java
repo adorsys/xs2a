@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
-import de.adorsys.psd2.consent.api.pis.CmsPaymentIdentifier;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
@@ -195,9 +194,9 @@ public class CmsPsuPisControllerTest {
         cmsPaymentResponse.setPayment(payment);
         when(cmsPsuPisService.checkRedirectAndGetPayment(REDIRECT_ID, INSTANCE_ID)).thenReturn(Optional.of(cmsPaymentResponse));
 
-        ResponseEntity<CmsPaymentIdentifier> actualResponse = cmsPsuPisController.getPaymentIdByRedirectId(REDIRECT_ID, INSTANCE_ID);
+        ResponseEntity<CmsPaymentResponse> actualResponse = cmsPsuPisController.getPaymentIdByRedirectId(REDIRECT_ID, INSTANCE_ID);
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
-        assertEquals(PAYMENT_ID, actualResponse.getBody().getPaymentId());
+        assertEquals(PAYMENT_ID, actualResponse.getBody().getPayment().getPaymentId());
     }
 
     @Test
@@ -225,9 +224,9 @@ public class CmsPsuPisControllerTest {
         cmsPaymentResponse.setPayment(payment);
         when(cmsPsuPisService.checkRedirectAndGetPaymentForCancellation(REDIRECT_ID, INSTANCE_ID)).thenReturn(Optional.of(cmsPaymentResponse));
 
-        ResponseEntity<CmsPaymentIdentifier> actualResponse = cmsPsuPisController.getPaymentIdByRedirectIdForCancellation(REDIRECT_ID, INSTANCE_ID);
+        ResponseEntity<CmsPaymentResponse> actualResponse = cmsPsuPisController.getPaymentIdByRedirectIdForCancellation(REDIRECT_ID, INSTANCE_ID);
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
-        assertEquals(PAYMENT_ID, actualResponse.getBody().getPaymentId());
+        assertEquals(PAYMENT_ID, actualResponse.getBody().getPayment().getPaymentId());
     }
 
     @Test

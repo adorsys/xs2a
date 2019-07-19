@@ -24,6 +24,8 @@ import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,6 +39,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS;
+
 @Component
 public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl implements ConsentBodyValidator {
     private static final String ACCESS_FIELD_NAME = "access";
@@ -49,17 +53,24 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
     private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
 
     private final JsonConverter jsonConverter;
+    private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
+    private DateFieldValidator dateFieldValidator;
 
     @Autowired
     public ConsentBodyFieldsValidatorImpl(ErrorBuildingService errorBuildingService,
                                           ObjectMapper objectMapper,
-                                          JsonConverter jsonConverter) {
+                                          JsonConverter jsonConverter, TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
+                                          DateFieldValidator dateFieldValidator) {
         super(errorBuildingService, objectMapper);
+        this.dateFieldValidator = dateFieldValidator;
         this.jsonConverter = jsonConverter;
+        this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
     }
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
+    public void validateBodyFields(HttpServletRequest request, MessageError messageError) {
+        tppRedirectUriBodyValidator.validate(request, messageError);
+
         validateRawAccess(request, messageError);
 
         Optional<Consents> consentsOptional = mapBodyToInstance(request, messageError, Consents.class);
@@ -86,6 +97,12 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
         } else {
             validateFrequencyPerDay(consents.getFrequencyPerDay(), messageError);
         }
+    }
+
+    @Override
+    public void validateRawData(HttpServletRequest request, MessageError messageError) {
+        validateRawAccess(request, messageError);
+        dateFieldValidator.validateDateFormat(request, AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError);
     }
 
     private void validateValidUntil(LocalDate validUntil, MessageError messageError) {

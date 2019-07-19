@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.link;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
@@ -29,6 +30,7 @@ public class CreateConsentLinks extends AbstractLinks {
 
     public CreateConsentLinks(String httpUrl, ScaApproachResolver scaApproachResolver,
                               CreateConsentResponse response, RedirectLinkBuilder redirectLinkBuilder,
+                              RedirectIdService redirectIdService,
                               boolean explicitMethod, boolean signingBasketModeActive,
                               ScaRedirectFlow scaRedirectFlow) {
         super(httpUrl);
@@ -49,7 +51,8 @@ public class CreateConsentLinks extends AbstractLinks {
             if (explicitMethod) {
                 setStartAuthorisation(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));
             } else {
-                setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildConsentScaRedirectLink(consentId, authorisationId));
+                String redirectId = redirectIdService.generateRedirectId(authorisationId);
+                setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId));
                 setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
             }
         }

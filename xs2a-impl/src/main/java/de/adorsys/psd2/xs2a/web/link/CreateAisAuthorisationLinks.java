@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
@@ -27,7 +28,8 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
 public class CreateAisAuthorisationLinks extends AbstractLinks {
 
     public CreateAisAuthorisationLinks(String httpUrl, CreateConsentAuthorizationResponse response,
-                                       ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder) {
+                                       ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
+                                       RedirectIdService redirectIdService) {
         super(httpUrl);
 
         String consentId = response.getConsentId();
@@ -36,7 +38,8 @@ public class CreateAisAuthorisationLinks extends AbstractLinks {
         setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
 
         if (scaApproachResolver.getInitiationScaApproach(authorisationId) == REDIRECT) {
-            setScaRedirect(new HrefType(redirectLinkBuilder.buildConsentScaRedirectLink(consentId, authorisationId)));
+            String redirectId = redirectIdService.generateRedirectId(authorisationId);
+            setScaRedirect(new HrefType(redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId)));
         } else {
             setUpdatePsuAuthentication(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
         }

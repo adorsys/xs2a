@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
-import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
-import de.adorsys.psd2.xs2a.core.event.Event;
+import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
+import de.adorsys.psd2.event.service.model.EventBO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -35,14 +35,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "api/v1/events")
 @Api(value = "api/v1/events", tags = "Events", description = "Provides access to the consent management system for Events")
 public class EventController {
-    private final EventServiceEncrypted eventService;
+    private final Xs2aEventServiceEncrypted eventService;
 
     @PostMapping(path = "/")
     @ApiOperation(value = "Creates new event")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Bad Request")})
-    public ResponseEntity<Boolean> recordEvent(@RequestBody Event event) {
+    public ResponseEntity<Boolean> recordEvent(@RequestBody EventBO event) {
         return new ResponseEntity<>(eventService.recordEvent(event), HttpStatus.OK);
     }
 }

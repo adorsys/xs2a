@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded;
 
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -27,7 +26,6 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -35,6 +33,8 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
@@ -53,7 +53,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Optional;
 import java.util.UUID;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -71,7 +70,6 @@ public class AisScaAuthenticatedStageTest {
     private static final MessageErrorCode ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID());
 
     @InjectMocks
@@ -79,8 +77,6 @@ public class AisScaAuthenticatedStageTest {
 
     @Mock
     private Xs2aAisConsentService aisConsentService;
-    @Mock
-    private AisConsentDataService aisConsentDataService;
     @Mock
     private AisConsentSpi aisConsentSpi;
     @Mock
@@ -101,6 +97,10 @@ public class AisScaAuthenticatedStageTest {
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    @Mock
+    private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
     @Before
     public void setUp() {
@@ -122,20 +122,16 @@ public class AisScaAuthenticatedStageTest {
         when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(spiAccountConsent);
 
-        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
-            .thenReturn(ASPSP_CONSENT_DATA);
-
-        doNothing()
-            .when(aisConsentDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
-
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
     }
 
     @Test
     public void apply_Success() {
-        when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(VALID_CONSENT_STATUS));
 
         doNothing()
@@ -156,7 +152,7 @@ public class AisScaAuthenticatedStageTest {
 
     @Test
     public void apply_Failure_SpiResponseWithError() {
-        when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildErrorSpiResponse());
 
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(), ServiceType.AIS))
@@ -185,7 +181,7 @@ public class AisScaAuthenticatedStageTest {
 
     @Test
     public void apply_Success_verifyUpdateMultilevelScaRequiredMethodIsCalled() {
-        when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(PARTIALLY_AUTHORISED_CONSENT_STATUS));
 
         doNothing()
@@ -208,7 +204,7 @@ public class AisScaAuthenticatedStageTest {
 
     @Test
     public void apply_Success_verifyUpdateMultilevelScaRequiredMethodIsNotCalled() {
-        when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(VALID_CONSENT_STATUS));
 
         doNothing()
@@ -231,7 +227,7 @@ public class AisScaAuthenticatedStageTest {
 
     @Test
     public void apply_Success_verifyUpdateConsentStatusMethodIsCalled() {
-        when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(VALID_CONSENT_STATUS));
 
         when(accountConsent.getConsentStatus())
@@ -257,7 +253,7 @@ public class AisScaAuthenticatedStageTest {
 
     @Test
     public void apply_Success_verifyUpdateConsentStatusMethodIsNotCalled() {
-        when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(PARTIALLY_AUTHORISED_CONSENT_STATUS));
 
         when(accountConsent.getConsentStatus())
@@ -282,14 +278,12 @@ public class AisScaAuthenticatedStageTest {
     private SpiResponse<SpiVerifyScaAuthorisationResponse> buildSuccessSpiResponse(ConsentStatus consentStatus) {
         return SpiResponse.<SpiVerifyScaAuthorisationResponse>builder()
                    .payload(new SpiVerifyScaAuthorisationResponse(consentStatus))
-                   .aspspConsentData(ASPSP_CONSENT_DATA)
-                   .success();
+                   .build();
     }
 
     // Needed because SpiResponse is final, so it's impossible to mock it
     private SpiResponse<SpiVerifyScaAuthorisationResponse> buildErrorSpiResponse() {
         return SpiResponse.<SpiVerifyScaAuthorisationResponse>builder()
-                   .aspspConsentData(ASPSP_CONSENT_DATA)
                    .fail(RESPONSE_STATUS);
     }
 }

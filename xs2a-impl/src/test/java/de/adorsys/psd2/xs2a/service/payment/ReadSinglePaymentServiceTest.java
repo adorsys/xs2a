@@ -102,7 +102,7 @@ public class ReadSinglePaymentServiceTest {
         when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiSinglePayment>builder()
                 .payload(SPI_SINGLE_PAYMENT)
-                .success());
+                .build());
         when(spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(SPI_SINGLE_PAYMENT)).thenReturn(SINGLE_PAYMENT);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))

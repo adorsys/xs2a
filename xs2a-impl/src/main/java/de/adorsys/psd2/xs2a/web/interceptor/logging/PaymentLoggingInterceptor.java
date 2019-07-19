@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
-import de.adorsys.psd2.xs2a.component.TppLogger;
+import de.adorsys.psd2.xs2a.component.logger.TppLogger;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -28,13 +29,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.X_REQUEST_ID;
-
 @RequiredArgsConstructor
 @Component
 public class PaymentLoggingInterceptor extends HandlerInterceptorAdapter {
     private static final String NOT_EXIST_IN_URI = "Not exist in URI";
     private final TppService tppService;
+    private final RedirectIdService redirectIdService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -43,11 +43,10 @@ public class PaymentLoggingInterceptor extends HandlerInterceptorAdapter {
                                .map(vr -> vr.get("paymentId"))
                                .orElse(NOT_EXIST_IN_URI);
 
-        TppLogger.logRequest()
-            .withParam("TPP ID", tppService.getTppId())
-            .withParam("TPP IP", request.getRemoteAddr())
-            .withParam(X_REQUEST_ID, request.getHeader(X_REQUEST_ID))
-            .withParam("URI", request.getRequestURI())
+        TppLogger.logRequest(request)
+            .withTpp(tppService.getTppInfo())
+            .withXRequestId()
+            .withRequestUri()
             .withParam("Payment ID", paymentId)
             .perform();
 
@@ -56,10 +55,11 @@ public class PaymentLoggingInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        TppLogger.logResponse()
-            .withParam("TPP ID", tppService.getTppId())
-            .withParam(X_REQUEST_ID, response.getHeader(X_REQUEST_ID))
-            .withParam("Status", String.valueOf(response.getStatus()))
+        TppLogger.logResponse(response)
+            .withTpp(tppService.getTppInfo())
+            .withXRequestId()
+            .withResponseStatus()
+            .withOptionalRedirectId(redirectIdService.getRedirectId())
             .perform();
     }
 }

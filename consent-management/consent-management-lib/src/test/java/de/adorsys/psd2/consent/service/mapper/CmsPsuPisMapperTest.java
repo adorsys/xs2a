@@ -25,6 +25,8 @@ import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisAddress;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
+import de.adorsys.psd2.consent.domain.payment.PisRemittance;
+import de.adorsys.psd2.consent.reader.JsonReader;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -37,8 +39,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
@@ -105,12 +109,17 @@ public class CmsPsuPisMapperTest {
     private static final LocalDate END_DATE = LocalDate.now();
     private static final PisExecutionRule EXECUTION_RULE = PisExecutionRule.FOLLOWING;
     private static final String FREEQUENCY = "DAILY";
+    private static final JsonReader jsonReader = new JsonReader();
+    private static final PisRemittance REMITTANCE = jsonReader.getObjectFromFile("json/remittance.json", PisRemittance.class);
     private static final PisPaymentData PIS_PAYMENT_DATA_SINGLE = buildPisPaymentData(PIS_COMMON_PAYMENT_DATA_SINGLE);
     private static final PisPaymentData PIS_PAYMENT_DATA_PERIODIC = buildPisPaymentData(PIS_COMMON_PAYMENT_DATA_PERIODIC);
     private static final PisPaymentData PIS_PAYMENT_DATA_BULK = buildPisPaymentData(PIS_COMMON_PAYMENT_DATA_BULK);
     private static final List<PisPaymentData> PIS_PAYMENT_DATA_SINGLE_LIST = Collections.singletonList(PIS_PAYMENT_DATA_SINGLE);
     private static final List<PisPaymentData> PIS_PAYMENT_DATA_PERIODIC_LIST = Collections.singletonList(PIS_PAYMENT_DATA_PERIODIC);
     private static final List<PisPaymentData> PIS_PAYMENT_DATA_BULK_LIST = Collections.singletonList(PIS_PAYMENT_DATA_BULK);
+    private static final String ULTIMATE_DEBTOR = "ultimate debtor";
+    private static final String ULTIMATE_CREDITOR = "ultimate creditor";
+    private static final String PURPOSE_CODE = "BKDF";
 
     @InjectMocks
     private CmsPsuPisMapper cmsPsuPisMapper;
@@ -121,6 +130,8 @@ public class CmsPsuPisMapperTest {
     private TppInfoMapper tppInfoMapper;
     @Mock
     private PsuDataMapper psuDataMapper;
+    @Spy
+    private CmsRemittanceMapper cmsRemittanceMapper = Mappers.getMapper(CmsRemittanceMapper.class);
 
     @Before
     public void setUp() {
@@ -176,6 +187,10 @@ public class CmsPsuPisMapperTest {
         assertEquals(PSU_ID_DATA_LIST, singlePayment.getPsuIdDatas());
         assertEquals(CREATION_TIMESTAMP, singlePayment.getCreationTimestamp());
         assertEquals(STATUS_CHANGE_TIMESTAMP, singlePayment.getStatusChangeTimestamp());
+        assertEquals(ULTIMATE_DEBTOR, singlePayment.getUltimateDebtor());
+        assertEquals(ULTIMATE_CREDITOR, singlePayment.getUltimateCreditor());
+        assertEquals(PURPOSE_CODE, singlePayment.getPurposeCode());
+        assertEquals(cmsRemittanceMapper.mapToCmsRemittance(REMITTANCE), singlePayment.getRemittanceInformationStructured());
     }
 
     @Test
@@ -206,6 +221,10 @@ public class CmsPsuPisMapperTest {
         assertEquals(PSU_ID_DATA_LIST, periodicPayment.getPsuIdDatas());
         assertEquals(CREATION_TIMESTAMP, periodicPayment.getCreationTimestamp());
         assertEquals(STATUS_CHANGE_TIMESTAMP, periodicPayment.getStatusChangeTimestamp());
+        assertEquals(ULTIMATE_DEBTOR, periodicPayment.getUltimateDebtor());
+        assertEquals(ULTIMATE_CREDITOR, periodicPayment.getUltimateCreditor());
+        assertEquals(PURPOSE_CODE, periodicPayment.getPurposeCode());
+        assertEquals(cmsRemittanceMapper.mapToCmsRemittance(REMITTANCE), periodicPayment.getRemittanceInformationStructured());
     }
 
     @Test
@@ -245,6 +264,10 @@ public class CmsPsuPisMapperTest {
         assertEquals(PSU_ID_DATA_LIST, singlePayment.getPsuIdDatas());
         assertEquals(CREATION_TIMESTAMP, singlePayment.getCreationTimestamp());
         assertEquals(STATUS_CHANGE_TIMESTAMP, singlePayment.getStatusChangeTimestamp());
+        assertEquals(ULTIMATE_DEBTOR, singlePayment.getUltimateDebtor());
+        assertEquals(ULTIMATE_CREDITOR, singlePayment.getUltimateCreditor());
+        assertEquals(PURPOSE_CODE, singlePayment.getPurposeCode());
+        assertEquals(cmsRemittanceMapper.mapToCmsRemittance(REMITTANCE), singlePayment.getRemittanceInformationStructured());
     }
 
     private static PisCommonPaymentData buildPisCommonPaymentData(PaymentType paymentType) {
@@ -309,6 +332,10 @@ public class CmsPsuPisMapperTest {
         pisPaymentData.setEndDate(END_DATE);
         pisPaymentData.setExecutionRule(EXECUTION_RULE);
         pisPaymentData.setFrequency(FREEQUENCY);
+        pisPaymentData.setUltimateDebtor(ULTIMATE_DEBTOR);
+        pisPaymentData.setUltimateCreditor(ULTIMATE_CREDITOR);
+        pisPaymentData.setPurposeCode(PURPOSE_CODE);
+        pisPaymentData.setRemittanceInformationStructured(REMITTANCE);
         return pisPaymentData;
     }
 

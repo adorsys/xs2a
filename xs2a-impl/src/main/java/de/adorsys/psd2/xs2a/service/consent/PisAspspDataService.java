@@ -16,9 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
-import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,16 +24,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PisAspspDataService {
     private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
-    private final AspspDataService aspspDataService;
-
-    public AspspConsentData getAspspConsentData(String paymentId) {
-        return aspspDataService.readAspspConsentData(paymentId)
-                   .orElseGet(() -> new AspspConsentData(null, paymentId));
-    }
-
-    public void updateAspspConsentData(AspspConsentData consentData) {
-        aspspDataService.updateAspspConsentData(consentData);
-    }
 
     public String getInternalPaymentIdByEncryptedString(String encryptedId) {
         return pisCommonPaymentServiceEncrypted.getDecryptedId(encryptedId).orElse(null);

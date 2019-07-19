@@ -16,54 +16,62 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidatorContext;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.PAYMENT_DATE_FIELDS;
 
 @Component
 public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implements PaymentBodyValidator {
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
-    private static final String DAY_OF_EXECUTION_FIELD_NAME = "dayOfExecution";
-    private static final String DAY_OF_MONTH_REGEX = "(0?[1-9]|[12]\\d|3[01])";
-    private static final String DAY_OF_EXECUTION_WRONG_VALUE_ERROR = "Value 'dayOfExecution' should be a number of day in month";
+    private static final String PURPOSE_CODE_FIELD_NAME = "purposeCode";
     private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
+    static final String PURPOSE_CODE_ERROR_FORMAT = "Field 'purposeCode' has wrong value";
 
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
+    private DateFieldValidator dateFieldValidator;
 
     private final JsonConverter jsonConverter;
+    private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
 
     @Autowired
     public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
                                     PaymentTypeValidatorContext paymentTypeValidatorContext,
                                     StandardPaymentProductsResolver standardPaymentProductsResolver,
-                                    JsonConverter jsonConverter) {
+                                    JsonConverter jsonConverter, TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
+                                    DateFieldValidator dateFieldValidator) {
         super(errorBuildingService, objectMapper);
         this.paymentTypeValidatorContext = paymentTypeValidatorContext;
         this.standardPaymentProductsResolver = standardPaymentProductsResolver;
+        this.dateFieldValidator = dateFieldValidator;
         this.jsonConverter = jsonConverter;
+        this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
     }
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
+    public void validateBodyFields(HttpServletRequest request, MessageError messageError) {
+        tppRedirectUriBodyValidator.validate(request, messageError);
+
         Map<String, String> pathParametersMap = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
         if (isRawPaymentProduct(pathParametersMap)) {
@@ -77,9 +85,15 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
             return;
         }
 
-        validateRawData(request, messageError);
-
         validateInitiatePaymentBody(bodyOptional.get(), pathParametersMap, messageError);
+    }
+
+    @Override
+    public void validateRawData(HttpServletRequest request, MessageError messageError) {
+        dateFieldValidator.validateDayOfExecution(request, messageError);
+        dateFieldValidator.validateDateFormat(request, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
+        List<String> purposeCodes = extractPurposeCodes(request, messageError);
+        validatePurposeCodes(purposeCodes, messageError);
     }
 
     private void validateInitiatePaymentBody(Object body, Map<String, String> pathParametersMap, MessageError messageError) {
@@ -97,36 +111,27 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         return standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct);
     }
 
-    private void validateRawData(HttpServletRequest request, MessageError messageError) {
-        String dayOfExecution = extractDayOfExecution(request, messageError);
-        validateDayOfExecutionValue(dayOfExecution, messageError);
-    }
+    private void validatePurposeCodes(List<String> purposeCodes, MessageError messageError) {
+        boolean isPurposeCodesNotValid = purposeCodes.stream()
+                                             .map(PurposeCode::fromValue)
+                                             .anyMatch(Objects::isNull);
 
-    private void validateDayOfExecutionValue(String value, MessageError messageError) {
-        if (value == null) {
-            return;
-        }
-
-        if (!isNumberADayOfMonth(value)) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, DAY_OF_EXECUTION_WRONG_VALUE_ERROR));
+        if (isPurposeCodesNotValid) {
+            enrichFormatMessageError(PURPOSE_CODE_ERROR_FORMAT, messageError);
         }
     }
 
-    private boolean isNumberADayOfMonth(@NotNull String value) {
-        return value.matches(DAY_OF_MONTH_REGEX);
+    private void enrichFormatMessageError(String message, MessageError messageError) {
+        errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, message));
     }
 
-    private String extractDayOfExecution(HttpServletRequest request, MessageError messageError) {
-        Optional<String> dayOfExecutionOptional = Optional.empty();
+    private List<String> extractPurposeCodes(HttpServletRequest request, MessageError messageError) {
+        List<String> purposeCodes = new ArrayList<>();
         try {
-            // TODO: create common class with Jackson's functionality instead of two: JsonConverter and ObjectMapper.
-            //  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/870
-            dayOfExecutionOptional = jsonConverter.toJsonField(request.getInputStream(), DAY_OF_EXECUTION_FIELD_NAME, new TypeReference<String>() {
-            });
+            purposeCodes.addAll(jsonConverter.toJsonGetValuesForField(request.getInputStream(), PURPOSE_CODE_FIELD_NAME));
         } catch (IOException e) {
             errorBuildingService.enrichMessageError(messageError, BODY_DESERIALIZATION_ERROR);
         }
-
-        return dayOfExecutionOptional.orElse(null);
+        return purposeCodes;
     }
 }

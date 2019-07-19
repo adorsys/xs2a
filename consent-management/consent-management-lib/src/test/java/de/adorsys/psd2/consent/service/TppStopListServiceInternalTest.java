@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.domain.TppStopListEntity;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
-import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,9 +33,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class TppStopListServiceInternalTest {
     private final String AUTHORISATION_NUMBER = "Authorisation number";
-    private final String AUTHORITY_ID = "Authority id";
     private final String AUTHORISATION_NUMBER_NOT_EXISTING = "Not existing Authorisation number";
-    private final String AUTHORITY_ID_NOT_EXISTING = "Not existing Authority id";
     private final String INSTANCE_ID = null;
 
     @InjectMocks
@@ -50,46 +47,37 @@ public class TppStopListServiceInternalTest {
 
     @Test
     public void checkIfTppBlocked_Fail_EmptyStopList() {
-        when(tppStopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING, INSTANCE_ID))
+        when(tppStopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
-        boolean isTppBlocked = tppStopListService.checkIfTppBlocked(buildNotExistingTppUniqueParamsHolder());
+        boolean isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER_NOT_EXISTING);
 
         assertFalse(isTppBlocked);
     }
 
     @Test
     public void checkIfTppBlocked_Success_BlockedTpp() {
-        when(tppStopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(AUTHORISATION_NUMBER, AUTHORITY_ID, INSTANCE_ID))
+        when(tppStopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER, INSTANCE_ID))
             .thenReturn(Optional.of(tppStopListEntity));
 
         when(tppStopListEntity.isBlocked())
             .thenReturn(false);
 
-        boolean isTppBlocked = tppStopListService.checkIfTppBlocked(buildExistingTppUniqueParamsHolder());
+        boolean isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER);
 
         assertFalse(isTppBlocked);
     }
 
     @Test
     public void checkIfTppBlocked_Success_NonBlockedTpp() {
-        when(tppStopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING, INSTANCE_ID))
+        when(tppStopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.of(tppStopListEntity));
 
         when(tppStopListEntity.isBlocked())
             .thenReturn(true);
 
-        boolean isTppBlocked = tppStopListService.checkIfTppBlocked(buildNotExistingTppUniqueParamsHolder());
+        boolean isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER_NOT_EXISTING);
 
         assertTrue(isTppBlocked);
     }
-
-    private TppUniqueParamsHolder buildNotExistingTppUniqueParamsHolder() {
-        return new TppUniqueParamsHolder(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING);
-    }
-
-    private TppUniqueParamsHolder buildExistingTppUniqueParamsHolder() {
-        return new TppUniqueParamsHolder(AUTHORISATION_NUMBER, AUTHORITY_ID);
-    }
-
 }

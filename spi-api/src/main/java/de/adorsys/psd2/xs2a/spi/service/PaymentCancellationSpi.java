@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationResponse;
@@ -27,36 +27,34 @@ public interface PaymentCancellationSpi extends AuthorisationSpi<SpiPayment> {
     /**
      * Initiates payment cancellation process
      *
-     * @param contextData      holder of call's context data (e.g. about PSU and TPP)
-     * @param payment          Payment to be cancelled
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param payment                  Payment to be cancelled
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return Payment cancellation response with information about transaction status and whether authorisation of the request is required
      */
     @NotNull
-    SpiResponse<SpiPaymentCancellationResponse> initiatePaymentCancellation(@NotNull SpiContextData contextData, @NotNull SpiPayment payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiPaymentCancellationResponse> initiatePaymentCancellation(@NotNull SpiContextData contextData, @NotNull SpiPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Cancels payment without performing strong customer authentication
      *
-     * @param contextData      holder of call's context data (e.g. about PSU and TPP)
-     * @param payment          Payment to be cancelled
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
-     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param payment                  Payment to be cancelled
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return Return a positive or negative response as part of SpiResponse
      */
     @NotNull
-    SpiResponse<SpiResponse.VoidResponse> cancelPaymentWithoutSca(@NotNull SpiContextData contextData, @NotNull SpiPayment payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiResponse.VoidResponse> cancelPaymentWithoutSca(@NotNull SpiContextData contextData, @NotNull SpiPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Sends authorisation confirmation information (secure code or such) to ASPSP and if case of successful validation cancels payment at ASPSP.
      *
-     * @param contextData        holder of call's context data (e.g. about PSU and TPP)
-     * @param spiScaConfirmation payment cancellation confirmation information
-     * @param payment            Payment to be cancelled
-     * @param aspspConsentData   Encrypted data that may stored in the consent management system in the consent linked to a request.
-     *                           May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param spiScaConfirmation       payment cancellation confirmation information
+     * @param payment                  Payment to be cancelled
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return Return a positive or negative response as part of SpiResponse
      */
     @NotNull
-    SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndCancelPayment(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPayment payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndCancelPayment(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 }

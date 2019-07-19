@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>3.7</version>
+    <version>3.8</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>xs2a-core</module>
@@ -31,7 +31,9 @@
         <module>consent-management</module>
         <module>psd2-validator</module>
         <module>xs2a-standalone-starter</module>
+        <module>event-service</module>
         <module>spi-stub</module>
+        <module>json-reader</module>
     </modules>
     <packaging>pom</packaging>
 

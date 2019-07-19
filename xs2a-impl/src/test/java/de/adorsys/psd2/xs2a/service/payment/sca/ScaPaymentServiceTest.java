@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.payment.sca;
 
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -69,7 +68,6 @@ public class ScaPaymentServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final TppInfo TPP_INFO = buildTppInfo();
     //SinglePayment
@@ -159,7 +157,6 @@ public class ScaPaymentServiceTest {
     public void createSinglePayment_singlePaymentSpi_initiatePayment_failed() {
         //Given
         SpiResponse<SpiSinglePaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
-            .aspspConsentData(AspspConsentData.emptyConsentData().respondWith(TEST_ASPSP_DATA.getBytes()))
             .fail(SpiResponseStatus.LOGICAL_FAILURE);
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
             .messages(Collections.singletonList("Payment not found"))
@@ -204,7 +201,6 @@ public class ScaPaymentServiceTest {
     public void createPeriodicPayment_periodicPaymentSpi_initiatePayment_failed() {
         //Given
         SpiResponse<SpiPeriodicPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
-            .aspspConsentData(AspspConsentData.emptyConsentData().respondWith(TEST_ASPSP_DATA.getBytes()))
             .fail(SpiResponseStatus.LOGICAL_FAILURE);
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
             .messages(Collections.singletonList("Payment not found"))
@@ -249,7 +245,6 @@ public class ScaPaymentServiceTest {
     public void createBulkPayment_bulkPaymentSpi_initiatePayment_failed() {
         //Given
         SpiResponse<SpiBulkPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiBulkPaymentInitiationResponse>builder()
-            .aspspConsentData(AspspConsentData.emptyConsentData().respondWith(TEST_ASPSP_DATA.getBytes()))
             .fail(SpiResponseStatus.LOGICAL_FAILURE);
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
             .messages(Collections.singletonList("Payment not found"))
@@ -295,7 +290,6 @@ public class ScaPaymentServiceTest {
     public void createCommonPayment_commonPaymentSpi_initiatePayment_failed() {
         //Given
         SpiResponse<SpiPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiPaymentInitiationResponse>builder()
-            .aspspConsentData(AspspConsentData.emptyConsentData().respondWith(TEST_ASPSP_DATA.getBytes()))
             .fail(SpiResponseStatus.LOGICAL_FAILURE);
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
             .messages(Collections.singletonList("Payment not found"))
@@ -380,7 +374,6 @@ public class ScaPaymentServiceTest {
     private static <T> SpiResponse<T> buildSpiResponse(T payload) {
         return SpiResponse.<T>builder()
             .payload(payload)
-            .aspspConsentData(ASPSP_CONSENT_DATA)
-            .success();
+            .build();
     }
 }

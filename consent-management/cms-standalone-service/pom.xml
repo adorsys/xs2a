@@ -21,7 +21,7 @@
 	<parent>
 		<artifactId>consent-management</artifactId>
 		<groupId>de.adorsys.psd2</groupId>
-		<version>3.7</version>
+		<version>3.8</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -39,36 +39,59 @@
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>consent-management-lib</artifactId>
-			<version>3.7</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>consent-xs2a-web</artifactId>
-			<version>3.7</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>consent-psu-web</artifactId>
-			<version>3.7</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>consent-aspsp-web</artifactId>
-			<version>3.7</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>aspsp-profile-remote</artifactId>
-			<version>3.7</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>cms-db-schema</artifactId>
-			<version>3.7</version>
+			<version>${project.version}</version>
 		</dependency>
 
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-xs2a-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-aspsp-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-persist-db-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-db-report-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 		<!-- other dependencies -->
 		<dependency>

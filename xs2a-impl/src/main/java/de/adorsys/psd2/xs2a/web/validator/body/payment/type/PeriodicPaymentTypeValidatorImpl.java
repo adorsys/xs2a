@@ -34,13 +34,10 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PERIOD_INVALID;
 
 @Component
 public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl {
-    private PaymentMapper paymentMapper;
 
     @Autowired
-    public PeriodicPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
-                                            PaymentMapper paymentMapper) {
+    public PeriodicPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper, PaymentMapper paymentMapper) {
         super(errorBuildingService, objectMapper, paymentMapper);
-        this.paymentMapper = paymentMapper;
     }
 
     @Override
@@ -76,6 +73,10 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
         if (areDatesInvalidInPeriodicPayment(periodicPayment)) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(PERIOD_INVALID, "Date values has wrong order"));
         }
+
+        validateUltimateDebtor(periodicPayment.getUltimateDebtor(), messageError);
+        validateUltimateCreditor(periodicPayment.getUltimateCreditor(), messageError);
+        validateRemittanceInformationStructured(periodicPayment.getRemittanceInformationStructured(), messageError);
     }
 
     private void validateStartDate(LocalDate startDate, MessageError messageError) {

@@ -48,7 +48,7 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
 
         return SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
                    .payload(response)
-                   .success();
+                   .build();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
 
         return SpiResponse.<SpiSinglePayment>builder()
                    .payload(payment)
-                   .success();
+                   .build();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
 
         return SpiResponse.<TransactionStatus>builder()
                    .payload(payment.getPaymentStatus())
-                   .success();
+                   .build();
     }
 
     @Override
@@ -78,7 +78,7 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
 
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
                    .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
-                   .success();
+                   .build();
     }
 
     @Override
@@ -88,6 +88,6 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
 
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
                    .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
-                   .success();
+                   .build();
     }
 }

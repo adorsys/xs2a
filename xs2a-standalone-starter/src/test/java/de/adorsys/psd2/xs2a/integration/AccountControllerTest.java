@@ -19,14 +19,13 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
-import de.adorsys.psd2.consent.service.AisConsentServiceRemote;
+import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
+import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.*;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.CashAccountType;
 import de.adorsys.psd2.xs2a.domain.account.AccountStatus;
@@ -38,9 +37,10 @@ import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.service.TppService;
-import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountDetailsMapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
@@ -58,6 +58,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -111,20 +112,22 @@ public class AccountControllerTest {
     @MockBean
     private TppStopListService tppStopListService;
     @MockBean
-    private EventServiceEncrypted eventServiceEncrypted;
+    private Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
-    private AisConsentServiceRemote aisConsentServiceRemote;
+    private AisConsentServiceEncrypted aisConsentServiceEncrypted;
     @MockBean
     private Xs2aAisConsentMapper xs2aAisConsentMapper;
     @MockBean
     @Qualifier("consentRestTemplate")
     private RestTemplate consentRestTemplate;
     @MockBean
-    private AisConsentDataService aisConsentDataService;
-    @MockBean
     private AccountSpi accountSpi;
     @MockBean
     private SpiToXs2aAccountDetailsMapper accountDetailsMapper;
+    @MockBean
+    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    @MockBean
+    private SpiAspspConsentDataProvider aspspConsentDataProvider;
 
     @Before
     public void init() {
@@ -135,12 +138,14 @@ public class AccountControllerTest {
             .willReturn(TPP_INFO);
         given(tppService.getTppId())
             .willReturn(TPP_INFO.getAuthorisationNumber());
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.buildTppUniqueParamsHolder()))
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(false);
-        given(eventServiceEncrypted.recordEvent(any(Event.class)))
+        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
-        given(aisConsentServiceRemote.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(new AisAccountConsent()));
-        given(consentRestTemplate.getForEntity(any(String.class), any(Class.class))).willReturn(ResponseEntity.ok(Void.class));
+        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(new AisAccountConsent()));
+        given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
+            .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
+        given(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).willReturn(aspspConsentDataProvider);
 
         httpHeaders.add("Content-Type", "application/json");
         httpHeaders.add("tpp-qwac-certificate", "qwac certificate");
@@ -208,20 +213,18 @@ public class AccountControllerTest {
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
         requestBuilder.headers(httpHeaders);
 
-        AspspConsentData aspspConsentData = new AspspConsentData(new byte[0], CONSENT_ID);
         SpiPsuData spiPsuData = new SpiPsuData(null, null, null, null);
         SpiContextData spiContextData = new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID);
-        SpiResponse<List<SpiAccountDetails>> response = buildListSpiResponse(aspspConsentData);
+        SpiResponse<List<SpiAccountDetails>> response = buildListSpiResponse();
         Xs2aAccountDetails accountDetails = buildXs2aAccountDetails();
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
 
-        given(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID)).willReturn(aspspConsentData);
-        given(accountSpi.requestAccountList(spiContextData, false, spiAccountConsent, aspspConsentData)).willReturn(response);
+        given(accountSpi.requestAccountList(spiContextData, false, spiAccountConsent, aspspConsentDataProvider)).willReturn(response);
         given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
 
         AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
-        given(aisConsentServiceRemote.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
-        given(aisConsentServiceRemote.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
+        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
+        given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
             .willReturn(Optional.of(aisAccountConsent));
         AccountConsent accountConsent = buildAccountConsent(aisAccountConsent.getUsageCounterMap());
         given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
@@ -241,21 +244,19 @@ public class AccountControllerTest {
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
         requestBuilder.headers(httpHeadersWithoutPsuIpAddress);
 
-        AspspConsentData aspspConsentData = new AspspConsentData(new byte[0], CONSENT_ID);
         SpiPsuData spiPsuData = new SpiPsuData(null, null, null, null);
         SpiContextData spiContextData = new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID);
-        SpiResponse<List<SpiAccountDetails>> response = buildListSpiResponse(aspspConsentData);
+        SpiResponse<List<SpiAccountDetails>> response = buildListSpiResponse();
         Xs2aAccountDetails accountDetails = buildXs2aAccountDetails();
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
 
-        given(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID)).willReturn(aspspConsentData);
-        given(accountSpi.requestAccountList(spiContextData, false, spiAccountConsent, aspspConsentData)).willReturn(response);
+        given(accountSpi.requestAccountList(spiContextData, false, spiAccountConsent, aspspConsentDataProvider)).willReturn(response);
         given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
 
         for (int usage = 2; usage >= 0; usage--) {
             AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", usage));
-            given(aisConsentServiceRemote.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
-            given(aisConsentServiceRemote.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
+            given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
+            given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
                 .willReturn(Optional.of(aisAccountConsent));
             AccountConsent accountConsent = buildAccountConsent(aisAccountConsent.getUsageCounterMap());
             given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
@@ -283,11 +284,10 @@ public class AccountControllerTest {
                                       AccountStatus.ENABLED, "y11", "linked3", Xs2aUsageType.PRIV, "details3", new ArrayList<>());
     }
 
-    private SpiResponse<List<SpiAccountDetails>> buildListSpiResponse(AspspConsentData aspspConsentData) {
+    private SpiResponse<List<SpiAccountDetails>> buildListSpiResponse() {
         return (SpiResponse<List<SpiAccountDetails>>) SpiResponse.<List<SpiAccountDetails>>builder()
                                                           .payload(Collections.EMPTY_LIST)
-                                                          .aspspConsentData(aspspConsentData)
-                                                          .success();
+                                                          .build();
     }
 
     private AisAccountConsent buildAisAccountConsent(Map<String, Integer> usageCounter) {

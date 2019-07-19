@@ -20,12 +20,12 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
-import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import org.springframework.stereotype.Service;
 
@@ -33,13 +33,13 @@ import org.springframework.stereotype.Service;
 public class AisScaFinalisedStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
 
     public AisScaFinalisedStage(Xs2aAisConsentService aisConsentService,
-                                AisConsentDataService aisConsentDataService,
+                                SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
                                 AisConsentSpi aisConsentSpi,
                                 Xs2aAisConsentMapper aisConsentMapper,
                                 Xs2aToSpiPsuDataMapper psuDataMapper,
                                 SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
                                 SpiErrorMapper spiErrorMapper) {
-        super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper, spiErrorMapper);
+        super(aisConsentService, aspspConsentDataProviderFactory, aisConsentSpi, aisConsentMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper, spiErrorMapper);
     }
 
     // Needed to prevent error in case of trying to update consent PSU data, that already has FINALISED Sca status.

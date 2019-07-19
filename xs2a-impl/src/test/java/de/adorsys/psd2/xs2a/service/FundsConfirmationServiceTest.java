@@ -16,9 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
@@ -33,6 +32,8 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfirmationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
@@ -58,7 +59,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FundsConfirmationServiceTest {
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo(), UUID.randomUUID());
     private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
@@ -79,10 +79,13 @@ public class FundsConfirmationServiceTest {
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    @Mock
+    private InitialSpiAspspConsentDataProvider aspspConsentDataProvider;
 
     @InjectMocks
     private FundsConfirmationService fundsConfirmationService;
-
 
     @Before
     public void setUp() {
@@ -97,11 +100,10 @@ public class FundsConfirmationServiceTest {
 
     @Test
     public void fundsConfirmation_Success_ShouldRecordEvent() {
+        // Given
         when(aspspProfileServiceWrapper.isPiisConsentSupported()).thenReturn(false);
         when(fundsConfirmationSpi.performFundsSufficientCheck(any(), any(), any(), any()))
-            .thenReturn(new SpiResponse<>(buildSpiFundsConfirmationResponse(), ASPSP_CONSENT_DATA));
-
-        // Given:
+            .thenReturn(buildSuccessSpiResponse());
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
         FundsConfirmationRequest request = buildFundsConfirmationRequest();
 
@@ -115,7 +117,7 @@ public class FundsConfirmationServiceTest {
 
     @Test
     public void fundsConfirmation_fundsConfirmationSpi_performFundsSufficientCheck_fail() {
-        // Given:
+        // Given
         String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
 
         ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
@@ -129,14 +131,12 @@ public class FundsConfirmationServiceTest {
         when(aspspProfileServiceWrapper.isPiisConsentSupported()).thenReturn(false);
         when(fundsConfirmationSpi.performFundsSufficientCheck(any(), any(), any(), any()))
             .thenReturn(SpiResponse.<SpiFundsConfirmationResponse>builder()
-                            .aspspConsentData(ASPSP_CONSENT_DATA)
-                            .message(ERROR_MESSAGE_TEXT)
                             .fail(SpiResponseStatus.LOGICAL_FAILURE));
 
         // When
         ResponseObject<FundsConfirmationResponse> response = fundsConfirmationService.fundsConfirmation(buildFundsConfirmationRequest());
 
-        //Than
+        // Then
         assertThat(response.hasError()).isTrue();
         assertThat(response.getBody()).isNull();
         assertThat(response.getError().getErrorType()).isEqualTo(ErrorType.PIIS_400);
@@ -162,5 +162,11 @@ public class FundsConfirmationServiceTest {
         FundsConfirmationResponse response = new FundsConfirmationResponse();
         response.setFundsAvailable(true);
         return response;
+    }
+
+    private SpiResponse<SpiFundsConfirmationResponse> buildSuccessSpiResponse() {
+        return SpiResponse.<SpiFundsConfirmationResponse>builder()
+                   .payload(buildSpiFundsConfirmationResponse())
+                   .build();
     }
 }

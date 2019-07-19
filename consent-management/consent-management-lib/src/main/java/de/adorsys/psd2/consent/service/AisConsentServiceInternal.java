@@ -188,7 +188,6 @@ public class AisConsentServiceInternal implements AisConsentService {
 
         List<AisConsent> oldConsents = aisConsentRepository.findOldConsentsByNewConsentParams(psuIds,
                                                                                               tppInfo.getAuthorisationNumber(),
-                                                                                              tppInfo.getAuthorityId(),
                                                                                               newConsent.getInstanceId(),
                                                                                               newConsent.getExternalId(),
                                                                                               EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID));
@@ -340,12 +339,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
-        if (consent != null && consent.isStatusNotExpired()
-                && (consent.isExpiredByDate() || consent.isNonReccuringAlreadyUsed())) {
-            consent.setConsentStatus(EXPIRED);
-            consent.setExpireDate(LocalDate.now());
-            consent.setLastActionDate(LocalDate.now());
-            aisConsentRepository.save(consent);
+        if (aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent)) {
+            aisConsentConfirmationExpirationService.expireConsent(consent);
         }
         return consent;
     }

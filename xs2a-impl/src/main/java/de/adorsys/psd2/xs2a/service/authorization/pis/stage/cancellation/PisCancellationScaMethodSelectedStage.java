@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage.cancellation;
 
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -34,6 +33,8 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
@@ -54,8 +55,9 @@ public class PisCancellationScaMethodSelectedStage extends PisScaStage<Xs2aUpdat
     private final SpiErrorMapper spiErrorMapper;
     private final Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     private final RequestProviderService requestProviderService;
+    private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
 
-    public PisCancellationScaMethodSelectedStage(CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted, ApplicationContext applicationContext, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper, PaymentCancellationSpi paymentCancellationSpi, PisAspspDataService pisAspspDataService, Xs2aUpdatePaymentAfterSpiService updatePaymentAfterSpiService, SpiContextDataProvider spiContextDataProvider, SpiErrorMapper spiErrorMapper, Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper, RequestProviderService requestProviderService) {
+    public PisCancellationScaMethodSelectedStage(CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted, ApplicationContext applicationContext, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper, PaymentCancellationSpi paymentCancellationSpi, PisAspspDataService pisAspspDataService, Xs2aUpdatePaymentAfterSpiService updatePaymentAfterSpiService, SpiContextDataProvider spiContextDataProvider, SpiErrorMapper spiErrorMapper, Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper, RequestProviderService requestProviderService, SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory) {
         super(cmsToXs2aPaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiSinglePaymentMapper, xs2aToSpiBulkPaymentMapper, pisCommonPaymentServiceEncrypted, applicationContext, xs2aToSpiPsuDataMapper);
         this.paymentCancellationSpi = paymentCancellationSpi;
         this.pisAspspDataService = pisAspspDataService;
@@ -64,6 +66,7 @@ public class PisCancellationScaMethodSelectedStage extends PisScaStage<Xs2aUpdat
         this.spiErrorMapper = spiErrorMapper;
         this.xs2aPisCommonPaymentMapper = xs2aPisCommonPaymentMapper;
         this.requestProviderService = requestProviderService;
+        this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
     }
 
     @Override
@@ -75,13 +78,12 @@ public class PisCancellationScaMethodSelectedStage extends PisScaStage<Xs2aUpdat
         String authorisationId = request.getAuthorisationId();
         String paymentId = request.getPaymentId();
 
-        AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(request.getPaymentId());
+        SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getPaymentId());
 
         String internalId = pisAspspDataService.getInternalPaymentIdByEncryptedString(request.getPaymentId());
         SpiScaConfirmation spiScaConfirmation = xs2aPisCommonPaymentMapper.buildSpiScaConfirmation(request, pisAuthorisationResponse.getPaymentId(), internalId, psuData);
 
-        SpiResponse<SpiResponse.VoidResponse> spiResponse = paymentCancellationSpi.verifyScaAuthorisationAndCancelPayment(spiContextDataProvider.provideWithPsuIdData(psuData), spiScaConfirmation, payment, aspspConsentData);
-        pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<SpiResponse.VoidResponse> spiResponse = paymentCancellationSpi.verifyScaAuthorisationAndCancelPayment(spiContextDataProvider.provideWithPsuIdData(psuData), spiScaConfirmation, payment, spiAspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
