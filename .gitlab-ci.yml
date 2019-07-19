@@ -2,9 +2,9 @@
 # Global settings
 # ------------------------------------------------------------------
 
-cache:
-  paths:
-    - .m2/repository
+#cache:
+#  paths:
+#    - .m2/repository
 
 image: "adorsys/ci-build:201907"
 
@@ -255,9 +255,12 @@ Push to DockerHub (develop):
 
 Deploy to Openshift (develop):
   stage: "Deploy"
+  cache: {}
+  dependencies: []
   only:
     - develop
   variables:
+    GIT_STRATEGY: none
     DOCKER_TAG: develop # Dockerhub source tag
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEV} # Openshift target namespace
   <<: *deploy_openshift
@@ -307,9 +310,12 @@ Push to DockerHub (nightly):
 
 Deploy to Openshift (nightly):
   stage: "Deploy"
+  cache: {}
+  dependencies: []
   only:
   - schedules
   variables:
+    GIT_STRATEGY: none
     DOCKER_TAG: nightly # Dockerhub source tag
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_INTEG} # Openshift target namespace
   <<: *deploy_openshift
@@ -326,9 +332,12 @@ Push to DockerHub (master):
 
 Deploy to Openshift (master):
   stage: "Deploy"
+  cache: {}
+  dependencies: []
   only:
     - master
   variables:
+    GIT_STRATEGY: none
     DOCKER_TAG: latest # Dockerhub source tag
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEMO} # Openshift target namespace
   <<: *deploy_openshift
@@ -345,10 +354,13 @@ Push to DockerHub (release):
 
 Deploy to Openshift (release):
   stage: "Deploy"
+  cache: {}
+  dependencies: []
   only:
     - tags
   when: manual
   variables:
+    GIT_STRATEGY: none
     DOCKER_TAG: $CI_COMMIT_TAG # Dockerhub source tag
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEMO} # Openshift target namespace
   <<: *deploy_openshift
