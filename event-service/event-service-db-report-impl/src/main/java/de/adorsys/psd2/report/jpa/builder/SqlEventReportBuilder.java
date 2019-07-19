@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.event.persist.jpa;
+package de.adorsys.psd2.report.jpa.builder;
+
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+
 
 public interface SqlEventReportBuilder {
-    SqlEventReportBuilder period();
 
     SqlEventReportBuilder instanceId();
+
+    SqlEventReportBuilder period();
 
     SqlEventReportBuilder consentId();
 
@@ -30,4 +36,10 @@ public interface SqlEventReportBuilder {
     SqlEventReportBuilder eventOrigin();
 
     String build();
+
+    SqlEventReportBuilder baseRequest();
+
+    default String getBasePartOfRequest(String fileName) throws IOException {
+        return IOUtils.toString(getClass().getClassLoader().getResource(fileName).openStream());
+    }
 }

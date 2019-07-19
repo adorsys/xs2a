@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.event.persist.jpa;
+package de.adorsys.psd2.report.jpa;
 
 import de.adorsys.psd2.event.core.model.EventOrigin;
 import de.adorsys.psd2.event.core.model.EventType;
-import de.adorsys.psd2.event.persist.entity.EventEntityForReport;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.adorsys.psd2.report.entity.EventEntityForReport;
+import de.adorsys.psd2.report.jpa.builder.EventReportSqlParameterSourceBuilder;
+import de.adorsys.psd2.report.jpa.builder.SqlEventReportBuilder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -29,12 +31,11 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class EventReportRepository {
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    @Autowired
-    private SqlEventReportBuilder sqlEventReportBuilder;
+public class EventReportJPARepository {
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final SqlEventReportBuilder sqlEventReportBuilder;
 
     public List<EventEntityForReport> getEventsForPeriod(OffsetDateTime periodFrom, OffsetDateTime periodTo, String instanceId) {
         EventReportSqlParameterSourceBuilder parameters = new EventReportSqlParameterSourceBuilder()
@@ -44,6 +45,7 @@ public class EventReportRepository {
                                                               .build();
 
         String sqlRequest = sqlEventReportBuilder
+                                .baseRequest()
                                 .period()
                                 .instanceId()
                                 .build();
@@ -60,6 +62,7 @@ public class EventReportRepository {
                                                               .build();
 
         String sqlRequest = sqlEventReportBuilder
+                                .baseRequest()
                                 .period()
                                 .instanceId()
                                 .consentId()
@@ -77,6 +80,7 @@ public class EventReportRepository {
                                                               .build();
 
         String sqlRequest = sqlEventReportBuilder
+                                .baseRequest()
                                 .period()
                                 .instanceId()
                                 .paymentId()
@@ -94,6 +98,7 @@ public class EventReportRepository {
                                                               .build();
 
         String sqlRequest = sqlEventReportBuilder
+                                .baseRequest()
                                 .period()
                                 .instanceId()
                                 .eventType()
@@ -111,6 +116,7 @@ public class EventReportRepository {
                                                               .build();
 
         String sqlRequest = sqlEventReportBuilder
+                                .baseRequest()
                                 .period()
                                 .instanceId()
                                 .eventOrigin()

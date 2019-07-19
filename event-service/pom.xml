@@ -38,6 +38,7 @@
         <module>event-service-persist-api</module>
         <module>event-service-persist-db-impl</module>
         <module>event-service-rest-client</module>
+        <module>event-service-db-report-impl</module>
     </modules>
 
 </project>
