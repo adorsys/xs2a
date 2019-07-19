@@ -18,11 +18,12 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring",
-    uses = {SpiToXs2aAccountReferenceMapper.class, SpiToXs2aAmountMapper.class, SpiToXs2aAddressMapper.class})
+    uses = {SpiToXs2aAccountReferenceMapper.class, SpiToXs2aAmountMapper.class, SpiToXs2aAddressMapper.class, RemittanceMapper.class})
 public interface SpiToXs2aPeriodicPaymentMapper {
 
     @Mapping(target = "psuDataList", ignore = true)

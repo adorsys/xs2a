@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
@@ -33,18 +34,19 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class PaymentInitiationAspect extends AbstractLinkAspect<PaymentController> {
-
-    private ScaApproachResolver scaApproachResolver;
-    private AuthorisationMethodDecider authorisationMethodDecider;
-    private RedirectLinkBuilder redirectLinkBuilder;
+    private final ScaApproachResolver scaApproachResolver;
+    private final AuthorisationMethodDecider authorisationMethodDecider;
+    private final RedirectLinkBuilder redirectLinkBuilder;
+    private final RedirectIdService redirectIdService;
 
     public PaymentInitiationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService,
                                    AuthorisationMethodDecider authorisationMethodDecider, RedirectLinkBuilder redirectLinkBuilder,
-                                   AspspProfileService aspspProfileService) {
+                                   AspspProfileService aspspProfileService, RedirectIdService redirectIdService) {
         super(messageService, aspspProfileService);
         this.scaApproachResolver = scaApproachResolver;
         this.authorisationMethodDecider = authorisationMethodDecider;
         this.redirectLinkBuilder = redirectLinkBuilder;
+        this.redirectIdService = redirectIdService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.createPayment(..)) && args(payment,requestParameters, ..)", returning = "result", argNames = "result,payment,requestParameters")
@@ -55,7 +57,7 @@ public class PaymentInitiationAspect extends AbstractLinkAspect<PaymentControlle
             boolean explicitMethod = authorisationMethodDecider.isExplicitMethod(explicitPreferred, body.isMultilevelScaRequired());
             boolean signingBasketModeActive = authorisationMethodDecider.isSigningBasketModeActive(explicitPreferred);
 
-            body.setLinks(new PaymentInitiationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
+            body.setLinks(new PaymentInitiationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder, redirectIdService,
                                                      requestParameters, body, explicitMethod, signingBasketModeActive));
             return result;
         }

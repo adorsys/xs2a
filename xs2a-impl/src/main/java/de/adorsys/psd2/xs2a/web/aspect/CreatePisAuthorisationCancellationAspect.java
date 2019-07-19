@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
@@ -35,14 +36,17 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect<PaymentController> {
-    private ScaApproachResolver scaApproachResolver;
+    private final ScaApproachResolver scaApproachResolver;
     private final RedirectLinkBuilder redirectLinkBuilder;
+    private final RedirectIdService redirectIdService;
 
     public CreatePisAuthorisationCancellationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService,
-                                                    RedirectLinkBuilder redirectLinkBuilder, AspspProfileService aspspProfileService) {
+                                                    RedirectLinkBuilder redirectLinkBuilder, AspspProfileService aspspProfileService,
+                                                    RedirectIdService redirectIdService) {
         super(messageService, aspspProfileService);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
+        this.redirectIdService = redirectIdService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService.createPisCancellationAuthorization(..)) && args( paymentId, psuData, paymentType, paymentProduct)", returning = "result", argNames = "result,paymentId,psuData,paymentType,paymentProduct")
@@ -50,7 +54,8 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
         if (!result.hasError()) {
             Xs2aCreatePisCancellationAuthorisationResponse body = result.getBody();
             body.setLinks(new PisAuthorisationCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
-                                                                paymentType.getValue(), paymentProduct, paymentId, body.getAuthorisationId()));
+                                                                redirectIdService, paymentType.getValue(), paymentProduct,
+                                                                paymentId, body.getAuthorisationId()));
             return result;
         }
         return enrichErrorTextMessage(result);

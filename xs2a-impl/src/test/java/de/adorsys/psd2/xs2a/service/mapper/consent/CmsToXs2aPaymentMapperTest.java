@@ -38,7 +38,9 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
@@ -92,7 +94,7 @@ public class CmsToXs2aPaymentMapperTest {
                                                                                     ZoneOffset.UTC);
 
     private static final String ULTIMATE_CREDITOR = "ultimate creditor";
-    private static final String PURPOSE_CODE = "purpose code";
+    private static final String PURPOSE_CODE = "BKDF";
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
     private static final LocalDate START_DATE = LocalDate.of(2019, 2, 25);
     private static final LocalDate END_DATE = LocalDate.of(2019, 2, 28);
@@ -109,6 +111,9 @@ public class CmsToXs2aPaymentMapperTest {
 
     @InjectMocks
     private CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
+
+    @Spy
+    private Xs2aRemittanceMapper xs2aRemittanceMapper = Mappers.getMapper(Xs2aRemittanceMapper.class);
 
     @Before
     public void setUp() {
@@ -157,18 +162,10 @@ public class CmsToXs2aPaymentMapperTest {
 
         assertEquals(DAY_OF_EXECUTION, periodicPayment.getDayOfExecution());
         assertEquals(STATUS_CHANGE_TIMESTAMP, periodicPayment.getStatusChangeTimestamp());
-    }
-
-    @Test
-    public void mapToPeriodicPayment_shouldNotMapDeprecatedFields() {
-        PisPayment pisPayment = buildPisPayment();
-
-        PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(pisPayment);
-
-        assertNull(periodicPayment.getUltimateDebtor());
-        assertNull(periodicPayment.getUltimateCreditor());
-        assertNull(periodicPayment.getPurposeCode());
-        assertNull(periodicPayment.getRemittanceInformationStructured());
+        assertEquals(pisPayment.getUltimateDebtor(), periodicPayment.getUltimateDebtor());
+        assertEquals(pisPayment.getUltimateCreditor(), periodicPayment.getUltimateCreditor());
+        assertEquals(pisPayment.getPurposeCode(), periodicPayment.getPurposeCode().toString());
+        assertEquals(xs2aRemittanceMapper.mapToRemittance(pisPayment.getRemittanceInformationStructured()), periodicPayment.getRemittanceInformationStructured());
     }
 
     @Test
@@ -222,18 +219,10 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(TRANSACTION_STATUS, singlePayment.getTransactionStatus());
         assertEquals(PSU_ID_DATA_LIST, singlePayment.getPsuDataList());
         assertEquals(STATUS_CHANGE_TIMESTAMP, singlePayment.getStatusChangeTimestamp());
-    }
-
-    @Test
-    public void mapToSinglePayment_shouldNotMapDeprecatedFields() {
-        PisPayment pisPayment = buildPisPayment();
-
-        SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(pisPayment);
-
-        assertNull(singlePayment.getUltimateDebtor());
-        assertNull(singlePayment.getUltimateCreditor());
-        assertNull(singlePayment.getPurposeCode());
-        assertNull(singlePayment.getRemittanceInformationStructured());
+        assertEquals(pisPayment.getUltimateDebtor(), singlePayment.getUltimateDebtor());
+        assertEquals(pisPayment.getUltimateCreditor(), singlePayment.getUltimateCreditor());
+        assertEquals(pisPayment.getPurposeCode(), singlePayment.getPurposeCode().toString());
+        assertEquals(xs2aRemittanceMapper.mapToRemittance(pisPayment.getRemittanceInformationStructured()), singlePayment.getRemittanceInformationStructured());
     }
 
     @Test
@@ -293,19 +282,10 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(TRANSACTION_STATUS, firstPayment.getTransactionStatus());
         assertEquals(PSU_ID_DATA_LIST, firstPayment.getPsuDataList());
         assertEquals(STATUS_CHANGE_TIMESTAMP, firstPayment.getStatusChangeTimestamp());
-    }
-
-    @Test
-    public void mapToBulkPayment_shouldNotMapDeprecatedFieldsInSinglePayment() {
-        PisPayment pisPayment = buildPisPayment();
-
-        BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(Collections.singletonList(pisPayment));
-        SinglePayment firstPayment = bulkPayment.getPayments().get(0);
-
-        assertNull(firstPayment.getUltimateDebtor());
-        assertNull(firstPayment.getUltimateCreditor());
-        assertNull(firstPayment.getPurposeCode());
-        assertNull(firstPayment.getRemittanceInformationStructured());
+        assertEquals(pisPayment.getUltimateDebtor(), firstPayment.getUltimateDebtor());
+        assertEquals(pisPayment.getUltimateCreditor(), firstPayment.getUltimateCreditor());
+        assertEquals(pisPayment.getPurposeCode(), firstPayment.getPurposeCode().toString());
+        assertEquals(xs2aRemittanceMapper.mapToRemittance(pisPayment.getRemittanceInformationStructured()), firstPayment.getRemittanceInformationStructured());
     }
 
     @Test

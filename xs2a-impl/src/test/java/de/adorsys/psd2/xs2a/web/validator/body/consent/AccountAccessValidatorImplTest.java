@@ -16,45 +16,69 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.consent;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.Consents;
+import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.OptionalFieldMaxLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.StringMaxLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.InputStream;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class AccountAccessValidatorImplTest {
 
     private static final String VALUE_36_LENGHT = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJK";
+    private static final String VALID_UNTIL_FIELD_NAME = "validUntil";
+    private static final String CORRECT_FORMAT_DATE = "2021-10-10";
+    private static final String WRONG_FORMAT_DATE = "07/01/2019 00:00:00";
+
+    private static final MessageError VALID_UNTIL_DATE_WRONG_VALUE_ERROR =
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Wrong format for 'validUntil': value should be ISO_DATE 'YYYY-MM-DD' format."));
 
     private HttpServletRequest request;
     private AccountAccessValidatorImpl validator;
+    private DateFieldValidator dateFieldValidator;
     private Consents consents;
     private MessageError messageError;
     private JsonReader jsonReader;
     private AccountReferenceValidator accountReferenceValidator;
 
+    @Mock
+    private JsonConverter jsonConverter;
+
     @Before
     public void setUp() {
         jsonReader = new JsonReader();
         consents = jsonReader.getObjectFromFile("json/validation/ais/consents.json", Consents.class);
-        messageError = new MessageError();
+        messageError = new MessageError(ErrorType.AIS_400);
         request = new MockHttpServletRequest();
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
+        dateFieldValidator = new DateFieldValidator(errorService, jsonConverter, new LocalDateConverter());
         OptionalFieldMaxLengthValidator stringValidator = new OptionalFieldMaxLengthValidator(new StringMaxLengthValidator(errorService));
         accountReferenceValidator = new AccountReferenceValidator(errorService, stringValidator);
 
@@ -78,9 +102,13 @@ public class AccountAccessValidatorImplTest {
 
     @Test
     public void validate_account_wrongIban_error() {
+        // Given
         consents.getAccess().getAccounts().get(0).setIban("123");
 
+        // When
         validator.validate(request, messageError);
+
+        // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Invalid IBAN format", messageError.getTppMessage().getText());
     }
@@ -164,8 +192,32 @@ public class AccountAccessValidatorImplTest {
                      messageError.getTppMessage().getText());
     }
 
+    @Test
+    public void validate_validUntilDateWrongValue_wrongFormat_error() {
+        // Given
+        when(jsonConverter.toJsonField(any(InputStream.class), eq(VALID_UNTIL_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_DATE));
+
+        // When
+        validator.validate(request, messageError);
+
+        // Then
+        assertEquals(VALID_UNTIL_DATE_WRONG_VALUE_ERROR, messageError);
+    }
+
+    @Test
+    public void validate_requestedExecutionDateCorrectValue_success() {
+        // Given
+        when(jsonConverter.toJsonField(any(InputStream.class), eq(VALID_UNTIL_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_DATE));
+
+        // When
+        validator.validate(request, messageError);
+
+        // Then
+        assertTrue(messageError.getTppMessages().isEmpty());
+    }
+
     private AccountAccessValidatorImpl createValidator(Consents consents) {
-        return new AccountAccessValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), new ObjectMapper(), accountReferenceValidator) {
+        return new AccountAccessValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), new ObjectMapper(), accountReferenceValidator, dateFieldValidator) {
             @SuppressWarnings("unchecked")
             @Override
             protected <T> Optional<T> mapBodyToInstance(HttpServletRequest request, MessageError messageError, Class<T> clazz) {

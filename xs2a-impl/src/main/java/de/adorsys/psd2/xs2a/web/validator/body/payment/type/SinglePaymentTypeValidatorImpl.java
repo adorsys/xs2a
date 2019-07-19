@@ -44,7 +44,7 @@ import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.EXECUTION_DATE_INVALI
 @Component
 public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl implements PaymentTypeValidator {
 
-    private PaymentMapper paymentMapper;
+    PaymentMapper paymentMapper;
 
     @Autowired
     public SinglePaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
@@ -97,6 +97,10 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         if (isDateInThePast(singlePayment.getRequestedExecutionDate())) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(EXECUTION_DATE_INVALID, "Value 'requestedExecutionDate' should not be in the past"));
         }
+
+        validateUltimateDebtor(singlePayment.getUltimateDebtor(), messageError);
+        validateUltimateCreditor(singlePayment.getUltimateCreditor(), messageError);
+        validateRemittanceInformationStructured(singlePayment.getRemittanceInformationStructured(), messageError);
     }
 
     void validateAddress(Xs2aAddress address, MessageError messageError) {

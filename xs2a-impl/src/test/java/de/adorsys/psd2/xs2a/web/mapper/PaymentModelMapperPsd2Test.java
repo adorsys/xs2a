@@ -32,7 +32,8 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {CoreObjectsMapper.class, TppRedirectUriMapper.class, ObjectMapper.class,
-    HrefLinkMapper.class, StandardPaymentProductsResolver.class, ScaMethodsMapperImpl.class, Xs2aAddressMapperImpl.class})
+    HrefLinkMapper.class, StandardPaymentProductsResolver.class, ScaMethodsMapperImpl.class, Xs2aAddressMapperImpl.class,
+    RemittanceMapperImpl.class, PurposeCodeMapperImpl.class})
 public class PaymentModelMapperPsd2Test {
 
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
@@ -51,6 +52,10 @@ public class PaymentModelMapperPsd2Test {
     private ScaMethodsMapper scaMethodsMapper;
     @Autowired
     private Xs2aAddressMapper xs2aAddressMapper;
+    @Autowired
+    private RemittanceMapper remittanceMapper;
+    @Autowired
+    private PurposeCodeMapper purposeCodeMapper;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -58,7 +63,7 @@ public class PaymentModelMapperPsd2Test {
     public void setUp() {
         mapper = new PaymentModelMapperPsd2(coreObjectsMapper, null, tppRedirectUriMapper,
                                             null, hrefLinkMapper, standardPaymentProductsResolver,
-                                            scaMethodsMapper, xs2aAddressMapper);
+                                            scaMethodsMapper, xs2aAddressMapper, remittanceMapper, purposeCodeMapper);
     }
 
     @Test

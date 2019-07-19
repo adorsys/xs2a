@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
@@ -33,14 +34,16 @@ public class PaymentInitiationLinks extends AbstractLinks {
 
     private ScaApproachResolver scaApproachResolver;
     private RedirectLinkBuilder redirectLinkBuilder;
+    private RedirectIdService redirectIdService;
     private boolean explicitMethod;
 
     public PaymentInitiationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
-                                  PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body,
-                                  boolean explicitMethod, boolean signingBasketModeActive) {
+                                  RedirectIdService redirectIdService, PaymentInitiationParameters paymentRequestParameters,
+                                  PaymentInitiationResponse body, boolean explicitMethod, boolean signingBasketModeActive) {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
+        this.redirectIdService = redirectIdService;
         this.explicitMethod = explicitMethod;
 
         buildPaymentLinks(paymentRequestParameters, body, signingBasketModeActive);
@@ -88,7 +91,8 @@ public class PaymentInitiationLinks extends AbstractLinks {
         if (explicitMethod) {
             setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
         } else {
-            String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, authorisationId);
+            String redirectId = redirectIdService.generateRedirectId(authorisationId);
+            String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId);
             setScaRedirect(new HrefType(scaRedirectLink));
             setScaStatus(
                 buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));

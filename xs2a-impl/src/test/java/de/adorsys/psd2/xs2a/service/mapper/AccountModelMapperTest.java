@@ -16,49 +16,73 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.HrefType;
-import de.adorsys.psd2.xs2a.domain.Transactions;
-import de.adorsys.psd2.xs2a.domain.Xs2aExchangeRate;
+import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetailsHolder;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountListHolder;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
+import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
 import java.time.OffsetDateTime;
 import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {AccountModelMapperImpl.class,
-    HrefLinkMapper.class, ObjectMapper.class, AmountModelMapper.class, ValueValidatorService.class,
-    SpringValidatorAdapter.class, RequestProviderService.class, MockHttpServletRequest.class})
+@ContextConfiguration(classes = {AccountModelMapperImpl.class, AccountModelMapperTest.TestConfiguration.class})
 public class AccountModelMapperTest {
 
     private static final OffsetDateTime OFFSET_DATE_TIME = OffsetDateTime.now();
     private static final String BYTE_ARRAY_IN_STRING = "000000000000000=";
+    private static final String XS2A_LINKS_JSON_PATH = "json/service/mapper/AccountModelMapper-xs2a-links.json";
+    private static final String LINKS_JSON_PATH = "json/service/mapper/AccountModelMapper-links.json";
+    private static final String XS2A_AMOUNT_JSON_PATH = "json/service/mapper/AccountModelMapper-xs2a-amount.json";
+    private static final String AMOUNT_JSON_PATH = "json/service/mapper/AccountModelMapper-amount.json";
 
     @Autowired
     private AccountModelMapper mapper;
 
+    @Autowired
+    private HrefLinkMapper mockedHrefLinkMapper;
+    @Autowired
+    private AmountModelMapper mockedAmountModelMapper;
+    @Autowired
+    private PurposeCodeMapper mockedPurposeCodeMapper;
+
     private JsonReader jsonReader = new JsonReader();
+
+    @After
+    public void resetMocks() {
+        // Resetting is necessary because these mocks are injected into the mapper as singleton beans
+        // and are not being recreated after each test
+        Mockito.reset(mockedHrefLinkMapper, mockedAmountModelMapper, mockedPurposeCodeMapper);
+    }
 
     @Test
     public void mapToAccountList() {
+        Map<String, HrefType> links = jsonReader.getObjectFromFile(LINKS_JSON_PATH, new TypeReference<Map<String, HrefType>>() {
+        });
+        Links xs2aLinks = jsonReader.getObjectFromFile(XS2A_LINKS_JSON_PATH, Links.class);
+        when(mockedHrefLinkMapper.mapToLinksMap(xs2aLinks)).thenReturn(links);
+
         Xs2aAccountListHolder xs2aAccountListHolder = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-xs2a-account-list-holder.json", Xs2aAccountListHolder.class);
         AccountList actualAccountList = mapper.mapToAccountList(xs2aAccountListHolder);
         actualAccountList.getAccounts().get(0).getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
@@ -74,6 +98,11 @@ public class AccountModelMapperTest {
 
     @Test
     public void mapToAccountDetails() {
+        Map<String, HrefType> links = jsonReader.getObjectFromFile(LINKS_JSON_PATH, new TypeReference<Map<String, HrefType>>() {
+        });
+        Links xs2aLinks = jsonReader.getObjectFromFile(XS2A_LINKS_JSON_PATH, Links.class);
+        when(mockedHrefLinkMapper.mapToLinksMap(xs2aLinks)).thenReturn(links);
+
         Xs2aAccountDetailsHolder xs2aAccountDetailsHolder = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-xs2a-account-details-holder.json", Xs2aAccountDetailsHolder.class);
         AccountDetails actualAccountDetails = mapper.mapToAccountDetails(xs2aAccountDetailsHolder);
 
@@ -141,6 +170,11 @@ public class AccountModelMapperTest {
 
     @Test
     public void mapToTransaction_success() {
+        Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
+        Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
+        when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
+        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.model.PurposeCode.BKDF);
+
         Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-transactions.json", Transactions.class);
         TransactionDetails actualTransactionDetails = mapper.mapToTransaction(transactions);
 
@@ -152,6 +186,11 @@ public class AccountModelMapperTest {
 
     @Test
     public void mapToTransactionDetails_success() {
+        Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
+        Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
+        when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
+        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.model.PurposeCode.BKDF);
+
         Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-transactions.json", Transactions.class);
 
         Map<String, TransactionDetails> actualMap = mapper.mapToTransactionDetails(transactions);
@@ -176,6 +215,11 @@ public class AccountModelMapperTest {
 
     @Test
     public void mapToTransactionsResponse200Json_success() {
+        Map<String, HrefType> links = jsonReader.getObjectFromFile(LINKS_JSON_PATH, new TypeReference<Map<String, HrefType>>() {
+        });
+        Links xs2aLinks = jsonReader.getObjectFromFile(XS2A_LINKS_JSON_PATH, Links.class);
+        when(mockedHrefLinkMapper.mapToLinksMap(xs2aLinks)).thenReturn(links);
+
         Xs2aTransactionsReport xs2aTransactionsReport = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-xs2a-transactions-report.json", Xs2aTransactionsReport.class);
 
         TransactionsResponse200Json actual = mapper.mapToTransactionsResponse200Json(xs2aTransactionsReport);
@@ -201,6 +245,24 @@ public class AccountModelMapperTest {
         for (Object linkKey : actualLinks.keySet()) {
             HrefType actualHrefType = (HrefType) actualLinks.get(linkKey);
             assertEquals(String.valueOf(((Map) expectedLinks.get(linkKey)).get("href")), actualHrefType.getHref());
+        }
+    }
+
+    @Configuration
+    public static class TestConfiguration {
+        @Bean
+        public HrefLinkMapper mockHrefLinkMapper() {
+            return mock(HrefLinkMapper.class);
+        }
+
+        @Bean
+        public AmountModelMapper mockAmountModelMapper() {
+            return mock(AmountModelMapper.class);
+        }
+
+        @Bean
+        public PurposeCodeMapper mockPurposeCodeMapper() {
+            return mock(PurposeCodeMapper.class);
         }
     }
 }

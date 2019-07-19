@@ -22,8 +22,8 @@ import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import de.adorsys.psd2.xs2a.domain.Xs2aExchangeRate;
 import de.adorsys.psd2.xs2a.domain.account.*;
-import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
+import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.Nullable;
 import org.mapstruct.Mapper;
@@ -37,10 +37,9 @@ import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", uses = {AmountModelMapper.class})
+@Mapper(componentModel = "spring", uses = {AmountModelMapper.class, PurposeCodeMapper.class})
 public abstract class AccountModelMapper {
 
     @Autowired
@@ -88,7 +87,6 @@ public abstract class AccountModelMapper {
         return transactionsReport.getAccountReport().getTransactionsRaw();
     }
 
-    @Mapping(target = "purposeCode", expression = "java(mapToPurposeCode(transactions.getPurposeCode()))")
     @Mapping(target = "currencyExchange", expression = "java(mapToReportExchanges(transactions.getExchangeRate()))")
     @Mapping(target = "bankTransactionCode", source = "bankTransactionCodeCode.code")
     @Mapping(target = "transactionAmount", source = "amount")
@@ -100,12 +98,6 @@ public abstract class AccountModelMapper {
         Map<String, TransactionDetails> transactionDetails = new HashMap<>();
         transactionDetails.put("transactionsDetails", mapToTransaction(transactions));
         return transactionDetails;
-    }
-
-    protected PurposeCode mapToPurposeCode(Xs2aPurposeCode xs2aPurposeCode) {
-        return PurposeCode.fromValue(Optional.ofNullable(xs2aPurposeCode)
-                                         .map(Xs2aPurposeCode::getCode)
-                                         .orElse(null));
     }
 
     protected OffsetDateTime mapToOffsetDateTime(LocalDateTime localDateTime) {

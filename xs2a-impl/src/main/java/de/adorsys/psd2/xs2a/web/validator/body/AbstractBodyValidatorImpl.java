@@ -17,8 +17,10 @@
 package de.adorsys.psd2.xs2a.web.validator.body;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.xs2a.domain.pis.Remittance;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +31,7 @@ import java.util.Optional;
 /**
  * Class with common functionality (AIS and PIS) for bodies validating.
  */
-public class AbstractBodyValidatorImpl {
+public class AbstractBodyValidatorImpl implements BodyValidator {
 
     protected ErrorBuildingService errorBuildingService;
     protected ObjectMapper objectMapper;
@@ -37,6 +39,20 @@ public class AbstractBodyValidatorImpl {
     protected AbstractBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper) {
         this.errorBuildingService = errorBuildingService;
         this.objectMapper = objectMapper;
+    }
+
+    protected void validateBodyFields(HttpServletRequest request, MessageError messageError) {
+    }
+
+    protected void validateRawData(HttpServletRequest request, MessageError messageError) {
+    }
+
+    @Override
+    public void validate(HttpServletRequest request, MessageError messageError) {
+        validateRawData(request, messageError);
+        if (CollectionUtils.isEmpty(messageError.getTppMessages())) {
+            validateBodyFields(request, messageError);
+        }
     }
 
     protected void checkRequiredFieldForMaxLength(String fieldToCheck, String fieldName, int maxLength, MessageError messageError) {
@@ -70,5 +86,21 @@ public class AbstractBodyValidatorImpl {
         }
 
         return Optional.empty();
+    }
+
+    protected void validateUltimateDebtor(String field, MessageError messageError) {
+        checkOptionalFieldForMaxLength(field, "ultimateDebtor", 70, messageError);
+    }
+
+    protected void validateUltimateCreditor(String field, MessageError messageError) {
+        checkOptionalFieldForMaxLength(field, "ultimateCreditor", 70, messageError);
+    }
+
+    protected void validateRemittanceInformationStructured(Remittance remittance, MessageError messageError) {
+        if (remittance != null) {
+            checkRequiredFieldForMaxLength(remittance.getReference(), "reference", 35, messageError);
+            checkOptionalFieldForMaxLength(remittance.getReferenceType(), "referenceType", 35, messageError);
+            checkOptionalFieldForMaxLength(remittance.getReferenceIssuer(), "referenceIssuer", 35, messageError);
+        }
     }
 }

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.spi.domain;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,8 +29,24 @@ import java.util.UUID;
  */
 @Value
 @NotNull
+@RequiredArgsConstructor
 public class SpiContextData {
     private SpiPsuData psuData;
     private TppInfo tppInfo;
     private UUID xRequestId;
+    private UUID internalRequestId;
+
+    /**
+     * Constructs new {@link SpiContextData} instance with internalRequestId set to null
+     *
+     * @deprecated since 2.10, use constructor with internalRequestId instead
+     */
+    // TODO remove this constructor in 2.13 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/927
+    @Deprecated
+    public SpiContextData(SpiPsuData spiPsuData, TppInfo tppInfo, UUID xRequestId) {
+        this.psuData = spiPsuData;
+        this.tppInfo = tppInfo;
+        this.xRequestId = xRequestId;
+        this.internalRequestId = null;
+    }
 }

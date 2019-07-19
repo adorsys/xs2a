@@ -31,8 +31,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,12 +43,16 @@ public class RequestProviderServiceTest {
     private static final String IP = "192.168.0.26";
     private static PsuIdData PSU_ID_DATA;
     private static final JsonReader jsonReader = new JsonReader();
-    private static final Map<String, String> HEADERS = jsonReader.getObjectFromFile("json/RequestHeaders.json", new TypeReference<Map<String, String>>() {});
+    private static final Map<String, String> HEADERS = jsonReader.getObjectFromFile("json/RequestHeaders.json", new TypeReference<Map<String, String>>() {
+    });
+    private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("9861d849-3302-4162-b79d-c5f8e543cdb0");
 
     @InjectMocks
     private RequestProviderService requestProviderService;
     @Mock
     private HttpServletRequest httpServletRequest;
+    @Mock
+    private InternalRequestIdService internalRequestIdService;
 
     @Before
     public void setUp() {
@@ -55,6 +61,7 @@ public class RequestProviderServiceTest {
         when(httpServletRequest.getHeaderNames()).thenReturn(Collections.enumeration(HEADERS.keySet()));
         when(httpServletRequest.getRequestURI()).thenReturn(URI);
         when(httpServletRequest.getRemoteAddr()).thenReturn(IP);
+        when(internalRequestIdService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
     }
 
     @Test
@@ -68,6 +75,7 @@ public class RequestProviderServiceTest {
         assertEquals(HEADERS.get(Xs2aHeaderConstant.X_REQUEST_ID), requestData.getRequestId().toString());
         assertEquals(PSU_ID_DATA, requestData.getPsuIdData());
         assertEquals(HEADERS, requestData.getHeaders());
+        assertEquals(INTERNAL_REQUEST_ID, requestData.getInternalRequestId());
     }
 
     @Test
@@ -79,6 +87,16 @@ public class RequestProviderServiceTest {
         assertEquals(HEADERS.get(Xs2aHeaderConstant.PSU_IP_ADDRESS), psuIpAddress);
         assertTrue(requestProviderService.isRequestFromPsu());
         assertFalse(requestProviderService.isRequestFromTPP());
+    }
+
+    @Test
+    public void getInternalRequestId() {
+        // When
+        UUID actualInternalRequestId = requestProviderService.getInternalRequestId();
+
+        // Then
+        verify(internalRequestIdService).getInternalRequestId();
+        assertEquals(INTERNAL_REQUEST_ID, actualInternalRequestId);
     }
 
     private PsuIdData buildPsuIdData() {

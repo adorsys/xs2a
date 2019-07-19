@@ -98,7 +98,8 @@ public class CmsPsuAisServiceTest {
     private CmsPsuService cmsPsuService;
     @Mock
     private AisConsentRequestTypeService aisConsentRequestTypeService;
-
+    @Mock
+    private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
 
     private AisConsent aisConsent;
     private List<AisConsent> aisConsents;
@@ -195,6 +196,25 @@ public class CmsPsuAisServiceTest {
         assertTrue(!consent.isPresent());
         verify(aisConsentSpecification, times(1))
             .byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID_NOT_EXIST, DEFAULT_SERVICE_INSTANCE_ID);
+    }
+
+    @Test
+    public void getConsentSuccessStatusNotChanged() {
+        //Given
+        ConsentStatus consentStatus = ConsentStatus.TERMINATED_BY_TPP;
+        AisConsent aisConsentTerminatedByTpp = buildConsentByStatusAndExpireDate(consentStatus, LocalDate.now().minusDays(1));
+        when(aisConsentRepository.findOne(any(Specification.class))).thenReturn(aisConsentTerminatedByTpp);
+        when(aisConsentMapper.mapToAisAccountConsent(aisConsentTerminatedByTpp)).thenReturn(mockAisAccountConsent);
+
+        ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
+
+        // When
+        Optional<AisAccountConsent> consent = cmsPsuAisService.getConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertTrue(consent.isPresent());
+        verify(aisConsentMapper).mapToAisAccountConsent(argument.capture());
+        assertEquals(consentStatus, argument.getValue().getConsentStatus());
     }
 
     @Test
@@ -674,6 +694,13 @@ public class CmsPsuAisServiceTest {
     private AisConsent buildConsentByStatus(ConsentStatus status) {
         AisConsent aisConsent = buildConsent();
         aisConsent.setConsentStatus(status);
+        return aisConsent;
+    }
+
+    private AisConsent buildConsentByStatusAndExpireDate(ConsentStatus status, LocalDate expireDate) {
+        AisConsent aisConsent = buildConsent();
+        aisConsent.setConsentStatus(status);
+        aisConsent.setExpireDate(expireDate);
         return aisConsent;
     }
 

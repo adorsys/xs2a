@@ -16,7 +16,12 @@
 
 package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -28,12 +33,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.X_REQUEST_ID;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentLoggingInterceptorTest {
+    private static final String TPP_IP = "1.1.1.1";
+    private static final String TPP_INFO_JSON = "json/web/interceptor/logging/tpp-info.json";
+    private static final String REQUEST_URI = "request_uri";
+    private static final String X_REQUEST_ID_HEADER_VALUE = "222";
+    private static final String REDIRECT_ID = "redirect-id";
+    private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("b571c834-4eb1-468f-91b0-f5e83589bc22");
 
     @InjectMocks
     private PaymentLoggingInterceptor interceptor;
@@ -43,52 +55,64 @@ public class PaymentLoggingInterceptorTest {
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
+    @Mock
+    private RedirectIdService redirectIdService;
+    @Mock
+    private RequestProviderService requestProviderService;
+
+    private JsonReader jsonReader = new JsonReader();
+
+    @Before
+    public void setUp() {
+        when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
+        when(request.getHeader(X_REQUEST_ID)).thenReturn(X_REQUEST_ID_HEADER_VALUE);
+        when(requestProviderService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
+    }
 
     @Test
     public void preHandle_pathVariableIsNull() {
         when(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(null);
-        when(tppService.getTppId()).thenReturn("111");
-        when(request.getHeader(X_REQUEST_ID)).thenReturn("222");
-        when(request.getRemoteAddr()).thenReturn("1.1.1.1");
-        when(request.getRequestURI()).thenReturn("request_uri");
+        when(request.getRemoteAddr()).thenReturn(TPP_IP);
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
 
         interceptor.preHandle(request, response, null);
 
-        verify(request, times(1)).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        verify(tppService, times(1)).getTppId();
-        verify(request, times(1)).getHeader(eq(X_REQUEST_ID));
-        verify(request, times(1)).getRemoteAddr();
-        verify(request, times(1)).getRequestURI();
+        verify(request).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        verify(tppService).getTppInfo();
+        verify(requestProviderService).getInternalRequestId();
+        verify(request).getHeader(eq(X_REQUEST_ID));
+        verify(request).getRemoteAddr();
+        verify(request).getRequestURI();
     }
 
     @Test
     public void preHandle_success() {
         Map<Object, Object> pathVariables = new HashMap<>();
         when(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(pathVariables);
-        when(tppService.getTppId()).thenReturn("111");
-        when(request.getHeader(X_REQUEST_ID)).thenReturn("222");
-        when(request.getRemoteAddr()).thenReturn("1.1.1.1");
-        when(request.getRequestURI()).thenReturn("request_uri");
+        when(request.getRemoteAddr()).thenReturn(TPP_IP);
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
 
         interceptor.preHandle(request, response, null);
 
-        verify(request, times(1)).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        verify(tppService, times(1)).getTppId();
-        verify(request, times(1)).getHeader(eq(X_REQUEST_ID));
-        verify(request, times(1)).getRemoteAddr();
-        verify(request, times(1)).getRequestURI();
+        verify(request).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        verify(tppService).getTppInfo();
+        verify(requestProviderService).getInternalRequestId();
+        verify(request).getHeader(eq(X_REQUEST_ID));
+        verify(request).getRemoteAddr();
+        verify(request).getRequestURI();
     }
 
     @Test
     public void afterCompletion() {
-        when(tppService.getTppId()).thenReturn("111");
-        when(response.getHeader(X_REQUEST_ID)).thenReturn("222");
         when(response.getStatus()).thenReturn(HttpServletResponse.SC_OK);
+        when(redirectIdService.getRedirectId()).thenReturn(REDIRECT_ID);
 
         interceptor.afterCompletion(request, response, null, null);
 
-        verify(tppService, times(1)).getTppId();
-        verify(response, times(1)).getHeader(eq(X_REQUEST_ID));
-        verify(response, times(1)).getStatus();
+        verify(tppService).getTppInfo();
+        verify(requestProviderService).getInternalRequestId();
+        verify(response).getHeader(eq(X_REQUEST_ID));
+        verify(response).getStatus();
+        verify(redirectIdService).getRedirectId();
     }
 }

@@ -16,20 +16,20 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
-import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring",
     uses = {SpiToXs2aAmountMapper.class, SpiToXs2aExchangeRateMapper.class, SpiToXs2aAccountReferenceMapper.class},
-    imports = {Xs2aPurposeCode.class, BankTransactionCode.class})
+    imports = {PurposeCode.class, BankTransactionCode.class})
 public interface SpiToXs2aTransactionMapper {
 
     @Mapping(target = "amount", source = "spiAmount")
-    @Mapping(target = "purposeCode", expression = "java(new Xs2aPurposeCode(spiTransaction.getPurposeCode()))")
+    @Mapping(target = "purposeCode", expression = "java(PurposeCode.fromValue(spiTransaction.getPurposeCode()))")
     @Mapping(target = "bankTransactionCodeCode", expression = "java(new BankTransactionCode(spiTransaction.getBankTransactionCodeCode()))")
     Transactions mapToXs2aTransaction(SpiTransaction spiTransaction);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
@@ -45,16 +46,19 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
     private final ScaApproachResolver scaApproachResolver;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final RedirectLinkBuilder redirectLinkBuilder;
+    private final RedirectIdService redirectIdService;
 
     public ConsentAspect(ScaApproachResolver scaApproachResolver,
                          MessageService messageService,
                          AuthorisationMethodDecider authorisationMethodDecider,
                          RedirectLinkBuilder redirectLinkBuilder,
-                         AspspProfileService aspspProfileService) {
+                         AspspProfileService aspspProfileService,
+                         RedirectIdService redirectIdService) {
         super(messageService, aspspProfileService);
         this.scaApproachResolver = scaApproachResolver;
         this.authorisationMethodDecider = authorisationMethodDecider;
         this.redirectLinkBuilder = redirectLinkBuilder;
+        this.redirectIdService = redirectIdService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args( request, psuData, explicitPreferred, tppRedirectUri)", returning = "result", argNames = "result,request,psuData,explicitPreferred,tppRedirectUri")
@@ -65,7 +69,7 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
             boolean explicitMethod = authorisationMethodDecider.isExplicitMethod(explicitPreferred, body.isMultilevelScaRequired());
             boolean signingBasketModeActive = authorisationMethodDecider.isSigningBasketModeActive(explicitPreferred);
 
-            body.setLinks(new CreateConsentLinks(getHttpUrl(), scaApproachResolver, body, redirectLinkBuilder,
+            body.setLinks(new CreateConsentLinks(getHttpUrl(), scaApproachResolver, body, redirectLinkBuilder, redirectIdService,
                                                  explicitMethod, signingBasketModeActive));
             return result;
         }
@@ -80,7 +84,7 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
                 body.setLinks(buildLinksForUpdateConsentResponse(body));
             } else if (result.getBody() instanceof CreateConsentAuthorizationResponse) {
                 CreateConsentAuthorizationResponse body = (CreateConsentAuthorizationResponse) result.getBody();
-                body.setLinks(new CreateAisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder));
+                body.setLinks(new CreateAisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder, redirectIdService));
             }
             return result;
         }

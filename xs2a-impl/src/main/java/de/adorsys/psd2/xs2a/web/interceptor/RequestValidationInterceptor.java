@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.interceptor;
 
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.MethodValidator;
 import de.adorsys.psd2.xs2a.web.validator.MethodValidatorController;
@@ -30,6 +29,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.X_REQUEST_ID;
 
 /**
  * This interceptor is used for headers and body validation of incoming HTTP requests. The main purposes: collect the
@@ -46,7 +47,6 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class RequestValidationInterceptor extends HandlerInterceptorAdapter {
-    private final RequestProviderService requestProviderService;
     private final ErrorBuildingService errorBuildingService;
     private final MethodValidatorController methodValidatorController;
 
@@ -71,7 +71,7 @@ public class RequestValidationInterceptor extends HandlerInterceptorAdapter {
             if (!initialMessageError.getTppMessages().isEmpty()) {
                 // Last part of all validations: if there is at least one error - we build response with HTTP code 400.
                 log.warn("X-Request-ID: [{}]. Validation of incoming request failed. Error msg: [{}]",
-                         requestProviderService.getRequestId(), initialMessageError);
+                         request.getHeader(X_REQUEST_ID), initialMessageError);
                 errorBuildingService.buildErrorResponse(response, initialMessageError);
                 return false;
             }

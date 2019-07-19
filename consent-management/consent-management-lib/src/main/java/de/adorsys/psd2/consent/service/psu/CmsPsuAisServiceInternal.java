@@ -33,6 +33,7 @@ import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentAuthorizationSpecification;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
+import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
 import de.adorsys.psd2.consent.service.AisConsentRequestTypeService;
 import de.adorsys.psd2.consent.service.AisConsentUsageService;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
@@ -74,6 +75,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentUsageService aisConsentUsageService;
     private final CmsPsuService cmsPsuService;
     private final AisConsentRequestTypeService aisConsentRequestTypeService;
+    private final AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
 
     @Override
     @Transactional
@@ -249,13 +251,10 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
-        if (consent != null && consent.isExpiredByDate() && consent.isStatusNotExpired()) {
-            consent.setConsentStatus(EXPIRED);
-            consent.setExpireDate(LocalDate.now());
-            consent.setLastActionDate(LocalDate.now());
-            aisConsentRepository.save(consent);
+        if (aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent)) {
+            aisConsentConfirmationExpirationService.expireConsent(consent);
         } else {
-            log.info("Get consent failed in checkAndUpdateOnExpiration method, because consent is null or expired.");
+            log.info("Get consent failed in checkAndUpdateOnExpiration method, because consent is null or expired or has finalised status.");
         }
         return consent;
     }

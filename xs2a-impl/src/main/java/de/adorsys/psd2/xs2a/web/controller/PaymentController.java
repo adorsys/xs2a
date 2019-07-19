@@ -347,7 +347,6 @@ public class PaymentController implements PaymentApi {
                                           .build(), responseHeaders);
     }
 
-    //TODO: Remove headers `tpPRedirectURI` and `tpPNokRedirectURI` https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/913
     @Override
     public ResponseEntity startPaymentInitiationCancellationAuthorisation(String paymentService, String paymentProduct,
                                                                           String paymentId, UUID xRequestID, String digest,

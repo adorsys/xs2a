@@ -271,7 +271,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     private CmsPaymentResponse buildCmsPaymentResponse(PisAuthorization authorisation) {
         PisCommonPaymentData commonPayment = authorisation.getPaymentData();
-        CmsPayment payment = cmsPsuPisMapper.mapToCmsPayment(commonPayment.getPayments());
+        CmsPayment payment = cmsPsuPisMapper.mapPaymentDataToCmsPayment(commonPayment);
         TppInfoEntity tppInfo = commonPayment.getTppInfo();
 
         return new CmsPaymentResponse(
@@ -283,7 +283,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     private CmsPaymentResponse buildCmsPaymentResponseForCancellation(PisAuthorization authorisation) {
         PisCommonPaymentData commonPayment = authorisation.getPaymentData();
-        CmsPayment payment = cmsPsuPisMapper.mapToCmsPayment(commonPayment.getPayments());
+        CmsPayment payment = cmsPsuPisMapper.mapPaymentDataToCmsPayment(commonPayment);
         TppInfoEntity tppInfo = commonPayment.getTppInfo();
 
         return new CmsPaymentResponse(

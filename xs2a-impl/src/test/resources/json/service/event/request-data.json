@@ -1,0 +1,12 @@
+{
+  "uri": "/v1/consents",
+  "internalRequestId": "9fe83704-6019-46fa-b8aa-53fb8fa667ea",
+  "requestId": "0d7f200e-09b4-46f5-85bd-f4ea89fccace",
+  "ip": "1.2.3.4",
+  "psuIdData": {
+    "psuId": "ID",
+    "psuIdType": "TYPE",
+    "psuCorporateId": "CORPORATE_ID",
+    "psuCorporateIdType": "CORPORATE_ID_TYPE"
+  }
+}

@@ -22,6 +22,7 @@ import de.adorsys.psd2.aspsp.mock.api.payment.AspspExecutionRule;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
@@ -39,6 +40,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SpiPeriodicPaymentMapper {
     private final SpiPaymentMapper spiPaymentMapper;
+    private final SpiRemittanceMapper spiRemittanceMapper;
 
     public AspspPeriodicPayment mapToAspspPeriodicPayment(@NotNull SpiPeriodicPayment payment, TransactionStatus transactionStatus) {
         AspspPeriodicPayment periodic = new AspspPeriodicPayment();
@@ -59,6 +61,10 @@ public class SpiPeriodicPaymentMapper {
         periodic.setDayOfExecution(mapToAspspDayOfExecution(payment.getDayOfExecution()).orElse(null));
         periodic.setRequestedExecutionTime(Optional.ofNullable(payment.getRequestedExecutionTime()).map(OffsetDateTime::toLocalDateTime).orElse(null));
         periodic.setRequestedExecutionDate(payment.getRequestedExecutionDate());
+        periodic.setUltimateDebtor(payment.getUltimateDebtor());
+        periodic.setUltimateCreditor(payment.getUltimateCreditor());
+        periodic.setPurposeCode(Optional.ofNullable(payment.getPurposeCode()).map(PurposeCode::toString).orElse(null));
+        periodic.setRemittanceInformationStructured(spiRemittanceMapper.mapToAspspRemittance(payment.getRemittanceInformationStructured()));
         return periodic;
     }
 
@@ -81,6 +87,10 @@ public class SpiPeriodicPaymentMapper {
         periodic.setDayOfExecution(mapToPisDayOfExecution(payment.getDayOfExecution()).orElse(null));
         periodic.setRequestedExecutionTime(Optional.ofNullable(payment.getRequestedExecutionTime()).map(t -> t.atOffset(ZoneOffset.UTC)).orElse(null));
         periodic.setRequestedExecutionDate(payment.getRequestedExecutionDate());
+        periodic.setUltimateDebtor(payment.getUltimateDebtor());
+        periodic.setUltimateCreditor(payment.getUltimateCreditor());
+        periodic.setPurposeCode(PurposeCode.fromValue(payment.getPurposeCode()));
+        periodic.setRemittanceInformationStructured(spiRemittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));
         return periodic;
     }
 

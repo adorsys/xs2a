@@ -17,8 +17,10 @@
 package de.adorsys.psd2.aspsp.mock.api.payment;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class AspspRemittance {
     private String reference;
     private String referenceType;
