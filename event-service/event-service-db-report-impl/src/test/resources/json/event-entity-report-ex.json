@@ -1,0 +1,15 @@
+{
+  "consentId": "fa6e687b-1ac9-4b1a-9c74-357c35c82ba1",
+  "paymentId": "j-t4XyLJTzQkonfSTnyxIMc",
+  "payload": "payload",
+  "eventOrigin": "TPP",
+  "eventType": "PAYMENT_INITIATION_REQUEST_RECEIVED",
+  "instanceId": "3de76f19-1df7-44d8-b760-ca972d2f945c",
+  "tppAuthorisationNumber": "PSDDE-FAKENCA-87B2AC",
+  "xrequestId": "2f77a125-aa7a-45c0-b414-cea25a116035",
+  "timestamp": "2019-07-09T13:29:50.042136+03:00",
+  "psuExId": "PSU ID EX",
+  "psuExIdType": "PSU ID TYPE EX",
+  "psuExCorporateId": "PSU CORPORATE ID EX",
+  "psuExCorporateIdType": "PSU CORPORATE ID TYPE EX"
+}

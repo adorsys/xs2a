@@ -17,25 +17,10 @@
 package de.adorsys.psd2.event.persist.jpa;
 
 import de.adorsys.psd2.event.persist.entity.EventEntity;
-import de.adorsys.psd2.event.core.model.EventOrigin;
-import de.adorsys.psd2.event.core.model.EventType;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.OffsetDateTime;
-import java.util.List;
-
 @Repository
 public interface EventJPARepository extends CrudRepository<EventEntity, Long>, JpaSpecificationExecutor<EventEntity> {
-
-    List<EventEntity> findByTimestampBetweenAndInstanceIdOrderByTimestampAsc(OffsetDateTime from, OffsetDateTime to, String instanceId);
-
-    List<EventEntity> findByTimestampBetweenAndConsentIdAndInstanceIdOrderByTimestampAsc(OffsetDateTime from, OffsetDateTime to, String consentId, String instanceId);
-
-    List<EventEntity> findByTimestampBetweenAndPaymentIdAndInstanceIdOrderByTimestampAsc(OffsetDateTime from, OffsetDateTime to, String paymentId, String instanceId);
-
-    List<EventEntity> findByTimestampBetweenAndEventTypeAndInstanceIdOrderByTimestampAsc(OffsetDateTime from, OffsetDateTime to, EventType eventType, String instanceId);
-
-    List<EventEntity> findByTimestampBetweenAndEventOriginAndInstanceIdOrderByTimestampAsc(OffsetDateTime from, OffsetDateTime to, EventOrigin eventOrigin, String instanceId);
 }

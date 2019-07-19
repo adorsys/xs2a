@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.event.persist.jpa;
+package de.adorsys.psd2.report.jpa.builder;
 
 import de.adorsys.psd2.event.core.model.EventOrigin;
 import de.adorsys.psd2.event.core.model.EventType;
@@ -30,6 +30,13 @@ import java.util.Map;
 @Setter
 public class EventReportSqlParameterSourceBuilder extends MapSqlParameterSource {
     private final Map<String, Object> values = new HashMap<>();
+
+    private EventReportSqlParameterSourceBuilder(Map<String, ?> values) {
+        super(values);
+    }
+
+    public EventReportSqlParameterSourceBuilder() {
+    }
 
     public EventReportSqlParameterSourceBuilder periodFrom(OffsetDateTime periodFrom) {
         values.put("periodFrom", periodFrom);
@@ -66,14 +73,7 @@ public class EventReportSqlParameterSourceBuilder extends MapSqlParameterSource 
         return this;
     }
 
-    private EventReportSqlParameterSourceBuilder(Map<String, ?> values) {
-        super(values);
-    }
-
-    public EventReportSqlParameterSourceBuilder() {
-    }
-
-    EventReportSqlParameterSourceBuilder build() {
+    public EventReportSqlParameterSourceBuilder build() {
         return new EventReportSqlParameterSourceBuilder(values);
     }
 }
