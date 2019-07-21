@@ -7,7 +7,8 @@ For upcoming versions see our [Roadmap](roadmap.md).
 ## Mainline 3.x (Development)
 
 ## Mainline 2.x (Stable. Supported minimum till 01.08.2019)
-* [Version 2.10   (release date: ?)](release_notes/Release_notes_2.10.adoc)
+* [Version 2.11   (release date: ?)](release_notes/Release_notes_2.11.adoc)
+* [Version 2.10   (release date: 19.07.2019)](release_notes/Release_notes_2.10.adoc)
 * [Version 2.9   (release date: 05.07.2019)](release_notes/Release_notes_2.9.adoc)
 * [Version 2.8   (release date: 21.06.2019)](release_notes/Release_notes_2.8.adoc)
 * [Version 2.7   (release date: 07.06.2019)](release_notes/Release_notes_2.7.adoc)
