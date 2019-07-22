@@ -259,6 +259,19 @@ After the Payment Initiation is created, it has to be authorise from the PSU. In
 
 ### Implementation of FundsConfirmationSpi
 
+## Configuring XS2A Service
+
+### Configuring Logging
+
+XS2A uses `SLF4J` for logging and provides named loggers `access-log` and `request-log`, as well as per class loggers(with logger name set to corresponding fully-qualified name of the class).
+Both `access-log` and `request-log` are operating at `INFO` logging level only.
+
+XS2A provides default configuration file `logback-spring.xml` for configuring logs with `Logback` and `Spring`.
+This configuration redirects messages from `access-log` and `request-log` loggers to the console and logs other messages on `DEBUG` level to both console and file.
+If the change of logging configuration is needed, custom logback file (`logback.xml` or `logback.groovy` if Groovy is on the classpath) should be created in the root of the classpath with appropriate configurations.
+
+Although XS2A provides configuration file for `Logback`, it's possible to configure and use any logging framework that's compatible with `SLF4J`.
+
 ## Working with CMS
 
 ### Using the CMS-PSU-API
