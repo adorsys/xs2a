@@ -60,13 +60,13 @@ public class PsuDataInInitialRequestValidator implements BusinessValidator<PsuId
             ErrorType errorType = errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), FORMAT_ERROR.getCode());
 
             if (psuId == null) {
-                log.info("X-Request-ID: [{}]. PSU Data validation has failed: mandated PSU ID is null",
-                         requestProviderService.getRequestId());
+                log.info("InR-ID: [{}], X-Request-ID: [{}]. PSU Data validation has failed: mandated PSU ID is null",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
                 return ValidationResult.invalid(errorType, TppMessageInformation.of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU_ID));
             }
 
-            log.info("X-Request-ID: [{}]. PSU Data validation has failed: mandated PSU ID is blank",
-                     requestProviderService.getRequestId());
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. PSU Data validation has failed: mandated PSU ID is blank",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
             return ValidationResult.invalid(errorType, TppMessageInformation.of(FORMAT_ERROR, MESSAGE_ERROR_PSU_ID_BLANK));
         }
 

@@ -74,8 +74,8 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. READ BULK Payment failed. Can't get Payment by id at SPI-level. Error msg: [{}]",
-                     requestProviderService.getRequestId(), spiPaymentOptional.get().getPaymentId(), errorHolder);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. READ BULK Payment failed. Can't get Payment by id at SPI-level. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), spiPaymentOptional.get().getPaymentId(), errorHolder);
             return new PaymentInformationResponse<>(errorHolder);
         }
 
@@ -84,8 +84,8 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
 
         TransactionStatus paymentStatus = xs2aBulkPayment.getTransactionStatus();
         if (!updatePaymentStatusAfterSpiService.updatePaymentStatus(encryptedPaymentId, paymentStatus)) {
-            log.info("X-Request-ID: [{}], Internal payment ID: [{}], Transaction status: [{}]. Update of a payment status in the CMS has failed.",
-                     requestProviderService.getRequestId(), xs2aBulkPayment.getPaymentId(), paymentStatus);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Internal payment ID: [{}], Transaction status: [{}]. Update of a payment status in the CMS has failed.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), xs2aBulkPayment.getPaymentId(), paymentStatus);
         }
 
         return new PaymentInformationResponse<>(xs2aBulkPayment);

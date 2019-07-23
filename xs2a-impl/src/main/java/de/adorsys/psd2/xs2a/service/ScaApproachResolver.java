@@ -130,8 +130,8 @@ public class ScaApproachResolver {
         }
 
         if (!scaApproachResponse.isPresent()) {
-            log.info("X-Request-ID: [{}]. Couldn't retrieve SCA approach from the authorisation with id: {} and type: {}",
-                     requestProviderService.getRequestId(), authorisationId, authorisationType);
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. Couldn't retrieve SCA approach from the authorisation with id: {} and type: {}",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId, authorisationType);
             throw new IllegalArgumentException("Wrong authorisation id: " + authorisationId +
                                                    " or type: " + authorisationType);
         }

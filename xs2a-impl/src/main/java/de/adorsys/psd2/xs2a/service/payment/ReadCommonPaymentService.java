@@ -62,8 +62,8 @@ public class ReadCommonPaymentService {
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. Read common payment failed. Can't get Payment by id at SPI-level. Error msg: [{}]",
-                     requestProviderService.getRequestId(), commonPayment.getPaymentId(), errorHolder);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Read common payment failed. Can't get Payment by id at SPI-level. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), commonPayment.getPaymentId(), errorHolder);
             return new PaymentInformationResponse<>(errorHolder);
         }
 

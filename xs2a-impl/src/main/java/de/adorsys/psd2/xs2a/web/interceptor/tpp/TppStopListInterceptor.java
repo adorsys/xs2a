@@ -60,7 +60,8 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(CERTIFICATE_BLOCKED.getCode());
 
-            log.info("X-Request-ID: [{}]. TPP {}.", requestProviderService.getRequestId(), STOP_LIST_ERROR_MESSAGE);
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. TPP {}.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), STOP_LIST_ERROR_MESSAGE);
             return false;
         }
 
