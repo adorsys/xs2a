@@ -52,6 +52,7 @@ public class RequestResponseLogMessage {
     }
 
     public static class RequestResponseLogMessageBuilder {
+        private static final String INTERNAL_REQUEST_ID = "internalRequestId";
         private static final String URI = "uri";
         private static final String REQUEST_HEADERS = "requestHeaders";
         private static final String RESPONSE_HEADERS = "responseHeaders";
@@ -69,6 +70,11 @@ public class RequestResponseLogMessage {
         private RequestResponseLogMessageBuilder(HttpServletRequest request, HttpServletResponse response) {
             this.request = request;
             this.response = response;
+        }
+
+        public RequestResponseLogMessageBuilder withInternalRequestId(@NotNull UUID internalRequestId) {
+            logParams.put(INTERNAL_REQUEST_ID, internalRequestId.toString());
+            return this;
         }
 
         /**
