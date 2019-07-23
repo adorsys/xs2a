@@ -36,6 +36,7 @@ public class ReportEvent {
     private String instanceId;
     private String tppAuthorisationNumber;
     private String xRequestId;
+    private String internalRequestId;
     private Set<PsuIdDataPO> psuIdData = new HashSet<>();
 
     public ReportEvent merge(ReportEvent other) {

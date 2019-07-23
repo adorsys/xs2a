@@ -41,7 +41,6 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountDetailsMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
-import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -93,14 +92,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class
 })
 public class AccountControllerTest {
-    private final static String ACCOUNT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
-    private final static String CONSENT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
-    private final static TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
+    private static final String ACCOUNT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
+    private static final String CONSENT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
+    private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private HttpHeaders httpHeaders = new HttpHeaders();
     private HttpHeaders httpHeadersWithoutPsuIpAddress = new HttpHeaders();
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private static final String ACCESS_EXCEEDED_JSON_PATH = "/json/account/res/AccessExceededResponse.json";
-    private final static UUID X_REQUEST_ID = UUID.randomUUID();
+    private static final UUID X_REQUEST_ID = UUID.randomUUID();
 
     @Autowired
     private MockMvc mockMvc;
@@ -150,7 +149,7 @@ public class AccountControllerTest {
         httpHeaders.add("Content-Type", "application/json");
         httpHeaders.add("tpp-qwac-certificate", "qwac certificate");
         httpHeaders.add("x-request-id", X_REQUEST_ID.toString());
-        httpHeaders.add("consent-id", "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc");
+        httpHeaders.add("consent-id", CONSENT_ID);
         httpHeaders.add("PSU-ID", "PSU-123");
         httpHeaders.add("PSU-ID-Type", "Some type");
         httpHeaders.add("PSU-Corporate-ID", "Some corporate id");
@@ -214,12 +213,11 @@ public class AccountControllerTest {
         requestBuilder.headers(httpHeaders);
 
         SpiPsuData spiPsuData = new SpiPsuData(null, null, null, null);
-        SpiContextData spiContextData = new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID);
         SpiResponse<List<SpiAccountDetails>> response = buildListSpiResponse();
         Xs2aAccountDetails accountDetails = buildXs2aAccountDetails();
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
 
-        given(accountSpi.requestAccountList(spiContextData, false, spiAccountConsent, aspspConsentDataProvider)).willReturn(response);
+        given(accountSpi.requestAccountList(notNull(), eq(false), eq(spiAccountConsent), eq(aspspConsentDataProvider))).willReturn(response);
         given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
 
         AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
@@ -245,12 +243,11 @@ public class AccountControllerTest {
         requestBuilder.headers(httpHeadersWithoutPsuIpAddress);
 
         SpiPsuData spiPsuData = new SpiPsuData(null, null, null, null);
-        SpiContextData spiContextData = new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID);
         SpiResponse<List<SpiAccountDetails>> response = buildListSpiResponse();
         Xs2aAccountDetails accountDetails = buildXs2aAccountDetails();
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
 
-        given(accountSpi.requestAccountList(spiContextData, false, spiAccountConsent, aspspConsentDataProvider)).willReturn(response);
+        given(accountSpi.requestAccountList(notNull(), eq(false), eq(spiAccountConsent), eq(aspspConsentDataProvider))).willReturn(response);
         given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
 
         for (int usage = 2; usage >= 0; usage--) {
@@ -285,9 +282,9 @@ public class AccountControllerTest {
     }
 
     private SpiResponse<List<SpiAccountDetails>> buildListSpiResponse() {
-        return (SpiResponse<List<SpiAccountDetails>>) SpiResponse.<List<SpiAccountDetails>>builder()
-                                                          .payload(Collections.EMPTY_LIST)
-                                                          .build();
+        return SpiResponse.<List<SpiAccountDetails>>builder()
+                   .payload(Collections.emptyList())
+                   .build();
     }
 
     private AisAccountConsent buildAisAccountConsent(Map<String, Integer> usageCounter) {

@@ -35,4 +35,5 @@ public class EventPO {
     private String tppAuthorisationNumber;
     private String xRequestId;
     private PsuIdDataPO psuIdData;
+    private String internalRequestId;
 }
