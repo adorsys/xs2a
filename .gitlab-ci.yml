@@ -2,9 +2,6 @@
 # Global settings
 # ------------------------------------------------------------------
 
-cache:
-  paths:
-    - /builds/adorsys/xs2a/aspsp-xs2a/.m2/repository
 
 # ------------------------------------------------------------------
 # stages
@@ -428,17 +425,22 @@ build_image_integ:
 # TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 deploy_image_integ:
   stage: deploy
+  cache: {}
+  dependencies: []
   only:
     - support-2.x
   environment:
     name: integ
     url: https://xs2a.integ.cloud.adorsys.de
   variables:
+    GIT_STRATEGY: none
     DOCKER_TAG: integ
   <<: *push_docker_openshift
 
 deploy_develop_stage:
   stage: "deploy:static"
+  cache: {}
+  dependencies: []
   <<: *helm_env_deploy
   only:
     - develop
@@ -493,9 +495,12 @@ build_dockerhub_image_master:
 # TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 deploy_image_master:
   stage: deploy
+  cache: {}
+  dependencies: []
   only:
     - master
   variables:
+    GIT_STRATEGY: none
     DOCKER_TAG: latest
   environment:
     name: demo
@@ -523,10 +528,13 @@ build_dockerhub_image_release:
 # TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 deploy_image_release:
   stage: deploy
+  cache: {}
+  dependencies: []
   only:
     - tags
   when: manual
   variables:
+    GIT_STRATEGY: none
     DOCKER_TAG: $CI_COMMIT_TAG
   <<: *push_docker_openshift
 
@@ -552,9 +560,12 @@ push_dockerhub_image_nightly:
 # TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 deploy_image_integtest:
   stage: deploy
+  cache: {}
+  dependencies: []
   only:
   - schedules
   variables:
+    GIT_STRATEGY: none
     DOCKER_TAG: nightly
   <<: *push_docker_openshift
 
