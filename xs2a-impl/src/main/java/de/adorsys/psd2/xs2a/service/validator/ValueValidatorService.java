@@ -65,7 +65,8 @@ public class ValueValidatorService {
                                             .collect(Collectors.toList());
 
         if (!violations.isEmpty()) {
-            log.debug("X-Request-ID: [{}]. Value validation failed: {}", requestProviderService.getRequestId(), violations.toString());
+            log.debug("InR-ID: [{}], X-Request-ID: [{}]. Value validation failed: {}",
+                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), violations.toString());
             throw new ValidationException(FORMAT_ERROR.name() + ": " + violations);
         }
     }

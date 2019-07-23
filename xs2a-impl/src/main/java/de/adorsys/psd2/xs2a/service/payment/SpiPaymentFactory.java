@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,8 @@ public class SpiPaymentFactory {
             case BULK:
                 return createSpiBulkPayment(pisPayments, paymentProduct);
             default:
-                log.info("X-Request-ID: [{}]. Unknown payment type: [{}]", requestProviderService.getRequestId(), paymentType);
+                log.info("InR-ID: [{}], X-Request-ID: [{}]. Unknown payment type: [{}]",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentType);
                 throw new IllegalArgumentException("Unknown payment type");
         }
     }
@@ -84,8 +85,8 @@ public class SpiPaymentFactory {
         SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(pisPayment);
 
         if (singlePayment == null) {
-            log.warn("X-Request-ID: [{}]. Can't map PIS Payment with paymentProduct [{}] to SINGLE payment.",
-                     requestProviderService.getRequestId(), paymentProduct);
+            log.warn("InR-ID: [{}], X-Request-ID: [{}]. Can't map PIS Payment with paymentProduct [{}] to SINGLE payment.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentProduct);
             return Optional.empty();
         }
 
@@ -103,8 +104,8 @@ public class SpiPaymentFactory {
         PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(pisPayment);
 
         if (periodicPayment == null) {
-            log.warn("X-Request-ID: [{}]. Can't map PIS Payment with paymentProduct [{}] to PERIODIC payment.",
-                     requestProviderService.getRequestId(), paymentProduct);
+            log.warn("InR-ID: [{}], X-Request-ID: [{}]. Can't map PIS Payment with paymentProduct [{}] to PERIODIC payment.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentProduct);
             return Optional.empty();
         }
 
@@ -122,8 +123,8 @@ public class SpiPaymentFactory {
         BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(pisPayments);
 
         if (bulkPayment == null) {
-            log.warn("X-Request-ID: [{}]. Can't map list of PIS Payments with paymentProduct [{}] to BULK payment.",
-                     requestProviderService.getRequestId(), paymentProduct);
+            log.warn("InR-ID: [{}], X-Request-ID: [{}]. Can't map list of PIS Payments with paymentProduct [{}] to BULK payment.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentProduct);
             return Optional.empty();
         }
 

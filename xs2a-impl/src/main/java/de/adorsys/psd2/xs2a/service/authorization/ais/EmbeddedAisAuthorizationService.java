@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,8 +59,8 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (!accountConsentOptional.isPresent()) {
-            log.info("X-Request-ID: [{}], Consent-ID [{}]. Create consent authorisation has failed. Consent not found by id.",
-                     requestProviderService.getRequestId(), consentId);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}]. Create consent authorisation has failed. Consent not found by id.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
             return Optional.empty();
         }
 
@@ -107,8 +107,8 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         UpdateConsentPsuDataResponse response = service.apply(request);
 
         if (response.hasError()) {
-            log.warn("X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}]. Update consent authorisation failed. Error msg: {}.",
-                     requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId(), response.getMessageError());
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}]. Update consent authorisation failed. Error msg: {}.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId(), response.getMessageError());
         } else {
             aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, request));
         }

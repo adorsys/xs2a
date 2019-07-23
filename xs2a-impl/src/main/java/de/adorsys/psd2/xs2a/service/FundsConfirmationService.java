@@ -87,8 +87,8 @@ public class FundsConfirmationService {
 
             if (validationResult.hasError()) {
                 ErrorHolder errorHolder = validationResult.getErrorHolder();
-                log.info("X-Request-ID: [{}]. Check availability of funds validation failed: {}",
-                         requestProviderService.getRequestId(), errorHolder);
+                log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds validation failed: {}",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), errorHolder);
                 return ResponseObject.<FundsConfirmationResponse>builder()
                            .fail(new MessageError(errorHolder))
                            .build();
@@ -122,8 +122,8 @@ public class FundsConfirmationService {
         AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
 
         if (selector == null) {
-            log.info("X-Request-ID: [{}]. Check availability of funds failed, because while validate account reference no account identifier found in the request [{}].",
-                     requestProviderService.getRequestId(), accountReference);
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds failed, because while validate account reference no account identifier found in the request [{}].",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), accountReference);
             return new PiisConsentValidationResult(ErrorHolder.builder(FORMAT_ERROR).errorType(PIIS_400).build());
         }
 
@@ -149,8 +149,8 @@ public class FundsConfirmationService {
 
         if (fundsSufficientCheck.hasError()) {
             ErrorHolder error = spiErrorMapper.mapToErrorHolder(fundsSufficientCheck, ServiceType.PIIS);
-            log.info("X-Request-ID: [{}]. Check availability of funds failed, because perform funds sufficient check failed. Msg error: {}",
-                     requestProviderService.getRequestId(), error);
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds failed, because perform funds sufficient check failed. Msg error: {}",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), error);
                 return new FundsConfirmationResponse(error);
         }
 

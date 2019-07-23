@@ -54,8 +54,8 @@ public class CreatePisCancellationAuthorisationValidator extends AbstractPisTppV
         PsuIdData psuData = paymentObject.getPsuData();
         PisCommonPaymentResponse pisCommonPaymentResponse = paymentObject.getPisCommonPaymentResponse();
         if (psuData.isNotEmpty() && !isPsuDataCorrect(pisCommonPaymentResponse, psuData)) {
-            log.info("X-Request-ID: [{}], Payment ID: [{}]. Creation of PIS cancellation authorisation has failed: PSU Data in request doesn't match PSU Data in payment",
-                     requestProviderService.getRequestId(), pisCommonPaymentResponse.getExternalId());
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Creation of PIS cancellation authorisation has failed: PSU Data in request doesn't match PSU Data in payment",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), pisCommonPaymentResponse.getExternalId());
             return ValidationResult.invalid(ErrorType.PIS_401, TppMessageInformation.of(PSU_CREDENTIALS_INVALID));
         }
 

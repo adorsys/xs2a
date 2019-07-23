@@ -39,7 +39,8 @@ public class ResponseErrorMapper {
      */
     public ResponseEntity generateErrorResponse(MessageError error) {
         ErrorMapperContainer.ErrorBody errorBody = errorMapperContainer.getErrorBody(error);
-        log.info("X-Request-ID: [{}]. Generate error: [{}]", requestProviderService.getRequestId(), error);
+        log.info("InR-ID: [{}], X-Request-ID: [{}]. Generate error: [{}]",
+                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), error);
         return new ResponseEntity<>(errorBody.getBody(), errorBody.getStatus());
     }
 
@@ -52,7 +53,8 @@ public class ResponseErrorMapper {
      */
     public ResponseEntity generateErrorResponse(MessageError error, ResponseHeaders responseHeaders) {
         ErrorMapperContainer.ErrorBody errorBody = errorMapperContainer.getErrorBody(error);
-        log.info("X-Request-ID: [{}]. Generate error: [{}]", requestProviderService.getRequestId(), error);
+        log.info("InR-ID: [{}], X-Request-ID: [{}]. Generate error: [{}]",
+                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), error);
         return new ResponseEntity<>(errorBody.getBody(), responseHeaders.getHttpHeaders(), errorBody.getStatus());
     }
 }

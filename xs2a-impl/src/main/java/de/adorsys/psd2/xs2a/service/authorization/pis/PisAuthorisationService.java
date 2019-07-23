@@ -67,8 +67,8 @@ public class PisAuthorisationService {
         CreatePisAuthorisationRequest request = new CreatePisAuthorisationRequest(CmsAuthorisationType.CREATED, psuData, scaApproachResolver.resolveScaApproach());
         return pisCommonPaymentServiceEncrypted.createAuthorization(paymentId, request)
                    .orElseGet(() -> {
-                       log.info("X-Request-ID: [{}], Payment-ID [{}]. Create PIS authorisation has failed: can't save authorisation to cms DB",
-                               requestProviderService.getRequestId(), paymentId);
+                       log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS authorisation has failed: can't save authorisation to cms DB",
+                                requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
                        return null;
                    });
     }
@@ -88,8 +88,8 @@ public class PisAuthorisationService {
                                           .errorType(ErrorType.PIS_404)
                                           .messages(Collections.singletonList("PIS authorisation is not found"))
                                           .build();
-            log.info("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed: authorisation is not found by id.",
-                     requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId());
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed: authorisation is not found by id.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId());
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, request.getPaymentId(), authorisationId, request.getPsuData());
 
         }
@@ -101,8 +101,8 @@ public class PisAuthorisationService {
         Xs2aUpdatePisCommonPaymentPsuDataResponse stageResponse = service.apply(request, response);
 
         if (stageResponse.hasError()) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed. Error msg: [{}]",
-                     requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId(), stageResponse.getErrorHolder());
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId(), stageResponse.getErrorHolder());
         } else {
             doUpdatePisAuthorisation(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(stageResponse));
         }
@@ -121,8 +121,8 @@ public class PisAuthorisationService {
         String authorisationId = request.getAuthorisationId();
         Optional<GetPisAuthorisationResponse> pisCancellationAuthorisationOptional = pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(request.getAuthorisationId());
         if (!pisCancellationAuthorisationOptional.isPresent()) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS Payment Cancellation authorisation PSU Data has failed: authorisation is not found by id.",
-                     requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId());
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS Payment Cancellation authorisation PSU Data has failed: authorisation is not found by id.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId());
 
             ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
                                           .errorType(ErrorType.PIS_404)
@@ -138,8 +138,8 @@ public class PisAuthorisationService {
         Xs2aUpdatePisCommonPaymentPsuDataResponse stageResponse = service.apply(request, response);
 
         if (stageResponse.hasError()) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS Payment Cancellation authorisation PSU Data has failed:. Error msg: [{}]",
-                     requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId(), stageResponse.getErrorHolder());
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS Payment Cancellation authorisation PSU Data has failed:. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId(), stageResponse.getErrorHolder());
         } else {
             doUpdatePisCancellationAuthorisation(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(stageResponse));
         }
@@ -166,8 +166,8 @@ public class PisAuthorisationService {
         CreatePisAuthorisationRequest request = new CreatePisAuthorisationRequest(CmsAuthorisationType.CANCELLED, psuData, scaApproachResolver.resolveScaApproach());
         return pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(paymentId, request)
                    .orElseGet(() -> {
-                       log.info("X-Request-ID: [{}], Payment-ID [{}]. Create PIS Payment Cancellation Authorisation has failed. Can't find Payment Data by id or Payment is Finalised.",
-                                requestProviderService.getRequestId(), paymentId);
+                       log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS Payment Cancellation Authorisation has failed. Can't find Payment Data by id or Payment is Finalised.",
+                                requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
                        return null;
                    });
     }

@@ -64,8 +64,8 @@ public class Xs2aPisCommonPaymentService {
     public CreatePisCommonPaymentResponse createCommonPayment(PisPaymentInfo request) {
         return pisCommonPaymentServiceEncrypted.createCommonPayment(request)
                    .orElseGet(() -> {
-                       log.info("X-Request-ID: [{}], Payment ID: [{}]. Pis common payment cannot be created, because can't save to cms DB",
-                                requestProviderService.getRequestId(), request.getPaymentId());
+                       log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Pis common payment cannot be created, because can't save to cms DB",
+                                requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId());
                        return null;
                    });
     }
