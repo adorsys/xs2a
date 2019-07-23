@@ -105,16 +105,16 @@ public class PisScaAuthenticatedStage extends PisScaStage<Xs2aUpdatePisCommonPay
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], Authentication-Method-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_PSUAUTHENTICATED stage. Proceed embedded approach when performs authorisation depending on selected SCA method has failed. Error msg: [{}]",
-                     requestProviderService.getRequestId(), paymentId, authorisationId, authenticationMethodId, psuId, errorHolder);
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], Authentication-Method-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_PSUAUTHENTICATED stage. Proceed embedded approach when performs authorisation depending on selected SCA method has failed. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authorisationId, authenticationMethodId, psuId, errorHolder);
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
         }
 
         SpiAuthorizationCodeResult authorizationCodeResult = spiResponse.getPayload();
 
         if (authorizationCodeResult.isEmpty()) {
-            log.info("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], Authentication-Method-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_PSUAUTHENTICATED stage. Proceed embedded approach when performs authorisation depending on selected SCA method has failed. SCA_METHOD_UNKNOWN",
-                     requestProviderService.getRequestId(), paymentId, authorisationId, authenticationMethodId, psuId);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], Authentication-Method-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_PSUAUTHENTICATED stage. Proceed embedded approach when performs authorisation depending on selected SCA method has failed. SCA_METHOD_UNKNOWN",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authorisationId, authenticationMethodId, psuId);
             ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.SCA_METHOD_UNKNOWN)
                                           .build();
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);

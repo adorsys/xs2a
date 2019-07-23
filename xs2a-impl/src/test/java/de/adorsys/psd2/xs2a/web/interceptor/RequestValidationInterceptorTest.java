@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.interceptor;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.web.validator.DefaultMethodValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.MethodValidator;
@@ -64,6 +65,8 @@ public class RequestValidationInterceptorTest {
     private HttpServletResponse response;
     @Mock
     private HandlerMethod handler;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     private MethodValidator methodValidator;
 

@@ -43,8 +43,8 @@ public abstract class TppInfoValidator {
      */
     public ValidationResult validateTpp(@Nullable TppInfo tppInfo) {
         if (tppInfoCheckerService.differsFromTppInRequest(tppInfo)) {
-            log.info("X-Request-ID: [{}]. TPP validation has failed: TPP in consent/payment doesn't match the TPP in request",
-                     requestProviderService.getRequestId());
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. TPP validation has failed: TPP in consent/payment doesn't match the TPP in request",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
             return ValidationResult.invalid(getErrorType(), getTppMessageInformation());
         }
 

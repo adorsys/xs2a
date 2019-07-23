@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,8 +42,8 @@ public class AuthorisationMethodDecider {
         boolean isExplicit = multilevelScaRequired
                                  || tppExplicitAuthorisationPreferred && aspspProfileService.isSigningBasketSupported();
 
-        log.info("X-Request-ID: [{}]. {} authorisation method chosen",
-                 requestProviderService.getRequestId(), isExplicit ? "EXPLICIT" : "IMPLICIT");
+        log.info("InR-ID: [{}], X-Request-ID: [{}]. {} authorisation method chosen",
+                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), isExplicit ? "EXPLICIT" : "IMPLICIT");
         return isExplicit;
     }
 

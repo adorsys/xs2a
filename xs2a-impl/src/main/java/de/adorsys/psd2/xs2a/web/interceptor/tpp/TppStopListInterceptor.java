@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,8 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(CERTIFICATE_BLOCKED.getCode());
 
-            log.info("X-Request-ID: [{}]. TPP {}.", requestProviderService.getRequestId(), STOP_LIST_ERROR_MESSAGE);
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. TPP {}.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), STOP_LIST_ERROR_MESSAGE);
             return false;
         }
 
