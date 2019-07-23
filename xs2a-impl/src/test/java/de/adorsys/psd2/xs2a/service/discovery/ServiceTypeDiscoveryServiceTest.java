@@ -16,10 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service.discovery;
 
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -29,13 +31,15 @@ import static org.junit.Assert.assertEquals;
 public class ServiceTypeDiscoveryServiceTest {
     private MockHttpServletRequest request;
 
+    @Mock
+    private RequestProviderService requestProviderService;
     @InjectMocks
     private ServiceTypeDiscoveryService cut;
 
     @Test
     public void getServiceType() {
         request = new MockHttpServletRequest("GET", "/v1/consents");
-        cut = new ServiceTypeDiscoveryService(request);
+        cut = new ServiceTypeDiscoveryService(request, requestProviderService);
         ServiceType result = cut.getServiceType();
 
         assertEquals("AIS", result.name());
@@ -45,7 +49,7 @@ public class ServiceTypeDiscoveryServiceTest {
     public void getServiceTypeWithContextPath() {
         request = new MockHttpServletRequest("GET", "/xs2a/v1/consents");
         request.setContextPath("/xs2a");
-        cut = new ServiceTypeDiscoveryService(request);
+        cut = new ServiceTypeDiscoveryService(request, requestProviderService);
         ServiceType result = cut.getServiceType();
 
         assertEquals("AIS", result.name());

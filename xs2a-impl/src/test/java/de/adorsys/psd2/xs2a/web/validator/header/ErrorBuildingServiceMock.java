@@ -17,17 +17,20 @@
 package de.adorsys.psd2.xs2a.web.validator.header;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import static org.mockito.Mockito.mock;
+
 public class ErrorBuildingServiceMock extends ErrorBuildingService {
     private ErrorType errorType;
 
     public ErrorBuildingServiceMock(ErrorType errorType) {
-        super(new ServiceTypeDiscoveryService(new MockHttpServletRequest()), new ServiceTypeToErrorTypeMapper(),
+        super(new ServiceTypeDiscoveryService(new MockHttpServletRequest(), mock(RequestProviderService.class)), new ServiceTypeToErrorTypeMapper(),
               null, new ObjectMapper());
         this.errorType = errorType;
     }

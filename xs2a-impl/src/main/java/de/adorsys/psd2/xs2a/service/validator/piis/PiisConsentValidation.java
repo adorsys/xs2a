@@ -77,7 +77,8 @@ public class PiisConsentValidation {
         } else {
             PiisConsentTppAccessType accessType = piisConsent.getTppAccessType();
 
-            log.error("X-Request-ID: [{}]. Unknown TPP access type: {}", requestProviderService.getRequestId(), accessType);
+            log.error("InR-ID: [{}], X-Request-ID: [{}]. Unknown TPP access type: {}",
+                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), accessType);
             return ValidationResult.invalid(PIIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400, String.format("Unknown TPP access type: {}", accessType)));
         }
     }

@@ -111,8 +111,8 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (!accountConsentOptional.isPresent()) {
-            log.warn("X-Request-ID: [{}], Consent-ID [{}]. AIS_RECEIVED stage. Apply authorisation when update consent PSU data has failed. Consent not found by id.",
-                     requestProviderService.getRequestId(), consentId);
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}]. AIS_RECEIVED stage. Apply authorisation when update consent PSU data has failed. Consent not found by id.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
             MessageError messageError = new MessageError(ErrorType.AIS_400, of(CONSENT_UNKNOWN_400));
             return createFailedResponse(messageError, Collections.emptyList(), request);
         }
@@ -129,8 +129,8 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
 
         if (authorisationStatusSpiResponse.hasError()) {
             if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
-                log.warn("X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_RECEIVED stage. Authorise PSU when apply authorisation has failed. PSU credentials invalid.",
-                         requestProviderService.getRequestId(), consentId, authorisationId, psuId);
+                log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_RECEIVED stage. Authorise PSU when apply authorisation has failed. PSU credentials invalid.",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, psuId);
                 MessageError messageError = new MessageError(AIS_401, of(PSU_CREDENTIALS_INVALID));
                 UpdateConsentPsuDataResponse failedResponse = createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages(), request);
 
@@ -140,8 +140,8 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
             }
 
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(authorisationStatusSpiResponse, ServiceType.AIS));
-            log.warn("X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_RECEIVED stage. Authorise PSU when apply authorisation has failed. Error msg: [{}]",
-                     requestProviderService.getRequestId(), consentId, authorisationId, psuId, messageError);
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_RECEIVED stage. Authorise PSU when apply authorisation has failed. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, psuId, messageError);
             return createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages(), request);
         }
 
@@ -158,8 +158,8 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
 
         if (spiResponse.hasError()) {
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(authorisationStatusSpiResponse, ServiceType.AIS));
-            log.warn("X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_RECEIVED stage. Request available SCA methods when apply authorisation has failed. Error msg: [{}]",
-                     requestProviderService.getRequestId(), consentId, authorisationId, psuId, messageError);
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_RECEIVED stage. Request available SCA methods when apply authorisation has failed. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, psuId, messageError);
             return createFailedResponse(messageError, spiResponse.getMessages(), request);
         }
 
@@ -173,8 +173,8 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
                 return createResponseForOneAvailableMethod(request, spiAccountConsent, availableScaMethods.get(0), psuData);
             }
         } else {
-            log.info("X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_RECEIVED stage. Apply authorisation has failed. Consent rejected because no available SCA methods.",
-                     requestProviderService.getRequestId(), consentId, authorisationId, psuId);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_RECEIVED stage. Apply authorisation has failed. Consent rejected because no available SCA methods.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, psuId);
             aisConsentService.updateConsentStatus(consentId, ConsentStatus.REJECTED);
             UpdateConsentPsuDataResponse response = createResponseForNoneAvailableScaMethod(consentId, authorisationId);
             aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, request));
@@ -184,8 +184,8 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
 
     private UpdateConsentPsuDataResponse applyIdentification(UpdateConsentPsuDataReq request) {
         if (!isPsuExist(request.getPsuData())) {
-            log.warn("X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}]. AIS_RECEIVED stage. Apply identification when update consent PSU data has failed. No PSU data available in request.",
-                     requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId());
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}]. AIS_RECEIVED stage. Apply identification when update consent PSU data has failed. No PSU data available in request.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId());
             MessageError messageError = new MessageError(ErrorType.AIS_400, of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU));
             return createFailedResponse(messageError, Collections.singletonList(MESSAGE_ERROR_NO_PSU), request);
         }
@@ -218,8 +218,8 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
 
         if (spiResponse.hasError()) {
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));
-            log.warn("X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}], Authentication-Method-ID [{}]. AIS_RECEIVED stage. Proceed embedded approach when performs authorisation depending on selected SCA method has failed. Error msg: [{}]",
-                     requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId(), request.getPsuData().getPsuId(), authenticationMethodId, messageError);
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}], Authentication-Method-ID [{}]. AIS_RECEIVED stage. Proceed embedded approach when performs authorisation depending on selected SCA method has failed. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId(), request.getPsuData().getPsuId(), authenticationMethodId, messageError);
             return createFailedResponse(messageError, spiResponse.getMessages(), request);
         }
 

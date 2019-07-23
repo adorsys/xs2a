@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,8 +66,8 @@ public class Xs2aAisConsentService {
         CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppInfo, allowedFrequencyPerDay);
         Optional<String> consent = aisConsentService.createConsent(createAisConsentRequest);
         return consent.orElseGet(() -> {
-            log.info("X-Request-ID: [{}]. Consent cannot be created, because can't save to cms DB",
-                     requestProviderService.getRequestId());
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. Consent cannot be created, because can't save to cms DB",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
             return null;
         });
     }
