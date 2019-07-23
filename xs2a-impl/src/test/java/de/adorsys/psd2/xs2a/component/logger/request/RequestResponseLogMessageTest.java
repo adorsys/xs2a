@@ -27,12 +27,14 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RequestResponseLogMessageTest {
+    private static final String INTERNAL_REQUEST_ID_MESSAGE_FORMAT = "internalRequestId: [%s]";
     private static final String REQUEST_URI_MESSAGE_FORMAT = "uri: [%s]";
     private static final String REQUEST_URI_QUERY_MESSAGE_FORMAT = "uri: [%s?%s]";
     private static final String REQUEST_HEADERS_MESSAGE_FORMAT = "requestHeaders: [%s: %s, %s: %s]";
@@ -54,6 +56,21 @@ public class RequestResponseLogMessageTest {
 
     private MockHttpServletRequest request = new MockHttpServletRequest();
     private MockHttpServletResponse response = new MockHttpServletResponse();
+
+    @Test
+    public void withInternalRequestId_shouldAddInternalRequestId() {
+        // Given
+        UUID internalRequestId = UUID.fromString("66982f5a-22bf-4fb4-8d11-92792e5e49d0");
+        String expectedMessage = String.format(INTERNAL_REQUEST_ID_MESSAGE_FORMAT, internalRequestId);
+
+        // When
+        RequestResponseLogMessage logMessage = RequestResponseLogMessage.builder(request, response)
+                                                   .withInternalRequestId(internalRequestId)
+                                                   .build();
+
+        // Then
+        assertEquals(expectedMessage, logMessage.getMessage());
+    }
 
     @Test
     public void withRequestUri_shouldAddRequestUri() {
