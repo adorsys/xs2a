@@ -31,7 +31,6 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
-import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
@@ -69,7 +68,6 @@ public class PaymentService {
     private final Xs2aPisCommonPaymentService pisCommonPaymentService;
     private final Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
     private final PisAspspDataService pisAspspDataService;
-    private final PisPsuDataService pisPsuDataService;
     private final TppService tppService;
     private final CreateSinglePaymentService createSinglePaymentService;
     private final CreatePeriodicPaymentService createPeriodicPaymentService;
@@ -178,9 +176,10 @@ public class PaymentService {
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(paymentId);
         PaymentInformationResponse response;
 
+        PsuIdData psuIdData = getPsuIdDataFromRequest();
         // TODO should be refactored https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/533
         if (commonPayment.getPaymentData() != null) {
-            response = readCommonPaymentService.getPayment(commonPayment, readPsuIdDataFromList(commonPayment.getPsuDataList()), aspspConsentData);
+            response = readCommonPaymentService.getPayment(commonPayment, psuIdData, aspspConsentData);
         } else {
             List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(commonPaymentResponse);
             if (CollectionUtils.isEmpty(pisPayments)) {
@@ -192,7 +191,7 @@ public class PaymentService {
             }
 
             ReadPaymentService<PaymentInformationResponse> readPaymentService = readPaymentFactory.getService(paymentType.getValue());
-            response = readPaymentService.getPayment(pisPayments, commonPaymentResponse.getPaymentProduct(), readPsuIdDataFromList(commonPayment.getPsuDataList()), aspspConsentData); //NOT USED IN 1.2
+            response = readPaymentService.getPayment(pisPayments, commonPaymentResponse.getPaymentProduct(), psuIdData, aspspConsentData); //NOT USED IN 1.2
         }
 
         if (response.hasError()) {
@@ -243,8 +242,7 @@ public class PaymentService {
         }
 
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(paymentId);
-        List<PsuIdData> psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
-        SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(readPsuIdDataFromList(psuData));
+        SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(getPsuIdDataFromRequest());
 
         ReadPaymentStatusResponse readPaymentStatusResponse;
 
@@ -355,8 +353,7 @@ public class PaymentService {
             spiPayment = spiPaymentOptional.get();
         }
 
-        List<PsuIdData> psuData = pisCommonPaymentResponse.getPsuData();
-        return cancelPaymentService.initiatePaymentCancellation(readPsuIdDataFromList(psuData), spiPayment,
+        return cancelPaymentService.initiatePaymentCancellation(getPsuIdDataFromRequest(), spiPayment,
                                                                 paymentCancellationRequest.getEncryptedPaymentId(),
                                                                 paymentCancellationRequest.getTppExplicitAuthorisationPreferred(),
                                                                 paymentCancellationRequest.getTppRedirectUri());
@@ -381,10 +378,9 @@ public class PaymentService {
         return pisPayments;
     }
 
-    private PsuIdData readPsuIdDataFromList(List<PsuIdData> psuIdDataList) { //TODO rework psudata list
-        if (CollectionUtils.isNotEmpty(psuIdDataList)) {
-            return psuIdDataList.get(0);
-        }
-        return null;
+    private PsuIdData getPsuIdDataFromRequest() {
+        PsuIdData psuIdData = requestProviderService.getPsuIdData();
+        log.info("X-Request-ID: [{}]. Corresponding PSU-ID {} was provided from request.", requestProviderService.getRequestId(), psuIdData);
+        return psuIdData;
     }
 }

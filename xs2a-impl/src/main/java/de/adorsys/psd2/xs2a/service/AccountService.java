@@ -51,7 +51,6 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -130,7 +129,7 @@ public class AccountService {
                        .build();
         }
 
-        SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
+        SpiContextData contextData = getSpiContextData();
 
         SpiResponse<List<SpiAccountDetails>> spiResponse = accountSpi.requestAccountList(contextData, withBalance,
                                                                                          consentMapper.mapToSpiAccountConsent(accountConsent),
@@ -209,7 +208,7 @@ public class AccountService {
 
         Xs2aAccountAccess access = accountConsent.getAccess();
         SpiAccountReference requestedAccountReference = findAccountReference(access.getAllPsd2(), access.getAccounts(), accountId);
-        SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
+        SpiContextData contextData = getSpiContextData();
 
         SpiResponse<SpiAccountDetails> spiResponse = accountSpi.requestAccountDetailForAccount(contextData, withBalance, requestedAccountReference,
                                                                                                consentMapper.mapToSpiAccountConsent(accountConsent),
@@ -283,7 +282,7 @@ public class AccountService {
 
         Xs2aAccountAccess access = accountConsent.getAccess();
         SpiAccountReference requestedAccountReference = findAccountReference(access.getAllPsd2(), access.getBalances(), accountId);
-        SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
+        SpiContextData contextData = getSpiContextData();
 
         SpiResponse<List<SpiAccountBalance>> spiResponse = accountSpi.requestBalancesForAccount(contextData, requestedAccountReference,
                                                                                                 consentMapper.mapToSpiAccountConsent(accountConsent),
@@ -373,7 +372,7 @@ public class AccountService {
 
         boolean isTransactionsShouldContainBalances =
             !aspspProfileService.isTransactionsWithoutBalancesSupported() || withBalance;
-        SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
+        SpiContextData contextData = getSpiContextData();
 
         SpiResponse<SpiTransactionReport> spiResponse = accountSpi.requestTransactionsForAccount(
             contextData,
@@ -470,7 +469,7 @@ public class AccountService {
         SpiAccountReference requestedAccountReference = findAccountReference(access.getAllPsd2(), access.getTransactions(), accountId);
         validatorService.validateAccountIdTransactionId(accountId, transactionId);
 
-        SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
+        SpiContextData contextData = getSpiContextData();
 
         SpiResponse<SpiTransaction> spiResponse = accountSpi.requestTransactionForAccountByTransactionId(contextData, transactionId, requestedAccountReference, consentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
 
@@ -532,10 +531,9 @@ public class AccountService {
                    .orElse(null);
     }
 
-    private SpiContextData getSpiContextData(List<PsuIdData> psuIdDataList) {
-        //TODO provide correct PSU Data to the SPI https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/701
-        return spiContextDataProvider.provideWithPsuIdData(CollectionUtils.isNotEmpty(psuIdDataList)
-                                                               ? psuIdDataList.get(0)
-                                                               : null);
+    private SpiContextData getSpiContextData() {
+        PsuIdData psuIdData = requestProviderService.getPsuIdData();
+        log.info("X-Request-ID: [{}]. Corresponding PSU-ID {} was provided from request.", requestProviderService.getRequestId(), psuIdData);
+        return spiContextDataProvider.provideWithPsuIdData(psuIdData);
     }
 }

@@ -1,3 +1,8 @@
 = Release notes v.2.11
 
 == Table of Contents
+* Provided PSU Data from request to SPI in SpiContextData
+
+== Provided PSU Data from request to SPI in SpiContextData
+
+From now on, PSU Data is extracted from the request instead of the consent or payment objects.
