@@ -19,9 +19,9 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
+import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentStatusFactory;
-import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -174,9 +174,10 @@ public class PaymentService {
         CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(commonPaymentResponse);
         PaymentInformationResponse response;
 
+        PsuIdData psuIdData = getPsuIdDataFromRequest();
         // TODO should be refactored https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/533
         if (commonPayment.getPaymentData() != null) {
-            response = readCommonPaymentService.getPayment(commonPayment, readPsuIdDataFromList(commonPayment.getPsuDataList()), encryptedPaymentId);
+            response = readCommonPaymentService.getPayment(commonPayment, psuIdData, encryptedPaymentId);
         } else {
             List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(commonPaymentResponse);
             if (CollectionUtils.isEmpty(pisPayments)) {
@@ -188,7 +189,7 @@ public class PaymentService {
             }
 
             ReadPaymentService<PaymentInformationResponse> readPaymentService = readPaymentFactory.getService(paymentType.getValue());
-            response = readPaymentService.getPayment(pisPayments, commonPaymentResponse.getPaymentProduct(), readPsuIdDataFromList(commonPayment.getPsuDataList()), encryptedPaymentId); //NOT USED IN 1.2
+            response = readPaymentService.getPayment(pisPayments, commonPaymentResponse.getPaymentProduct(), psuIdData, encryptedPaymentId); //NOT USED IN 1.2
         }
 
         if (response.hasError()) {
@@ -238,8 +239,7 @@ public class PaymentService {
             return ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build();
         }
 
-        List<PsuIdData> psuData = pisPsuDataService.getPsuDataByPaymentId(encryptedPaymentId);
-        SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(readPsuIdDataFromList(psuData));
+        SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(getPsuIdDataFromRequest());
 
         ReadPaymentStatusResponse readPaymentStatusResponse;
 
@@ -350,8 +350,7 @@ public class PaymentService {
             spiPayment = spiPaymentOptional.get();
         }
 
-        List<PsuIdData> psuData = pisCommonPaymentResponse.getPsuData();
-        return cancelPaymentService.initiatePaymentCancellation(readPsuIdDataFromList(psuData), spiPayment,
+        return cancelPaymentService.initiatePaymentCancellation(getPsuIdDataFromRequest(), spiPayment,
                                                                 paymentCancellationRequest.getEncryptedPaymentId(),
                                                                 paymentCancellationRequest.getTppExplicitAuthorisationPreferred(),
                                                                 paymentCancellationRequest.getTppRedirectUri());
@@ -376,10 +375,9 @@ public class PaymentService {
         return pisPayments;
     }
 
-    private PsuIdData readPsuIdDataFromList(List<PsuIdData> psuIdDataList) { //TODO rework psudata list
-        if (CollectionUtils.isNotEmpty(psuIdDataList)) {
-            return psuIdDataList.get(0);
-        }
-        return null;
+    private PsuIdData getPsuIdDataFromRequest() {
+        PsuIdData psuIdData = requestProviderService.getPsuIdData();
+        log.info("X-Request-ID: [{}]. Corresponding PSU-ID {} was provided from request.", requestProviderService.getRequestId(), psuIdData);
+        return psuIdData;
     }
 }
