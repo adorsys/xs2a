@@ -56,12 +56,10 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -256,8 +254,6 @@ public class ConsentService {
 
         if (accountConsentOptional.isPresent()) {
             // TODO this is not correct. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
-            // PSU Data here should be provided from actual request headers. Data in consent is provided in consent
-            //TODO provide correct PSU Data to the SPI https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/701
 
             AccountConsent accountConsent = accountConsentOptional.get();
             ValidationResult validationResult = deleteAccountConsentsByIdValidator.validate(new CommonConsentObject(accountConsent));
@@ -269,7 +265,7 @@ public class ConsentService {
                            .build();
             }
 
-            SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
+            SpiContextData contextData = getSpiContextData();
 
             SpiAspspConsentDataProvider aspspDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
             SpiResponse<VoidResponse> revokeAisConsentResponse = aisConsentSpi.revokeAisConsent(contextData, aisConsentMapper.mapToSpiAccountConsent(accountConsent), aspspDataProvider);
@@ -600,11 +596,10 @@ public class ConsentService {
             .ifPresent(a -> response.setAuthorizationId(a.getAuthorisationId()));
     }
 
-    private SpiContextData getSpiContextData(List<PsuIdData> psuIdDataList) {
-        //TODO provide correct PSU Data to the SPI https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/701
-        return spiContextDataProvider.provideWithPsuIdData(CollectionUtils.isNotEmpty(psuIdDataList)
-                                                               ? psuIdDataList.get(0)
-                                                               : null);
+    private SpiContextData getSpiContextData() {
+        PsuIdData psuIdData = requestProviderService.getPsuIdData();
+        log.info("X-Request-ID: [{}]. Corresponding PSU-ID {} was provided from request.", requestProviderService.getRequestId(), psuIdData);
+        return spiContextDataProvider.provideWithPsuIdData(psuIdData);
     }
 
     private Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId) {

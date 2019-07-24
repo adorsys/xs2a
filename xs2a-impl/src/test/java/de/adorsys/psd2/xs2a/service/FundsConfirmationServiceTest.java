@@ -91,6 +91,7 @@ public class FundsConfirmationServiceTest {
     public void setUp() {
         when(xs2aToSpiFundsConfirmationRequestMapper.mapToSpiFundsConfirmationRequest(buildFundsConfirmationRequest()))
             .thenReturn(buildSpiFundsConfirmationRequest());
+        when(requestProviderService.getPsuIdData()).thenReturn(PSU_ID_DATA);
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
         when(spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(buildSpiFundsConfirmationResponse()))
