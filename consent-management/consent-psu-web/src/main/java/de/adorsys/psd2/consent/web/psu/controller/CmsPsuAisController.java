@@ -276,7 +276,7 @@ public class CmsPsuAisController {
     @GetMapping(path = "/{consent-id}/authorisation/psus")
     @ApiOperation(value = "Returns list of info objects about psu data and authorisation scaStatuses")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = List.class),
+        @ApiResponse(code = 200, message = "OK", response = CmsAisPsuDataAuthorisation.class, responseContainer = "List"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<List<CmsAisPsuDataAuthorisation>> psuDataAuthorisations(
         @ApiParam(name = "consent-id", value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
