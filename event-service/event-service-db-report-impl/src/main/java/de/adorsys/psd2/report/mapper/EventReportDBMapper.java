@@ -67,6 +67,6 @@ public interface EventReportDBMapper {
                                                                                 Function.identity(),
                                                                                 ReportEvent::merge))
                                                       .values();
-        return new ArrayList(eventCollection);
+        return new ArrayList<>(eventCollection);
     }
 }
