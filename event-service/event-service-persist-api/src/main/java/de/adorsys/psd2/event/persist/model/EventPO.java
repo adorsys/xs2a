@@ -19,6 +19,7 @@ package de.adorsys.psd2.event.persist.model;
 import de.adorsys.psd2.event.core.model.EventOrigin;
 import de.adorsys.psd2.event.core.model.EventType;
 import lombok.Data;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.OffsetDateTime;
 
@@ -26,14 +27,18 @@ import java.time.OffsetDateTime;
 public class EventPO {
     private Long id;
     private OffsetDateTime timestamp;
+    @Nullable
     private String consentId;
+    @Nullable
     private String paymentId;
+    @Nullable
     private byte[] payload;
     private EventOrigin eventOrigin;
     private EventType eventType;
     private String instanceId;
     private String tppAuthorisationNumber;
     private String xRequestId;
+    @Nullable
     private PsuIdDataPO psuIdData;
     private String internalRequestId;
 }

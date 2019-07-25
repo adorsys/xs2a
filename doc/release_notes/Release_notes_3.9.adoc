@@ -1,3 +1,12 @@
 = Release notes v. 3.9
 
 == Table of Contents
+* Log events to stdout
+
+== Log events to stdout
+New event module `event-service-persist-log-impl` has been added with logging implementation of `event-service-persist-api`.
+This module can be used in CMS instead of `event-service-persist-db-impl` in order to log events without saving them to the database.
+All events are being written to a separate logger (`event-log`) at `INFO` logging level using `SLF4J`.
+
+Additional configuration of `SLF4J`-compatible logging framework may be required in order to properly display event logs.
+Default logging configuration provided in `cms-standalone-service` writes log records only to the console.
