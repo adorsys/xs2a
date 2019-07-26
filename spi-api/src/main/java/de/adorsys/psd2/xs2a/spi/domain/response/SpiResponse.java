@@ -43,7 +43,7 @@ public class SpiResponse<T> {
      *
      * @deprecated since 3.5. Use MessageErrorCode in errors list instead.
      */
-    @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
+    @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965
     private SpiResponseStatus responseStatus;
 
     /**
@@ -79,7 +79,7 @@ public class SpiResponse<T> {
      * @return List of error messages
      * @deprecated since 3.5
      */
-    @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
+    @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965
     public List<String> getMessages() {
         return errors.stream()
                    .map(TppMessage::getMessageText)
@@ -87,7 +87,7 @@ public class SpiResponse<T> {
     }
 
     @NotNull
-    //TODO remove with messages removal https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
+    //TODO remove with messages removal https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965
     private static MessageErrorCode getErrorCodeByStatus(SpiResponseStatus responseStatus) {
         MessageErrorCode messageErrorCode = MessageErrorCode.FORMAT_ERROR;
         if (responseStatus != null) {
@@ -152,7 +152,7 @@ public class SpiResponse<T> {
          * @see #build()
          * @deprecated since 3.5. Use build instead
          */
-        @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
+        @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965
         public SpiResponse<T> fail(@Deprecated @NotNull SpiResponseStatus responseStatus) {
             this.responseStatus = responseStatus;
             this.errors.add(new TppMessage(getErrorCodeByStatus(responseStatus), ""));
