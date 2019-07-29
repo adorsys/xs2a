@@ -1,0 +1,19 @@
+= SPI Developer Guide
+:toc-title:
+//:imagesdir: usecases/diagrams
+:toc: left
+// horizontal line
+
+== Purpose and Scope
+
+== xref:Choosing the deployment layout.adoc[Choosing the deployment layout]
+
+== xref:Setting up ASPSP Profile options.adoc[Setting up ASPSP Profile options]
+
+== xref:Implementing SPI-API.adoc[Implementing SPI-API]
+
+== xref:Configuring XS2A Service.adoc[Configuring XS2A Service]
+
+== xref:Working with CMS.adoc[Working with CMS]
+
+== xref:Special modes.adoc[Special modes]

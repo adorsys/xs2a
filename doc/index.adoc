@@ -28,7 +28,10 @@ toc::[]
 xref:architecture/index.adoc[Architecture documentation]
 
 == XS2A. Details of realisation
-xref:xs2a features description.adoc[Documentation]
+xref:XS2A. Details of realisation/xs2a features description.adoc[Documentation]
+
+== SPI Developer Guide
+xref:SPI Developer Guide/SPI_Developer_Guide.adoc[SPI Developer Guide]
 
 include::version_policy.adoc[]
 
@@ -44,3 +47,6 @@ and xref:releasenotes.adoc[Release notes for each version].
 
 xref:releasenotes.adoc[Release notes] contain information about changes included into releases.
 Might contain also important migration information for the developers, how to migrate to a new version and how to use it.
+
+== Filing a bug
+xref:Filing_a_bug.adoc[Bug ticket workflow]
