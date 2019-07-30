@@ -18,13 +18,12 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
 
-public class TransactionsReportByPeriodHugeLinks extends AbstractLinks {
+public class TransactionsReportAccountLinks extends AbstractLinks {
 
-    public TransactionsReportByPeriodHugeLinks(String httpUrl, String accountId, boolean withBalance) {
+    public TransactionsReportAccountLinks(String httpUrl, String accountId, boolean withBalance) {
         super(httpUrl);
 
-        // TODO we need return only download link without transactions info https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
-        // TODO further we should implement real flow for downloading file https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
+        setAccount(buildPath(UrlHolder.ACCOUNT_LINK_URL, accountId));
 
         if (withBalance) {
             setBalances(buildPath(UrlHolder.ACCOUNT_BALANCES_URL, accountId));

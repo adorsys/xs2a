@@ -1,0 +1,34 @@
+{
+  "accountConsent": {
+    "access": {
+      "accounts": [
+        {
+          "resourceId": "11111-999999999",
+          "iban": "DE89370400440532013000",
+          "currency": "EUR"
+        }
+      ],
+      "balances": [
+        {
+          "resourceId": "11111-999999999",
+          "iban": "DE89370400440532013000",
+          "currency": "EUR"
+        }
+      ],
+      "transactions": [
+        {
+          "resourceId": "11111-999999999",
+          "iban": "DE89370400440532013000",
+          "currency": "EUR"
+        }
+      ]
+    },
+    "recurringIndicator": true,
+    "validUntil": "2018-08-06",
+    "frequencyPerDay": "4",
+    "consentStatus": "VALID",
+    "tppInfo": {
+      "authorisationNumber": "fc488759-d8a2-4a51-b797-7d4cf7ac0447"
+    }
+  }
+}

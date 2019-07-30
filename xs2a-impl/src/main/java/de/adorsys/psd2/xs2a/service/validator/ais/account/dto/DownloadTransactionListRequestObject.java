@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.link;
+package de.adorsys.psd2.xs2a.service.validator.ais.account.dto;
 
-import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
+import lombok.Value;
 
-public class TransactionsReportByPeriodLinks extends AbstractLinks {
+@Value
+public class DownloadTransactionListRequestObject implements TppInfoProvider {
+    private AccountConsent accountConsent;
 
-    public TransactionsReportByPeriodLinks(String httpUrl, String accountId, boolean withBalance) {
-        super(httpUrl);
-
-        setAccount(buildPath(UrlHolder.ACCOUNT_LINK_URL, accountId));
-
-        if (withBalance) {
-            setBalances(buildPath(UrlHolder.ACCOUNT_BALANCES_URL, accountId));
-        }
+    @Override
+    public TppInfo getTppInfo() {
+        return accountConsent.getTppInfo();
     }
 }

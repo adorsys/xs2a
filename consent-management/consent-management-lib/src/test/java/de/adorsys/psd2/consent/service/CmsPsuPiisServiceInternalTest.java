@@ -80,9 +80,9 @@ public class CmsPsuPiisServiceInternalTest {
 
     @Test
     public void getConsent_success() {
+        // Given
         when(piisConsentEntitySpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        //noinspection unchecked
         when(piisConsentRepository.findOne(any())).thenReturn(Optional.ofNullable(piisConsentEntity));
 
         // When
@@ -107,7 +107,6 @@ public class CmsPsuPiisServiceInternalTest {
         // Given
         when(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        //noinspection unchecked
         when(piisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(piisConsentEntity));
         // When
         List<PiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);

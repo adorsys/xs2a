@@ -38,7 +38,7 @@ public class ServiceTypeDiscoveryService {
     public ServiceType getServiceType() {
         return ServiceTypeDiscovery.getServiceType(new UrlPathHelper().getPathWithinApplication(request),
                                                    requestProviderService.getInternalRequestId(),
-                                                   requestProviderService.getRequestId());
+                                                   requestProviderService.getRequestIdString());
     }
 }
 

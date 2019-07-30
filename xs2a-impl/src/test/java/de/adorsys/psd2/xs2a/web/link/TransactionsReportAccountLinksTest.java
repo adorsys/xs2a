@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class TransactionsReportByPeriodLinksTest {
+public class TransactionsReportAccountLinksTest {
 
     private static final String HTTP_URL = "http://url";
     private static final String ACCOUNT_ID = "33333-999999999";
@@ -38,7 +38,7 @@ public class TransactionsReportByPeriodLinksTest {
     public void success_noBalance() {
         boolean withOutBalance = false;
 
-        TransactionsReportByPeriodLinks links = new TransactionsReportByPeriodLinks(HTTP_URL, ACCOUNT_ID, withOutBalance);
+        TransactionsReportAccountLinks links = new TransactionsReportAccountLinks(HTTP_URL, ACCOUNT_ID, withOutBalance);
 
         expectedLinks.setAccount(new HrefType("http://url/v1/accounts/33333-999999999"));
         assertEquals(expectedLinks, links);
@@ -48,7 +48,7 @@ public class TransactionsReportByPeriodLinksTest {
     public void success_with_balance() {
         boolean withBalance = true;
 
-        TransactionsReportByPeriodLinks links = new TransactionsReportByPeriodLinks(HTTP_URL, ACCOUNT_ID, withBalance);
+        TransactionsReportAccountLinks links = new TransactionsReportAccountLinks(HTTP_URL, ACCOUNT_ID, withBalance);
 
         expectedLinks.setAccount(new HrefType("http://url/v1/accounts/33333-999999999"));
         expectedLinks.setBalances(new HrefType("http://url/v1/accounts/33333-999999999/balances"));

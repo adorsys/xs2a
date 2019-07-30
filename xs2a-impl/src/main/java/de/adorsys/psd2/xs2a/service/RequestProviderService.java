@@ -88,6 +88,10 @@ public class RequestProviderService {
         return getRequestData().getRequestId();
     }
 
+    public String getRequestIdString() {
+        return getHeader(X_REQUEST_ID_HEADER);
+    }
+
     public boolean isRequestFromPsu() {
         return StringUtils.isNotBlank(getPsuIpAddress());
     }

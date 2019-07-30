@@ -23,22 +23,25 @@ import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
+import de.adorsys.xs2a.reader.JsonReader;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
 public class AccountSpiMockImpl implements AccountSpi {
+
+    private JsonReader jsonReader = new JsonReader();
+
     @Override
     public SpiResponse<List<SpiAccountDetails>> requestAccountList(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("AccountSpi#requestAccountList: contextData {}, withBalance {}, accountConsent-id {}, aspspConsentData {}", contextData, withBalance, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
@@ -71,7 +74,7 @@ public class AccountSpiMockImpl implements AccountSpi {
 
 
         return SpiResponse.<SpiTransactionReport>builder()
-                   .payload(new SpiTransactionReport(buildSpiTransactionList(), Collections.singletonList(buildSpiAccountBalance()), "application/json", null))
+                   .payload(new SpiTransactionReport("dGVzdA==", buildSpiTransactionList(), Collections.singletonList(buildSpiAccountBalance()), "application/json", null))
                    .build();
     }
 
@@ -90,6 +93,21 @@ public class AccountSpiMockImpl implements AccountSpi {
 
         return SpiResponse.<List<SpiAccountBalance>>builder()
                    .payload(Collections.singletonList(buildSpiAccountBalance()))
+                   .build();
+    }
+
+    @Override
+    public SpiResponse<SpiTransactionsDownloadResponse> requestTransactionsByDownloadLink(@NotNull SpiContextData contextData, @NotNull SpiAccountConsent accountConsent, @NotNull String downloadId, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("AccountSpi#requestTransactionsByDownloadLink: contextData {}, accountConsent-ID {}, download-ID {}, aspspConsentData {}", contextData, accountConsent.getId(), downloadId, aspspConsentDataProvider.loadAspspConsentData());
+
+        String testTransactionData = jsonReader.getStringFromFile("account-access-test-file.json");
+
+        InputStream stream = new ByteArrayInputStream(testTransactionData.getBytes());
+        SpiTransactionsDownloadResponse response = new SpiTransactionsDownloadResponse(stream,
+                                                                                       "transactions_" + new Date().getTime() + ".json",
+                                                                                       testTransactionData.getBytes().length);
+        return SpiResponse.<SpiTransactionsDownloadResponse>builder()
+                   .payload(response)
                    .build();
     }
 

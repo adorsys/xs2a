@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.validator;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.HeaderValidator;
+import de.adorsys.psd2.xs2a.web.validator.path.PathParameterValidator;
 import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +48,8 @@ public class AbstractMethodValidatorTest {
     private BodyValidator bodyValidator;
     @Mock
     private QueryParameterValidator queryParameterValidator;
+    @Mock
+    private PathParameterValidator pathParameterValidator;
 
     @Captor
     private ArgumentCaptor<Map<String, String>> headersCaptor;
@@ -68,7 +71,8 @@ public class AbstractMethodValidatorTest {
 
         methodValidator = new AbstractMethodValidator(Collections.singletonList(headerValidator),
                                                       Collections.singletonList(bodyValidator),
-                                                      Collections.singletonList(queryParameterValidator)) {
+                                                      Collections.singletonList(queryParameterValidator),
+                                                      Collections.singletonList(pathParameterValidator)) {
             @Override
             public String getMethodName() {
                 return "method_name";

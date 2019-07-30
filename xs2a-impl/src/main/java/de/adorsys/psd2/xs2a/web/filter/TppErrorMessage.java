@@ -19,10 +19,12 @@ package de.adorsys.psd2.xs2a.web.filter;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 
 @Value
 public class TppErrorMessage {
     private MessageCategory category;
+    @NotNull
     private MessageErrorCode code;
     private String text;
 
@@ -32,7 +34,7 @@ public class TppErrorMessage {
                    "  \"tppMessages\": [\n" +
                    "    {\n" +
                    "      \"category\": \"" + category + "\",\n" +
-                   "      \"code\": \"" + code + "\",\n" +
+                   "      \"code\": \"" + code.getName() + "\",\n" +
                    "      \"text\": \"" + text + "\"\n" +
                    "    }\n" +
                    "  ]\n" +

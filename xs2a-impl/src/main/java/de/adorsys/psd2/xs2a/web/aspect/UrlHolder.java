@@ -35,7 +35,7 @@ public class UrlHolder {
     public static final String ACCOUNT_LINK_URL = "/v1/accounts/{accountId}";
     public static final String ACCOUNT_BALANCES_URL = "/v1/accounts/{accountId}/balances";
     public static final String ACCOUNT_TRANSACTIONS_URL = "/v1/accounts/{accountId}/transactions";
-    public static final String ACCOUNT_TRANSACTIONS_DOWNLOAD_URL = "/v1/accounts/{accountId}/transactions/download";
+    public static final String ACCOUNT_TRANSACTIONS_DOWNLOAD_URL = "/v1/accounts/{accountId}/transactions/download/{downloadId}";
 
     private UrlHolder() {
     }

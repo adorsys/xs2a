@@ -18,5 +18,5 @@ package de.adorsys.psd2.xs2a.exception;
 
 public enum MessageCategory {
     ERROR,
-    WARNING;
+    WARNING
 }
