@@ -2,7 +2,11 @@
 
 == Table of Contents
 * Provided PSU Data from request to SPI in SpiContextData
+* Include internal request ID in `request-log` and internal XS2A logs
 
 == Provided PSU Data from request to SPI in SpiContextData
 
 From now on, PSU Data is extracted from the request instead of the consent or payment objects.
+
+== Include internal request ID in `request-log` and internal XS2A logs
+From now on, `request-log` and internal XS2A logs will also contain internal request ID (`InR-Id`).
