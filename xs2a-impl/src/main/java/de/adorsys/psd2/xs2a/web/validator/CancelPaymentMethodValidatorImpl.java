@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.validator;
 
 import de.adorsys.psd2.xs2a.web.validator.body.cancelpayment.CancelPaymentBodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.CancelPaymentHeaderValidator;
+import de.adorsys.psd2.xs2a.web.validator.path.PathParameterValidator;
 import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,14 +29,15 @@ import java.util.List;
 @Component
 public class CancelPaymentMethodValidatorImpl extends AbstractMethodValidator<CancelPaymentHeaderValidator,
                                                                                  CancelPaymentBodyValidator,
-                                                                                 QueryParameterValidator> {
+                                                                                 QueryParameterValidator,
+                                                                                 PathParameterValidator> {
 
     private static final String METHOD_NAME = "_cancelPayment";
 
     @Autowired
     protected CancelPaymentMethodValidatorImpl(List<CancelPaymentHeaderValidator> headerValidators,
                                                List<CancelPaymentBodyValidator> bodyValidators) {
-        super(headerValidators, bodyValidators, Collections.emptyList());
+        super(headerValidators, bodyValidators, Collections.emptyList(), Collections.emptyList());
     }
 
     @Override

@@ -19,14 +19,13 @@ package de.adorsys.psd2.xs2a.web.aspect;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.Transactions;
-import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetailsHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountListHolder;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.web.controller.AccountController;
 import de.adorsys.psd2.xs2a.web.link.AccountDetailsLinks;
-import de.adorsys.psd2.xs2a.web.link.TransactionsReportByPeriodHugeLinks;
-import de.adorsys.psd2.xs2a.web.link.TransactionsReportByPeriodLinks;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -38,6 +37,7 @@ import java.util.List;
 @Aspect
 @Component
 public class AccountAspect extends AbstractLinkAspect<AccountController> {
+
     public AccountAspect(MessageService messageService, AspspProfileService aspspProfileService) {
         super(messageService, aspspProfileService);
     }
@@ -70,30 +70,4 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         }
         return enrichErrorTextMessage(result);
     }
-
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getTransactionsReportByPeriod(..)) && args(request)", returning = "result", argNames = "result,request")
-    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aTransactionsReport> result, Xs2aTransactionsReportByPeriodRequest request) {
-        if (!result.hasError()) {
-            Xs2aTransactionsReport transactionsReport = result.getBody();
-
-            if (transactionsReport.isTransactionReportHuge()) {
-                transactionsReport.setLinks(new TransactionsReportByPeriodHugeLinks(getHttpUrl(), request.getAccountId(), request.isWithBalance()));
-            } else {
-                Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
-                accountReport.setLinks(new TransactionsReportByPeriodLinks(getHttpUrl(), request.getAccountId(), request.isWithBalance()));
-            }
-
-            return result;
-        }
-        return enrichErrorTextMessage(result);
-    }
-
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getTransactionDetails(..)) && args( consentID, accountId, resourceId, requestUri)", returning = "result", argNames = "result,consentID,accountId,resourceId,requestUri")
-    public ResponseObject<Transactions> getTransactionDetailsAspect(ResponseObject<Transactions> result, String consentID, String accountId, String resourceId, String requestUri) {
-        if (!result.hasError()) {
-            return result;
-        }
-        return enrichErrorTextMessage(result);
-    }
-
 }

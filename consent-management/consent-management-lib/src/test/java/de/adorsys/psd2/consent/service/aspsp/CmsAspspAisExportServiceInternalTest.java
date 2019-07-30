@@ -143,7 +143,6 @@ public class CmsAspspAisExportServiceInternalTest {
             CREATION_DATE_TO,
             DEFAULT_SERVICE_INSTANCE_ID
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        //noinspection unchecked
         when(aisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
         AisAccountConsent expectedConsent = buildAisAccountConsent();
 
@@ -209,7 +208,6 @@ public class CmsAspspAisExportServiceInternalTest {
             CREATION_DATE_TO,
             DEFAULT_SERVICE_INSTANCE_ID
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        //noinspection unchecked
         when(aisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
         AisAccountConsent expectedConsent = buildAisAccountConsent();
 

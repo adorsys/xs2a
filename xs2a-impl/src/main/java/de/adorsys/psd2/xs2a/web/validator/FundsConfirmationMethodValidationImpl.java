@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.validator;
 
 import de.adorsys.psd2.xs2a.web.validator.body.piis.FundsConfirmationBodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.FundsConfirmationHeaderValidator;
+import de.adorsys.psd2.xs2a.web.validator.path.PathParameterValidator;
 import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import org.springframework.stereotype.Component;
 
@@ -25,12 +26,12 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class FundsConfirmationMethodValidationImpl extends AbstractMethodValidator<FundsConfirmationHeaderValidator, FundsConfirmationBodyValidator, QueryParameterValidator> {
+public class FundsConfirmationMethodValidationImpl extends AbstractMethodValidator<FundsConfirmationHeaderValidator, FundsConfirmationBodyValidator, QueryParameterValidator, PathParameterValidator> {
 
     private static final String METHOD_NAME = "_checkAvailabilityOfFunds";
 
     public FundsConfirmationMethodValidationImpl(List<FundsConfirmationHeaderValidator> headerValidators, List<FundsConfirmationBodyValidator> bodyValidators) {
-        super(headerValidators, bodyValidators, Collections.emptyList());
+        super(headerValidators, bodyValidators, Collections.emptyList(), Collections.emptyList());
     }
 
     @Override

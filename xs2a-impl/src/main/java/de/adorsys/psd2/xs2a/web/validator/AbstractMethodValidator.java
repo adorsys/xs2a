@@ -19,23 +19,27 @@ package de.adorsys.psd2.xs2a.web.validator;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.HeaderValidator;
+import de.adorsys.psd2.xs2a.web.validator.path.PathParameterValidator;
 import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractMethodValidator<H extends HeaderValidator, B extends BodyValidator, P extends QueryParameterValidator> implements MethodValidator {
+public abstract class AbstractMethodValidator<H extends HeaderValidator, B extends BodyValidator, Q extends QueryParameterValidator, P extends PathParameterValidator> implements MethodValidator {
     @Getter(AccessLevel.PACKAGE)
     private final List<H> headerValidators;
     @Getter(AccessLevel.PACKAGE)
     private final List<B> bodyValidators;
     @Getter(AccessLevel.PACKAGE)
-    private final List<P> queryParameterValidators;
+    private final List<Q> queryParameterValidators;
+    @Getter(AccessLevel.PACKAGE)
+    private final List<P> pathParameterValidators;
 
     /**
      * Common validator which validates request headers and body
@@ -54,10 +58,16 @@ public abstract class AbstractMethodValidator<H extends HeaderValidator, B exten
         caseInsensitiveHeaders.putAll(headers);
 
         Map<String, List<String>> queryParameters = extractQueryParameters(request);
+        Map<String, String> pathParameters = extractPathParameters(request);
 
+        getPathParameterValidators().forEach(v -> v.validate(pathParameters, messageError));
+        getQueryParameterValidators().forEach(v -> v.validate(queryParameters, messageError));
         getHeaderValidators().forEach(v -> v.validate(caseInsensitiveHeaders, messageError));
         getBodyValidators().forEach(v -> v.validate(request, messageError));
-        getQueryParameterValidators().forEach(v -> v.validate(queryParameters, messageError));
+    }
+
+    private Map<String, String> extractPathParameters(HttpServletRequest request) {
+        return (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
     }
 
     private Map<String, List<String>> extractQueryParameters(HttpServletRequest request) {

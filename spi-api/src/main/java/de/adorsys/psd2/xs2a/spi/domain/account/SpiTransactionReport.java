@@ -23,13 +23,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Transaction report of Spi layer to be used as a container for account reference, transactions and balances
+ * Transaction report of SPI layer to be used as a container for account reference, transactions and balances.
+ * Also, holds encoded file download identifier.
  */
 @Value
 public class SpiTransactionReport {
     public static final String RESPONSE_TYPE_JSON = "application/json";
     public static final String RESPONSE_TYPE_XML = "application/xml";
     public static final String RESPONSE_TYPE_TEXT = "text/plain";
+
+    /**
+     * This field stores the file download identifier. To be used in further calls, when TPP asks
+     * the SPI for the transaction list file.
+     */
+    private String downloadId;
 
     private List<SpiTransaction> transactions;
     @Nullable

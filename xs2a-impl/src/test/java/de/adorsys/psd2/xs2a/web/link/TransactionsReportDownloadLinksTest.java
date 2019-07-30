@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class TransactionsReportByPeriodHugeLinksTest {
+public class TransactionsReportDownloadLinksTest {
 
     private static final String HTTP_URL = "http://url";
     private static final String ACCOUNT_ID = "33333-999999999";
@@ -32,13 +32,14 @@ public class TransactionsReportByPeriodHugeLinksTest {
     @Before
     public void setUp() {
         expectedLinks = new Links();
+        expectedLinks.setDownload(new HrefType(HTTP_URL + "/v1/accounts/" + ACCOUNT_ID + "/transactions/download/encoded-string"));
     }
 
     @Test
     public void success_noBalance() {
         boolean withBalance = false;
 
-        TransactionsReportByPeriodHugeLinks links = new TransactionsReportByPeriodHugeLinks(HTTP_URL, ACCOUNT_ID, withBalance);
+        TransactionsReportDownloadLinks links = new TransactionsReportDownloadLinks(HTTP_URL, ACCOUNT_ID, withBalance, "encoded-string");
 
         assertEquals(expectedLinks, links);
     }
@@ -47,7 +48,7 @@ public class TransactionsReportByPeriodHugeLinksTest {
     public void success_with_balance() {
         boolean withBalance = true;
 
-        TransactionsReportByPeriodHugeLinks links = new TransactionsReportByPeriodHugeLinks(HTTP_URL, ACCOUNT_ID, withBalance);
+        TransactionsReportDownloadLinks links = new TransactionsReportDownloadLinks(HTTP_URL, ACCOUNT_ID, withBalance, "encoded-string");
 
         expectedLinks.setBalances(new HrefType("http://url/v1/accounts/33333-999999999/balances"));
         assertEquals(expectedLinks, links);

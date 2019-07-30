@@ -48,10 +48,10 @@ class ServiceTypeDiscovery {
      *
      * @param targetPath        target path to be checked on pattern matching
      * @param internalRequestId internal id of the request
-     * @param requestId         request id provided by the TPP
+     * @param xRequestId        request id provided by the TPP
      * @return Service Type value
      */
-    static ServiceType getServiceType(String targetPath, UUID internalRequestId, UUID requestId) {
+    static ServiceType getServiceType(String targetPath, UUID internalRequestId, String xRequestId) {
         for (Map.Entry<String, ServiceType> entry : pathToServiceType.entrySet()) {
             String pattern = entry.getKey();
 
@@ -61,7 +61,7 @@ class ServiceTypeDiscovery {
         }
 
         log.warn("InR-ID: [{}], X-Request-ID: [{}]. Can't get ServiceType because illegal path: [{}]",
-                 internalRequestId, requestId, targetPath);
+                 internalRequestId, xRequestId, targetPath);
         throw new IllegalArgumentException("Illegal path: " + targetPath);
     }
 }

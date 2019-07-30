@@ -4,6 +4,7 @@
 * Log events to stdout
 * New internal request ID
 * Extract PSU data for payment cancellation from authorisation request
+* Downloading transactions supported
 
 == Log events to stdout
 New event module `event-service-persist-log-impl` has been added with logging implementation of `event-service-persist-api`.
@@ -23,3 +24,14 @@ It was also added to the events, `access-log`, `request-log` and internal XS2A l
 
 From now on, PSU Data is extracted from authorisation request instead of payment object.
 During initiate payment cancellation PSU Data is empty when ContextData is sent to SPI.
+
+== Downloading transactions supported
+From now on, `GET /v1/accounts/{account-id}/transactions` endpoint may return download link, which can be used
+by TPP for downloading transactions as a file. A new REST API `GET /v1/accounts/{account-id}/transactions/download/{download-id}`
+was added to provide the download data.
+
+For a SPI developer, `downloadId` field was added to `SpiTransactionReport.java` class, which should be filled, if transaction's
+downloading should be supported. Also, a new method `requestTransactionsByDownloadLink` was added to `AccountSpi.java`, which
+is invoked, when TPP tries to download transactions by the download link. This method's response contains binary java inputstream
+as a source of controller response data.
+

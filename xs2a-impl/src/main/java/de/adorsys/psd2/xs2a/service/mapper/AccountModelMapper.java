@@ -154,6 +154,5 @@ public abstract class AccountModelMapper {
     }
 
     protected abstract ReportExchangeRate mapToReportExchangeRate(Xs2aExchangeRate xs2aExchangeRate);
-
 }
 
