@@ -3,6 +3,7 @@
 == Table of Contents
 * Log events to stdout
 * New internal request ID
+* Extract PSU data for payment cancellation from authorisation request
 
 == Log events to stdout
 New event module `event-service-persist-log-impl` has been added with logging implementation of `event-service-persist-api`.
@@ -17,3 +18,8 @@ From now on, XS2A generates internal request ID (`InR-Id`) for each incoming req
 Unlike the `X-Request-ID`, which is generated and provided by the TPP, `InR-Id` is guaranteed to be unique.
 This internal request ID is now provided to the SPI inside the `de.adorsys.psd2.xs2a.spi.domain.SpiContextData`.
 It was also added to the events, `access-log`, `request-log` and internal XS2A logs.
+
+== Extract PSU data for payment cancellation from authorisation request
+
+From now on, PSU Data is extracted from authorisation request instead of payment object.
+During initiate payment cancellation PSU Data is empty when ContextData is sent to SPI.
