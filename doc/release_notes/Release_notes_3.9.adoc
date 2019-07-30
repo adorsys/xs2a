@@ -2,6 +2,7 @@
 
 == Table of Contents
 * Log events to stdout
+* New internal request ID
 
 == Log events to stdout
 New event module `event-service-persist-log-impl` has been added with logging implementation of `event-service-persist-api`.
@@ -10,3 +11,9 @@ All events are being written to a separate logger (`event-log`) at `INFO` loggin
 
 Additional configuration of `SLF4J`-compatible logging framework may be required in order to properly display event logs.
 Default logging configuration provided in `cms-standalone-service` writes log records only to the console.
+
+== New internal request ID
+From now on, XS2A generates internal request ID (`InR-Id`) for each incoming request from TPP in order to uniquely identify requests.
+Unlike the `X-Request-ID`, which is generated and provided by the TPP, `InR-Id` is guaranteed to be unique.
+This internal request ID is now provided to the SPI inside the `de.adorsys.psd2.xs2a.spi.domain.SpiContextData`.
+It was also added to the events, `access-log`, `request-log` and internal XS2A logs.
