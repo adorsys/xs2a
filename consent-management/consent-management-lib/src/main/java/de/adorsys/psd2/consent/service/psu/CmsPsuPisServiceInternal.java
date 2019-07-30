@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service.psu;
 
+import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
@@ -228,7 +229,9 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
             if (psuDataOptional.isPresent()) {
                 newPsuData = psuDataOptional.get();
-                authorisation.getPaymentData().setPsuDataList(cmsPsuService.enrichPsuData(newPsuData, paymentPsuList));
+                if (CmsAuthorisationType.CANCELLED != authorisation.getAuthorizationType()) {
+                    authorisation.getPaymentData().setPsuDataList(cmsPsuService.enrichPsuData(newPsuData, paymentPsuList));
+                }
             }
             log.info("Authorisation ID [{}]. Update PSU in payment failed in updatePsuData method because authorisation contains no PSU data.", authorisation.getId());
         }

@@ -3,10 +3,17 @@
 == Table of Contents
 * Provided PSU Data from request to SPI in SpiContextData
 * Include internal request ID in `request-log` and internal XS2A logs
+* Extract PSU data for payment cancellation from authorisation request
 
 == Provided PSU Data from request to SPI in SpiContextData
 
 From now on, PSU Data is extracted from the request instead of the consent or payment objects.
 
 == Include internal request ID in `request-log` and internal XS2A logs
+
 From now on, `request-log` and internal XS2A logs will also contain internal request ID (`InR-Id`).
+
+== Extract PSU data for payment cancellation from authorisation request
+
+From now on, PSU Data is extracted from authorisation request instead of payment object.
+During initiate payment cancellation PSU Data is empty when ContextData is sent to SPI.
