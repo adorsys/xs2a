@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationResponse;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
@@ -28,5 +27,5 @@ public interface SpiToXs2aCancelPaymentMapper {
 
     @Mapping(target = "startAuthorisationRequired", source = "spiCancelPayment.cancellationAuthorisationMandated")
     @Mapping(target = "paymentId", source = "encryptedPaymentId")
-    CancelPaymentResponse mapToCancelPaymentResponse(SpiPaymentCancellationResponse spiCancelPayment, SpiPayment payment, PsuIdData psuData, String encryptedPaymentId);
+    CancelPaymentResponse mapToCancelPaymentResponse(SpiPaymentCancellationResponse spiCancelPayment, SpiPayment payment, String encryptedPaymentId);
 }
