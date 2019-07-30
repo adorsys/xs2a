@@ -353,7 +353,7 @@ public class PaymentService {
             spiPayment = spiPaymentOptional.get();
         }
 
-        return cancelPaymentService.initiatePaymentCancellation(getPsuIdDataFromRequest(), spiPayment,
+        return cancelPaymentService.initiatePaymentCancellation(spiPayment,
                                                                 paymentCancellationRequest.getEncryptedPaymentId(),
                                                                 paymentCancellationRequest.getTppExplicitAuthorisationPreferred(),
                                                                 paymentCancellationRequest.getTppRedirectUri());

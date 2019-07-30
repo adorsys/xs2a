@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationResponse;
@@ -47,11 +46,8 @@ public class SpiToXs2aCancelPaymentMapperTest {
         SpiPaymentCancellationResponse spiCancelPayment =
             jsonReader.getObjectFromFile("json/service/mapper/single-payment-cancellation-response.json", SpiPaymentCancellationResponse.class);
 
-        PsuIdData psuData =
-            jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
-
         CancelPaymentResponse actualResponse =
-            mapper.mapToCancelPaymentResponse(spiCancelPayment, spiSinglePayment, psuData, ENCRYPTED_PAYMENT_ID);
+            mapper.mapToCancelPaymentResponse(spiCancelPayment, spiSinglePayment, ENCRYPTED_PAYMENT_ID);
 
         CancelPaymentResponse expectedResponse =
             jsonReader.getObjectFromFile("json/service/mapper/cancel-payment-response.json", CancelPaymentResponse.class);
