@@ -1,52 +1,35 @@
 @startuml
 
-node "API Gateway" as node_gw {
-    interface XS2A
-}
-
-node "ASPSP-Profile" {
-    artifact "ASPSPProfile" {
-        component "aspsp-profile-api" as profile_api
-        component "aspsp-profile-lib" as profile_lib
-
-        control "aspsp-profile-server" as profile_server
-        profile_api <|-- profile_lib
-
-        profile_api <.. profile_server
-    }
-}
-
 node "XS2A-Service" as node_xs2a {
     artifact XS2AService {
-        component "xs2a-impl" as xs2a_impl
-        component "consent-xs2a-client" as cms_client
-        component "spi-impl" as spi_impl
-        component "aspsp-profile-remote" as profile_remote
+        component "xs2a-impl.jar" as xs2a_impl
+        component "consent-xs2a-client.jar" as cms_client
+        component "spi-impl.jar" as spi_impl #lightblue
+        component "aspsp-profile-remote.jar" as profile_remote
+
+        component "Main XS2A Service Application" as main #lightblue
 
         xs2a_impl .> cms_client
         xs2a_impl ..> spi_impl
         profile_remote <.. xs2a_impl
 
+        spi_impl -[hidden] main
     }
+    file "application.yml" as config
+    file "swagger.json" as swagger
+    file "logback.xml" as logback
+
+    main -- config
+    main -- swagger
+    main -- logback
 }
 
-node_gw -[hidden]> node_xs2a
+artifact "ASPSPProfile"
 
-XS2A - xs2a_impl
+ASPSPProfile <.. profile_remote
 
-profile_remote -|> profile_api
-profile_remote .> profile_lib
+artifact "Consent-management-system" as CMS
 
-node CMS {
-    artifact "Consent-management-system" {
-        control "cms-standalone-service"
-    }
-}
-
-
-
-database ConsentDB
-
-CMS -- ConsentDB
+cms_client .> CMS
 
 @enduml

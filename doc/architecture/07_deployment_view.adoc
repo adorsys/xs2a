@@ -5,16 +5,14 @@
 == Deployment View
 
 
-
-=== Infrastructure Level 1
-
 One of the main goals is to make this project adaptable to environment of customer.
 Therefore we provide a set of Java libraries dependent on spring framework.
 The decision of the ways to include these libraries and how to deploy is on the integration project (SPI Development).
 
 Nevertheless we highlight some major scenarios how we see the possible deployment of the application.
 
-==== Multiservice deployment
+
+=== Infrastructure Level 1 - Multiservice deployment
 
 image::07_multiservice_deployment.png[Multiservice deployment, title="Multiservice deployment", align="center"]
 
@@ -29,10 +27,18 @@ _<explanation in text form>_
 Mapping of Building Blocks to Infrastructure::
 _<description of the mapping>_
 
-==== Single-service deployment
+=== Infrastructure Level 2 - Multiservice deployment
+
+==== XS2A Standalone Service Deployment
+
+image::07_multiservice_xs2a.png[Multiservice deployment XS2A, title="Multiservice deployment XS2A", align="center"]
+
+=== Infrastructure Level 1 - Single service deployment
 
 image::07_single_service_deployment.png[Single service deployment, title="Single service deployment", align="center"]
 
-==== Multiple instances deployment with one database
+=== Infrastructure Level 1 - Multiple instances deployment with one database
 
 image::07_multiinstance_deployment.png[Multiple instances deployment, title="Multiple instances deployment", align="center"]
+
+
