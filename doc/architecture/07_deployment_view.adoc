@@ -29,13 +29,13 @@ _<description of the mapping>_
 
 === Infrastructure Level 2 - Multiservice deployment
 
-==== XS2A Standalone Service Deployment
+==== XS2A Service Deployment
 
 image::07_multiservice_xs2a.png[Multiservice deployment XS2A, title="Multiservice deployment XS2A", align="center"]
 
 === Infrastructure Level 1 - Single service deployment
 
-image::07_single_service_deployment.png[Single service deployment, title="Single service deployment", align="center"]
+image::07_allinone_deployment.png[Single service deployment, title="Single service deployment", align="center"]
 
 === Infrastructure Level 1 - Multiple instances deployment with one database
 
