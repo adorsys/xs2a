@@ -27,8 +27,13 @@ import java.time.LocalDate;
 @Data
 @ApiModel(description = "Piis consent request", value = "PiisConsentRequest")
 public class CreatePiisConsentRequest {
+
+    @Deprecated // TODO: Remove the field in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/971
     @ApiModelProperty(value = "Tpp for which the consent will be created. If the property is omitted, the consent will be created for all TPPs")
     private TppInfo tppInfo;
+
+    @ApiModelProperty(value = "Tpp attribute that fully described Tpp for which the consent will be created. If the property is omitted, the consent will be created for all TPPs")
+    private String tppAuthorisationNumber;
 
     @ApiModelProperty(value = "Account, where the confirmation of funds service is aimed to be submitted to.")
     private AccountReference account;
@@ -36,6 +41,7 @@ public class CreatePiisConsentRequest {
     @ApiModelProperty(value = "Consent`s expiration date. The content is the local ASPSP date in ISODate Format", example = "2020-10-10")
     private LocalDate validUntil;
 
+    @Deprecated // TODO: Remove the column in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/970
     @ApiModelProperty(value = "Maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private int allowedFrequencyPerDay;
 

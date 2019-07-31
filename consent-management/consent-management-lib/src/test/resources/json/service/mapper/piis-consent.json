@@ -1,0 +1,50 @@
+{
+  "id": "69f1a603-1da2-4b46-82da-3bb0bd0b47cb",
+  "recurringIndicator": true,
+  "requestDateTime": "2018-03-09T13:29:50.042136+03:00",
+  "lastActionDate": "2018-05-04",
+  "expireDate": "2018-07-13",
+  "psuData": {
+    "psuId": "PSU ID",
+    "psuIdType": "PSU ID TYPE",
+    "psuCorporateId": "PSU CORPORATE ID",
+    "psuCorporateIdType": "PSU CORPORATE ID TYPE"
+  },
+  "tppInfo": {
+    "authorisationNumber": "12345987",
+    "tppName": "Tpp company",
+    "tppRoles": [
+      "PISP"
+    ],
+    "authorityId": "authority id",
+    "authorityName": "authority name",
+    "country": "Germany",
+    "organisation": "Organisation",
+    "organisationUnit": "Organisation unit",
+    "city": "Nuremberg",
+    "state": "Bayern",
+    "tppRedirectUri": {
+      "uri": "TPP-Redirect-URI",
+      "nokUri": "TPP-Nok-Redirect-URI"
+    },
+    "cancelTppRedirectUri": {
+      "uri": "TPP-Redirect-URI-Cancel",
+      "nokUri": "TPP-Nok-Redirect-URI-Cancel"
+    }
+  },
+  "consentStatus": "VALID",
+  "account": {
+    "currency": "EUR",
+    "iban": "DE15500105172295759744"
+  },
+  "tppAccessType": "SINGLE_TPP",
+  "allowedFrequencyPerDay": 2,
+  "creationTimestamp": "2019-07-26T13:29:50.042136+03:00",
+  "cardNumber": "1234567891234",
+  "cardExpiryDate": "2020-12-31",
+  "cardInformation": "MyMerchant Loyalty Card",
+  "registrationInformation": "Your contract Number 1234 with MyMerchant is completed with the registration with your bank.",
+  "statusChangeTimestamp": "2019-03-17T15:30:35.035Z",
+  "instanceId": "823648238476238462",
+  "tppAuthorisationNumber": "PSDDE-FAKENCA-87B2AC"
+}
