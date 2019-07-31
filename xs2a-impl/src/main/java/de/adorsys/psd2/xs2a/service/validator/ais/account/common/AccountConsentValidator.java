@@ -57,7 +57,7 @@ public class AccountConsentValidator {
     }
 
     private boolean isAccessExceeded(AccountConsent accountConsent, String requestUri) {
-        if (requestProviderService.isRequestFromPsu()) {
+        if (requestProviderService.isRequestFromPsu() && !accountConsent.isOneAccessType()) {
             return false;
         }
 

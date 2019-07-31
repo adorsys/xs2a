@@ -43,7 +43,6 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import org.apache.commons.io.IOUtils;
@@ -212,7 +211,6 @@ public class AccountControllerTest {
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
         requestBuilder.headers(httpHeaders);
 
-        SpiPsuData spiPsuData = new SpiPsuData(null, null, null, null);
         SpiResponse<List<SpiAccountDetails>> response = buildListSpiResponse();
         Xs2aAccountDetails accountDetails = buildXs2aAccountDetails();
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -237,12 +235,40 @@ public class AccountControllerTest {
     }
 
     @Test
+    public void getAccountList_WithPsuIpAddressWithNoUsageCounter_oneOffConsent_AccessExceeded() throws Exception {
+        // Given
+        MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
+        requestBuilder.headers(httpHeaders);
+
+        SpiResponse<List<SpiAccountDetails>> response = buildListSpiResponse();
+        Xs2aAccountDetails accountDetails = buildXs2aAccountDetails();
+        SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
+
+        given(accountSpi.requestAccountList(notNull(), eq(false), eq(spiAccountConsent), eq(aspspConsentDataProvider))).willReturn(response);
+        given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
+
+        AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
+        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
+        given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
+            .willReturn(Optional.of(aisAccountConsent));
+        AccountConsent accountConsent = buildOneOffAccountConsent(aisAccountConsent.getUsageCounterMap());
+        given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
+        given(xs2aAisConsentMapper.mapToSpiAccountConsent(accountConsent)).willReturn(spiAccountConsent);
+
+        // When
+        ResultActions resultActions = mockMvc.perform(requestBuilder);
+
+        // Then
+        resultActions.andExpect(status().isTooManyRequests())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+    }
+
+    @Test
     public void getAccountList_TwoRequestSuccessfulThirdRequestFailed() throws Exception {
         // Given
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
         requestBuilder.headers(httpHeadersWithoutPsuIpAddress);
 
-        SpiPsuData spiPsuData = new SpiPsuData(null, null, null, null);
         SpiResponse<List<SpiAccountDetails>> response = buildListSpiResponse();
         Xs2aAccountDetails accountDetails = buildXs2aAccountDetails();
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -295,9 +321,17 @@ public class AccountControllerTest {
 
     private AccountConsent buildAccountConsent(Map<String, Integer> usageCounter) {
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null);
+        return new AccountConsent(null, xs2aAccountAccess, true, LocalDate.now().plusDays(1), 10,
+                                  null, ConsentStatus.VALID, false, false,
+                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter);
+    }
+
+    private AccountConsent buildOneOffAccountConsent(Map<String, Integer> usageCounter) {
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null);
         return new AccountConsent(null, xs2aAccountAccess, false, LocalDate.now().plusDays(1), 10,
                                   null, ConsentStatus.VALID, false, false,
                                   null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter);
     }
+
 }
 

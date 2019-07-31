@@ -7,6 +7,7 @@
 * Downloading transactions supported
 * Provided PSU Data from request to SPI in SpiContextData
 * Validate only TPP-Authorisation-Number in TPP-info for PIIS
+* Bugfix: one-off consent details can be read only once
 
 == Log events to stdout
 
@@ -49,3 +50,8 @@ From now on, PSU Data is extracted from the request instead of the consent or pa
 New column `tpp_authorisation_number` is added to `piis_consent` table.
 From now on, if PIIS consent is stored in CMS (in profile `piisConsentSupported=true`) field `TPP-Authorisation-Number` will be stored as well and used for TPP INFO validation instead of the whole TPPInfo.
 Field TppInfo is deprecated in `CreatePiisConsentRequest`.
+
+== Bugfix: one-off consent details can be read only once
+
+From now on, after creating one-off AIS consent, TPP is able to read all its information (accounts, balances, transactions)
+only once and it doesn't depend on the `psu-ip-address` header presence in the request. This works only for one-off consents, i.e. `recurringIndicator = false`.
