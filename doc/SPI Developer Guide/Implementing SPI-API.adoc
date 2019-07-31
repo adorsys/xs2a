@@ -1,4 +1,4 @@
-= Implementing SPI-API
+== Implementing SPI-API
 :toc-title:
 //:imagesdir: usecases/diagrams
 :toc: left
@@ -6,13 +6,13 @@
 
 toc::[]
 
-== General requirements
+=== General requirements
 
-== SpiResponse
+=== SpiResponse
 
-== Work with ASPSP-Consent-Data object
+=== Work with ASPSP-Consent-Data object
 
-== Implementation of AccountSpi
+=== Implementation of AccountSpi
 
 The Interface is used for AIS consent accounts SPI implementation. The following methods should be implemented:
 
@@ -32,19 +32,19 @@ It returns *SpiTransactionsDownloadResponse* object with the InputStream which c
 From the TPP side the download can be initiated by accessing new endpoint in account controller - *GET /v1/accounts/{account-id}/transactions/download/{download-id}*.
 TPP should provide the AIS consent account ID and the download ID. As a response for accessing this endpoint, the TPP receives the stream with transaction list.
 
-== Implementation of AisConsentSpi
+=== Implementation of AisConsentSpi
 
-== Providing account resources to consent
+=== Providing account resources to consent
 
-== Implementation of FundsConfirmationSpi
+=== Implementation of FundsConfirmationSpi
 
-== Implementation of PaymentSpi(s)
+=== Implementation of PaymentSpi(s)
 
 *SPI* means Service Provider Interface that is an API intended to be implemented or extended by a third party.
 
 We distinguish between following Interfaces: *SinglePaymentSpi*, *BulkPaymentSpi*, *PeriodicPaymentSpi*, *PaymentAuthorisationSpi*, *PaymentCancellationSpi*.
 
-=== SinglePaymentSpi
+==== SinglePaymentSpi
 The Interface is used for the single payment SPI implementation. The following Methods should be implemented:
 
 * *initiatePayment*: aims to initiate a payment;
@@ -89,7 +89,7 @@ Response by the method *getPaymentStatusById* returns an object (with the transa
 * *payment*;
 * *aspspConsentData*.
 
-=== PeriodicPaymentSpi
+==== PeriodicPaymentSpi
 The Interface is used for periodic payment for SPI implementation. The following Methods should be implemented:
 
 * *initiatePayment*;
@@ -115,7 +115,7 @@ Response by the method *getPaymentStatusById* returns an object (with the transa
 * *payment*;
 * *aspspConsentData*.
 
-=== BulkPaymentSpi
+==== BulkPaymentSpi
 The Interface is used for bulk payment for SPI implementation. The following Methods should be implemented:
 
 * *initiatePayment*;
@@ -142,7 +142,7 @@ Response by the methods *getPaymentStatusById* returns an object (with the trans
 * *payment*;
 * *aspspConsentData*.
 
-=== PaymentAuthorisationSpi
+==== PaymentAuthorisationSpi
 The Interface is used while implementing payment authorisation flow on SPI level. This Interface is implemented by extending the *AuthorisationSPi*. The following Methods should be implemented:
 
 * *authorisePsu*;
@@ -180,7 +180,7 @@ to allow the app to access CMS. It returns a response object, contains a message
 * *authenticationMethodId*: for a decoupled SCA method within embedded approach;
 * *authorisationId*: a unique identifier of authorisation process.
 
-=== PaymentCancellationSpi
+==== PaymentCancellationSpi
 The Interface is used to cancel a payment. The following Methods should be implemented:
 
 * *initiatePaymentCancellation*;

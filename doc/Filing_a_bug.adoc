@@ -18,9 +18,9 @@ The more information you provide, the faster analysis would be possible.
 3. Please assign your ticket to @vhaex (Gitlab tickets) or leave it unassigned on Github.
 
 
-= Bug ticket workflow
+== Bug ticket workflow
 
-== Ticket preanalysis
+=== Ticket preanalysis
 After creation XS2A Team analyses information you provided
 and gives a first conclusion as a comment in the ticket, mentioning ticket's reporter (i.o. to get him notified).
 
@@ -28,16 +28,16 @@ If ticket gets accepted for a fix, it becomes a label *Confirmed*.
 
 If XS2A Team considers the problem not reproducible or not valid, ticket will be labeled with *Rejected*.
 
-== Ticket planning (Accepted tickets)
+=== Ticket planning (Accepted tickets)
 XS2A Team processes Tickets in scope of sprints according to versions affected.
 Mainline, like *2.x, 3.x* will be set also as a label to mark for which version a fix is to be provided.
 
 If XS2A Team delivers a Hotfix version, a *HOTFIX* label will be set.
 Planning ticket to sprints is done using the Roadmap.
 
-== Bugfixing (Accepted tickets)
+=== Bugfixing (Accepted tickets)
 When XS2A Team fixes a bug and it goes through internal quality gates, XS2A would notify reporter using the comment section in the ticket
 (with reporter's login, like @dgo) to retest it with the development version (if possible).
 
-== Release (Accepted tickets)
+=== Release (Accepted tickets)
 After release of new version(s) containing the bugfix, ticket reporter is asked to provide feedback in the ticket, by commenting out if fix was successful or pointing out the problems that still exist and assigning ticket back to @vhaex (Gitlab).

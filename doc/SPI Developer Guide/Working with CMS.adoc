@@ -1,21 +1,21 @@
-= Working with CMS
+== Working with CMS
 :toc-title:
 //:imagesdir: usecases/diagrams
 :toc: left
 // horizontal line
 
-== Using the CMS-PSU-API
+=== Using the CMS-PSU-API
 
-== SCA Approaches REDIRECT
+=== SCA Approaches REDIRECT
 
-== SCA Approaches
+=== SCA Approaches
 
-== SCA Approach EMBEDDED
+=== SCA Approach EMBEDDED
 
-== Using the CMS-ASPSP-API
+=== Using the CMS-ASPSP-API
 
-== Using the Tpp locking interface
+=== Using the Tpp locking interface
 
-== Using the Consents/Payments export interface
+=== Using the Consents/Payments export interface
 
-== Using the FundsConfirmation Consent interface
+=== Using the FundsConfirmation Consent interface

@@ -1,16 +1,16 @@
-= Choosing the deployment layout
+== Choosing the deployment layout
 :toc-title:
 //:imagesdir: usecases/diagrams
 :toc: left
 // horizontal line
 
 
-== Microservices Deployment
+=== Microservices Deployment
 
-== Embedded Deployment
+=== Embedded Deployment
 
-== Embedding XS2A Library
+=== Embedding XS2A Library
 
-== Embedding CMS Library
+=== Embedding CMS Library
 
-== Embedding Profile library
+=== Embedding Profile library
