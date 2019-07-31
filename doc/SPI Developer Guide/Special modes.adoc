@@ -1,13 +1,13 @@
-= Special modes
+== Special modes
 :toc-title:
 //:imagesdir: usecases/diagrams
 :toc: left
 // horizontal line
 
 
-== Multi-tenancy support
+=== Multi-tenancy support
 
-== Configure Event-Service in embedded mode
+=== Configure Event-Service in embedded mode
 
 XS2A is started as a standalone application in embedded mode (*Xs2aStandaloneStarter*). CMS does not start at all.
 
@@ -84,7 +84,7 @@ spring.datasource.password=cms
    @EntityScan({"de.adorsys.psd2.consent.domain", "de.adorsys.psd2.event.persist.entity"})
 ```
 
-=== Getting events
+==== Getting events
 
 Use endpoint for getting events *by period* and *instance_id* (GET aspsp-api/v1/events).
 
@@ -98,23 +98,4 @@ Request parameters are passed as headers:
 |end-date |true |
 |instance-id |false |UNDEFINED
 |===
-
-=== How to add new custom payment-product
-
-Xs2a has implementation to support custom payment-products which are different from Berlin Group list.
-To use for example "new-payment-product", open *bank-profile.yaml* and add it to *supportedPaymentTypeAndProductMatrix*:
-```
-  SINGLE:
-   - new-payment-product
-  PERIODIC:
-   - new-payment-product
-  BULK:
-   - new-payment-product
-```
-
-If "new-payment-product" supports JSON format and should be parsed in xs2a, add in *de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver*:
-```
-STANDARD_PAYMENT_PRODUCTS.add(“new-payment-product”);
-```
-Besides custom payment-products should be passed to *de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi* and appropriate interfaces should be implemented there.
 

@@ -1,8 +1,26 @@
-= Setting up ASPSP Profile options
+== Setting up ASPSP Profile options
 :toc-title:
 //:imagesdir: usecases/diagrams
 :toc: left
 // horizontal line
 
+=== Configuring Payment types and Payment products
 
-== Using debug interface
+==== How to add new custom payment-product
+
+Xs2a has implementation to support custom payment-products which are different from Berlin Group list.
+To use for example "new-payment-product", open *bank-profile.yaml* and add it to *supportedPaymentTypeAndProductMatrix*:
+```
+  SINGLE:
+   - new-payment-product
+  PERIODIC:
+   - new-payment-product
+  BULK:
+   - new-payment-product
+```
+
+Custom payment-products will be passed to SPI level through the interface *de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi*
+Therefore this interface should be implemented in your SPI-Connector.
+
+
+=== Using debug interface

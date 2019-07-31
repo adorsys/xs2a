@@ -6,14 +6,14 @@
 
 == Purpose and Scope
 
-== xref:Choosing the deployment layout.adoc[Choosing the deployment layout]
+include::Choosing the deployment layout.adoc[Choosing the deployment layout]
 
-== xref:Setting up ASPSP Profile options.adoc[Setting up ASPSP Profile options]
+include::Setting up ASPSP Profile options.adoc[Setting up ASPSP Profile options]
 
-== xref:Implementing SPI-API.adoc[Implementing SPI-API]
+include::Implementing SPI-API.adoc[Implementing SPI-API]
 
-== xref:Configuring XS2A Service.adoc[Configuring XS2A Service]
+include::Configuring XS2A Service.adoc[Configuring XS2A Service]
 
-== xref:Working with CMS.adoc[Working with CMS]
+include::Working with CMS.adoc[Working with CMS]
 
-== xref:Special modes.adoc[Special modes]
+include::Special modes.adoc[Special modes]
