@@ -96,5 +96,6 @@
     <include relativeToChangelogFile="true" file="migration/0068-remove-deprecated-columns-from-crypto-algorithm-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0069-remove-authority-id-column-from-unique-constraint-in-tpp-stop-list-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0070-add-internal-request-id-to-event-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0071-add-tpp-authorisation-number-to-piis-consent-table.xml"/>
 
 </databaseChangeLog>

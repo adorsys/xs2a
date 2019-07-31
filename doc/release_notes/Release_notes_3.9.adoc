@@ -5,8 +5,11 @@
 * New internal request ID
 * Extract PSU data for payment cancellation from authorisation request
 * Downloading transactions supported
+* Provided PSU Data from request to SPI in SpiContextData
+* Validate only TPP-Authorisation-Number in TPP-info for PIIS
 
 == Log events to stdout
+
 New event module `event-service-persist-log-impl` has been added with logging implementation of `event-service-persist-api`.
 This module can be used in CMS instead of `event-service-persist-db-impl` in order to log events without saving them to the database.
 All events are being written to a separate logger (`event-log`) at `INFO` logging level using `SLF4J`.
@@ -15,6 +18,7 @@ Additional configuration of `SLF4J`-compatible logging framework may be required
 Default logging configuration provided in `cms-standalone-service` writes log records only to the console.
 
 == New internal request ID
+
 From now on, XS2A generates internal request ID (`InR-Id`) for each incoming request from TPP in order to uniquely identify requests.
 Unlike the `X-Request-ID`, which is generated and provided by the TPP, `InR-Id` is guaranteed to be unique.
 This internal request ID is now provided to the SPI inside the `de.adorsys.psd2.xs2a.spi.domain.SpiContextData`.
@@ -26,6 +30,7 @@ From now on, PSU Data is extracted from authorisation request instead of payment
 During initiate payment cancellation PSU Data is empty when ContextData is sent to SPI.
 
 == Downloading transactions supported
+
 From now on, `GET /v1/accounts/{account-id}/transactions` endpoint may return download link, which can be used
 by TPP for downloading transactions as a file. A new REST API `GET /v1/accounts/{account-id}/transactions/download/{download-id}`
 was added to provide the download data.
@@ -35,3 +40,12 @@ downloading should be supported. Also, a new method `requestTransactionsByDownlo
 is invoked, when TPP tries to download transactions by the download link. This method's response contains binary java inputstream
 as a source of controller response data.
 
+== Provided PSU Data from request to SPI in SpiContextData
+
+From now on, PSU Data is extracted from the request instead of the consent or payment objects.
+
+== Validate only TPP-Authorisation-Number in TPP-info for PIIS
+
+New column `tpp_authorisation_number` is added to `piis_consent` table.
+From now on, if PIIS consent is stored in CMS (in profile `piisConsentSupported=true`) field `TPP-Authorisation-Number` will be stored as well and used for TPP INFO validation instead of the whole TPPInfo.
+Field TppInfo is deprecated in `CreatePiisConsentRequest`.

@@ -64,6 +64,7 @@ public class PiisConsentEntity extends InstanceDependableEntity {
     @JoinColumn(name = "psu_id")
     private PsuData psuData;
 
+    // TODO: Remove the column in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/971
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tpp_info_id")
     @ApiModelProperty(value = "Information about TPP")
@@ -83,6 +84,7 @@ public class PiisConsentEntity extends InstanceDependableEntity {
     @ApiModelProperty(value = "Type of the tpp access: SINGLE_TPP or ALL_TPP.", required = true, example = "ALL_TPP")
     private PiisConsentTppAccessType tppAccessType;
 
+    // TODO: Remove the column in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/970
     @Column(name = "allowed_frequency_per_day", nullable = false)
     @ApiModelProperty(value = "Maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private int allowedFrequencyPerDay;
@@ -104,6 +106,10 @@ public class PiisConsentEntity extends InstanceDependableEntity {
 
     @Column(name = "status_change_timestamp")
     private OffsetDateTime statusChangeTimestamp;
+
+    @Column(name = "tpp_authorisation_number")
+    @ApiModelProperty(value = "Fully described Tpp attribute", example = "PSDDE-FAKENCA-87B2AC")
+    private String tppAuthorisationNumber;
 
     @Transient
     private ConsentStatus previousConsentStatus;

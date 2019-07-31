@@ -54,7 +54,7 @@ public class PiisConsentValidation {
                                                         .filter(e -> Optional.ofNullable(e.getExpireDate())
                                                                          .map(d -> d.compareTo(LocalDate.now()) >= 0)
                                                                          .orElse(true))
-                                                        .filter(e -> e.getAllowedFrequencyPerDay() > 0)
+                                                        .filter(e -> e.getAllowedFrequencyPerDay() > 0) //// TODO: Remove validation in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/970
                                                         .sorted(Comparator.comparing(PiisConsent::getCreationTimestamp, Comparator.nullsLast(Comparator.reverseOrder())))
                                                         .findAny();
 
@@ -73,7 +73,7 @@ public class PiisConsentValidation {
         if (piisConsent.getTppAccessType() == PiisConsentTppAccessType.ALL_TPP) {
             return ValidationResult.valid();
         } else if (piisConsent.getTppAccessType() == PiisConsentTppAccessType.SINGLE_TPP) {
-            return piisTppInfoValidator.validateTpp(piisConsent.getTppInfo());
+            return piisTppInfoValidator.validateTpp(piisConsent.getTppAuthorisationNumber(), piisConsent.getTppInfo());
         } else {
             PiisConsentTppAccessType accessType = piisConsent.getTppAccessType();
 

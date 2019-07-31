@@ -1,0 +1,35 @@
+{
+  "tppInfo": {
+    "authorisationNumber": "12345987",
+    "tppName": "Tpp company",
+    "tppRoles": [
+      "PISP"
+    ],
+    "authorityId": "authority id",
+    "authorityName": "authority name",
+    "country": "Germany",
+    "organisation": "Organisation",
+    "organisationUnit": "Organisation unit",
+    "city": "Nuremberg",
+    "state": "Bayern",
+    "tppRedirectUri": {
+      "uri": "TPP-Redirect-URI",
+      "nokUri": "TPP-Nok-Redirect-URI"
+    },
+    "cancelTppRedirectUri": {
+      "uri": "TPP-Redirect-URI-Cancel",
+      "nokUri": "TPP-Nok-Redirect-URI-Cancel"
+    }
+  },
+  "tppAuthorisationNumber": "PSDDE-FAKENCA-87B2AC",
+  "account": {
+    "currency": "EUR",
+    "iban": "DE15500105172295759744"
+  },
+  "validUntil": "2018-07-13",
+  "allowedFrequencyPerDay": 2,
+  "cardNumber": "1234567891234",
+  "cardExpiryDate": "2020-12-31",
+  "cardInformation": "MyMerchant Loyalty Card",
+  "registrationInformation": "Your contract Number 1234 with MyMerchant is completed with the registration with your bank."
+}

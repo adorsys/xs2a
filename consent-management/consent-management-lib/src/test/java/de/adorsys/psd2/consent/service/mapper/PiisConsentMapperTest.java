@@ -16,164 +16,93 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
-import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.consent.reader.JsonReader;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertNotNull;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {PiisConsentMapper.class, PsuDataMapper.class, TppInfoMapperImpl.class,
+    AccountReferenceMapper.class})
 public class PiisConsentMapperTest {
-    private static final String INSTANCE_ID = "823648238476238462";
-    private static final String PSU_ID = "PSU-ID";
-    private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
-    private static final String TPP_AUTHORITY_ID = "authority id";
-    private static final String EXTERNAL_ID = "83e42eb5-c800-4cdd-af1a-65c5c472317f";
-    private static final OffsetDateTime REQUEST_DATETIME = OffsetDateTime.now().plusDays(1);
-    private static final LocalDate LAST_ACTION_DATE = LocalDate.now();
-    private static final LocalDate EXPIRY_DATE = LocalDate.now().plusDays(10);
-    private static final int ALLOWED_FREQUENCY_PER_DAY = 4;
-    private static final ConsentStatus CONSENT_STATUS = ConsentStatus.RECEIVED;
-    private static final OffsetDateTime CREATION_TIMESTAMP = OffsetDateTime.now().plusDays(2);
-    private static final String CARD_NUMBER = "1234567891234";
-    private static final LocalDate CARD_EXPIRY_DATE = LocalDate.now().plusDays(1);
-    private static final String CARD_INFORMATION = "MyMerchant Loyalty Card";
-    private static final String REGISTRATION_INFORMATION = "Your contract Number 1234 with MyMerchant is completed with the registration with your bank.";
-    private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.now();
-
-    @InjectMocks
+    @Autowired
     private PiisConsentMapper piisConsentMapper;
-    @Mock
-    private PsuDataMapper psuDataMapper;
-    @Mock
-    private TppInfoMapper tppInfoMapper;
-    @Mock
-    private AccountReferenceMapper accountReferenceMapper;
 
-    @Before
-    public void setUp() {
-        when(psuDataMapper.mapToPsuIdData(buildPsuData())).thenReturn(buildPsuIdData());
-        when(tppInfoMapper.mapToTppInfo(buildTppInfoEntity())).thenReturn(buildTppInfo());
-        when(accountReferenceMapper.mapToAccountReferenceEntity(buildAccountReferenceEntity())).thenReturn(buildAccountReference());
+    private JsonReader jsonReader = new JsonReader();
+
+    @Test
+    public void mapToPiisConsent() {
+        PiisConsentEntity piisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
+        PiisConsent actualPiisConsent = piisConsentMapper.mapToPiisConsent(piisConsentEntity);
+
+        PiisConsent expectedPiisConsent = jsonReader.getObjectFromFile("json/service/mapper/piis-consent.json", PiisConsent.class);
+        assertEquals(expectedPiisConsent, actualPiisConsent);
     }
 
     @Test
-    public void mapToPiisConsentListSuccess() {
-        //Given
-        PiisConsentEntity piisConsentEntity = buildPiisConsentEntity();
-        List<PiisConsentEntity> piisConsentEntityList = Collections.singletonList(piisConsentEntity);
+    public void mapToPiisConsentList() {
+        PiisConsentEntity piisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
+        List<PiisConsent> actualPiisConsentList = piisConsentMapper.mapToPiisConsentList(Collections.singletonList(piisConsentEntity));
 
-        //When
-        List<PiisConsent> consents = piisConsentMapper.mapToPiisConsentList(piisConsentEntityList);
-
-        //Then
-        assertEquals(consents.size(), piisConsentEntityList.size());
-        PiisConsent piisConsent = consents.get(0);
-
-        Assert.assertEquals(piisConsentEntity.getExternalId(), piisConsent.getId());
-        Assert.assertTrue(piisConsent.isRecurringIndicator());
-        Assert.assertEquals(piisConsentEntity.getRequestDateTime(), piisConsent.getRequestDateTime());
-        Assert.assertEquals(piisConsentEntity.getLastActionDate(), piisConsent.getLastActionDate());
-        Assert.assertEquals(piisConsentEntity.getExpireDate(), piisConsent.getExpireDate());
-        Assert.assertEquals(buildPsuIdData(), piisConsent.getPsuData());
-        Assert.assertEquals(buildTppInfo(), piisConsent.getTppInfo());
-        Assert.assertEquals(piisConsentEntity.getConsentStatus(), piisConsent.getConsentStatus());
-        Assert.assertEquals(buildAccountReference(), piisConsent.getAccount());
-        Assert.assertEquals(piisConsentEntity.getTppAccessType(), piisConsent.getTppAccessType());
-        Assert.assertEquals(piisConsentEntity.getAllowedFrequencyPerDay(), piisConsent.getAllowedFrequencyPerDay());
-        Assert.assertEquals(piisConsentEntity.getCreationTimestamp(), piisConsent.getCreationTimestamp());
-        Assert.assertEquals(piisConsentEntity.getInstanceId(), piisConsent.getInstanceId());
-        Assert.assertEquals(piisConsentEntity.getCardNumber(), piisConsent.getCardNumber());
-        Assert.assertEquals(piisConsentEntity.getCardExpiryDate(), piisConsent.getCardExpiryDate());
-        Assert.assertEquals(piisConsentEntity.getCardInformation(), piisConsent.getCardInformation());
-        Assert.assertEquals(piisConsentEntity.getRegistrationInformation(), piisConsent.getRegistrationInformation());
-        Assert.assertEquals(piisConsentEntity.getStatusChangeTimestamp(), piisConsent.getStatusChangeTimestamp());
+        PiisConsent expectedPiisConsent = jsonReader.getObjectFromFile("json/service/mapper/piis-consent.json", PiisConsent.class);
+        assertNotNull(actualPiisConsentList);
+        assertEquals(1, actualPiisConsentList.size());
+        assertEquals(expectedPiisConsent, actualPiisConsentList.get(0));
     }
 
-    @NotNull
-    private PiisConsentEntity buildPiisConsentEntity() {
-        PiisConsentEntity piisConsentEntity = new PiisConsentEntity();
-        piisConsentEntity.setInstanceId(INSTANCE_ID);
-        piisConsentEntity.setExternalId(EXTERNAL_ID);
-        piisConsentEntity.setRecurringIndicator(true);
-        piisConsentEntity.setRequestDateTime(REQUEST_DATETIME);
-        piisConsentEntity.setLastActionDate(LAST_ACTION_DATE);
-        piisConsentEntity.setExpireDate(EXPIRY_DATE);
-        piisConsentEntity.setPsuData(buildPsuData());
-        piisConsentEntity.setTppInfo(buildTppInfoEntity());
-        piisConsentEntity.setConsentStatus(CONSENT_STATUS);
-        piisConsentEntity.setAccount(buildAccountReferenceEntity());
-        piisConsentEntity.setTppAccessType(PiisConsentTppAccessType.SINGLE_TPP);
-        piisConsentEntity.setAllowedFrequencyPerDay(ALLOWED_FREQUENCY_PER_DAY);
-        piisConsentEntity.setCreationTimestamp(CREATION_TIMESTAMP);
-        piisConsentEntity.setCardNumber(CARD_NUMBER);
-        piisConsentEntity.setCardExpiryDate(CARD_EXPIRY_DATE);
-        piisConsentEntity.setCardInformation(CARD_INFORMATION);
-        piisConsentEntity.setRegistrationInformation(REGISTRATION_INFORMATION);
-        piisConsentEntity.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
-        return piisConsentEntity;
+    @Test
+    public void mapToPiisConsentEntity() {
+        PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
+        CreatePiisConsentRequest createPiisConsentRequest = jsonReader.getObjectFromFile("json/service/mapper/create-piis-consent-request.json", CreatePiisConsentRequest.class);
+
+        PiisConsentEntity actualPiisConsentEntity = piisConsentMapper.mapToPiisConsentEntity(psuIdData, createPiisConsentRequest);
+
+        PiisConsentEntity expectedPiisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
+        expectedPiisConsentEntity.setId(null);
+        expectedPiisConsentEntity.setRecurringIndicator(false);
+        expectedPiisConsentEntity.setLastActionDate(null);
+        expectedPiisConsentEntity.setStatusChangeTimestamp(null);
+        expectedPiisConsentEntity.setExternalId(actualPiisConsentEntity.getExternalId());
+        expectedPiisConsentEntity.setRequestDateTime(actualPiisConsentEntity.getRequestDateTime());
+        expectedPiisConsentEntity.setCreationTimestamp(actualPiisConsentEntity.getCreationTimestamp());
+
+        assertEquals(expectedPiisConsentEntity, actualPiisConsentEntity);
     }
 
-    private TppInfo buildTppInfo() {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber(TPP_AUTHORISATION_NUMBER);
-        tppInfo.setAuthorityId(TPP_AUTHORITY_ID);
-        return tppInfo;
-    }
+    @Test
+    public void mapToPiisConsentEntity_noTppInfoAndAuthorisationNumber_accessTypeAllTpp() {
+        PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
+        CreatePiisConsentRequest createPiisConsentRequest = jsonReader.getObjectFromFile("json/service/mapper/create-piis-consent-request.json", CreatePiisConsentRequest.class);
+        createPiisConsentRequest.setTppInfo(null);
+        createPiisConsentRequest.setTppAuthorisationNumber(null);
 
-    private TppInfoEntity buildTppInfoEntity() {
-        TppInfo tppInfo = buildTppInfo();
-        TppInfoEntity tppInfoEntity = new TppInfoEntity();
-        tppInfoEntity.setAuthorisationNumber(tppInfo.getAuthorisationNumber());
-        tppInfoEntity.setAuthorityId(tppInfo.getAuthorityId());
-        return tppInfoEntity;
-    }
+        PiisConsentEntity actualPiisConsentEntity = piisConsentMapper.mapToPiisConsentEntity(psuIdData, createPiisConsentRequest);
 
-    private PsuIdData buildPsuIdData() {
-        return new PsuIdData(PSU_ID, null, null, null);
-    }
+        PiisConsentEntity expectedPiisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
+        expectedPiisConsentEntity.setId(null);
+        expectedPiisConsentEntity.setRecurringIndicator(false);
+        expectedPiisConsentEntity.setLastActionDate(null);
+        expectedPiisConsentEntity.setStatusChangeTimestamp(null);
+        expectedPiisConsentEntity.setExternalId(actualPiisConsentEntity.getExternalId());
+        expectedPiisConsentEntity.setRequestDateTime(actualPiisConsentEntity.getRequestDateTime());
+        expectedPiisConsentEntity.setCreationTimestamp(actualPiisConsentEntity.getCreationTimestamp());
+        expectedPiisConsentEntity.setTppInfo(null);
+        expectedPiisConsentEntity.setTppAuthorisationNumber(null);
+        expectedPiisConsentEntity.setTppAccessType(PiisConsentTppAccessType.ALL_TPP);
 
-    private PsuData buildPsuData() {
-        PsuIdData psuIdData = buildPsuIdData();
-        return new PsuData(psuIdData.getPsuId(), psuIdData.getPsuIdType(), psuIdData.getPsuCorporateId(), psuIdData.getPsuCorporateIdType());
-    }
-
-    private AccountReference buildAccountReference() {
-        return new AccountReference("aspspAccountId", "resourceId",
-                                    "DE89370400440532013000",
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    null);
-    }
-
-    private AccountReferenceEntity buildAccountReferenceEntity() {
-        AccountReference accountReference = buildAccountReference();
-        AccountReferenceEntity accountReferenceEntity = new AccountReferenceEntity();
-        accountReferenceEntity.setAspspAccountId(accountReference.getAspspAccountId());
-        accountReferenceEntity.setIban(accountReference.getIban());
-        return accountReferenceEntity;
+        assertEquals(expectedPiisConsentEntity, actualPiisConsentEntity);
     }
 }
