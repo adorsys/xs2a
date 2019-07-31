@@ -25,7 +25,7 @@ import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Payment object that contains necessary information for validating payment in {@link CreatePisCancellationAuthorisationValidator}
+ * Payment object that contains necessary information for validating payment
  */
 @Value
 public class CreatePisCancellationAuthorisationPO implements PaymentTypeAndInfoProvider {
