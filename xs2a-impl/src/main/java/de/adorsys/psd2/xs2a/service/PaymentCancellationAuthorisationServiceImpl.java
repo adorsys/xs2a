@@ -53,7 +53,6 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     private final PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
     private final Xs2aEventService xs2aEventService;
     private final Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
-    private final CreatePisCancellationAuthorisationValidator createPisCancellationAuthorisationValidator;
     private final UpdatePisCancellationPsuDataValidator updatePisCancellationPsuDataValidator;
     private final GetPaymentCancellationAuthorisationsValidator getPaymentAuthorisationsValidator;
     private final GetPaymentCancellationAuthorisationScaStatusValidator getPaymentAuthorisationScaStatusValidator;
@@ -78,15 +77,6 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
-                       .build();
-        }
-
-        ValidationResult validationResult = createPisCancellationAuthorisationValidator.validate(new CreatePisCancellationAuthorisationPO(pisCommonPaymentResponse.get(), psuData));
-        if (validationResult.isNotValid()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS cancellation authorisation - validation failed: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
-            return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                       .fail(validationResult.getMessageError())
                        .build();
         }
 
