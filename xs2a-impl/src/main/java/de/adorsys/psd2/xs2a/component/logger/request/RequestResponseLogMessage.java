@@ -52,7 +52,7 @@ public class RequestResponseLogMessage {
     }
 
     public static class RequestResponseLogMessageBuilder {
-        private static final String INTERNAL_REQUEST_ID = "internalRequestId";
+        private static final String INTERNAL_REQUEST_ID = "InR-ID";
         private static final String URI = "uri";
         private static final String REQUEST_HEADERS = "requestHeaders";
         private static final String RESPONSE_HEADERS = "responseHeaders";
