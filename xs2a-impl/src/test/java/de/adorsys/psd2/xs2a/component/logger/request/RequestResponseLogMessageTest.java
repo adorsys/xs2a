@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RequestResponseLogMessageTest {
-    private static final String INTERNAL_REQUEST_ID_MESSAGE_FORMAT = "internalRequestId: [%s]";
+    private static final String INTERNAL_REQUEST_ID_MESSAGE_FORMAT = "InR-ID: [%s]";
     private static final String REQUEST_URI_MESSAGE_FORMAT = "uri: [%s]";
     private static final String REQUEST_URI_QUERY_MESSAGE_FORMAT = "uri: [%s?%s]";
     private static final String REQUEST_HEADERS_MESSAGE_FORMAT = "requestHeaders: [%s: %s, %s: %s]";
