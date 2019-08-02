@@ -16,13 +16,22 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
+import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 
 @Component
 @RequiredArgsConstructor
@@ -49,12 +58,39 @@ public class PiisConsentMapper {
                                piisConsentEntity.getCardExpiryDate(),
                                piisConsentEntity.getCardInformation(),
                                piisConsentEntity.getRegistrationInformation(),
-                               piisConsentEntity.getStatusChangeTimestamp());
+                               piisConsentEntity.getStatusChangeTimestamp(),
+                               piisConsentEntity.getTppAuthorisationNumber());
     }
 
     public List<PiisConsent> mapToPiisConsentList(List<PiisConsentEntity> consentEntities) {
         return consentEntities.stream()
                    .map(this::mapToPiisConsent)
                    .collect(Collectors.toList());
+    }
+
+    public PiisConsentEntity mapToPiisConsentEntity(PsuIdData psuIdData, CreatePiisConsentRequest request) {
+        PiisConsentEntity consent = new PiisConsentEntity();
+        consent.setExternalId(UUID.randomUUID().toString());
+        consent.setConsentStatus(VALID);
+        consent.setRequestDateTime(OffsetDateTime.now());
+        consent.setExpireDate(request.getValidUntil());
+        consent.setPsuData(psuDataMapper.mapToPsuData(psuIdData));
+        consent.setTppInfo(tppInfoMapper.mapToTppInfoEntity(request.getTppInfo()));
+        consent.setAccount(accountReferenceMapper.mapToAccountReferenceEntity(request.getAccount()));
+        consent.setTppAccessType(getAccessType(request));
+        consent.setAllowedFrequencyPerDay(request.getAllowedFrequencyPerDay());
+        consent.setCardNumber(request.getCardNumber());
+        consent.setCardExpiryDate(request.getCardExpiryDate());
+        consent.setCardInformation(request.getCardInformation());
+        consent.setRegistrationInformation(request.getRegistrationInformation());
+        consent.setTppAuthorisationNumber(request.getTppAuthorisationNumber());
+        return consent;
+    }
+
+    @NotNull
+    private PiisConsentTppAccessType getAccessType(CreatePiisConsentRequest request) {
+        return request.getTppInfo() != null || StringUtils.isNotBlank(request.getTppAuthorisationNumber()) ?
+                   PiisConsentTppAccessType.SINGLE_TPP :
+                   PiisConsentTppAccessType.ALL_TPP;
     }
 }

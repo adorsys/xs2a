@@ -20,6 +20,7 @@ import de.adorsys.psd2.event.persist.model.EventPO;
 import de.adorsys.psd2.event.service.model.EventBO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
@@ -31,11 +32,17 @@ public abstract class Xs2aEventBOMapper {
     protected JsonConverterService jsonConverterService;
 
     @Mapping(target = "XRequestId", source = "XRequestId", qualifiedByName = "mapToXRequestId")
+    @Mapping(target = "internalRequestId", source = "internalRequestId", qualifiedByName = "mapToInternalRequestId")
     @Mapping(target = "payload", expression = "java(jsonConverterService.toJsonBytes(eventBO.getPayload()).orElse(null))")
     public abstract EventPO toEventPO(EventBO eventBO);
 
+    @Named("mapToXRequestId")
     protected String mapToXRequestId(UUID xRequestId) {
         return xRequestId != null ? xRequestId.toString() : null;
     }
 
+    @Named("mapToInternalRequestId")
+    protected String mapToInternalRequestId(UUID internalRequestId) {
+        return internalRequestId != null ? internalRequestId.toString() : null;
+    }
 }

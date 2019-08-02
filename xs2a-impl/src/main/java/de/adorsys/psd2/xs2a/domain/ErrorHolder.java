@@ -32,7 +32,7 @@ public class ErrorHolder {
         this.errorType = builder.errorType;
     }
 
-    // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392, use TppMessageInformation instead
+    // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965, use TppMessageInformation instead
     @Deprecated
     public String getMessage() {
         return tppMessageInformationList.stream()
@@ -40,7 +40,7 @@ public class ErrorHolder {
                    .collect(Collectors.joining(", "));
     }
 
-    // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392, use TppMessageInformation instead
+    // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965, use TppMessageInformation instead
     @Deprecated
     public MessageErrorCode getErrorCode() {
         return getFirstTppMessage().getMessageErrorCode();
@@ -58,7 +58,7 @@ public class ErrorHolder {
         return new ErrorHolderBuilder(errorType);
     }
 
-    // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392, use builder with error type instead
+    // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965, use builder with error type instead
     @Deprecated
     public static ErrorHolderBuilder builder(MessageErrorCode errorCode) {
         return new ErrorHolderBuilder(errorCode);
@@ -82,7 +82,7 @@ public class ErrorHolder {
             this.errorCode = errorCode;
         }
 
-        // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392, use TppMessageInformation instead
+        // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965, use TppMessageInformation instead
         @Deprecated
         public ErrorHolderBuilder messages(List<String> messages) {
             this.messages = messages;
@@ -94,7 +94,7 @@ public class ErrorHolder {
             return this;
         }
 
-        // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392, use builder instead
+        // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965, use builder instead
         @Deprecated
         public ErrorHolderBuilder errorType(ErrorType errorType) {
             this.errorType = errorType;
@@ -109,7 +109,7 @@ public class ErrorHolder {
             return new ErrorHolder(this);
         }
 
-        // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392 when it won't be possible to create holder without tpp messages
+        // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965 when it won't be possible to create holder without tpp messages
         @Deprecated
         private List<TppMessageInformation> generateTppMessages(List<String> messages) {
             if (CollectionUtils.isEmpty(messages)) {

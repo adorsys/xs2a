@@ -1,0 +1,115 @@
+== Special modes
+:toc-title:
+//:imagesdir: usecases/diagrams
+:toc: left
+// horizontal line
+
+
+=== Multi-tenancy support
+
+=== Configure Event-Service in embedded mode
+
+XS2A is started as a standalone application in embedded mode (*Xs2aStandaloneStarter*). CMS does not start at all.
+
+*Xs2aStandaloneStarter* application has database configuration, event service and CMS parts inside.
+
+* Update *application.properties* of *xs2a-standalone-starter* by adding database configuration:
+
+```
+spring.datasource.url=jdbc:postgresql://localhost/consent
+spring.datasource.username=cms
+spring.datasource.password=cms
+```
+
+* Remove maven dependencies in *xs2a-standalone-starter* pom.xml:
+
+```
+ <dependency>
+     <groupId>de.adorsys.psd2</groupId>
+     <artifactId>consent-xs2a-client</artifactId>
+     <version>${project.version}</version>
+ </dependency>
+
+<dependency>
+     <groupId>de.adorsys.psd2</groupId>
+     <artifactId>event-service-rest-client</artifactId>
+     <version>${project.version}</version>
+ </dependency>
+```
+
+* Add maven dependencies in *xs2a-standalone-starter* pom.xml:
+
+```
+ <dependency>
+     <groupId>org.springframework.boot</groupId>
+     <artifactId>spring-boot-starter-data-jpa</artifactId>
+ </dependency>
+
+<dependency>
+     <groupId>de.adorsys.psd2</groupId>
+     <artifactId>event-service-xs2a-impl</artifactId>
+     <version>${project.version}</version>
+ </dependency>
+
+<dependency>
+     <groupId>de.adorsys.psd2</groupId>
+     <artifactId>event-service-aspsp-impl</artifactId>
+     <version>${project.version}</version>
+ </dependency>
+
+<dependency>
+     <groupId>de.adorsys.psd2</groupId>
+     <artifactId>event-service-persist-db-impl</artifactId>
+     <version>${project.version}</version>
+ </dependency>
+
+<dependency>
+     <groupId>de.adorsys.psd2</groupId>
+     <artifactId>consent-management-lib</artifactId>
+     <version>${project.version}</version>
+ </dependency>
+
+<dependency>
+     <groupId>de.adorsys.psd2</groupId>
+     <artifactId>consent-aspsp-web</artifactId>
+     <version>${project.version}</version>
+ </dependency>
+```
+
+* Update scan annotations in *Xs2aStandaloneStarter.java*:
+```
+   @ComponentScan(basePackages = "de.adorsys.psd2")
+   @EnableTransactionManagement
+   @EnableJpaRepositories(basePackages = {"de.adorsys.psd2.consent.repository", "de.adorsys.psd2.event"})
+   @EntityScan({"de.adorsys.psd2.consent.domain", "de.adorsys.psd2.event.persist.entity"})
+```
+
+==== Getting events
+
+Use endpoint for getting events *by period* and *instance_id* (GET aspsp-api/v1/events).
+
+Request parameters are passed as headers:
+
+.Request Headers
+|===
+|Header |Required |Default value
+
+|start-date |true |
+|end-date |true |
+|instance-id |false |UNDEFINED
+|===
+
+==== Configuring events recording
+
+Recording of events can be tweaked by using custom implementations of interfaces from *event-service-persist-api*.
+Two implementations of these interfaces are provided by default in separate modules:
+ - implementation for saving events to the database, can be enabled by adding dependency to the *event-service-persist-db-impl*
+ - implementation for logging events, can be enabled by adding dependency to the *event-service-persist-log-impl*
+
+These modules doesn't provide implementation of *de.adorsys.psd2.event.persist.EventReportRepository* for generating event reports.
+This means that either default implementation for reading events from the database should be added as a dependency (*event-service-db-report-impl*),
+endpoints for retrieving events report from the *cms-aspsp-api* should be disabled, or custom implementation of the interface should be provided.
+
+Logging implementation uses *SLF4J* for recording events, meaning that it's possible to configure and use any logging framework that's compatible with *SLF4J*.
+All events are being written to a separate logger *event-log* at *INFO* level.
+See <<SPI_Developer_Guide.adoc#configuring-logging,XS2A Logging configuring>> for more details on how to configure *SLF4J* logging.

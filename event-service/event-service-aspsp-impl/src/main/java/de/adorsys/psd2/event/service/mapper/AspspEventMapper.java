@@ -20,10 +20,7 @@ import de.adorsys.psd2.event.persist.model.ReportEvent;
 import de.adorsys.psd2.event.persist.model.PsuIdDataPO;
 import de.adorsys.psd2.event.service.model.AspspEvent;
 import de.adorsys.psd2.event.service.model.AspspPsuIdData;
-import org.mapstruct.IterableMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValueMappingStrategy;
+import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -38,6 +35,7 @@ public abstract class AspspEventMapper {
     protected JsonConverterService jsonConverterService;
 
     @Mapping(target = "xRequestId", source = "XRequestId", qualifiedByName = "mapToXRequestId")
+    @Mapping(target = "internalRequestId", source = "internalRequestId", qualifiedByName = "mapToInternalRequestId")
     @Mapping(target = "psuIdData", source = "psuIdData", qualifiedByName = "mapToPduIdDataSet")
     @Mapping(target = "payload", expression = "java(jsonConverterService.toObject(event.getPayload(), Object.class).orElse(null))")
     public abstract AspspEvent toAspspEvent(ReportEvent event);
@@ -55,8 +53,14 @@ public abstract class AspspEventMapper {
                    .collect(Collectors.toSet());
     }
 
+    @Named("mapToXRequestId")
     protected UUID mapToXRequestId(String xRequestId) {
         return xRequestId != null ? UUID.fromString(xRequestId) : null;
+    }
+
+    @Named("mapToInternalRequestId")
+    protected UUID mapToInternalRequestId(String internalRequestId) {
+        return internalRequestId != null ? UUID.fromString(internalRequestId) : null;
     }
 
     protected AspspPsuIdData mapToPduIdData(PsuIdDataPO psuIdDataPO) {

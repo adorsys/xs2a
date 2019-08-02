@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,8 @@ public class PisPsuDataService {
     public List<PsuIdData> getPsuDataByPaymentId(String paymentId) {
         return pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(paymentId)
                    .orElseGet(() -> {
-                       log.info("X-Request-ID [{}], Payment-ID [{}]. Can't get PsuData by payment ID because PsuData list not found by id at cms.", requestProviderService.getRequestId(), paymentId);
+                       log.info("InR-ID: [{}], X-Request-ID [{}], Payment-ID [{}]. Can't get PsuData by payment ID because PsuData list not found by id at cms.",
+                                requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
                        return null;
                    });
     }

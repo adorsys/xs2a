@@ -173,7 +173,6 @@ public interface AccountApi {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
     @ApiOperation(value = "Read Account Details", nickname = "readAccountDetails", notes = "Reads details about an account, with balances where required.  It is assumed that a consent of the PSU to  this access is already given and stored on the ASPSP system.  The addressed details of this account depends then on the stored consent addressed by consentId,  respectively the OAuth2 access token.  **NOTE:** The account-id can represent a multicurrency account.  In this case the currency code is set to \"XXX\".  Give detailed information about the addressed account.  Give detailed information about the addressed account together with balance information ", response = AccountDetails.class, authorizations = {
         @Authorization(value = "BearerAuthOAuth")
     }, tags = {})

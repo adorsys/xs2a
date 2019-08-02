@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -43,6 +44,9 @@ public class Xs2aTransactionsReport implements CustomContentTypeProvider {
     private boolean transactionReportHuge;
 
     private String responseContentType;
+
+    @Nullable
+    private String downloadId;
 
     public boolean isResponseContentTypeJson() {
         return RESPONSE_TYPE_JSON.equals(responseContentType);

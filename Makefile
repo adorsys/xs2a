@@ -19,7 +19,7 @@ prepare_diagrams: prepare_pages
 	cd pages/doc && plantuml **/*.puml
 
 pages : prepare_pages prepare_diagrams
-	cd pages && asciidoctor -R doc -D html '**/*.adoc'
+	cd pages && asciidoctor --failure-level WARN -R doc -D html '**/*.adoc'
 	cd pages && rsync -amR --include="*/" --include="*.png" --exclude="*" doc/ html
 	cd pages && cd html/doc && rsync -amR --include="*/" --include="*.png" --exclude="*" . ..
 	cd pages && cd html && rm -rf doc

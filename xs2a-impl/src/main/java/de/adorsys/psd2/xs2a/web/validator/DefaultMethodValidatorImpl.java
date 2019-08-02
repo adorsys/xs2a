@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
 import de.adorsys.psd2.xs2a.web.validator.header.HeaderValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.XRequestIdHeaderValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.path.PathParameterValidator;
 import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 @Component
-public class DefaultMethodValidatorImpl extends AbstractMethodValidator<HeaderValidator, BodyValidator, QueryParameterValidator> {
+public class DefaultMethodValidatorImpl extends AbstractMethodValidator<HeaderValidator, BodyValidator, QueryParameterValidator, PathParameterValidator> {
 
     private XRequestIdHeaderValidatorImpl xRequestIdHeaderValidator;
 
     @Autowired
     public DefaultMethodValidatorImpl(XRequestIdHeaderValidatorImpl xRequestIdHeaderValidator) {
-        super(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+        super(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
         this.xRequestIdHeaderValidator = xRequestIdHeaderValidator;
     }
 

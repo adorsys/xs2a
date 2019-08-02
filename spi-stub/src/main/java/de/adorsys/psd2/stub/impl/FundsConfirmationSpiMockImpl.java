@@ -34,8 +34,9 @@ public class FundsConfirmationSpiMockImpl implements FundsConfirmationSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiFundsConfirmationResponse> performFundsSufficientCheck(@NotNull SpiContextData contextData, @Nullable PiisConsent piisConsent, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("FundsConfirmationSpi#performFundsSufficientCheck: contextData {}, piisConsent {}, spiFundsConfirmationRequest {}, aspspConsentData {}", contextData, piisConsent, spiFundsConfirmationRequest, aspspConsentDataProvider.loadAspspConsentData());
+    public SpiResponse<SpiFundsConfirmationResponse> performFundsSufficientCheck(@NotNull SpiContextData contextData, @Nullable PiisConsent piisConsent, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @Nullable SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("FundsConfirmationSpi#performFundsSufficientCheck: contextData {}, piisConsent {}, spiFundsConfirmationRequest {}, aspspConsentData {}",
+                 contextData, piisConsent, spiFundsConfirmationRequest, aspspConsentDataProvider != null ? aspspConsentDataProvider.loadAspspConsentData() : null);
         SpiFundsConfirmationResponse response = new SpiFundsConfirmationResponse();
         response.setFundsAvailable(true);
 

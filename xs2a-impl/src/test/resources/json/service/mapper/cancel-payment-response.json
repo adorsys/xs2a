@@ -3,11 +3,5 @@
   "transactionStatus": "ACCP",
   "paymentId": "m7yCLQAd0eYCRm0GQlpSUkdX0zMvJvyxMZP5Y9t3_LXc-bUD1r4ipjym9p0cP3rgqC7ZF9NIw_bZTnhXSEbGFg==_=_psGLvQpt9Q",
   "paymentType": "payments",
-  "paymentProduct": "product",
-  "psuData": {
-    "psuId": "psu Id",
-    "psuIdType": "psuId Type",
-    "psuCorporateId": "psu Corporate Id",
-    "psuCorporateIdType": "psuCorporate Id Type"
-  }
+  "paymentProduct": "product"
 }

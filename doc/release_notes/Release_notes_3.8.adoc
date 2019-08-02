@@ -9,6 +9,15 @@
 * Refactor: removed SpiFrequencyCode enumerator
 * Bugfix: TPP URIs are validated in REDIRECT approach only
 * Feature: Add to events psuId from payments and consents
+* Include TPP roles in all access-log for all request entries
+* Bugfix: Finalised status of AIS consent changes after expiration
+* Bugfix: Payment and Consent initiation request where field X-Request-ID contains an invalid UUID return internal server error
+* Bugfix: Fix `scaRedirect` link in payment cancellation in case of implicit authorisation
+* Bugfix: Using invalid date format in request body results in internal server error being returned to the TPP
+* Include Redirect-ID in all access-log for the responses where applicable
+* Log HTTP requests and responses to a separate logger
+* Bugfix: Fix get common payment by redirect-id
+* Bugfix: Optional fields in JSON structure are commented in yaml
 
 == Refactor: ASPSP consent data refactoring
 
@@ -61,3 +70,65 @@ From now on, TPP URIs are validated only for REDIRECT approach and for requests:
 
 From now on, response to the `Event objects between two dates` Request (`GET /aspsp-api/v1/events/`) from CMS-ASPSP-API contains psu data list.
 If event does not contain psu data then this event will fetch psu data from payments or consents to which this event is dedicated.
+
+== Include TPP roles in all access-log for all request entries
+
+From now on, request entries in access-log will also contain list of TPP roles, extracted from the certificate.
+
+== Bugfix: Payment and Consent initiation request where field X-Request-ID contains an invalid UUID return internal server error
+
+From now on, while initiate payment or consent with invalid field `X-Request-ID` we'll see `400 FROMAT_ERROR` response with validator message instead
+`500 Internal Server Error`
+
+== Bugfix: Finalised status of AIS consent changes after expiration
+
+From now on, no changes can be done to the status of consent when it is expired or finalised
+while getting AIS Consent (`GET /psu-api/v1/ais/consent/{consent-id}` or `GET /api/v1/ais/consent/{consent-id}`) in CMS.
+
+== Bugfix: Fix `scaRedirect` link in payment cancellation in case of implicit authorisation
+
+From now on, `scaRedirect` link in response to payment cancellation request (`DELETE /v1/{payment-service}/{payment-product}/{paymentId}`)
+in Redirect approach in case of implicit authorisation will be correctly generated based on the `pisPaymentCancellationRedirectUrlToAspsp`
+property in the ASPSP profile instead of the `pisRedirectUrlToAspsp` one.
+
+== Bugfix: Using invalid date format in request body results in internal server error being returned to the TPP
+
+From now on, using invalid `ISODate` format in request body of PIS and AIS return
+
+ HTTP 400 FORMAT_ERROR "Wrong format for 'validUntil': value should be ISO_DATE 'YYYY-MM-DD' format."
+
+Using invalid `ISODateTime` format in request body of PIS return
+
+ HTTP 400 FORMAT_ERROR "Wrong format for 'requestedExecutionTime': value should be ISO_DATE_TIME 'YYYY-MM-DD'T'HH:mm:ssZ' format."
+
+== Include Redirect-ID in all access-log for the responses where applicable
+
+From now on, response entries in access-log will also contain redirect ID, if it's present in the response.
+
+== Log HTTP requests and responses to a separate logger
+
+From now, all HTTP requests and responses are being logged to a separate logger (`request-log`).
+At the moment this logger records:
+
+ - request URI with query params
+ - request headers
+ - request payload
+ - response status
+ - response headers
+ - response body
+
+Logging can be configured in the `logback-spring.xml` file. By default, log records from this logger are being written to the console only.
+This behaviour can be changed by configuring the `logback-spring.xml`.
+
+== Bugfix: Fix get common payment by redirect-id
+
+Executing GET pain common payment in CMS-PSU-API on `/psu-api/v1/payment/redirect/{redirect-id}` or `/psu-api/v1/payment/cancellation/redirect/{redirect-id}`
+caused internal server error. From now on, this bug is fixed.
+
+== Bugfix: Optional fields in JSON structure are commented in yaml
+
+From now on, TPP can provide `ultimateDebtor`, `ultimateCreditor`, `purposeCode`, `remittanceInformationStructured` fields
+in request body during payment initiation process (`POST /v1/{payment-service}/{payment-product}`). These fields
+are available in payment objects in SPI API. Added validators for these fields.
+Also these fields present in `CmsPayment` object in CMS-PSU-API and CMS-ASPSP-API.
+

@@ -123,7 +123,7 @@ public class CmsPsuPisMapper {
     private CmsPayment mapToCmsBulkPayment(List<PisPaymentData> pisPaymentDataList, String paymentProduct) {
         PisPaymentData bulkPisPaymentData = pisPaymentDataList.get(0);
         CmsBulkPayment bulkPayment = new CmsBulkPayment();
-        bulkPayment.setPaymentId(bulkPisPaymentData.getPaymentId());
+        bulkPayment.setPaymentId(bulkPisPaymentData.getPaymentData().getPaymentId());
         bulkPayment.setBatchBookingPreferred(false);
         bulkPayment.setDebtorAccount(mapToCmsAccountReference(bulkPisPaymentData.getDebtorAccount()));
         bulkPayment.setPaymentProduct(paymentProduct);

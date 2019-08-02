@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,8 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                 TppCertificateData tppCertificateData = CertificateExtractorUtil.extract(encodedTppQwacCert);
 
                 if (isCertificateExpired(tppCertificateData.getNotAfter())) {
-                    log.info("X-Request-ID: [{}], TPP Certificate is expired", requestProviderService.getRequestId());
+                    log.info("InR-ID: [{}], X-Request-ID: [{}], TPP Certificate is expired",
+                             requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
 
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().print(new TppErrorMessage(ERROR, CERTIFICATE_EXPIRED, "Certificate is expired"));
@@ -98,7 +99,8 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                 tppInfo.setTppRoles(xs2aTppRoles);
 
                 if (!tppRoleValidationService.hasAccess(tppInfo, request)) {
-                    log.info("X-Request-ID: [{}], Access forbidden for TPP with authorisation number: [{}]", requestProviderService.getRequestId(), tppCertificateData.getPspAuthorisationNumber());
+                    log.info("InR-ID: [{}], X-Request-ID: [{}], Access forbidden for TPP with authorisation number: [{}]",
+                             requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), tppCertificateData.getPspAuthorisationNumber());
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().print(new TppErrorMessage(ERROR, CERTIFICATE_INVALID, "You don't have access to this resource"));
                     return;
@@ -106,7 +108,8 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
 
                 tppInfoHolder.setTppInfo(tppInfo);
             } catch (CertificateValidationException e) {
-                log.info("X-Request-ID: [{}], TPP unauthorised because CertificateValidationException: {}", requestProviderService.getRequestId(), e.getMessage());
+                log.info("InR-ID: [{}], X-Request-ID: [{}], TPP unauthorised because CertificateValidationException: {}",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), e.getMessage());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().print(new TppErrorMessage(ERROR, CERTIFICATE_INVALID, "You don't have access to this resource"));
                 return;

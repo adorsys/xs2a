@@ -16,27 +16,47 @@
 
 package de.adorsys.psd2.xs2a.service.validator.tpp;
 
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 
+@Slf4j
 @Component
-public class PiisTppInfoValidator extends TppInfoValidator {
-    public PiisTppInfoValidator(TppInfoCheckerService tppInfoCheckerService, RequestProviderService requestProviderService) {
-        super(tppInfoCheckerService, requestProviderService);
+@RequiredArgsConstructor
+public class PiisTppInfoValidator {
+    static final String TPP_ERROR_MESSAGE = "TPP certificate doesn’t match the initial request";
+
+    private final RequestProviderService requestProviderService;
+    private final TppService tppService;
+
+    public ValidationResult validateTpp(String authorisationNumber, TppInfo tppInfo) {
+        if (differsFromTppInRequest(authorisationNumber, tppInfo)) {
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. TPP validation has failed: TPP in consent/payment doesn't match the TPP in request",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+            return ValidationResult.invalid(PIIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400, TPP_ERROR_MESSAGE));
+        }
+
+        return ValidationResult.valid();
     }
 
-    @Override
-    ErrorType getErrorType() {
-        return PIIS_400;
-    }
+    private boolean differsFromTppInRequest(String tppAuthorisationNumber, TppInfo tppInfo) {
+        if (StringUtils.isBlank(tppAuthorisationNumber) && (tppInfo == null || tppInfo.isNotValid())) {
+            return true;
+        }
 
-    @Override
-    TppMessageInformation getTppMessageInformation() {
-        return TppMessageInformation.of(CONSENT_UNKNOWN_400, TPP_ERROR_MESSAGE);
+        String authorisationNumber = StringUtils.isNotBlank(tppAuthorisationNumber) ?
+                                         tppAuthorisationNumber :
+                                         tppInfo.getAuthorisationNumber();
+        TppInfo tppInRequest = tppService.getTppInfo();
+        return !tppInRequest.getAuthorisationNumber().equals(authorisationNumber);
     }
 }

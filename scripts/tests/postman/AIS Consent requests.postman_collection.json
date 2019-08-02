@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fd97cfdb-b08d-4511-914f-7c5af23b7d4e",
+		"_postman_id": "3c57ddd9-abd8-488c-8f63-9a5164f5113d",
 		"name": "AIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -4349,6 +4349,7 @@
 											"const jsonData = pm.response.json();",
 											"",
 											"pm.globals.set(\"resource_id\", jsonData.transactions.booked[0].transactionId);",
+											"pm.globals.set(\"dowload_link\", jsonData._links.download.href);",
 											"",
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -4451,6 +4452,29 @@
 									]
 								},
 								"description": "Read transaction reports or transaction lists of a given account adressed by \"account-id\", depending on the steering parameter  \"bookingStatus\" together with balances.  For a given account, additional parameters are e.g. the attributes \"dateFrom\" and \"dateTo\".  The ASPSP might add balance information, if transaction lists without balances are not supported. "
+							},
+							"response": []
+						},
+						{
+							"name": "10. Download transactions",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{dowload_link}}",
+									"host": [
+										"{{dowload_link}}"
+									]
+								}
 							},
 							"response": []
 						}
@@ -5312,6 +5336,7 @@
 											"const jsonData = pm.response.json();",
 											"",
 											"pm.globals.set(\"resource_id\", jsonData.transactions.booked[0].transactionId);",
+											"pm.globals.set(\"dowload_link\", jsonData._links.download.href);",
 											"",
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -5462,7 +5487,30 @@
 							"response": []
 						},
 						{
-							"name": "11 Read Transaction Details",
+							"name": "11. Download transactions",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{dowload_link}}",
+									"host": [
+										"{{dowload_link}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "12 Read Transaction Details",
 							"event": [
 								{
 									"listen": "test",
@@ -7784,6 +7832,8 @@
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
+											"pm.globals.set(\"dowload_link\", jsonData._links.download.href);",
+											"",
 											"pm.test(\"Status code is 401\", function () {",
 											"    pm.response.to.have.status(401);",
 											"});",
@@ -7855,6 +7905,29 @@
 									]
 								},
 								"description": "Read transaction reports or transaction lists of a given account adressed by \"account-id\", depending on the steering parameter  \"bookingStatus\" together with balances.  For a given account, additional parameters are e.g. the attributes \"dateFrom\" and \"dateTo\".  The ASPSP might add balance information, if transaction lists without balances are not supported. "
+							},
+							"response": []
+						},
+						{
+							"name": "10. Download transactions",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{dowload_link}}",
+									"host": [
+										"{{dowload_link}}"
+									]
+								}
 							},
 							"response": []
 						}
@@ -8588,6 +8661,8 @@
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
+											"pm.globals.set(\"dowload_link\", jsonData._links.download.href);",
+											"",
 											"pm.test(\"Status code is 401\", function () {",
 											"    pm.response.to.have.status(401);",
 											"});",
@@ -8659,6 +8734,29 @@
 									]
 								},
 								"description": "Read transaction reports or transaction lists of a given account adressed by \"account-id\", depending on the steering parameter  \"bookingStatus\" together with balances.  For a given account, additional parameters are e.g. the attributes \"dateFrom\" and \"dateTo\".  The ASPSP might add balance information, if transaction lists without balances are not supported. "
+							},
+							"response": []
+						},
+						{
+							"name": "10. Download transactions",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{dowload_link}}",
+									"host": [
+										"{{dowload_link}}"
+									]
+								}
 							},
 							"response": []
 						}
@@ -9315,6 +9413,8 @@
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
+											"pm.globals.set(\"dowload_link\", jsonData._links.download.href);",
+											"",
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
 											"});",
@@ -9407,6 +9507,29 @@
 									]
 								},
 								"description": "Read transaction reports or transaction lists of a given account adressed by \"account-id\", depending on the steering parameter  \"bookingStatus\" together with balances.  For a given account, additional parameters are e.g. the attributes \"dateFrom\" and \"dateTo\".  The ASPSP might add balance information, if transaction lists without balances are not supported. "
+							},
+							"response": []
+						},
+						{
+							"name": "10. Download transactions",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{dowload_link}}",
+									"host": [
+										"{{dowload_link}}"
+									]
+								}
 							},
 							"response": []
 						}
@@ -13100,6 +13223,7 @@
 									"const jsonData = pm.response.json();",
 									"",
 									"pm.globals.set(\"resource_id\", jsonData.transactions.booked[0].transactionId);",
+									"pm.globals.set(\"dowload_link\", jsonData._links.download.href);",
 									"",
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -13209,7 +13333,30 @@
 					"response": []
 				},
 				{
-					"name": "9 Read Transaction Details",
+					"name": "9. Download transactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Consent-ID",
+								"value": "{{consent_id}}"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"url": {
+							"raw": "{{dowload_link}}",
+							"host": [
+								"{{dowload_link}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "10 Read Transaction Details",
 					"event": [
 						{
 							"listen": "test",
@@ -13259,7 +13406,7 @@
 					"response": []
 				},
 				{
-					"name": "10 Read Transaction Details Exceeded",
+					"name": "11 Read Transaction Details Exceeded",
 					"event": [
 						{
 							"listen": "test",
@@ -13315,7 +13462,7 @@
 					"response": []
 				},
 				{
-					"name": "11 Read Transaction List Exceeded",
+					"name": "12 Read Transaction List Exceeded",
 					"event": [
 						{
 							"listen": "test",
@@ -13398,7 +13545,7 @@
 					"response": []
 				},
 				{
-					"name": "12 Read Balance Exceeded",
+					"name": "13 Read Balance Exceeded",
 					"event": [
 						{
 							"listen": "test",
@@ -13453,7 +13600,7 @@
 					"response": []
 				},
 				{
-					"name": "13 Read Account Details Exceeded",
+					"name": "14 Read Account Details Exceeded",
 					"event": [
 						{
 							"listen": "test",
@@ -13513,7 +13660,7 @@
 					"response": []
 				},
 				{
-					"name": "14 Read Account List Exceeded",
+					"name": "15 Read Account List Exceeded",
 					"event": [
 						{
 							"listen": "test",

@@ -19,9 +19,9 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
+import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentStatusFactory;
-import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -98,8 +98,8 @@ public class PaymentService {
 
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(payment, paymentInitiationParameters));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], PaymentType [{}], PaymentProduct [{}]. Create payment - validation failed: [{}]",
-                     requestProviderService.getRequestId(), paymentInitiationParameters.getPaymentType(), paymentInitiationParameters.getPaymentProduct(), validationResult.getMessageError());
+            log.info("InR-ID: [{}], X-Request-ID: [{}], PaymentType [{}], PaymentProduct [{}]. Create payment - validation failed: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentInitiationParameters.getPaymentType(), paymentInitiationParameters.getPaymentProduct(), validationResult.getMessageError());
             return ResponseObject.<PaymentInitiationResponse>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -129,7 +129,8 @@ public class PaymentService {
         }
 
         if (responseObject.hasError()) {
-            log.info("X-Request-ID: [{}]. Create payment failed: [{}]", requestProviderService.getRequestId(), responseObject.getError());
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. Create payment failed: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), responseObject.getError());
             return ResponseObject.<PaymentInitiationResponse>builder()
                        .fail(responseObject.getError())
                        .build();
@@ -153,7 +154,8 @@ public class PaymentService {
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
 
         if (!pisCommonPaymentOptional.isPresent()) {
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. Get payment failed. PIS CommonPayment not found by id", requestProviderService.getRequestId(), encryptedPaymentId);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get payment failed. PIS CommonPayment not found by id",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId);
             return ResponseObject.builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
@@ -162,8 +164,8 @@ public class PaymentService {
         PisCommonPaymentResponse commonPaymentResponse = pisCommonPaymentOptional.get();
         ValidationResult validationResult = getPaymentByIdValidator.validate(new GetPaymentByIdPO(commonPaymentResponse, paymentType, paymentProduct));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. Get payment - validation failed: {}",
-                     requestProviderService.getRequestId(), encryptedPaymentId, validationResult.getMessageError());
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get payment - validation failed: {}",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId, validationResult.getMessageError());
             return ResponseObject.builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -172,24 +174,27 @@ public class PaymentService {
         CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(commonPaymentResponse);
         PaymentInformationResponse response;
 
+        PsuIdData psuIdData = getPsuIdDataFromRequest();
         // TODO should be refactored https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/533
         if (commonPayment.getPaymentData() != null) {
-            response = readCommonPaymentService.getPayment(commonPayment, readPsuIdDataFromList(commonPayment.getPsuDataList()), encryptedPaymentId);
+            response = readCommonPaymentService.getPayment(commonPayment, psuIdData, encryptedPaymentId);
         } else {
             List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(commonPaymentResponse);
             if (CollectionUtils.isEmpty(pisPayments)) {
-                log.info("X-Request-ID: [{}], Payment-ID [{}]. Get payment failed. Payments not found at PisCommonPayment.", requestProviderService.getRequestId(), encryptedPaymentId);
+                log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get payment failed. Payments not found at PisCommonPayment.",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId);
                 return ResponseObject.builder()
                            .fail(PIS_400, of(FORMAT_ERROR, PAYMENT_NOT_FOUND_MESSAGE))
                            .build();
             }
 
             ReadPaymentService<PaymentInformationResponse> readPaymentService = readPaymentFactory.getService(paymentType.getValue());
-            response = readPaymentService.getPayment(pisPayments, commonPaymentResponse.getPaymentProduct(), readPsuIdDataFromList(commonPayment.getPsuDataList()), encryptedPaymentId); //NOT USED IN 1.2
+            response = readPaymentService.getPayment(pisPayments, commonPaymentResponse.getPaymentProduct(), psuIdData, encryptedPaymentId); //NOT USED IN 1.2
         }
 
         if (response.hasError()) {
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. Read Payment failed: {}", requestProviderService.getRequestId(), encryptedPaymentId, response.getErrorHolder());
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Read Payment failed: {}",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId, response.getErrorHolder());
             return ResponseObject.builder()
                        .fail(response.getErrorHolder())
                        .build();
@@ -212,7 +217,8 @@ public class PaymentService {
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
 
         if (!pisCommonPaymentOptional.isPresent()) {
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. Get Payment Status failed. PIS CommonPayment not found by id", requestProviderService.getRequestId(), encryptedPaymentId);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get Payment Status failed. PIS CommonPayment not found by id",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId);
             return ResponseObject.<TransactionStatus>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
@@ -221,8 +227,8 @@ public class PaymentService {
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
         ValidationResult validationResult = getPaymentStatusByIdValidator.validate(new GetPaymentStatusByIdPO(pisCommonPaymentResponse, paymentType, paymentProduct));
         if (validationResult.isNotValid()) {
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. Get payment status by id - validation failed: {}",
-                     requestProviderService.getRequestId(), encryptedPaymentId, validationResult.getMessageError());
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get payment status by id - validation failed: {}",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId, validationResult.getMessageError());
             return ResponseObject.<TransactionStatus>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -233,8 +239,7 @@ public class PaymentService {
             return ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build();
         }
 
-        List<PsuIdData> psuData = pisPsuDataService.getPsuDataByPaymentId(encryptedPaymentId);
-        SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(readPsuIdDataFromList(psuData));
+        SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(getPsuIdDataFromRequest());
 
         ReadPaymentStatusResponse readPaymentStatusResponse;
 
@@ -244,7 +249,8 @@ public class PaymentService {
         } else {
             List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(pisCommonPaymentResponse);
             if (CollectionUtils.isEmpty(pisPayments)) {
-                log.info("X-Request-ID: [{}], Payment-ID [{}]. Get Payment Status failed. Payments not found at PisCommonPayment.", requestProviderService.getRequestId(), encryptedPaymentId);
+                log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get Payment Status failed. Payments not found at PisCommonPayment.",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId);
                 return ResponseObject.<TransactionStatus>builder()
                            .fail(PIS_400, of(FORMAT_ERROR, PAYMENT_NOT_FOUND_MESSAGE))
                            .build();
@@ -256,7 +262,8 @@ public class PaymentService {
 
         if (readPaymentStatusResponse.hasError()) {
             ErrorHolder errorHolder = readPaymentStatusResponse.getErrorHolder();
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. Read Payment status failed: {}", requestProviderService.getRequestId(), encryptedPaymentId, errorHolder);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Read Payment status failed: {}",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId, errorHolder);
             return ResponseObject.<TransactionStatus>builder()
                        .fail(errorHolder)
                        .build();
@@ -265,16 +272,16 @@ public class PaymentService {
         TransactionStatus transactionStatus = readPaymentStatusResponse.getStatus();
 
         if (transactionStatus == null) {
-            log.info("X-Request-ID: [{}], Payment-ID [{}].  Get Payment Status by id failed. Transaction status is null.",
-                     requestProviderService.getRequestId(), encryptedPaymentId);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}].  Get Payment Status by id failed. Transaction status is null.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId);
             return ResponseObject.<TransactionStatus>builder()
                        .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
         if (!updatePaymentAfterSpiService.updatePaymentStatus(encryptedPaymentId, transactionStatus)) {
-            log.info("X-Request-ID: [{}], Payment ID: [{}], Transaction status: [{}]. Update of a payment status in the CMS has failed.",
-                     requestProviderService.getRequestId(), encryptedPaymentId, transactionStatus);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}], Transaction status: [{}]. Update of a payment status in the CMS has failed.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId, transactionStatus);
         }
 
         return ResponseObject.<TransactionStatus>builder().body(transactionStatus).build();
@@ -291,7 +298,8 @@ public class PaymentService {
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentCancellationRequest.getEncryptedPaymentId());
 
         if (!pisCommonPaymentOptional.isPresent()) {
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. Cancel payment has failed. Payment not found by id.", requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId());
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Cancel payment has failed. Payment not found by id.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId());
             return ResponseObject.<CancelPaymentResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
@@ -301,15 +309,16 @@ public class PaymentService {
         ValidationResult validationResult = cancelPaymentValidator.validate(
             new CancelPaymentPO(pisCommonPaymentResponse, paymentCancellationRequest.getPaymentType(), paymentCancellationRequest.getPaymentProduct()));
         if (validationResult.isNotValid()) {
-            log.warn("X-Request-ID: [{}], Payment-ID [{}]. Cancel payment - validation failed: [{}]",
-                     requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId(), validationResult.getMessageError());
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Cancel payment - validation failed: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId(), validationResult.getMessageError());
             return ResponseObject.<CancelPaymentResponse>builder()
                        .fail(validationResult.getMessageError())
                        .build();
         }
 
         if (isFinalisedPayment(pisCommonPaymentResponse)) {
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. Cancel payment has failed. Payment has finalised status", requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId());
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Cancel payment has failed. Payment has finalised status",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId());
             return ResponseObject.<CancelPaymentResponse>builder()
                        .fail(PIS_CANC_405, of(CANCELLATION_INVALID))
                        .build();
@@ -323,8 +332,8 @@ public class PaymentService {
         } else {
             List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(pisCommonPaymentResponse);
             if (CollectionUtils.isEmpty(pisPayments)) {
-                log.info("X-Request-ID: [{}], Payment-ID: [{}]. Cancel payment has failed: Payments not found at PisCommonPayment.",
-                         requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId());
+                log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID: [{}]. Cancel payment has failed: Payments not found at PisCommonPayment.",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId());
                 return ResponseObject.<CancelPaymentResponse>builder()
                            .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                            .build();
@@ -332,8 +341,8 @@ public class PaymentService {
 
             Optional<? extends SpiPayment> spiPaymentOptional = spiPaymentFactory.createSpiPaymentByPaymentType(pisPayments, pisCommonPaymentResponse.getPaymentProduct(), paymentCancellationRequest.getPaymentType());
             if (!spiPaymentOptional.isPresent()) {
-                log.info("X-Request-ID: [{}], Payment ID: [{}]. Cancel payment has failed: couldn't create SPI payment from CMS payments",
-                         requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId());
+                log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Cancel payment has failed: couldn't create SPI payment from CMS payments",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId());
                 return ResponseObject.<CancelPaymentResponse>builder()
                            .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                            .build();
@@ -341,8 +350,7 @@ public class PaymentService {
             spiPayment = spiPaymentOptional.get();
         }
 
-        List<PsuIdData> psuData = pisCommonPaymentResponse.getPsuData();
-        return cancelPaymentService.initiatePaymentCancellation(readPsuIdDataFromList(psuData), spiPayment,
+        return cancelPaymentService.initiatePaymentCancellation(spiPayment,
                                                                 paymentCancellationRequest.getEncryptedPaymentId(),
                                                                 paymentCancellationRequest.getTppExplicitAuthorisationPreferred(),
                                                                 paymentCancellationRequest.getTppRedirectUri());
@@ -367,10 +375,9 @@ public class PaymentService {
         return pisPayments;
     }
 
-    private PsuIdData readPsuIdDataFromList(List<PsuIdData> psuIdDataList) { //TODO rework psudata list
-        if (CollectionUtils.isNotEmpty(psuIdDataList)) {
-            return psuIdDataList.get(0);
-        }
-        return null;
+    private PsuIdData getPsuIdDataFromRequest() {
+        PsuIdData psuIdData = requestProviderService.getPsuIdData();
+        log.info("X-Request-ID: [{}]. Corresponding PSU-ID {} was provided from request.", requestProviderService.getRequestId(), psuIdData);
+        return psuIdData;
     }
 }

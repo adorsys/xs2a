@@ -5,7 +5,8 @@ For Versioning policy see xref:Version_Policy.adoc[Versioning, Release and Suppo
 For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 3.x (Development)
-* xref:release_notes/Release_notes_3.8.adoc[Version 3.8   (release date: ?)]
+* xref:release_notes/Release_notes_3.9.adoc[Version 3.9   (release date: ?)]
+* xref:release_notes/Release_notes_3.8.adoc[Version 3.8   (release date: 19.07.2019)]
 * xref:release_notes/Release_notes_3.7.adoc[Version 3.7   (release date: 05.07.2019)]
 * xref:release_notes/Release_notes_3.6.adoc[Version 3.6   (release date: 21.06.2019)]
 * xref:release_notes/Release_notes_3.5.adoc[Version 3.5   (release date: 07.06.2019)]
@@ -19,7 +20,11 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 2.x (Stable. Supported minimum till 01.08.2019)
 
-* xref:release_notes/Release_notes_2.7.adoc[Version 2.7  (release date: ?)]
+* xref:release_notes/Release_notes_2.11.adoc[Version 2.11  (release date: ?)]
+* xref:release_notes/Release_notes_2.10.adoc[Version 2.10  (release date: 19.07.2019)]
+* xref:release_notes/Release_notes_2.9.adoc[Version 2.9  (release date: 05.07.2019)]
+* xref:release_notes/Release_notes_2.8.adoc[Version 2.8  (release date: 21.06.2019)]
+* xref:release_notes/Release_notes_2.7.adoc[Version 2.7  (release date: 07.06.2019)]
 * xref:release_notes/Release_notes_2.6.adoc[Version 2.6   (release date: 24.05.2019)]
 * xref:release_notes/Release_notes_2.5.2.adoc[Version 2.5.2   (release date: 15.05.2019)]
 * xref:release_notes/Release_notes_2.5.1.adoc[Version 2.5.1   (release date: 14.05.2019)]

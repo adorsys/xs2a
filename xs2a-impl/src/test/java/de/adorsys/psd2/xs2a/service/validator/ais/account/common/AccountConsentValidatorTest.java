@@ -120,6 +120,21 @@ public class AccountConsentValidatorTest {
         assertTrue(actual.isValid());
     }
 
+
+    @Test
+    public void testValidateAccessExceeded_oneOff_shouldReturnExceededError() {
+        // Given
+        when(requestProviderService.isRequestFromPsu()).thenReturn(false);
+        AccountConsent accountConsent = buildOneOffAccountConsentAccessExceeded();
+
+        // When
+        ValidationResult actual = accountConsentValidator.validate(accountConsent, REQUEST_URI);
+
+        // Then
+        assertTrue(actual.isNotValid());
+        assertEquals(AIS_CONSENT_ACCESS_EXCEEDED_ERROR, actual.getMessageError());
+    }
+
     private AccountConsent buildAccountConsentValid() {
         return new AccountConsent("id", null, false, LocalDate.now().plusYears(1), 0,
                                   null, ConsentStatus.VALID, false, false,
@@ -141,8 +156,15 @@ public class AccountConsentValidatorTest {
                                   Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 10));
     }
 
+    private AccountConsent buildOneOffAccountConsentAccessExceeded() {
+        return new AccountConsent("id", null, false, LocalDate.now().plusYears(1), 1,
+                                  null, ConsentStatus.VALID, false, false,
+                                  Collections.emptyList(), buildTppInfo(), null, false,
+                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 0));
+    }
+
     private AccountConsent buildAccountConsentAccessExceeded() {
-        return new AccountConsent("id", null, false, LocalDate.now().plusYears(1), 0,
+        return new AccountConsent("id", null, true, LocalDate.now().plusYears(1), 0,
                                   null, ConsentStatus.VALID, false, false,
                                   Collections.emptyList(), buildTppInfo(), null, false,
                                   Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 0));

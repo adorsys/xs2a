@@ -36,6 +36,7 @@ public class EventEntityForReport {
     private String psuCorporateId;
     private String psuCorporateIdType;
     private String tppAuthorisationNumber;
+    private String internalRequestId;
     private String xRequestId;
     private String psuExId;
     private String psuExIdType;

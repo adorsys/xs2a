@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,7 +114,8 @@ public class Xs2aEventService {
     private void recordEventInCms(EventBO event) {
         boolean recorded = eventService.recordEvent(event);
         if (!recorded) {
-            log.info("X-REQUEST-ID: [{}], TPP ID: [{}]. Couldn't record event from TPP request: {}", event.getXRequestId(), event.getTppAuthorisationNumber(), event);
+            log.info("InR-ID: [{}], X-REQUEST-ID: [{}], TPP ID: [{}]. Couldn't record event from TPP request: {}",
+                     event.getInternalRequestId(), event.getXRequestId(), event.getTppAuthorisationNumber(), event);
         }
     }
 
@@ -122,13 +123,14 @@ public class Xs2aEventService {
         RequestData requestData = requestProviderService.getRequestData();
 
         EventBO event = EventBO.builder()
-                          .timestamp(OffsetDateTime.now())
-                          .eventOrigin(EventOrigin.TPP)
-                          .eventType(eventType)
-                          .psuIdData(eventMapper.toEventPsuIdData(requestData.getPsuIdData()))
-                          .xRequestId(requestData.getRequestId())
-                          .tppAuthorisationNumber(tppService.getTppInfo().getAuthorisationNumber())
-                          .build();
+                            .timestamp(OffsetDateTime.now())
+                            .eventOrigin(EventOrigin.TPP)
+                            .eventType(eventType)
+                            .psuIdData(eventMapper.toEventPsuIdData(requestData.getPsuIdData()))
+                            .xRequestId(requestData.getRequestId())
+                            .internalRequestId(requestData.getInternalRequestId())
+                            .tppAuthorisationNumber(tppService.getTppInfo().getAuthorisationNumber())
+                            .build();
         RequestEventPayload payload = buildRequestEventPayload(requestData, body);
         event.setPayload(payload);
 

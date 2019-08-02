@@ -82,15 +82,15 @@ public class PisCommonDecoupledService {
                 spiResponse = paymentCancellationSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), authenticationId, authenticationMethodId, payment, aspspConsentDataProvider);
                 break;
             default:
-                log.info("X-Request-ID: [{}], Payment-ID [{}]. Payment Authorisation Type {} is not supported.",
-                         requestProviderService.getRequestId(), paymentId, scaType);
+                log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Payment Authorisation Type {} is not supported.",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, scaType);
                 throw new IllegalArgumentException("This SCA type is not supported: " + scaType);
         }
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.warn("X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. Start SPI Authorisation Decoupled SCA has failed. Error msg: {}.",
-                     requestProviderService.getRequestId(), paymentId, authenticationId, psuData.getPsuId(), errorHolder);
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. Start SPI Authorisation Decoupled SCA has failed. Error msg: {}.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authenticationId, psuData.getPsuId(), errorHolder);
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, psuData);
         }
 

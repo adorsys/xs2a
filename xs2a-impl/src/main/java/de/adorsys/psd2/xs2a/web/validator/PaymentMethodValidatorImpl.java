@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.validator;
 
 import de.adorsys.psd2.xs2a.web.validator.body.payment.PaymentBodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.PaymentHeaderValidator;
+import de.adorsys.psd2.xs2a.web.validator.path.PathParameterValidator;
 import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,14 +27,14 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class PaymentMethodValidatorImpl extends AbstractMethodValidator<PaymentHeaderValidator, PaymentBodyValidator, QueryParameterValidator> {
+public class PaymentMethodValidatorImpl extends AbstractMethodValidator<PaymentHeaderValidator, PaymentBodyValidator, QueryParameterValidator, PathParameterValidator> {
 
     private static final String METHOD_NAME = "_initiatePayment";
 
     @Autowired
     protected PaymentMethodValidatorImpl(List<PaymentHeaderValidator> headerValidators,
                                          List<PaymentBodyValidator> bodyValidators) {
-        super(headerValidators, bodyValidators, Collections.emptyList());
+        super(headerValidators, bodyValidators, Collections.emptyList(), Collections.emptyList());
     }
 
     @Override

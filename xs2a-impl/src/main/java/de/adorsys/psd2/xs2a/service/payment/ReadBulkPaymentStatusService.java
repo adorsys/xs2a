@@ -68,8 +68,8 @@ public class ReadBulkPaymentStatusService implements ReadPaymentStatusService {
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. READ BULK Payment STATUS failed. Can't get Payment status by id at SPI-level. Error msg: [{}]",
-                     requestProviderService.getRequestId(), spiBulkPaymentOptional.get().getPaymentId(), errorHolder);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. READ BULK Payment STATUS failed. Can't get Payment status by id at SPI-level. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), spiBulkPaymentOptional.get().getPaymentId(), errorHolder);
             return new ReadPaymentStatusResponse(errorHolder);
         }
 
