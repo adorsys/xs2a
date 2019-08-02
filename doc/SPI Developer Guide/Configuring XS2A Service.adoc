@@ -4,6 +4,7 @@
 :toc: left
 // horizontal line
 
+[#configuring-logging]
 === Configuring Logging
 
 XS2A uses *SLF4J* for logging and provides named loggers *access-log* and *request-log*, as well as per class loggers(with logger name set to corresponding fully-qualified name of the class).
