@@ -99,3 +99,17 @@ Request parameters are passed as headers:
 |instance-id |false |UNDEFINED
 |===
 
+==== Configuring events recording
+
+Recording of events can be tweaked by using custom implementations of interfaces from *event-service-persist-api*.
+Two implementations of these interfaces are provided by default in separate modules:
+ - implementation for saving events to the database, can be enabled by adding dependency to the *event-service-persist-db-impl*
+ - implementation for logging events, can be enabled by adding dependency to the *event-service-persist-log-impl*
+
+These modules doesn't provide implementation of *de.adorsys.psd2.event.persist.EventReportRepository* for generating event reports.
+This means that either default implementation for reading events from the database should be added as a dependency (*event-service-db-report-impl*),
+endpoints for retrieving events report from the *cms-aspsp-api* should be disabled, or custom implementation of the interface should be provided.
+
+Logging implementation uses *SLF4J* for recording events, meaning that it's possible to configure and use any logging framework that's compatible with *SLF4J*.
+All events are being written to a separate logger *event-log* at *INFO* level.
+See <<SPI_Developer_Guide.adoc#configuring-logging,XS2A Logging configuring>> for more details on how to configure *SLF4J* logging.
