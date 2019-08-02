@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,8 @@ public class ValueValidatorService {
                                             .collect(Collectors.toList());
 
         if (!violations.isEmpty()) {
-            log.debug("X-Request-ID: [{}]. Value validation failed: {}", requestProviderService.getRequestId(), violations.toString());
+            log.debug("InR-ID: [{}], X-Request-ID: [{}]. Value validation failed: {}",
+                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), violations.toString());
             throw new ValidationException(FORMAT_ERROR.name() + ": " + violations);
         }
     }

@@ -83,8 +83,8 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
         if (!accountConsentOptional.isPresent()) {
-            log.warn("X-Request-ID: [{}], Consent-ID [{}]. AIS_SCAMETHODSELECTED stage. Apply authorisation when update consent PSU data has failed. Consent not found by id.",
-                     requestProviderService.getRequestId(), consentId);
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}]. AIS_SCAMETHODSELECTED stage. Apply authorisation when update consent PSU data has failed. Consent not found by id.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
             MessageError messageError = new MessageError(ErrorType.AIS_400, of(MessageErrorCode.CONSENT_UNKNOWN_400));
             return createFailedResponse(messageError, Collections.emptyList(), request);
         }
@@ -97,8 +97,8 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
 
         if (spiResponse.hasError()) {
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));
-            log.warn("X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_SCAMETHODSELECTED stage. Verify SCA authorisation failed when update PSU data. Error msg: [{}]",
-                     requestProviderService.getRequestId(), consentId, request.getAuthorizationId(), psuData.getPsuId(), messageError);
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_SCAMETHODSELECTED stage. Verify SCA authorisation failed when update PSU data. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, request.getAuthorizationId(), psuData.getPsuId(), messageError);
             return createFailedResponse(messageError, spiResponse.getMessages(), request);
         }
 

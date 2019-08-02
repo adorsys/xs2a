@@ -184,7 +184,7 @@ public class CmsPsuPisController {
     @GetMapping(path = "/{payment-id}/authorisation/psus")
     @ApiOperation(value = "Returns list of info objects about PSU data and authorisation statuses")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = List.class),
+        @ApiResponse(code = 200, message = "OK", response = CmsPisPsuDataAuthorisation.class, responseContainer = "List"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<List<CmsPisPsuDataAuthorisation>> psuAuthorisationStatuses(
         @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")

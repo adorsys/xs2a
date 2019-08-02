@@ -446,7 +446,7 @@ public class PaymentServiceTest {
         when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
         doReturn(Optional.of(spiPayment))
             .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(PaymentType.class));
-        when(cancelPaymentService.initiatePaymentCancellation(any(), eq(spiPayment), eq(PAYMENT_ID), eq(false), any(TppRedirectUri.class)))
+        when(cancelPaymentService.initiatePaymentCancellation(eq(spiPayment), eq(PAYMENT_ID), eq(false), any(TppRedirectUri.class)))
             .thenReturn(ResponseObject.<CancelPaymentResponse>builder()
                             .body(getCancelPaymentResponse(true, CANC))
                             .build());

@@ -64,8 +64,8 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. CREATE SINGLE Payment failed. Can't initiate Payment at SPI-level. Error msg: {}.",
-                     requestProviderService.getRequestId(), payment.getPaymentId(), errorHolder);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. CREATE SINGLE Payment failed. Can't initiate Payment at SPI-level. Error msg: {}.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), payment.getPaymentId(), errorHolder);
             return new SinglePaymentInitiationResponse(errorHolder);
         }
 
@@ -79,8 +79,8 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. CREATE PERIODIC Payment failed. Can't initiate Payment at SPI-level. Error msg: {}.",
-                     requestProviderService.getRequestId(), payment.getPaymentId(), errorHolder);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. CREATE PERIODIC Payment failed. Can't initiate Payment at SPI-level. Error msg: {}.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), payment.getPaymentId(), errorHolder);
             return new PeriodicPaymentInitiationResponse(errorHolder);
         }
 
@@ -94,8 +94,8 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. CREATE BULK Payment failed. Can't initiate Payment at SPI-level. Error msg: {}.",
-                     requestProviderService.getRequestId(), bulkPayment.getPaymentId(), errorHolder);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. CREATE BULK Payment failed. Can't initiate Payment at SPI-level. Error msg: {}.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), bulkPayment.getPaymentId(), errorHolder);
             return new BulkPaymentInitiationResponse(errorHolder);
         }
 
@@ -109,8 +109,8 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.info("X-Request-ID: [{}], Payment-ID [{}]. CREATE COMMON Payment failed. Can't initiate Payment at SPI-level. Error msg: {}.",
-                     requestProviderService.getRequestId(), payment.getPaymentId(), errorHolder);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. CREATE COMMON Payment failed. Can't initiate Payment at SPI-level. Error msg: {}.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), payment.getPaymentId(), errorHolder);
             return new CommonPaymentInitiationResponse(errorHolder);
         }
 

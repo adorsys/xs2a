@@ -22,14 +22,15 @@ import org.springframework.util.AntPathMatcher;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType.*;
 
 @Slf4j
 class ServiceTypeDiscovery {
-    private final static AntPathMatcher matcher = new AntPathMatcher();
-    private final static Map<String, ServiceType> pathToServiceType;
+    private static final AntPathMatcher matcher = new AntPathMatcher();
+    private static final Map<String, ServiceType> pathToServiceType;
 
     static {
         pathToServiceType = new HashMap<>();
@@ -45,10 +46,12 @@ class ServiceTypeDiscovery {
     /**
      * Returns service type by checking incoming path on existing paths patterns matching (each pattern is associated with corresponding service type).
      *
-     * @param targetPath target path to be checked on pattern matching
+     * @param targetPath        target path to be checked on pattern matching
+     * @param internalRequestId internal id of the request
+     * @param requestId         request id provided by the TPP
      * @return Service Type value
      */
-    static ServiceType getServiceType(String requestId, String targetPath) {
+    static ServiceType getServiceType(String targetPath, UUID internalRequestId, UUID requestId) {
         for (Map.Entry<String, ServiceType> entry : pathToServiceType.entrySet()) {
             String pattern = entry.getKey();
 
@@ -57,7 +60,8 @@ class ServiceTypeDiscovery {
             }
         }
 
-        log.warn("X-Request-ID: [{}]. Can't get ServiceType because illegal path: [{}]", requestId, targetPath);
+        log.warn("InR-ID: [{}], X-Request-ID: [{}]. Can't get ServiceType because illegal path: [{}]",
+                 internalRequestId, requestId, targetPath);
         throw new IllegalArgumentException("Illegal path: " + targetPath);
     }
 }

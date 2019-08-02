@@ -55,15 +55,15 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValida
     protected ValidationResult executeBusinessValidation(UpdatePisCommonPaymentPsuDataPO paymentObject) {
         String authorisationId = paymentObject.getAuthorisationId();
         if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, PaymentAuthorisationType.INITIATION)) {
-            log.info("X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data  has failed: endpoint is not accessible for authorisation",
-                     requestProviderService.getRequestId(), authorisationId);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data  has failed: endpoint is not accessible for authorisation",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
             return ValidationResult.invalid(PIS_403, TppMessageInformation.of(SERVICE_BLOCKED));
         }
 
         // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
         if (paymentObject.getPisCommonPaymentResponse().getTransactionStatus() == TransactionStatus.RJCT) {
-            log.info("X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: payment has been rejected",
-                     requestProviderService.getRequestId(), authorisationId);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: payment has been rejected",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
             return ValidationResult.invalid(PIS_403, TppMessageInformation.of(RESOURCE_EXPIRED_403));
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,14 +56,16 @@ public class SignatureFilter extends AbstractXs2aFilter {
 
         if (StringUtils.isBlank(signature)) {
             errText = CertificateErrorMsgCode.SIGNATURE_MISSING.toString();
-            log.info("X-Request-ID: [{}]. TPP unauthorized: {}", requestProviderService.getRequestId(), errText);
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. TPP unauthorized: {}",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), errText);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, errText);
             return;
         }
 
         if (digestContainsErrors(request)) {
             errText = CertificateErrorMsgCode.FORMAT_ERROR.toString();
-                log.info("X-Request-ID: [{}], TPP unauthorized: {}", requestProviderService.getRequestId(), errText);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], TPP unauthorized: {}",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), errText);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, errText);
             return;
         }
@@ -76,7 +78,8 @@ public class SignatureFilter extends AbstractXs2aFilter {
             chain.doFilter(request, response);
         } else {
             errText = CertificateErrorMsgCode.SIGNATURE_INVALID.toString();
-                log.info("X-Request-ID: [{}], TPP unauthorized: {}", requestProviderService.getRequestId(), errText);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], TPP unauthorized: {}",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), errText);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, errText);
         }
     }

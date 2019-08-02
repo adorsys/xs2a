@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.interceptor;
 
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.MethodValidator;
 import de.adorsys.psd2.xs2a.web.validator.MethodValidatorController;
@@ -29,8 +30,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
-import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.X_REQUEST_ID;
 
 /**
  * This interceptor is used for headers and body validation of incoming HTTP requests. The main purposes: collect the
@@ -49,6 +48,7 @@ import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.X_
 public class RequestValidationInterceptor extends HandlerInterceptorAdapter {
     private final ErrorBuildingService errorBuildingService;
     private final MethodValidatorController methodValidatorController;
+    private final RequestProviderService requestProviderService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
@@ -70,8 +70,8 @@ public class RequestValidationInterceptor extends HandlerInterceptorAdapter {
 
             if (!initialMessageError.getTppMessages().isEmpty()) {
                 // Last part of all validations: if there is at least one error - we build response with HTTP code 400.
-                log.warn("X-Request-ID: [{}]. Validation of incoming request failed. Error msg: [{}]",
-                         request.getHeader(X_REQUEST_ID), initialMessageError);
+                log.warn("InR-ID: [{}], X-Request-ID: [{}]. Validation of incoming request failed. Error msg: [{}]",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), initialMessageError);
                 errorBuildingService.buildErrorResponse(response, initialMessageError);
                 return false;
             }

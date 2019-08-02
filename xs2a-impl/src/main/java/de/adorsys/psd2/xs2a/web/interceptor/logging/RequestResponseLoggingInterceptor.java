@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogMessage;
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -30,10 +31,12 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class RequestResponseLoggingInterceptor extends HandlerInterceptorAdapter {
     private final RequestResponseLogger requestResponseLogger;
+    private final RequestProviderService requestProviderService;
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         RequestResponseLogMessage message = RequestResponseLogMessage.builder(request, response)
+                                                .withInternalRequestId(requestProviderService.getInternalRequestId())
                                                 .withRequestUri()
                                                 .withRequestHeaders()
                                                 .withRequestPayload()

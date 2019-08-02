@@ -52,8 +52,8 @@ public class UpdatePisCancellationPsuDataValidator extends AbstractPisTppValidat
     protected ValidationResult executeBusinessValidation(UpdatePisCancellationPsuDataPO paymentObject) {
         String authorisationId = paymentObject.getAuthorisationId();
         if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, PaymentAuthorisationType.CANCELLATION)) {
-            log.info("X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS cancellation authorisation PSU Data has failed: endpoint is not accessible for authorisation",
-                     requestProviderService.getRequestId(), authorisationId);
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS cancellation authorisation PSU Data has failed: endpoint is not accessible for authorisation",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
             return ValidationResult.invalid(ErrorType.PIS_403, TppMessageInformation.of(SERVICE_BLOCKED));
         }
 

@@ -87,8 +87,8 @@ public class SupportedAccountReferenceValidator implements BusinessValidator<Col
             return ValidationResult.valid();
         } else {
             String wrongReferenceNames = StringUtils.join(wrongReferences, ", ");
-            log.info("X-Request-ID: [{}]. Supported account reference validation has failed: account reference type: {} is not supported by the ASPSP",
-                     requestProviderService.getRequestId(), wrongReferenceNames);
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. Supported account reference validation has failed: account reference type: {} is not supported by the ASPSP",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), wrongReferenceNames);
             ErrorType errorType = errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(),
                                                                  FORMAT_ERROR.getCode());
             return ValidationResult.invalid(errorType, TppMessageInformation.of(

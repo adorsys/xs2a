@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogMessage;
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -26,8 +27,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RequestResponseLoggingInterceptorTest {
@@ -37,13 +40,19 @@ public class RequestResponseLoggingInterceptorTest {
     private HttpServletResponse httpServletResponse;
     @Mock
     private RequestResponseLogger requestResponseLogger;
+    @Mock
+    private RequestProviderService requestProviderService;
     @InjectMocks
     private RequestResponseLoggingInterceptor requestResponseLoggingInterceptor;
 
     @Test
     public void afterCompletion_shouldLogRequestAndResponse() {
         // Given
+        UUID internalRequestId = UUID.fromString("b87028ad-6925-41fa-b892-88912606a2f4");
+        when(requestProviderService.getInternalRequestId()).thenReturn(internalRequestId);
+
         RequestResponseLogMessage message = RequestResponseLogMessage.builder(httpServletRequest, httpServletResponse)
+                                                .withInternalRequestId(internalRequestId)
                                                 .withRequestUri()
                                                 .withRequestHeaders()
                                                 .withRequestPayload()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,6 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
@@ -86,8 +85,8 @@ public class FundsConfirmationService {
 
             if (validationResult.hasError()) {
                 ErrorHolder errorHolder = validationResult.getErrorHolder();
-                log.info("X-Request-ID: [{}]. Check availability of funds validation failed: {}",
-                         requestProviderService.getRequestId(), errorHolder);
+                log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds validation failed: {}",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), errorHolder);
                 return ResponseObject.<FundsConfirmationResponse>builder()
                            .fail(new MessageError(errorHolder))
                            .build();
@@ -96,7 +95,8 @@ public class FundsConfirmationService {
             consent = validationResult.getConsent();
         }
 
-        PsuIdData psuIdData = getPsuIdData(consent);
+        PsuIdData psuIdData = requestProviderService.getPsuIdData();
+        log.info("X-Request-ID: [{}]. Corresponding PSU-ID {} was provided from request.", requestProviderService.getRequestId(), psuIdData);
         AspspConsentData aspspConsentData = getAspspConsentData(consent);
         FundsConfirmationResponse response = executeRequest(psuIdData, consent, request, aspspConsentData);
 
@@ -116,8 +116,8 @@ public class FundsConfirmationService {
         AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
 
         if (selector == null) {
-            log.info("X-Request-ID: [{}]. Check availability of funds failed, because while validate account reference no account identifier found in the request [{}].",
-                     requestProviderService.getRequestId(), accountReference);
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds failed, because while validate account reference no account identifier found in the request [{}].",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), accountReference);
             return new PiisConsentValidationResult(ErrorHolder.builder(FORMAT_ERROR).errorType(PIIS_400).build());
         }
 
@@ -148,23 +148,12 @@ public class FundsConfirmationService {
 
         if (fundsSufficientCheck.hasError()) {
             ErrorHolder error = spiErrorMapper.mapToErrorHolder(fundsSufficientCheck, ServiceType.PIIS);
-            log.info("X-Request-ID: [{}]. Check availability of funds failed, because perform funds sufficient check failed. Msg error: {}",
-                     requestProviderService.getRequestId(), error);
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds failed, because perform funds sufficient check failed. Msg error: {}",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), error);
                 return new FundsConfirmationResponse(error);
         }
 
         return spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(fundsSufficientCheck.getPayload());
-    }
-
-    private @NotNull PsuIdData getPsuIdData(@Nullable PiisConsent consent) {
-        // TODO Extract PSU Data from request if it's possible https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/525
-        PsuIdData emptyPsuIdData = new PsuIdData(null, null, null, null);
-        if (consent == null) {
-            return emptyPsuIdData;
-        }
-
-        return Optional.ofNullable(consent.getPsuData())
-                   .orElse(emptyPsuIdData);
     }
 
     private @NotNull AspspConsentData getAspspConsentData(@Nullable PiisConsent consent) {
