@@ -1,0 +1,56 @@
+@startuml
+entity TPP
+entity XS2A
+entity SPI
+== Response only with Transaction List ==
+TPP -> XS2A: REST Call Read Transaction List\nGET "/v1/accounts/{account-id}/transactions"
+activate TPP
+activate XS2A
+|||
+XS2A->SPI: Java Call SpiReadTransactionsForAccount
+activate SPI
+|||
+SPI-->XS2A: SpiReadTransactionsForAccountResponse\nwith Transaction List
+|||
+XS2A-->TPP: Read Transaction List Response with List of Transactions
+|||
+== Response with link "download or Transaction List+link "download ==
+|||
+TPP -> XS2A: REST Call Read Transaction List\nGET "/v1/accounts/{account-id}/transactions"
+|||
+XS2A->SPI: Java Call SpiReadTransactionsForAccount
+|||
+alt
+note right of TPP
+ASPSP sends Response only with downloadId
+end note
+SPI-->XS2A: SpiReadTransactionsForAccountResponse\nwith downloadId
+|||
+XS2A-->TPP: Read Transaction List Response with Link "download"
+|||
+else
+|||
+note right of TPP
+ASPSP sends Response with Transaction list and link "download
+end note
+|||
+SPI-->XS2A: SpiReadTransactionListResponse\nwith Transaction List and downloadId
+|||
+XS2A-->TPP: Read Transaction List Response with List of Transactions and link "download"
+|||
+end
+== Download Transaction list ==
+|||
+TPP -> XS2A: REST Call \nGET "/v1/accounts/{account-id}/transactions/download/{download-id}
+|||
+XS2A->SPI: Java Call SpiRequestTransactionsByDownloadLink
+|||
+SPI-->XS2A: SpiTransactionsByDownloadLink Response with Input stream
+deactivate SPI
+|||
+XS2A-->TPP: Response contains Stream with Transaction List
+|||
+deactivate XS2A
+deactivate TPP
+@enduml
+
