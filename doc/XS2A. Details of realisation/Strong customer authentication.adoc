@@ -1,7 +1,7 @@
 // toc-title definition MUST follow document title without blank line!
 = Strong customer authentication
 :toc-title:
-:imagesdir: usecases/diagrams
+:imagesdir: ../usecases/diagrams
 :toc: left
 
 // horizontal line
