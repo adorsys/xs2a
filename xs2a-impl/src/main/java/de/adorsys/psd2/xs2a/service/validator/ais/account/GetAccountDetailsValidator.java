@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
@@ -33,7 +32,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class GetAccountDetailsValidator extends AbstractAisTppValidator<CommonAccountRequestObject> {
+public class GetAccountDetailsValidator extends AbstractAccountTppValidator<CommonAccountRequestObject> {
     private final PermittedAccountReferenceValidator permittedAccountReferenceValidator;
     private final AccountConsentValidator accountConsentValidator;
     private final AccountAccessValidator accountAccessValidator;

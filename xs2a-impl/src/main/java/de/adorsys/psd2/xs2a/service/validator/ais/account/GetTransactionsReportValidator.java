@@ -21,11 +21,10 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.common.TransactionReportAcceptHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.TransactionReportAcceptHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
@@ -45,7 +44,7 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
  */
 @Component
 @RequiredArgsConstructor
-public class GetTransactionsReportValidator extends AbstractAisTppValidator<TransactionsReportByPeriodObject> {
+public class GetTransactionsReportValidator extends AbstractAccountTppValidator<TransactionsReportByPeriodObject> {
     private static final String ENTRY_REFERENCE_FROM_NOT_SUPPORTED_ERROR_TEXT = "Parameter 'entryReferenceFrom' is not supported by ASPSP";
     private static final String DELTA_LIST_NOT_SUPPORTED_ERROR_TEXT = "Parameter 'deltaList' is not supported by ASPSP";
     private static final String ONE_DELTA_REPORT_CAN_BE_PRESENT_ERROR_TEXT = "Only one delta report query parameter can be present in request";

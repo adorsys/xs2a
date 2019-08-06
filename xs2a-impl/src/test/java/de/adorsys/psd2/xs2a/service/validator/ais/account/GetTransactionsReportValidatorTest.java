@@ -28,10 +28,10 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.common.TransactionReportAcceptHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.TransactionReportAcceptHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
-import de.adorsys.psd2.xs2a.service.validator.tpp.AisTppInfoValidator;
+import de.adorsys.psd2.xs2a.service.validator.tpp.AisAccountTppInfoValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -90,7 +90,7 @@ public class GetTransactionsReportValidatorTest {
     @Mock
     private AccountConsentValidator accountConsentValidator;
     @Mock
-    private AisTppInfoValidator aisTppInfoValidator;
+    private AisAccountTppInfoValidator aisAccountTppInfoValidator;
     @Mock
     private AccountReferenceAccessValidator accountReferenceAccessValidator;
     @Mock
@@ -106,11 +106,11 @@ public class GetTransactionsReportValidatorTest {
     @Before
     public void setUp() {
         // Inject pisTppInfoValidator via setter
-        getTransactionsReportValidator.setPisTppInfoValidator(aisTppInfoValidator);
+        getTransactionsReportValidator.setAisAccountTppInfoValidator(aisAccountTppInfoValidator);
 
-        when(aisTppInfoValidator.validateTpp(TPP_INFO))
+        when(aisAccountTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());
-        when(aisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
+        when(aisAccountTppInfoValidator.validateTpp(INVALID_TPP_INFO))
             .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
         when(aspspProfileService.isDeltaListSupported()).thenReturn(false);
         when(aspspProfileService.isEntryReferenceFromSupported()).thenReturn(false);
@@ -155,7 +155,7 @@ public class GetTransactionsReportValidatorTest {
         ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isValid());
@@ -175,7 +175,7 @@ public class GetTransactionsReportValidatorTest {
             new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, Boolean.TRUE, MediaType.APPLICATION_ATOM_XML_VALUE, BOOKING_STATUS));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
         verify(permittedAccountReferenceValidator, never()).validate(accountConsent,  ACCOUNT_ID, WITH_BALANCE);
 
         assertNotNull(validationResult);
@@ -196,7 +196,7 @@ public class GetTransactionsReportValidatorTest {
         ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertFalse(validationResult.isValid());
@@ -214,7 +214,7 @@ public class GetTransactionsReportValidatorTest {
         ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -232,7 +232,7 @@ public class GetTransactionsReportValidatorTest {
         ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, Boolean.TRUE, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -250,7 +250,7 @@ public class GetTransactionsReportValidatorTest {
         ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, "777", DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -269,7 +269,7 @@ public class GetTransactionsReportValidatorTest {
         ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, "777", Boolean.TRUE, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -291,7 +291,7 @@ public class GetTransactionsReportValidatorTest {
         ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, "777", Boolean.TRUE, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -311,7 +311,7 @@ public class GetTransactionsReportValidatorTest {
         ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, NOT_SUPPORTED_BOOKING_STATUS));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
