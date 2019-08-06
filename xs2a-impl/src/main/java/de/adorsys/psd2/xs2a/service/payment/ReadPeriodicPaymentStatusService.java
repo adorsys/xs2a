@@ -20,8 +20,10 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -35,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,13 +51,13 @@ public class ReadPeriodicPaymentStatusService implements ReadPaymentStatusServic
     private final RequestProviderService requestProviderService;
 
     @Override
-    public  ReadPaymentStatusResponse readPaymentStatus(List<PisPayment> pisPayments, String paymentProduct, SpiContextData spiContextData, @NotNull String encryptedPaymentId) {
+    public ReadPaymentStatusResponse readPaymentStatus(List<PisPayment> pisPayments, String paymentProduct, SpiContextData spiContextData, @NotNull String encryptedPaymentId) {
         Optional<SpiPeriodicPayment> spiPeriodicPaymentOptional = spiPaymentFactory.createSpiPeriodicPayment(pisPayments.get(0), paymentProduct);
 
         if (!spiPeriodicPaymentOptional.isPresent()) {
             return new ReadPaymentStatusResponse(
-                ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-                    .messages(Collections.singletonList("Payment not found"))
+                ErrorHolder.builder(ErrorType.PIS_404)
+                    .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404, "Payment not found"))
                     .build()
             );
         }

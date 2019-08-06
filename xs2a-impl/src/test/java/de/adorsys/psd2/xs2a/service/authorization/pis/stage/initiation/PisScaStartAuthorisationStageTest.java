@@ -19,8 +19,8 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage.initiation;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
@@ -54,7 +55,6 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.junit.Before;
@@ -77,14 +77,12 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisScaStartAuthorisationStageTest {
-    private static final String TEST_ASPSP_DATA = "Test aspsp data";
     private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
     private static final String AUTHENTICATION_METHOD_ID = "sms";
     private static final String PAYMENT_ID = "123456789";
     private static final String PSU_ID = "Test psuId";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(TEST_ASPSP_DATA.getBytes(), "");
-    private static final SpiContextData CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo(), UUID.randomUUID());
+    private static final SpiContextData CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null);
     private static final List<SpiAuthenticationObject> MULTIPLE_SPI_SCA_METHODS = Arrays.asList(buildSpiSmsAuthenticationObject(false), buildSpiPushAuthenticationObject(true));
@@ -107,7 +105,6 @@ public class PisScaStartAuthorisationStageTest {
     private SinglePaymentSpi singlePaymentSpi;
     @Mock
     private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
-
     @Mock
     private CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
     @Mock
@@ -144,9 +141,8 @@ public class PisScaStartAuthorisationStageTest {
 
     @Before
     public void setUp() {
-        ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
-                                      .errorType(PIS_400)
-                                      .messages(ERROR_MESSAGE_TEXT)
+        ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "message 1, message 2, message 3"))
                                       .build();
 
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIS)))
@@ -179,14 +175,15 @@ public class PisScaStartAuthorisationStageTest {
         //Then
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FAILED);
         assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(ErrorType.PIS_400);
-        assertThat(actualResponse.getErrorHolder().getErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
+        assertThat(actualResponse.getErrorHolder().getErrorType().getErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR.getCode());
     }
 
     @Test
     public void apply_paymentAuthorisationSpi_authorisePsu_fail() {
         String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         SpiResponse<SpiAuthorisationStatus> spiErrorMessage = SpiResponse.<SpiAuthorisationStatus>builder()
-                                                                  .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                                                                  .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                                                                  .build();
 
         // generate an error
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any()))
@@ -196,9 +193,13 @@ public class PisScaStartAuthorisationStageTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
         // Then
+        assertFormatError(errorMessagesString, actualResponse);
+    }
+
+    private void assertFormatError(String errorMessagesString, Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse) {
         assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getErrorHolder().getErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
-        assertThat(actualResponse.getErrorHolder().getMessage()).isEqualTo(errorMessagesString);
+        assertThat(actualResponse.getErrorHolder().getErrorType().getErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR.getCode());
+        assertThat(actualResponse.getErrorHolder().getTppMessageInformationList().iterator().next().getText()).isEqualTo(errorMessagesString);
     }
 
     @Test
@@ -213,7 +214,8 @@ public class PisScaStartAuthorisationStageTest {
 
         // generate an error
         SpiResponse<List<SpiAuthenticationObject>> spiErrorMessage = SpiResponse.<List<SpiAuthenticationObject>>builder()
-                                                                         .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+                                                                         .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                         .build();
 
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any()))
             .thenReturn(spiErrorMessage);
@@ -222,9 +224,7 @@ public class PisScaStartAuthorisationStageTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
         // Then
 
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getErrorHolder().getErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
-        assertThat(actualResponse.getErrorHolder().getMessage()).isEqualTo(errorMessagesString);
+        assertFormatError(errorMessagesString, actualResponse);
     }
 
     @Test
@@ -252,7 +252,8 @@ public class PisScaStartAuthorisationStageTest {
 
         // generate an error
         SpiResponse<SpiAuthorizationCodeResult> spiErrorMessage = SpiResponse.<SpiAuthorizationCodeResult>builder()
-                                                                      .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+                                                                      .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                      .build();
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any()))
             .thenReturn(spiErrorMessage);
 
@@ -260,9 +261,7 @@ public class PisScaStartAuthorisationStageTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
         // Then
 
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getErrorHolder().getErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
-        assertThat(actualResponse.getErrorHolder().getMessage()).isEqualTo(errorMessagesString);
+        assertFormatError(errorMessagesString, actualResponse);
     }
 
 
@@ -293,7 +292,8 @@ public class PisScaStartAuthorisationStageTest {
 
         // generate an error
         SpiResponse<SpiPaymentExecutionResponse> spiErrorMessage = SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                       .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+                                                                       .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                       .build();
 
         when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any()))
             .thenReturn(spiErrorMessage);
@@ -302,9 +302,7 @@ public class PisScaStartAuthorisationStageTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
         // Then
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getErrorHolder().getErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
-        assertThat(actualResponse.getErrorHolder().getMessage()).isEqualTo(errorMessagesString);
+        assertFormatError(errorMessagesString, actualResponse);
     }
 
     @Test

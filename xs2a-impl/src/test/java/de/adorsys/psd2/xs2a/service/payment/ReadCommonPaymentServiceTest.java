@@ -18,16 +18,18 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentInfoMapper;
@@ -38,7 +40,6 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,31 +103,32 @@ public class ReadCommonPaymentServiceTest {
 
     @Test
     public void getPayment_success() {
-        //When
+        // When
         PaymentInformationResponse<PisPaymentInfo> actualResponse = readCommonPaymentService.getPayment(COMMON_PAYMENT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getPayment()).isEqualTo(PIS_PAYMENT_INFO);
     }
 
     @Test
     public void getPayment_failed() {
-        //Given
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-                                        .messages(Collections.singletonList("Payment not found"))
+        // Given
+        ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
+                                        .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404, "Payment not found"))
                                         .build();
         SpiResponse<SpiPaymentInfo> failSpiResponse = SpiResponse.<SpiPaymentInfo>builder()
-                                                          .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                                                          .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                                                          .build();
 
         when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, spiAspspConsentDataProvider)).thenReturn(failSpiResponse);
         when(spiErrorMapper.mapToErrorHolder(failSpiResponse, ServiceType.PIS))
             .thenReturn(expectedError);
 
-        //When
+        // When
         PaymentInformationResponse<PisPaymentInfo> actualResponse = readCommonPaymentService.getPayment(COMMON_PAYMENT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getPayment()).isNull();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
@@ -156,6 +158,7 @@ public class ReadCommonPaymentServiceTest {
         return new SpiContextData(
             new SpiPsuData("", "", "", ""),
             new TppInfo(),
+            UUID.randomUUID(),
             UUID.randomUUID()
         );
     }

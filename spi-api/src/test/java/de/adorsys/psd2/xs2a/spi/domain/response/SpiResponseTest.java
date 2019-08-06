@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 
 public class SpiResponseTest {
 
-    private static final SpiResponseStatus SOME_STATUS = SpiResponseStatus.LOGICAL_FAILURE;
+    private final TppMessage FORMAT_ERROR = new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error");
 
     @Test
     public void builder_should_pass_on_failure_without_payload() {
@@ -34,7 +34,8 @@ public class SpiResponseTest {
 
         builder
             .payload(null)
-            .fail(SOME_STATUS);
+            .error(FORMAT_ERROR)
+            .build();
     }
 
     @Test
@@ -48,15 +49,15 @@ public class SpiResponseTest {
         assertEquals("some payload", response.getPayload());
         assertTrue(response.isSuccessful());
         assertFalse(response.hasError());
-        assertEquals(0, response.getMessages().size());
         assertEquals(0, response.getErrors().size());
-        assertEquals(SpiResponseStatus.SUCCESS, response.getResponseStatus());
     }
 
     @Test
     public void builder_build_should_generate_message_on_fail() {
         // When
-        SpiResponse<String> response = SpiResponse.<String>builder().fail(SpiResponseStatus.LOGICAL_FAILURE);
+        SpiResponse<String> response = SpiResponse.<String>builder()
+                                           .error(FORMAT_ERROR)
+                                           .build();
 
         // Then
         assertTrue(response.hasError());

@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.exception;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -27,11 +26,11 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static java.util.Collections.singletonList;
 
 @Data
 @NoArgsConstructor
@@ -50,16 +49,8 @@ public class MessageError {
     }
 
     public MessageError(ErrorHolder errorHolder) {
-        this(errorHolder.getErrorCode(), errorHolder.getMessage());
+        this.tppMessages.addAll(errorHolder.getTppMessageInformationList());
         this.errorType = errorHolder.getErrorType();
-    }
-
-    private MessageError(MessageErrorCode errorCode, String message) {
-        this(singletonList(of(errorCode, message)));
-    }
-
-    private MessageError(List<TppMessageInformation> tppMessages) {
-        this.tppMessages.addAll(tppMessages);
     }
 
     // TODO task: add logic to resolve resulting MessageError https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/211

@@ -17,14 +17,16 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -33,7 +35,6 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,7 +89,7 @@ public class ReadBulkPaymentStatusServiceTest {
 
     @Test
     public void readPaymentStatus_success() {
-        //Given
+        // Given
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
             .thenReturn(spiAspspConsentDataProvider);
         when(spiPaymentFactory.createSpiBulkPayment(PIS_PAYMENTS, PRODUCT))
@@ -96,27 +97,27 @@ public class ReadBulkPaymentStatusServiceTest {
         when(bulkPaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(TRANSACTION_RESPONSE);
 
-        //When
+        // When
         ReadPaymentStatusResponse actualResponse = readBulkPaymentStatusService.readPaymentStatus(PIS_PAYMENTS, PRODUCT, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse).isEqualTo(READ_PAYMENT_STATUS_RESPONSE);
     }
 
     @Test
     public void readPaymentStatus_spiPaymentFactory_createSpiBulkPayment_failed() {
         //Given
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-            .messages(Collections.singletonList("Payment not found"))
-            .build();
+        ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
+                                        .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404, "Payment not found"))
+                                        .build();
 
         when(spiPaymentFactory.createSpiBulkPayment(PIS_PAYMENTS, PRODUCT))
             .thenReturn(Optional.empty());
 
-        //When
+        // When
         ReadPaymentStatusResponse actualResponse = readBulkPaymentStatusService.readPaymentStatus(PIS_PAYMENTS, PRODUCT, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
     }
@@ -124,9 +125,9 @@ public class ReadBulkPaymentStatusServiceTest {
     @Test
     public void readPaymentStatus_bulkPaymentSpi_getPaymentStatusById_failed() {
         //Given
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-            .messages(Collections.singletonList("Payment not found"))
-            .build();
+        ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
+                                        .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404, "Payment not found"))
+                                        .build();
 
         when(spiPaymentFactory.createSpiBulkPayment(PIS_PAYMENTS, PRODUCT))
             .thenReturn(Optional.of(SPI_BULK_PAYMENT));
@@ -137,10 +138,10 @@ public class ReadBulkPaymentStatusServiceTest {
         when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
             .thenReturn(spiAspspConsentDataProvider);
 
-        //When
+        // When
         ReadPaymentStatusResponse actualResponse = readBulkPaymentStatusService.readPaymentStatus(PIS_PAYMENTS, PRODUCT, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
     }
@@ -155,13 +156,14 @@ public class ReadBulkPaymentStatusServiceTest {
 
     private static SpiResponse<TransactionStatus> buildSpiResponseTransactionStatus() {
         return SpiResponse.<TransactionStatus>builder()
-            .payload(TRANSACTION_STATUS)
-            .build();
+                   .payload(TRANSACTION_STATUS)
+                   .build();
     }
 
     private static SpiResponse<TransactionStatus> buildFailSpiResponseTransactionStatus() {
         return SpiResponse.<TransactionStatus>builder()
-            .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                   .build();
     }
 
     private static List<PisPayment> getListPisPayment() {

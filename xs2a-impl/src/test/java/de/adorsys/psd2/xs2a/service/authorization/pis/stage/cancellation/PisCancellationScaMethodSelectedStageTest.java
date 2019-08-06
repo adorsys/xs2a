@@ -21,9 +21,11 @@ import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -36,7 +38,6 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 
@@ -80,17 +80,14 @@ public class PisCancellationScaMethodSelectedStageTest {
     @Mock
     private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     @Mock
-    private ApplicationContext applicationContext;
-    @Mock
     private RequestProviderService requestProviderService;
     @Mock
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
 
     @Before
     public void setUp() {
-        ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
-                                      .errorType(PIS_400)
-                                      .messages(ERROR_MESSAGE_TEXT)
+        ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "message 1, message 2, message 3"))
                                       .build();
 
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIS)))
@@ -105,7 +102,8 @@ public class PisCancellationScaMethodSelectedStageTest {
     public void apply_paymentCancellationSpi_verifyScaAuthorisationAndCancelPayment_fail() {
         String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         SpiResponse<SpiResponse.VoidResponse> spiErrorMessage = SpiResponse.<SpiResponse.VoidResponse>builder()
-                                                                    .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                                                                    .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                                                                    .build();
 
         // generate an error
         when(paymentCancellationSpi.verifyScaAuthorisationAndCancelPayment(any(), any(), any(), any())).thenReturn(spiErrorMessage);
@@ -116,8 +114,8 @@ public class PisCancellationScaMethodSelectedStageTest {
 
         // Then
         assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getErrorHolder().getErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
-        assertThat(actualResponse.getErrorHolder().getMessage()).isEqualTo(errorMessagesString);
+        assertThat(actualResponse.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
+        assertThat(actualResponse.getErrorHolder().getTppMessageInformationList().iterator().next().getText()).isEqualTo(errorMessagesString);
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataRequest buildXs2aUpdatePisPsuDataRequest() {

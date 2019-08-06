@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -63,7 +64,6 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAisConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -109,7 +109,7 @@ public class ConsentServiceTest {
     private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.MAX;
     private static final MessageError VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(MessageErrorCode.CONSENT_INVALID));
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     private static final MessageError CONSENT_UNKNOWN_403_ERROR =
         new MessageError(ErrorType.AIS_403, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_403));
     private static final TppRedirectUri TPP_REDIRECT_URI = new TppRedirectUri("redirectUri", "nokRedirectUri");
@@ -601,12 +601,16 @@ public class ConsentServiceTest {
     public void getAccountConsentsStatusById_spi_response_has_error() {
         // Given
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
-                                                                   .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                                                                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                                                                   .build();
 
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiResponse);
         when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS))
-            .thenReturn(ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR).errorType(ErrorType.AIS_400).build());
+            .thenReturn(ErrorHolder
+                            .builder(ErrorType.AIS_400)
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, ""))
+                            .build());
 
         // When
         ResponseObject actualResponse = consentService.getAccountConsentsStatusById(CONSENT_ID);

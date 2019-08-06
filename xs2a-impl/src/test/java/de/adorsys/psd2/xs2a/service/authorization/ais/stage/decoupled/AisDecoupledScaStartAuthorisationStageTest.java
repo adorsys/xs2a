@@ -18,10 +18,12 @@ package de.adorsys.psd2.xs2a.service.authorization.ais.stage.decoupled;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
@@ -42,7 +44,6 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +67,6 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     private static final String PSU_ID = "Test psuId";
     private static final String AUTHORISATION_ID = "Test authorisationId";
     private static final String PSU_SUCCESS_MESSAGE = "Test psuSuccessMessage";
-    private static final SpiResponseStatus RESPONSE_STATUS = SpiResponseStatus.LOGICAL_FAILURE;
     private static final ScaStatus FAILED_SCA_STATUS = ScaStatus.FAILED;
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null);
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
@@ -190,7 +190,10 @@ public class AisDecoupledScaStartAuthorisationStageTest {
             .thenReturn(response);
 
         when(spiErrorMapper.mapToErrorHolder(response, ServiceType.AIS))
-            .thenReturn(ErrorHolder.builder(MessageErrorCode.CONSENT_INVALID).errorType(ErrorType.AIS_401).build());
+            .thenReturn(ErrorHolder
+                            .builder(ErrorType.AIS_401)
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.CONSENT_INVALID, ""))
+                            .build());
         // When
         UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
@@ -267,7 +270,8 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     private <T> SpiResponse<T> buildErrorSpiResponse(T payload) {
         return SpiResponse.<T>builder()
                    .payload(payload)
-                   .fail(RESPONSE_STATUS);
+                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                   .build();
     }
 
     private UpdateConsentPsuDataResponse buildUpdateConsentPsuDataResponse() {

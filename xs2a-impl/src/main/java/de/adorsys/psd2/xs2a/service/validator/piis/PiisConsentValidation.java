@@ -33,7 +33,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
@@ -47,7 +50,9 @@ public class PiisConsentValidation {
 
     public PiisConsentValidationResult validatePiisConsentData(List<PiisConsent> piisConsents) {
         if (CollectionUtils.isEmpty(piisConsents)) {
-            return new PiisConsentValidationResult(ErrorHolder.builder(MessageErrorCode.NO_PIIS_ACTIVATION).errorType(PIIS_400).build());
+            return new PiisConsentValidationResult(ErrorHolder.builder(PIIS_400)
+                                                       .tppMessages(TppMessageInformation.of(MessageErrorCode.NO_PIIS_ACTIVATION, ""))
+                                                       .build());
         }
         Optional<PiisConsent> filteredPiisConsent = piisConsents.stream()
                                                         .filter(e -> EnumSet.of(ConsentStatus.VALID, ConsentStatus.RECEIVED).contains(e.getConsentStatus()))
@@ -79,31 +84,13 @@ public class PiisConsentValidation {
 
             log.error("InR-ID: [{}], X-Request-ID: [{}]. Unknown TPP access type: {}",
                       requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), accessType);
-            return ValidationResult.invalid(PIIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400, String.format("Unknown TPP access type: {}", accessType)));
+            return ValidationResult.invalid(PIIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400, String.format("Unknown TPP access type: %s", accessType)));
         }
     }
 
     private ErrorHolder buildErrorHolderFromMessageError(MessageError messageError) {
-        Optional<TppMessageInformation> messageErrorOptional = Optional.ofNullable(messageError)
-                                                                   .map(MessageError::getTppMessage);
-
-        Optional<ErrorHolder.ErrorHolderBuilder> builderOptional = messageErrorOptional.map(TppMessageInformation::getMessageErrorCode)
-                                                                       .map(ErrorHolder::builder);
-
-        if (builderOptional.isPresent()) {
-            ErrorHolder.ErrorHolderBuilder builder = builderOptional.get();
-
-            List<String> messages = messageErrorOptional
-                                        .map(TppMessageInformation::getText)
-                                        .map(Collections::singletonList)
-                                        .orElse(null);
-
-            builder.errorType(messageError.getErrorType());
-            builder.messages(messages);
-
-            return builder.build();
-        }
-
-        return ErrorHolder.builder(CONSENT_UNKNOWN_400).build();
+        return ErrorHolder.builder(messageError.getErrorType())
+                   .tppMessages(messageError.getTppMessage())
+                   .build();
     }
 }
