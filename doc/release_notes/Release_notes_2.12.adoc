@@ -1,3 +1,7 @@
 = Release notes v.2.12
 
 == Table of Contents
+* Removed deprecated enum
+
+== Removed deprecated enum
+Removed deprecated enum value `ALL_ACCOUNTS_WITH_BALANCES` in `AccountAccessType` class.

@@ -25,9 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public enum AccountAccessType {
-    ALL_ACCOUNTS("allAccounts"),
-    @Deprecated //since 2.8 TODO remove deprecated enum in 2.10 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/887
-    ALL_ACCOUNTS_WITH_BALANCES("allAccountsWithBalances");
+    ALL_ACCOUNTS("allAccounts");
 
     private static Map<String, AccountAccessType> container = new HashMap<>();
 
