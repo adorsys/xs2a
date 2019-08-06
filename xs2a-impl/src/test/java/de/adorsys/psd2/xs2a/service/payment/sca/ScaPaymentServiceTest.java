@@ -17,15 +17,18 @@
 package de.adorsys.psd2.xs2a.service.payment.sca;
 
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
@@ -41,7 +44,6 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitia
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
@@ -66,7 +68,6 @@ public class ScaPaymentServiceTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String PRODUCT = "sepa-credit-transfers";
-    private static final String TEST_ASPSP_DATA = "Test aspsp data";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final TppInfo TPP_INFO = buildTppInfo();
@@ -83,7 +84,7 @@ public class ScaPaymentServiceTest {
     private static final SpiResponse<SpiPeriodicPaymentInitiationResponse> SPI_PERIODIC_RESPONSE = buildSpiResponse(SPI_PERIODIC_PAYMENT_RESPONSE);
     private static final PeriodicPaymentInitiationResponse PERIODIC_PAYMENT_RESPONSE = new PeriodicPaymentInitiationResponse();
     //BulkPayment
-    private static final BulkPayment BULK_PAYMENT = buildBulkPayment(SINGLE_PAYMENT);
+    private static final BulkPayment BULK_PAYMENT = buildBulkPayment();
     private static final SpiBulkPayment SPI_BULK_PAYMENT = new SpiBulkPayment();
     private static final SpiBulkPaymentInitiationResponse SPI_BULK_PAYMENT_RESPONSE = buildSpiBulkPaymentInitiationResponse();
     private static final SpiResponse<SpiBulkPaymentInitiationResponse> SPI_BULK_RESPONSE = buildSpiResponse(SPI_BULK_PAYMENT_RESPONSE);
@@ -93,6 +94,10 @@ public class ScaPaymentServiceTest {
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = new SpiPaymentInfo(PRODUCT);
     private static final SpiResponse<SpiPaymentInitiationResponse> SPI_COMMON_RESPONSE = buildSpiResponse(SPI_SINGLE_PAYMENT_RESPONSE);
     private static final CommonPaymentInitiationResponse COMMON_PAYMENT_RESPONSE = new CommonPaymentInitiationResponse();
+    private static final TppMessage FORMAT_ERROR = new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error");
+    private static final ErrorHolder EXPECTED_ERROR = ErrorHolder.builder(ErrorType.PIS_404)
+                                    .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404, "Payment not found"))
+                                    .build();
 
     @InjectMocks
     private RedirectScaPaymentService scaPaymentService;
@@ -155,12 +160,11 @@ public class ScaPaymentServiceTest {
 
     @Test
     public void createSinglePayment_singlePaymentSpi_initiatePayment_failed() {
-        //Given
+        // Given
         SpiResponse<SpiSinglePaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
-            .fail(SpiResponseStatus.LOGICAL_FAILURE);
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-            .messages(Collections.singletonList("Payment not found"))
-            .build();
+                                                                                      .error(FORMAT_ERROR)
+                                                                                      .build();
+        ErrorHolder expectedError = EXPECTED_ERROR;
 
         when(xs2AToSpiSinglePaymentMapper.mapToSpiSinglePayment(SINGLE_PAYMENT, PRODUCT))
             .thenReturn(SPI_SINGLE_PAYMENT);
@@ -169,18 +173,18 @@ public class ScaPaymentServiceTest {
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
             .thenReturn(expectedError);
 
-        //When
+        // When
         SinglePaymentInitiationResponse actualResponse = scaPaymentService.createSinglePayment(SINGLE_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
-        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
+        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(EXPECTED_ERROR);
     }
 
     @Test
     public void createPeriodicPayment_success() {
-        //Given
+        // Given
         when(xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(PERIODIC_PAYMENT, PRODUCT))
             .thenReturn(SPI_PERIODIC_PAYMENT);
         when(periodicPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, initialSpiAspspConsentDataProvider))
@@ -188,10 +192,10 @@ public class ScaPaymentServiceTest {
         when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_PERIODIC_PAYMENT_RESPONSE), eq(initialSpiAspspConsentDataProvider)))
             .thenReturn(PERIODIC_PAYMENT_RESPONSE);
 
-        //When
+        // When
         PeriodicPaymentInitiationResponse actualResponse = scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //Then
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isNull();
         assertThat(actualResponse).isEqualTo(PERIODIC_PAYMENT_RESPONSE);
@@ -199,32 +203,29 @@ public class ScaPaymentServiceTest {
 
     @Test
     public void createPeriodicPayment_periodicPaymentSpi_initiatePayment_failed() {
-        //Given
+        // Given
         SpiResponse<SpiPeriodicPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
-            .fail(SpiResponseStatus.LOGICAL_FAILURE);
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-            .messages(Collections.singletonList("Payment not found"))
-            .build();
-
+                                                                                        .error(FORMAT_ERROR)
+                                                                                        .build();
         when(xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(PERIODIC_PAYMENT, PRODUCT))
             .thenReturn(SPI_PERIODIC_PAYMENT);
         when(periodicPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(expectedFailureResponse);
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
-            .thenReturn(expectedError);
+            .thenReturn(EXPECTED_ERROR);
 
-        //When
+        // When
         PeriodicPaymentInitiationResponse actualResponse = scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
-        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
+        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(EXPECTED_ERROR);
     }
 
     @Test
     public void createBulkPayment_success() {
-        //Given
+        // Given
         when(xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(BULK_PAYMENT, PRODUCT))
             .thenReturn(SPI_BULK_PAYMENT);
         when(bulkPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, initialSpiAspspConsentDataProvider))
@@ -232,10 +233,10 @@ public class ScaPaymentServiceTest {
         when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_BULK_PAYMENT_RESPONSE), eq(initialSpiAspspConsentDataProvider)))
             .thenReturn(BULK_PAYMENT_RESPONSE);
 
-        //When
+        // When
         BulkPaymentInitiationResponse actualResponse = scaPaymentService.createBulkPayment(BULK_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //Then
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isNull();
         assertThat(actualResponse).isEqualTo(BULK_PAYMENT_RESPONSE);
@@ -243,27 +244,24 @@ public class ScaPaymentServiceTest {
 
     @Test
     public void createBulkPayment_bulkPaymentSpi_initiatePayment_failed() {
-        //Given
+        // Given
         SpiResponse<SpiBulkPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiBulkPaymentInitiationResponse>builder()
-            .fail(SpiResponseStatus.LOGICAL_FAILURE);
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-            .messages(Collections.singletonList("Payment not found"))
-            .build();
-
+                                                                                    .error(FORMAT_ERROR)
+                                                                                    .build();
         when(xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(BULK_PAYMENT, PRODUCT))
             .thenReturn(SPI_BULK_PAYMENT);
         when(bulkPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(expectedFailureResponse);
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
-            .thenReturn(expectedError);
+            .thenReturn(EXPECTED_ERROR);
 
-        //When
+        // When
         BulkPaymentInitiationResponse actualResponse = scaPaymentService.createBulkPayment(BULK_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
-        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
+        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(EXPECTED_ERROR);
     }
 
     @Test
@@ -277,10 +275,10 @@ public class ScaPaymentServiceTest {
         when(spiToXs2aPaymentMapper.mapToCommonPaymentInitiateResponse(SPI_COMMON_RESPONSE.getPayload(), COMMON_PAYMENT.getPaymentType(), initialSpiAspspConsentDataProvider))
             .thenReturn(COMMON_PAYMENT_RESPONSE);
 
-        //When
+        // When
         CommonPaymentInitiationResponse actualResponse = scaPaymentService.createCommonPayment(COMMON_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //Then
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isNull();
         assertThat(actualResponse).isEqualTo(COMMON_PAYMENT_RESPONSE);
@@ -288,13 +286,10 @@ public class ScaPaymentServiceTest {
 
     @Test
     public void createCommonPayment_commonPaymentSpi_initiatePayment_failed() {
-        //Given
+        // Given
         SpiResponse<SpiPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiPaymentInitiationResponse>builder()
-            .fail(SpiResponseStatus.LOGICAL_FAILURE);
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-            .messages(Collections.singletonList("Payment not found"))
-            .build();
-
+                                                                                .error(FORMAT_ERROR)
+                                                                                .build();
         when(spiContextDataProvider.provide(PSU_DATA, TPP_INFO))
             .thenReturn(SPI_CONTEXT_DATA);
         when(xs2aToSpiPaymentInfo.mapToSpiPaymentRequest(COMMON_PAYMENT, PRODUCT))
@@ -302,21 +297,22 @@ public class ScaPaymentServiceTest {
         when(commonPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, initialSpiAspspConsentDataProvider))
             .thenReturn(expectedFailureResponse);
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
-            .thenReturn(expectedError);
+            .thenReturn(EXPECTED_ERROR);
 
-        //When
+        // When
         CommonPaymentInitiationResponse actualResponse = scaPaymentService.createCommonPayment(COMMON_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
-        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
+        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(EXPECTED_ERROR);
     }
 
     private static SpiContextData getSpiContextData() {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
             new TppInfo(),
+            UUID.randomUUID(),
             UUID.randomUUID()
         );
     }
@@ -330,9 +326,9 @@ public class ScaPaymentServiceTest {
         return tppInfo;
     }
 
-    private static BulkPayment buildBulkPayment(SinglePayment singlePayment) {
+    private static BulkPayment buildBulkPayment() {
         BulkPayment bulkPayment = new BulkPayment();
-        bulkPayment.setPayments(Collections.singletonList(singlePayment));
+        bulkPayment.setPayments(Collections.singletonList(ScaPaymentServiceTest.SINGLE_PAYMENT));
         bulkPayment.setRequestedExecutionDate(LocalDate.now());
         bulkPayment.setBatchBookingPreferred(false);
         return bulkPayment;
@@ -373,7 +369,7 @@ public class ScaPaymentServiceTest {
 
     private static <T> SpiResponse<T> buildSpiResponse(T payload) {
         return SpiResponse.<T>builder()
-            .payload(payload)
-            .build();
+                   .payload(payload)
+                   .build();
     }
 }

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais.stage;
 
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
@@ -31,6 +32,7 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -49,7 +51,7 @@ public abstract class AisScaStage<T, R> implements Function<T, R> {
     protected final SpiErrorMapper spiErrorMapper;
 
     protected UpdateConsentPsuDataResponse createFailedResponse(MessageError messageError,
-                                                                List<String> messages,
+                                                                List<TppMessage> messages,
                                                                 UpdateConsentPsuDataReq updateConsentPsuDataReq) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FAILED,
                                                                                  updateConsentPsuDataReq.getConsentId(),
@@ -59,8 +61,11 @@ public abstract class AisScaStage<T, R> implements Function<T, R> {
         return response;
     }
 
-    private String buildPsuMessage(List<String> messages) {
-        return String.join(", ", messages);
+    private String buildPsuMessage(List<TppMessage> messages) {
+        List<String> textMessages = new ArrayList<>();
+        messages.forEach(tppMessage -> textMessages.add(tppMessage.getMessageText()));
+
+        return String.join(", ", textMessages);
     }
 
     protected PsuIdData extractPsuIdData(UpdateConsentPsuDataReq request) {

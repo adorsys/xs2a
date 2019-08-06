@@ -1,3 +1,14 @@
 = Release notes v. 3.10
 
 == Table of Contents
+* Remove deprecated methods in SpiResponse
+
+== Remove deprecated methods in SpiResponse
+
+From now on, some changes in `SpiResponse` and `SpiResponseStatus` were made:
+
+- removed method `fail()` in builder `SpiResponseBuilder`, please use `build()` instead;
+- removed `responseStatus` property from `SpiResponseBuilder` builder, please use `error()` method instead;
+- removed `getMessages()` method from `SpiResponse` class;
+- removed `responseStatus` property from `SpiResponse` class;
+- removed `SpiResponseStatus` enumerator.

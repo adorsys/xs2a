@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
@@ -24,7 +26,6 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,6 +84,8 @@ interface AuthorisationSpi<T> {
      */
     @NotNull
     default SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @Nullable String authenticationMethodId, @NotNull T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+        return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
+                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED, "Service is not supported"))
+                   .build();
     }
 }

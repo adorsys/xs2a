@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
@@ -85,8 +86,7 @@ public class CreateCommonPaymentServiceTest {
     private ScaPaymentService scaPaymentService;
     @Mock
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
-    @Mock
-    private PisAspspDataService pisAspspDataService;
+    @Mock    private PisAspspDataService pisAspspDataService;
     @Mock
     private AspspDataService aspspDataService;
     @Mock
@@ -234,9 +234,8 @@ public class CreateCommonPaymentServiceTest {
     }
 
     private static CommonPaymentInitiationResponse buildSpiErrorForCommonPayment() {
-        ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
-                                      .errorType(ErrorType.PIIS_400)
-                                      .messages(ERROR_MESSAGE_TEXT)
+        ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIIS_400)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "message 1, message 2, message 3"))
                                       .build();
 
         return new CommonPaymentInitiationResponse(errorHolder);

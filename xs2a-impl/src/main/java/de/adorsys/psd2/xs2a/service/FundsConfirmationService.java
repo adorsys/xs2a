@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
@@ -124,7 +125,9 @@ public class FundsConfirmationService {
         if (selector == null) {
             log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds failed, because while validate account reference no account identifier found in the request [{}].",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), accountReference);
-            return new PiisConsentValidationResult(ErrorHolder.builder(FORMAT_ERROR).errorType(PIIS_400).build());
+            return new PiisConsentValidationResult(ErrorHolder.builder(PIIS_400)
+                                                       .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
+                                                       .build());
         }
 
         List<PiisConsent> response = piisConsentService.getPiisConsentListByAccountIdentifier(accountReference.getCurrency(),
@@ -151,7 +154,7 @@ public class FundsConfirmationService {
             ErrorHolder error = spiErrorMapper.mapToErrorHolder(fundsSufficientCheck, ServiceType.PIIS);
             log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds failed, because perform funds sufficient check failed. Msg error: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), error);
-                return new FundsConfirmationResponse(error);
+            return new FundsConfirmationResponse(error);
         }
 
         return spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(fundsSufficientCheck.getPayload());

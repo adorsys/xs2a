@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -105,10 +104,7 @@ public class PiisConsentValidationTest {
         PiisConsentValidationResult validationResult = piisConsentValidation.validatePiisConsentData(piisConsents);
 
         // Then
-        assertNotNull(validationResult);
-        assertTrue(validationResult.hasError());
-        assertEquals(MessageErrorCode.CONSENT_UNKNOWN_400, validationResult.getErrorHolder().getErrorCode());
-        assertEquals(ErrorType.PIIS_400, validationResult.getErrorHolder().getErrorType());
+        assertThatErrorIs(validationResult, MessageErrorCode.CONSENT_UNKNOWN_400);
     }
 
     @Test
@@ -142,10 +138,7 @@ public class PiisConsentValidationTest {
         PiisConsentValidationResult validationResult = piisConsentValidation.validatePiisConsentData(piisConsents);
 
         // Then
-        assertNotNull(validationResult);
-        assertTrue(validationResult.hasError());
-        assertEquals(MessageErrorCode.CONSENT_UNKNOWN_400, validationResult.getErrorHolder().getErrorCode());
-        assertEquals(ErrorType.PIIS_400, validationResult.getErrorHolder().getErrorType());
+        assertThatErrorIs(validationResult, MessageErrorCode.CONSENT_UNKNOWN_400);
     }
 
     @Test
@@ -160,10 +153,7 @@ public class PiisConsentValidationTest {
         PiisConsentValidationResult validationResult = piisConsentValidation.validatePiisConsentData(piisConsents);
 
         // Then
-        assertNotNull(validationResult);
-        assertTrue(validationResult.hasError());
-        assertEquals(MessageErrorCode.CONSENT_UNKNOWN_400, validationResult.getErrorHolder().getErrorCode());
-        assertEquals(ErrorType.PIIS_400, validationResult.getErrorHolder().getErrorType());
+        assertThatErrorIs(validationResult, MessageErrorCode.CONSENT_UNKNOWN_400);
     }
 
     @Test
@@ -177,7 +167,7 @@ public class PiisConsentValidationTest {
         // Then
         assertNotNull(validationResult);
         assertTrue(validationResult.hasError());
-        assertEquals(MessageErrorCode.NO_PIIS_ACTIVATION, validationResult.getErrorHolder().getErrorCode());
+        assertEquals(MessageErrorCode.NO_PIIS_ACTIVATION, validationResult.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode());
         assertEquals(ErrorType.PIIS_400, validationResult.getErrorHolder().getErrorType());
     }
 
@@ -187,5 +177,12 @@ public class PiisConsentValidationTest {
 
     private PiisConsent buildConsent() {
         return jsonReader.getObjectFromFile(CREATE_PIIS_CONSENT_JSON_PATH, PiisConsent.class);
+    }
+
+    private void assertThatErrorIs(PiisConsentValidationResult validationResult, MessageErrorCode consentUnknown400) {
+        assertNotNull(validationResult);
+        assertTrue(validationResult.hasError());
+        assertEquals(validationResult.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode(), consentUnknown400);
+        assertEquals(validationResult.getErrorHolder().getErrorType(), ErrorType.PIIS_400);
     }
 }

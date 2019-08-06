@@ -54,7 +54,6 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionReport;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionsDownloadResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -175,7 +174,7 @@ public class TransactionService {
 
         if (spiResponse.hasError()) {
             // in this particular call we use NOT_SUPPORTED to indicate that requested Content-type is not ok for us
-            if (spiResponse.getResponseStatus() == SpiResponseStatus.NOT_SUPPORTED) {
+            if (spiResponse.getErrors().get(0).getErrorCode() == SERVICE_NOT_SUPPORTED) {
                 log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transactions report by period failed: requested content-type not json or text.",
                          internalRequestId, xRequestId, accountId, consentId);
                 return ResponseObject.<Xs2aTransactionsReport>builder()

@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -47,7 +46,6 @@ import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -104,7 +102,6 @@ public class PaymentControllerTest {
     private PaymentModelMapperPsd2 paymentModelMapperPsd2;
     @Mock
     private PaymentModelMapperXs2a paymentModelMapperXs2a;
-
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
     @Mock
@@ -790,7 +787,7 @@ public class PaymentControllerTest {
 
     private ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationResponseWithError() {
         return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
-                   .fail(new MessageError(ErrorHolder.builder(MessageErrorCode.PAYMENT_FAILED).errorType(PIS_403).build()))
+                   .fail(new MessageError(ErrorHolder.builder(PIS_403).tppMessages(TppMessageInformation.of(PAYMENT_FAILED, "")).build()))
                    .build();
     }
 

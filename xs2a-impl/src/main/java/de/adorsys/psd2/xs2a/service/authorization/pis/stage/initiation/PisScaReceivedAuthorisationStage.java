@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -57,7 +58,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
@@ -220,9 +220,8 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse applyIdentification(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         if (!isPsuExist(request.getPsuData())) {
-            ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
-                                          .errorType(ErrorType.PIS_400)
-                                          .messages(Collections.singletonList(MESSAGE_ERROR_NO_PSU))
+            ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, MESSAGE_ERROR_NO_PSU))
                                           .build();
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. PIS_EMBEDDED_RECEIVED stage. Apply identification when update payment PSU data has failed. No PSU data available in request.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId());

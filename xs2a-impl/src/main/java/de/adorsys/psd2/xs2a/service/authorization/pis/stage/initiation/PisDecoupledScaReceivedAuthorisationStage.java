@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -42,8 +43,6 @@ import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED;
 
@@ -101,9 +100,8 @@ public class PisDecoupledScaReceivedAuthorisationStage extends PisScaStage<Xs2aU
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse applyIdentification(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         if (!isPsuExist(request.getPsuData())) {
-            ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
-                                          .errorType(ErrorType.PIS_400)
-                                          .messages(Collections.singletonList(MESSAGE_ERROR_NO_PSU))
+            ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, MESSAGE_ERROR_NO_PSU))
                                           .build();
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_DECOUPLED_RECEIVED stage. Apply identification when update payment PSU data has failed. No PSU data available in request.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId(), request.getPsuData().getPsuId());

@@ -77,6 +77,7 @@ import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
@@ -219,7 +220,10 @@ public class TransactionServiceTest {
             .thenReturn(buildErrorSpiResponse(SPI_TRANSACTION_REPORT));
 
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(SPI_TRANSACTION_REPORT), ServiceType.AIS))
-            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
+            .thenReturn(ErrorHolder
+                            .builder(AIS_400)
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, ""))
+                            .build());
 
         // When
         ResponseObject<Xs2aTransactionsReport> actualResponse = transactionService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
@@ -432,7 +436,9 @@ public class TransactionServiceTest {
 
         when(accountSpi.requestTransactionsByDownloadLink(SPI_CONTEXT_DATA, SPI_ACCOUNT_CONSENT, new String(Base64.getDecoder().decode(BASE64_STRING_EXAMPLE)), spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)))
             .thenReturn(buildErrorSpiResponse(spiTransactionsDownloadResponse));
-        ErrorHolder errorHolder = ErrorHolder.builder(AIS_401).build();
+        ErrorHolder errorHolder = ErrorHolder.builder(AIS_401)
+                                      .tppMessages(TppMessageInformation.of(FORMAT_ERROR, ""))
+                                      .build();
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(spiTransactionsDownloadResponse), ServiceType.AIS)).thenReturn(errorHolder);
 
         // When
@@ -468,7 +474,9 @@ public class TransactionServiceTest {
             .thenReturn(buildErrorSpiResponse(spiTransaction));
 
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(spiTransaction), ServiceType.AIS))
-            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
+            .thenReturn(ErrorHolder.builder(AIS_400)
+                            .tppMessages(TppMessageInformation.of(FORMAT_ERROR, ""))
+                            .build());
 
         // When
         ResponseObject<Transactions> actualResponse = transactionService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID, REQUEST_URI);

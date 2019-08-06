@@ -16,11 +16,13 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ErrorHolder {
@@ -30,20 +32,6 @@ public class ErrorHolder {
     private ErrorHolder(ErrorHolderBuilder builder) {
         this.tppMessageInformationList = builder.tppMessageInformationList;
         this.errorType = builder.errorType;
-    }
-
-    // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965, use TppMessageInformation instead
-    @Deprecated
-    public String getMessage() {
-        return tppMessageInformationList.stream()
-                   .map(TppMessageInformation::getText)
-                   .collect(Collectors.joining(", "));
-    }
-
-    // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965, use TppMessageInformation instead
-    @Deprecated
-    public MessageErrorCode getErrorCode() {
-        return getFirstTppMessage().getMessageErrorCode();
     }
 
     public ErrorType getErrorType() {
@@ -58,35 +46,12 @@ public class ErrorHolder {
         return new ErrorHolderBuilder(errorType);
     }
 
-    // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965, use builder with error type instead
-    @Deprecated
-    public static ErrorHolderBuilder builder(MessageErrorCode errorCode) {
-        return new ErrorHolderBuilder(errorCode);
-    }
-
-    private TppMessageInformation getFirstTppMessage() {
-        return tppMessageInformationList.get(0);
-    }
-
     public static class ErrorHolderBuilder {
         private List<TppMessageInformation> tppMessageInformationList = new ArrayList<>();
         private ErrorType errorType;
-        private List<String> messages;
-        private MessageErrorCode errorCode;
 
         private ErrorHolderBuilder(ErrorType errorType) {
             this.errorType = errorType;
-        }
-
-        private ErrorHolderBuilder(MessageErrorCode errorCode) {
-            this.errorCode = errorCode;
-        }
-
-        // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965, use TppMessageInformation instead
-        @Deprecated
-        public ErrorHolderBuilder messages(List<String> messages) {
-            this.messages = messages;
-            return this;
         }
 
         public ErrorHolderBuilder tppMessages(TppMessageInformation... tppMessages) {
@@ -94,31 +59,8 @@ public class ErrorHolder {
             return this;
         }
 
-        // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965, use builder instead
-        @Deprecated
-        public ErrorHolderBuilder errorType(ErrorType errorType) {
-            this.errorType = errorType;
-            return this;
-        }
-
         public ErrorHolder build() {
-            if (tppMessageInformationList.isEmpty()) {
-                tppMessageInformationList = generateTppMessages(messages);
-            }
-
             return new ErrorHolder(this);
-        }
-
-        // TODO: Remove the method in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965 when it won't be possible to create holder without tpp messages
-        @Deprecated
-        private List<TppMessageInformation> generateTppMessages(List<String> messages) {
-            if (CollectionUtils.isEmpty(messages)) {
-                return Collections.singletonList(TppMessageInformation.of(errorCode));
-            }
-
-            return messages.stream()
-                       .map(m -> TppMessageInformation.of(errorCode, m))
-                       .collect(Collectors.toList());
         }
     }
 

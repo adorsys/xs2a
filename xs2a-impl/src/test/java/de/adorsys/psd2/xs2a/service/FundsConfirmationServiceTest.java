@@ -16,12 +16,14 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.event.core.model.EventType;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -32,14 +34,11 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfirmationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
-import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +59,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class FundsConfirmationServiceTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
 
     @Mock
@@ -79,10 +78,6 @@ public class FundsConfirmationServiceTest {
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private RequestProviderService requestProviderService;
-    @Mock
-    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
-    @Mock
-    private InitialSpiAspspConsentDataProvider aspspConsentDataProvider;
 
     @InjectMocks
     private FundsConfirmationService fundsConfirmationService;
@@ -121,9 +116,9 @@ public class FundsConfirmationServiceTest {
         // Given
         String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
 
-        ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
-                                      .errorType(PIIS_400)
-                                      .messages(ERROR_MESSAGE_TEXT)
+        ErrorHolder errorHolder = ErrorHolder
+                                      .builder(PIIS_400)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "message 1, message 2, message 3"))
                                       .build();
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIIS)))
             .thenReturn(errorHolder);
@@ -132,7 +127,8 @@ public class FundsConfirmationServiceTest {
         when(aspspProfileServiceWrapper.isPiisConsentSupported()).thenReturn(false);
         when(fundsConfirmationSpi.performFundsSufficientCheck(any(), any(), any(), any()))
             .thenReturn(SpiResponse.<SpiFundsConfirmationResponse>builder()
-                            .fail(SpiResponseStatus.LOGICAL_FAILURE));
+                            .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                            .build());
 
         // When
         ResponseObject<FundsConfirmationResponse> response = fundsConfirmationService.fundsConfirmation(buildFundsConfirmationRequest());
