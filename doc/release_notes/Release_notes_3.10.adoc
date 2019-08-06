@@ -3,6 +3,7 @@
 == Table of Contents
 * Remove deprecated methods in SpiResponse
 * Removed deprecated enum
+* Wrong error code on deleting an account information consent
 
 == Remove deprecated methods in SpiResponse
 
@@ -15,4 +16,18 @@ From now on, some changes in `SpiResponse` and `SpiResponseStatus` were made:
 - removed `SpiResponseStatus` enumerator.
 
 == Removed deprecated enum
+
 Removed deprecated enum value `ALL_ACCOUNTS_WITH_BALANCES` in `AccountAccessType` class.
+
+== Wrong error code on deleting an account information consent
+
+From now on, trying to delete account information consent (via `DELETE /v1/consents/{consentId}` endpoint) with TPP
+certificate that differs from the one used for creating the consent will result in an error with HTTP code 403 instead of 400.
+
+The same change has also been applied to following endpoints:
+ - Get Status Request (`GET /v1/consents/{consentId}/status`)
+ - Get Consent Request (`GET /v1/consents/{consentId}`)
+ - Start Authorisation Request (`POST /v1/consents/{consentId}/authorisations`)
+ - Update PSU Data Request (`PUT /v1/consents/{consentId}/authorisations/{authorsationId}`)
+ - Get SCA Status Request (`GET /v1/consents/{consentId}/authorisations/{authorisationId}`)
+ - Get Authorisation Sub-Resources Request (`GET /v1/consents/{consentId}/authorisations`)

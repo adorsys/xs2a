@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -26,7 +25,7 @@ import org.springframework.stereotype.Component;
  * Validator to be used for validating update consent psu data request according to some business rules
  */
 @Component
-public class UpdateConsentPsuDataValidator extends AbstractAisTppValidator<CommonConsentObject> {
+public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<CommonConsentObject> {
     /**
      * Validates update consent psu data request
      *

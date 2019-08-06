@@ -29,7 +29,7 @@ import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentV
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountRequestObject;
-import de.adorsys.psd2.xs2a.service.validator.tpp.AisTppInfoValidator;
+import de.adorsys.psd2.xs2a.service.validator.tpp.AisAccountTppInfoValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,7 +66,7 @@ public class GetAccountDetailsValidatorTest {
     @Mock
     private AccountConsentValidator accountConsentValidator;
     @Mock
-    private AisTppInfoValidator aisTppInfoValidator;
+    private AisAccountTppInfoValidator aisAccountTppInfoValidator;
     @Mock
     private AccountReferenceAccessValidator accountReferenceAccessValidator;
     @Mock
@@ -79,11 +79,11 @@ public class GetAccountDetailsValidatorTest {
     @Before
     public void setUp() {
         // Inject pisTppInfoValidator via setter
-        getAccountDetailsValidator.setPisTppInfoValidator(aisTppInfoValidator);
+        getAccountDetailsValidator.setAisAccountTppInfoValidator(aisAccountTppInfoValidator);
 
-        when(aisTppInfoValidator.validateTpp(TPP_INFO))
+        when(aisAccountTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());
-        when(aisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
+        when(aisAccountTppInfoValidator.validateTpp(INVALID_TPP_INFO))
             .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
     }
 
@@ -124,7 +124,7 @@ public class GetAccountDetailsValidatorTest {
         ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isValid());
@@ -142,7 +142,7 @@ public class GetAccountDetailsValidatorTest {
         ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertFalse(validationResult.isValid());
@@ -161,7 +161,7 @@ public class GetAccountDetailsValidatorTest {
         ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());

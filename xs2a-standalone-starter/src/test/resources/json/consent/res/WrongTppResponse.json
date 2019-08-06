@@ -1,0 +1,9 @@
+{
+    "tppMessages": [
+        {
+            "category": "ERROR",
+            "code": "CONSENT_UNKNOWN",
+            "text": "TPP certificate doesn’t match the initial request"
+        }
+    ]
+}

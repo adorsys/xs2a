@@ -20,7 +20,6 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.DownloadTransactionListRequestObject;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +34,7 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 
 @Component
 @RequiredArgsConstructor
-public class DownloadTransactionsReportValidator extends AbstractAisTppValidator<DownloadTransactionListRequestObject> {
+public class DownloadTransactionsReportValidator extends AbstractAccountTppValidator<DownloadTransactionListRequestObject> {
 
     @NotNull
     @Override

@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
-import de.adorsys.psd2.xs2a.service.validator.tpp.AisTppInfoValidator;
+import de.adorsys.psd2.xs2a.service.validator.tpp.AisConsentTppInfoValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +47,7 @@ public class UpdateConsentPsuDataValidatorTest {
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
 
     @Mock
-    private AisTppInfoValidator aisTppInfoValidator;
+    private AisConsentTppInfoValidator aisConsentTppInfoValidator;
 
     @InjectMocks
     private UpdateConsentPsuDataValidator updateConsentPsuDataValidator;
@@ -55,11 +55,11 @@ public class UpdateConsentPsuDataValidatorTest {
     @Before
     public void setUp() {
         // Inject pisTppInfoValidator via setter
-        updateConsentPsuDataValidator.setPisTppInfoValidator(aisTppInfoValidator);
+        updateConsentPsuDataValidator.setAisConsentTppInfoValidator(aisConsentTppInfoValidator);
 
-        when(aisTppInfoValidator.validateTpp(TPP_INFO))
+        when(aisConsentTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());
-        when(aisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
+        when(aisConsentTppInfoValidator.validateTpp(INVALID_TPP_INFO))
             .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
     }
 
@@ -72,7 +72,7 @@ public class UpdateConsentPsuDataValidatorTest {
         ValidationResult validationResult = updateConsentPsuDataValidator.validate(new CommonConsentObject(accountConsent));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isValid());
@@ -88,7 +88,7 @@ public class UpdateConsentPsuDataValidatorTest {
         ValidationResult validationResult = updateConsentPsuDataValidator.validate(new CommonConsentObject(accountConsent));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
