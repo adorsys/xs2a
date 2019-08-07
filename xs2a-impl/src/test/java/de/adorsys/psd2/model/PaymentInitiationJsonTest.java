@@ -30,6 +30,7 @@ public class PaymentInitiationJsonTest {
             CommonModelTest.checkUltimateCreditorField(clazz);
             CommonModelTest.checkPurposeCodeField(clazz);
             CommonModelTest.checkRemittanceInformationStructuredField(clazz);
+            CommonModelTest.checkRequestedExecutionDate(clazz);
         } catch (NoSuchFieldException e) {
             fail();
         }
