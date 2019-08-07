@@ -33,4 +33,8 @@ public class CommonModelTest {
     static void checkRemittanceInformationStructuredField(Class clazz) throws NoSuchFieldException {
         clazz.getDeclaredField("remittanceInformationStructured");
     }
+
+    static void checkRequestedExecutionDate(Class clazz) throws NoSuchFieldException {
+        clazz.getDeclaredField("requestedExecutionDate");
+    }
 }
