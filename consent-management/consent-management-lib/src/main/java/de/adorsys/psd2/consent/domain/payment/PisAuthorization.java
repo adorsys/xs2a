@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.consent.domain.payment;
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.ScaMethod;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
@@ -56,7 +56,7 @@ public class PisAuthorization extends InstanceDependableEntity {
 
     @Column(name = "authorization_type")
     @Enumerated(value = EnumType.STRING)
-    private CmsAuthorisationType authorizationType;
+    private PaymentAuthorisationType authorizationType;
 
     @Column(name = "redirect_expiration_timestamp")
     private OffsetDateTime redirectUrlExpirationTimestamp;

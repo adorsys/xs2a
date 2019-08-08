@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
@@ -56,7 +56,7 @@ public class PisCommonDecoupledService {
     }
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledInitiation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId) {
-        return proceedDecoupled(request, payment, authenticationMethodId, PaymentAuthorisationType.INITIATION);
+        return proceedDecoupled(request, payment, authenticationMethodId, PaymentAuthorisationType.CREATED);
     }
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledCancellation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment) {
@@ -64,7 +64,7 @@ public class PisCommonDecoupledService {
     }
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledCancellation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId) {
-        return proceedDecoupled(request, payment, authenticationMethodId, PaymentAuthorisationType.CANCELLATION);
+        return proceedDecoupled(request, payment, authenticationMethodId, PaymentAuthorisationType.CANCELLED);
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupled(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId, PaymentAuthorisationType scaType) {
@@ -75,10 +75,10 @@ public class PisCommonDecoupledService {
         SpiResponse<SpiAuthorisationDecoupledScaResponse> spiResponse = null;
 
         switch (scaType) {
-            case INITIATION:
+            case CREATED:
                 spiResponse = paymentAuthorisationSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), authenticationId, authenticationMethodId, payment, aspspConsentDataProvider);
                 break;
-            case CANCELLATION:
+            case CANCELLED:
                 spiResponse = paymentCancellationSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), authenticationId, authenticationMethodId, payment, aspspConsentDataProvider);
                 break;
             default:

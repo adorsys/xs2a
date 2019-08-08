@@ -16,13 +16,13 @@
 
 package de.adorsys.psd2.consent.api.service;
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.*;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -135,7 +135,7 @@ interface PisCommonPaymentServiceBase {
      * @param authorisationType Type of authorisation
      * @return Response containing information about authorisation IDs
      */
-    Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, CmsAuthorisationType authorisationType);
+    Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, PaymentAuthorisationType authorisationType);
 
     /**
      * Gets SCA status of the authorisation by payment ID, authorisation ID and authorisation type
@@ -145,7 +145,7 @@ interface PisCommonPaymentServiceBase {
      * @param authorisationType Type of authorisation
      * @return SCA status of the authorisation
      */
-    Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, CmsAuthorisationType authorisationType);
+    Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, PaymentAuthorisationType authorisationType);
 
     /**
      * Get information about PSU list by payment identifier
@@ -189,5 +189,5 @@ interface PisCommonPaymentServiceBase {
      * @param authorisationType Type of authorisation
      * @return SCA approach of the authorisation
      */
-    Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, CmsAuthorisationType authorisationType);
+    Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType);
 }

@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -54,7 +54,7 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValida
     @Override
     protected ValidationResult executeBusinessValidation(UpdatePisCommonPaymentPsuDataPO paymentObject) {
         String authorisationId = paymentObject.getAuthorisationId();
-        if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, PaymentAuthorisationType.INITIATION)) {
+        if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, PaymentAuthorisationType.CREATED)) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data  has failed: endpoint is not accessible for authorisation",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
             return ValidationResult.invalid(PIS_403, TppMessageInformation.of(SERVICE_BLOCKED));

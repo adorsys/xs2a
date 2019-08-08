@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.*;
@@ -26,6 +25,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PisCommonPaymentRemoteUrls;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -140,7 +140,7 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
     }
 
     @Override
-    public Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, CmsAuthorisationType authorisationType) {
+    public Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, PaymentAuthorisationType authorisationType) {
         String url = getAuthorisationSubResourcesUrl(authorisationType);
         try {
             return Optional.ofNullable(consentRestTemplate.exchange(url, HttpMethod.GET, null,
@@ -154,7 +154,7 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
     }
 
     @Override
-    public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, CmsAuthorisationType authorisationType) {
+    public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, PaymentAuthorisationType authorisationType) {
         String url = getAuthorisationScaStatusUrl(authorisationType);
         try {
             return Optional.ofNullable(consentRestTemplate.getForEntity(url, ScaStatus.class,
@@ -187,7 +187,7 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
         return false;
     }
 
-    private String getAuthorisationSubResourcesUrl(CmsAuthorisationType authorisationType) {
+    private String getAuthorisationSubResourcesUrl(PaymentAuthorisationType authorisationType) {
         switch (authorisationType) {
             case CREATED:
                 return remotePisCommonPaymentUrls.getAuthorisationSubResources();
@@ -214,7 +214,7 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
     }
 
     @Override
-    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, CmsAuthorisationType authorisationType) {
+    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType) {
         String url = getAuthorisationScaApproachUrl(authorisationType);
 
         try {
@@ -228,7 +228,7 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
         return Optional.empty();
     }
 
-    private String getAuthorisationScaApproachUrl(CmsAuthorisationType authorisationType) {
+    private String getAuthorisationScaApproachUrl(PaymentAuthorisationType authorisationType) {
         switch (authorisationType) {
             case CREATED:
                 return remotePisCommonPaymentUrls.getAuthorisationScaApproach();
@@ -240,7 +240,7 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
         }
     }
 
-    private String getAuthorisationScaStatusUrl(CmsAuthorisationType authorisationType) {
+    private String getAuthorisationScaStatusUrl(PaymentAuthorisationType authorisationType) {
         switch (authorisationType) {
             case CREATED:
                 return remotePisCommonPaymentUrls.getAuthorisationScaStatus();
