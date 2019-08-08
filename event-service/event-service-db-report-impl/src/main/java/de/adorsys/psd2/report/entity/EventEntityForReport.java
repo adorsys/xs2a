@@ -27,7 +27,7 @@ public class EventEntityForReport {
     private OffsetDateTime timestamp;
     private String consentId;
     private String paymentId;
-    private String payload;
+    private byte[] payload;
     private String eventOrigin;
     private String eventType;
     private String instanceId;

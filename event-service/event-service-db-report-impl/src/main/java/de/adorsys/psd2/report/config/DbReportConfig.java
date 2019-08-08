@@ -17,14 +17,14 @@
 package de.adorsys.psd2.report.config;
 
 import de.adorsys.psd2.report.jpa.builder.SqlEventReportBuilder;
-import de.adorsys.psd2.report.jpa.builder.SqlEventReportDbBuilder;
-import de.adorsys.psd2.report.jpa.builder.SqlEventReportOracleDbBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class DbReportConfig {
+    private static final String SQL_REQUEST_FILE_NAME = "base_event_report_db.sql";
+    private static final String ORACLE_SQL_REQUEST_FILE_NAME = "base_event_report_oracle.sql";
 
     @Value("${spring.datasource.driver-class-name:oracle.jdbc.OracleDriver}")
     private String driverName;
@@ -32,8 +32,8 @@ public class DbReportConfig {
     @Bean
     public SqlEventReportBuilder getSqlEventReportBuilder() {
         return driverName.toLowerCase().contains("oracle")
-                   ? new SqlEventReportOracleDbBuilder()
-                   : new SqlEventReportDbBuilder();
+                   ? new SqlEventReportBuilder(ORACLE_SQL_REQUEST_FILE_NAME)
+                   : new SqlEventReportBuilder(SQL_REQUEST_FILE_NAME);
     }
 
 }
