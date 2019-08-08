@@ -16,30 +16,78 @@
 
 package de.adorsys.psd2.report.jpa.builder;
 
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.io.IOException;
 
+@Data
+@Slf4j
+public class SqlEventReportBuilder extends MapSqlParameterSource {
+    private final String sqlRequestFileName;
+    private StringBuilder sqlRequest;
+    private StringBuilder filterRequest;
 
-public interface SqlEventReportBuilder {
-
-    SqlEventReportBuilder instanceId();
-
-    SqlEventReportBuilder period();
-
-    SqlEventReportBuilder consentId();
-
-    SqlEventReportBuilder paymentId();
-
-    SqlEventReportBuilder eventType();
-
-    SqlEventReportBuilder eventOrigin();
-
-    String build();
-
-    SqlEventReportBuilder baseRequest();
-
-    default String getBasePartOfRequest(String fileName) throws IOException {
+    public String getBasePartOfRequest(String fileName) throws IOException {
         return IOUtils.toString(getClass().getClassLoader().getResource(fileName).openStream());
+    }
+
+    public SqlEventReportBuilder baseRequest() {
+        try {
+            sqlRequest = new StringBuilder(getBasePartOfRequest(sqlRequestFileName));
+        } catch (IOException e) {
+            log.error("Request query was not found!");
+        }
+        filterRequest = new StringBuilder();
+        return this;
+    }
+
+    public SqlEventReportBuilder period() {
+        appendToRequest("timestamp between :periodFrom and :periodTo ");
+        return this;
+    }
+
+    public SqlEventReportBuilder instanceId() {
+        appendToRequest("ev.instance_id = :instanceId ");
+        return this;
+    }
+
+    public SqlEventReportBuilder consentId() {
+        appendToRequest("ev.consent_id = :consentId ");
+        return this;
+    }
+
+    public SqlEventReportBuilder paymentId() {
+        appendToRequest("ev.payment_id = :paymentId ");
+        return this;
+    }
+
+    public SqlEventReportBuilder eventType() {
+        appendToRequest("ev.event_type = :eventType ");
+        return this;
+    }
+
+    public SqlEventReportBuilder eventOrigin() {
+        appendToRequest("ev.event_origin = :eventOrigin ");
+        return this;
+    }
+
+    public String build() {
+        return sqlRequest
+                   .append(filterRequest)
+                   .append("order by timestamp ")
+                   .toString();
+    }
+
+    private void appendToRequest(String filter) {
+        if (filterRequest.length() == 0) {
+            filterRequest.append("where ");
+        } else {
+            filterRequest.append("and  ");
+        }
+
+        filterRequest.append(filter);
     }
 }

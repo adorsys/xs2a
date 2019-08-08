@@ -6,6 +6,7 @@
 * Wrong error code on deleting an account information consent
 * Bugfix: NPE during executing Confirmation of Funds request without currency
 * Bugfix: `batchBookingPreferred` is not persisted for bulk payments
+* Event query for Oracle DB was fixed
 
 == Remove deprecated methods in SpiResponse
 
@@ -43,3 +44,7 @@ confirmation request for it (POST `/v1/funds-confirmations`) without the currenc
 
 From now on, `batchBookingPreferred` field is persisted for bulk payment during the payment initiation request (`POST /v1/{payment-service}/{payment-product}`)
  and return correct value on get payment information request (`GET /v1/{payment-service}/{payment-product}/{paymentId}`)
+
+== Event query for Oracle DB was fixed
+
+From now on, CMS endpoint `GET /aspsp-api/v1/events/` performs correctly on Oracle DB (before it was `Internal Server Error` response).
