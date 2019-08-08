@@ -16,11 +16,13 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
+import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
+import de.adorsys.psd2.consent.reader.JsonReader;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.any;
@@ -37,6 +40,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PisCommonPaymentMapperTest {
     private final static String PSU_ID = "777";
+    private final static JsonReader jsonReader = new JsonReader();
 
     @InjectMocks
     private PisCommonPaymentMapper pisCommonPaymentMapper;
@@ -62,6 +66,40 @@ public class PisCommonPaymentMapperTest {
         assertEquals(getPisAuthorisationResponse.getPsuIdData().getPsuId(), psuData.getPsuId());
     }
 
+    @Test
+    public void mapToPisPaymentDataList() {
+        //Given
+        PisPayment pisPayment = buildPisPayment(null);
+        PisPaymentData pisPaymentDataExpected = jsonReader.getObjectFromFile("json/service/mapper/pis-payment-data.json", PisPaymentData.class);
+        //When
+        List<PisPaymentData> pisPaymentDataList = pisCommonPaymentMapper.mapToPisPaymentDataList(Collections.singletonList(pisPayment), null);
+        //Then
+        PisPaymentData pisPaymentDataActual = pisPaymentDataList.get(0);
+        assertEquals(pisPaymentDataExpected, pisPaymentDataActual);
+    }
+
+    @Test
+    public void mapToPisPaymentDataList_BatchBookingPreferred_True() {
+        //Given
+        PisPayment pisPayment = buildPisPayment(Boolean.TRUE);
+        //When
+        List<PisPaymentData> pisPaymentDataList = pisCommonPaymentMapper.mapToPisPaymentDataList(Collections.singletonList(pisPayment), null);
+        //Then
+        PisPaymentData pisPaymentData = pisPaymentDataList.get(0);
+        assertEquals(pisPayment.getBatchBookingPreferred(), pisPaymentData.getBatchBookingPreferred());
+    }
+
+    @Test
+    public void mapToPisPaymentDataList_BatchBookingPreferred_False() {
+        //Given
+        PisPayment pisPayment = buildPisPayment(Boolean.FALSE);
+        //When
+        List<PisPaymentData> pisPaymentDataList = pisCommonPaymentMapper.mapToPisPaymentDataList(Collections.singletonList(pisPayment), null);
+        //Then
+        PisPaymentData pisPaymentData = pisPaymentDataList.get(0);
+        assertEquals(pisPayment.getBatchBookingPreferred(), pisPaymentData.getBatchBookingPreferred());
+    }
+
     private PisAuthorization buildPisAuthorization() {
         PisAuthorization pisAuthorization = new PisAuthorization();
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
@@ -71,5 +109,11 @@ public class PisCommonPaymentMapperTest {
         pisCommonPaymentData.setPayments(Collections.singletonList(pisPaymentData));
         pisAuthorization.setPaymentData(pisCommonPaymentData);
         return pisAuthorization;
+    }
+
+    private PisPayment buildPisPayment(Boolean batchBookingPreferred) {
+        PisPayment pisPayment = jsonReader.getObjectFromFile("json/service/mapper/pis-payment.json", PisPayment.class);
+        pisPayment.setBatchBookingPreferred(batchBookingPreferred);
+        return pisPayment;
     }
 }

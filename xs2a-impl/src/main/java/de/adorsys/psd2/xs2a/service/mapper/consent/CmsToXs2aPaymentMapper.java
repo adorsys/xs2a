@@ -104,7 +104,7 @@ public class CmsToXs2aPaymentMapper {
         BulkPayment bulk = new BulkPayment();
         PisPayment firstPayment = payments.get(0);
         bulk.setPaymentId(firstPayment.getPaymentId());
-        bulk.setBatchBookingPreferred(false);
+        bulk.setBatchBookingPreferred(firstPayment.getBatchBookingPreferred());
         bulk.setDebtorAccount(firstPayment.getDebtorAccount());
         bulk.setRequestedExecutionDate(firstPayment.getRequestedExecutionDate());
         bulk.setRequestedExecutionTime(firstPayment.getRequestedExecutionTime());

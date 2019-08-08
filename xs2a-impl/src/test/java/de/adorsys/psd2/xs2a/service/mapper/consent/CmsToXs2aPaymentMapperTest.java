@@ -241,7 +241,7 @@ public class CmsToXs2aPaymentMapperTest {
         assertNotNull(bulkPayment);
         assertEquals(PAYMENT_ID, bulkPayment.getPaymentId());
 
-        assertFalse(bulkPayment.getBatchBookingPreferred());
+        assertTrue(bulkPayment.getBatchBookingPreferred());
 
         assertEquals(DEBTOR_ACCOUNT_REFERENCE, bulkPayment.getDebtorAccount());
         assertEquals(REQUESTED_EXECUTION_DATE, bulkPayment.getRequestedExecutionDate());
@@ -346,6 +346,7 @@ public class CmsToXs2aPaymentMapperTest {
         pisPayment.setDayOfExecution(DAY_OF_EXECUTION);
         pisPayment.setPsuDataList(PSU_ID_DATA_LIST);
         pisPayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
+        pisPayment.setBatchBookingPreferred(Boolean.TRUE);
         return pisPayment;
     }
 
