@@ -1,0 +1,18 @@
+{
+  "instanceId": "UNDEFINED",
+  "paymentId": "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI",
+  "endToEndIdentification": "RI-123456789",
+  "currency": "EUR",
+  "amount": 1000.00,
+  "creditorAgent": "BCENECEQ",
+  "creditorName": "Telekom",
+  "creditorAddress": {
+    "street": "WBG Straße",
+    "buildingNumber": "56",
+    "city": "Nürnberg",
+    "postalCode": "90543",
+    "country": "DE"
+  },
+  "purposeCode": "",
+  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222"
+}

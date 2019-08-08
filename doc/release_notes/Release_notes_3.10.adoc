@@ -5,6 +5,7 @@
 * Removed deprecated enum
 * Wrong error code on deleting an account information consent
 * Bugfix: NPE during executing Confirmation of Funds request without currency
+* Bugfix: `batchBookingPreferred` is not persisted for bulk payments
 
 == Remove deprecated methods in SpiResponse
 
@@ -37,3 +38,8 @@ The same change has also been applied to following endpoints:
 
 From now on, it is possible to create PIIS consent without the currency in AccountReference and launch the funds
 confirmation request for it (POST `/v1/funds-confirmations`) without the currency in `account` field.
+
+== Bugfix: `batchBookingPreferred` is not persisted for bulk payments
+
+From now on, `batchBookingPreferred` field is persisted for bulk payment during the payment initiation request (`POST /v1/{payment-service}/{payment-product}`)
+ and return correct value on get payment information request (`GET /v1/{payment-service}/{payment-product}/{paymentId}`)

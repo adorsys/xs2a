@@ -109,4 +109,7 @@ public class PisPayment {
     private OffsetDateTime statusChangeTimestamp;
 
     private List<PsuIdData> psuDataList;
+
+    @ApiModelProperty(value = "Batch booking preferred")
+    private Boolean batchBookingPreferred;
 }
