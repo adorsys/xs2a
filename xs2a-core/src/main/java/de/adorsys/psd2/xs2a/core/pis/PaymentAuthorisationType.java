@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain.pis;
+package de.adorsys.psd2.xs2a.core.pis;
 
-// TODO Move PaymentAuthorisationType to the xs2a-core https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/717
 public enum PaymentAuthorisationType {
-    INITIATION,
-    CANCELLATION
+    CREATED,
+    CANCELLED
 }

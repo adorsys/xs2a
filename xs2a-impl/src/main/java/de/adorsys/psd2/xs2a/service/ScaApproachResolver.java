@@ -20,7 +20,7 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
@@ -105,7 +105,7 @@ public class ScaApproachResolver {
      */
     @NotNull
     public ScaApproach getInitiationScaApproach(@NotNull String authorisationId) {
-        return resolveScaApproach(authorisationId, PaymentAuthorisationType.INITIATION);
+        return resolveScaApproach(authorisationId, PaymentAuthorisationType.CREATED);
     }
 
     /**
@@ -116,7 +116,7 @@ public class ScaApproachResolver {
      */
     @NotNull
     public ScaApproach getCancellationScaApproach(@NotNull String authorisationId) {
-        return resolveScaApproach(authorisationId, PaymentAuthorisationType.CANCELLATION);
+        return resolveScaApproach(authorisationId, PaymentAuthorisationType.CANCELLED);
     }
 
     @NotNull

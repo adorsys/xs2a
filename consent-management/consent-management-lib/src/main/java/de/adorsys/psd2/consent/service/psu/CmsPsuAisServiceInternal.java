@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.service.psu;
 
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
@@ -45,6 +44,7 @@ import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -229,7 +229,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
                                                                auth.getExternalId(),
                                                                auth.getScaStatus(),
                                                                // Here we use hardcoded value of enum, because AIS consent can not be in any other status than 'CREATED'.
-                                                               CmsAuthorisationType.CREATED))
+                                                               PaymentAuthorisationType.CREATED))
                    .collect(Collectors.toList());
     }
 

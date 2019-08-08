@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.service.psu;
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
@@ -38,6 +37,7 @@ import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -248,7 +248,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
             if (psuDataOptional.isPresent()) {
                 newPsuData = psuDataOptional.get();
-                if (CmsAuthorisationType.CANCELLED != authorisation.getAuthorizationType()) {
+                if (PaymentAuthorisationType.CANCELLED != authorisation.getAuthorizationType()) {
                     authorisation.getPaymentData().setPsuDataList(cmsPsuService.enrichPsuData(newPsuData, paymentPsuList));
                 }
             }

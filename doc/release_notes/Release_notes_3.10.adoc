@@ -7,6 +7,7 @@
 * Bugfix: NPE during executing Confirmation of Funds request without currency
 * Bugfix: `batchBookingPreferred` is not persisted for bulk payments
 * Event query for Oracle DB was fixed
+* Refactor: PaymentAuthorisationType enum moved to xs2a-core
 
 == Remove deprecated methods in SpiResponse
 
@@ -48,3 +49,8 @@ From now on, `batchBookingPreferred` field is persisted for bulk payment during 
 == Event query for Oracle DB was fixed
 
 From now on, CMS endpoint `GET /aspsp-api/v1/events/` performs correctly on Oracle DB (before it was `Internal Server Error` response).
+
+== Refactor: PaymentAuthorisationType enum moved to xs2a-core
+
+`PaymentAuthorisationType` enumerator was moved to xs2a-core and `CmsAuthorisationType` enumerator was deleted and
+replaced with `PaymentAuthorisationType`.

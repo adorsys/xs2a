@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -46,7 +46,7 @@ public interface CmsPsuAuthorisationMapper {
                                                          @MappingTarget CmsPsuAuthorisation cmsPsuAuthorisation) {
         TppInfoEntity tppInfo = pisAuthorization.getPaymentData().getTppInfo();
 
-        boolean isPaymentCreated = pisAuthorization.getAuthorizationType() == CmsAuthorisationType.CREATED;
+        boolean isPaymentCreated = pisAuthorization.getAuthorizationType() == PaymentAuthorisationType.CREATED;
         cmsPsuAuthorisation.setTppOkRedirectUri(isPaymentCreated ? tppInfo.getRedirectUri() : tppInfo.getCancelRedirectUri());
         cmsPsuAuthorisation.setTppNokRedirectUri(isPaymentCreated ? tppInfo.getNokRedirectUri() : tppInfo.getCancelNokRedirectUri());
     }

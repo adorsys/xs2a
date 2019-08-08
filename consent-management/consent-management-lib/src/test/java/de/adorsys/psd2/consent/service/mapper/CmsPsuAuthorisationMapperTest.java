@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
@@ -25,6 +24,7 @@ import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.consent.reader.JsonReader;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
@@ -95,7 +95,7 @@ public class CmsPsuAuthorisationMapperTest {
         pisAuthorization.setScaStatus(ScaStatus.RECEIVED);
         pisAuthorization.setPsuData(new PsuData(PSU_ID, PSU_ID_TYPE, "", ""));
 
-        pisAuthorization.setAuthorizationType(CmsAuthorisationType.CREATED);
+        pisAuthorization.setAuthorizationType(PaymentAuthorisationType.CREATED);
         pisAuthorization.setAuthorisationExpirationTimestamp(EXPIRATION_TIMESTAMP);
         pisAuthorization.setScaApproach(ScaApproach.EMBEDDED);
         PisCommonPaymentData paymentData = new PisCommonPaymentData();

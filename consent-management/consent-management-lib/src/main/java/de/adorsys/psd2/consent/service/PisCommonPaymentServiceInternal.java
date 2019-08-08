@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.*;
@@ -36,6 +35,7 @@ import de.adorsys.psd2.consent.service.mapper.PisCommonPaymentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -179,10 +179,10 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Transactional
     public Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisAuthorisation(String authorisationId, UpdatePisCommonPaymentPsuDataRequest request) {
         Optional<PisAuthorization> pisAuthorisationOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(
-            authorisationId, CmsAuthorisationType.CREATED);
+            authorisationId, PaymentAuthorisationType.CREATED);
 
         if (!pisAuthorisationOptional.isPresent()) {
-            log.info("Authorisation ID: [{}]. Update pis authorisation failed, because pis authorisation with CmsAuthorisationType.CREATED is not found by id",
+            log.info("Authorisation ID: [{}]. Update pis authorisation failed, because pis authorisation with PaymentAuthorisationType.CREATED is not found by id",
                      authorisationId);
             return Optional.empty();
         }
@@ -205,10 +205,10 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Transactional
     public Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisCancellationAuthorisation(String cancellationId, UpdatePisCommonPaymentPsuDataRequest request) {
         Optional<PisAuthorization> pisAuthorisationOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(
-            cancellationId, CmsAuthorisationType.CANCELLED);
+            cancellationId, PaymentAuthorisationType.CANCELLED);
 
         if (!pisAuthorisationOptional.isPresent()) {
-            log.info("Cancellation ID: [{}]. Update pis cancellation authorisation failed, because pis authorisation with CmsAuthorisationType.CANCELLED is not found by id",
+            log.info("Cancellation ID: [{}]. Update pis cancellation authorisation failed, because pis authorisation with PaymentAuthorisationType.CANCELLED is not found by id",
                      cancellationId);
             return Optional.empty();
         }
@@ -243,7 +243,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      */
     @Override
     public Optional<GetPisAuthorisationResponse> getPisAuthorisationById(String authorisationId) {
-        return pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, CmsAuthorisationType.CREATED)
+        return pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, PaymentAuthorisationType.CREATED)
                    .map(pisCommonPaymentMapper::mapToGetPisAuthorizationResponse);
     }
 
@@ -255,7 +255,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      */
     @Override
     public Optional<GetPisAuthorisationResponse> getPisCancellationAuthorisationById(String cancellationId) {
-        return pisAuthorisationRepository.findByExternalIdAndAuthorizationType(cancellationId, CmsAuthorisationType.CANCELLED)
+        return pisAuthorisationRepository.findByExternalIdAndAuthorizationType(cancellationId, PaymentAuthorisationType.CANCELLED)
                    .map(pisCommonPaymentMapper::mapToGetPisAuthorizationResponse);
     }
 
@@ -267,7 +267,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @return response contains authorisation IDs
      */
     @Override
-    public Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, CmsAuthorisationType authorisationType) {
+    public Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, PaymentAuthorisationType authorisationType) {
         return readPisCommonPaymentDataByPaymentId(paymentId)
                    .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
                    .map(pmt -> readAuthorisationsFromPaymentCommonData(pmt, authorisationType));
@@ -275,7 +275,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
 
     @Override
     @Transactional
-    public Optional<ScaStatus> getAuthorisationScaStatus(@NotNull String paymentId, @NotNull String authorisationId, CmsAuthorisationType authorisationType) {
+    public Optional<ScaStatus> getAuthorisationScaStatus(@NotNull String paymentId, @NotNull String authorisationId, PaymentAuthorisationType authorisationType) {
         Optional<PisAuthorization> authorisationOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, authorisationType);
 
         if (!authorisationOptional.isPresent()) {
@@ -361,7 +361,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     }
 
     @Override
-    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, CmsAuthorisationType authorisationType) {
+    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType) {
         return pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, authorisationType)
                    .map(a -> new AuthorisationScaApproachResponse(a.getScaApproach()));
     }
@@ -426,7 +426,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
 
         if (psuDataOptional.isPresent()) {
             PsuData psuData = psuDataOptional.get();
-            if (CmsAuthorisationType.CANCELLED != request.getAuthorizationType()){
+            if (PaymentAuthorisationType.CANCELLED != request.getAuthorizationType()){
                 paymentData.setPsuDataList(cmsPsuService.enrichPsuData(psuData, paymentData.getPsuDataList()));
             }
             pisAuthorisation.setPsuData(psuData);
@@ -444,10 +444,10 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         return pisAuthorisationRepository.save(pisAuthorisation);
     }
 
-    private OffsetDateTime countRedirectUrlExpirationTimestampForAuthorisationType(CmsAuthorisationType authorisationType) {
+    private OffsetDateTime countRedirectUrlExpirationTimestampForAuthorisationType(PaymentAuthorisationType authorisationType) {
         long redirectUrlExpirationTimeMs;
 
-        if (authorisationType == CmsAuthorisationType.CANCELLED) {
+        if (authorisationType == PaymentAuthorisationType.CANCELLED) {
             redirectUrlExpirationTimeMs = aspspProfileService.getAspspSettings().getPaymentCancellationRedirectUrlExpirationTimeMs();
         } else {
             redirectUrlExpirationTimeMs = aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs();
@@ -464,7 +464,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
 
     private void closePreviousAuthorisationsByPsu(PisAuthorization authorisation, PsuIdData psuIdData) {
         PisCommonPaymentData paymentData = authorisation.getPaymentData();
-        CmsAuthorisationType authorizationType = authorisation.getAuthorizationType();
+        PaymentAuthorisationType authorizationType = authorisation.getAuthorizationType();
 
         List<PisAuthorization> previousAuthorisations = paymentData.getAuthorizations().stream()
                                                             .filter(a -> !a.getExternalId().equals(authorisation.getExternalId()))
@@ -473,7 +473,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         closePreviousAuthorisationsByPsu(previousAuthorisations, authorizationType, psuIdData);
     }
 
-    private void closePreviousAuthorisationsByPsu(List<PisAuthorization> authorisations, CmsAuthorisationType authorisationType, PsuIdData psuIdData) {
+    private void closePreviousAuthorisationsByPsu(List<PisAuthorization> authorisations, PaymentAuthorisationType authorisationType, PsuIdData psuIdData) {
         PsuData psuData = psuDataMapper.mapToPsuData(psuIdData);
 
         if (psuData == null || psuData.isEmpty()) {
@@ -497,7 +497,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         return auth;
     }
 
-    private List<String> readAuthorisationsFromPaymentCommonData(PisCommonPaymentData paymentData, CmsAuthorisationType authorisationType) {
+    private List<String> readAuthorisationsFromPaymentCommonData(PisCommonPaymentData paymentData, PaymentAuthorisationType authorisationType) {
         return paymentData.getAuthorizations()
                    .stream()
                    .filter(auth -> auth.getAuthorizationType() == authorisationType)

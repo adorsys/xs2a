@@ -21,7 +21,7 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
@@ -389,14 +389,14 @@ public class ScaApproachResolverTest {
     @Test
     public void getCancellationScaApproach() {
         when(serviceTypeDiscoveryService.getServiceType()).thenReturn(ServiceType.PIS);
-        when(pisAuthorisationService.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLATION))
+        when(pisAuthorisationService.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
             .thenReturn(Optional.of(new AuthorisationScaApproachResponse(REDIRECT)));
 
         ScaApproach scaApproach = scaApproachResolver.getCancellationScaApproach(AUTHORISATION_ID);
 
         assertThat(scaApproach).isEqualTo(REDIRECT);
         verify(pisAuthorisationService, times(1))
-            .getAuthorisationScaApproach(eq(AUTHORISATION_ID), eq(PaymentAuthorisationType.CANCELLATION));
+            .getAuthorisationScaApproach(eq(AUTHORISATION_ID), eq(PaymentAuthorisationType.CANCELLED));
     }
 
     @Test
