@@ -25,13 +25,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -45,14 +45,18 @@ public class PiisConsentServiceRemote implements PiisConsentService {
     public List<PiisConsent> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountReferenceSelector) {
         List<PiisConsent> response = Collections.emptyList();
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("currency", currency == null ? null : currency.toString());
+
+        HttpEntity entity = new HttpEntity(headers);
+
         try {
             response = consentRestTemplate.exchange(
                 remotePiisConsentUrls.getPiisConsent(),
                 HttpMethod.GET,
-                null,
+                entity,
                 new ParameterizedTypeReference<List<PiisConsent>>() {
                 },
-                currency.toString(),
                 accountReferenceSelector.getAccountReferenceType().name(),
                 accountReferenceSelector.getAccountValue()
             ).getBody();

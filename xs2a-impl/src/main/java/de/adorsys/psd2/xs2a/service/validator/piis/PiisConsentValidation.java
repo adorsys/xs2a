@@ -1,3 +1,6 @@
+
+
+
 /*
  * Copyright 2018-2019 adorsys GmbH & Co KG
  *
@@ -59,7 +62,6 @@ public class PiisConsentValidation {
                                                         .filter(e -> Optional.ofNullable(e.getExpireDate())
                                                                          .map(d -> d.compareTo(LocalDate.now()) >= 0)
                                                                          .orElse(true))
-                                                        .filter(e -> e.getAllowedFrequencyPerDay() > 0) //// TODO: Remove validation in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/970
                                                         .sorted(Comparator.comparing(PiisConsent::getCreationTimestamp, Comparator.nullsLast(Comparator.reverseOrder())))
                                                         .findAny();
 

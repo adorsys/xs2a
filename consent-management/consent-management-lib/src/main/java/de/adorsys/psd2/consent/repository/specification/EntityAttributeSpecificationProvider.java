@@ -78,7 +78,9 @@ public class EntityAttributeSpecificationProvider {
      */
     public static <T> Specification<T> provideSpecificationForJoinedEntityAttribute(@NotNull Join<T, ?> join,
                                                                                     @NotNull String attribute,
-                                                                                    @NotNull Object value) {
-        return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.and(criteriaBuilder.equal(join.get(attribute), value));
+                                                                                    @Nullable Object value) {
+        return (root, criteriaQuery, criteriaBuilder) -> value == null
+                                                             ? criteriaBuilder.and(criteriaBuilder.isNull(join.get(attribute)))
+                                                             : criteriaBuilder.and(criteriaBuilder.equal(join.get(attribute), value));
     }
 }

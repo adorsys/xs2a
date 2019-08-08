@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.api.service;
 
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Currency;
 import java.util.List;
@@ -25,11 +26,11 @@ import java.util.List;
 public interface PiisConsentService {
 
     /**
-     * Retrieves list of PIIS consents by account reference
+     * Retrieves list of PIIS consents by account reference and optional currency.
      *
-     * @param currency              Chosen currency
+     * @param currency              Chosen currency (may be null if not provided during PIIS consent creation)
      * @param accountIdentifierName The name of account reference identifier
      * @return PIIS consents
      */
-    List<PiisConsent> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountIdentifierName);
+    List<PiisConsent> getPiisConsentListByAccountIdentifier(@Nullable Currency currency, AccountReferenceSelector accountIdentifierName);
 }

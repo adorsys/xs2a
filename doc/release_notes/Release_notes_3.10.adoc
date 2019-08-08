@@ -4,6 +4,7 @@
 * Remove deprecated methods in SpiResponse
 * Removed deprecated enum
 * Wrong error code on deleting an account information consent
+* Bugfix: NPE during executing Confirmation of Funds request without currency
 
 == Remove deprecated methods in SpiResponse
 
@@ -31,3 +32,8 @@ The same change has also been applied to following endpoints:
  - Update PSU Data Request (`PUT /v1/consents/{consentId}/authorisations/{authorsationId}`)
  - Get SCA Status Request (`GET /v1/consents/{consentId}/authorisations/{authorisationId}`)
  - Get Authorisation Sub-Resources Request (`GET /v1/consents/{consentId}/authorisations`)
+
+== Bugfix: NPE during executing Confirmation of Funds request without currency
+
+From now on, it is possible to create PIIS consent without the currency in AccountReference and launch the funds
+confirmation request for it (POST `/v1/funds-confirmations`) without the currency in `account` field.

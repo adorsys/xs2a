@@ -120,14 +120,15 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
     /**
      * Returns specification for PiisConsentEntity for filtering consents by Currency and Account Reference Selector.
      *
-     * @param currency mandatory Currency
+     * @param currency optional Currency
      * @param selector mandatory Account Reference Selector
      * @return resulting specification for PiisConsentEntity
      */
-    public Specification<PiisConsentEntity> byCurrencyAndAccountReferenceSelector(@NotNull Currency currency, @NotNull AccountReferenceSelector selector) {
+    public Specification<PiisConsentEntity> byCurrencyAndAccountReferenceSelector(@Nullable Currency currency, @NotNull AccountReferenceSelector selector) {
         return (root, query, cb) -> {
             Join<PiisConsentEntity, AccountReferenceEntity> accountJoin = root.join(ACCOUNT_ATTRIBUTE);
-            return Specifications
+
+            return Specification
                        .where(provideSpecificationForJoinedEntityAttribute(accountJoin, selector.getAccountReferenceType().getValue(), selector.getAccountValue()))
                        .and(provideSpecificationForJoinedEntityAttribute(accountJoin, CURRENCY_ATTRIBUTE, currency))
                        .toPredicate(root, query, cb);
@@ -164,10 +165,14 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
         return (root, query, cb) -> {
             AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
             Join<PiisConsentEntity, AccountReferenceEntity> accountJoin = root.join(ACCOUNT_ATTRIBUTE);
-            return Specifications
-                       .where(provideSpecificationForJoinedEntityAttribute(accountJoin, selector.getAccountReferenceType().getValue(), selector.getAccountValue()))
-                       .and(provideSpecificationForJoinedEntityAttribute(accountJoin, CURRENCY_ATTRIBUTE, accountReference.getCurrency()))
-                       .toPredicate(root, query, cb);
+            Specifications specifications = Specifications
+                                            .where(provideSpecificationForJoinedEntityAttribute(accountJoin, selector.getAccountReferenceType().getValue(), selector.getAccountValue()));
+
+            if (accountReference.getCurrency() != null) {
+                specifications.and(provideSpecificationForJoinedEntityAttribute(accountJoin, CURRENCY_ATTRIBUTE, accountReference.getCurrency()));
+            }
+
+            return specifications.toPredicate(root, query, cb);
         };
     }
 }
