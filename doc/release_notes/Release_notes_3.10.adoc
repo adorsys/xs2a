@@ -8,6 +8,7 @@
 * Bugfix: `batchBookingPreferred` is not persisted for bulk payments
 * Event query for Oracle DB was fixed
 * Refactor: PaymentAuthorisationType enum moved to xs2a-core
+* Update version of jackson-databind to 2.9.9.3
 
 == Remove deprecated methods in SpiResponse
 
@@ -54,3 +55,7 @@ From now on, CMS endpoint `GET /aspsp-api/v1/events/` performs correctly on Orac
 
 `PaymentAuthorisationType` enumerator was moved to xs2a-core and `CmsAuthorisationType` enumerator was deleted and
 replaced with `PaymentAuthorisationType`.
+
+== Update version of jackson-databind to 2.9.9.3
+
+Fixed severe security vulnerability detected in com.fasterxml.jackson.core:jackson-databind < 2.9.9.2 defined in pom.xml.
