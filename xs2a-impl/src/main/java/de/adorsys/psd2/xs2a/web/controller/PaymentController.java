@@ -48,10 +48,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.header.PaymentCancellationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.PaymentInitiationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
-import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
-import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
-import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
-import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
+import de.adorsys.psd2.xs2a.web.mapper.*;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
@@ -83,6 +80,7 @@ public class PaymentController implements PaymentApi {
     private final AuthorisationMapper authorisationMapper;
     private final PaymentInitiationHeadersBuilder paymentInitiationHeadersBuilder;
     private final PaymentCancellationHeadersBuilder paymentCancellationHeadersBuilder;
+    private final AuthorisationModelMapper authorisationModelMapper;
 
     @Override
     public ResponseEntity getPaymentInitiationStatus(String paymentService, String paymentProduct,
@@ -370,9 +368,9 @@ public class PaymentController implements PaymentApi {
         }
 
         Xs2aCreatePisCancellationAuthorisationResponse body = serviceResponse.getBody();
-        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildStartPaymentCancellationAuthorisationHeaders(body.getAuthorisationId());
+        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildStartPaymentCancellationAuthorisationHeaders(body.getCancellationId());
 
-        return responseMapper.created(serviceResponse, consentModelMapper::mapToStartScaProcessResponse, responseHeaders);
+        return responseMapper.created(serviceResponse, authorisationModelMapper::mapToStartCancellationScaProcessResponse, responseHeaders);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,13 +59,6 @@ public class ConsentModelMapper {
         return Optional.ofNullable(consentStatusResponse)
                    .map(cstr -> new ConsentStatusResponse200().consentStatus(ConsentStatus.fromValue(cstr.getConsentStatus())))
                    .orElse(null);
-    }
-
-    public StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisCancellationAuthorisationResponse response) {
-        return new StartScaprocessResponse()
-                   .scaStatus(coreObjectsMapper.mapToModelScaStatus(response.getScaStatus()))
-                   .authorisationId(response.getAuthorisationId())
-                   ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()));
     }
 
     public ConsentsResponse201 mapToConsentsResponse201(CreateConsentResponse createConsentResponse) {

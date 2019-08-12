@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "251980c0-56ca-468f-85a9-d7449be6e17e",
+    "_postman_id": "8ec88b8a-4ee6-4c5f-b81d-5aa24acc4285",
 		"name": "PIS Payment requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -2794,10 +2794,10 @@
 													"    pm.expect(scaStatus).to.eql('received');",
 													"});",
 													"",
-													"pm.test(\"Select authorisationId \", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
+                          "pm.test(\"Select cancellationId \", () => {",
+                          "    pm.expect(jsonData).to.have.property('cancellationId');",
 													"    ",
-													"    pm.globals.set(\"authorisation_id\", jsonData.authorisationId);",
+                          "    pm.globals.set(\"cancellation_id\", jsonData.cancellationId);",
 													"});",
 													"",
 													"pm.test(\"Select scaStatus \", () => {",
@@ -2823,7 +2823,7 @@
 											"script": {
 												"id": "4e1898ce-dc16-4c98-a814-d70ce1571ddf",
 												"exec": [
-													"pm.globals.unset(\"authorisation_id\");"
+                          "pm.globals.unset(\"cancellation_id\");"
 												],
 												"type": "text/javascript"
 											}
@@ -2934,7 +2934,7 @@
 											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{authorisation_id}}",
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_xs2a}}"
@@ -2945,7 +2945,7 @@
 												"{{payment_product}}",
 												"{{payment_id}}",
 												"cancellation-authorisations",
-												"{{authorisation_id}}"
+                        "{{cancellation_id}}"
 											]
 										},
 										"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
@@ -3795,10 +3795,10 @@
 													"    pm.expect(scaStatus).to.eql('received');",
 													"});",
 													"",
-													"pm.test(\"Select authorisationId \", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
+                          "pm.test(\"Select cancellationId \", () => {",
+                          "    pm.expect(jsonData).to.have.property('cancellationId');",
 													"    ",
-													"    pm.globals.set(\"authorisation_id\", jsonData.authorisationId);",
+                          "    pm.globals.set(\"cancellation_id\", jsonData.cancellationId);",
 													"});",
 													"",
 													"pm.test(\"Select scaStatus \", () => {",
@@ -3824,7 +3824,7 @@
 											"script": {
 												"id": "4e1898ce-dc16-4c98-a814-d70ce1571ddf",
 												"exec": [
-													"pm.globals.unset(\"authorisation_id\");"
+                          "pm.globals.unset(\"cancellation_id\");"
 												],
 												"type": "text/javascript"
 											}
@@ -3956,7 +3956,7 @@
 											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{authorisation_id}}",
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_xs2a}}"
@@ -3967,7 +3967,7 @@
 												"{{payment_product}}",
 												"{{payment_id}}",
 												"cancellation-authorisations",
-												"{{authorisation_id}}"
+                        "{{cancellation_id}}"
 											]
 										},
 										"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
@@ -4161,7 +4161,7 @@
 											"raw": "{\n\t\"scaAuthenticationData\": \"{{tanNumber}}\"\n}"
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{authorisation_id}}",
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_xs2a}}"
@@ -4172,7 +4172,7 @@
 												"{{payment_product}}",
 												"{{payment_id}}",
 												"cancellation-authorisations",
-												"{{authorisation_id}}"
+                        "{{cancellation_id}}"
 											]
 										},
 										"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
@@ -5109,7 +5109,11 @@
 													"",
 													"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
 													"",
-													"pm.globals.set(\"authorisation_id\", authorisationId);",
+                          "pm.test(\"Select cancellationId \", () => {",
+                          "    pm.expect(jsonData).to.have.property('cancellationId');",
+                          "    ",
+                          "    pm.globals.set(\"cancellation_id\", jsonData.cancellationId);",
+                          "});",
 													"",
 													"pm.test(\"Status code is 201\", function () {",
 													"    pm.response.to.have.status(201);",
@@ -5249,7 +5253,7 @@
 											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{authorisation_id}}",
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_xs2a}}"
@@ -5260,7 +5264,7 @@
 												"{{payment_product}}",
 												"{{payment_id}}",
 												"cancellation-authorisations",
-												"{{authorisation_id}}"
+                        "{{cancellation_id}}"
 											]
 										},
 										"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
@@ -5341,7 +5345,7 @@
 											"raw": "{\n    \"authenticationMethodId\": \"{{scaMethod}}\"        \n}"
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{authorisation_id}}",
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_xs2a}}"
@@ -5352,7 +5356,7 @@
 												"{{payment_product}}",
 												"{{payment_id}}",
 												"cancellation-authorisations",
-												"{{authorisation_id}}"
+                        "{{cancellation_id}}"
 											]
 										},
 										"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
@@ -5546,7 +5550,7 @@
 											"raw": "{\n\t\"scaAuthenticationData\": \"{{tanNumber}}\"\n}"
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{authorisation_id}}",
+                      "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_xs2a}}"
@@ -5557,7 +5561,7 @@
 												"{{payment_product}}",
 												"{{payment_id}}",
 												"cancellation-authorisations",
-												"{{authorisation_id}}"
+                        "{{cancellation_id}}"
 											]
 										},
 										"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "

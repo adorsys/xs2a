@@ -136,7 +136,7 @@ public class CancelPaymentService {
             }
 
             Xs2aCreatePisCancellationAuthorisationResponse authorisationResponse = authorizationResponse.getBody();
-            cancelPaymentResponse.setAuthorizationId(authorisationResponse.getAuthorisationId());
+            cancelPaymentResponse.setAuthorizationId(authorisationResponse.getCancellationId());
             cancelPaymentResponse.setScaStatus(authorisationResponse.getScaStatus());
         }
 

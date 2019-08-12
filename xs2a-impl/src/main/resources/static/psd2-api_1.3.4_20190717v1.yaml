@@ -1015,7 +1015,7 @@ paths:
 
       responses:
         '201':
-          $ref: "#/components/responses/CREATED_201_StartScaProcess"
+          $ref: "#/components/responses/CREATED_201_StartCancellationScaProcess"
 
         '400':
           $ref: "#/components/responses/BAD_REQUEST_400_PIS"
@@ -6499,6 +6499,29 @@ components:
         psuMessage:
           $ref: "#/components/schemas/psuMessageText"
 
+    startCancellationScaProcessResponse:
+        description: Body of the JSON response for a Start SCA authorisation request.
+        type: object
+        required:
+            - scaStatus
+            - authorisationId
+            - _links
+        properties:
+            scaStatus:
+                $ref: "#/components/schemas/scaStatus"
+            cancellationId:
+                $ref: "#/components/schemas/cancellationId"
+            scaMethods:
+                $ref: "#/components/schemas/scaMethods"
+            chosenScaMethod:
+                $ref: "#/components/schemas/chosenScaMethod"
+            challengeData:
+                $ref: "#/components/schemas/challengeData"
+            _links:
+                $ref: "#/components/schemas/_linksStartScaProcess"
+            psuMessage:
+                $ref: "#/components/schemas/psuMessageText"
+
 
     updatePsuIdenticationResponse:
       description: Body of the JSON response for a successful update PSU Identification request.
@@ -11157,6 +11180,22 @@ components:
             "Example 1: payments - Decoupled Approach":
                $ref: "#/components/examples/startScaProcessResponseExample1"
 
+    CREATED_201_StartCancellationScaProcess:
+        description: Created cancellation authorisation
+
+        headers:
+            X-Request-ID:
+                $ref: "#/components/headers/X-Request-ID"
+            ASPSP-SCA-Approach:
+                $ref: "#/components/headers/ASPSP-SCA-Approach"
+
+        content:
+            application/json:
+                schema:
+                    $ref: "#/components/schemas/startCancellationScaProcessResponse"
+                examples:
+                    "Example 1: payments - Decoupled Approach":
+                        $ref: "#/components/examples/startCancellationScaProcessResponseExample1"
 
     CREATED_201_Consents:
       description: Created
@@ -12364,6 +12403,17 @@ components:
         }
 
 
+    startCancellationScaProcessResponseExample1:
+        value:
+            {
+                "scaStatus": "received",
+                "cancellationId": "123auth456",
+                "psuMessage": "Please use your BankApp for transaction Authorisation.",
+                "_links":
+                    {
+                        "scaStatus":  {"href":"/v1/payments/qwer3456tzui7890/cancellation-authorisations/123auth456"}
+                    }
+            }
 
     signingBasketExample:
       description: "JSON Body of a signing basket request"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ public class AuthorisationMapper {
     private final CoreObjectsMapper coreObjectsMapper;
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
+    private final AuthorisationModelMapper authorisationModelMapper;
 
     public Authorisations mapToAuthorisations(Xs2aAuthorisationSubResources xs2AAuthorisationSubResources) {
         Authorisations authorisations = new Authorisations();
@@ -54,8 +55,7 @@ public class AuthorisationMapper {
         }
 
         if (body instanceof Xs2aCreatePisAuthorisationResponse) {
-
-            return mapToStartScaProcessResponseFromPis((Xs2aCreatePisAuthorisationResponse) body);
+            return authorisationModelMapper.mapToStartScaProcessResponse((Xs2aCreatePisAuthorisationResponse) body);
         } else if (body instanceof Xs2aUpdatePisCommonPaymentPsuDataResponse) {
 
             Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisCommonPaymentPsuDataResponse = (Xs2aUpdatePisCommonPaymentPsuDataResponse) body;
@@ -74,8 +74,7 @@ public class AuthorisationMapper {
         }
 
         if (body instanceof CreateConsentAuthorizationResponse) {
-
-            return mapToStartScaProcessResponse((CreateConsentAuthorizationResponse) body);
+            return authorisationModelMapper.mapToStartScaProcessResponse((CreateConsentAuthorizationResponse) body);
         } else if (body instanceof UpdateConsentPsuDataResponse) {
 
             UpdatePsuAuthenticationResponse resp = mapToAisUpdatePsuAuthenticationResponse((UpdateConsentPsuDataResponse) body);
@@ -128,27 +127,6 @@ public class AuthorisationMapper {
                    .map(bdy -> bdy.get("psuData"))
                    .map(o -> (LinkedHashMap<String, String>) o)
                    .map(psuDataMap -> psuDataMap.get("password"))
-                   .orElse(null);
-    }
-
-    private StartScaprocessResponse mapToStartScaProcessResponseFromPis(Xs2aCreatePisAuthorisationResponse response) {
-        return Optional.ofNullable(response)
-                   .map(r -> new StartScaprocessResponse()
-                                 .scaStatus(coreObjectsMapper.mapToModelScaStatus(r.getScaStatus()))
-                                 .authorisationId(r.getAuthorisationId())
-                                 ._links(hrefLinkMapper.mapToLinksMap(r.getLinks())))
-                   .orElse(null);
-    }
-
-    private StartScaprocessResponse mapToStartScaProcessResponse(
-        CreateConsentAuthorizationResponse createResponse) {
-        return Optional.ofNullable(createResponse)
-                   .map(csar ->
-                            new StartScaprocessResponse()
-                                .scaStatus(coreObjectsMapper.mapToModelScaStatus(csar.getScaStatus()))
-                                .authorisationId(csar.getAuthorisationId())
-                                ._links(hrefLinkMapper.mapToLinksMap(csar.getLinks()))
-                   )
                    .orElse(null);
     }
 

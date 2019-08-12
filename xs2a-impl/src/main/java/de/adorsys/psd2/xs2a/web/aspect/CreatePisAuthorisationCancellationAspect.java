@@ -55,7 +55,7 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
             Xs2aCreatePisCancellationAuthorisationResponse body = result.getBody();
             body.setLinks(new PisAuthorisationCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
                                                                 redirectIdService,
-                                                                paymentType.getValue(), paymentProduct, paymentId, body.getAuthorisationId(), getScaRedirectFlow()));
+                                                                paymentType.getValue(), paymentProduct, paymentId, body.getCancellationId(), getScaRedirectFlow()));
             return result;
         }
         return enrichErrorTextMessage(result);

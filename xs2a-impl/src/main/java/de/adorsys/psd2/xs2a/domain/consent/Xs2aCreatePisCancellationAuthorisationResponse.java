@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,19 @@ package de.adorsys.psd2.xs2a.domain.consent;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class Xs2aCreatePisCancellationAuthorisationResponse {
-    private String authorisationId;
+    private String cancellationId;
     private ScaStatus scaStatus;
     private PaymentType paymentType;
     private Links links = new Links();
 
-    public Xs2aCreatePisCancellationAuthorisationResponse(String authorisationId, ScaStatus scaStatus, PaymentType paymentType) {
-        this.authorisationId = authorisationId;
+    public Xs2aCreatePisCancellationAuthorisationResponse(String cancellationId, ScaStatus scaStatus, PaymentType paymentType) {
+        this.cancellationId = cancellationId;
         this.scaStatus = scaStatus;
         this.paymentType = paymentType;
     }
