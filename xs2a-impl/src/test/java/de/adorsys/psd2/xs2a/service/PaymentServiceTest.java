@@ -19,10 +19,10 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
+import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentStatusFactory;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -434,6 +434,50 @@ public class PaymentServiceTest {
         assertThat(actualResult.hasError()).isTrue();
         assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_404);
         assertThat(actualResult.getError().getTppMessages().contains(of(RESOURCE_UNKNOWN_404, WRONG_PAYMENT_ID_TEXT))).isTrue();
+    }
+
+    @Test
+    public void getPaymentStatusById_Success_FundsAvailableIsNull() {
+        //Given
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
+        when(readPaymentStatusService.readPaymentStatus(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(SpiContextData.class), any(String.class)))
+            .thenReturn(new ReadPaymentStatusResponse(ACCP));
+        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
+            .thenReturn(true);
+        when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(SPI_CONTEXT_DATA);
+
+        //When
+        ResponseObject<GetPaymentStatusResponse> response = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        //Then
+        assertThat(response.getBody()).isNotNull();
+        GetPaymentStatusResponse getPaymentResponse = response.getBody();
+        assertThat(getPaymentResponse.getTransactionStatus()).isEqualTo(ACCP);
+        assertThat(getPaymentResponse.getFundsAvailable()).isNull();
+    }
+
+    @Test
+    public void getPaymentStatusById_Success_FundsAvailableIsTrue() {
+        //Given
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
+        when(readPaymentStatusService.readPaymentStatus(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(SpiContextData.class), any(String.class)))
+            .thenReturn(new ReadPaymentStatusResponse(ACCP, true));
+        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
+            .thenReturn(true);
+        when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(SPI_CONTEXT_DATA);
+
+        //When
+        ResponseObject<GetPaymentStatusResponse> response = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        //Then
+        assertThat(response.getBody()).isNotNull();
+        GetPaymentStatusResponse getPaymentResponse = response.getBody();
+        assertThat(getPaymentResponse.getTransactionStatus()).isEqualTo(ACCP);
+        assertThat(getPaymentResponse.getFundsAvailable()).isEqualTo(true);
     }
 
     @Test

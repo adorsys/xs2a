@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
@@ -30,6 +29,7 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public class ReadCommonPaymentStatusService {
         SpiAspspConsentDataProvider aspspConsentDataProvider =
             aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(encryptedPaymentId);
 
-        SpiResponse<TransactionStatus> spiResponse = commonPaymentSpi.getPaymentStatusById(spiContextData, request, aspspConsentDataProvider);
+        SpiResponse<SpiGetPaymentStatusResponse> spiResponse = commonPaymentSpi.getPaymentStatusById(spiContextData, request, aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
@@ -64,6 +64,7 @@ public class ReadCommonPaymentStatusService {
             return new ReadPaymentStatusResponse(errorHolder);
         }
 
-        return new ReadPaymentStatusResponse(spiResponse.getPayload());
+        SpiGetPaymentStatusResponse payload = spiResponse.getPayload();
+        return new ReadPaymentStatusResponse(payload.getTransactionStatus(), payload.getFundsAvailable());
     }
 }

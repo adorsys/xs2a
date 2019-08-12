@@ -17,29 +17,16 @@
 package de.adorsys.psd2.xs2a.domain.pis;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Data
-public class ReadPaymentStatusResponse {
-    private TransactionStatus status;
+@AllArgsConstructor
+public class GetPaymentStatusResponse {
+    @NotNull
+    private TransactionStatus transactionStatus;
+    @Nullable
     private Boolean fundsAvailable;
-    private ErrorHolder errorHolder;
-
-    public ReadPaymentStatusResponse(TransactionStatus status) {
-        this(status, null);
-    }
-
-    public ReadPaymentStatusResponse(TransactionStatus status, Boolean fundsAvailable) {
-        this.status = status;
-        this.fundsAvailable = fundsAvailable;
-    }
-
-    public ReadPaymentStatusResponse(ErrorHolder errorHolder) {
-        this.errorHolder = errorHolder;
-    }
-
-    public boolean hasError() {
-        return errorHolder != null;
-    }
 }

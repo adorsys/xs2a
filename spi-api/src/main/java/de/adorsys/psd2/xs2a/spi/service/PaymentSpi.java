@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
@@ -54,10 +54,10 @@ public interface PaymentSpi<T extends SpiPayment, R> {
      * @param contextData      holder of call's context data (e.g. about PSU and TPP)
      * @param payment          T payment, that extends SpiPayment
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
-     * @return Returns TransactionStatus as a part of SpiResponse
+     * @return Returns a response that contains the current transaction status and a flag indicating the availability of funds, as a part of SpiResponse
      */
     @NotNull
-    SpiResponse<TransactionStatus> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull T payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+    SpiResponse<SpiGetPaymentStatusResponse> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull T payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Executes payment - to be used in a case, when none SCA methods exist

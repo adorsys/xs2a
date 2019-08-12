@@ -10,6 +10,7 @@
 * Refactor: PaymentAuthorisationType enum moved to xs2a-core
 * Update version of jackson-databind to 2.9.9.3
 * Migrate to .yaml OpenAPI v. 1.3.4
+* Added fundsAvailable field in getPaymentStatusById response
 
 == Remove deprecated methods in SpiResponse
 
@@ -69,3 +70,11 @@ XS2A models and interfaces were updated in accordance with version 1.3.4 of Open
 - Fields in `Address` are changed: city -> townName, street -> streetName, postalCode -> postCode
 - Field `availableAccountsWithBalance` in `AccountAccess` is renamed from `availableAccountsWithBalances`
 - Field `creditLimitIncluded` is added in `SpiAccountBalance`
+
+== Added fundsAvailable field in getPaymentStatusById response
+
+From now on, get payment status requests (`GET /v1/{payment-service}/{payment-product}/{paymentId}/status`) can return
+information about `fundsAvailable`. Additionally some changes in payment SPI were made:
+
+- Added class `SpiGetPaymentStatusResponse.java`;
+- The return type of `PaymentSpi#getPaymentStatusById` changed from `TransactionStatus` to `SpiGetPaymentResponse`.

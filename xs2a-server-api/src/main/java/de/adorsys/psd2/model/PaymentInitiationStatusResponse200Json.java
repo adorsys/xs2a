@@ -29,6 +29,11 @@ public class PaymentInitiationStatusResponse200Json   {
     return this;
   }
 
+  public PaymentInitiationStatusResponse200Json fundsAvailable(Boolean fundsAvailable){
+      this.fundsAvailable = fundsAvailable;
+      return this;
+  }
+
   /**
    * Get transactionStatus
    * @return transactionStatus
@@ -38,7 +43,6 @@ public class PaymentInitiationStatusResponse200Json   {
 
   @Valid
 
-
   @JsonProperty("transactionStatus")
   public TransactionStatus getTransactionStatus() {
     return transactionStatus;
@@ -46,11 +50,6 @@ public class PaymentInitiationStatusResponse200Json   {
 
   public void setTransactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
-  }
-
-  public PaymentInitiationStatusResponse200Json fundsAvailable(Boolean fundsAvailable) {
-    this.fundsAvailable = fundsAvailable;
-    return this;
   }
 
   /**
@@ -93,7 +92,7 @@ public class PaymentInitiationStatusResponse200Json   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class PaymentInitiationStatusResponse200Json {\n");
-    
+
     sb.append("    transactionStatus: ").append(toIndentedString(transactionStatus)).append("\n");
     sb.append("    fundsAvailable: ").append(toIndentedString(fundsAvailable)).append("\n");
     sb.append("}");

@@ -37,6 +37,7 @@ import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.web.header.PaymentInitiationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
@@ -129,10 +130,9 @@ public class PaymentControllerTest {
             .thenReturn(ResponseObject.builder().body(getXs2aPayment()).build());
 
         when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(CORRECT_PAYMENT_ID)))
-            .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
+            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP,null)).build());
         when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(WRONG_PAYMENT_ID)))
-            .thenReturn(ResponseObject.<TransactionStatus>builder().fail(PIS_403,
-                                                                         TppMessageInformation.of(RESOURCE_UNKNOWN_403)).build());
+            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP,null)).build());
 
     }
 
@@ -185,7 +185,7 @@ public class PaymentControllerTest {
     public void getTransactionStatusById_Success() {
         doReturn(new ResponseEntity<>(getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus.ACCP), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
-        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID)).thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
+        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID)).thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP,null)).build());
 
         //Given:
         PaymentInitiationStatusResponse200Json expectedBody = getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus.ACCP);
@@ -214,7 +214,7 @@ public class PaymentControllerTest {
     @Test
     public void getTransactionStatusById_WrongId() {
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
-        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, WRONG_PAYMENT_ID)).thenReturn(ResponseObject.<TransactionStatus>builder().fail(createMessageError(PIS_403, RESOURCE_UNKNOWN_403)).build());
+        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, WRONG_PAYMENT_ID)).thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().fail(createMessageError(PIS_403, RESOURCE_UNKNOWN_403)).build());
         //Given:
         HttpStatus expectedHttpStatus = FORBIDDEN;
 

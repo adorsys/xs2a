@@ -18,11 +18,11 @@ package de.adorsys.psd2.xs2a.spi.service;
 
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,8 +48,8 @@ public interface BulkPaymentSpi extends PaymentSpi<SpiBulkPayment, SpiBulkPaymen
 
     @Override
     @NotNull
-    default SpiResponse<TransactionStatus> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return SpiResponse.<TransactionStatus>builder()
+    default SpiResponse<SpiGetPaymentStatusResponse> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<SpiGetPaymentStatusResponse>builder()
                    .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED, "Service is not supported"))
                    .build();
     }

@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
@@ -30,6 +29,7 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +65,7 @@ public class ReadSinglePaymentStatusService implements ReadPaymentStatusService 
         SpiAspspConsentDataProvider aspspConsentDataProvider =
             aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(encryptedPaymentId);
 
-        SpiResponse<TransactionStatus> spiResponse = singlePaymentSpi.getPaymentStatusById(spiContextData, spiSinglePaymentOptional.get(), aspspConsentDataProvider);
+        SpiResponse<SpiGetPaymentStatusResponse> spiResponse = singlePaymentSpi.getPaymentStatusById(spiContextData, spiSinglePaymentOptional.get(), aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
@@ -74,6 +74,7 @@ public class ReadSinglePaymentStatusService implements ReadPaymentStatusService 
             return new ReadPaymentStatusResponse(errorHolder);
         }
 
-        return new ReadPaymentStatusResponse(spiResponse.getPayload());
+        SpiGetPaymentStatusResponse payload = spiResponse.getPayload();
+        return new ReadPaymentStatusResponse(payload.getTransactionStatus(), payload.getFundsAvailable());
     }
 }
