@@ -116,21 +116,6 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToStartScaProcessResponse_success() {
-        // Given
-        when(coreObjectsMapper.mapToModelScaStatus(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED)).thenReturn(de.adorsys.psd2.model.ScaStatus.RECEIVED);
-        StartScaprocessResponse expected =
-            jsonReader.getObjectFromFile("json/service/mapper/ConsentModelMapper-start-scaprocess-response-expected.json", StartScaprocessResponse.class);
-        Xs2aCreatePisCancellationAuthorisationResponse xs2aCreatePisCancellationAuthorisationResponse = buildXs2aCreatePisCancellationAuthorisationResponse();
-
-        // When
-        StartScaprocessResponse actual = consentModelMapper.mapToStartScaProcessResponse(xs2aCreatePisCancellationAuthorisationResponse);
-
-        // Then
-        assertEquals(expected, actual);
-    }
-
-    @Test
     public void mapToCreateConsentReq_AvailableAccountsWithBalance() {
         //Given
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAvailableAccountsWithBalances.json", Consents.class);
