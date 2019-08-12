@@ -1,36 +1,23 @@
-/*
- * Copyright 2018-2019 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.HrefType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.Map;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * A _link object with all availabel link types 
  */
 @ApiModel(description = "A _link object with all availabel link types ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
 
 public class LinksAll extends HashMap<String, HrefType>  {
   @JsonProperty("scaRedirect")
@@ -65,6 +52,12 @@ public class LinksAll extends HashMap<String, HrefType>  {
 
   @JsonProperty("updateEncryptedPsuAuthentication")
   private HrefType updateEncryptedPsuAuthentication = null;
+
+  @JsonProperty("updateAdditionalPsuAuthentication")
+  private HrefType updateAdditionalPsuAuthentication = null;
+
+  @JsonProperty("updateAdditionalEncryptedPsuAuthentication")
+  private HrefType updateAdditionalEncryptedPsuAuthentication = null;
 
   @JsonProperty("startAuthorisationWithAuthenticationMethodSelection")
   private HrefType startAuthorisationWithAuthenticationMethodSelection = null;
@@ -371,6 +364,52 @@ public class LinksAll extends HashMap<String, HrefType>  {
 
   public void setUpdateEncryptedPsuAuthentication(HrefType updateEncryptedPsuAuthentication) {
     this.updateEncryptedPsuAuthentication = updateEncryptedPsuAuthentication;
+  }
+
+  public LinksAll updateAdditionalPsuAuthentication(HrefType updateAdditionalPsuAuthentication) {
+    this.updateAdditionalPsuAuthentication = updateAdditionalPsuAuthentication;
+    return this;
+  }
+
+  /**
+   * Get updateAdditionalPsuAuthentication
+   * @return updateAdditionalPsuAuthentication
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("updateAdditionalPsuAuthentication")
+  public HrefType getUpdateAdditionalPsuAuthentication() {
+    return updateAdditionalPsuAuthentication;
+  }
+
+  public void setUpdateAdditionalPsuAuthentication(HrefType updateAdditionalPsuAuthentication) {
+    this.updateAdditionalPsuAuthentication = updateAdditionalPsuAuthentication;
+  }
+
+  public LinksAll updateAdditionalEncryptedPsuAuthentication(HrefType updateAdditionalEncryptedPsuAuthentication) {
+    this.updateAdditionalEncryptedPsuAuthentication = updateAdditionalEncryptedPsuAuthentication;
+    return this;
+  }
+
+  /**
+   * Get updateAdditionalEncryptedPsuAuthentication
+   * @return updateAdditionalEncryptedPsuAuthentication
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("updateAdditionalEncryptedPsuAuthentication")
+  public HrefType getUpdateAdditionalEncryptedPsuAuthentication() {
+    return updateAdditionalEncryptedPsuAuthentication;
+  }
+
+  public void setUpdateAdditionalEncryptedPsuAuthentication(HrefType updateAdditionalEncryptedPsuAuthentication) {
+    this.updateAdditionalEncryptedPsuAuthentication = updateAdditionalEncryptedPsuAuthentication;
   }
 
   public LinksAll startAuthorisationWithAuthenticationMethodSelection(HrefType startAuthorisationWithAuthenticationMethodSelection) {
@@ -789,7 +828,7 @@ public class LinksAll extends HashMap<String, HrefType>  {
 
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -808,6 +847,8 @@ public class LinksAll extends HashMap<String, HrefType>  {
         Objects.equals(this.updatePsuAuthentication, _linksAll.updatePsuAuthentication) &&
         Objects.equals(this.startAuthorisationWithEncryptedPsuAuthentication, _linksAll.startAuthorisationWithEncryptedPsuAuthentication) &&
         Objects.equals(this.updateEncryptedPsuAuthentication, _linksAll.updateEncryptedPsuAuthentication) &&
+        Objects.equals(this.updateAdditionalPsuAuthentication, _linksAll.updateAdditionalPsuAuthentication) &&
+        Objects.equals(this.updateAdditionalEncryptedPsuAuthentication, _linksAll.updateAdditionalEncryptedPsuAuthentication) &&
         Objects.equals(this.startAuthorisationWithAuthenticationMethodSelection, _linksAll.startAuthorisationWithAuthenticationMethodSelection) &&
         Objects.equals(this.selectAuthenticationMethod, _linksAll.selectAuthenticationMethod) &&
         Objects.equals(this.startAuthorisationWithTransactionAuthorisation, _linksAll.startAuthorisationWithTransactionAuthorisation) &&
@@ -831,7 +872,7 @@ public class LinksAll extends HashMap<String, HrefType>  {
 
   @Override
   public int hashCode() {
-    return Objects.hash(scaRedirect, scaOAuth, startAuthorisation, startAuthorisationWithPsuIdentification, updatePsuIdentification, startAuthorisationWithProprietaryData, updateProprietaryData, startAuthorisationWithPsuAuthentication, updatePsuAuthentication, startAuthorisationWithEncryptedPsuAuthentication, updateEncryptedPsuAuthentication, startAuthorisationWithAuthenticationMethodSelection, selectAuthenticationMethod, startAuthorisationWithTransactionAuthorisation, authoriseTransaction, self, status, scaStatus, account, balances, transactions, transactionDetails, cardAccount, cardTransactions, first, next, previous, last, download, super.hashCode());
+    return Objects.hash(scaRedirect, scaOAuth, startAuthorisation, startAuthorisationWithPsuIdentification, updatePsuIdentification, startAuthorisationWithProprietaryData, updateProprietaryData, startAuthorisationWithPsuAuthentication, updatePsuAuthentication, startAuthorisationWithEncryptedPsuAuthentication, updateEncryptedPsuAuthentication, updateAdditionalPsuAuthentication, updateAdditionalEncryptedPsuAuthentication, startAuthorisationWithAuthenticationMethodSelection, selectAuthenticationMethod, startAuthorisationWithTransactionAuthorisation, authoriseTransaction, self, status, scaStatus, account, balances, transactions, transactionDetails, cardAccount, cardTransactions, first, next, previous, last, download, super.hashCode());
   }
 
   @Override
@@ -850,6 +891,8 @@ public class LinksAll extends HashMap<String, HrefType>  {
     sb.append("    updatePsuAuthentication: ").append(toIndentedString(updatePsuAuthentication)).append("\n");
     sb.append("    startAuthorisationWithEncryptedPsuAuthentication: ").append(toIndentedString(startAuthorisationWithEncryptedPsuAuthentication)).append("\n");
     sb.append("    updateEncryptedPsuAuthentication: ").append(toIndentedString(updateEncryptedPsuAuthentication)).append("\n");
+    sb.append("    updateAdditionalPsuAuthentication: ").append(toIndentedString(updateAdditionalPsuAuthentication)).append("\n");
+    sb.append("    updateAdditionalEncryptedPsuAuthentication: ").append(toIndentedString(updateAdditionalEncryptedPsuAuthentication)).append("\n");
     sb.append("    startAuthorisationWithAuthenticationMethodSelection: ").append(toIndentedString(startAuthorisationWithAuthenticationMethodSelection)).append("\n");
     sb.append("    selectAuthenticationMethod: ").append(toIndentedString(selectAuthenticationMethod)).append("\n");
     sb.append("    startAuthorisationWithTransactionAuthorisation: ").append(toIndentedString(startAuthorisationWithTransactionAuthorisation)).append("\n");
@@ -876,7 +919,7 @@ public class LinksAll extends HashMap<String, HrefType>  {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }

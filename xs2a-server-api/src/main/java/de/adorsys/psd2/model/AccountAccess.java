@@ -1,39 +1,24 @@
-/*
- * Copyright 2018-2019 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import de.adorsys.psd2.model.AccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Requested access services for a consent. 
  */
 @ApiModel(description = "Requested access services for a consent. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-13T12:17:38.965151+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
 
 public class AccountAccess   {
   @JsonProperty("accounts")
@@ -83,6 +68,38 @@ public class AccountAccess   {
   /**
    * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
    */
+  public enum AvailableAccountsWithBalanceEnum {
+    ALLACCOUNTS("allAccounts");
+
+    private String value;
+
+    AvailableAccountsWithBalanceEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static AvailableAccountsWithBalanceEnum fromValue(String text) {
+      for (AvailableAccountsWithBalanceEnum b : AvailableAccountsWithBalanceEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+
+  @JsonProperty("availableAccountsWithBalance")
+  private AvailableAccountsWithBalanceEnum availableAccountsWithBalance = null;
+
+  /**
+   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
+   */
   public enum AllPsd2Enum {
     ALLACCOUNTS("allAccounts");
 
@@ -111,38 +128,6 @@ public class AccountAccess   {
 
   @JsonProperty("allPsd2")
   private AllPsd2Enum allPsd2 = null;
-
-  /**
-   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
-   */
-  public enum AvailableAccountsWithBalancesEnum {
-    ALLACCOUNTS("allAccounts");
-
-    private String value;
-
-    AvailableAccountsWithBalancesEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static AvailableAccountsWithBalancesEnum fromValue(String text) {
-      for (AvailableAccountsWithBalancesEnum b : AvailableAccountsWithBalancesEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-
-  @JsonProperty("availableAccountsWithBalances")
-  private AvailableAccountsWithBalancesEnum availableAccountsWithBalances = null;
 
   public AccountAccess accounts(List<AccountReference> accounts) {
     this.accounts = accounts;
@@ -259,6 +244,28 @@ public class AccountAccess   {
     this.availableAccounts = availableAccounts;
   }
 
+  public AccountAccess availableAccountsWithBalance(AvailableAccountsWithBalanceEnum availableAccountsWithBalance) {
+    this.availableAccountsWithBalance = availableAccountsWithBalance;
+    return this;
+  }
+
+  /**
+   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
+   * @return availableAccountsWithBalance
+  **/
+  @ApiModelProperty(value = "Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. ")
+
+
+
+  @JsonProperty("availableAccountsWithBalance")
+  public AvailableAccountsWithBalanceEnum getAvailableAccountsWithBalance() {
+    return availableAccountsWithBalance;
+  }
+
+  public void setAvailableAccountsWithBalance(AvailableAccountsWithBalanceEnum availableAccountsWithBalance) {
+    this.availableAccountsWithBalance = availableAccountsWithBalance;
+  }
+
   public AccountAccess allPsd2(AllPsd2Enum allPsd2) {
     this.allPsd2 = allPsd2;
     return this;
@@ -281,31 +288,9 @@ public class AccountAccess   {
     this.allPsd2 = allPsd2;
   }
 
-  public AccountAccess availableAccountsWithBalances(AvailableAccountsWithBalancesEnum availableAccountsWithBalances) {
-    this.availableAccountsWithBalances = availableAccountsWithBalances;
-    return this;
-  }
-
-  /**
-   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
-   * @return availableAccountsWithBalances
-  **/
-  @ApiModelProperty(value = "Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. ")
-
-
-
-  @JsonProperty("availableAccountsWithBalances")
-  public AvailableAccountsWithBalancesEnum getAvailableAccountsWithBalances() {
-    return availableAccountsWithBalances;
-  }
-
-  public void setAvailableAccountsWithBalances(AvailableAccountsWithBalancesEnum availableAccountsWithBalances) {
-    this.availableAccountsWithBalances = availableAccountsWithBalances;
-  }
-
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -317,13 +302,13 @@ public class AccountAccess   {
         Objects.equals(this.balances, accountAccess.balances) &&
         Objects.equals(this.transactions, accountAccess.transactions) &&
         Objects.equals(this.availableAccounts, accountAccess.availableAccounts) &&
-        Objects.equals(this.allPsd2, accountAccess.allPsd2) &&
-        Objects.equals(this.availableAccountsWithBalances, accountAccess.availableAccountsWithBalances);
+        Objects.equals(this.availableAccountsWithBalance, accountAccess.availableAccountsWithBalance) &&
+        Objects.equals(this.allPsd2, accountAccess.allPsd2);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(accounts, balances, transactions, availableAccounts, allPsd2, availableAccountsWithBalances);
+    return Objects.hash(accounts, balances, transactions, availableAccounts, availableAccountsWithBalance, allPsd2);
   }
 
   @Override
@@ -335,8 +320,8 @@ public class AccountAccess   {
     sb.append("    balances: ").append(toIndentedString(balances)).append("\n");
     sb.append("    transactions: ").append(toIndentedString(transactions)).append("\n");
     sb.append("    availableAccounts: ").append(toIndentedString(availableAccounts)).append("\n");
+    sb.append("    availableAccountsWithBalance: ").append(toIndentedString(availableAccountsWithBalance)).append("\n");
     sb.append("    allPsd2: ").append(toIndentedString(allPsd2)).append("\n");
-    sb.append("    availableAccountsWithBalances: ").append(toIndentedString(availableAccountsWithBalances)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -345,7 +330,7 @@ public class AccountAccess   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }

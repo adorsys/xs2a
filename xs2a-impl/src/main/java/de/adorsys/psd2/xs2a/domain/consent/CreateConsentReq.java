@@ -86,7 +86,7 @@ public class CreateConsentReq implements AccountReferenceCollector {
     @JsonIgnore
     public boolean isConsentForAllAvailableAccounts() {
         return access.getAvailableAccounts() == ALL_ACCOUNTS
-                   || access.getAvailableAccountsWithBalances() == ALL_ACCOUNTS;
+                   || access.getAvailableAccountsWithBalance() == ALL_ACCOUNTS;
     }
 
     @JsonIgnore

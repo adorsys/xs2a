@@ -1,7 +1,7 @@
 {
-  "street": "Herrnstraße",
+  "streetName": "Herrnstraße",
   "buildingNumber": "123-34",
-  "city": "Nürnberg",
-  "postalCode": "90431",
+  "townName": "Nürnberg",
+  "postCode": "90431",
   "country": { "code" : "DE" }
 }

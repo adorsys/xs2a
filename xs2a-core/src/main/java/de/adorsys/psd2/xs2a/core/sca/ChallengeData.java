@@ -22,8 +22,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -34,7 +37,7 @@ public class ChallengeData {
     private byte[] image;
 
     @ApiModelProperty(value = "String challenge data", example = "zzz")
-    private String data;
+    private List<String> data;
 
     @ApiModelProperty(value = "A link where the ASPSP will provides the challenge image for the TPP", example = "https://www.testbank.com/authentication/image.jpg")
     private String imageLink;
@@ -51,7 +54,7 @@ public class ChallengeData {
     @JsonIgnore
     public boolean isEmpty() {
         return ArrayUtils.isEmpty(image)
-                   && StringUtils.isBlank(data)
+                   && CollectionUtils.isEmpty(data)
                    && StringUtils.isBlank(imageLink)
                    && otpMaxLength == null
                    && otpFormat == null

@@ -12,9 +12,9 @@
   },
   "creditorAddress": {
     "buildingNumber": "56",
-    "city": "Nürnberg",
-    "postalCode": "90543",
-    "street": "WBG Straße",
+    "townName": "Nürnberg",
+    "postCode": "90543",
+    "streetName": "WBG Straße",
     "country": {
       "code": "DE"
     }

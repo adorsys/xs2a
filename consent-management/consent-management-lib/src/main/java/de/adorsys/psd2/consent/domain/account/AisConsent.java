@@ -146,7 +146,7 @@ public class AisConsent extends InstanceDependableEntity {
     @Column(name = "accounts_with_balances")
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Type of the available accounts with balances access type: ALL_ACCOUNTS.", example = "ALL_ACCOUNTS")
-    private AccountAccessType availableAccountsWithBalances;
+    private AccountAccessType availableAccountsWithBalance;
 
     @Column(name = "multilevel_sca_required", nullable = false)
     private boolean multilevelScaRequired;

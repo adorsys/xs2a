@@ -142,10 +142,10 @@ public class CmsToXs2aPaymentMapperTest {
 
         Xs2aAddress creditorAddress = periodicPayment.getCreditorAddress();
         assertNotNull(creditorAddress);
-        assertEquals(CREDITOR_ADDRESS_STREET, creditorAddress.getStreet());
+        assertEquals(CREDITOR_ADDRESS_STREET, creditorAddress.getStreetName());
         assertEquals(CREDITOR_ADDRESS_BUILDING_NUMBER, creditorAddress.getBuildingNumber());
-        assertEquals(CREDITOR_ADDRESS_CITY, creditorAddress.getCity());
-        assertEquals(CREDITOR_ADDRESS_POSTAL_CODE, creditorAddress.getPostalCode());
+        assertEquals(CREDITOR_ADDRESS_CITY, creditorAddress.getTownName());
+        assertEquals(CREDITOR_ADDRESS_POSTAL_CODE, creditorAddress.getPostCode());
         assertEquals(CREDITOR_ADDRESS_COUNTRY, creditorAddress.getCountry().getCode());
 
         assertEquals(REMITTANCE_INFORMATION_UNSTRUCTURED, periodicPayment.getRemittanceInformationUnstructured());
@@ -207,10 +207,10 @@ public class CmsToXs2aPaymentMapperTest {
 
         Xs2aAddress creditorAddress = singlePayment.getCreditorAddress();
         assertNotNull(creditorAddress);
-        assertEquals(CREDITOR_ADDRESS_STREET, creditorAddress.getStreet());
+        assertEquals(CREDITOR_ADDRESS_STREET, creditorAddress.getStreetName());
         assertEquals(CREDITOR_ADDRESS_BUILDING_NUMBER, creditorAddress.getBuildingNumber());
-        assertEquals(CREDITOR_ADDRESS_CITY, creditorAddress.getCity());
-        assertEquals(CREDITOR_ADDRESS_POSTAL_CODE, creditorAddress.getPostalCode());
+        assertEquals(CREDITOR_ADDRESS_CITY, creditorAddress.getTownName());
+        assertEquals(CREDITOR_ADDRESS_POSTAL_CODE, creditorAddress.getPostCode());
         assertEquals(CREDITOR_ADDRESS_COUNTRY, creditorAddress.getCountry().getCode());
 
         assertEquals(REMITTANCE_INFORMATION_UNSTRUCTURED, singlePayment.getRemittanceInformationUnstructured());
@@ -270,10 +270,10 @@ public class CmsToXs2aPaymentMapperTest {
 
         Xs2aAddress creditorAddress = firstPayment.getCreditorAddress();
         assertNotNull(creditorAddress);
-        assertEquals(CREDITOR_ADDRESS_STREET, creditorAddress.getStreet());
+        assertEquals(CREDITOR_ADDRESS_STREET, creditorAddress.getStreetName());
         assertEquals(CREDITOR_ADDRESS_BUILDING_NUMBER, creditorAddress.getBuildingNumber());
-        assertEquals(CREDITOR_ADDRESS_CITY, creditorAddress.getCity());
-        assertEquals(CREDITOR_ADDRESS_POSTAL_CODE, creditorAddress.getPostalCode());
+        assertEquals(CREDITOR_ADDRESS_CITY, creditorAddress.getTownName());
+        assertEquals(CREDITOR_ADDRESS_POSTAL_CODE, creditorAddress.getPostCode());
         assertEquals(CREDITOR_ADDRESS_COUNTRY, creditorAddress.getCountry().getCode());
 
         assertEquals(REMITTANCE_INFORMATION_UNSTRUCTURED, firstPayment.getRemittanceInformationUnstructured());

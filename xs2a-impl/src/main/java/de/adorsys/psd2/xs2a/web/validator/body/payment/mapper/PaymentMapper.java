@@ -162,10 +162,10 @@ public class PaymentMapper {
         return Optional.ofNullable(address)
                    .map(a -> {
                        Xs2aAddress targetAddress = new Xs2aAddress();
-                       targetAddress.setStreet(a.getStreet());
+                       targetAddress.setStreetName(a.getStreetName());
                        targetAddress.setBuildingNumber(a.getBuildingNumber());
-                       targetAddress.setCity(a.getCity());
-                       targetAddress.setPostalCode(a.getPostalCode());
+                       targetAddress.setTownName(a.getTownName());
+                       targetAddress.setPostCode(a.getPostCode());
                        targetAddress.setCountry(new Xs2aCountryCode(a.getCountry()));
                        return targetAddress;
                    })

@@ -9,7 +9,9 @@
   },
   "challengeData": {
     "image": null,
-    "data": "some data",
+    "data": [
+      "some data"
+    ],
     "imageLink": "some link",
     "otpMaxLength": 1,
     "otpFormat": null,
@@ -41,7 +43,9 @@
     }
   ],
   "_links": {
-    "self": {"href": "http://localhost"}
+    "self": {
+      "href": "http://localhost"
+    }
   },
   "scaStatus": "received",
   "psuMessage": "some message"

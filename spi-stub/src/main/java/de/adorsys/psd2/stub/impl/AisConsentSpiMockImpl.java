@@ -117,7 +117,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
         method.setAuthenticationMethodId("sms");
         method.setAuthenticationType("SMS_OTP");
         spiAuthorizationCodeResult.setSelectedScaMethod(method);
-        spiAuthorizationCodeResult.setChallengeData(new ChallengeData(null, "some data", "some link", 100, null, "info"));
+        spiAuthorizationCodeResult.setChallengeData(new ChallengeData(null, Collections.singletonList("some data"), "some link", 100, null, "info"));
 
         return SpiResponse.<SpiAuthorizationCodeResult>builder()
                    .payload(spiAuthorizationCodeResult)

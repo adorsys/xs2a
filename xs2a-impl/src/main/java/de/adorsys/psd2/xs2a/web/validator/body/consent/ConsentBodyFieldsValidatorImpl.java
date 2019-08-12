@@ -46,10 +46,10 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
     private static final String ACCESS_FIELD_NAME = "access";
     private static final String ALL_PSD2_FIELD_NAME = "allPsd2";
     private static final String AVAILABLE_ACCOUNTS_FIELD_NAME = "availableAccounts";
-    private static final String AVAILABLE_ACCOUNTS_WITH_BALANCES_FIELD_NAME = "availableAccountsWithBalances";
+    private static final String AVAILABLE_ACCOUNTS_WITH_BALANCES_FIELD_NAME = "availableAccountsWithBalance";
     private static final String ALL_PSD2_WRONG_VALUE_ERROR = "Wrong value for allPsd2";
     private static final String AVAILABLE_ACCOUNTS_WRONG_VALUE_ERROR = "Wrong value for availableAccounts";
-    private static final String AVAILABLE_ACCOUNTS_WITH_BALANCES_WRONG_VALUE_ERROR = "Wrong value for availableAccountsWithBalances";
+    private static final String AVAILABLE_ACCOUNTS_WITH_BALANCES_WRONG_VALUE_ERROR = "Wrong value for availableAccountsWithBalance";
     private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
 
     private final JsonConverter jsonConverter;
@@ -128,8 +128,8 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
         validateEnumValue(availableAccounts, AccountAccess.AvailableAccountsEnum::fromValue,
                           messageError, AVAILABLE_ACCOUNTS_WRONG_VALUE_ERROR);
 
-        Object availableAccountsWithBalances = access.get(AVAILABLE_ACCOUNTS_WITH_BALANCES_FIELD_NAME);
-        validateEnumValue(availableAccountsWithBalances, AccountAccess.AvailableAccountsWithBalancesEnum::fromValue,
+        Object availableAccountsWithBalance = access.get(AVAILABLE_ACCOUNTS_WITH_BALANCES_FIELD_NAME);
+        validateEnumValue(availableAccountsWithBalance, AccountAccess.AvailableAccountsWithBalanceEnum::fromValue,
                           messageError, AVAILABLE_ACCOUNTS_WITH_BALANCES_WRONG_VALUE_ERROR);
     }
 

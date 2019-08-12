@@ -8218,7 +8218,7 @@
 							"response": []
 						},
 						{
-							"name": "3. Save access (availableAccountsWithBalances)",
+							"name": "3. Save access (availableAccountsWithBalance)",
 							"event": [
 								{
 									"listen": "test",
@@ -8250,7 +8250,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"accountAccess\": {\n    \t\"availableAccountsWithBalances\": \"allAccounts\"\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2019-12-31\"\n}"
+									"raw": "{\n    \"accountAccess\": {\n    \t\"availableAccountsWithBalance\": \"allAccounts\"\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2019-12-31\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",

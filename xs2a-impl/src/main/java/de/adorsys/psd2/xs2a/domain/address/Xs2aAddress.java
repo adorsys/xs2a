@@ -21,9 +21,9 @@ import lombok.Data;
 
 @Data
 public class Xs2aAddress {
-    private String street;
+    private String streetName;
     private String buildingNumber;
-    private String city;
-    private String postalCode;
+    private String townName;
+    private String postCode;
     private Xs2aCountryCode country;
 }

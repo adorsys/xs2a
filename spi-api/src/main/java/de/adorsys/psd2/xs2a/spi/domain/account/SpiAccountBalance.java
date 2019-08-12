@@ -29,4 +29,5 @@ public class SpiAccountBalance {
     private LocalDateTime lastChangeDateTime;
     private LocalDate referenceDate;
     private String lastCommittedTransaction;
+    private Boolean creditLimitIncluded;
 }

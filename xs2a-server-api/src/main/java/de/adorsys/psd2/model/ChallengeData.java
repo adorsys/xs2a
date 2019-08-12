@@ -1,43 +1,31 @@
-/*
- * Copyright 2018-2019 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.Objects;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * It is contained in addition to the data element &#39;chosenScaMethod&#39; if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the &#39;startAuthorisationWithPsuAuthentication&#39; link. 
  */
 @ApiModel(description = "It is contained in addition to the data element 'chosenScaMethod' if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the 'startAuthorisationWithPsuAuthentication' link. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
 
 public class ChallengeData   {
   @JsonProperty("image")
   private byte[] image = null;
 
   @JsonProperty("data")
-  private String data = null;
+  @Valid
+  private List<String> data = null;
 
   @JsonProperty("imageLink")
   private String imageLink = null;
@@ -104,25 +92,33 @@ public class ChallengeData   {
     this.image = image;
   }
 
-  public ChallengeData data(String data) {
+  public ChallengeData data(List<String> data) {
     this.data = data;
     return this;
   }
 
+  public ChallengeData addDataItem(String dataItem) {
+    if (this.data == null) {
+      this.data = new ArrayList<>();
+    }
+    this.data.add(dataItem);
+    return this;
+  }
+
   /**
-   * String challenge data
+   * A collection of strings as challenge data
    * @return data
   **/
-  @ApiModelProperty(value = "String challenge data")
+  @ApiModelProperty(value = "A collection of strings as challenge data")
 
 
 
   @JsonProperty("data")
-  public String getData() {
+  public List<String> getData() {
     return data;
   }
 
-  public void setData(String data) {
+  public void setData(List<String> data) {
     this.data = data;
   }
 
@@ -182,6 +178,7 @@ public class ChallengeData   {
   @ApiModelProperty(value = "The format type of the OTP to be typed in. The admitted values are \"characters\" or \"integer\".")
 
 
+
   @JsonProperty("otpFormat")
   public OtpFormatEnum getOtpFormat() {
     return otpFormat;
@@ -215,7 +212,7 @@ public class ChallengeData   {
 
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -255,7 +252,7 @@ public class ChallengeData   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }
