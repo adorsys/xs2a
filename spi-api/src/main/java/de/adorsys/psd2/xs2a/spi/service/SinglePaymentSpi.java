@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
@@ -38,5 +38,5 @@ public interface SinglePaymentSpi extends PaymentSpi<SpiSinglePayment, SpiSingle
 
     @Override
     @NotNull
-    SpiResponse<TransactionStatus> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull SpiSinglePayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+    SpiResponse<SpiGetPaymentStatusResponse> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull SpiSinglePayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 }

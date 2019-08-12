@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationS
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
+import de.adorsys.psd2.xs2a.domain.pis.GetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
@@ -92,9 +93,9 @@ public class PaymentController implements PaymentApi {
                                                      String psUAcceptLanguage, String psUUserAgent,
                                                      String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
-        ResponseObject<TransactionStatus> serviceResponse = PaymentType.getByValue(paymentService)
+        ResponseObject<GetPaymentStatusResponse> serviceResponse = PaymentType.getByValue(paymentService)
                                                                 .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentProduct, paymentId))
-                                                                .orElseGet(ResponseObject.<TransactionStatus>builder()
+                                                                .orElseGet(ResponseObject.<GetPaymentStatusResponse>builder()
                                                                                .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404))::build);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())

@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
+import de.adorsys.psd2.xs2a.domain.pis.GetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
@@ -36,6 +37,7 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
@@ -60,10 +62,10 @@ public class ReadCommonPaymentStatusServiceTest {
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final CommonPayment COMMON_PAYMENT = new CommonPayment();
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = new SpiPaymentInfo(PRODUCT);
-    private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACSP;
-    private static final SpiResponse<TransactionStatus> TRANSACTION_RESPONSE = buildSpiResponseTransactionStatus();
-    private static final SpiResponse<TransactionStatus> TRANSACTION_RESPONSE_FAILURE = buildFailSpiResponseTransactionStatus();
-    private static final ReadPaymentStatusResponse READ_PAYMENT_STATUS_RESPONSE = new ReadPaymentStatusResponse(TRANSACTION_RESPONSE.getPayload());
+    private static final SpiGetPaymentStatusResponse TRANSACTION_STATUS = new SpiGetPaymentStatusResponse(TransactionStatus.ACSP,null);
+    private static final SpiResponse<SpiGetPaymentStatusResponse> TRANSACTION_RESPONSE = buildSpiResponseTransactionStatus();
+    private static final SpiResponse<SpiGetPaymentStatusResponse> TRANSACTION_RESPONSE_FAILURE = buildFailSpiResponseTransactionStatus();
+    private static final ReadPaymentStatusResponse READ_PAYMENT_STATUS_RESPONSE = new ReadPaymentStatusResponse(TRANSACTION_RESPONSE.getPayload().getTransactionStatus(),TRANSACTION_RESPONSE.getPayload().getFundsAvailable());
     private static final PisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new PisCommonPaymentResponse();
     private static final String SOME_ENCRYPTED_PAYMENT_ID = "Encrypted Payment Id";
 
@@ -139,14 +141,14 @@ public class ReadCommonPaymentStatusServiceTest {
         );
     }
 
-    private static SpiResponse<TransactionStatus> buildSpiResponseTransactionStatus() {
-        return SpiResponse.<TransactionStatus>builder()
+    private static SpiResponse<SpiGetPaymentStatusResponse> buildSpiResponseTransactionStatus() {
+        return SpiResponse.<SpiGetPaymentStatusResponse>builder()
                    .payload(TRANSACTION_STATUS)
                    .build();
     }
 
-    private static SpiResponse<TransactionStatus> buildFailSpiResponseTransactionStatus() {
-        return SpiResponse.<TransactionStatus>builder()
+    private static SpiResponse<SpiGetPaymentStatusResponse> buildFailSpiResponseTransactionStatus() {
+        return SpiResponse.<SpiGetPaymentStatusResponse>builder()
                    .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
                    .build();
     }

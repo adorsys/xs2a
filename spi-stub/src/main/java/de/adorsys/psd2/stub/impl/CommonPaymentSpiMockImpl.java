@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiCommonPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -65,12 +66,12 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<TransactionStatus> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull SpiPaymentInfo payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    public SpiResponse<SpiGetPaymentStatusResponse> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull SpiPaymentInfo payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("CommonPaymentSpi#getPaymentStatusById: contextData {}, spiPaymentInfo {}, aspspConsentData {}", contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
 
-        return SpiResponse.<TransactionStatus>builder()
-                   .payload(payment.getPaymentStatus())
-                   .build();
+        return SpiResponse.<SpiGetPaymentStatusResponse>builder()
+            .payload(new SpiGetPaymentStatusResponse(payment.getPaymentStatus(),true))
+            .build();
     }
 
     @Override

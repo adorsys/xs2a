@@ -144,9 +144,9 @@ public class PaymentService {
     /**
      * Retrieves payment from ASPSP by its ASPSP identifier, product and payment type
      *
-     * @param paymentType    type of payment (payments, bulk-payments, periodic-payments)
-     * @param paymentProduct payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
-     * @param encryptedPaymentId      ASPSP identifier of the payment
+     * @param paymentType        type of payment (payments, bulk-payments, periodic-payments)
+     * @param paymentProduct     payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
+     * @param encryptedPaymentId ASPSP identifier of the payment
      * @return Response containing information about payment or corresponding error
      */
     public ResponseObject getPaymentById(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {
@@ -207,19 +207,19 @@ public class PaymentService {
     /**
      * Retrieves payment status from ASPSP
      *
-     * @param paymentType    The addressed payment category Single, Periodic or Bulk
-     * @param paymentProduct payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
-     * @param encryptedPaymentId      String representation of payment primary ASPSP identifier
+     * @param paymentType        The addressed payment category Single, Periodic or Bulk
+     * @param paymentProduct     payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
+     * @param encryptedPaymentId String representation of payment primary ASPSP identifier
      * @return Information about the status of a payment
      */
-    public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {//NOPMD //TODO refactor method  and remove https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/683
+    public ResponseObject<GetPaymentStatusResponse> getPaymentStatusById(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {//NOPMD //TODO refactor method  and remove https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/683
         xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
 
         if (!pisCommonPaymentOptional.isPresent()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get Payment Status failed. PIS CommonPayment not found by id",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId);
-            return ResponseObject.<TransactionStatus>builder()
+            return ResponseObject.<GetPaymentStatusResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
         }
@@ -229,14 +229,14 @@ public class PaymentService {
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get payment status by id - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId, validationResult.getMessageError());
-            return ResponseObject.<TransactionStatus>builder()
+            return ResponseObject.<GetPaymentStatusResponse>builder()
                        .fail(validationResult.getMessageError())
                        .build();
         }
 
         // TODO temporary solution: payment initiation workflow should be clarified https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/582
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
-            return ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build();
+            return ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.RJCT, null)).build();
         }
 
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(getPsuIdDataFromRequest());
@@ -251,7 +251,7 @@ public class PaymentService {
             if (CollectionUtils.isEmpty(pisPayments)) {
                 log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get Payment Status failed. Payments not found at PisCommonPayment.",
                          requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId);
-                return ResponseObject.<TransactionStatus>builder()
+                return ResponseObject.<GetPaymentStatusResponse>builder()
                            .fail(PIS_400, of(FORMAT_ERROR, PAYMENT_NOT_FOUND_MESSAGE))
                            .build();
             }
@@ -264,7 +264,7 @@ public class PaymentService {
             ErrorHolder errorHolder = readPaymentStatusResponse.getErrorHolder();
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Read Payment status failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId, errorHolder);
-            return ResponseObject.<TransactionStatus>builder()
+            return ResponseObject.<GetPaymentStatusResponse>builder()
                        .fail(errorHolder)
                        .build();
         }
@@ -274,7 +274,7 @@ public class PaymentService {
         if (transactionStatus == null) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}].  Get Payment Status by id failed. Transaction status is null.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId);
-            return ResponseObject.<TransactionStatus>builder()
+            return ResponseObject.<GetPaymentStatusResponse>builder()
                        .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
@@ -284,7 +284,8 @@ public class PaymentService {
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId, transactionStatus);
         }
 
-        return ResponseObject.<TransactionStatus>builder().body(transactionStatus).build();
+        GetPaymentStatusResponse response = new GetPaymentStatusResponse(transactionStatus, readPaymentStatusResponse.getFundsAvailable());
+        return ResponseObject.<GetPaymentStatusResponse>builder().body(response).build();
     }
 
     /**
