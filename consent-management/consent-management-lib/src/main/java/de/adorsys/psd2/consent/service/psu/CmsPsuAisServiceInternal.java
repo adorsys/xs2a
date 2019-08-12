@@ -244,7 +244,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         Function<String, AccountAccessType> accountAccessTypeConverter = (description) -> AccountAccessType.getByDescription(description).orElse(null);
         consent.setAllPsd2(accountAccessTypeConverter.apply(accountAccess.getAllPsd2()));
         consent.setAvailableAccounts(accountAccessTypeConverter.apply(accountAccess.getAvailableAccounts()));
-        consent.setAvailableAccountsWithBalances(accountAccessTypeConverter.apply(accountAccess.getAvailableAccountsWithBalances()));
+        consent.setAvailableAccountsWithBalance(accountAccessTypeConverter.apply(accountAccess.getAvailableAccountsWithBalance()));
 
         Optional.ofNullable(request.getRecurringIndicator())
             .ifPresent(consent::setRecurringIndicator);

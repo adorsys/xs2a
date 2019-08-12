@@ -16,10 +16,10 @@
   "creditorName": "Telekom",
   "creditorAddress": {
     "buildingNumber": "56",
-    "city": "Nürnberg",
+    "townName": "Nürnberg",
     "country": "DE",
-    "postalCode": "90543",
-    "street": "WBG Straße"
+    "postCode": "90543",
+    "streetName": "WBG Straße"
   },
   "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
   "startDate": "2020-01-01",

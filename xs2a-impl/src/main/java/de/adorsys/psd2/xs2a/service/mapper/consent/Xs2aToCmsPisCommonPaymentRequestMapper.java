@@ -167,10 +167,10 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         return Optional.ofNullable(address)
                    .map(adr -> {
                        CmsAddress cmsAddress = new CmsAddress();
-                       cmsAddress.setStreet(adr.getStreet());
+                       cmsAddress.setStreet(adr.getStreetName());
                        cmsAddress.setBuildingNumber(adr.getBuildingNumber());
-                       cmsAddress.setCity(adr.getCity());
-                       cmsAddress.setPostalCode(adr.getPostalCode());
+                       cmsAddress.setCity(adr.getTownName());
+                       cmsAddress.setPostalCode(adr.getPostCode());
                        cmsAddress.setCountry(Optional.ofNullable(adr.getCountry()).map(Xs2aCountryCode::getCode).orElse(null));
                        return cmsAddress;
                    }).orElseGet(CmsAddress::new);

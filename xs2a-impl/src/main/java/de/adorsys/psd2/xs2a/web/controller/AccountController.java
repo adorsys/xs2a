@@ -81,7 +81,7 @@ public class AccountController implements AccountApi {
         ResponseObject<Xs2aAccountDetailsHolder> accountDetails = accountService.getAccountDetails(consentID, accountId, Optional.ofNullable(withBalance).orElse(false), trimEndingSlash(request.getRequestURI()));
         return accountDetails.hasError()
                    ? responseErrorMapper.generateErrorResponse(accountDetails.getError())
-                   : responseMapper.ok(accountDetails, accountModelMapper::mapToAccountDetails);
+                   : responseMapper.ok(accountDetails, accountModelMapper::mapToInlineResponse200);
     }
 
     @Override

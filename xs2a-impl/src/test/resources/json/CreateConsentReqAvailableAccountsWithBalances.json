@@ -3,7 +3,7 @@
     "accounts": [],
     "balances": [],
     "transactions": [],
-    "availableAccountsWithBalances": "allAccounts"
+    "availableAccountsWithBalance": "allAccounts"
   },
   "frequencyPerDay": "1",
   "recurringIndicator": "false",

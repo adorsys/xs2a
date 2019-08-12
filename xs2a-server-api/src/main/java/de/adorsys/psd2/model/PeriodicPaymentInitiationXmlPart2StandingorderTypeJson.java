@@ -1,37 +1,24 @@
-/*
- * Copyright 2018-2019 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.DayOfExecution;
+import de.adorsys.psd2.model.ExecutionRule;
+import de.adorsys.psd2.model.FrequencyCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
- * The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment. 
+ * The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment.
  */
 @ApiModel(description = "The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
 
 public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   @JsonProperty("startDate")
@@ -155,7 +142,6 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   @ApiModelProperty(value = "")
 
   @Valid
-
   @JsonProperty("dayOfExecution")
   public DayOfExecution getDayOfExecution() {
     return dayOfExecution;
@@ -167,7 +153,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
 
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -191,7 +177,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson {\n");
-    
+
     sb.append("    startDate: ").append(toIndentedString(startDate)).append("\n");
     sb.append("    endDate: ").append(toIndentedString(endDate)).append("\n");
     sb.append("    executionRule: ").append(toIndentedString(executionRule)).append("\n");
@@ -205,7 +191,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }

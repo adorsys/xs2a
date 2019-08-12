@@ -104,14 +104,14 @@ public class AccountModelMapperTest {
         when(mockedHrefLinkMapper.mapToLinksMap(xs2aLinks)).thenReturn(links);
 
         Xs2aAccountDetailsHolder xs2aAccountDetailsHolder = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-xs2a-account-details-holder.json", Xs2aAccountDetailsHolder.class);
-        AccountDetails actualAccountDetails = mapper.mapToAccountDetails(xs2aAccountDetailsHolder);
+        InlineResponse200 actualInlineResponse200 = mapper.mapToInlineResponse200(xs2aAccountDetailsHolder);
 
         AccountDetails expectedAccountDetails = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-account-details-expected.json", AccountDetails.class);
 
-        assertLinks(expectedAccountDetails.getLinks(), actualAccountDetails.getLinks());
+        assertLinks(expectedAccountDetails.getLinks(), actualInlineResponse200.getAccount().getLinks());
 
-        expectedAccountDetails.setLinks(actualAccountDetails.getLinks());
-        assertEquals(expectedAccountDetails, actualAccountDetails);
+        expectedAccountDetails.setLinks(actualInlineResponse200.getAccount().getLinks());
+        assertEquals(expectedAccountDetails, actualInlineResponse200.getAccount());
     }
 
     @Test
@@ -193,15 +193,13 @@ public class AccountModelMapperTest {
 
         Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-transactions.json", Transactions.class);
 
-        Map<String, TransactionDetails> actualMap = mapper.mapToTransactionDetails(transactions);
+        InlineResponse2001 actualInlineResponse2001 = mapper.mapToTransactionDetails(transactions);
 
         TransactionDetails expectedTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-transaction-details-expected.json",
                                                                                      TransactionDetails.class);
 
-        Map<String, TransactionDetails> expectedMap = new HashMap<>();
-        expectedMap.put("transactionsDetails", expectedTransactionDetails);
-
-        assertEquals(expectedMap, actualMap);
+        assertNotNull(actualInlineResponse2001);
+        assertEquals(expectedTransactionDetails, actualInlineResponse2001.getTransactionsDetails());
     }
 
     @Test

@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -109,7 +110,7 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
         method.setAuthenticationMethodId("sms");
         method.setAuthenticationType("SMS_OTP");
         spiAuthorizationCodeResult.setSelectedScaMethod(method);
-        spiAuthorizationCodeResult.setChallengeData(new ChallengeData(null, "some data", "some link", 100, null, "info"));
+        spiAuthorizationCodeResult.setChallengeData(new ChallengeData(null, Collections.singletonList("some data"), "some link", 100, null, "info"));
 
         return SpiResponse.<SpiAuthorizationCodeResult>builder()
                    .payload(spiAuthorizationCodeResult)

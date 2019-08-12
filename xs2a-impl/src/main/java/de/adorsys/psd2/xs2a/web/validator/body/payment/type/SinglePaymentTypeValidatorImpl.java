@@ -104,10 +104,10 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     }
 
     void validateAddress(Xs2aAddress address, MessageError messageError) {
-        checkOptionalFieldForMaxLength(address.getStreet(), "street", 100, messageError);
+        checkOptionalFieldForMaxLength(address.getStreetName(), "streetName", 100, messageError);
         checkOptionalFieldForMaxLength(address.getBuildingNumber(), "buildingNumber", 20, messageError);
-        checkOptionalFieldForMaxLength(address.getCity(), "city", 100, messageError);
-        checkOptionalFieldForMaxLength(address.getPostalCode(), "postalCode", 5, messageError);
+        checkOptionalFieldForMaxLength(address.getTownName(), "townName", 100, messageError);
+        checkOptionalFieldForMaxLength(address.getPostCode(), "postCode", 5, messageError);
 
         if ( Objects.isNull(address.getCountry()) || StringUtils.isBlank(address.getCountry().getCode()) ) {
             errorBuildingService.enrichMessageError(messageError, "Value 'address.country' is required");

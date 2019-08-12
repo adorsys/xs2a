@@ -54,7 +54,7 @@ public class AccountReferenceAccessValidator {
     }
 
     private boolean isConsentForAllAvailableAccounts(Xs2aAccountAccess accountAccess) {
-        return Arrays.asList(accountAccess.getAvailableAccounts(), accountAccess.getAvailableAccountsWithBalances())
+        return Arrays.asList(accountAccess.getAvailableAccounts(), accountAccess.getAvailableAccountsWithBalance())
                    .contains(AccountAccessType.ALL_ACCOUNTS);
     }
 }

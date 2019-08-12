@@ -104,7 +104,7 @@ public class ConsentModelMapper {
                                 mapToXs2aAccountReferences(acs.getTransactions()),
                                 mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
                                 mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2()),
-                                mapToAccountAccessTypeFromAvailableAccountsWithBalances(acs.getAvailableAccountsWithBalances())
+                                mapToAccountAccessTypeFromAvailableAccountsWithBalance(acs.getAvailableAccountsWithBalance())
                             ))
                    .orElse(null);
     }
@@ -130,9 +130,9 @@ public class ConsentModelMapper {
                                         .orElse(null)
                                 )
                             );
-                            mappedAccountAccess.setAvailableAccountsWithBalances(
-                                AccountAccess.AvailableAccountsWithBalancesEnum.fromValue(
-                                    Optional.ofNullable(access.getAvailableAccountsWithBalances())
+                            mappedAccountAccess.setAvailableAccountsWithBalance(
+                                AccountAccess.AvailableAccountsWithBalanceEnum.fromValue(
+                                    Optional.ofNullable(access.getAvailableAccountsWithBalance())
                                         .map(AccountAccessType::getDescription)
                                         .orElse(null)
                                 )
@@ -156,7 +156,7 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private AccountAccessType mapToAccountAccessTypeFromAvailableAccountsWithBalances(AccountAccess.AvailableAccountsWithBalancesEnum accountsEnum) {
+    private AccountAccessType mapToAccountAccessTypeFromAvailableAccountsWithBalance(AccountAccess.AvailableAccountsWithBalanceEnum accountsEnum) {
         return Optional.ofNullable(accountsEnum)
                    .flatMap(en -> AccountAccessType.getByDescription(en.toString()))
                    .orElse(null);

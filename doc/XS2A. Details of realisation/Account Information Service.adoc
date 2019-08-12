@@ -61,8 +61,8 @@ This function implies a consent resource at the ASPSP to return a list of all av
 The ability to create Consent on Account List of Available Accounts depends on successful validation:
 
 * The attribute in ASPSP Profile "availableAccountsConsentSupported" should be set to "TRUE".
-* The call only contains the "availableAccounts" or “availableAccountsWithBalances” sub attribute within the "access" attribute with value "allAccounts".
-* All possible content of "accounts", "balances", "transactions" fields is ignored if call contains attribute "availableAccounts" or “availableAccountsWithBalances”.
+* The call only contains the "availableAccounts" or “availableAccountsWithBalance” sub attribute within the "access" attribute with value "allAccounts".
+* All possible content of "accounts", "balances", "transactions" fields is ignored if call contains attribute "availableAccounts" or “availableAccountsWithBalance”.
 * Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP profile "scaByOneTimeAvailableAccountsConsentRequired" (true (by default), false)
 * When in profile parameter “scaByOneTimeAvailableAccountsConsentRequired”=false, request contains reccuringIndicator=false and in SPIResponse "multilevelSca"=true, then multilevel flag is ignored and Consent become "Valid" after execution one-factor authorisation (login and password) by one PSU. 
 
@@ -71,7 +71,7 @@ The ability to create Consent on Account List of Available Accounts depends on s
 ||Attribute |Value |Authorisation |Consent
 
 |*Account Access*
-|availableAccounts OR availableAccountsWithBalances
+|availableAccounts OR availableAccountsWithBalance
 |allAccounts
 .3+|one-factor authorisation  (PSU-ID and password)
 .7+^.^|*Consent on Account List of Available Accounts*
@@ -87,7 +87,7 @@ The ability to create Consent on Account List of Available Accounts depends on s
 |
 |
 |*Account Access*
-|availableAccounts OR availableAccountsWithBalances
+|availableAccounts OR availableAccountsWithBalance
 |allAccounts
 .3+|two-factor authorisation(PSU-ID and password + TAN)
 .2+|*ASPSP Profile*
@@ -115,7 +115,7 @@ The ability to create Global Consent depends on successful validation:
 
 * The attribute in ASPSP Profile "allPsd2Support" should be set to "TRUE".
 * The call contains the "allPsd2" sub attribute within the "access" attribute with the value "allAccounts".
-* All possible content of "accounts", "balances", "transactions", "availableAccounts" or “availableAccountsWithBalances” fields is ignored if call contains attribute "allPsd2".
+* All possible content of "accounts", "balances", "transactions", "availableAccounts" or “availableAccountsWithBalance” fields is ignored if call contains attribute "allPsd2".
 * Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP profile "scaByOneTimeGlobalConsentRequired" (true (by default), false)
 
 .Global Consent

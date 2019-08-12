@@ -587,7 +587,7 @@ public class ConsentService {
             new ArrayList<>(),
             request.getAccess().getAvailableAccounts(),
             request.getAccess().getAllPsd2(),
-            request.getAccess().getAvailableAccountsWithBalances()
+            request.getAccess().getAvailableAccountsWithBalance()
         );
     }
 

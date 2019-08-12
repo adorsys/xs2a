@@ -129,7 +129,7 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
                                 mapToXs2aAccountReferences(acs.getTransactions(), messageError),
                                 mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
                                 mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2()),
-                                mapToAccountAccessTypeFromAvailableAccountsWithBalances(acs.getAvailableAccountsWithBalances())
+                                mapToAccountAccessTypeFromAvailableAccountsWithBalance(acs.getAvailableAccountsWithBalance())
                             ))
                    .orElse(null);
     }
@@ -154,7 +154,7 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
                    .orElse(null);
     }
 
-    private AccountAccessType mapToAccountAccessTypeFromAvailableAccountsWithBalances(AccountAccess.AvailableAccountsWithBalancesEnum accountsEnum) {
+    private AccountAccessType mapToAccountAccessTypeFromAvailableAccountsWithBalance(AccountAccess.AvailableAccountsWithBalanceEnum accountsEnum) {
         return Optional.ofNullable(accountsEnum)
                    .flatMap(en -> AccountAccessType.getByDescription(en.toString()))
                    .orElse(null);

@@ -1,6 +1,6 @@
 {
   "access": {
-    "availableAccountsWithBalances": "allAccounts"
+    "availableAccountsWithBalance": "allAccounts"
   },
   "frequencyPerDay": "1",
   "recurringIndicator": "false",

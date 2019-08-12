@@ -8,7 +8,7 @@
         "iban": "DE80760700240271232400"
       }
     ],
-    "availableAccountsWithBalances": "allAccounts"
+    "availableAccountsWithBalance": "allAccounts"
   },
   "combinedServiceIndicator": false,
   "frequencyPerDay": 10,

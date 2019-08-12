@@ -29,14 +29,14 @@ public class AisConsentRequestTypeService {
     public AisConsentRequestType getRequestTypeFromConsent(AisConsent aisConsent) {
         return getRequestType(aisConsent.getAllPsd2(),
                               aisConsent.getAvailableAccounts(),
-                              aisConsent.getAvailableAccountsWithBalances(),
+                              aisConsent.getAvailableAccountsWithBalance(),
                               aisConsent.getAspspAccountAccesses().isEmpty());
     }
 
     public AisConsentRequestType getRequestTypeFromAccess(AisAccountAccessInfo accessInfo) {
         return getRequestType(accessInfo.getAllPsd2(),
                               accessInfo.getAvailableAccounts(),
-                              accessInfo.getAvailableAccountsWithBalances(),
+                              accessInfo.getAvailableAccountsWithBalance(),
                               isEmptyAccess(accessInfo));
     }
 
@@ -48,14 +48,14 @@ public class AisConsentRequestTypeService {
 
     private AisConsentRequestType getRequestType(AccountAccessType allPsd2,
                                                  AccountAccessType availableAccounts,
-                                                 AccountAccessType availableAccountsWithBalances,
+                                                 AccountAccessType availableAccountsWithBalance,
                                                  boolean isAccessesEmpty) {
 
         if (AccountAccessType.ALL_ACCOUNTS == allPsd2) {
             return AisConsentRequestType.GLOBAL;
         } else if (AccountAccessType.ALL_ACCOUNTS == availableAccounts) {
             return AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
-        } else if (AccountAccessType.ALL_ACCOUNTS == availableAccountsWithBalances) {
+        } else if (AccountAccessType.ALL_ACCOUNTS == availableAccountsWithBalance) {
             return AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
         } else if (isAccessesEmpty) {
             return AisConsentRequestType.BANK_OFFERED;

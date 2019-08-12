@@ -1,40 +1,28 @@
-/*
- * Copyright 2018-2019 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.ScaMethods;
+import de.adorsys.psd2.model.ScaStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Map;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Body of the JSON response for a successful update PSU Identification request.
  */
 @ApiModel(description = "Body of the JSON response for a successful update PSU Identification request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
 
 public class UpdatePsuIdenticationResponse   {
+  @JsonProperty("scaMethods")
+  private ScaMethods scaMethods = null;
+
   @JsonProperty("_links")
   private Map _links = null;
 
@@ -43,6 +31,29 @@ public class UpdatePsuIdenticationResponse   {
 
   @JsonProperty("psuMessage")
   private String psuMessage = null;
+
+  public UpdatePsuIdenticationResponse scaMethods(ScaMethods scaMethods) {
+    this.scaMethods = scaMethods;
+    return this;
+  }
+
+  /**
+   * Get scaMethods
+   * @return scaMethods
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("scaMethods")
+  public ScaMethods getScaMethods() {
+    return scaMethods;
+  }
+
+  public void setScaMethods(ScaMethods scaMethods) {
+    this.scaMethods = scaMethods;
+  }
 
   public UpdatePsuIdenticationResponse _links(Map _links) {
     this._links = _links;
@@ -116,7 +127,7 @@ public class UpdatePsuIdenticationResponse   {
 
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -124,14 +135,15 @@ public class UpdatePsuIdenticationResponse   {
       return false;
     }
     UpdatePsuIdenticationResponse updatePsuIdenticationResponse = (UpdatePsuIdenticationResponse) o;
-    return Objects.equals(this._links, updatePsuIdenticationResponse._links) &&
+    return Objects.equals(this.scaMethods, updatePsuIdenticationResponse.scaMethods) &&
+        Objects.equals(this._links, updatePsuIdenticationResponse._links) &&
         Objects.equals(this.scaStatus, updatePsuIdenticationResponse.scaStatus) &&
         Objects.equals(this.psuMessage, updatePsuIdenticationResponse.psuMessage);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(_links, scaStatus, psuMessage);
+    return Objects.hash(scaMethods, _links, scaStatus, psuMessage);
   }
 
   @Override
@@ -139,6 +151,7 @@ public class UpdatePsuIdenticationResponse   {
     StringBuilder sb = new StringBuilder();
     sb.append("class UpdatePsuIdenticationResponse {\n");
     
+    sb.append("    scaMethods: ").append(toIndentedString(scaMethods)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
     sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
@@ -150,7 +163,7 @@ public class UpdatePsuIdenticationResponse   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }

@@ -198,10 +198,10 @@ public class PaymentModelMapperTest {
 
     private Address getAddress12(boolean code, boolean str, boolean bld, boolean city, boolean country) {
         Address address = new Address();
-        address.setPostalCode(code ? "PostalCode" : null);
-        address.setCity(city ? "Kiev" : null);
+        address.setPostCode(code ? "PostalCode" : null);
+        address.setTownName(city ? "Kiev" : null);
         address.setBuildingNumber(bld ? "8" : null);
-        address.setStreet(str ? "Esplanadnaya" : null);
+        address.setStreetName(str ? "Esplanadnaya" : null);
         address.setCountry(country ? "Ukraine" : null);
         return address;
     }
@@ -243,9 +243,9 @@ public class PaymentModelMapperTest {
     private Xs2aAddress buildXs2aAddress() {
         Xs2aAddress address = new Xs2aAddress();
         address.setCountry(new Xs2aCountryCode("Ukraine"));
-        address.setCity("Kiev");
-        address.setPostalCode("PostalCode");
-        address.setStreet("Esplanadnaya");
+        address.setTownName("Kiev");
+        address.setPostCode("PostalCode");
+        address.setStreetName("Esplanadnaya");
         address.setBuildingNumber("8");
         return address;
     }

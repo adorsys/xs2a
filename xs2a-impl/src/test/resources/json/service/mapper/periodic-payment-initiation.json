@@ -8,10 +8,10 @@
   },
   "creditorAddress": {
     "buildingNumber": "123-34",
-    "city": "Nürnberg",
+    "townName": "Nürnberg",
     "country": "DE",
-    "postalCode": "90431",
-    "street": "Herrnstraße"
+    "postCode": "90431",
+    "streetName": "Herrnstraße"
   },
   "creditorAgent": "BCENECEQ",
   "creditorName": "Telekom",
