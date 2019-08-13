@@ -54,6 +54,7 @@ From now on, `batchBookingPreferred` field is persisted for bulk payment during 
 == Event query for Oracle DB was fixed
 
 From now on, CMS endpoint `GET /aspsp-api/v1/events/` performs correctly on Oracle DB (before it was `Internal Server Error` response).
+Now the database schema is set with `spring.jpa.properties.hibernate.default_schema` property and must be provided explicitly.
 
 == Refactor: PaymentAuthorisationType enum moved to xs2a-core
 
