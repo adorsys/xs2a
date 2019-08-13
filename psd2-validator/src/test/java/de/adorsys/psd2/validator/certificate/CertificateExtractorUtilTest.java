@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -76,5 +77,17 @@ public class CertificateExtractorUtilTest {
         Date expectedDate = calendar.getTime();
 
         Assert.assertEquals(expectedDate, extractedNotAfter);
+    }
+
+    @Test
+    public void testExtractCertDataWithNDSValidCert() throws CertificateValidationException {
+
+        String encodedCert = CertificateUtils.getCertificateByName("certificateWithDNSValid.crt");
+
+        TppCertificateData extract = CertificateExtractorUtil.extract(encodedCert);
+
+        List<String> dnsList = extract.getDnsList();
+        Assert.assertNotNull(dnsList);
+        Assert.assertThat(dnsList.size(), equalTo(2));
     }
 }

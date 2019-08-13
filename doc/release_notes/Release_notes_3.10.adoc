@@ -12,6 +12,7 @@
 * Migrate to .yaml OpenAPI v. 1.3.4
 * Added fundsAvailable field in getPaymentStatusById response
 * POST cancellation-authorisations doesn't return cancellationId
+* TPP URIs compliance checks
 
 == Remove deprecated methods in SpiResponse
 
@@ -84,3 +85,9 @@ information about `fundsAvailable`. Additionally some changes in payment SPI wer
 
 From now on, response on start authorisation for payment cancellation (`POST /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations`)
 will contain `cancellationId` property instead of `authorisationId`.
+
+== TPP URIs compliance checks
+
+From now on, TPP URIs from `TPP-Redirect-URI` and `TPP-Nok-Redirect-URI` headers are being checked for compliance
+with TPP eIDAS QWAC certificate URIs (`CN` or `SubjectAltName` fields).
+If URIs are not compliant `400 FORMAT_ERROR` error will be returned in the response.
