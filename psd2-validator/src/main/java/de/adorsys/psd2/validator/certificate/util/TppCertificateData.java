@@ -18,6 +18,7 @@ package de.adorsys.psd2.validator.certificate.util;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,4 +36,5 @@ public class TppCertificateData {
     private String state;
     private String issuerCN;
     private Date notAfter;
+    private List<String> dnsList = new ArrayList<>();
 }
