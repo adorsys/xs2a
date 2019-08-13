@@ -118,6 +118,22 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
     }
 
     /**
+     * Returns specification for PiisConsentEntity for filtering consents by PsuIdData, TppInfo and AccountReference.
+     *
+     * @param psuIdData              mandatory PSU ID data
+     * @param tppAuthorisationNumber mandatory TPP authorisation number
+     * @param accountReference       mandatory PIIS Account Reference
+     * @return resulting specification for PiisConsentEntity
+     */
+    public Specification<PiisConsentEntity> byPsuIdDataAndTppInfoAndAccountReferenceWithoutJoin(@NotNull PsuIdData psuIdData,
+                                                                                     @NotNull String tppAuthorisationNumber,
+                                                                                     @NotNull AccountReference accountReference) {
+        return Specification.<PiisConsentEntity>where(byPsuIdData(psuIdData))
+                   .and(byTppAuthorisationNumberWithoutJoin(tppAuthorisationNumber))
+                   .and(byAccountReference(accountReference));
+    }
+
+    /**
      * Returns specification for PiisConsentEntity for filtering consents by Currency and Account Reference Selector.
      *
      * @param currency optional Currency
@@ -134,6 +150,23 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
                        .toPredicate(root, query, cb);
         };
     }
+
+    /**
+     * Returns specification for PiisConsentEntity for filtering consents by Account Reference Selector.
+     *
+     * @param selector mandatory Account Reference Selector
+     * @return resulting specification for PiisConsentEntity
+     */
+    public Specification<PiisConsentEntity> byAccountReferenceSelector(@NotNull AccountReferenceSelector selector) {
+        return (root, query, cb) -> {
+            Join<PiisConsentEntity, AccountReferenceEntity> accountJoin = root.join(ACCOUNT_ATTRIBUTE);
+
+            return Specification
+                       .where(provideSpecificationForJoinedEntityAttribute(accountJoin, selector.getAccountReferenceType().getValue(), selector.getAccountValue()))
+                       .toPredicate(root, query, cb);
+        };
+    }
+
 
     /**
      * Returns specification for PiisConsentEntity for filtering data by aspsp account id.
