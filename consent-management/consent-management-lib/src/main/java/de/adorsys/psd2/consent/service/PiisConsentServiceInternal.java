@@ -43,7 +43,12 @@ public class PiisConsentServiceInternal implements PiisConsentService {
 
     @Override
     public List<PiisConsent> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountReferenceSelector) {
-        Specification<PiisConsentEntity> specification = piisConsentEntitySpecification.byCurrencyAndAccountReferenceSelector(currency, accountReferenceSelector);
+        Specification<PiisConsentEntity> specification;
+
+        specification = currency == null
+                            ? piisConsentEntitySpecification.byAccountReferenceSelector(accountReferenceSelector)
+                            : piisConsentEntitySpecification.byCurrencyAndAccountReferenceSelector(currency, accountReferenceSelector);
+
         List<PiisConsentEntity> consents = piisConsentRepository.findAll(specification);
         return piisConsentMapper.mapToPiisConsentList(consents);
     }

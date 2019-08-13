@@ -37,7 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -59,7 +58,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
             return Optional.empty();
         }
 
-        closePreviousPiisConsents(psuIdData, getAuthorisationNumber(request), request.getAccount());
+        closePreviousPiisConsents(psuIdData, request);
 
         PiisConsentEntity consent = piisConsentMapper.mapToPiisConsentEntity(psuIdData, request);
         PiisConsentEntity saved = piisConsentRepository.save(consent);
@@ -104,28 +103,30 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         return true;
     }
 
-    private void closePreviousPiisConsents(PsuIdData psuIdData, String authorisationNumber, AccountReference accountReference) {
-        Specification<PiisConsentEntity> specification = piisConsentEntitySpecification.byPsuIdDataAndTppInfoAndAccountReference(psuIdData, authorisationNumber, accountReference);
+    private void closePreviousPiisConsents(PsuIdData psuIdData, CreatePiisConsentRequest request) {
+
+        AccountReference accountReference = request.getAccount();
+
+        // TODO: remove this elvis operator when removing TppInfo in CreatePiisConsentRequest
+        //  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/971
+        Specification<PiisConsentEntity> specification = StringUtils.isEmpty(request.getTppAuthorisationNumber())
+                                                             ? piisConsentEntitySpecification.byPsuIdDataAndTppInfoAndAccountReference(psuIdData, request.getTppInfo().getAuthorisationNumber(), accountReference)
+                                                             : piisConsentEntitySpecification.byPsuIdDataAndTppInfoAndAccountReferenceWithoutJoin(psuIdData, request.getTppAuthorisationNumber(), accountReference);
+
         List<PiisConsentEntity> piisConsentEntities = piisConsentRepository.findAll(specification);
         piisConsentEntities.forEach(con -> con.setConsentStatus(ConsentStatus.REVOKED_BY_PSU));
         piisConsentRepository.saveAll(piisConsentEntities);
     }
 
     private boolean isInvalidConsentCreationRequest(@NotNull PsuIdData psuIdData, CreatePiisConsentRequest request) {
-            boolean invalidTpp = (request.getTppInfo() == null || request.getTppInfo().isNotValid()) &&
-                                     StringUtils.isBlank(request.getTppAuthorisationNumber());
+        boolean invalidTpp = (request.getTppInfo() == null || request.getTppInfo().isNotValid()) &&
+                                 StringUtils.isBlank(request.getTppAuthorisationNumber());
 
-            return invalidTpp
-                       || psuIdData.isEmpty()
+        return invalidTpp
+                   || psuIdData.isEmpty()
                    || request.getAccount() == null
                    || request.getValidUntil() == null
                    || request.getValidUntil().isBefore(LocalDate.now())
                    || request.getCardExpiryDate() != null && request.getCardExpiryDate().isBefore(LocalDate.now());
-    }
-
-    private String getAuthorisationNumber(@NotNull CreatePiisConsentRequest request) {
-        return Objects.isNull(request.getTppInfo()) ?
-                   request.getTppAuthorisationNumber() :
-                   request.getTppInfo().getAuthorisationNumber();
     }
 }

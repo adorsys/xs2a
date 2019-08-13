@@ -128,6 +128,20 @@ public abstract class GenericSpecification {
     }
 
     /**
+     * Returns specification for some entity for filtering data by TPP authorisation number stored in the same entity.
+     *
+     * <p>
+     * If optional parameter is not provided, this specification will not affect resulting data.
+     *
+     * @param tppAuthorisationNumber optional TPP authorisation number
+     * @param <T>                    type of the entity, for which this specification will be created
+     * @return resulting specification
+     */
+    protected <T> Specification<T> byTppAuthorisationNumberWithoutJoin(@Nullable String tppAuthorisationNumber) {
+        return provideSpecificationForEntityAttribute(TPP_AUTHORISATION_NUMBER_ATTRIBUTE, tppAuthorisationNumber);
+    }
+
+    /**
      * Returns specification for some entity for filtering data by aspsp account id.
      *
      * <p>
