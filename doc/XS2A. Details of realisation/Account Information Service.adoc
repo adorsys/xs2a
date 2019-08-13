@@ -1,69 +1,69 @@
 // toc-title definition MUST follow document title without blank line!
-= Account Information Service
+== Account Information Service
 :toc-title:
 :imagesdir: ../usecases/diagrams
 :toc: left
 
-// horizontal line
-***
-
 toc::[]
-== Establish account information consent
+=== Establish account information consent
 The support of this endpoint at the XS2A interface is mandatory.
 A TPP may execute transactions according to this use case to receive the right to execute further transactions according to the other use cases of the account information service. Subject to consent of the PSU, the TPP can obtain the following rights for transactions (of the account information service):
 
-* Get the list of reachable accounts of the PSU once.
-* Get the balances for a list of accounts once or multiple times.
+* Get the list of reachable accounts of the PSU once;
+* Get the balances for a list of accounts once or multiple times;
 * Get payment transaction information for a list of accounts once or multiple times.
 
 === XS2A performs validation
 
-* TPP data from certificate in request is compared in CMS with TPP data in Consent:
-* Account data should be requested by the same TPP which was given a Consent (TPP Reg_Num = tpp_id). In case when validation is unsuccessful, XS2A sends the response with HTTP code 400 CONSENT_UNKNOWN.
-* First check should be for consent access, and then for expiration.
-* The consent is considered ready to be used by the TPP to access the AIS service when the status is VALID. A consent with RECEIVED status does not have an access token yet. If TPP wants to get account details, transactions and balances with consent which status is Received, XS2A sends the response with HTTP code 401 CONSENT_INVALID.
+TPP data from certificate in request is compared in CMS with TPP data in Consent:
+
+* Account data should be requested by the same TPP which was given a Consent (TPP Reg_Num = tpp_id). In case when validation is unsuccessful, XS2A sends the response with HTTP code 400 CONSENT_UNKNOWN;
+* First check should be for consent access, and then for expiration;
+* The consent is considered ready to be used by the TPP to access the AIS service when the status is VALID. A consent with RECEIVED status does not have an access token yet. If TPP wants to get account details, transactions and balances with consent which status is Received, XS2A sends the response with HTTP code 401 CONSENT_INVALID;
 * In case of usage non-existent consent-id XS2A sends response  with HTTP code 403 CONSENT_UNKNOWN.
 
-=== Account Information Service in Redirect approach
+==== Account Information Service in Redirect approach
 image::ConsentInitRedirect.png[Consent Initiation in Redirect Approach, title='Consent Initiation in Redirect Approach', align='center']
 
-=== Account Information Service in Embedded approach
+==== Account Information Service in Embedded approach
 image::ConsentInitEmbedded.png[Consent Initiation in Embedded Approach, title='Consent Initiation in Embedded Approach', align='center']
 
-== Consent Models
+=== Consent Models
 The XS2A supports four different consent models:
 
-=== Consent on Dedicated Accounts:
+==== Consent on Dedicated Accounts:
 Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.
 
 * All permitted "access" attributes ("accounts", "balances" and "transactions") used in this message shall carry a non-empty array of account references, indicating the accounts where the type of access is requested.
 
-+
 NOTE: that a "transactions" or "balances" access right also gives access to the generic /accounts endpoints, i.e. is implicitly supporting also the "accounts" access.
-+
+
 Consent on Dedicated Accounts affects on response body for all account endpoints:
 
-** Get consent request
-** Read account list
-** Read account details
-** Read balance
-** Read transaction list
-** Read transaction details
-+
-* When this Consent Request is a request where the “recurringIndicator” equals true, and if it exists already a former consent for recurring access on account information for the addressed PSU and potentially addressed corporate identification submitted by this TPP, then the former consent automatically expires as soon as the new consent request is authorised by the PSU.
+** Get consent request;
+** Read account list;
+** Read account details;
+** Read balance;
+** Read transaction list;
+** Read transaction details.
+
+When this Consent Request is a request where the “recurringIndicator” equals true, and if it exists already a former consent
+for recurring access on account information for the addressed PSU and potentially addressed corporate identification submitted by this TPP, then the former consent automatically expires as soon as the new consent request is authorised by the PSU.
+
 There are no expiration side effects foreseen for Consent Requests where the “recurringIndicator” equals false.
-* When this Consent Request is a request for one access to the account data then "recurringIndicator" equals false and "frequencyPerDay" should not be more than "1".
+
+When this Consent Request is a request for one access to the account data then "recurringIndicator" equals false and "frequencyPerDay" should not be more than "1".
 
 
-=== Consent on Account List of Available Accounts
+==== Consent on Account List of Available Accounts
 This function implies a consent resource at the ASPSP to return a list of all available accounts, resp. all available accounts with its balances.
 
 The ability to create Consent on Account List of Available Accounts depends on successful validation:
 
-* The attribute in ASPSP Profile "availableAccountsConsentSupported" should be set to "TRUE".
-* The call only contains the "availableAccounts" or “availableAccountsWithBalance” sub attribute within the "access" attribute with value "allAccounts".
-* All possible content of "accounts", "balances", "transactions" fields is ignored if call contains attribute "availableAccounts" or “availableAccountsWithBalance”.
-* Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP profile "scaByOneTimeAvailableAccountsConsentRequired" (true (by default), false)
+* The attribute in ASPSP Profile "availableAccountsConsentSupported" should be set to "TRUE". If Consent on Account List of Available Accounts is not supported in Profile - respond with 405 SERVICE_INVALID;
+* The consent should only contains the "availableAccounts" or “availableAccountsWithBalance” sub attribute within the "access" attribute with value "allAccounts";
+* All possible content of "accounts", "balances", "transactions" fields is ignored if call contains attribute "availableAccounts" or “availableAccountsWithBalance”;
+* Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP profile "scaByOneTimeAvailableAccountsConsentRequired" (true (by default), false);
 * When in profile parameter “scaByOneTimeAvailableAccountsConsentRequired”=false, request contains reccuringIndicator=false and in SPIResponse "multilevelSca"=true, then multilevel flag is ignored and Consent become "Valid" after execution one-factor authorisation (login and password) by one PSU. 
 
 .Consent on Account List of Available Accounts
@@ -98,25 +98,38 @@ The ability to create Consent on Account List of Available Accounts depends on s
 |TRUE
 |===
 
-=== Bank Offered Consent
+==== Bank Offered Consent
 
 This function implies a consent without indication of Accounts. The ASPSP will then agree bilaterally directly with the PSU on which accounts the requested access consent should be supported.
+
+During authorisation in Online-Banking PSU chooses type of consent and accesses (it may be Dedicated Account Consent, Global Consent, All Available Accounts Consent or All Available Accounts With Balances Consent)
+and Online-Banking stored them through the endpoint PUT /psu-api/v1/ais/consent/{consent-id}/save-access.
+
+When TPP requests Get Consent with this consent-id, xs2a should respond with accesses written by Online-Banking in CMS during authorisation.
+
+When TPP requests Read Account Data with this consent-id, xs2a should respond according to authorised accesses:
+
+* Dedicated Account Consent;
+* Global Consent;
+* All Available Accounts Consent or All Available Accounts With Balances Consent.
+
 The ability to create Bank Offered Consent depends on successful validation:
 
-* The attribute in ASPSP Profile "bankOfferedConsentSupport" should be set to "TRUE",
-* The call contains the "accounts", "balances" and/or "transactions" sub attribute within the "access" attribute all with an empty array.
+* The attribute in ASPSP Profile "bankOfferedConsentSupport" should be set to "TRUE". If Bank Offered consent is not supported in Profile - respond with 405 SERVICE_INVALID;
+* The call contains the "accounts", "balances" and/or "transactions" sub attribute within the "access" attribute all with an empty array;
 * For this function the Embedded SCA Approach is not supported.
 
-=== Global Consent
+==== Global Consent
 This function implies a consent on all available accounts of the PSU on all PSD2 related account information services (meaning access to all account endpoints including balances and transactions).
+Response for Read Account Data request, with Global Consent access, contains links for related balances and transactions.
 Global consent can be recurring and one-off.
 
 The ability to create Global Consent depends on successful validation:
 
-* The attribute in ASPSP Profile "allPsd2Support" should be set to "TRUE".
-* The call contains the "allPsd2" sub attribute within the "access" attribute with the value "allAccounts".
-* All possible content of "accounts", "balances", "transactions", "availableAccounts" or “availableAccountsWithBalance” fields is ignored if call contains attribute "allPsd2".
-* Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP profile "scaByOneTimeGlobalConsentRequired" (true (by default), false)
+* The attribute in ASPSP Profile "allPsd2Support" should be set to "TRUE". If Global consent is not supported in Profile - respond with 405 SERVICE_INVALID;
+* The call contains the "allPsd2" sub attribute within the "access" attribute with the value "allAccounts";
+* All possible content of "accounts", "balances", "transactions", "availableAccounts" or “availableAccountsWithBalance” fields is ignored if call contains attribute "allPsd2";
+* Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP profile "scaByOneTimeGlobalConsentRequired" (true (by default), false).
 
 .Global Consent
 |===
@@ -152,59 +165,72 @@ The ability to create Global Consent depends on successful validation:
 
 
 
-== Consent expiration date
+=== Consent expiration date
 All requests to the CMS concerning any consentID should be validated for parameter "validUntil" (mandatory field). The parameter "validUntil" is adjusted for Consent in CMS according to parameter in ASPSP Profile "consentLifetime":
 
-* if parameter "consentLifetime" = 0 or empty, then the maximum lifetime of Consent is infinity. Therefore no adjustment should be applied. 
-* if parameter "consentLifetime" > 0, then the limit of a maximum lifetime of Consent is set in days and “ValidUntil” should be adjusted and stored in CMS with new value. For example, date of Consent request is 2019-03-01, “ValidUntil” is “9999-12-31" and "consentLifetime"=10, then adjusted value of “ValidUntil” should be 2019-03-10. And TPP will get new adjusted value by Get consent request.
+* if parameter "consentLifetime" = 0 or empty, then the maximum lifetime of Consent is infinity. Therefore no adjustment should be applied;
+* if parameter "consentLifetime" > 0, then the limit of a maximum lifetime of Consent is set in days and “ValidUntil” should be adjusted and stored in CMS with new value. For example, date of Consent request is 2019-03-01, “ValidUntil” is “9999-12-31" and "consentLifetime"=10, then adjusted value of “ValidUntil” should be 2019-03-10. And TPP will get new adjusted value by Get consent request;
 * if parameter "consentLifetime" > 0 and “ValidUntil” contains date far than it is allowed by bank, then there should be adjustment to the date according "consentLifetime". For example, date of Consent request creation is 2019-03-01, “ValidUntil” is “2019-04-20" and "consentLifetime"=10, then adjusted value of “ValidUntil” should be 2019-03-10. And TPP will get new adjusted value by Get consent request;
 * if parameter "consentLifetime" > 0 and “ValidUntil” contains date less than it could be allowed by bank, then no adjustment should be applied. For example, date of Consent request creation is 2019-03-01, “ValidUntil” is “2019-03-10" and "consentLifetime"=15, then adjusted value of “ValidUntil” should be 2019-03-10. And TPP will get "ValidUntil” =2019-03-10 by Get consent request;
-* If the date of "validUntil" is in the past, then XS2A sends the response with HTTP code 401 CONSENT_EXPIRED.
+* If the date of "validUntil" is in the past, then XS2A sends the response with HTTP code 401 CONSENT_EXPIRED;
 * In case TPP tries to initiate new authorisation for expired consent, XS2A sends the response with HTTP code 403 CONSENT_EXPIRED.
 
-== Counting of frequencyPerDay
+=== Counting of frequencyPerDay
 This attribute indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to "1"."
-
 
 Number of TPP accesses is counted by every endpoint:
 
-* /accounts
-* /accounts/account-id per account-id
-* /accounts/account-id/transactions per account-id
-* /accounts/account-id/balances per account-id
+* /accounts;
+* /accounts/account-id per account-id;
+* /accounts/account-id/transactions per account-id;
+* /accounts/account-id/balances per account-id;
 * /accounts/account-id/transactions/transaction-id per account-id and transaction-id, if applicable.
 
-If the amount of accesses for any of these endpoints is exceeded - HTTP error 429 ACCESS_EXCEEDED is returned. All other endpoints are still accessible until their amount is not exceeded.
+If the amount of accesses for any of these endpoints is exceeded - *HTTP error 429 ACCESS_EXCEEDED* is returned. All other endpoints are still accessible until their amount is not exceeded.
 
 === Frequency is addressing only the Read Account Data Requests without PSU involvement:
 
 * When any GET Account Data Requests contain filled parameter PSU-IP-Address, then frequencyPerDay isn't counted for this request with recurring consent.
 * For one-off consent PSU-IP-Address is ignored and frequencyPerDay is counted.
 
-== Consent statuses
+=== Consent statuses
 The status of the consent (the data element "consentStatus")resource is changing during the initiation process. In difference to the payment initiation process, there are only SCA checks on the consent resource and no feedback loop with the ASPSP backend.
 
 Status settlement:
 
-* While creating consent, In case of existing old unauthorised  recurring consent (status "received") for one TPP and one PSU - its consent status becomes "rejected",  as soon as new recurring one becomes authorised (consent status set to VALID).
-* While creating consent, In case of existing old recurring authorised consent for one TPP and one PSU - its consent status becomes "Terminated_by_TPP" as soon as new recurring consent becomes authorised (consent status set to VALID).
+* While creating consent, in case of existing old unauthorised  recurring consent (status "received") for one TPP and one PSU - its consent status becomes "rejected",  as soon as new recurring one becomes authorised (consent status set to VALID);
+* While creating consent, in case of existing old recurring authorised consent for one TPP and one PSU - its consent status becomes "Terminated_by_TPP" as soon as new recurring consent becomes authorised (consent status set to VALID);
 * Consent without successful authorisation expire after a certain period. Consent Status becomes "rejected" and Sca Status for consent authorisation becomes "failed".
 
 Consent Statuses which are defined as *Finalised*:
 
-* *Rejected* (The consent data is rejected e.g. since no successful authorisation takes place)
-* *RevokedByPSU* (The consent has been revoked by the PSU)
-* *Expired* (The consent has been expired (e.g. after 90 days)
-* *TerminatedByTpp* (The corresponding TPP has terminated the consent by applying the DELETE method to the consent resource)
+* *Rejected* (The consent data is rejected e.g. since no successful authorisation takes place);
+* *RevokedByPSU* (The consent has been revoked by the PSU);
+* *Expired* (The consent has been expired (e.g. after 90 days);
+* *TerminatedByTpp* (The corresponding TPP has terminated the consent by applying the DELETE method to the consent resource).
 
 After setting finalised status for consent:
 
-* status isn't allowed to be changed in CMS any more.
+* status isn't allowed to be changed in CMS any more;
 * new authorisation sub-resource can't be created
-
 
 === Get consent Status Request
 Field *lastActionDate* - is containing the date of the last action on the consent object either through the XS2A interface or the PSU/ASPSP interface having an impact on the status:
 
 * When consent is created and gets status "Received" - lastActionDate contains date of consent creation.
 * When consent status is changed - lastActionDate also is updated with new date.
+
+=== Account Identifier
+*aspspAccountId* - This field is a specific unique identifier for bank accounts used in payments, AIS, and PIIS consents (known to bank and given by bank) instead of IBAN and to give all consents for account by this identifier.
+
+Parameter:
+
+* sets as Optional in Account Reference;
+* can be provided in response to SPI initiatePayment or initiateConsent request;
+* for PIIS aspspAccountId can be provided on creation of PIIS consent on endpoint POST /aspsp-api/v1/piis/consents as a part of account data;
+* can be used as search criteria on export endpoints in CMS then.
+
+ASPSP can add *aspspAccountId* to AIS, PIIS consent while:
+
+* create consent request is received, or
+* get account list request is received.

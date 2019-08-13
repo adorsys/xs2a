@@ -1,45 +1,49 @@
 // toc-title definition MUST follow document title without blank line!
-= Read Account Data Requests
+== Read Account Data Requests
 :toc-title:
 :imagesdir: ../usecases/diagrams
 :toc: left
 
-// horizontal line
-***
-
 toc::[]
+The Read Account Data flow is independent from the corresponding Consent Management flow. It is a simple Request/Response process.
 
 For all Read Account Data Requests:
 
-* Read Account List
-* Read Account Details
-* Read Balance
-* Read Transaction List
-* Read Transaction Details
+* Read Account List;
+* Read Account Details;
+* Read Balance;
+* Read Transaction List;
+* Read Transaction Details;
 
 the *PSU-IP-Address added to the request header* definitions with the Condition "Conditional" and the following description to identify PSU involvement: "The forwarded IP Address header field consists of the corresponding HTTP request IP Address field between PSU and TPP. It shall be contained if and only if this request was actively initiated by the PSU."
 
 
-== Granted Permission in appropriate Consent:
-* For Get accounts with balances (query parameter *withBalance = true* ) validate if permission exists in the Consent.  In case when validation is unsuccessful, XS2A sends the response with HTTP code 401 CONSENT_INVALID and output "The consent was created by this TPP but is not valid for the addressed service/resource".
-* According to Specification 1.3: To have possibility to get balances or transactions or account data, TPP needs to know account-id - this identification is denoting the addressed account. The account-id is retrieved by using a “Read Account List” call. The account-id is the “resourceId” attribute of the account structure. Its value is constant at least throughout the lifecycle of a given consent. So after consent is expired - ASPSP may change account-ids and after establishing new consent TPP will need a new call to get account-ids.
-* If Get account request has *"withBalance=true"* query parameter and Consent permission is valid - response should contain array of balances for account which was granted consent for balances. And it doesn't influence on links.
-* If Get account request has *"withBalance=false"* query parameter - response should not contain array of balances. And it doesn't influence on links.
-* In case of access not granted for balances or transactions, XS2A sends the response with HTTP code 401 CONSENT_INVALID.
+=== Granted Permission in appropriate Consent:
+* For Get accounts with balances (query parameter *withBalance = true* ) validate if permission exists in the Consent.  In case when validation is unsuccessful, XS2A sends the response with HTTP code 401 CONSENT_INVALID and output "The consent was created by this TPP but is not valid for the addressed service/resource";
+* According to Specification 1.3: To have possibility to get balances or transactions or account data, TPP needs to know account-id - this identification is denoting the addressed account. The account-id is retrieved by using a “Read Account List” call. The account-id is the “resourceId” attribute of the account structure.
+Its value is constant at least throughout the lifecycle of a given consent. So after consent is expired - ASPSP may change account-ids and after establishing new consent TPP will need a new call to get account-ids;
+* If Get account request has *"withBalance=true"* query parameter and Consent permission is valid - response should contain array of balances for account which was granted consent for balances. And it doesn't influence on links;
+* If Get account request has *"withBalance=false"* query parameter - response should not contain array of balances. And it doesn't influence on links;
+* In case of access not granted for balances or transactions, XS2A sends the response with HTTP code 401 CONSENT_INVALID;
 * Links balances and transactions should appear in Get Account response according to Consent access.
 
-== Read Account List
+=== Read Account List
 
-== Read Account Details
+=== Read Account Details
 
-== Read Balance
+=== Read Balance
 
-== Read Transaction List
+=== Read Transaction List
 The support of "Get transaction information for a given account" at the XS2A interface is mandatory. 
 
 The TPP can use transactions according to this use case to receive information about payment transactions of a specific account. As a result the TPP will receive information about all payment transactions executed during the time period indicated in the request. In addition, the ASPSP might return also the booking balance.
 
 In addition, the ASPSP can optionally offer the service of a delta report. In this case, the ASPSP is delivering only the information about payment transaction since the last access of this TPP to this account information service or it is delivering the information about payment transaction starting with the next transaction of a payment transaction with a given transaction identification.
+
+Transaction List can't be presented for the period which started more than 90 days ago. Response contains *HTTP Code 401 CONSENT_INVALID* with message "dateFrom should be less than 90 days in the past."
+
+
+NOTE: This rule is not applying for the first access with recurring consent.
 
 .Read Transaction List (Delta report)
 |===
@@ -65,17 +69,17 @@ In addition, the ASPSP can optionally offer the service of a delta report. In th
 |This data attribute is indicating that the AISP is in favor to get all transactions after the transaction with identification entryReferenceFrom alternatively to the above defined period
 |If this data element is contained, the entries "dateFrom" and "dateTo" might be ignored by the ASPSP in case of a delta report is supported (ASPSP-profile contains parameter "entryReferenceFrom" = true).
 
- This delta indicator might be rejected by the ASPSP if this function is not supported (in ASPSP-profile "entryReferenceFrom" = false), in this case in response an error should be sent "PARAMETER_NOT_SUPPORTED" code 400
+ This delta indicator might be rejected by the ASPSP if this function is not supported (in ASPSP-profile "entryReferenceFrom" = false), in this case in response an error should be sent *"PARAMETER_NOT_SUPPORTED" HTTP code 400*
 |deltaList
 |Optional if supported by API provider
 
 |This data attribute is indicating that the AISP is in favor to get all transactions after the last report access for this PSU
 |If this data element is contained, the entries "dateFrom" and "dateTo" might be ignored by the ASPSP in case of a delta report is supported (ASPSP-profile contains parameter "deltaList " = true).
 
- This delta indicator might be rejected by the ASPSP if this function is not supported (in ASPSP-profile "deltaList" =false), in this case in response an error should be sent "PARAMETER_NOT_SUPPORTED" code 400
+ This delta indicator might be rejected by the ASPSP if this function is not supported (in ASPSP-profile "deltaList" =false), in this case in response an error should be sent *"PARAMETER_NOT_SUPPORTED" HTTP code 400*
 4+|- Transaction List Response should contain parameter "entryReference" for every sent transaction (for both reports – with parameter “deltaList” and “entryReferenceFrom”, if supported by ASPSP)
 
-- If request contains both optional Query Parameters "deltaList" and "entryReferenceFrom", then  Read Transaction List  response contains http code 400 FORMAT_ERROR (Only one delta report query parameter can be present in request)
+- If request contains both optional Query Parameters "deltaList" and "entryReferenceFrom", then  Read Transaction List  response contains *HTTP code 400 FORMAT_ERROR* (Only one delta report query parameter can be present in request)
 |bookingStatus
 
 |Mandatory
@@ -92,5 +96,17 @@ In addition, the ASPSP can optionally offer the service of a delta report. In th
 |
 |===
 
+image::ReadTransactionList.png[Read Transaction List, title='Confirmation of Funds Service (Read Transaction List)', align='center']
 
-== Read Transaction Details
+==== Report format
+TPP could specify preferable format (xml or JSON or text) for Read Transaction List by setting appropriate type in “Content Type" field. It will be validated on xs2a side. Further actions will be performed on the connector side.
+
+Possible variants that may be received from SPI in getTransactionList request:
+
+* only list of transactions;
+* only link "download";
+* list of transactions and link "download" (only for JSON format of response, otherwise this combination is not possible).
+
+From the TPP side the download can be initiated by accessing new endpoint in account controller - *GET /v1/accounts/{account-id}/transactions/download/{download-id}*. TPP should provide the AIS consent account ID and the download ID. As a response for accessing this endpoint, the TPP receives the stream with transaction list.
+
+=== Read Transaction Details

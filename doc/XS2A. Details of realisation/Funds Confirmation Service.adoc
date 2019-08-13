@@ -1,0 +1,32 @@
+// toc-title definition MUST follow document title without blank line!
+== Funds Confirmation Service
+:toc-title:
+:imagesdir: ../usecases/diagrams
+:toc: left
+
+toc::[]
+
+The overall confirmation of funds service is separated in two phases:
+
+* Establish PIIS consent (Optional);
+
+* Perform the actual Confirmation of Funds through xs2a.
+
+The first part is not mandated to be offered by the XS2A interface, since this could also be an online banking function or even a paper based consent process.
+
+Parameter *piisConsentSupported* in the ASPSP-Profile, defines whether ASPSP supports storing PIIS consent in CMS (created through ASPSP-CMS-API).
+
+If *piisConsentSupported = TRUE* then ASPSP stores PIIS consent in CMS and FundsConf request is validated according to this consent.
+
+* If ASPSP doesn't provide PIIS Consent to the CMS and TPP requests Funds Confirmation, then response will contain *HTTP code  400 "NO_PIIS_ACTIVATION"*;
+* If PIIS Consent is stored in CMS without TPP-Authorisation-Number , this PIIS consent can be used by any TPP;
+* If TPP-Authorisation-Number is set in consent - PIIS consent is for particular TPP;
+* Funds Confirmation should be requested by the same TPP which is written in Consent. In case when validation is unsuccessful, XS2A sends the response with *HTTP code 400 CONSENT_UNKNOWN*;
+* In case of TPP doesn't have appropriate role in the certificate for initiate Confirmation of Funds request then XS2A sends the response with *HTTP code 401 CERTIFICATE_INVALID* with message: “You don’t have permission to this resource”.
+
+If *piisConsentSupported = FALSE* then PIIS consent is not stored in CMS and request is sent to SPI with NULL value. And ANY TPP may request Funds Confirmation.
+
+image::PIIS.png[Confirmation of Funds Service (Establish PIIS Consent, Perform Funds Confirmation Request), title='Confirmation of Funds Service (Establish PIIS Consent, Perform Funds Confirmation Request)', align='center']
+
+=== PIIS Consent Statuses:
+* While creating PIIS consent, In case of existing old valid consent for TPP, one PSU and one account (Mandatory)-its consent status becomes "RevokedByPSU" as soon as new one for the same TPP, the same PSU and the same account is created with status Valid.

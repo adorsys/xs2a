@@ -33,14 +33,13 @@ xref:XS2A. Details of realisation/xs2a features description.adoc[Documentation]
 == SPI Developer Guide
 xref:SPI Developer Guide/SPI_Developer_Guide.adoc[SPI Developer Guide]
 
-include::version_policy.adoc[]
+== Version policy
+xref:version_policy.adoc[Version policy]
 
 == Upcoming and existing Versions
-=== Roadmap
+
 xref:roadmap.adoc[Roadmap] contains brief information about upcoming features and bugfixes.
 May be changed without a note.
-
-=== Change log and Release notes
 
 For the versions available, see the https://github.com/adorsys/xs2a/tags[tags on this repository]
 and xref:releasenotes.adoc[Release notes for each version].
