@@ -1,62 +1,61 @@
 // toc-title definition MUST follow document title without blank line!
-= Payment Initiation Service
+== Payment Initiation Service
 :toc-title:
 :imagesdir: ../usecases/diagrams
 :toc: left
 
-// horizontal line
-***
-
 toc::[]
+
 The support of this service at the XS2A interface is mandatory.
 Transactions according to this use case can be used to initiate a single payment in form of a credit transfer from an account of the PSU to an account of the payee.
+
 While the transaction at the XS2A interface is initiated by the TPP, it must first be initiated by the PSU at the PSU – TPP interface.
 The ASPSP will reject the transaction if the TPP cannot be identified correctly at the XS2A interface and/or if it does not have the role PISP. Subject to the decision of the ASPSP, strong customer authentication of the PSU has to be executed.
 
 Current version of the XS2A Interface supports the following types of payments:
 
-* Single payment
-* Future dated single payment
-* Bulk payment
-* Periodic payment
+* Single payment;
+* Future dated single payment;
+* Bulk payment;
+* Periodic payment.
 
 
-== SCA Approaches fo PIS
-=== Payment Initiation Service in Redirect Approach
+=== SCA Approaches fo PIS
+==== Payment Initiation Service in Redirect Approach
 
 image::paymentInitRedirect.png[Payment Initiation in Redirect Approach, title='Payment Initiation in Redirect Approach', align='center']
 
-=== Integration OAuth2 Redirect SCA Approach
+==== Integration OAuth2 Redirect SCA Approach
 
 image::PaymentInitOAuth.png[Payment Initiation in OAuth with Redirect Approach, title='Payment Initiation in OAuth with Redirect Approach', align='center']
 
-=== Payment Initiation Service in Embedded Approach
+==== Payment Initiation Service in Embedded Approach
 
 image::paymentInitEmbedded.png[Payment Initiation in Embedded Approach, title='Payment Initiation in Embedded Approach', align='center']
 
-== Payment statuses
+=== Payment statuses
 Payment transaction status is synchronised in bank's database and in CMS. When payment data with payment transaction status is given from ASPSP, status will be updated in CMS, even if it is already finalised. There is endpoint in cms-aspsp-api to set payment data with payment transaction status directly from ASPSP to CMS.
 
 Status settlement:
 
-* Not confirmed with SCA payments obsolete after a certain period. Payment Transaction Status becomes "rejected" and Sca Status for dedicated payment authorisation becomes "failed".
-* In case TPP tries to initiate new authorisation for expired payment, XS2A sends the response with HTTP code 403 RESOURCE_EXPIRED.
+* Not confirmed with SCA payments obsolete after a certain period. Payment Transaction Status becomes "rejected" and Sca Status for dedicated payment authorisation becomes "failed";
+* In case TPP tries to initiate new authorisation for expired payment, XS2A sends the response with *HTTP code 403 RESOURCE_EXPIRED*;
 * In case of usage non-existent payment-id XS2A sends response with HTTP code 404 RESOURCE_UNKNOWN.
 
 
 The transaction statuses of the payment initiation resource which are defined as *Finalised*:
 
-* *Cancelled* (Payment initiation has been cancelled before execution).
-* *Rejected* (Payment initiation or individual transaction included in the payment initiation has been rejected).
+* *Cancelled* (Payment initiation has been cancelled before execution);
+* *Rejected* (Payment initiation or individual transaction included in the payment initiation has been rejected);
 * *AcceptedSettlementCompleted* (indicating that the money has been booked already from the debtor account).
 
 After setting finalised status for payment:
 
-* status isn't allowed to be changed in CMS any more (except the case when ASPSP updates is directly in CMS)
-* new authorisation sub-resource can't be created
-* cancellation can't be proceeded
+* status isn't allowed to be changed in CMS any more (except the case when ASPSP updates is directly in CMS);
+* new authorisation sub-resource can't be created;
+* cancellation can't be proceeded.
 
-== Payment Cancellation
+=== Payment Cancellation
 The support of this use case at the XS2A interface is optional.
 A TPP may execute a transaction according to this use case to cancel a (still pending) payment, which has been initiated before. Only future dated payments and recurring payments may be cancelled.
 
@@ -64,8 +63,8 @@ NOTE: It is up to the ASPSP to decide if a given payment can still be cancelled 
 
 Depending on SpiPaymentCancellationResponse properties *transactionStatus* and *cancellationAuthorisationMandated*:
 
-* XS2A starts authorisation process of payment cancellation only for authorised payments (which were sent and accepted by ASPSP).
-* When payment is finished (has one of transaction statuses Cancelled, Rejected, AcceptedSettlementCompleted) there isn't possibility to cancel it or to proceed payment cancellation authorisation flow. In this case XS2A sends the response with HTTP code 400 FORMAT_ERROR and output "Payment is finalised already and cannot be cancelled".
+* XS2A starts authorisation process of payment cancellation only for authorised payments (which were sent and accepted by ASPSP);
+* When payment is finished (has one of transaction statuses Cancelled, Rejected, AcceptedSettlementCompleted) there isn't possibility to cancel it or to proceed payment cancellation authorisation flow. In this case XS2A sends the response with HTTP code 400 FORMAT_ERROR and output "Payment is finalised already and cannot be cancelled";
 * If the payment is initiated and authorisation is not finished yet, then it is not yet sent to ASPSP and cancellation will be done without authorisation, even if ASPSP supports authorisation for cancellation of payment.
 
 .Payment Cancellation Authorisation Mandated in Profile and in SpiPaymentCancellationResponse
