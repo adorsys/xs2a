@@ -18,6 +18,7 @@ package de.adorsys.psd2.report.jpa.builder;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,7 +29,9 @@ public class SqlEventReportBuilderTest {
 
     @Before
     public void init() {
-        builder = new SqlEventReportBuilder(TEST_REQUEST_NAME);
+        builder = new SqlEventReportBuilder();
+        Whitebox.setInternalState(builder, "schemaName", "event");
+        Whitebox.setInternalState(builder, "sqlRequestFileName", TEST_REQUEST_NAME);
     }
 
     @Test
