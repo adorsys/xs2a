@@ -7525,6 +7525,9 @@ components:
       description: Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).
       type: string
 
+    MessageCode406_PIS:
+        description: Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).
+        type: string
 
     MessageCode409_AIS:
       description: Message codes defined for AIS for HTTP Error code 409 (CONFLICT).
@@ -7700,7 +7703,6 @@ components:
           type: string
         text:
           $ref: "#/components/schemas/tppMessageText"
-
 
     tppMessage403_PIS:
       type: object
@@ -7941,6 +7943,20 @@ components:
         text:
           $ref: "#/components/schemas/tppMessageText"
 
+    tppMessage406_PIS:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+          $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode406_PIS"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
 
     tppMessage409_AIS:
       type: object
@@ -9439,6 +9455,59 @@ components:
         _links:
           $ref: "#/components/schemas/_linksAll"
 
+    Error406_PIS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 406 for PIS.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 512
+        code:
+          $ref: "#/components/schemas/MessageCode406_PIS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode406_PIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
 
     Error429_AIS:
       description: |
@@ -9771,6 +9840,17 @@ components:
         _links:
           $ref: "#/components/schemas/_linksAll"
 
+    Error406_NG_PIS:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 406.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage406_PIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
 
     Error406_NG_AIS:
       description: |

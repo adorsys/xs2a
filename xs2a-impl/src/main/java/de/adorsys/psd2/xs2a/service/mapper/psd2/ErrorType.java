@@ -27,6 +27,7 @@ public enum ErrorType {
     PIS_403(ServiceType.PIS, 403),
     PIS_404(ServiceType.PIS, 404),
     PIS_405(ServiceType.PIS, 405),
+    PIS_406(ServiceType.PIS, 406),
     PIS_409(ServiceType.PIS, 409),
     PIS_415(ServiceType.PIS, 415),
     PIS_500(ServiceType.PIS, 500),
