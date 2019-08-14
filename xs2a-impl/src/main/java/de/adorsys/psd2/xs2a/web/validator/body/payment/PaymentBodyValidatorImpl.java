@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidatorContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
@@ -39,6 +40,7 @@ import java.util.*;
 
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.PAYMENT_DATE_FIELDS;
 
+@Slf4j
 @Component
 public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implements PaymentBodyValidator {
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
@@ -69,14 +71,18 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     }
 
     @Override
-    public void validateBodyFields(HttpServletRequest request, MessageError messageError) {
-        tppRedirectUriBodyValidator.validate(request, messageError);
-
-        Map<String, String> pathParametersMap = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-
-        if (isRawPaymentProduct(pathParametersMap)) {
+    public void validate(HttpServletRequest request, MessageError messageError) {
+        if (isRawPaymentProduct(getPathParameters(request))) {
+            log.info("Raw payment product is detected.");
             return;
         }
+
+        super.validate(request, messageError);
+    }
+
+    @Override
+    public void validateBodyFields(HttpServletRequest request, MessageError messageError) {
+        tppRedirectUriBodyValidator.validate(request, messageError);
 
         Optional<Object> bodyOptional = mapBodyToInstance(request, messageError, Object.class);
 
@@ -85,7 +91,7 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
             return;
         }
 
-        validateInitiatePaymentBody(bodyOptional.get(), pathParametersMap, messageError);
+        validateInitiatePaymentBody(bodyOptional.get(), getPathParameters(request), messageError);
     }
 
     @Override
@@ -133,5 +139,9 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
             errorBuildingService.enrichMessageError(messageError, BODY_DESERIALIZATION_ERROR);
         }
         return purposeCodes;
+    }
+
+    private Map<String, String> getPathParameters(HttpServletRequest request) {
+        return (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
     }
 }

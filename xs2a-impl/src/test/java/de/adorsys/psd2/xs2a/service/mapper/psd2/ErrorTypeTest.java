@@ -37,7 +37,7 @@ public class ErrorTypeTest {
     @Test
     public void getByServiceTypeAndErrorCode_withNotExistingCode_shouldReturnEmpty() {
         // When
-        Optional<ErrorType> errorType = ErrorType.getByServiceTypeAndErrorCode(ServiceType.PIS, 406);
+        Optional<ErrorType> errorType = ErrorType.getByServiceTypeAndErrorCode(ServiceType.PIS, 423);
 
         // Then
         assertFalse(errorType.isPresent());

@@ -13,6 +13,7 @@
 * Added fundsAvailable field in getPaymentStatusById response
 * POST cancellation-authorisations doesn't return cancellationId
 * TPP URIs compliance checks
+* Added `Error 406` for PIS
 
 == Remove deprecated methods in SpiResponse
 
@@ -92,3 +93,7 @@ will contain `cancellationId` property instead of `authorisationId`.
 From now on, TPP URIs from `TPP-Redirect-URI` and `TPP-Nok-Redirect-URI` headers are being checked for compliance
 with TPP eIDAS QWAC certificate URIs (`CN` or `SubjectAltName` fields).
 If URIs are not compliant `400 FORMAT_ERROR` error will be returned in the response.
+
+== Added `Error 406` for PIS
+
+From now on, 406 error code is supported in PIS.
