@@ -45,6 +45,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.TERMINATED_BY_ASPS
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     private final PiisConsentRepository piisConsentRepository;
     private final PiisConsentEntitySpecification piisConsentEntitySpecification;
