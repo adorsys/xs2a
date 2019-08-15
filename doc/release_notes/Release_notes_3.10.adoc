@@ -14,6 +14,7 @@
 * POST cancellation-authorisations doesn't return cancellationId
 * TPP URIs compliance checks
 * Added `Error 406` for PIS
+* Get PIIS consent results with error
 
 == Remove deprecated methods in SpiResponse
 
@@ -97,3 +98,6 @@ If URIs are not compliant `400 FORMAT_ERROR` error will be returned in the respo
 == Added `Error 406` for PIS
 
 From now on, 406 error code is supported in PIS.
+
+== Get PIIS consent results with error
+From now on, get PIIS consent request (`GET /aspsp-api/v1/piis/consents/`) doesn't entail an error.
