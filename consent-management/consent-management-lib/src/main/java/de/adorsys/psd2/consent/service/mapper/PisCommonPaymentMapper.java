@@ -89,6 +89,7 @@ public class PisCommonPaymentMapper {
                        pisPaymentData.setFrequency(pm.getFrequency());
                        pisPaymentData.setDayOfExecution(pm.getDayOfExecution());
                        pisPaymentData.setPaymentData(pisCommonPayment);
+                       pisPaymentData.setBatchBookingPreferred(pm.getBatchBookingPreferred());
 
                        return pisPaymentData;
                    }).orElse(null);
@@ -176,6 +177,7 @@ public class PisCommonPaymentMapper {
                        pisPayment.setFrequency(pm.getFrequency());
                        pisPayment.setDayOfExecution(pm.getDayOfExecution());
                        pisPayment.setPsuDataList(psuDataMapper.mapToPsuIdDataList(pm.getPaymentData().getPsuDataList()));
+                       pisPayment.setBatchBookingPreferred(pm.getBatchBookingPreferred());
 
                        return pisPayment;
                    }).orElse(null);

@@ -42,6 +42,7 @@ public class ErrorMapperContainer {
     private final PIS403ErrorMapper pis403ErrorMapper;
     private final PIS404ErrorMapper pis404ErrorMapper;
     private final PIS405ErrorMapper pis405ErrorMapper;
+    private final PIS406ErrorMapper pis406ErrorMapper;
     private final PIS409ErrorMapper pis409ErrorMapper;
     private final PIS415ErrorMapper pis415ErrorMapper;
     private final PIS500ErrorMapper pis500ErrorMapper;
@@ -84,6 +85,7 @@ public class ErrorMapperContainer {
         mapperContainer.put(PIS_403, pis403ErrorMapper);
         mapperContainer.put(PIS_404, pis404ErrorMapper);
         mapperContainer.put(PIS_405, pis405ErrorMapper);
+        mapperContainer.put(PIS_406, pis406ErrorMapper);
         mapperContainer.put(PIS_409, pis409ErrorMapper);
         mapperContainer.put(PIS_415, pis415ErrorMapper);
         mapperContainer.put(PIS_500, pis500ErrorMapper);

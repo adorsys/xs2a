@@ -5,44 +5,99 @@ Starting 15th of March 2019 XS2A Team is providing development within two branch
 *Stable branch 2.x*
 
 Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3
-Stable branch 2.x will be supported at least till 01.09.2019
+
+Stable branch 2.x will be supported till 01.09.2019 and will be replaced by the version 4.x
 
 *Development branch 3.x*
 
 Development branch is oriented on implementation of new features and optional endpoints.
-No backward compatibility with 2.x is guaranteed.
+No backward compatibility with 2.x is guaranteed. Since 01.09.2019 development branch 3.x will be continued with bugfixing in branch 4.x and new Development branch 5.x will be started.
 
-
-[cols=".<1,.<3,.<3"]
+[cols=".<1,.<2,.<2,.<2,.<2"]
 |===
-|release date|version 2.x|version 3.x
-
-|02.08.2019
-a|2.11
-
-* Bugfix: Provide correct PSU Data to the SPI in SpiContextData 
-
-* Bugfix: Extract PSU data for payment cancellation from authorisation requests 
-
-* Add new internal request id
-
-a|3.9
-
-* All bugfixes from version 2.11
-
-* Support of download link in Read Transaction list
-
-* Validate only TPP-Authorisation-Number in TPP-info for PIIS 
-
-
-
+|release date|version 2.x|version 3.x|version 4.x|version 5.x
 
 |16.08.2019
+
 a|2.12
+
+* Remove deprecated enum `ALL_ACCOUNTS_WITH_BALANCES` in `AccountAccessType` class
+
+* Remove vulnerable dependency in adorsys/xs2a 
+
+a|3.10
+
+* All fixes from v.2.12
+
+* Migrate to .yaml open API ver 1.3.4_20190717v1 
+
+* The field fundsAvailable should be supported in the response for Payment Initiation Status Request 
+
+* Add TPP URIs compliance checks
 
 * Bugfix: Wrong error code on deleting an account information consent
 
 * Bugfix: POST cancellation-authorisations don't return cancellationId 
+
+* Bugfix: PIIS: NPE during executing Confirmation of Funds request without currency 
+
+* Bugfix: `batchBookingPreferred` is not persisted for bulk payments 
+
+* Bug in ErrorMapping. Missing ErrorType causes NPE 
+
+* Fix event query for Oracle 
+
+* Remove deprecated methods in SpiResponse and ErrorHolder 
+
+a|
+
+a|
+
+|30.08.2019
+
+a|2.13 (end of line)
+
+* Bugfix: Wrong error body on using incorrect HTTP method on creating consent
+
+a|3.11
+
+* All fixes from v.2.13
+
+* Add headers TPP URIs for startAuthorisation request
+
+* Remove deprecated SpiContextData constructor
+
+* Remove deprecated column authority_id from tpp_stop_list table
+
+* Bugfix: Periodic payment without frequency causes NullPointerException
+
+* Bugfix: Update PSU Data with failed AIS authorisation results in 500 INTERNAL_SERVER_ERROR 
+
+* Bugfix: Missing requestedExecutionDate on get payment request for future dated payment 
+
+* Bugfix: Get PIIS consent results with error 
+
+* Bugfix: Create PIIS consent needs closing "/" in URL 
+
+* Bugfix: Wrong authorisationId can 'authorise' actions 
+
+* Bugfix: Wrong PSU-ID can authorise endpoints 
+
+a|
+
+a|
+
+|13.09.2019
+
+a|
+
+a|
+
+a|4.0
+
+* Bugfix: Error on updating PSU Data with no body in the request 
+
+* Bugfix: Consents without successful authorisation should expire with status Rejected
 
 * Bugfix: Incorrect response for Update PSU data for payment initiation request without psuId in header
 
@@ -50,54 +105,47 @@ a|2.12
 
 * Bugfix: Empty array "account" in Read Balances and Read Transaction List responses
 
-* Bugfix: Error on updating PSU Data with no body in the request 
-
-
-a|3.10
-
-* All bugfixes from version 2.12
-
-* Execute payment without sca in OAuth approach
-
-* Add TPP URIs compliance checks
-
-* Add headers TPP URIs for startAuthorisation request
-
-* Support of relative links
-
-* Optional SCA for Global Consent 
-
-
-
-|30.08.2019
-a|2.13
-
-* Bugfix: Consents without successful authorisation should expire with status Rejected
-
 * Bugfix: Check incoming requests to have required information
 
-* Bugfix: Error on initiating payment with custom payment product and JSON body 
+a|5.0
 
-* Bugfix: PSU data should be updated for both payment\consent and authorisation 
-
-a|3.11
-
-* All bugfixes from version 2.13
-
-* Validation of authorisation sub-resources
+* All fixes from v.4.0
 
 * Multilevel SCA for Payment Initiation in Redirect approach
 
 * Multilevel SCA for Establish Consent in Redirect approach 
 
+|27.09.2019
 
+a|
 
-|13.09.2019
-a|2.14
+a|
+
+a|4.1
+
+* Bugfix: Error on initiating payment with custom payment product and JSON body 
+
+* Bugfix: PSU data should be updated for both payment\consent and authorisation 
 
 * Bugfix: Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow 
 
-* Bugfix: When bank returns PATC status for payment, multilevel flag in CMS should be set to true 
+a|5.1
+
+* All fixes from v.4.1
+
+* Support of relative links
+
+* Optional SCA for Global Consent 
+
+|Further development
+
+a|
+
+a|
+
+a|
+
+a|* Bugfix: When bank returns PATC status for payment, multilevel flag in CMS should be set to true 
 
 * Bugfix: SpiAccountConsent shouldn't return real ID (PK from DB)
 
@@ -105,33 +153,21 @@ a|2.14
 
 * Bugfix: Incorrect TransactionId in read transaction details leads to internal server error
 
+* Bugfix: Get consent endpoint in cms-psu-api shouldn't contain PSU Data 
 
-a|3.12
-
-* All bugfixes from version 2.14
-
-* Implementation of delta access for transaction list request 
-
-* Implement support of Multicurrency Accounts 
-
-
-|Further development
-
-a|
-
-a|* Bugfix: Only Pending transactions should be available in getTransactionList response when query param set to "pending"
+* Bugfix: Only Pending transactions should be available in getTransactionList response when query param set to "pending"
 
 * Bugfix: Incorrect error code in response for ReadAccountList for consent which was revoked by PSU
 
 * Bugfix: Wrong response for provision of an invalid TAN or password 
 
-* Remove deprecated enum `ALL_ACCOUNTS_WITH_BALANCES` in `AccountAccessType` class in v.2.10
+* Create Bulk Payment validators 
 
-* Add new internal request id 
+* Implementation of delta access for transaction list request 
 
-* Include new attributes in all access-log for all response entries 
+* Implement support of Multicurrency Accounts
 
-* Log http requests and responses to separate logger
+* Validation of authorisation sub-resources
 
 _Support of Signing Basket:_
 

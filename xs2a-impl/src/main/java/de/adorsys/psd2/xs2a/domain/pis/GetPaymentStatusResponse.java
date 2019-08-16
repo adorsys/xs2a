@@ -16,8 +16,17 @@
 
 package de.adorsys.psd2.xs2a.domain.pis;
 
-// TODO Move PaymentAuthorisationType to the xs2a-core https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/717
-public enum PaymentAuthorisationType {
-    INITIATION,
-    CANCELLATION
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+@Data
+@AllArgsConstructor
+public class GetPaymentStatusResponse {
+    @NotNull
+    private TransactionStatus transactionStatus;
+    @Nullable
+    private Boolean fundsAvailable;
 }

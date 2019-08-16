@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.api.pis.authorisation;
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.ApiModel;
@@ -29,7 +29,7 @@ import lombok.Data;
 @ApiModel(description = "Create PIS Authorisation Request", value = "CreatePisAuthorisationRequest")
 public class CreatePisAuthorisationRequest {
     @ApiModelProperty(value = "Cms authorisation type", required = true)
-    private CmsAuthorisationType authorizationType;
+    private PaymentAuthorisationType authorizationType;
 
     @ApiModelProperty(value = "Corresponding PSU", required = true)
     private PsuIdData psuData;

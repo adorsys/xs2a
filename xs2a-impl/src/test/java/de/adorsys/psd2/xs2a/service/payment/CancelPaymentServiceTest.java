@@ -17,12 +17,14 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -40,7 +42,6 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import org.junit.Before;
@@ -50,18 +51,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Collections;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_CANC_405;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CancelPaymentServiceTest {
@@ -71,7 +70,7 @@ public class CancelPaymentServiceTest {
     private static final String PAYMENT_NOT_FOUND_MESSAGE = "Payment not found";
     private static final PsuIdData PSU_DATA = buildPsuIdData();
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_DATA.getPsuId(), PSU_DATA.getPsuIdType(), PSU_DATA.getPsuCorporateId(), PSU_DATA.getPsuCorporateIdType());
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
 
     @InjectMocks
     private CancelPaymentService cancelPaymentService;
@@ -135,10 +134,11 @@ public class CancelPaymentServiceTest {
         SpiPayment spiPayment = getSpiPayment(PAYMENT_ID, ACTC);
 
         SpiResponse<SpiResponse.VoidResponse> spiErrorResponse = SpiResponse.<SpiResponse.VoidResponse>builder()
-                                                                     .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+                                                                     .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                     .build();
 
-        ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-                                      .messages(Collections.singletonList(PAYMENT_NOT_FOUND_MESSAGE))
+        ErrorHolder errorHolder = ErrorHolder.builder(PIS_404)
+                                      .tppMessages(TppMessageInformation.of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                                       .build();
 
         MessageError expectedError = new MessageError(errorHolder);
@@ -269,10 +269,13 @@ public class CancelPaymentServiceTest {
         SpiPayment spiPayment = getSpiPayment(PAYMENT_ID, null);
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(spiPayment), any()))
             .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
-                            .fail(SpiResponseStatus.LOGICAL_FAILURE));
+                            .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                            .build());
 
         when(spiErrorMapper.mapToErrorHolder(any(), eq(ServiceType.PIS)))
-            .thenReturn(ErrorHolder.builder(MessageErrorCode.RESOURCE_BLOCKED).build());
+            .thenReturn(ErrorHolder.builder(PIS_400)
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_BLOCKED, ""))
+                            .build());
 
         // When
         ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(spiPayment,

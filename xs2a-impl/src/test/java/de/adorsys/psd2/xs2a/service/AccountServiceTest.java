@@ -186,7 +186,10 @@ public class AccountServiceTest {
             .thenReturn(buildErrorSpiResponse(EMPTY_ACCOUNT_DETAILS_LIST));
 
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(EMPTY_ACCOUNT_DETAILS_LIST), ServiceType.AIS))
-            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
+            .thenReturn(ErrorHolder
+                            .builder(ErrorType.AIS_400)
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, ""))
+                            .build());
 
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
 
@@ -327,7 +330,10 @@ public class AccountServiceTest {
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(spiAccountDetails), ServiceType.AIS))
-            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
+            .thenReturn(ErrorHolder
+                            .builder(ErrorType.AIS_400)
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, ""))
+                            .build());
 
         // When
         ResponseObject<Xs2aAccountDetailsHolder> actualResponse = accountService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI);
@@ -437,7 +443,10 @@ public class AccountServiceTest {
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(Collections.EMPTY_LIST), ServiceType.AIS))
-            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
+            .thenReturn(ErrorHolder
+                            .builder(ErrorType.AIS_400)
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, ""))
+                            .build());
 
         // When
         ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);

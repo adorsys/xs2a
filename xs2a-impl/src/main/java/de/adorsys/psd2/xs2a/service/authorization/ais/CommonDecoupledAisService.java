@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.DecoupledUpdateConsentPsuDataResponse;
@@ -36,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -61,7 +63,7 @@ public class CommonDecoupledAisService {
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}], Authentication-Method-ID [{}]. Notifies a decoupled app about starting SCA when proceed decoupled approach has failed. Error msg: {}.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId(), psuData.getPsuId(), authenticationMethodId, messageError);
-            return createFailedResponse(messageError, spiResponse.getMessages(), request);
+            return createFailedResponse(messageError, spiResponse.getErrors(), request);
         }
 
         UpdateConsentPsuDataResponse response = new DecoupledUpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, consentId, authorisationId);
@@ -78,7 +80,7 @@ public class CommonDecoupledAisService {
     }
 
     private UpdateConsentPsuDataResponse createFailedResponse(MessageError messageError,
-                                                              List<String> messages,
+                                                              List<TppMessage> messages,
                                                               UpdateConsentPsuDataReq updateConsentPsuDataReq) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FAILED,
                                                                                  updateConsentPsuDataReq.getConsentId(),
@@ -89,8 +91,11 @@ public class CommonDecoupledAisService {
         return response;
     }
 
-    private String buildPsuMessage(List<String> messages) {
-        return String.join(", ", messages);
+    private String buildPsuMessage(List<TppMessage> messages) {
+        List<String> textMessages = new ArrayList<>();
+        messages.forEach(tppMessage -> textMessages.add(tppMessage.getMessageText()));
+
+        return String.join(", ", textMessages);
     }
 
 }

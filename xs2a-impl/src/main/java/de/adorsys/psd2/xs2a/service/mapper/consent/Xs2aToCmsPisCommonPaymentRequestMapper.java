@@ -80,7 +80,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
     public PisCommonPaymentRequest mapToCmsBulkPisCommonPaymentRequest(BulkPayment bulkPayment, String paymentProduct) {
         PisCommonPaymentRequest request = new PisCommonPaymentRequest();
         request.setPaymentId(bulkPayment.getPaymentId());
-        request.setPayments(mapToListPisPayment(bulkPayment.getPayments()));
+        request.setPayments(mapToListPisPayment(bulkPayment.getPayments(), bulkPayment.getBatchBookingPreferred()));
         request.setPaymentProduct(paymentProduct);
         request.setPaymentType(PaymentType.BULK);
         // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
@@ -89,10 +89,16 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
 
     }
 
-    private List<PisPayment> mapToListPisPayment(List<SinglePayment> payments) {
+    private List<PisPayment> mapToListPisPayment(List<SinglePayment> payments, Boolean batchBookingPreferred) {
         return payments.stream()
                    .map(this::mapToPisPaymentForSinglePayment)
+                   .map(pisPayment -> updateBatchBookingPreferred(pisPayment, batchBookingPreferred))
                    .collect(Collectors.toList());
+    }
+
+    private PisPayment updateBatchBookingPreferred(PisPayment pisPayment, Boolean batchBookingPreferred) {
+        pisPayment.setBatchBookingPreferred(batchBookingPreferred);
+        return pisPayment;
     }
 
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment) {
@@ -161,10 +167,10 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         return Optional.ofNullable(address)
                    .map(adr -> {
                        CmsAddress cmsAddress = new CmsAddress();
-                       cmsAddress.setStreet(adr.getStreet());
+                       cmsAddress.setStreet(adr.getStreetName());
                        cmsAddress.setBuildingNumber(adr.getBuildingNumber());
-                       cmsAddress.setCity(adr.getCity());
-                       cmsAddress.setPostalCode(adr.getPostalCode());
+                       cmsAddress.setCity(adr.getTownName());
+                       cmsAddress.setPostalCode(adr.getPostCode());
                        cmsAddress.setCountry(Optional.ofNullable(adr.getCountry()).map(Xs2aCountryCode::getCode).orElse(null));
                        return cmsAddress;
                    }).orElseGet(CmsAddress::new);

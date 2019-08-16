@@ -139,7 +139,7 @@ public class AisConsentMapper {
                                     mapToInitialAccountReferences(accesses, TypeAccess.TRANSACTION),
                                     getAccessType(consent.getAvailableAccounts()),
                                     getAccessType(consent.getAllPsd2()),
-                                    getAccessType(consent.getAvailableAccountsWithBalances()));
+                                    getAccessType(consent.getAvailableAccountsWithBalance()));
     }
 
     private List<AccountReference> mapToInitialAccountReferences(List<TppAccountAccess> aisAccounts, TypeAccess typeAccess) {
@@ -156,7 +156,7 @@ public class AisConsentMapper {
                                     mapToAccountReferences(accesses, TypeAccess.TRANSACTION),
                                     getAccessType(consent.getAvailableAccounts()),
                                     getAccessType(consent.getAllPsd2()),
-                                    getAccessType(consent.getAvailableAccountsWithBalances()));
+                                    getAccessType(consent.getAvailableAccountsWithBalance()));
     }
 
     private List<AccountReference> mapToAccountReferences(List<AspspAccountAccess> aisAccounts, TypeAccess typeAccess) {

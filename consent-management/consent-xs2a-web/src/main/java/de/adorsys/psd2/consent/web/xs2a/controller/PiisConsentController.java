@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,19 +37,22 @@ import java.util.List;
 public class PiisConsentController {
     private final PiisConsentService piisConsentService;
 
-    @GetMapping(path = "/{currency}/{account-reference-type}/{account-identifier}")
+    @GetMapping(path = "/{account-reference-type}/{account-identifier}")
     @ApiOperation(value = "Gets list of consents by account reference data.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<List<PiisConsent>> getPiisConsentListByAccountReference(
         @ApiParam(name = "currency", value = "3 capital letters of currency name.", example = "EUR")
-        @PathVariable("currency") String currency,
+        @RequestHeader(value = "currency") String currency,
         @ApiParam(name = "account-reference-type", value = "Account reference type, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN.", example = "IBAN")
         @PathVariable("account-reference-type") AccountReferenceType accountReferenceType,
         @ApiParam(name = "account-identifier", value = "The value of account identifier.", example = "DE2310010010123456789")
         @PathVariable("account-identifier") String accountIdentifier) {
-        List<PiisConsent> responseList = piisConsentService.getPiisConsentListByAccountIdentifier(Currency.getInstance(currency), new AccountReferenceSelector(accountReferenceType, accountIdentifier));
+        Currency nullableCurrency = StringUtils.isBlank(currency) ? null : Currency.getInstance(currency);
+
+        List<PiisConsent> responseList = piisConsentService.getPiisConsentListByAccountIdentifier(nullableCurrency, new AccountReferenceSelector(accountReferenceType, accountIdentifier));
+
         return CollectionUtils.isEmpty(responseList)
                    ? ResponseEntity.notFound().build()
                    : ResponseEntity.ok(responseList);

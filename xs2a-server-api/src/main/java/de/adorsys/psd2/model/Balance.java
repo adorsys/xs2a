@@ -1,39 +1,24 @@
-/*
- * Copyright 2018-2019 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.Amount;
+import de.adorsys.psd2.model.BalanceType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * A single balance element 
  */
 @ApiModel(description = "A single balance element ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
 
 public class Balance   {
   @JsonProperty("balanceAmount")
@@ -41,6 +26,9 @@ public class Balance   {
 
   @JsonProperty("balanceType")
   private BalanceType balanceType = null;
+
+  @JsonProperty("creditLimitIncluded")
+  private Boolean creditLimitIncluded = null;
 
   @JsonProperty("lastChangeDateTime")
   private OffsetDateTime lastChangeDateTime = null;
@@ -97,6 +85,28 @@ public class Balance   {
 
   public void setBalanceType(BalanceType balanceType) {
     this.balanceType = balanceType;
+  }
+
+  public Balance creditLimitIncluded(Boolean creditLimitIncluded) {
+    this.creditLimitIncluded = creditLimitIncluded;
+    return this;
+  }
+
+  /**
+   * A flag indicating if the credit limit of the corresponding account is included in the calculation of the balance, where applicable. 
+   * @return creditLimitIncluded
+  **/
+  @ApiModelProperty(value = "A flag indicating if the credit limit of the corresponding account is included in the calculation of the balance, where applicable. ")
+
+
+
+  @JsonProperty("creditLimitIncluded")
+  public Boolean isCreditLimitIncluded() {
+    return creditLimitIncluded;
+  }
+
+  public void setCreditLimitIncluded(Boolean creditLimitIncluded) {
+    this.creditLimitIncluded = creditLimitIncluded;
   }
 
   public Balance lastChangeDateTime(OffsetDateTime lastChangeDateTime) {
@@ -169,7 +179,7 @@ public class Balance   {
 
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -179,6 +189,7 @@ public class Balance   {
     Balance balance = (Balance) o;
     return Objects.equals(this.balanceAmount, balance.balanceAmount) &&
         Objects.equals(this.balanceType, balance.balanceType) &&
+        Objects.equals(this.creditLimitIncluded, balance.creditLimitIncluded) &&
         Objects.equals(this.lastChangeDateTime, balance.lastChangeDateTime) &&
         Objects.equals(this.referenceDate, balance.referenceDate) &&
         Objects.equals(this.lastCommittedTransaction, balance.lastCommittedTransaction);
@@ -186,7 +197,7 @@ public class Balance   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(balanceAmount, balanceType, lastChangeDateTime, referenceDate, lastCommittedTransaction);
+    return Objects.hash(balanceAmount, balanceType, creditLimitIncluded, lastChangeDateTime, referenceDate, lastCommittedTransaction);
   }
 
   @Override
@@ -196,6 +207,7 @@ public class Balance   {
     
     sb.append("    balanceAmount: ").append(toIndentedString(balanceAmount)).append("\n");
     sb.append("    balanceType: ").append(toIndentedString(balanceType)).append("\n");
+    sb.append("    creditLimitIncluded: ").append(toIndentedString(creditLimitIncluded)).append("\n");
     sb.append("    lastChangeDateTime: ").append(toIndentedString(lastChangeDateTime)).append("\n");
     sb.append("    referenceDate: ").append(toIndentedString(referenceDate)).append("\n");
     sb.append("    lastCommittedTransaction: ").append(toIndentedString(lastCommittedTransaction)).append("\n");
@@ -207,7 +219,7 @@ public class Balance   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }

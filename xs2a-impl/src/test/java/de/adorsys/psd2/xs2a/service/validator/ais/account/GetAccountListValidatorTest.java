@@ -28,7 +28,7 @@ import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessMu
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetAccountListConsentObject;
-import de.adorsys.psd2.xs2a.service.validator.tpp.AisTppInfoValidator;
+import de.adorsys.psd2.xs2a.service.validator.tpp.AisAccountTppInfoValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,7 +59,7 @@ public class GetAccountListValidatorTest {
     @Mock
     private AccountConsentValidator accountConsentValidator;
     @Mock
-    private AisTppInfoValidator aisTppInfoValidator;
+    private AisAccountTppInfoValidator aisAccountTppInfoValidator;
     @Mock
     private AccountAccessValidator accountAccessValidator;
     @Mock
@@ -72,11 +72,11 @@ public class GetAccountListValidatorTest {
     @Before
     public void setUp() {
         // Inject pisTppInfoValidator via setter
-        getAccountListValidator.setPisTppInfoValidator(aisTppInfoValidator);
+        getAccountListValidator.setAisAccountTppInfoValidator(aisAccountTppInfoValidator);
 
-        when(aisTppInfoValidator.validateTpp(TPP_INFO))
+        when(aisAccountTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());
-        when(aisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
+        when(aisAccountTppInfoValidator.validateTpp(INVALID_TPP_INFO))
             .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
     }
 
@@ -132,7 +132,7 @@ public class GetAccountListValidatorTest {
         ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, false, REQUEST_URI));
 
         // Then
-        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());

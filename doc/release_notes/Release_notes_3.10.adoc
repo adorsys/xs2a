@@ -1,0 +1,103 @@
+= Release notes v. 3.10
+
+== Table of Contents
+* Remove deprecated methods in SpiResponse
+* Removed deprecated enum
+* Wrong error code on deleting an account information consent
+* Bugfix: NPE during executing Confirmation of Funds request without currency
+* Bugfix: `batchBookingPreferred` is not persisted for bulk payments
+* Event query for Oracle DB was fixed
+* Refactor: PaymentAuthorisationType enum moved to xs2a-core
+* Update version of jackson-databind to 2.9.9.3
+* Migrate to .yaml OpenAPI v. 1.3.4
+* Added fundsAvailable field in getPaymentStatusById response
+* POST cancellation-authorisations doesn't return cancellationId
+* TPP URIs compliance checks
+* Added `Error 406` for PIS
+* Get PIIS consent results with error
+
+== Remove deprecated methods in SpiResponse
+
+From now on, some changes in `SpiResponse` and `SpiResponseStatus` were made:
+
+- removed method `fail()` in builder `SpiResponseBuilder`, please use `build()` instead;
+- removed `responseStatus` property from `SpiResponseBuilder` builder, please use `error()` method instead;
+- removed `getMessages()` method from `SpiResponse` class;
+- removed `responseStatus` property from `SpiResponse` class;
+- removed `SpiResponseStatus` enumerator.
+
+== Removed deprecated enum
+
+Removed deprecated enum value `ALL_ACCOUNTS_WITH_BALANCES` in `AccountAccessType` class.
+
+== Wrong error code on deleting an account information consent
+
+From now on, trying to delete account information consent (via `DELETE /v1/consents/{consentId}` endpoint) with TPP
+certificate that differs from the one used for creating the consent will result in an error with HTTP code 403 instead of 400.
+
+The same change has also been applied to following endpoints:
+ - Get Status Request (`GET /v1/consents/{consentId}/status`)
+ - Get Consent Request (`GET /v1/consents/{consentId}`)
+ - Start Authorisation Request (`POST /v1/consents/{consentId}/authorisations`)
+ - Update PSU Data Request (`PUT /v1/consents/{consentId}/authorisations/{authorsationId}`)
+ - Get SCA Status Request (`GET /v1/consents/{consentId}/authorisations/{authorisationId}`)
+ - Get Authorisation Sub-Resources Request (`GET /v1/consents/{consentId}/authorisations`)
+
+== Bugfix: NPE during executing Confirmation of Funds request without currency
+
+From now on, it is possible to create PIIS consent without the currency in AccountReference and launch the funds
+confirmation request for it (POST `/v1/funds-confirmations`) without the currency in `account` field.
+
+== Bugfix: `batchBookingPreferred` is not persisted for bulk payments
+
+From now on, `batchBookingPreferred` field is persisted for bulk payment during the payment initiation request (`POST /v1/{payment-service}/{payment-product}`)
+ and return correct value on get payment information request (`GET /v1/{payment-service}/{payment-product}/{paymentId}`)
+
+== Event query for Oracle DB was fixed
+
+From now on, CMS endpoint `GET /aspsp-api/v1/events/` performs correctly on Oracle DB (before it was `Internal Server Error` response).
+Now the database schema is set with `spring.jpa.properties.hibernate.default_schema` property and must be provided explicitly.
+
+== Refactor: PaymentAuthorisationType enum moved to xs2a-core
+
+`PaymentAuthorisationType` enumerator was moved to xs2a-core and `CmsAuthorisationType` enumerator was deleted and
+replaced with `PaymentAuthorisationType`.
+
+== Update version of jackson-databind to 2.9.9.3
+
+Fixed severe security vulnerability detected in com.fasterxml.jackson.core:jackson-databind < 2.9.9.2 defined in pom.xml.
+
+== Migrate to .yaml OpenAPI v. 1.3.4
+
+XS2A models and interfaces were updated in accordance with version 1.3.4 of OpenAPI 3.0 file by Berlin Group.
+
+- Field `data` from `ChallengeData` is changed type to list of string.
+- Fields in `Address` are changed: city -> townName, street -> streetName, postalCode -> postCode
+- Field `availableAccountsWithBalance` in `AccountAccess` is renamed from `availableAccountsWithBalances`
+- Field `creditLimitIncluded` is added in `SpiAccountBalance`
+
+== Added fundsAvailable field in getPaymentStatusById response
+
+From now on, get payment status requests (`GET /v1/{payment-service}/{payment-product}/{paymentId}/status`) can return
+information about `fundsAvailable`. Additionally some changes in payment SPI were made:
+
+- Added class `SpiGetPaymentStatusResponse.java`;
+- The return type of `PaymentSpi#getPaymentStatusById` changed from `TransactionStatus` to `SpiGetPaymentResponse`.
+
+== POST cancellation-authorisations doesn't return cancellationId
+
+From now on, response on start authorisation for payment cancellation (`POST /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations`)
+will contain `cancellationId` property instead of `authorisationId`.
+
+== TPP URIs compliance checks
+
+From now on, TPP URIs from `TPP-Redirect-URI` and `TPP-Nok-Redirect-URI` headers are being checked for compliance
+with TPP eIDAS QWAC certificate URIs (`CN` or `SubjectAltName` fields).
+If URIs are not compliant `400 FORMAT_ERROR` error will be returned in the response.
+
+== Added `Error 406` for PIS
+
+From now on, 406 error code is supported in PIS.
+
+== Get PIIS consent results with error
+From now on, get PIIS consent request (`GET /aspsp-api/v1/piis/consents/`) doesn't entail an error.

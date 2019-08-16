@@ -37,7 +37,9 @@
   },
   "challengeData": {
     "image": null,
-    "data": "some data",
+    "data": [
+      "some data"
+    ],
     "imageLink": "some link",
     "otpMaxLength": 1,
     "otpFormat": null,

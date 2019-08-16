@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage.cancellation;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -26,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
@@ -47,7 +49,6 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,16 +72,14 @@ public class PisCancellationScaAuthenticatedStageTest {
     private static final String PSU_ID = "Test psuId";
     private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
     private static final TransactionStatus ACCP_TRANSACTION_STATUS = TransactionStatus.ACCP;
-    private static final SpiResponseStatus FAILURE_RESPONSE_STATUS = SpiResponseStatus.LOGICAL_FAILURE;
     private static final ServiceType PIS_SERVICE_TYPE = ServiceType.PIS;
-    private static final MessageErrorCode FORMAT_ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final MessageErrorCode SCA_METHOD_UNKNOWN = MessageErrorCode.SCA_METHOD_UNKNOWN;
     private static final ErrorType PIS_400_ERROR_TYPE = ErrorType.PIS_400;
     private static final ScaStatus FAILED_SCA_STATUS = ScaStatus.FAILED;
     private static final byte[] PAYMENT_DATA = "Test payment data".getBytes();
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null);
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfo();
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = buildSpiPaymentInfo();
 
@@ -190,7 +189,10 @@ public class PisCancellationScaAuthenticatedStageTest {
             .thenReturn(spiResponse);
 
         when(spiErrorMapper.mapToErrorHolder(spiResponse, PIS_SERVICE_TYPE))
-            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(PIS_400_ERROR_TYPE).build());
+            .thenReturn(ErrorHolder
+                            .builder(PIS_400_ERROR_TYPE)
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, ""))
+                            .build());
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaAuthenticatedStage.apply(request, response);
 
@@ -225,7 +227,7 @@ public class PisCancellationScaAuthenticatedStageTest {
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
-        assertThat(actualResponse.getErrorHolder().getErrorCode()).isEqualTo(SCA_METHOD_UNKNOWN);
+        assertThat(actualResponse.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode()).isEqualTo(SCA_METHOD_UNKNOWN);
     }
 
     @Test
@@ -298,6 +300,7 @@ public class PisCancellationScaAuthenticatedStageTest {
     // Needed because SpiResponse is final, so it's impossible to mock it
     private <T> SpiResponse<T> buildErrorSpiResponse() {
         return SpiResponse.<T>builder()
-                   .fail(FAILURE_RESPONSE_STATUS);
+                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                   .build();
     }
 }

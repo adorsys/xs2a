@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.*;
@@ -26,6 +25,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -128,14 +128,14 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
 
     @Override
     public Optional<List<String>> getAuthorisationsByPaymentId(String encryptedPaymentId,
-                                                               CmsAuthorisationType authorisationType) {
+                                                               PaymentAuthorisationType authorisationType) {
         return securityDataService.decryptId(encryptedPaymentId)
                    .flatMap(id -> pisCommonPaymentService.getAuthorisationsByPaymentId(id, authorisationType));
     }
 
     @Override
     @Transactional
-    public Optional<ScaStatus> getAuthorisationScaStatus(String encryptedPaymentId, String authorisationId, CmsAuthorisationType authorisationType) {
+    public Optional<ScaStatus> getAuthorisationScaStatus(String encryptedPaymentId, String authorisationId, PaymentAuthorisationType authorisationType) {
         return securityDataService.decryptId(encryptedPaymentId)
                    .flatMap(id -> pisCommonPaymentService.getAuthorisationScaStatus(id, authorisationId, authorisationType));
     }
@@ -164,7 +164,7 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     }
 
     @Override
-    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, CmsAuthorisationType authorisationType) {
+    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType) {
         return pisCommonPaymentService.getAuthorisationScaApproach(authorisationId, authorisationType);
     }
 }

@@ -18,7 +18,6 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.*;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
@@ -26,6 +25,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -52,10 +52,10 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     private static final ScaStatus SCA_STATUS = ScaStatus.SCAMETHODSELECTED;
     private static final String ENCRYPTED_PAYMENT_ID = "encrypted payment id";
     private static final String DECRYPTED_PAYMENT_ID = "1856e4fa-8af8-427b-85ec-4caf515ce074";
-    private static final CmsAuthorisationType AUTHORISATION_TYPE = CmsAuthorisationType.CREATED;
+    private static final PaymentAuthorisationType AUTHORISATION_TYPE = PaymentAuthorisationType.CREATED;
     private static final String AUTHORISATION_ID = "46f2e3a7-1855-4815-8755-5ca76769a1a4";
     private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
-    private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(CmsAuthorisationType.CREATED, PSU_DATA, ScaApproach.REDIRECT);
+    private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_DATA, ScaApproach.REDIRECT);
 
     @InjectMocks
     private PisCommonPaymentServiceInternalEncrypted pisCommonPaymentServiceInternalEncrypted;
@@ -94,11 +94,11 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
             .thenReturn(Optional.of(buildGetPisAuthorisationResponse()));
         when(pisCommonPaymentService.getPisCancellationAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildGetPisAuthorisationResponse()));
-        when(pisCommonPaymentService.getAuthorisationsByPaymentId(DECRYPTED_PAYMENT_ID, CmsAuthorisationType.CREATED))
+        when(pisCommonPaymentService.getAuthorisationsByPaymentId(DECRYPTED_PAYMENT_ID, PaymentAuthorisationType.CREATED))
             .thenReturn(Optional.of(buildPaymentAuthorisations()));
         when(pisCommonPaymentService.getPsuDataListByPaymentId(DECRYPTED_PAYMENT_ID))
             .thenReturn(Optional.of(buildPsuIdDataList()));
-        when(pisCommonPaymentService.getAuthorisationScaStatus(DECRYPTED_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+        when(pisCommonPaymentService.getAuthorisationScaStatus(DECRYPTED_PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .thenReturn(Optional.of(SCA_STATUS));
     }
 
@@ -279,24 +279,24 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
 
         // When
         Optional<List<String>> actual = pisCommonPaymentServiceInternalEncrypted.getAuthorisationsByPaymentId(ENCRYPTED_PAYMENT_ID,
-                                                                                                              CmsAuthorisationType.CREATED);
+                                                                                                              PaymentAuthorisationType.CREATED);
 
         // Then
         assertTrue(actual.isPresent());
         assertEquals(expected, actual.get());
         verify(pisCommonPaymentService, times(1))
-            .getAuthorisationsByPaymentId(DECRYPTED_PAYMENT_ID, CmsAuthorisationType.CREATED);
+            .getAuthorisationsByPaymentId(DECRYPTED_PAYMENT_ID, PaymentAuthorisationType.CREATED);
     }
 
     @Test
     public void getAuthorisationScaStatus_success() {
         // When
-        Optional<ScaStatus> actual = pisCommonPaymentServiceInternalEncrypted.getAuthorisationScaStatus(ENCRYPTED_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED);
+        Optional<ScaStatus> actual = pisCommonPaymentServiceInternalEncrypted.getAuthorisationScaStatus(ENCRYPTED_PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
 
         // Then
         assertTrue(actual.isPresent());
         assertEquals(SCA_STATUS, actual.get());
-        verify(pisCommonPaymentService, times(1)).getAuthorisationScaStatus(DECRYPTED_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED);
+        verify(pisCommonPaymentService, times(1)).getAuthorisationScaStatus(DECRYPTED_PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
     }
 
     @Test
@@ -315,14 +315,14 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
 
     @Test
     public void getAuthorisationScaApproach() {
-        when(pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+        when(pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .thenReturn(Optional.of(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
 
-        Optional<AuthorisationScaApproachResponse> actual = pisCommonPaymentServiceInternalEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED);
+        Optional<AuthorisationScaApproachResponse> actual = pisCommonPaymentServiceInternalEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
 
         assertTrue(actual.isPresent());
         assertEquals(ScaApproach.EMBEDDED, actual.get().getScaApproach());
-        verify(pisCommonPaymentService, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID), eq(CmsAuthorisationType.CREATED));
+        verify(pisCommonPaymentService, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID), eq(PaymentAuthorisationType.CREATED));
     }
 
     private PisPaymentInfo buildPisPaymentInfoRequest() {

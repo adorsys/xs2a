@@ -97,6 +97,7 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                                                  .map(TppRole::valueOf)
                                                  .collect(Collectors.toList());
                 tppInfo.setTppRoles(xs2aTppRoles);
+                tppInfo.setDnsList(tppCertificateData.getDnsList());
 
                 if (!tppRoleValidationService.hasAccess(tppInfo, request)) {
                     log.info("InR-ID: [{}], X-Request-ID: [{}], Access forbidden for TPP with authorisation number: [{}]",

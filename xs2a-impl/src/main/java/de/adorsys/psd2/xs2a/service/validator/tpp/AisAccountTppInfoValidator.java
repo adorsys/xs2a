@@ -25,8 +25,8 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_4
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 
 @Component
-public class AisTppInfoValidator extends TppInfoValidator{
-    public AisTppInfoValidator(TppInfoCheckerService tppInfoCheckerService, RequestProviderService requestProviderService) {
+public class AisAccountTppInfoValidator extends TppInfoValidator {
+    public AisAccountTppInfoValidator(TppInfoCheckerService tppInfoCheckerService, RequestProviderService requestProviderService) {
         super(tppInfoCheckerService, requestProviderService);
     }
 

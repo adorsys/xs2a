@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.response;
+package de.adorsys.psd2.model;
 
-/**
- * @deprecated since 3.5. Use SpiResponse::errors instead
- */
-@Deprecated
-public enum SpiResponseStatus {
-    SUCCESS,
-    TECHNICAL_FAILURE,
-    UNAUTHORIZED_FAILURE,
-    LOGICAL_FAILURE,
-    NOT_SUPPORTED
+import org.junit.Test;
+
+public class StartCancellationScaProcessResponseTest {
+    private final Class clazz = StartCancellationScaProcessResponse.class;
+
+    @Test()
+    public void cancellationId_shouldExist() throws NoSuchFieldException {
+        clazz.getDeclaredField("cancellationId");
+    }
 }

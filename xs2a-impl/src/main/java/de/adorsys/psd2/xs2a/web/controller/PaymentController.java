@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationS
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
+import de.adorsys.psd2.xs2a.domain.pis.GetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
@@ -47,10 +48,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.header.PaymentCancellationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.PaymentInitiationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
-import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
-import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
-import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
-import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
+import de.adorsys.psd2.xs2a.web.mapper.*;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
@@ -82,6 +80,7 @@ public class PaymentController implements PaymentApi {
     private final AuthorisationMapper authorisationMapper;
     private final PaymentInitiationHeadersBuilder paymentInitiationHeadersBuilder;
     private final PaymentCancellationHeadersBuilder paymentCancellationHeadersBuilder;
+    private final AuthorisationModelMapper authorisationModelMapper;
 
     @Override
     public ResponseEntity getPaymentInitiationStatus(String paymentService, String paymentProduct,
@@ -92,9 +91,9 @@ public class PaymentController implements PaymentApi {
                                                      String psUAcceptLanguage, String psUUserAgent,
                                                      String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
-        ResponseObject<TransactionStatus> serviceResponse = PaymentType.getByValue(paymentService)
+        ResponseObject<GetPaymentStatusResponse> serviceResponse = PaymentType.getByValue(paymentService)
                                                                 .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentProduct, paymentId))
-                                                                .orElseGet(ResponseObject.<TransactionStatus>builder()
+                                                                .orElseGet(ResponseObject.<GetPaymentStatusResponse>builder()
                                                                                .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404))::build);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
@@ -369,9 +368,9 @@ public class PaymentController implements PaymentApi {
         }
 
         Xs2aCreatePisCancellationAuthorisationResponse body = serviceResponse.getBody();
-        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildStartPaymentCancellationAuthorisationHeaders(body.getAuthorisationId());
+        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildStartPaymentCancellationAuthorisationHeaders(body.getCancellationId());
 
-        return responseMapper.created(serviceResponse, consentModelMapper::mapToStartScaProcessResponse, responseHeaders);
+        return responseMapper.created(serviceResponse, authorisationModelMapper::mapToStartCancellationScaProcessResponse, responseHeaders);
     }
 
     @Override

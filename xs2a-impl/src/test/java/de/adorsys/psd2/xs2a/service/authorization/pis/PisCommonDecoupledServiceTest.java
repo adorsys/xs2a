@@ -16,17 +16,19 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.pis;
 
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -36,7 +38,6 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledSc
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import org.junit.Before;
@@ -46,7 +47,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Collections;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
@@ -69,7 +69,9 @@ public class PisCommonDecoupledServiceTest {
     private static final PsuIdData PSU_DATA = buildPsuIdData();
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse UPDATE_PIS_COMMON_PAYMENT_RESPONSE = buildUpdatePisCommonPaymentPsuDataResponse(UPDATE_PIS_COMMON_PAYMENT_REQUEST);
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse UPDATE_PIS_COMMON_PAYMENT_RESPONSE_AUTH_METHOD_ID = buildUpdatePisCommonPaymentPsuDataResponse(UPDATE_PIS_COMMON_PAYMENT_REQUEST_AUTH_METHOD_ID);
-
+    private static final ErrorHolder EXPECTED_ERROR = ErrorHolder.builder(ErrorType.PIS_404)
+                                                                 .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404, "Payment not found"))
+                                                                 .build();
     @InjectMocks
     private PisCommonDecoupledService pisCommonDecoupledService;
 
@@ -98,138 +100,122 @@ public class PisCommonDecoupledServiceTest {
 
     @Test
     public void proceedDecoupledInitiation_success() {
-        //Given
+        // Given
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
 
-        //When
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse).isEqualTo(UPDATE_PIS_COMMON_PAYMENT_RESPONSE);
     }
 
     @Test
     public void proceedDecoupledInitiation_failed() {
-        //Given
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-                                        .messages(Collections.singletonList("Payment not found"))
-                                        .build();
-
+        // Given
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
         when(spiErrorMapper.mapToErrorHolder(AUTH_DECOUPLED_RESPONSE_FAIL, ServiceType.PIS))
-            .thenReturn(expectedError);
+            .thenReturn(EXPECTED_ERROR);
 
-        //When
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
+        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(EXPECTED_ERROR);
     }
 
     @Test
     public void proceedDecoupledInitiation_authenticationMethodId_success() {
-        //Given
+        // Given
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
 
-        //When
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST_AUTH_METHOD_ID, SPI_SINGLE_PAYMENT, AUTHENTICATION_METHOD_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse).isEqualTo(UPDATE_PIS_COMMON_PAYMENT_RESPONSE_AUTH_METHOD_ID);
     }
 
     @Test
     public void proceedDecoupledInitiation_authenticationMethodId_failed() {
-        //Given
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-                                        .messages(Collections.singletonList("Payment not found"))
-                                        .build();
-
+        // Given
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
         when(spiErrorMapper.mapToErrorHolder(AUTH_DECOUPLED_RESPONSE_FAIL, ServiceType.PIS))
-            .thenReturn(expectedError);
+            .thenReturn(EXPECTED_ERROR);
 
-        //When
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST_AUTH_METHOD_ID, SPI_SINGLE_PAYMENT, AUTHENTICATION_METHOD_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
+        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(EXPECTED_ERROR);
     }
 
     @Test
     public void proceedDecoupledCancellation_success() {
-        //Given
+        // Given
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
 
-        //When
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledCancellation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse).isEqualTo(UPDATE_PIS_COMMON_PAYMENT_RESPONSE);
     }
 
     @Test
     public void proceedDecoupledCancellation_failed() {
-        //Given
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-                                        .messages(Collections.singletonList("Payment not found"))
-                                        .build();
-
+        // Given
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
         when(spiErrorMapper.mapToErrorHolder(AUTH_DECOUPLED_RESPONSE_FAIL, ServiceType.PIS))
-            .thenReturn(expectedError);
+            .thenReturn(EXPECTED_ERROR);
 
-        //When
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledCancellation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
+        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(EXPECTED_ERROR);
     }
 
     @Test
     public void proceedDecoupledCancellation_authenticationMethodId_success() {
-        //Given
+        // Given
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
 
-        //When
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledCancellation(UPDATE_PIS_COMMON_PAYMENT_REQUEST_AUTH_METHOD_ID, SPI_SINGLE_PAYMENT, AUTHENTICATION_METHOD_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse).isEqualTo(UPDATE_PIS_COMMON_PAYMENT_RESPONSE_AUTH_METHOD_ID);
     }
 
     @Test
     public void proceedDecoupledCancellation_authenticationMethodId_failed() {
-        //Given
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-                                        .messages(Collections.singletonList("Payment not found"))
-                                        .build();
-
+        // Given
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
         when(spiErrorMapper.mapToErrorHolder(AUTH_DECOUPLED_RESPONSE_FAIL, ServiceType.PIS))
-            .thenReturn(expectedError);
+            .thenReturn(EXPECTED_ERROR);
 
-        //When
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledCancellation(UPDATE_PIS_COMMON_PAYMENT_REQUEST_AUTH_METHOD_ID, SPI_SINGLE_PAYMENT, AUTHENTICATION_METHOD_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
+        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(EXPECTED_ERROR);
     }
 
     private static PsuIdData buildPsuIdData() {
@@ -249,6 +235,7 @@ public class PisCommonDecoupledServiceTest {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
             new TppInfo(),
+            UUID.randomUUID(),
             UUID.randomUUID()
         );
     }
@@ -262,7 +249,8 @@ public class PisCommonDecoupledServiceTest {
 
     private static SpiResponse<SpiAuthorisationDecoupledScaResponse> buildSpiResponseFail() {
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
-                   .fail(SpiResponseStatus.NOT_SUPPORTED);
+                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED, "Service not supported"))
+                   .build();
     }
 
     private static Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdatePisCommonPaymentPsuDataResponse(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {

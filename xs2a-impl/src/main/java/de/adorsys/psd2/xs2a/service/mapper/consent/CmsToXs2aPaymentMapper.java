@@ -104,7 +104,7 @@ public class CmsToXs2aPaymentMapper {
         BulkPayment bulk = new BulkPayment();
         PisPayment firstPayment = payments.get(0);
         bulk.setPaymentId(firstPayment.getPaymentId());
-        bulk.setBatchBookingPreferred(false);
+        bulk.setBatchBookingPreferred(firstPayment.getBatchBookingPreferred());
         bulk.setDebtorAccount(firstPayment.getDebtorAccount());
         bulk.setRequestedExecutionDate(firstPayment.getRequestedExecutionDate());
         bulk.setRequestedExecutionTime(firstPayment.getRequestedExecutionTime());
@@ -140,10 +140,10 @@ public class CmsToXs2aPaymentMapper {
         return Optional.ofNullable(address)
                    .map(a -> {
                        Xs2aAddress xs2aAddress = new Xs2aAddress();
-                       xs2aAddress.setStreet(a.getStreet());
+                       xs2aAddress.setStreetName(a.getStreet());
                        xs2aAddress.setBuildingNumber(a.getBuildingNumber());
-                       xs2aAddress.setCity(a.getCity());
-                       xs2aAddress.setPostalCode(a.getPostalCode());
+                       xs2aAddress.setTownName(a.getCity());
+                       xs2aAddress.setPostCode(a.getPostalCode());
                        xs2aAddress.setCountry(new Xs2aCountryCode(a.getCountry()));
                        return xs2aAddress;
                    }).orElseGet(Xs2aAddress::new);

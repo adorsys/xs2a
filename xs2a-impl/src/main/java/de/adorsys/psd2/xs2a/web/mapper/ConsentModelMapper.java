@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,13 +61,6 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    public StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisCancellationAuthorisationResponse response) {
-        return new StartScaprocessResponse()
-                   .scaStatus(coreObjectsMapper.mapToModelScaStatus(response.getScaStatus()))
-                   .authorisationId(response.getAuthorisationId())
-                   ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()));
-    }
-
     public ConsentsResponse201 mapToConsentsResponse201(CreateConsentResponse createConsentResponse) {
         return Optional.ofNullable(createConsentResponse)
                    .map(cnst ->
@@ -104,7 +97,7 @@ public class ConsentModelMapper {
                                 mapToXs2aAccountReferences(acs.getTransactions()),
                                 mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
                                 mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2()),
-                                mapToAccountAccessTypeFromAvailableAccountsWithBalances(acs.getAvailableAccountsWithBalances())
+                                mapToAccountAccessTypeFromAvailableAccountsWithBalance(acs.getAvailableAccountsWithBalance())
                             ))
                    .orElse(null);
     }
@@ -130,9 +123,9 @@ public class ConsentModelMapper {
                                         .orElse(null)
                                 )
                             );
-                            mappedAccountAccess.setAvailableAccountsWithBalances(
-                                AccountAccess.AvailableAccountsWithBalancesEnum.fromValue(
-                                    Optional.ofNullable(access.getAvailableAccountsWithBalances())
+                            mappedAccountAccess.setAvailableAccountsWithBalance(
+                                AccountAccess.AvailableAccountsWithBalanceEnum.fromValue(
+                                    Optional.ofNullable(access.getAvailableAccountsWithBalance())
                                         .map(AccountAccessType::getDescription)
                                         .orElse(null)
                                 )
@@ -156,7 +149,7 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private AccountAccessType mapToAccountAccessTypeFromAvailableAccountsWithBalances(AccountAccess.AvailableAccountsWithBalancesEnum accountsEnum) {
+    private AccountAccessType mapToAccountAccessTypeFromAvailableAccountsWithBalance(AccountAccess.AvailableAccountsWithBalanceEnum accountsEnum) {
         return Optional.ofNullable(accountsEnum)
                    .flatMap(en -> AccountAccessType.getByDescription(en.toString()))
                    .orElse(null);

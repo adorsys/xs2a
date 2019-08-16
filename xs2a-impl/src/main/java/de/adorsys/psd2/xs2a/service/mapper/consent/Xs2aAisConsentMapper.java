@@ -158,7 +158,7 @@ public class Xs2aAisConsentMapper {
                                   .map(accessType -> AccountAccessType.valueOf(accessType.name()))
                                   .orElse(null));
 
-        accessInfo.setAvailableAccountsWithBalances(Optional.ofNullable(access.getAvailableAccountsWithBalances())
+        accessInfo.setAvailableAccountsWithBalance(Optional.ofNullable(access.getAvailableAccountsWithBalance())
                                             .map(accessType -> AccountAccessType.valueOf(accessType.name()))
                                             .orElse(null));
 
@@ -255,7 +255,7 @@ public class Xs2aAisConsentMapper {
             ais.getTransactions(),
             getAccessType(ais.getAvailableAccounts()),
             getAccessType(ais.getAllPsd2()),
-            getAccessType(ais.getAvailableAccountsWithBalances()));
+            getAccessType(ais.getAvailableAccountsWithBalance()));
     }
 
     private AccountAccessType getAccessType(String type) {

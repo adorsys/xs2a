@@ -1,14 +1,11 @@
 // toc-title definition MUST follow document title without blank line!
-= Common features
+== Common features
 :toc-title:
-:imagesdir: usecases/diagrams
+:imagesdir: ../usecases/diagrams
 :toc: left
 
-// horizontal line
-***
-
 toc::[]
-== Support of Relative and Global links in responses
+=== Support of Relative and Global links in responses
 In https://github.com/adorsys/xs2a/tree/develop/aspsp-profile[ASPSP Profile] support of relative links look like:
 ```
 forceXs2aBaseLinksUrl: true
@@ -19,9 +16,9 @@ xs2aBaseLinksUrl: "/"
 1. xs2aBaseLinksUrl="/" - for relative link;
 2. xs2aBaseLinksUrl="`http://myhost.com/`" - for global link;
 
-- If `forceXs2aBaseLinksUrl` is set to `false`, links in responses (except "scaRedirect") shall be generated with the base URL of controller (as it is now)
+- If `forceXs2aBaseLinksUrl` is set to `false`, links in responses (except "scaRedirect") shall be generated with the base URL of controller (as it is now);
 
-- Default value for `forceXs2aBaseLinksUrl` is `false`
+- Default value for `forceXs2aBaseLinksUrl` is `false`.
 
 |===
 |Option in Profile | | | |
@@ -44,3 +41,17 @@ xs2aBaseLinksUrl: "/"
 |Link based on URL of controller
 |Link based on URL of controller
 |===
+
+
+=== Supported payment products
+
+ASPSP-Profile contains a possible combination of payment-product/payment-type that ASPSP supports.
+Each product type (SINGLE, BULK, PERIODIC) may contain payment products according to Berlin Group specification:
+
+* sepa-credit-transfers;
+* instant-sepa-credit-transfers;
+* target-2-payments;
+* cross-border-credit-transfers.
+
+Other payment products, supported by ASPSP, can be added for every payment type.
+If it is needed to receive extra parameters in payment (for example, bank sort code), not supported by BG Specification, ASPSP can add new payment product to Profile and xs2a api will pass payment object of this payment product to Connector side without validation.

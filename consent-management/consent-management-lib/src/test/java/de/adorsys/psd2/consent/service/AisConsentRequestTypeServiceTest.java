@@ -90,7 +90,7 @@ public class AisConsentRequestTypeServiceTest {
     public void determineAisConsentRequestTypeByAisConsent_ALL_AVAILABLE_ACCOUNTS_WITH_BALANCES() {
         // Given
         aisConsent.setAspspAccountAccesses(Collections.emptyList());
-        aisConsent.setAvailableAccountsWithBalances(AccountAccessType.ALL_ACCOUNTS);
+        aisConsent.setAvailableAccountsWithBalance(AccountAccessType.ALL_ACCOUNTS);
         // When
         AisConsentRequestType aisConsentRequestType = aisConsentRequestTypeService.getRequestTypeFromConsent(aisConsent);
 
@@ -147,7 +147,7 @@ public class AisConsentRequestTypeServiceTest {
     public void getRequestTypeFromAccess_ALL_AVAILABLE_ACCOUNTS_WITH_BALANCES() {
         // Given
         accessInfo.setAccounts(Collections.emptyList());
-        accessInfo.setAvailableAccountsWithBalances(AccountAccessType.ALL_ACCOUNTS);
+        accessInfo.setAvailableAccountsWithBalance(AccountAccessType.ALL_ACCOUNTS);
         // When
         AisConsentRequestType aisConsentRequestType = aisConsentRequestTypeService.getRequestTypeFromAccess(accessInfo);
 

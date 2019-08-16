@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -43,7 +42,7 @@ public class SpiErrorMapperTest {
 
     @Test
     public void mapToErrorHolder() {
-        //Given:
+        // Given
         String message = "error";
         MessageErrorCode messageErrorCode = MessageErrorCode.PSU_CREDENTIALS_INVALID;
         ErrorType errorType = ErrorType.PIS_401;
@@ -52,10 +51,10 @@ public class SpiErrorMapperTest {
                                       .build();
         TppMessageInformation expectedTppMessage = TppMessageInformation.of(messageErrorCode, message);
 
-        //When:
+        // When
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
 
-        //Then:
+        // Then
         assertNotNull(errorHolder);
         assertEquals(Collections.singletonList(expectedTppMessage), errorHolder.getTppMessageInformationList());
         assertEquals(errorType, errorHolder.getErrorType());
@@ -63,24 +62,23 @@ public class SpiErrorMapperTest {
 
     @Test
     public void mapToErrorHolder_withoutExplicitErrorsInSpiResponse() {
-        //Given:
-        String message = "error";
+        // Given
         MessageErrorCode messageErrorCode = MessageErrorCode.PSU_CREDENTIALS_INVALID;
         ErrorType errorType = ErrorType.PIS_401;
         SpiResponse spiResponse = buildSpiResponseTransactionStatus();
 
-        //When:
+        // When
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
 
-        //Then:
+        // Then
         assertNotNull(errorHolder);
-        assertEquals(messageErrorCode, errorHolder.getErrorCode());
+        assertEquals(messageErrorCode, errorHolder.getTppMessageInformationList().iterator().next().getMessageErrorCode());
         assertEquals(errorType, errorHolder.getErrorType());
     }
 
     @Test
     public void mapToErrorHolder_withMultipleErrorsInResponse() {
-        //Given:
+        // Given
         ErrorType firstErrorType = ErrorType.PIS_400;
         String firstMessage = "first error";
         MessageErrorCode firstErrorCode = MessageErrorCode.FORMAT_ERROR;
@@ -98,10 +96,10 @@ public class SpiErrorMapperTest {
         TppMessageInformation expectedFirstTppMessage = TppMessageInformation.of(firstErrorCode, firstMessage);
         TppMessageInformation expectedSecondTppMessage = TppMessageInformation.of(secondErrorCode, secondMessage);
 
-        //When:
+        // When
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
 
-        //Then:
+        // Then
         assertNotNull(errorHolder);
         assertEquals(Arrays.asList(expectedFirstTppMessage, expectedSecondTppMessage), errorHolder.getTppMessageInformationList());
         assertEquals(firstErrorType, errorHolder.getErrorType());
@@ -109,16 +107,17 @@ public class SpiErrorMapperTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void mapToErrorHolder_withoutErrors_shouldThrowIllegalArgumentException() {
-        //Given:
+        // Given
         SpiResponse spiResponse = SpiResponse.<String>builder().payload("some payload").build();
 
-        //When:
+        // When
         spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
     }
 
-    private static SpiResponse<SpiResponseStatus> buildSpiResponseTransactionStatus() {
-        return SpiResponse.<SpiResponseStatus>builder()
-                   .fail(SpiResponseStatus.UNAUTHORIZED_FAILURE);
+    private static SpiResponse<Void> buildSpiResponseTransactionStatus() {
+        return SpiResponse.<Void>builder()
+                   .error(new TppMessage(MessageErrorCode.PSU_CREDENTIALS_INVALID, "Unauthorised"))
+                   .build();
     }
 
 }

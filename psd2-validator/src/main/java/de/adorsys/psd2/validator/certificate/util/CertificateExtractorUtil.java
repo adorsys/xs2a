@@ -24,11 +24,13 @@ import de.adorsys.psd2.validator.common.RoleOfPSP;
 import de.adorsys.psd2.validator.common.RolesOfPSP;
 import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
+import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
 import javax.naming.InvalidNameException;
@@ -36,11 +38,10 @@ import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 import java.security.Principal;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class CertificateExtractorUtil {
@@ -90,6 +91,8 @@ public class CertificateExtractorUtil {
             log.debug(e.getMessage());
             throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
         }
+
+        tppCertData.setDnsList(getSubjectAltNames(cert, GeneralName.dNSName));
         return tppCertData;
 
     }
@@ -127,5 +130,29 @@ public class CertificateExtractorUtil {
         }
     }
 
+    private static List<String> getSubjectAltNames(X509Certificate certificate, int type) {
+        try {
+            Collection<?> subjectAltNames = certificate.getSubjectAlternativeNames();
+            if (CollectionUtils.isEmpty(subjectAltNames)) {
+                return Collections.emptyList();
+            }
+
+            return certificate.getSubjectAlternativeNames().stream()
+                       .map(entry -> (List<?>) entry)
+                       .filter(CertificateExtractorUtil::isValidSubjectAltName)
+                       .filter(e -> (Integer) e.get(0) == type)
+                       .map(e -> (String) e.get(1))
+                       .filter(Objects::nonNull)
+                       .collect(Collectors.toList());
+        } catch (CertificateParsingException e) {
+            return Collections.emptyList();
+        }
+    }
+
+    private static boolean isValidSubjectAltName(List<?> entry) {
+        return entry != null
+                   && entry.size() >= 2
+                   && entry.get(0) != null;
+    }
 
 }

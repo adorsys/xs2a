@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.service.validator;
 
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,9 +38,9 @@ public class PisEndpointAccessCheckerService extends EndpointAccessChecker {
      */
     public boolean isEndpointAccessible(String authorisationId, PaymentAuthorisationType authorisationType) {
         Optional<GetPisAuthorisationResponse> authorisationResponse = Optional.empty();
-        if (authorisationType == PaymentAuthorisationType.INITIATION) {
+        if (authorisationType == PaymentAuthorisationType.CREATED) {
             authorisationResponse = pisCommonPaymentServiceEncrypted.getPisAuthorisationById(authorisationId);
-        } else if (authorisationType == PaymentAuthorisationType.CANCELLATION) {
+        } else if (authorisationType == PaymentAuthorisationType.CANCELLED) {
             authorisationResponse = pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(authorisationId);
         }
 

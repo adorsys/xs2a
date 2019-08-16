@@ -48,6 +48,7 @@ public class ServiceTypeToErrorTypeMapper {
         pisHttpCodeToErrorType.put(403, PIS_403);
         pisHttpCodeToErrorType.put(404, PIS_404);
         pisHttpCodeToErrorType.put(405, PIS_405);
+        pisHttpCodeToErrorType.put(406, PIS_406);
         pisHttpCodeToErrorType.put(409, PIS_409);
         pisHttpCodeToErrorType.put(415, PIS_415);
         pisHttpCodeToErrorType.put(500, PIS_500);

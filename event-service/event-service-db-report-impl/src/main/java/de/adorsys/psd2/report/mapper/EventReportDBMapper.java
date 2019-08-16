@@ -22,7 +22,6 @@ import de.adorsys.psd2.report.entity.EventEntityForReport;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.*;
@@ -32,7 +31,6 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface EventReportDBMapper {
 
-    @Mapping(target = "payload", source = "payload.bytes")
     ReportEvent mapToReportEvent(EventEntityForReport event);
 
     @AfterMapping

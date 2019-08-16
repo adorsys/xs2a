@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.web.controller;
 
 import com.google.gson.Gson;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
-import de.adorsys.psd2.model.InlineResponse200;
+import de.adorsys.psd2.model.InlineResponse2003;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.service.FundsConfirmationService;
@@ -36,7 +36,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
@@ -44,7 +43,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FundsConfirmationControllerTest {
-    private static final UUID REQUEST_ID = UUID.fromString("ddd36e05-d67a-4830-93ad-9462f71ae1e6");
     private final String FUNDS_REQ_DATA = "/json/ConfirmationOfFundsTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
 
@@ -71,12 +69,12 @@ public class FundsConfirmationControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
         //When:
-        ResponseEntity<?> actualResult = fundsConfirmationController.checkAvailabilityOfFunds(confirmationOfFunds, null, null, null, null);
-        InlineResponse200 fundsConfirmationResponse = (InlineResponse200) actualResult.getBody();
+        ResponseEntity<?> actualResult = fundsConfirmationController.checkAvailabilityOfFunds(confirmationOfFunds, null, null, null, null, null);
+        InlineResponse2003 fundsConfirmationResponse = (InlineResponse2003) actualResult.getBody();
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(fundsConfirmationResponse.isFundsAvailable()).isEqualTo(true);
+        assertThat(fundsConfirmationResponse.getFundsAvailable()).isEqualTo(true);
     }
 
     private ResponseObject<FundsConfirmationResponse> readResponseObject() {
@@ -85,7 +83,7 @@ public class FundsConfirmationControllerTest {
     }
 
     private ResponseEntity getInlineResponse() {
-        return new ResponseEntity<>(new InlineResponse200().fundsAvailable(true), HttpStatus.OK);
+        return new ResponseEntity<>(new InlineResponse2003().fundsAvailable(true), HttpStatus.OK);
     }
 
     private ConfirmationOfFunds getConfirmationOfFunds() throws IOException {

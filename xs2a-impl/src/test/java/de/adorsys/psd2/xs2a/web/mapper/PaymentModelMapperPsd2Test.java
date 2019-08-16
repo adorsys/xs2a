@@ -18,7 +18,10 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
+import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.domain.pis.GetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
@@ -35,9 +38,11 @@ import static org.junit.Assert.*;
     HrefLinkMapper.class, StandardPaymentProductsResolver.class, ScaMethodsMapperImpl.class, Xs2aAddressMapperImpl.class,
     RemittanceMapperImpl.class, PurposeCodeMapperImpl.class})
 public class PaymentModelMapperPsd2Test {
-
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACCP;
+    private static final boolean FUNDS_AVAILABLE = true;
+    private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE);
 
     private PaymentModelMapperPsd2 mapper;
     @Autowired
@@ -72,5 +77,12 @@ public class PaymentModelMapperPsd2Test {
 
         PisPaymentCancellationRequest expected = jsonReader.getObjectFromFile("json/service/mapper/payment-cancellation-request.json", PisPaymentCancellationRequest.class);
         assertEquals(expected, actualPaymentCancellationRequest);
+    }
+
+    @Test
+    public void mapToStatusResponse_ShouldMapCorrectly(){
+        PaymentInitiationStatusResponse200Json response = mapper.mapToStatusResponse(PAYMENT_STATUS_RESPONSE);
+        assertEquals(response.getTransactionStatus(), de.adorsys.psd2.model.TransactionStatus.ACCP);
+        assertEquals(response.getFundsAvailable(), true);
     }
 }

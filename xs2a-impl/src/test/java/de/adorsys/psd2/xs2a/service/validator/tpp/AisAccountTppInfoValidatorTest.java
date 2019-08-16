@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AisTppInfoValidatorTest {
+public class AisAccountTppInfoValidatorTest {
     private static final String TPP_AUTHORITY_ID = "authority id";
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo DIFFERENT_TPP_INFO = buildTppInfo("different authorisation number");
@@ -49,7 +49,7 @@ public class AisTppInfoValidatorTest {
     private RequestProviderService requestProviderService;
 
     @InjectMocks
-    private AisTppInfoValidator aisTppInfoValidator;
+    private AisAccountTppInfoValidator aisAccountTppInfoValidator;
 
     @Before
     public void setUp() {
@@ -65,7 +65,7 @@ public class AisTppInfoValidatorTest {
     @Test
     public void validateTpp_withSameTppInConsentAsInRequest_shouldReturnValid() {
         // When
-        ValidationResult validationResult = aisTppInfoValidator.validateTpp(TPP_INFO);
+        ValidationResult validationResult = aisAccountTppInfoValidator.validateTpp(TPP_INFO);
 
         // Then
         assertNotNull(validationResult);
@@ -75,16 +75,21 @@ public class AisTppInfoValidatorTest {
 
     @Test
     public void validateTpp_withDifferentTppInConsent_shouldReturnError() {
+        // Given
+        MessageError expectedError = new MessageError(ErrorType.AIS_400,
+                                                      TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400, "TPP certificate doesn’t match the initial request"));
+
         // When
-        ValidationResult validationResult = aisTppInfoValidator.validateTpp(DIFFERENT_TPP_INFO);
+        ValidationResult validationResult = aisAccountTppInfoValidator.validateTpp(DIFFERENT_TPP_INFO);
 
         // Then
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
 
-        MessageError expectedError = new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400, "Invalid TPP"));
-        assertEquals(expectedError.getErrorType(), validationResult.getMessageError().getErrorType());
-        assertEquals(expectedError.getTppMessage().getMessageErrorCode(), validationResult.getMessageError().getTppMessage().getMessageErrorCode());
+        MessageError actualError = validationResult.getMessageError();
+        assertNotNull(actualError);
+        assertEquals(expectedError.getErrorType(), actualError.getErrorType());
+        assertEquals(expectedError.getTppMessage(), actualError.getTppMessage());
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

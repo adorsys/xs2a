@@ -20,10 +20,8 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
 import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.tpp.AisTppInfoValidator;
+import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoValidator;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * Common validator for validating TPP in consents and executing request-specific business validation afterwards.
@@ -31,15 +29,12 @@ import org.springframework.stereotype.Component;
  *
  * @param <T> type of object to be checked
  */
-@Component
 public abstract class AbstractAisTppValidator<T extends TppInfoProvider> implements BusinessValidator<T> {
-    private AisTppInfoValidator aisTppInfoValidator;
-
     @NotNull
     @Override
     public ValidationResult validate(@NotNull T object) {
         TppInfo tppInfoInConsent = object.getTppInfo();
-        ValidationResult tppValidationResult = aisTppInfoValidator.validateTpp(tppInfoInConsent);
+        ValidationResult tppValidationResult = getTppInfoValidator().validateTpp(tppInfoInConsent);
         if (tppValidationResult.isNotValid()) {
             return tppValidationResult;
         }
@@ -56,8 +51,11 @@ public abstract class AbstractAisTppValidator<T extends TppInfoProvider> impleme
     @NotNull
     protected abstract ValidationResult executeBusinessValidation(T consentObject);
 
-    @Autowired
-    public void setPisTppInfoValidator(AisTppInfoValidator aisTppInfoValidator) {
-        this.aisTppInfoValidator = aisTppInfoValidator;
-    }
+    /**
+     * Returns appropriate TPP info validator for current request
+     *
+     * @return TPP info validator
+     */
+    @NotNull
+    protected abstract TppInfoValidator getTppInfoValidator();
 }

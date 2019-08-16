@@ -174,10 +174,10 @@ public class Xs2aToSpiSinglePaymentMapperTest {
 
     private Xs2aAddress buildXs2aAddress() {
         Xs2aAddress xs2aAddress = new Xs2aAddress();
-        xs2aAddress.setStreet(STREET);
+        xs2aAddress.setStreetName(STREET);
         xs2aAddress.setBuildingNumber(BUILDING_NUMBER);
-        xs2aAddress.setCity(CITY);
-        xs2aAddress.setPostalCode(POSTAL_CODE);
+        xs2aAddress.setTownName(CITY);
+        xs2aAddress.setPostCode(POSTAL_CODE);
         xs2aAddress.setCountry(new Xs2aCountryCode(COUNTRY));
         return xs2aAddress;
     }

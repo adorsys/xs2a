@@ -1,20 +1,18 @@
-// toc-title definition MUST follow document title without blank line!
 = XS2A. Details of realisation
-:toc-title:
-:imagesdir: usecases/diagrams
+:toc-title: XS2A. Details of realisation
+:imagesdir: ../usecases/diagrams
 :toc: left
-
-// horizontal line
-***
 
 toc::[]
 
-== xref:Strong customer authentication.adoc[Strong customer authentication]
+include::Strong customer authentication.adoc[Strong customer authentication]
 
-== xref:Payment Initiation Service.adoc[Payment Initiation Service]
+include::Payment Initiation Service.adoc[Payment Initiation Service]
 
-== xref:Account Information Service.adoc[Account Information Service]
+include::Account Information Service.adoc[Account Information Service]
 
-== xref:Read Account Data Requests.adoc[Read Account Data Requests]
+include::Read Account Data Requests.adoc[Read Account Data Requests]
 
-== xref:Common features.adoc[Common features]
+include::Funds Confirmation Service.adoc[Funds Confirmation Service]
+
+include::Common features.adoc[Common features]

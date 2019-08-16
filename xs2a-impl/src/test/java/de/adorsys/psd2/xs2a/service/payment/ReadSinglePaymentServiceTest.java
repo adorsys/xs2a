@@ -18,14 +18,17 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aSinglePaymentMapper;
@@ -35,7 +38,6 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,8 +103,8 @@ public class ReadSinglePaymentServiceTest {
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
         when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiSinglePayment>builder()
-                .payload(SPI_SINGLE_PAYMENT)
-                .build());
+                            .payload(SPI_SINGLE_PAYMENT)
+                            .build());
         when(spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(SPI_SINGLE_PAYMENT)).thenReturn(SINGLE_PAYMENT);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
@@ -111,12 +113,12 @@ public class ReadSinglePaymentServiceTest {
 
     @Test
     public void getPayment_success() {
-        //Given
+        // Given
 
-        //When
+        // When
         PaymentInformationResponse<SinglePayment> actualResponse = readSinglePaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getPayment()).isNotNull();
         assertThat(actualResponse.getPayment()).isEqualTo(SINGLE_PAYMENT);
@@ -129,10 +131,10 @@ public class ReadSinglePaymentServiceTest {
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ENCRYPTED_PAYMENT_ID, SINGLE_PAYMENT.getTransactionStatus()))
             .thenReturn(false);
 
-        //When
+        // When
         PaymentInformationResponse<SinglePayment> actualResponse = readSinglePaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getPayment()).isNotNull();
         assertThat(actualResponse.getPayment()).isEqualTo(SINGLE_PAYMENT);
@@ -141,21 +143,22 @@ public class ReadSinglePaymentServiceTest {
 
     @Test
     public void getPayment_singlePaymentSpi_getPaymentById_failed() {
-        //Given
+        // Given
         SpiResponse<SpiSinglePayment> spiResponseError = SpiResponse.<SpiSinglePayment>builder()
-            .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                                                             .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                                                             .build();
 
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
-            .messages(Collections.singletonList("Payment is finalised already, so its status cannot be changed"))
-            .build();
+        ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_400)
+                                        .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Payment is finalised already, so its status cannot be changed"))
+                                        .build();
 
         when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider)).thenReturn(spiResponseError);
         when(spiErrorMapper.mapToErrorHolder(spiResponseError, ServiceType.PIS)).thenReturn(expectedError);
 
-        //When
+        // When
         PaymentInformationResponse<SinglePayment> actualResponse = readSinglePaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getPayment()).isNull();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
@@ -164,17 +167,17 @@ public class ReadSinglePaymentServiceTest {
 
     @Test
     public void getPayment_spiPaymentFactory_createSpiSinglePayment_failed() {
-        //Given
-        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-            .messages(Collections.singletonList("Payment not found"))
+        // Given
+        ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
+            .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404, "Payment not found"))
             .build();
 
         when(spiPaymentFactory.createSpiSinglePayment(PIS_PAYMENTS.get(0), PRODUCT)).thenReturn(Optional.empty());
 
-        //When
+        // When
         PaymentInformationResponse<SinglePayment> actualResponse = readSinglePaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getPayment()).isNull();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
@@ -185,6 +188,7 @@ public class ReadSinglePaymentServiceTest {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
             new TppInfo(),
+            UUID.randomUUID(),
             UUID.randomUUID()
         );
     }

@@ -1,103 +1,87 @@
-/*
- * Copyright 2018-2019 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.CancellationList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.Objects;
+import javax.validation.constraints.*;
 
 /**
  * An array of all cancellationIds
  */
 @ApiModel(description = "An array of all cancellationIds")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-03T12:45:57.911034+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
 
-public class Cancellations {
-    @JsonProperty("cancellationIds")
-    private CancellationList cancellationIds = null;
+public class Cancellations   {
+  @JsonProperty("cancellationIds")
+  private CancellationList cancellationIds = null;
 
-    public Cancellations cancellationIds(CancellationList cancellationIds) {
-        this.cancellationIds = cancellationIds;
-        return this;
+  public Cancellations cancellationIds(CancellationList cancellationIds) {
+    this.cancellationIds = cancellationIds;
+    return this;
+  }
+
+  /**
+   * Get cancellationIds
+   * @return cancellationIds
+  **/
+  @ApiModelProperty(required = true, value = "")
+  @NotNull
+
+  @Valid
+
+
+  @JsonProperty("cancellationIds")
+  public CancellationList getCancellationIds() {
+    return cancellationIds;
+  }
+
+  public void setCancellationIds(CancellationList cancellationIds) {
+    this.cancellationIds = cancellationIds;
+  }
+
+
+  @Override
+  public boolean equals(java.lang.Object o) {
+    if (this == o) {
+      return true;
     }
-
-    /**
-     * Get cancellationIds
-     *
-     * @return cancellationIds
-     **/
-    @ApiModelProperty(required = true, value = "")
-    @NotNull
-
-    @Valid
-
-
-    @JsonProperty("cancellationIds")
-    public CancellationList getCancellationIds() {
-        return cancellationIds;
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
+    Cancellations cancellations = (Cancellations) o;
+    return Objects.equals(this.cancellationIds, cancellations.cancellationIds);
+  }
 
-    public void setCancellationIds(CancellationList cancellationIds) {
-        this.cancellationIds = cancellationIds;
+  @Override
+  public int hashCode() {
+    return Objects.hash(cancellationIds);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class Cancellations {\n");
+    
+    sb.append("    cancellationIds: ").append(toIndentedString(cancellationIds)).append("\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(java.lang.Object o) {
+    if (o == null) {
+      return "null";
     }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Cancellations cancellations = (Cancellations) o;
-        return Objects.equals(this.cancellationIds, cancellations.cancellationIds);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(cancellationIds);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class Cancellations {\n");
-
-        sb.append("    cancellationIds: ").append(toIndentedString(cancellationIds)).append("\n");
-        sb.append("}");
-        return sb.toString();
-    }
-
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
+    return o.toString().replace("\n", "\n    ");
+  }
 }
 

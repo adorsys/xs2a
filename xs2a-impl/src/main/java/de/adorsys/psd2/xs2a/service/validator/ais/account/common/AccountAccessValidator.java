@@ -38,7 +38,7 @@ public class AccountAccessValidator {
                 return ValidationResult.valid();
             }
 
-            if (accountAccess.getAvailableAccountsWithBalances() == AccountAccessType.ALL_ACCOUNTS) {
+            if (accountAccess.getAvailableAccountsWithBalance() == AccountAccessType.ALL_ACCOUNTS) {
                 return ValidationResult.valid();
             }
 

@@ -133,4 +133,8 @@ public class PisPaymentData extends InstanceDependableEntity {
     @JoinColumn(name = "common_payment_id", nullable = false)
     @ApiModelProperty(value = "Detailed information about payment", required = true)
     private PisCommonPaymentData paymentData;
+
+    @Column(name = "batch_booking_preferred")
+    @ApiModelProperty(name = "Batch booking preferred", example = "true")
+    private Boolean batchBookingPreferred;
 }

@@ -159,7 +159,7 @@ public class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    public void validate_availableAccountsWithBalances_success() throws IOException {
+    public void validate_availableAccountsWithBalance_success() throws IOException {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccountsWithBalances.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
@@ -167,7 +167,7 @@ public class ConsentBodyFieldsValidatorImplTest {
             .thenReturn(consents);
 
         Map<String, Object> accessMap = new HashMap<>();
-        accessMap.put("availableAccountsWithBalances", "allAccounts");
+        accessMap.put("availableAccountsWithBalance", "allAccounts");
 
         // noinspection unchecked
         when(jsonConverter.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
@@ -326,13 +326,13 @@ public class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    public void validate_availableAccountsWithBalances_invalidValue_error() throws IOException {
+    public void validate_availableAccountsWithBalance_invalidValue_error() throws IOException {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccountsWithBalances-invalidValue.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
 
         Map<String, Object> accessMap = new HashMap<>();
-        accessMap.put("availableAccountsWithBalances", "Accounts");
+        accessMap.put("availableAccountsWithBalance", "Accounts");
 
         when(jsonConverter.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
             .thenReturn(Optional.of(accessMap));
@@ -342,17 +342,17 @@ public class ConsentBodyFieldsValidatorImplTest {
 
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Wrong value for availableAccountsWithBalances", messageError.getTppMessage().getText());
+        assertEquals("Wrong value for availableAccountsWithBalance", messageError.getTppMessage().getText());
     }
 
     @Test
-    public void validate_availableAccountsWithBalances_invalidType_error() throws IOException {
+    public void validate_availableAccountsWithBalance_invalidType_error() throws IOException {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccountsWithBalances-invalidType.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
 
         Map<String, Object> accessMap = new HashMap<>();
-        accessMap.put("availableAccountsWithBalances", 1);
+        accessMap.put("availableAccountsWithBalance", 1);
 
         // noinspection unchecked
         when(jsonConverter.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
@@ -363,7 +363,7 @@ public class ConsentBodyFieldsValidatorImplTest {
 
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Wrong value for availableAccountsWithBalances", messageError.getTppMessage().getText());
+        assertEquals("Wrong value for availableAccountsWithBalance", messageError.getTppMessage().getText());
     }
 
     @Test

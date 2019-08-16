@@ -1,11 +1,8 @@
 // toc-title definition MUST follow document title without blank line!
-= Strong customer authentication
+== Strong customer authentication
 :toc-title:
-:imagesdir: usecases/diagrams
+:imagesdir: ../usecases/diagrams
 :toc: left
-
-// horizontal line
-***
 
 toc::[]
 
@@ -16,7 +13,7 @@ Following transactions require strong customer authentication (SCA) of the PSU a
   transactions at the user interfaces offered by the ASPSP to the PSU directly).
 * Establish account information consent transactions.
 
-== SCA Approaches
+=== SCA Approaches
 XS2A Interface supports multiple SCA approaches. https://github.com/adorsys/xs2a/tree/develop/aspsp-profile[ASPSP-Profile] may contain a list of approaches (in order of priority - first one with the highest priority).
 Choice of SCA approach also depends on header parameter in initial request - TPP-Redirect-Preferred.
 If TPP-Redirect-Preferred is true and ASPSP supports REDIRECT approach, then REDIRECT approach is used. Otherwise first approach in ASPSP-profile is used.
@@ -41,14 +38,14 @@ The first factor of authorisation process is executed on XS2A side and the secon
 === SCA using the embedded approach
 When applying the embedded approach the SCA of the PSU is executed entirely as part of the transaction at the XS2A interface.
 
-== Explicit/Implicit start of authorisation
+=== Explicit/Implicit start of authorisation
 Explicit start of authorisation is supported in case of Multilevel SCA and in case of Signing Basket, otherwise there is implicit start of authorisation.
 
-== Authorisation (SCA) Statuses
+=== Authorisation (SCA) Statuses
 Statuses which are defined finalised:
 
-* Finalised (The SCA routine has been finalised successfully)
-* Failed(The SCA routine failed)
-* Exempted (SCA was exempted for the related transaction, the related authorisation is successful)
+* Finalised (The SCA routine has been finalised successfully);
+* Failed(The SCA routine failed);
+* Exempted (SCA was exempted for the related transaction, the related authorisation is successful).
 
 After setting finalised status for Authorisation status isn't allowed to be changed in CMS any more.

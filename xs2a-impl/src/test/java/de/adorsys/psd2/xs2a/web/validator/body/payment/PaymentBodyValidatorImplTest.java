@@ -48,8 +48,6 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -68,7 +66,7 @@ public class PaymentBodyValidatorImplTest {
     private static final String WRONG_DAY_OF_MONTH = "666";
     private static final String CORRECT_FORMAT_DATE = "2021-10-10";
     private static final String CORRECT_FORMAT_TIME = "2019-01-01T12:00:00+01:00";
-    private static final String WRONG_FORMAT_DATE = "07/01/2019 00:00:00";
+    private static final String WRONG_FORMAT_DATE = "07/01/2019";
     private static final String WRONG_FORMAT_TIME = "07/01/2019 00:00:00";
 
     private static final MessageError DESERIALISATION_ERROR =
@@ -259,7 +257,6 @@ public class PaymentBodyValidatorImplTest {
         // Given
         Map<String, String> templates = buildTemplateVariables(PAIN_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
-        doNothing().when(tppRedirectUriBodyValidator).validate(mockRequest, messageError);
 
         // When
         validator.validate(mockRequest, messageError);
@@ -268,7 +265,7 @@ public class PaymentBodyValidatorImplTest {
         assertTrue(messageError.getTppMessages().isEmpty());
         // noinspection unchecked
         verify(objectMapper, never()).readValue(any(InputStream.class), any(Class.class));
-        verify(tppRedirectUriBodyValidator, times(1)).validate(mockRequest, messageError);
+        verify(tppRedirectUriBodyValidator, never()).validate(mockRequest, messageError);
     }
 
     @Test(expected = IllegalArgumentException.class)

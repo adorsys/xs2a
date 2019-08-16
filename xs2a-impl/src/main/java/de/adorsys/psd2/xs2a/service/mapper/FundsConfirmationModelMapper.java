@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
-import de.adorsys.psd2.model.InlineResponse200;
+import de.adorsys.psd2.model.InlineResponse2003;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
@@ -52,8 +52,8 @@ public class FundsConfirmationModelMapper {
      * @param fundsConfirmationResponse response from funds confirmation service.
      * @return InlineResponse200 for controller
      */
-    public InlineResponse200 mapToInlineResponse200(FundsConfirmationResponse fundsConfirmationResponse) {
-        return new InlineResponse200().fundsAvailable(fundsConfirmationResponse.isFundsAvailable());
+    public InlineResponse2003 mapToInlineResponse2003(FundsConfirmationResponse fundsConfirmationResponse) {
+        return new InlineResponse2003().fundsAvailable(fundsConfirmationResponse.isFundsAvailable());
     }
 
     private AccountReference mapToAccountReferenceInner(Object reference) {

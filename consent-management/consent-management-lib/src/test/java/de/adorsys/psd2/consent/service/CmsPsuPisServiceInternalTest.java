@@ -17,7 +17,6 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
@@ -38,6 +37,7 @@ import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuPisServiceInternal;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -77,7 +77,7 @@ public class CmsPsuPisServiceInternalTest {
     private final PsuIdData PSU_ID_DATA = buildPsuIdData();
     private static final String PAYMENT_ID = "payment id";
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
-    private static final CmsAuthorisationType AUTHORISATION_TYPE_CREATED = CmsAuthorisationType.CREATED;
+    private static final PaymentAuthorisationType AUTHORISATION_TYPE_CREATED = PaymentAuthorisationType.CREATED;
 
     @InjectMocks
     private CmsPsuPisServiceInternal cmsPsuPisServiceInternal;
@@ -520,7 +520,7 @@ public class CmsPsuPisServiceInternalTest {
     private PisAuthorization buildPisAuthorisation() {
         PisAuthorization pisAuthorisation = new PisAuthorization();
         pisAuthorisation.setScaStatus(ScaStatus.PSUAUTHENTICATED);
-        pisAuthorisation.setAuthorizationType(CmsAuthorisationType.CREATED);
+        pisAuthorisation.setAuthorizationType(PaymentAuthorisationType.CREATED);
         pisAuthorisation.setPaymentData(buildPisCommonPaymentData());
         pisAuthorisation.setExternalId(AUTHORISATION_ID);
         pisAuthorisation.setPsuData(buildPsuData());
@@ -645,7 +645,7 @@ public class CmsPsuPisServiceInternalTest {
     private PisAuthorization buildFinalisedAuthorisationNoPsuData() {
         PisAuthorization pisAuthorisation = new PisAuthorization();
         pisAuthorisation.setScaStatus(ScaStatus.FINALISED);
-        pisAuthorisation.setAuthorizationType(CmsAuthorisationType.CREATED);
+        pisAuthorisation.setAuthorizationType(PaymentAuthorisationType.CREATED);
         pisAuthorisation.setPaymentData(buildPisCommonPaymentData());
         pisAuthorisation.setExternalId(AUTHORISATION_ID);
 
@@ -655,7 +655,7 @@ public class CmsPsuPisServiceInternalTest {
     private PisAuthorization buildExpiredAuthorisation() {
         PisAuthorization pisAuthorisation = new PisAuthorization();
         pisAuthorisation.setScaStatus(ScaStatus.RECEIVED);
-        pisAuthorisation.setAuthorizationType(CmsAuthorisationType.CREATED);
+        pisAuthorisation.setAuthorizationType(PaymentAuthorisationType.CREATED);
         pisAuthorisation.setPaymentData(buildPisCommonPaymentData());
         pisAuthorisation.setExternalId(EXPIRED_AUTHORISATION_ID);
         pisAuthorisation.setPsuData(buildPsuData());

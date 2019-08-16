@@ -34,9 +34,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {AmountModelMapper.class, PurposeCodeMapper.class})
@@ -59,8 +57,10 @@ public abstract class AccountModelMapper {
         return new AccountList().accounts(details);
     }
 
-    public AccountDetails mapToAccountDetails(Xs2aAccountDetailsHolder xs2aAccountDetailsHolder) {
-        return mapToAccountDetails(xs2aAccountDetailsHolder.getAccountDetails());
+    public InlineResponse200 mapToInlineResponse200(Xs2aAccountDetailsHolder xs2aAccountDetailsHolder) {
+        InlineResponse200 inlineResponse200 = new InlineResponse200();
+        inlineResponse200.setAccount(mapToAccountDetails(xs2aAccountDetailsHolder.getAccountDetails()));
+        return inlineResponse200;
     }
 
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(accountDetails.getLinks()))")
@@ -93,11 +93,10 @@ public abstract class AccountModelMapper {
     @Mapping(target = "links", ignore = true)
     public abstract TransactionDetails mapToTransaction(Transactions transactions);
 
-    public Map<String, TransactionDetails> mapToTransactionDetails(Transactions transactions) {
-        //TODO Change to an appropriate object when it will be possible https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/574
-        Map<String, TransactionDetails> transactionDetails = new HashMap<>();
-        transactionDetails.put("transactionsDetails", mapToTransaction(transactions));
-        return transactionDetails;
+    public InlineResponse2001 mapToTransactionDetails(Transactions transactions) {
+        InlineResponse2001 inlineResponse2001 = new InlineResponse2001();
+        inlineResponse2001.setTransactionsDetails(mapToTransaction(transactions));
+        return inlineResponse2001;
     }
 
     protected OffsetDateTime mapToOffsetDateTime(LocalDateTime localDateTime) {

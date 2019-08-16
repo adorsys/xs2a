@@ -32,10 +32,10 @@ public class Xs2aToSpiAddressMapper {
         }
 
         return new SpiAddress(
-            address.getStreet(),
+            address.getStreetName(),
             address.getBuildingNumber(),
-            address.getCity(),
-            address.getPostalCode(),
+            address.getTownName(),
+            address.getPostCode(),
             Optional.ofNullable(address.getCountry()).map(Xs2aCountryCode::getCode).orElse(""));
     }
 }

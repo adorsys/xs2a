@@ -19,10 +19,12 @@ package de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
@@ -48,7 +50,6 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,7 +72,6 @@ public class AisScaStartAuthorisationStageTest {
     private static final String PASSWORD = "Test password";
     private static final String PSU_ID = "Test psuId";
     private static final String TEST_AUTHENTICATION_METHOD_ID = "sms";
-    private static final SpiResponseStatus RESPONSE_STATUS = SpiResponseStatus.LOGICAL_FAILURE;
     private static final ScaStatus FAILED_SCA_STATUS = ScaStatus.FAILED;
     private static final ScaStatus AUTHENTICATED_SCA_STATUS = ScaStatus.PSUAUTHENTICATED;
     private static final ScaStatus METHOD_SELECTED_SCA_STATUS = ScaStatus.SCAMETHODSELECTED;
@@ -82,7 +82,7 @@ public class AisScaStartAuthorisationStageTest {
     private static final List<Xs2aAuthenticationObject> MULTIPLE_CMS_SCA_METHODS = Arrays.asList(buildXs2aSmsAuthenticationObject(), buildXs2aPhotoAuthenticationObject());
     private static final List<SpiAuthenticationObject> ONE_SPI_SCA_METHOD = Collections.singletonList(buildSpiSmsAuthenticationObject());
     private static final List<SpiAuthenticationObject> NONE_SPI_SCA_METHOD = Collections.emptyList();
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
 
     private static final String PSU_SUCCESS_MESSAGE = "Test psuSuccessMessage";
@@ -201,16 +201,16 @@ public class AisScaStartAuthorisationStageTest {
     public void apply_Failure_AuthorisationStatusSpiResponseFailedWithoutBody() {
         String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
 
-        ErrorHolder errorHolder = ErrorHolder.builder(FORMAT_ERROR_CODE)
-                                      .errorType(ErrorType.AIS_401)
-                                      .messages(ERROR_MESSAGE_TEXT)
+        ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_401)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.UNAUTHORIZED, "message 1, message 2, message 3"))
                                       .build();
 
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.AIS)))
             .thenReturn(errorHolder);
 
         SpiResponse<SpiAuthorisationStatus> spiResponse = SpiResponse.<SpiAuthorisationStatus>builder()
-                                                              .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                                                              .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                                                              .build();
 
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);
@@ -227,12 +227,13 @@ public class AisScaStartAuthorisationStageTest {
     public void apply_Failure_AuthorisationStatusSpiResponseFailedWithBody() {
         SpiResponse<SpiAuthorisationStatus> spiResponse = SpiResponse.<SpiAuthorisationStatus>builder()
                                                               .payload(SpiAuthorisationStatus.FAILURE)
-                                                              .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                                                              .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                                                              .build();
 
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);
         when(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(any(UpdateConsentPsuDataResponse.class),
-            any(UpdateConsentPsuDataReq.class))).thenReturn(request);
+                                                              any(UpdateConsentPsuDataReq.class))).thenReturn(request);
 
         UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
@@ -332,7 +333,10 @@ public class AisScaStartAuthorisationStageTest {
             .thenReturn(buildErrorSpiResponse(new SpiAuthorizationCodeResult()));
 
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(new SpiAuthorizationCodeResult()), ServiceType.AIS))
-            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
+            .thenReturn(ErrorHolder
+                            .builder(ErrorType.AIS_400)
+                            .tppMessages(TppMessageInformation.of(FORMAT_ERROR_CODE, ""))
+                            .build());
 
         UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
@@ -434,8 +438,8 @@ public class AisScaStartAuthorisationStageTest {
     // Needed because SpiResponse is final, so it's impossible to mock it
     private <T> SpiResponse<T> buildErrorSpiResponse(T payload) {
         return SpiResponse.<T>builder()
-                   .payload(payload)
-                   .fail(RESPONSE_STATUS);
+                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                   .build();
     }
 
     private UpdateConsentPsuDataResponse buildUpdateConsentPsuDataResponse() {

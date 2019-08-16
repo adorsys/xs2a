@@ -298,7 +298,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setAisConsentRequestType(aisConsentRequestTypeService.getRequestTypeFromAccess(request.getAccess()));
         consent.setAvailableAccounts(request.getAccess().getAvailableAccounts());
         consent.setAllPsd2(request.getAccess().getAllPsd2());
-        consent.setAvailableAccountsWithBalances(request.getAccess().getAvailableAccountsWithBalances());
+        consent.setAvailableAccountsWithBalance(request.getAccess().getAvailableAccountsWithBalance());
         consent.setLastActionDate(LocalDate.now());
         return consent;
     }

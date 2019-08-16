@@ -118,8 +118,10 @@ public class PaymentModelMapperPsd2 {
         }
     }
 
-    public static PaymentInitiationStatusResponse200Json mapToStatusResponse(de.adorsys.psd2.xs2a.core.pis.TransactionStatus status) {
-        return new PaymentInitiationStatusResponse200Json().transactionStatus(mapToTransactionStatus(status));
+    public static PaymentInitiationStatusResponse200Json mapToStatusResponse(GetPaymentStatusResponse response) {
+        return new PaymentInitiationStatusResponse200Json()
+            .transactionStatus(mapToTransactionStatus(response.getTransactionStatus()))
+            .fundsAvailable(response.getFundsAvailable());
     }
 
     public static TransactionStatus mapToTransactionStatus(de.adorsys.psd2.xs2a.core.pis.TransactionStatus responseObject) {

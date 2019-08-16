@@ -21,7 +21,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.DownloadTransactionListRequestObject;
-import de.adorsys.psd2.xs2a.service.validator.tpp.AisTppInfoValidator;
+import de.adorsys.psd2.xs2a.service.validator.tpp.AisAccountTppInfoValidator;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class DownloadTransactionsReportValidatorTest {
     private DownloadTransactionsReportValidator downloadTransactionsReportValidator;
 
     @Mock
-    private AisTppInfoValidator aisTppInfoValidator;
+    private AisAccountTppInfoValidator aisAccountTppInfoValidator;
 
     private JsonReader jsonReader;
     private DownloadTransactionListRequestObject requestObject;
@@ -57,7 +57,7 @@ public class DownloadTransactionsReportValidatorTest {
     public void setUp() {
         jsonReader = new JsonReader();
 
-        when(aisTppInfoValidator.validateTpp(any()))
+        when(aisAccountTppInfoValidator.validateTpp(any()))
             .thenReturn(ValidationResult.valid());
     }
 

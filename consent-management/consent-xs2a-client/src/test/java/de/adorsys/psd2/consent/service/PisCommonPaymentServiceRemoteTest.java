@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.config.PisCommonPaymentRemoteUrls;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class PisCommonPaymentServiceRemoteTest {
         when(consentRestTemplate.getForEntity(URL, AuthorisationScaApproachResponse.class, AUTHORISATION_ID))
             .thenReturn(ResponseEntity.ok(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
 
-        service.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED);
+        service.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
 
         verify(remotePisCommonPaymentUrls, times(1)).getAuthorisationScaApproach();
         verify(consentRestTemplate).getForEntity(eq(URL), eq(AuthorisationScaApproachResponse.class), eq(AUTHORISATION_ID));
@@ -62,7 +62,7 @@ public class PisCommonPaymentServiceRemoteTest {
         when(consentRestTemplate.getForEntity(URL, AuthorisationScaApproachResponse.class, AUTHORISATION_ID))
             .thenReturn(ResponseEntity.ok(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
 
-        service.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CANCELLED);
+        service.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED);
 
         verify(remotePisCommonPaymentUrls, times(1)).getCancellationAuthorisationScaApproach();
         verify(consentRestTemplate).getForEntity(eq(URL), eq(AuthorisationScaApproachResponse.class), eq(AUTHORISATION_ID));

@@ -25,10 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus.LOGICAL_FAILURE;
-import static de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus.SUCCESS;
-import static java.util.stream.Collectors.toList;
-
 @Value
 public class SpiResponse<T> {
     private static final VoidResponse VOID_RESPONSE = new VoidResponse();
@@ -39,14 +35,6 @@ public class SpiResponse<T> {
     private T payload;
 
     /**
-     * A status of execution result. Is used to provide correct answer to TPP.
-     *
-     * @deprecated since 3.5. Use MessageErrorCode in errors list instead.
-     */
-    @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965
-    private SpiResponseStatus responseStatus;
-
-    /**
      * Optional messages that can be returned to explain an error in details. XS2A Service will use it to
      * provide the error explanation to TPP
      */
@@ -55,7 +43,6 @@ public class SpiResponse<T> {
 
     private SpiResponse(SpiResponseBuilder<T> builder) {
         this.payload = builder.payload;
-        this.responseStatus = builder.responseStatus;
         this.errors.addAll(builder.errors);
     }
 
@@ -68,50 +55,15 @@ public class SpiResponse<T> {
     }
 
     public boolean hasError() {
-        return !errors.isEmpty() || responseStatus != SUCCESS || payload == null;
+        return !errors.isEmpty() || payload == null;
     }
 
     public boolean isSuccessful() {
-        return errors.isEmpty() && responseStatus == SUCCESS && payload != null;
-    }
-
-    /**
-     * @return List of error messages
-     * @deprecated since 3.5
-     */
-    @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965
-    public List<String> getMessages() {
-        return errors.stream()
-                   .map(TppMessage::getMessageText)
-                   .collect(toList());
-    }
-
-    @NotNull
-    //TODO remove with messages removal https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965
-    private static MessageErrorCode getErrorCodeByStatus(SpiResponseStatus responseStatus) {
-        MessageErrorCode messageErrorCode = MessageErrorCode.FORMAT_ERROR;
-        if (responseStatus != null) {
-            switch (responseStatus) {
-                case NOT_SUPPORTED:
-                    messageErrorCode = MessageErrorCode.PARAMETER_NOT_SUPPORTED;
-                    break;
-                case TECHNICAL_FAILURE:
-                    messageErrorCode = MessageErrorCode.INTERNAL_SERVER_ERROR;
-                    break;
-                case UNAUTHORIZED_FAILURE:
-                    messageErrorCode = MessageErrorCode.PSU_CREDENTIALS_INVALID;
-                    break;
-                case LOGICAL_FAILURE:
-                default:
-                    messageErrorCode = MessageErrorCode.FORMAT_ERROR;
-            }
-        }
-        return messageErrorCode;
+        return errors.isEmpty()  && payload != null;
     }
 
     public static class SpiResponseBuilder<T> {
         private T payload;
-        private SpiResponseStatus responseStatus;
         private List<TppMessage> errors = new ArrayList<>();
 
         private SpiResponseBuilder() {
@@ -135,9 +87,6 @@ public class SpiResponse<T> {
         }
 
         public SpiResponse<T> build() {
-            if (this.responseStatus == null) {
-                this.responseStatus = this.errors.isEmpty() ? SUCCESS : LOGICAL_FAILURE;
-            }
 
             if (payload == null && CollectionUtils.isEmpty(errors)) {
                 this.error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, ""));
@@ -145,20 +94,6 @@ public class SpiResponse<T> {
 
             return new SpiResponse<>(this);
         }
-
-        /**
-         * @param responseStatus deprecated
-         * @return SpiResponse object
-         * @see #build()
-         * @deprecated since 3.5. Use build instead
-         */
-        @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/965
-        public SpiResponse<T> fail(@Deprecated @NotNull SpiResponseStatus responseStatus) {
-            this.responseStatus = responseStatus;
-            this.errors.add(new TppMessage(getErrorCodeByStatus(responseStatus), ""));
-            return new SpiResponse<>(this);
-        }
-
     }
 
     /**
