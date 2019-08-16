@@ -4,37 +4,24 @@
 :imagesdir: images
 :toc: left
 
-//additional style for arc42 help callouts
-ifdef::basebackend-html[]
-++++
-<style>
-.arc42help {font-size:small; width: 14px; height: 16px; overflow: hidden; position: absolute; right: 0px; padding: 2px 0px 3px 2px;}
-.arc42help::before {content: "?";}
-.arc42help:hover {width:auto; height: auto; z-index: 100; padding: 10px;}
-.arc42help:hover::before {content: "";}
-@media print {
-	.arc42help {display:hidden;}
-}
-</style>
-++++
-endif::basebackend-html[]
-
-// horizontal line
-***
-
 toc::[]
 
 == Architecture
-xref:architecture/index.adoc[Architecture documentation]
+xref:architecture/index.adoc[Architecture documentation] provides a comprehensive architectural overview of the system,
+using a number of different architectural views to depict different aspects of the system. It is intended to capture and convey the significant
+architectural decisions which have been made on the system.
 
 == XS2A. Details of realisation
-xref:XS2A. Details of realisation/xs2a features description.adoc[Documentation]
+xref:XS2A. Details of realisation/xs2a features description.adoc[This document] describes implementation details of XS2A Interface
+for Account Information Service, Payment Initiation Service, Payment Instrument Issuing Service, SCA Methods.
 
 == SPI Developer Guide
-xref:SPI Developer Guide/SPI_Developer_Guide.adoc[SPI Developer Guide]
+xref:SPI Developer Guide/SPI_Developer_Guide.adoc[SPI Developer Guide] provides instructions for implementing the Interfaces on the SPI level,
+describes special modes e.g. configuring Event-Service, Logging etc.
+
 
 == Version policy
-xref:version_policy.adoc[Version policy]
+xref:version_policy.adoc[Version Policy] describes the main rules of Versioning, Release numbering, and Support policy.
 
 == Upcoming and existing Versions
 
@@ -48,4 +35,4 @@ xref:releasenotes.adoc[Release notes] contain information about changes included
 Might contain also important migration information for the developers, how to migrate to a new version and how to use it.
 
 == Filing a bug
-xref:Filing_a_bug.adoc[Bug ticket workflow]
+xref:Filing_a_bug.adoc[This document] contains a summary of how to report an issue to XS2A Team.

@@ -18,7 +18,8 @@ For all Read Account Data Requests:
 the *PSU-IP-Address added to the request header* definitions with the Condition "Conditional" and the following description to identify PSU involvement: "The forwarded IP Address header field consists of the corresponding HTTP request IP Address field between PSU and TPP. It shall be contained if and only if this request was actively initiated by the PSU."
 
 
-=== Granted Permission in appropriate Consent:
+*Granted Permission in appropriate Consent*:
+
 * For Get accounts with balances (query parameter *withBalance = true* ) validate if permission exists in the Consent.  In case when validation is unsuccessful, XS2A sends the response with HTTP code 401 CONSENT_INVALID and output "The consent was created by this TPP but is not valid for the addressed service/resource";
 * According to Specification 1.3: To have possibility to get balances or transactions or account data, TPP needs to know account-id - this identification is denoting the addressed account. The account-id is retrieved by using a “Read Account List” call. The account-id is the “resourceId” attribute of the account structure.
 Its value is constant at least throughout the lifecycle of a given consent. So after consent is expired - ASPSP may change account-ids and after establishing new consent TPP will need a new call to get account-ids;

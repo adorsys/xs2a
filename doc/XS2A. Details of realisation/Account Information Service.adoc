@@ -13,7 +13,7 @@ A TPP may execute transactions according to this use case to receive the right t
 * Get the balances for a list of accounts once or multiple times;
 * Get payment transaction information for a list of accounts once or multiple times.
 
-=== XS2A performs validation
+==== XS2A performs validation
 
 TPP data from certificate in request is compared in CMS with TPP data in Consent:
 
@@ -188,7 +188,7 @@ Number of TPP accesses is counted by every endpoint:
 
 If the amount of accesses for any of these endpoints is exceeded - *HTTP error 429 ACCESS_EXCEEDED* is returned. All other endpoints are still accessible until their amount is not exceeded.
 
-=== Frequency is addressing only the Read Account Data Requests without PSU involvement:
+==== Frequency is addressing only the Read Account Data Requests without PSU involvement:
 
 * When any GET Account Data Requests contain filled parameter PSU-IP-Address, then frequencyPerDay isn't counted for this request with recurring consent.
 * For one-off consent PSU-IP-Address is ignored and frequencyPerDay is counted.
