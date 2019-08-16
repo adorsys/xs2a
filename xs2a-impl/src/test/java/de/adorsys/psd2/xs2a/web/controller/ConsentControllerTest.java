@@ -24,6 +24,8 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.HrefType;
+import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
@@ -131,6 +133,21 @@ public class ConsentControllerTest {
         assertThat(resp.getConsentStatus().toString()).isEqualTo(ConsentStatus.RECEIVED.getValue());
         assertThat(resp.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(resp.getPsuMessage()).isEqualTo(PSU_MESSAGE_RESPONSE);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createAccountConsent_WithNullInLinks() {
+        //Given:
+        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA), eq(EXPLICIT_PREFERRED), any())).thenReturn(createXs2aConsentResponseWithoutLinks(CONSENT_ID));
+        Consents consents = getConsents();
+
+        //When:
+        consentController.createConsent(null, consents,
+                                                                        null, null, null, CORRECT_PSU_ID, null, null,
+                                                                        null, false, null, null,
+                                                                        EXPLICIT_PREFERRED, null, null, null, null,
+                                                                        null, null, null, null, null,
+                                                                        null, null, null);
     }
 
     @Test
@@ -331,9 +348,22 @@ public class ConsentControllerTest {
     }
 
     private ResponseObject<CreateConsentResponse> createXs2aConsentResponse(String consentId) {
-        return isEmpty(consentId)
-                   ? ResponseObject.<CreateConsentResponse>builder().fail(MESSAGE_ERROR_AIS_404).build()
-                   : ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null, false)).build();
+        if (isEmpty(consentId)) {
+            return ResponseObject.<CreateConsentResponse>builder().fail(MESSAGE_ERROR_AIS_404).build();
+        }
+        CreateConsentResponse consentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null, false);
+        Links links = new Links();
+        links.setSelf(new HrefType("type"));
+        consentResponse.setLinks(links);
+        return ResponseObject.<CreateConsentResponse>builder().body(consentResponse).build();
+    }
+
+    private ResponseObject<CreateConsentResponse> createXs2aConsentResponseWithoutLinks(String consentId) {
+        if (isEmpty(consentId)) {
+            return ResponseObject.<CreateConsentResponse>builder().fail(MESSAGE_ERROR_AIS_404).build();
+        }
+        CreateConsentResponse consentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null, false);
+        return ResponseObject.<CreateConsentResponse>builder().body(consentResponse).build();
     }
 
     private ResponseObject<AccountConsent> getConsent(String consentId) {
