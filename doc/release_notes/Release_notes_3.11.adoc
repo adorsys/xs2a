@@ -1,3 +1,11 @@
 = Release notes v. 3.11
 
 == Table of Contents
+* Remove deprecated constructor in `SpiContextData`
+
+== Remove deprecated constructor in `SpiContextData`
+
+From now on, there is no constructor with three arguments in class `SpiContextData`:
+`psuData`, `tppInfo`, `xRequestId`. New constructor uses such arguments:
+ `psuData`, `tppInfo`, `xRequestId`, `internalRequestId`.
+

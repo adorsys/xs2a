@@ -57,6 +57,7 @@ import static org.mockito.Mockito.when;
 public class ReadBulkPaymentStatusServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private final static UUID X_REQUEST_ID = UUID.randomUUID();
+    private final static UUID INTERNAL_REQUEST_ID = UUID.randomUUID();
     private static final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final SpiBulkPayment SPI_BULK_PAYMENT = new SpiBulkPayment();
@@ -151,7 +152,8 @@ public class ReadBulkPaymentStatusServiceTest {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
             new TppInfo(),
-            X_REQUEST_ID
+            X_REQUEST_ID,
+            INTERNAL_REQUEST_ID
         );
     }
 

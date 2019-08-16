@@ -229,7 +229,7 @@ public class ConsentServiceTest {
         when(getConsentAuthorisationScaStatusValidator.validate(any(CommonConsentObject.class)))
             .thenReturn(ValidationResult.valid());
 
-        SpiContextData spiContextData = new SpiContextData(SPI_PSU_DATA, tppInfo, UUID.randomUUID());
+        SpiContextData spiContextData = new SpiContextData(SPI_PSU_DATA, tppInfo, UUID.randomUUID(), UUID.randomUUID());
         when(spiContextDataProvider.provide()).thenReturn(spiContextData);
         when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
         when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(spiContextData);

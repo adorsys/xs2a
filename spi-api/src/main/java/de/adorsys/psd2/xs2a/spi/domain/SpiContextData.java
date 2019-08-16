@@ -35,18 +35,4 @@ public class SpiContextData {
     private TppInfo tppInfo;
     private UUID xRequestId;
     private UUID internalRequestId;
-
-    /**
-     * Constructs new {@link SpiContextData} instance with internalRequestId set to null
-     *
-     * @deprecated since 2.10, use constructor with internalRequestId instead
-     */
-    // TODO remove this constructor in 2.13 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/927
-    @Deprecated
-    public SpiContextData(SpiPsuData spiPsuData, TppInfo tppInfo, UUID xRequestId) {
-        this.psuData = spiPsuData;
-        this.tppInfo = tppInfo;
-        this.xRequestId = xRequestId;
-        this.internalRequestId = null;
-    }
 }
