@@ -92,7 +92,8 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
 
             CreateConsentReq createConsent = mapToCreateConsentReq(consents, messageError);
 
-            if (areFlagsAndAccountsInvalid(createConsent)) {
+            // This object is checked for null on the level above
+            if (areFlagsAndAccountsInvalid(createConsent)) { //NOSONAR
                 errorBuildingService.enrichMessageError(messageError, "Consent object can not contain both list of accounts and the flag allPsd2 or availableAccounts");
             }
         }

@@ -246,7 +246,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         }
 
         PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
-        return pisScaAuthorisationService.createCommonPaymentAuthorisation(paymentId, PaymentType.getByValue(paymentService).get(), psuData)
+        return pisScaAuthorisationService.createCommonPaymentAuthorisation(paymentId, PaymentType.getByValue(paymentService)
+                                                                                          .orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")), psuData)
                    .map(resp -> ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
                                     .body(resp)
                                     .build())

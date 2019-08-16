@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.repository.specification.PisCommonPaymentDataSpec
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -55,7 +56,7 @@ public class CommonPaymentDataService {
     }
 
     @Transactional
-    public boolean updateCancelTppRedirectURIs(Long tppInfoId, @Nullable TppRedirectUri tppRedirectUri) {
+    public boolean updateCancelTppRedirectURIs(Long tppInfoId, @NotNull TppRedirectUri tppRedirectUri) {
         int saved = tppInfoRepository.updateCancelRedirectUrisById(tppInfoId, tppRedirectUri.getUri(), tppRedirectUri.getNokUri());
         return saved == 1;
     }

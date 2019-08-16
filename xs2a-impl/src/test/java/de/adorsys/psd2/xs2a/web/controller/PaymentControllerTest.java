@@ -24,6 +24,8 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.HrefType;
+import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
@@ -636,12 +638,9 @@ public class PaymentControllerTest {
             .thenReturn(PAYMENT_OBJECT);
 
         when(xs2aPaymentService.createPayment(PAYMENT_OBJECT, paymentInitiationParameters))
-            .thenReturn(buildSuccessResponseObject());
+            .thenReturn(buildSuccessResponseObjectWithLinks());
 
-        when(paymentModelMapperPsd2.mapToPaymentInitiationResponse(PAYMENT_INITIATION_RESPONSE))
-            .thenReturn(PAYMENT_OBJECT);
-
-        ResponseObject expectedResponseObject = buildSuccessResponseObject();
+        ResponseObject expectedResponseObject = buildSuccessResponseObjectWithLinks();
 
         when(responseMapper.created(any(ResponseObject.class), eq(RESPONSE_HEADERS)))
             .thenReturn(new ResponseEntity<>(expectedResponseObject, CREATED));
@@ -716,12 +715,9 @@ public class PaymentControllerTest {
             .thenReturn(PAYMENT_OBJECT);
 
         when(xs2aPaymentService.createPayment(PAYMENT_OBJECT, paymentInitiationParameters))
-            .thenReturn(buildSuccessResponseObject());
+            .thenReturn(buildSuccessResponseObjectWithLinks());
 
-        when(paymentModelMapperPsd2.mapToPaymentInitiationResponse(PAYMENT_INITIATION_RESPONSE))
-            .thenReturn(PAYMENT_OBJECT);
-
-        ResponseObject expectedResponseObject = buildSuccessResponseObject();
+        ResponseObject expectedResponseObject = buildSuccessResponseObjectWithLinks();
 
         when(paymentInitiationHeadersBuilder.buildInitiatePaymentHeaders(any(), any())).thenReturn(RESPONSE_HEADERS);
 
@@ -739,6 +735,26 @@ public class PaymentControllerTest {
         assertThat(actual).isNotNull();
         assertThat(actual.getStatusCode()).isEqualTo(CREATED);
         assertThat(actual.getBody()).isEqualTo(expectedResponseObject);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void initiatePayment_XML_WithException() {
+        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData()))
+            .thenReturn(paymentInitiationParameters);
+
+        when(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, XML_SCT, JSON_STANDING_ORDER_TYPE))
+            .thenReturn(PAYMENT_OBJECT);
+
+        when(xs2aPaymentService.createPayment(PAYMENT_OBJECT, paymentInitiationParameters))
+            .thenReturn(buildSuccessResponseObjectWithLinksNullType());
+
+        ResponseObject expectedResponseObject = buildSuccessResponseObjectWithLinksNullType();
+
+        paymentController.initiatePayment(REQUEST_ID, null, CORRECT_PAYMENT_SERVICE, PRODUCT,
+                                                                  XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
+                                                                  null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
+                                                                  null, null, null, null, null, null,
+                                                                  null, null, null, null, null);
     }
 
     private ResponseObject<CancelPaymentResponse> getCancelPaymentResponseObject(boolean startAuthorisationRequired) {
@@ -804,6 +820,25 @@ public class PaymentControllerTest {
     private ResponseObject<PaymentInitiationResponse> buildSuccessResponseObject() {
         return ResponseObject.<PaymentInitiationResponse>builder()
                    .body(PAYMENT_INITIATION_RESPONSE)
+                   .build();
+    }
+
+    private ResponseObject<PaymentInitiationResponse> buildSuccessResponseObjectWithLinks() {
+        PaymentInitiationResponse initiationResponse = new SinglePaymentInitiationResponse();
+        Links links = new Links();
+        links.setSelf(new HrefType("type"));
+        initiationResponse.setLinks(links);
+        return ResponseObject.<PaymentInitiationResponse>builder()
+                   .body(initiationResponse)
+                   .build();
+    }
+
+    private ResponseObject<PaymentInitiationResponse> buildSuccessResponseObjectWithLinksNullType() {
+        PaymentInitiationResponse initiationResponse = new SinglePaymentInitiationResponse();
+        Links links = new Links();
+        initiationResponse.setLinks(links);
+        return ResponseObject.<PaymentInitiationResponse>builder()
+                   .body(initiationResponse)
                    .build();
     }
 
