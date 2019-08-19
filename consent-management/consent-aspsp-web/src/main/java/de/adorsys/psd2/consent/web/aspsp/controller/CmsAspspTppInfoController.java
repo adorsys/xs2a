@@ -42,12 +42,9 @@ public class CmsAspspTppInfoController {
     public ResponseEntity<TppInfo> getTppInfo(
         @ApiParam(value = "ID of TPP", required = true, example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
-        // TODO delete this request header in 3.11 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/937
-        @ApiParam(value = "National competent authority id", required = true, example = "authority id")
-        @RequestHeader(value = "authority-id") String nationalAuthorityId,
         @ApiParam(value = "Service instance id", example = "instance id")
         @RequestHeader(value = "instance-id", required = false, defaultValue = "UNDEFINED") String instanceId) {
-        return cmsAspspTppService.getTppInfo(tppAuthorisationNumber, nationalAuthorityId, instanceId)
+        return cmsAspspTppService.getTppInfo(tppAuthorisationNumber, instanceId)
                    .map(record -> new ResponseEntity<>(record, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

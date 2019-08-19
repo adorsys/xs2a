@@ -34,53 +34,44 @@ public class CmsAspspStopListController {
     private final CmsAspspTppService cmsAspspTppService;
 
     @GetMapping
-    @ApiOperation(value = "Returns TPP stop list record by TPP authorisation number and national authority ID")
+    @ApiOperation(value = "Returns TPP stop list record by TPP authorisation number")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<TppStopListRecord> getTppStopListRecord(
         @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
-        // TODO delete this request header in 3.11 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/937
-        @ApiParam(value = "National competent authority id", example = "authority id")
-        @RequestHeader(value = "authority-id") String nationalAuthorityId,
         @ApiParam(value = "Service instance id", example = "instance id")
         @RequestHeader(value = "instance-id", required = false, defaultValue = "UNDEFINED") String instanceId) {
-        return cmsAspspTppService.getTppStopListRecord(tppAuthorisationNumber, nationalAuthorityId, instanceId)
+        return cmsAspspTppService.getTppStopListRecord(tppAuthorisationNumber, instanceId)
                    .map(record -> new ResponseEntity<>(record, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping(path = "/block")
-    @ApiOperation(value = "Blocks TPP by TPP authorisation number, national authority ID and lock period")
+    @ApiOperation(value = "Blocks TPP by TPP authorisation number and lock period")
     @ApiResponse(code = 200, message = "OK")
     public ResponseEntity<Boolean> blockTpp(
         @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
-        // TODO delete this request header in 3.11 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/937
-        @ApiParam(value = "National competent authority id", example = "authority id")
-        @RequestHeader(value = "authority-id") String nationalAuthorityId,
         @ApiParam(value = "Service instance id", example = "instance id")
         @RequestHeader(value = "instance-id", required = false, defaultValue = "UNDEFINED") String instanceId,
         @ApiParam(value = "Period of TPP locking (in milliseconds)", example = "1000")
         @RequestHeader(value = "lock-period", required = false) Long lockPeriod) {
         Duration lockPeriodDuration = lockPeriod != null ? Duration.ofMillis(lockPeriod) : null;
-        boolean isBlocked = cmsAspspTppService.blockTpp(tppAuthorisationNumber, nationalAuthorityId, instanceId, lockPeriodDuration);
+        boolean isBlocked = cmsAspspTppService.blockTpp(tppAuthorisationNumber, instanceId, lockPeriodDuration);
         return new ResponseEntity<>(isBlocked, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/unblock")
-    @ApiOperation(value = "Unblocks TPP by TPP authorisation number and national authority ID")
+    @ApiOperation(value = "Unblocks TPP by TPP authorisation number")
     @ApiResponse(code = 200, message = "OK")
     public ResponseEntity<Boolean> unblockTpp(
         @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
-        // TODO delete this request header in 3.11 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/937
-        @ApiParam(value = "National competent authority id", example = "authority id")
-        @RequestHeader(value = "authority-id") String nationalAuthorityId,
         @ApiParam(value = "Service instance id", example = "instance id")
         @RequestHeader(value = "instance-id", required = false, defaultValue = "UNDEFINED") String instanceId) {
-        boolean isUnblocked = cmsAspspTppService.unblockTpp(tppAuthorisationNumber, nationalAuthorityId, instanceId);
+        boolean isUnblocked = cmsAspspTppService.unblockTpp(tppAuthorisationNumber, instanceId);
         return new ResponseEntity<>(isUnblocked, HttpStatus.OK);
     }
 }

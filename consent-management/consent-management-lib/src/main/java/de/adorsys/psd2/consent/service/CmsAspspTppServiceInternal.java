@@ -34,7 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.util.Optional;
 
-// TODO delete nationalAuthorityId parameter in all methods in 3.11 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/937
 @RequiredArgsConstructor
 @Service
 public class CmsAspspTppServiceInternal implements CmsAspspTppService {
@@ -45,21 +44,20 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
 
     @NotNull
     @Override
-    public Optional<TppStopListRecord> getTppStopListRecord(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId) {
-        Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppAuthorisationNumber, nationalAuthorityId, instanceId);
+    public Optional<TppStopListRecord> getTppStopListRecord(@NotNull String tppAuthorisationNumber, @NotNull String instanceId) {
+        Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndInstanceId(tppAuthorisationNumber, instanceId);
         return stopListEntityOptional.map(tppStopListMapper::mapToTppStopListRecord);
     }
 
     @Transactional
     @Override
-    public boolean blockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId, @Nullable Duration lockPeriod) {
-        Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppAuthorisationNumber, nationalAuthorityId, instanceId);
+    public boolean blockTpp(@NotNull String tppAuthorisationNumber, @NotNull String instanceId, @Nullable Duration lockPeriod) {
+        Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndInstanceId(tppAuthorisationNumber, instanceId);
 
         TppStopListEntity entityToBeBlocked = stopListEntityOptional
                                                   .orElseGet(() -> {
                                                       TppStopListEntity entity = new TppStopListEntity();
                                                       entity.setTppAuthorisationNumber(tppAuthorisationNumber);
-                                                      entity.setNationalAuthorityId(nationalAuthorityId);
                                                       return entity;
                                                   });
         entityToBeBlocked.block(lockPeriod);
@@ -70,8 +68,8 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
 
     @Transactional
     @Override
-    public boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId) {
-        Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppAuthorisationNumber, nationalAuthorityId, instanceId);
+    public boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String instanceId) {
+        Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndInstanceId(tppAuthorisationNumber, instanceId);
 
         if (stopListEntityOptional.isPresent()) {
             TppStopListEntity entityToBeUnblocked = stopListEntityOptional.get();
@@ -84,8 +82,8 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
 
     @NotNull
     @Override
-    public Optional<TppInfo> getTppInfo(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId) {
-        Optional<TppInfoEntity> tppInfoEntityOptional = tppInfoRepository.findFirstByAuthorisationNumberAndAuthorityIdAndInstanceId(tppAuthorisationNumber, nationalAuthorityId, instanceId);
+    public Optional<TppInfo> getTppInfo(@NotNull String tppAuthorisationNumber, @NotNull String instanceId) {
+        Optional<TppInfoEntity> tppInfoEntityOptional = tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppAuthorisationNumber, instanceId);
         return tppInfoEntityOptional.map(tppInfoMapper::mapToTppInfo);
     }
 }
