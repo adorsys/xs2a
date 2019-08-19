@@ -26,7 +26,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface TppInfoRepository extends CrudRepository<TppInfoEntity, Long> {
-    Optional<TppInfoEntity> findFirstByAuthorisationNumberAndAuthorityIdAndInstanceId(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId);
+    Optional<TppInfoEntity> findFirstByAuthorisationNumberAndInstanceId(@NotNull String tppAuthorisationNumber, @NotNull String instanceId);
 
     @Modifying
     @Query(value = "UPDATE tpp_info " +

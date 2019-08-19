@@ -27,11 +27,6 @@ public class TppStopListRecord {
     @ApiModelProperty(value = "Authorisation number", required = true, example = "12345987")
     private String tppAuthorisationNumber;
 
-    // TODO delete this field in 3.11 sprint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/937
-    @Deprecated
-    @ApiModelProperty(value = "National competent authority id", required = true, example = "authority id")
-    private String nationalAuthorityId;
-
     @ApiModelProperty(value = "Status of the TPP in stop list", example = "ENABLED", allowableValues = "ENABLED,BLOCKED")
     private TppStatus status;
 

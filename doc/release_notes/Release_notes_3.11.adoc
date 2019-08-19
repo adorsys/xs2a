@@ -2,6 +2,7 @@
 
 == Table of Contents
 * Remove deprecated constructor in `SpiContextData`
+* Remove deprecated column `authority_id` from `tpp_stop_list` table
 
 == Remove deprecated constructor in `SpiContextData`
 
@@ -9,3 +10,7 @@ From now on, there is no constructor with three arguments in class `SpiContextDa
 `psuData`, `tppInfo`, `xRequestId`. New constructor uses such arguments:
  `psuData`, `tppInfo`, `xRequestId`, `internalRequestId`.
 
+== Remove deprecated column `authority_id` from `tpp_stop_list` table
+
+From now on, the column `authority_id` in `tpp_stop_list` table doesn't exist anymore.
+Adequate changes in controllers and services have been made.

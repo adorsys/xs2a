@@ -39,7 +39,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class CmsAspspTppServiceInternalTest {
     private final String AUTHORISATION_NUMBER = "Authorisation number";
-    private final String AUTHORITY_ID = "Authority id";
     private final Duration BLOCKING_DURATION = Duration.ofMillis(15000);
     private final String AUTHORISATION_NUMBER_NOT_EXISTING = "Not existing Authorisation number";
     private final String AUTHORITY_ID_NOT_EXISTING = "Not existing Authority id";
@@ -68,23 +67,23 @@ public class CmsAspspTppServiceInternalTest {
 
     @Test
     public void getTppStopListRecord_Fail_TppEntityIsNotExistInDB() {
-        when(stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING, INSTANCE_ID))
+        when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
-        Optional<TppStopListRecord> result = cmsAspspTppService.getTppStopListRecord(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING, INSTANCE_ID);
+        Optional<TppStopListRecord> result = cmsAspspTppService.getTppStopListRecord(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID);
 
         assertFalse(result.isPresent());
     }
 
     @Test
     public void getTppStopListRecord_Success_TppEntityIsExistInDB() {
-        when(stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(AUTHORISATION_NUMBER, AUTHORITY_ID, INSTANCE_ID))
+        when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER, INSTANCE_ID))
             .thenReturn(Optional.of(tppStopListEntity));
 
         when(tppStopListMapper.mapToTppStopListRecord(tppStopListEntity))
             .thenReturn(tppStopListRecord);
 
-        Optional<TppStopListRecord> result = cmsAspspTppService.getTppStopListRecord(AUTHORISATION_NUMBER, AUTHORITY_ID, INSTANCE_ID);
+        Optional<TppStopListRecord> result = cmsAspspTppService.getTppStopListRecord(AUTHORISATION_NUMBER, INSTANCE_ID);
 
         assertTrue(result.isPresent());
         assertEquals(tppStopListRecord, result.get());
@@ -92,7 +91,7 @@ public class CmsAspspTppServiceInternalTest {
 
     @Test
     public void blockTpp_Success_TppEntityIsExistInDB() {
-        when(stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(AUTHORISATION_NUMBER, AUTHORITY_ID, INSTANCE_ID))
+        when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER, INSTANCE_ID))
             .thenReturn(Optional.of(tppStopListEntity));
 
         doNothing()
@@ -101,7 +100,7 @@ public class CmsAspspTppServiceInternalTest {
         when(stopListRepository.save(tppStopListEntity))
             .thenReturn(tppStopListEntity);
 
-        boolean isBlocked = cmsAspspTppService.blockTpp(AUTHORISATION_NUMBER, AUTHORITY_ID, INSTANCE_ID, BLOCKING_DURATION);
+        boolean isBlocked = cmsAspspTppService.blockTpp(AUTHORISATION_NUMBER, INSTANCE_ID, BLOCKING_DURATION);
 
         assertTrue(isBlocked);
         verify(stopListRepository).save(tppStopListEntity);
@@ -109,7 +108,7 @@ public class CmsAspspTppServiceInternalTest {
 
     @Test
     public void blockTpp_Success_TppEntityIsNotExistInDB() {
-        when(stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING, INSTANCE_ID))
+        when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
         TppStopListEntity entityToBeBlocked = buildBlockedTppStopListEntity(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING, INSTANCE_ID, null);
@@ -117,7 +116,7 @@ public class CmsAspspTppServiceInternalTest {
         when(stopListRepository.save(entityToBeBlocked))
             .thenReturn(entityToBeBlocked);
 
-        boolean isBlocked = cmsAspspTppService.blockTpp(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING, INSTANCE_ID, null);
+        boolean isBlocked = cmsAspspTppService.blockTpp(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID, null);
 
         assertTrue(isBlocked);
         verify(stopListRepository).save(entityToBeBlocked);
@@ -125,10 +124,10 @@ public class CmsAspspTppServiceInternalTest {
 
     @Test
     public void unblockTpp_Success_TppEntityIsNotExistInDB() {
-        when(stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING, INSTANCE_ID))
+        when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
-        boolean isUnblocked = cmsAspspTppService.unblockTpp(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING, INSTANCE_ID);
+        boolean isUnblocked = cmsAspspTppService.unblockTpp(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID);
 
         assertTrue(isUnblocked);
         verify(stopListRepository, never()).save(any(TppStopListEntity.class));
@@ -136,7 +135,7 @@ public class CmsAspspTppServiceInternalTest {
 
     @Test
     public void unblockTpp_Success_TppEntityIsExistInDB() {
-        when(stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(AUTHORISATION_NUMBER, AUTHORITY_ID, INSTANCE_ID))
+        when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER, INSTANCE_ID))
             .thenReturn(Optional.of(tppStopListEntity));
 
         doNothing()
@@ -145,7 +144,7 @@ public class CmsAspspTppServiceInternalTest {
         when(stopListRepository.save(tppStopListEntity))
             .thenReturn(tppStopListEntity);
 
-        boolean isUnblocked = cmsAspspTppService.unblockTpp(AUTHORISATION_NUMBER, AUTHORITY_ID, INSTANCE_ID);
+        boolean isUnblocked = cmsAspspTppService.unblockTpp(AUTHORISATION_NUMBER, INSTANCE_ID);
 
         assertTrue(isUnblocked);
         verify(stopListRepository).save(tppStopListEntity);
@@ -153,23 +152,23 @@ public class CmsAspspTppServiceInternalTest {
 
     @Test
     public void getTppInfoRecord_Fail_TppEntityIsNotExistInDB() {
-        when(tppInfoRepository.findFirstByAuthorisationNumberAndAuthorityIdAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID, INSTANCE_ID))
+        when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
-        Optional<TppInfo> result = cmsAspspTppService.getTppInfo(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID, INSTANCE_ID);
+        Optional<TppInfo> result = cmsAspspTppService.getTppInfo(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID);
 
         assertFalse(result.isPresent());
     }
 
     @Test
     public void getTppInfoRecord_Success_TppEntityIsExistInDB() {
-        when(tppInfoRepository.findFirstByAuthorisationNumberAndAuthorityIdAndInstanceId(AUTHORISATION_NUMBER, AUTHORITY_ID, INSTANCE_ID))
+        when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER, INSTANCE_ID))
             .thenReturn(Optional.of(tppInfoEntity));
 
         when(tppInfoMapper.mapToTppInfo(tppInfoEntity))
             .thenReturn(tppInfo);
 
-        Optional<TppInfo> result = cmsAspspTppService.getTppInfo(AUTHORISATION_NUMBER, AUTHORITY_ID, INSTANCE_ID);
+        Optional<TppInfo> result = cmsAspspTppService.getTppInfo(AUTHORISATION_NUMBER, INSTANCE_ID);
 
         assertTrue(result.isPresent());
         assertEquals(tppInfo, result.get());
@@ -178,7 +177,6 @@ public class CmsAspspTppServiceInternalTest {
     private TppStopListEntity buildBlockedTppStopListEntity(String authorisationNumber, String authorityId, String instanceId, Duration blockingDuration) {
         TppStopListEntity entity = new TppStopListEntity();
         entity.setTppAuthorisationNumber(authorisationNumber);
-        entity.setNationalAuthorityId(authorityId);
         entity.block(blockingDuration);
         return entity;
     }
