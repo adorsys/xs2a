@@ -6371,9 +6371,9 @@ components:
 #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured: # N.A.
           $ref: "#/components/schemas/remittanceInformationStructured"
-#        requestedExecutionDate: # N.A.
-#          type: string
-#          format: date
+        requestedExecutionDate: # N.A.
+          type: string
+          format: date
 #        requestedExecutionTime: # N.A.
 #          type: string
 #          format: date-time

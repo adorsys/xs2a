@@ -81,6 +81,7 @@ public class PaymentModelMapperPsd2 {
             paymentResponse.setUltimateCreditor(xs2aPayment.getUltimateCreditor());
             paymentResponse.setPurposeCode(purposeCodeMapper.mapToPurposeCode(xs2aPayment.getPurposeCode()));
             paymentResponse.setRemittanceInformationStructured(remittanceMapper.mapToRemittanceInformationStructured(xs2aPayment.getRemittanceInformationStructured()));
+            paymentResponse.setRequestedExecutionDate(xs2aPayment.getRequestedExecutionDate());
             return paymentResponse;
         } else if (type == PERIODIC) {
             PeriodicPayment xs2aPayment = (PeriodicPayment) payment;

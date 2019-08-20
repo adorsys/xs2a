@@ -6,6 +6,7 @@
 * Missing error response body on reading transaction list with not supported format
 * Bugfix: NPE in creation periodic payment without field `frequency` or with wrong `frequency` format
 * Bugfix: create PIIS consent needs closing "/" in URL
+* Bugfix: missing `requestedExecutionDate` on get payment request for future dated payment
 
 == Remove deprecated constructor in `SpiContextData`
 
@@ -30,4 +31,8 @@ value for this field, the error `400 FORMAT_ERROR` will be given to TPP.
 == * Bugfix: create PIIS consent needs closing "/" in URL
 
 From now on create PIIS consent doesn't need closing "/" in URL.
+== Bugfix: Missing requestedExecutionDate on get payment request for future dated payment
+
+From now on, in Get Payment Request `GET /v1/{payment-service}/{payment_product}/{paymentId}` field
+`requestedExecutionDate` is present in the response object of get payment request.
 
