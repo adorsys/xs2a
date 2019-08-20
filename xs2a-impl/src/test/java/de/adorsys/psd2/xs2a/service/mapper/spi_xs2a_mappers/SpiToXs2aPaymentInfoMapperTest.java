@@ -54,7 +54,7 @@ public class SpiToXs2aPaymentInfoMapperTest {
         spiPaymentInfo.setPaymentType(PaymentType.SINGLE);
         spiPaymentInfo.setStatus(TransactionStatus.ACSP);
         spiPaymentInfo.setStatusChangeTimestamp(OFFSET_DATE_TIME);
-        spiPaymentInfo.setPsuDataList(Collections.singletonList(new SpiPsuData("psuId", "", "", "")));
+        spiPaymentInfo.setPsuDataList(Collections.singletonList(new SpiPsuData("psuId", "", "", "", "")));
         spiPaymentInfo.setPaymentData(PAYMENT_DATA);
 
         PisPaymentInfo pisPaymentInfo = mapper.mapToXs2aPaymentInfo(spiPaymentInfo);

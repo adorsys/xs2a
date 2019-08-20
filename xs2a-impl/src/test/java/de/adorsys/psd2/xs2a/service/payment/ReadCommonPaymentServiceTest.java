@@ -156,7 +156,7 @@ public class ReadCommonPaymentServiceTest {
 
     private static SpiContextData getSpiContextData() {
         return new SpiContextData(
-            new SpiPsuData("", "", "", ""),
+            new SpiPsuData("", "", "", "", ""),
             new TppInfo(),
             UUID.randomUUID(),
             UUID.randomUUID()

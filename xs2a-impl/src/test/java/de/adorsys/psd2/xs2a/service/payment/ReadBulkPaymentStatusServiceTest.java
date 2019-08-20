@@ -150,7 +150,7 @@ public class ReadBulkPaymentStatusServiceTest {
 
     private static SpiContextData getSpiContextData() {
         return new SpiContextData(
-            new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
+            new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress"),
             new TppInfo(),
             X_REQUEST_ID,
             INTERNAL_REQUEST_ID

@@ -86,7 +86,7 @@ public class PaymentServiceTest {
     private static final String WRONG_PAYMENT_ID_TEXT = "Payment not found";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
-    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
+    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null, null);
     private static final MessageError VALIDATION_ERROR = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
 
