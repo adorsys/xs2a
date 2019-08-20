@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
+import de.adorsys.psd2.xs2a.config.converter.MappingJackson2TextMessageConverter;
 import de.adorsys.psd2.xs2a.domain.InternalRequestIdHolder;
 import de.adorsys.psd2.xs2a.domain.RedirectIdHolder;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
@@ -40,11 +41,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.context.annotation.RequestScope;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -147,6 +146,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new PaymentTypeEnumConverter());
+    }
+
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(new MappingJackson2TextMessageConverter());
+        super.extendMessageConverters(converters);
     }
 }
 

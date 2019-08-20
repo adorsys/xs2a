@@ -3,6 +3,7 @@
 == Table of Contents
 * Remove deprecated constructor in `SpiContextData`
 * Remove deprecated column `authority_id` from `tpp_stop_list` table
+* Missing error response body on reading transaction list with not supported format
 
 == Remove deprecated constructor in `SpiContextData`
 
@@ -14,3 +15,7 @@ From now on, there is no constructor with three arguments in class `SpiContextDa
 
 From now on, the column `authority_id` in `tpp_stop_list` table doesn't exist anymore.
 Adequate changes in controllers and services have been made.
+
+== Missing error response body on reading transaction list with not supported format
+
+From now on, `406 REQUESTED_FORMATS_INVALID` is responded as text for not supported `text/plain` Accept header by bank profile (configuration property `supportedTransactionApplicationTypes`).
