@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidatorContext;
+import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,6 +69,7 @@ public class PaymentBodyValidatorImplTest {
     private static final String CORRECT_FORMAT_TIME = "2019-01-01T12:00:00+01:00";
     private static final String WRONG_FORMAT_DATE = "07/01/2019";
     private static final String WRONG_FORMAT_TIME = "07/01/2019 00:00:00";
+    private static final String FREQUENCY_FIELD_NAME = "Monthly";
 
     private static final MessageError DESERIALISATION_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Cannot deserialize the request body"));
@@ -80,6 +82,8 @@ public class PaymentBodyValidatorImplTest {
 
     private static final MessageError PURPOSE_CODE_WRONG_VALUE_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, PaymentBodyValidatorImpl.PURPOSE_CODE_ERROR_FORMAT));
+    private static final MessageError NO_FREQUENCY =
+        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, PaymentBodyValidatorImpl.NO_FREQUENCY_ERROR_FORMAT));
 
     private PaymentBodyValidatorImpl validator;
     private MessageError messageError;
@@ -97,14 +101,16 @@ public class PaymentBodyValidatorImplTest {
     @Mock
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
     private MockHttpServletRequest mockRequest;
+    private FieldExtractor fieldExtractor;
 
     @Before
     public void setUp() {
         mockRequest = new MockHttpServletRequest();
         messageError = new MessageError(ErrorType.PIS_400);
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.PIS_400);
+        fieldExtractor = new FieldExtractor(errorService, jsonConverter);
         validator = new PaymentBodyValidatorImpl(errorService, objectMapper, paymentTypeValidatorContext,
-                                                 standardPaymentProductsResolver, jsonConverter, tppRedirectUriBodyValidator, new DateFieldValidator(errorService, jsonConverter, new LocalDateConverter()));
+                                                 standardPaymentProductsResolver, jsonConverter, tppRedirectUriBodyValidator, new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor), fieldExtractor);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(PAIN_PAYMENT_PRODUCT)))
             .thenReturn(true);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(JSON_PAYMENT_PRODUCT)))
@@ -295,7 +301,6 @@ public class PaymentBodyValidatorImplTest {
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
-        Object paymentBody = new Object();
         when(jsonConverter.toJsonGetValuesForField(any(InputStream.class), anyString()))
             .thenReturn(Collections.singletonList(purposeCode));
 
@@ -304,6 +309,20 @@ public class PaymentBodyValidatorImplTest {
 
         // Then
         assertEquals(PURPOSE_CODE_WRONG_VALUE_ERROR, messageError);
+    }
+
+    @Test
+    public void validate_frequency_shouldReturnError() {
+        // Given
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, "periodic-payments");
+        mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
+
+        // When
+        validator.validate(mockRequest, messageError);
+
+        // Then
+        assertEquals(NO_FREQUENCY, messageError);
     }
 
     private Map<String, String> buildTemplateVariables(String paymentProduct, String paymentService) {

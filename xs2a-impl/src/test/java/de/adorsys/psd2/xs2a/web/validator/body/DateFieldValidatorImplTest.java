@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
+import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,6 +63,7 @@ public class DateFieldValidatorImplTest {
 
     private DateFieldValidator validator;
     private MessageError messageError;
+    private FieldExtractor fieldExtractor;
 
     @Mock
     private JsonConverter jsonConverter;
@@ -70,7 +72,8 @@ public class DateFieldValidatorImplTest {
     public void setUp() {
         messageError = new MessageError(ErrorType.PIS_400);
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.PIS_400);
-        validator = new DateFieldValidator(errorService, jsonConverter, new LocalDateConverter());
+        fieldExtractor = new FieldExtractor(errorService, jsonConverter);
+        validator = new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor);
     }
 
     @Test
