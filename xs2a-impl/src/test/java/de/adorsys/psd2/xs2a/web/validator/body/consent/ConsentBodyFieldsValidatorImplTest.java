@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,6 +75,7 @@ public class ConsentBodyFieldsValidatorImplTest {
     private ObjectMapper objectMapper;
     @Mock
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
+    private FieldExtractor fieldExtractor;
 
     @Before
     public void setUp() throws IOException {
@@ -85,12 +87,13 @@ public class ConsentBodyFieldsValidatorImplTest {
         when(objectMapper.readValue(any(InputStream.class), eq(Consents.class)))
             .thenReturn(consents);
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
+        fieldExtractor = new FieldExtractor(errorService, jsonConverter);
         messageError = new MessageError(ErrorType.AIS_400);
 
         byte[] requestContent = jsonReader.getBytesFromFile("json/validation/ais/consents.json");
         this.request = buildRequestWithContent(requestContent);
 
-        validator = new ConsentBodyFieldsValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), objectMapper, jsonConverter, tppRedirectUriBodyValidator, new DateFieldValidator(errorService, jsonConverter, new LocalDateConverter()));
+        validator = new ConsentBodyFieldsValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), objectMapper, jsonConverter, tppRedirectUriBodyValidator, new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor));
     }
 
     @Test

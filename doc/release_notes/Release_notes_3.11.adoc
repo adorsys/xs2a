@@ -4,6 +4,7 @@
 * Remove deprecated constructor in `SpiContextData`
 * Remove deprecated column `authority_id` from `tpp_stop_list` table
 * Missing error response body on reading transaction list with not supported format
+* Bugfix: NPE in creation periodic payment without field `frequency` or with wrong `frequency` format
 
 == Remove deprecated constructor in `SpiContextData`
 
@@ -19,3 +20,10 @@ Adequate changes in controllers and services have been made.
 == Missing error response body on reading transaction list with not supported format
 
 From now on, `406 REQUESTED_FORMATS_INVALID` is responded as text for not supported `text/plain` Accept header by bank profile (configuration property `supportedTransactionApplicationTypes`).
+
+== Bugfix: NPE in creation periodic payment without field `frequency` or with wrong `frequency` format
+
+From now on, if you try to create periodic payment without field `frequency` or with wrong
+value for this field, the error `400 FORMAT_ERROR` will be given to TPP.
+
+

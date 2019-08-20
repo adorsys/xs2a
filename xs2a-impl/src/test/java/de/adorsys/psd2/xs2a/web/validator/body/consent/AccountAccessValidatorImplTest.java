@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.OptionalFieldMaxLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.StringMaxLengthValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,6 +68,7 @@ public class AccountAccessValidatorImplTest {
     private MessageError messageError;
     private JsonReader jsonReader;
     private AccountReferenceValidator accountReferenceValidator;
+    private FieldExtractor fieldExtractor;
 
     @Mock
     private JsonConverter jsonConverter;
@@ -78,7 +80,8 @@ public class AccountAccessValidatorImplTest {
         messageError = new MessageError(ErrorType.AIS_400);
         request = new MockHttpServletRequest();
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
-        dateFieldValidator = new DateFieldValidator(errorService, jsonConverter, new LocalDateConverter());
+        fieldExtractor = new FieldExtractor(errorService, jsonConverter);
+        dateFieldValidator = new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor);
         OptionalFieldMaxLengthValidator stringValidator = new OptionalFieldMaxLengthValidator(new StringMaxLengthValidator(errorService));
         accountReferenceValidator = new AccountReferenceValidator(errorService, stringValidator);
 
