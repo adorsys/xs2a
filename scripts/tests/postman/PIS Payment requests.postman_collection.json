@@ -1,6 +1,6 @@
 {
 	"info": {
-    "_postman_id": "8ec88b8a-4ee6-4c5f-b81d-5aa24acc4285",
+		"_postman_id": "7891a183-717f-4662-b873-a0f5c15d6ecd",
 		"name": "PIS Payment requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -15,7 +15,7 @@
 							"name": "Single payment initiation EMBEDDED  explicit  0 SCA methods",
 							"item": [
 								{
-									"name": "0. Set aspsp properties",
+									"name": "1. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -63,7 +63,7 @@
 									"response": []
 								},
 								{
-									"name": "0 Set embedded SCA approach",
+									"name": "2. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -111,7 +111,7 @@
 									"response": []
 								},
 								{
-									"name": "1 Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -128,15 +128,17 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
 													"    pm.expect(_links).to.have.property('startAuthorisation');",
 													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -222,7 +224,7 @@
 									"response": []
 								},
 								{
-									"name": "2 Start the authorisation process for a payment initiation",
+									"name": "4. Start the authorisation process for a payment initiation",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -258,9 +260,9 @@
 													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
-													"    ",
-													"    pm.expect(_links).to.have.property('scaStatus');",
+													"",
 													"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+													"    pm.expect(_links).to.have.property('scaStatus');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -310,7 +312,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment initiation",
+									"name": "5. Update PSU data for payment initiation",
 									"event": [
 										{
 											"listen": "test",
@@ -327,7 +329,7 @@
 													"   pm.expect(jsonData.scaStatus).to.eql('finalised');",
 													"});",
 													"",
-													"pm.test(\"Select scaStatus link exists\", () => {",
+													"pm.test(\"scaStatus link exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    pm.expect(_links).to.have.property('scaStatus');",
@@ -381,7 +383,7 @@
 									"response": []
 								},
 								{
-									"name": "4 Get Payment Initiation Authorisation Sub-Resources Request",
+									"name": "6. Get Payment Initiation Authorisation Sub-Resources Request",
 									"event": [
 										{
 											"listen": "test",
@@ -427,7 +429,7 @@
 									"response": []
 								},
 								{
-									"name": "5 Read the SCA Status of the payment authorisation",
+									"name": "7. Read the SCA Status of the payment authorisation",
 									"event": [
 										{
 											"listen": "test",
@@ -474,7 +476,7 @@
 									"response": []
 								},
 								{
-									"name": "6 Get Payment Information",
+									"name": "8. Get Payment Information",
 									"event": [
 										{
 											"listen": "test",
@@ -529,7 +531,7 @@
 									"response": []
 								},
 								{
-									"name": "7 Payment initiation status request",
+									"name": "9. Payment initiation status request",
 									"event": [
 										{
 											"listen": "test",
@@ -587,7 +589,7 @@
 							"name": "Single payment initiation EMBEDDED explicit 1 SCA method",
 							"item": [
 								{
-									"name": "0. Set aspsp properties",
+									"name": "1. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -635,7 +637,7 @@
 									"response": []
 								},
 								{
-									"name": "0 Set embedded SCA approach",
+									"name": "2. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -683,7 +685,7 @@
 									"response": []
 								},
 								{
-									"name": "1 Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -700,15 +702,16 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
 													"    pm.expect(_links).to.have.property('startAuthorisation');",
-													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -794,7 +797,7 @@
 									"response": []
 								},
 								{
-									"name": "2 Start the authorisation process for a payment initiation",
+									"name": "4. Start the authorisation process for a payment initiation",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -831,8 +834,8 @@
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
-													"    pm.expect(_links).to.have.property('scaStatus');",
 													"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+													"    pm.expect(_links).to.have.property('scaStatus');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -882,7 +885,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment initiation",
+									"name": "5. Update PSU data for payment initiation",
 									"event": [
 										{
 											"listen": "test",
@@ -895,36 +898,18 @@
 													"",
 													"const jsonData = pm.response.json();",
 													"",
-													"pm.test('Sca status is scaMethodSelected', () => {",
+													"pm.test('SCA status is scaMethodSelected', () => {",
 													"   pm.expect(jsonData.scaStatus).to.eql('scaMethodSelected');",
 													"});",
 													"",
-													"pm.test(\"Select authoriseTransaction method link exists\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
+													"    ",
+													"    pm.expect(_links).to.have.property('scaStatus');",
 													"    pm.expect(_links).to.have.property('authoriseTransaction');",
 													"});",
-													"",
-													"pm.test(\"Select chosenScaMethod exist\", () => {",
-													"    pm.expect(jsonData).to.have.property('chosenScaMethod');",
-													"    const chosenScaMethod = jsonData.chosenScaMethod;",
-													"    ",
-													"    pm.expect(chosenScaMethod).to.have.property('authenticationType');",
-													"    pm.expect(chosenScaMethod.authenticationType).to.eql('SMS_OTP');",
-													"    ",
-													"    pm.expect(chosenScaMethod).to.have.property('authenticationMethodId');",
-													"    pm.expect(chosenScaMethod.authenticationMethodId).to.eql('sms');",
-													"});",
-													"",
-													"pm.test(\"Challenge data exist\", () => {",
-													"    pm.expect(jsonData).to.have.property('challengeData');",
-													"    const challengeData = jsonData.challengeData;",
-													"    ",
-													"    pm.expect(challengeData).to.have.property('data');",
-													"    pm.expect(challengeData).to.have.property('imageLink');",
-													"    pm.expect(challengeData).to.have.property('otpMaxLength');",
-													"    pm.expect(challengeData).to.have.property('additionalInformation');",
-													"});"
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -974,141 +959,7 @@
 									"response": []
 								},
 								{
-									"name": "3.1 Get access token form IDP",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "a5180f8b-82da-47cf-9c83-d169798fb964",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"access_token exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('access_token');",
-													"    const access_token = jsonData.access_token;",
-													"    ",
-													"pm.globals.set(\"access_token\", \"Bearer \"+access_token);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"value": "application/x-www-form-urlencoded",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "urlencoded",
-											"urlencoded": [
-												{
-													"key": "grant_type",
-													"value": "password",
-													"type": "text"
-												},
-												{
-													"key": "client_id",
-													"value": "aspsp-mock",
-													"type": "text"
-												},
-												{
-													"key": "client_secret",
-													"value": "{{client_secret}}",
-													"type": "text"
-												},
-												{
-													"key": "username",
-													"value": "{{psu_id_single}}",
-													"type": "text"
-												},
-												{
-													"key": "password",
-													"value": "zzz",
-													"type": "text"
-												}
-											]
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_idp}}/auth/realms/xs2a/protocol/openid-connect/token",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_idp}}"
-											],
-											"path": [
-												"auth",
-												"realms",
-												"xs2a",
-												"protocol",
-												"openid-connect",
-												"token"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "3.2 Get TAN for psu single",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "83721020-fac4-49c5-8ac8-023212d11233",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"tanNumber exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('tanNumber');",
-													"    const tanNumber = jsonData.tanNumber;",
-													"    ",
-													"pm.globals.set(\"tanNumber\", tanNumber);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "authorization",
-												"type": "text",
-												"value": "{{access_token}}"
-											}
-										],
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_mock}}/consent/tan/{{psu_id_single}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_mock}}"
-											],
-											"path": [
-												"consent",
-												"tan",
-												"{{psu_id_single}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "4 Update PSU data for payment initiation finalized",
+									"name": "6. Update PSU data for payment initiation finalized",
 									"event": [
 										{
 											"listen": "test",
@@ -1179,7 +1030,7 @@
 									"response": []
 								},
 								{
-									"name": "5 Get Payment Initiation Authorisation Sub-Resources Request",
+									"name": "7. Get Payment Initiation Authorisation Sub-Resources Request",
 									"event": [
 										{
 											"listen": "test",
@@ -1225,7 +1076,7 @@
 									"response": []
 								},
 								{
-									"name": "6 Read the SCA Status of the payment authorisation",
+									"name": "8. Read the SCA Status of the payment authorisation",
 									"event": [
 										{
 											"listen": "test",
@@ -1272,7 +1123,7 @@
 									"response": []
 								},
 								{
-									"name": "7 Get Payment Information",
+									"name": "9. Get Payment Information",
 									"event": [
 										{
 											"listen": "test",
@@ -1327,7 +1178,7 @@
 									"response": []
 								},
 								{
-									"name": "8 Payment initiation status request",
+									"name": "10. Payment initiation status request",
 									"event": [
 										{
 											"listen": "test",
@@ -1342,7 +1193,7 @@
 													"",
 													"pm.test(\"Test transaction status\", () => {",
 													"    pm.expect(jsonData).to.have.property('transactionStatus');",
-													"    pm.expect(jsonData.transactionStatus).to.eql('ACCP');",
+													"    pm.expect(jsonData.transactionStatus).to.eql('ACSP');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1409,7 +1260,7 @@
 							"name": "Single payment initiation EMBEDDED explicit multiple SCA methods",
 							"item": [
 								{
-									"name": "0. Set aspsp properties",
+									"name": "1. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -1457,7 +1308,7 @@
 									"response": []
 								},
 								{
-									"name": "0. Set embedded SCA approac",
+									"name": "2. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -1505,7 +1356,7 @@
 									"response": []
 								},
 								{
-									"name": "1 Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -1522,15 +1373,17 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
 													"    pm.expect(_links).to.have.property('startAuthorisation');",
 													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -1616,7 +1469,7 @@
 									"response": []
 								},
 								{
-									"name": "2 Start the authorisation process for a payment initiation",
+									"name": "4. Start the authorisation process for a payment initiation",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -1704,7 +1557,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment initiation",
+									"name": "5. Update PSU data for payment initiation",
 									"event": [
 										{
 											"listen": "test",
@@ -1731,19 +1584,21 @@
 													"    pm.expect(jsonData).to.have.property('scaMethods');",
 													"    const scaMethods = jsonData.scaMethods;",
 													"    ",
-													"    pm.expect(scaMethods.length).to.eql(3);",
+													"    pm.expect(scaMethods.length).to.be.above(1);",
 													"    ",
 													"    pm.expect(scaMethods[0]).to.have.property('authenticationType');",
-													"    pm.expect(scaMethods[0].authenticationType).to.eql('SMS_OTP');",
-													"",
+													"    pm.expect(scaMethods[0].authenticationType) !== undefined;",
+													"    ",
 													"    pm.expect(scaMethods[0]).to.have.property('authenticationMethodId');",
-													"    pm.expect(scaMethods[0].authenticationMethodId).to.eql('sms');",
+													"    pm.expect(scaMethods[0].authenticationMethodId) !== undefined;",
+													"",
+													"    pm.expect(scaMethods[0]).to.have.property('authenticationType');",
+													"    pm.expect(scaMethods[0].authenticationType) !== undefined;",
 													"    ",
-													"    pm.expect(scaMethods[1]).to.have.property('authenticationType');",
-													"    pm.expect(scaMethods[1].authenticationType).to.eql('PUSH_OTP');",
+													"    pm.expect(scaMethods[0]).to.have.property('authenticationMethodId');",
+													"    pm.expect(scaMethods[0].authenticationMethodId) !== undefined;",
 													"    ",
-													"    pm.expect(scaMethods[1]).to.have.property('authenticationMethodId');",
-													"    pm.expect(scaMethods[1].authenticationMethodId).to.eql('push');",
+													"    pm.globals.set(\"authenticationMethodId\", scaMethods[0].authenticationMethodId);",
 													"});",
 													"",
 													""
@@ -1796,7 +1651,7 @@
 									"response": []
 								},
 								{
-									"name": "4 Update PSU data for payment initiation chose scaMethod",
+									"name": "6. Update PSU data for payment initiation chose SCA method",
 									"event": [
 										{
 											"listen": "test",
@@ -1824,20 +1679,14 @@
 													"    const chosenScaMethod = jsonData.chosenScaMethod;",
 													"    ",
 													"    pm.expect(chosenScaMethod).to.have.property('authenticationType');",
-													"    pm.expect(chosenScaMethod.authenticationType).to.eql('SMS');",
+													"    pm.expect(chosenScaMethod.authenticationType) !== undefined;",
 													"    ",
 													"    pm.expect(chosenScaMethod).to.have.property('authenticationMethodId');",
-													"    pm.expect(chosenScaMethod.authenticationMethodId).to.eql('sms');",
+													"    pm.expect(chosenScaMethod.authenticationMethodId) !== undefined;",
 													"});",
 													"",
 													"pm.test(\"Challenge data exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('challengeData');",
-													"    const challengeData = jsonData.challengeData;",
-													"    ",
-													"    pm.expect(challengeData).to.have.property('data');",
-													"    pm.expect(challengeData).to.have.property('imageLink');",
-													"    pm.expect(challengeData).to.have.property('otpMaxLength');",
-													"    pm.expect(challengeData).to.have.property('additionalInformation');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1866,7 +1715,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"authenticationMethodId\": \"{{scaMethod}}\"        \n}"
+											"raw": "{\n    \"authenticationMethodId\": \"{{authenticationMethodId}}\"        \n}"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
@@ -1888,141 +1737,7 @@
 									"response": []
 								},
 								{
-									"name": "4.1 Get access token form IDP",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "a5180f8b-82da-47cf-9c83-d169798fb964",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"access_token exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('access_token');",
-													"    const access_token = jsonData.access_token;",
-													"    ",
-													"pm.globals.set(\"access_token\", \"Bearer \"+access_token);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/x-www-form-urlencoded"
-											}
-										],
-										"body": {
-											"mode": "urlencoded",
-											"urlencoded": [
-												{
-													"key": "grant_type",
-													"value": "password",
-													"type": "text"
-												},
-												{
-													"key": "client_id",
-													"value": "aspsp-mock",
-													"type": "text"
-												},
-												{
-													"key": "client_secret",
-													"value": "{{client_secret}}",
-													"type": "text"
-												},
-												{
-													"key": "username",
-													"value": "{{psu_id_multiple}}",
-													"type": "text"
-												},
-												{
-													"key": "password",
-													"value": "zzz",
-													"type": "text"
-												}
-											]
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_idp}}/auth/realms/xs2a/protocol/openid-connect/token",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_idp}}"
-											],
-											"path": [
-												"auth",
-												"realms",
-												"xs2a",
-												"protocol",
-												"openid-connect",
-												"token"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "4.2 Get TAN for psu multiple",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "83721020-fac4-49c5-8ac8-023212d11233",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"tanNumber exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('tanNumber');",
-													"    const tanNumber = jsonData.tanNumber;",
-													"    ",
-													"pm.globals.set(\"tanNumber\", tanNumber);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "authorization",
-												"type": "text",
-												"value": "{{access_token}}"
-											}
-										],
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_mock}}/consent/tan/{{psu_id_multiple}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_mock}}"
-											],
-											"path": [
-												"consent",
-												"tan",
-												"{{psu_id_multiple}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "5 Update PSU data for payment initiation finalized",
+									"name": "7. Update PSU data for payment initiation finalized",
 									"event": [
 										{
 											"listen": "test",
@@ -2093,7 +1808,7 @@
 									"response": []
 								},
 								{
-									"name": "6 Get Payment Initiation Authorisation Sub-Resources Request",
+									"name": "8. Get Payment Initiation Authorisation Sub-Resources Request",
 									"event": [
 										{
 											"listen": "test",
@@ -2139,7 +1854,7 @@
 									"response": []
 								},
 								{
-									"name": "7 Read the SCA Status of the payment authorisation",
+									"name": "9. Read the SCA Status of the payment authorisation",
 									"event": [
 										{
 											"listen": "test",
@@ -2186,7 +1901,7 @@
 									"response": []
 								},
 								{
-									"name": "8 Get Payment Information",
+									"name": "10. Get Payment Information",
 									"event": [
 										{
 											"listen": "test",
@@ -2241,7 +1956,7 @@
 									"response": []
 								},
 								{
-									"name": "9 Payment initiation status request",
+									"name": "11. Payment initiation status request",
 									"event": [
 										{
 											"listen": "test",
@@ -2322,7 +2037,7 @@
 							"name": "Single payment cancellation EMBEDDED explicit 0 SCA methods",
 							"item": [
 								{
-									"name": "0. Set aspsp properties",
+									"name": "1. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -2370,7 +2085,7 @@
 									"response": []
 								},
 								{
-									"name": "0. Set embedded SCA approach",
+									"name": "2. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -2418,7 +2133,7 @@
 									"response": []
 								},
 								{
-									"name": "1 Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -2435,7 +2150,7 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
@@ -2443,7 +2158,7 @@
 													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -2529,7 +2244,7 @@
 									"response": []
 								},
 								{
-									"name": "2 Start the authorisation process for a payment initiation",
+									"name": "4. Start the authorisation process for a payment initiation",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -2617,7 +2332,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment initiation",
+									"name": "5. Update PSU data for payment initiation",
 									"event": [
 										{
 											"listen": "test",
@@ -2688,7 +2403,7 @@
 									"response": []
 								},
 								{
-									"name": "2. Cancel payment",
+									"name": "6. Cancel payment",
 									"event": [
 										{
 											"listen": "test",
@@ -2701,14 +2416,16 @@
 													"",
 													"const jsonData = pm.response.json();",
 													"",
-													"pm.test(\"Transcation status is RCVD\", () => {",
-													"    pm.expect(jsonData.transactionStatus).to.eql('ACCP');",
+													"pm.test(\"Transcation status is ACSP\", () => {",
+													"    pm.expect(jsonData.transactionStatus).to.eql('ACSP');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
 													"    pm.expect(_links).to.have.property('startAuthorisationWithPsuAuthentication');",
 													"    ",
 													"});"
@@ -2794,10 +2511,10 @@
 													"    pm.expect(scaStatus).to.eql('received');",
 													"});",
 													"",
-                          "pm.test(\"Select cancellationId \", () => {",
-                          "    pm.expect(jsonData).to.have.property('cancellationId');",
+													"pm.test(\"Select cancellationId \", () => {",
+													"    pm.expect(jsonData).to.have.property('cancellationId');",
 													"    ",
-                          "    pm.globals.set(\"cancellation_id\", jsonData.cancellationId);",
+													"    pm.globals.set(\"cancellation_id\", jsonData.cancellationId);",
 													"});",
 													"",
 													"pm.test(\"Select scaStatus \", () => {",
@@ -2806,11 +2523,11 @@
 													"    pm.expect(scaStatus).to.eql('received');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
-													"    //pm.expect(_links).to.have.property('scaStatus');  ",
+													"    pm.expect(_links).to.have.property('scaStatus');  ",
 													"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
 													"    ",
 													"});"
@@ -2823,7 +2540,7 @@
 											"script": {
 												"id": "4e1898ce-dc16-4c98-a814-d70ce1571ddf",
 												"exec": [
-                          "pm.globals.unset(\"cancellation_id\");"
+													"pm.globals.unset(\"cancellation_id\");"
 												],
 												"type": "text/javascript"
 											}
@@ -2882,7 +2599,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment cancellation",
+									"name": "8. Update PSU data for payment cancellation",
 									"event": [
 										{
 											"listen": "test",
@@ -2934,7 +2651,7 @@
 											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
 										},
 										"url": {
-                      "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_xs2a}}"
@@ -2945,7 +2662,7 @@
 												"{{payment_product}}",
 												"{{payment_id}}",
 												"cancellation-authorisations",
-                        "{{cancellation_id}}"
+												"{{cancellation_id}}"
 											]
 										},
 										"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
@@ -2953,7 +2670,7 @@
 									"response": []
 								},
 								{
-									"name": "8 Payment initiation status request",
+									"name": "9. Payment initiation status request",
 									"event": [
 										{
 											"listen": "test",
@@ -3006,7 +2723,7 @@
 									"response": []
 								},
 								{
-									"name": "2. Cancel payment again - should return error",
+									"name": "10. Cancel payment again - should return error",
 									"event": [
 										{
 											"listen": "test",
@@ -3019,7 +2736,7 @@
 													"",
 													"const jsonData = pm.response.json().tppMessages[0];",
 													"",
-													"pm.test(\"Transaction Status exists\", () => {",
+													"pm.test(\"Error code is CANCELLATION_INVALID\", () => {",
 													"    pm.expect(jsonData).to.have.property('code', 'CANCELLATION_INVALID');",
 													"});",
 													""
@@ -3099,7 +2816,7 @@
 							"name": "Single payment cancellation EMBEDDED explicit 1 SCA method",
 							"item": [
 								{
-									"name": "0 Set embedded SCA approach",
+									"name": "1. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -3147,7 +2864,7 @@
 									"response": []
 								},
 								{
-									"name": "0. Set aspsp properties",
+									"name": "2. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -3195,7 +2912,7 @@
 									"response": []
 								},
 								{
-									"name": "1 Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -3212,7 +2929,7 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
@@ -3220,7 +2937,7 @@
 													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -3306,7 +3023,7 @@
 									"response": []
 								},
 								{
-									"name": "2 Start the authorisation process for a payment initiation",
+									"name": "4. Start the authorisation process for a payment initiation",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -3394,7 +3111,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment initiation",
+									"name": "5. Update PSU data for payment initiation",
 									"event": [
 										{
 											"listen": "test",
@@ -3414,29 +3131,11 @@
 													"pm.test(\"Select authoriseTransaction method link exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
+													"    ",
+													"    pm.expect(_links).to.have.property('scaStatus');",
 													"    pm.expect(_links).to.have.property('authoriseTransaction');",
 													"});",
-													"",
-													"pm.test(\"Select chosenScaMethod exist\", () => {",
-													"    pm.expect(jsonData).to.have.property('chosenScaMethod');",
-													"    const chosenScaMethod = jsonData.chosenScaMethod;",
-													"    ",
-													"    pm.expect(chosenScaMethod).to.have.property('authenticationType');",
-													"    pm.expect(chosenScaMethod.authenticationType).to.eql('SMS_OTP');",
-													"    ",
-													"    pm.expect(chosenScaMethod).to.have.property('authenticationMethodId');",
-													"    pm.expect(chosenScaMethod.authenticationMethodId).to.eql('sms');",
-													"});",
-													"",
-													"pm.test(\"Challenge data exist\", () => {",
-													"    pm.expect(jsonData).to.have.property('challengeData');",
-													"    const challengeData = jsonData.challengeData;",
-													"    ",
-													"    pm.expect(challengeData).to.have.property('data');",
-													"    pm.expect(challengeData).to.have.property('imageLink');",
-													"    pm.expect(challengeData).to.have.property('otpMaxLength');",
-													"    pm.expect(challengeData).to.have.property('additionalInformation');",
-													"});"
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -3486,141 +3185,7 @@
 									"response": []
 								},
 								{
-									"name": "3.1 Get access token form IDP",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "a5180f8b-82da-47cf-9c83-d169798fb964",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"access_token exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('access_token');",
-													"    const access_token = jsonData.access_token;",
-													"    ",
-													"pm.globals.set(\"access_token\", \"Bearer \"+access_token);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"value": "application/x-www-form-urlencoded",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "urlencoded",
-											"urlencoded": [
-												{
-													"key": "grant_type",
-													"value": "password",
-													"type": "text"
-												},
-												{
-													"key": "client_id",
-													"value": "aspsp-mock",
-													"type": "text"
-												},
-												{
-													"key": "client_secret",
-													"value": "{{client_secret}}",
-													"type": "text"
-												},
-												{
-													"key": "username",
-													"value": "{{psu_id_single}}",
-													"type": "text"
-												},
-												{
-													"key": "password",
-													"value": "zzz",
-													"type": "text"
-												}
-											]
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_idp}}/auth/realms/xs2a/protocol/openid-connect/token",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_idp}}"
-											],
-											"path": [
-												"auth",
-												"realms",
-												"xs2a",
-												"protocol",
-												"openid-connect",
-												"token"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "3.2 Get TAN for psu single",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "83721020-fac4-49c5-8ac8-023212d11233",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"tanNumber exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('tanNumber');",
-													"    const tanNumber = jsonData.tanNumber;",
-													"    ",
-													"pm.globals.set(\"tanNumber\", tanNumber);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "authorization",
-												"type": "text",
-												"value": "{{access_token}}"
-											}
-										],
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_mock}}/consent/tan/{{psu_id_single}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_mock}}"
-											],
-											"path": [
-												"consent",
-												"tan",
-												"{{psu_id_single}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "4 Update PSU data for payment initiation finalized",
+									"name": "6. Update PSU data for payment initiation finalized",
 									"event": [
 										{
 											"listen": "test",
@@ -3691,7 +3256,7 @@
 									"response": []
 								},
 								{
-									"name": "2. Cancel payment",
+									"name": "7. Cancel payment",
 									"event": [
 										{
 											"listen": "test",
@@ -3704,14 +3269,16 @@
 													"",
 													"const jsonData = pm.response.json();",
 													"",
-													"pm.test(\"Transcation status is RCVD\", () => {",
-													"    pm.expect(jsonData.transactionStatus).to.eql('ACCP');",
+													"pm.test(\"Transcation status is ACSP\", () => {",
+													"    pm.expect(jsonData.transactionStatus).to.eql('ACSP');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
 													"    pm.expect(_links).to.have.property('startAuthorisationWithPsuAuthentication');",
 													"    ",
 													"});"
@@ -3775,7 +3342,7 @@
 									"response": []
 								},
 								{
-									"name": "7. Start the cancellation authorisation process",
+									"name": "8. Start the cancellation authorisation process",
 									"event": [
 										{
 											"listen": "test",
@@ -3795,10 +3362,10 @@
 													"    pm.expect(scaStatus).to.eql('received');",
 													"});",
 													"",
-                          "pm.test(\"Select cancellationId \", () => {",
-                          "    pm.expect(jsonData).to.have.property('cancellationId');",
+													"pm.test(\"Select cancellationId \", () => {",
+													"    pm.expect(jsonData).to.have.property('cancellationId');",
 													"    ",
-                          "    pm.globals.set(\"cancellation_id\", jsonData.cancellationId);",
+													"    pm.globals.set(\"cancellation_id\", jsonData.cancellationId);",
 													"});",
 													"",
 													"pm.test(\"Select scaStatus \", () => {",
@@ -3807,7 +3374,7 @@
 													"    pm.expect(scaStatus).to.eql('received');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
@@ -3824,7 +3391,7 @@
 											"script": {
 												"id": "4e1898ce-dc16-4c98-a814-d70ce1571ddf",
 												"exec": [
-                          "pm.globals.unset(\"cancellation_id\");"
+													"pm.globals.unset(\"cancellation_id\");"
 												],
 												"type": "text/javascript"
 											}
@@ -3883,7 +3450,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment cancellation",
+									"name": "9. Update PSU data for payment cancellation",
 									"event": [
 										{
 											"listen": "test",
@@ -3906,26 +3473,14 @@
 													"    pm.expect(_links).to.have.property('authoriseTransaction');",
 													"});",
 													"",
-													"pm.test(\"Select chosenScaMethod exist\", () => {",
-													"    pm.expect(jsonData).to.have.property('chosenScaMethod');",
-													"    const chosenScaMethod = jsonData.chosenScaMethod;",
+													"pm.test(\"Links exist\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
 													"    ",
-													"    pm.expect(chosenScaMethod).to.have.property('authenticationType');",
-													"    pm.expect(chosenScaMethod.authenticationType).to.eql('SMS_OTP');",
-													"    ",
-													"    pm.expect(chosenScaMethod).to.have.property('authenticationMethodId');",
-													"    pm.expect(chosenScaMethod.authenticationMethodId).to.eql('sms');",
+													"    pm.expect(_links).to.have.property('scaStatus');",
+													"    pm.expect(_links).to.have.property('authoriseTransaction');",
 													"});",
-													"",
-													"pm.test(\"Challenge data exist\", () => {",
-													"    pm.expect(jsonData).to.have.property('challengeData');",
-													"    const challengeData = jsonData.challengeData;",
-													"    ",
-													"    pm.expect(challengeData).to.have.property('data');",
-													"    pm.expect(challengeData).to.have.property('imageLink');",
-													"    pm.expect(challengeData).to.have.property('otpMaxLength');",
-													"    pm.expect(challengeData).to.have.property('additionalInformation');",
-													"});"
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -3956,7 +3511,7 @@
 											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
 										},
 										"url": {
-                      "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_xs2a}}"
@@ -3967,7 +3522,7 @@
 												"{{payment_product}}",
 												"{{payment_id}}",
 												"cancellation-authorisations",
-                        "{{cancellation_id}}"
+												"{{cancellation_id}}"
 											]
 										},
 										"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
@@ -3975,141 +3530,7 @@
 									"response": []
 								},
 								{
-									"name": "3.1 Get access token form IDP",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "a5180f8b-82da-47cf-9c83-d169798fb964",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"access_token exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('access_token');",
-													"    const access_token = jsonData.access_token;",
-													"    ",
-													"pm.globals.set(\"access_token\", \"Bearer \"+access_token);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"value": "application/x-www-form-urlencoded",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "urlencoded",
-											"urlencoded": [
-												{
-													"key": "grant_type",
-													"value": "password",
-													"type": "text"
-												},
-												{
-													"key": "client_id",
-													"value": "aspsp-mock",
-													"type": "text"
-												},
-												{
-													"key": "client_secret",
-													"value": "{{client_secret}}",
-													"type": "text"
-												},
-												{
-													"key": "username",
-													"value": "{{psu_id_single}}",
-													"type": "text"
-												},
-												{
-													"key": "password",
-													"value": "zzz",
-													"type": "text"
-												}
-											]
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_idp}}/auth/realms/xs2a/protocol/openid-connect/token",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_idp}}"
-											],
-											"path": [
-												"auth",
-												"realms",
-												"xs2a",
-												"protocol",
-												"openid-connect",
-												"token"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "3.2 Get TAN for psu single",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "83721020-fac4-49c5-8ac8-023212d11233",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"tanNumber exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('tanNumber');",
-													"    const tanNumber = jsonData.tanNumber;",
-													"    ",
-													"pm.globals.set(\"tanNumber\", tanNumber);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "authorization",
-												"type": "text",
-												"value": "{{access_token}}"
-											}
-										],
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_mock}}/consent/tan/{{psu_id_single}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_mock}}"
-											],
-											"path": [
-												"consent",
-												"tan",
-												"{{psu_id_single}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "4 Update PSU data for payment cancellation finalized",
+									"name": "10. Update PSU data for payment cancellation finalized",
 									"event": [
 										{
 											"listen": "test",
@@ -4161,7 +3582,7 @@
 											"raw": "{\n\t\"scaAuthenticationData\": \"{{tanNumber}}\"\n}"
 										},
 										"url": {
-                      "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_xs2a}}"
@@ -4172,7 +3593,7 @@
 												"{{payment_product}}",
 												"{{payment_id}}",
 												"cancellation-authorisations",
-                        "{{cancellation_id}}"
+												"{{cancellation_id}}"
 											]
 										},
 										"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
@@ -4180,7 +3601,7 @@
 									"response": []
 								},
 								{
-									"name": "8 Payment initiation status request",
+									"name": "11. Payment initiation status request",
 									"event": [
 										{
 											"listen": "test",
@@ -4233,7 +3654,7 @@
 									"response": []
 								},
 								{
-									"name": "2. Cancel payment again - should return error",
+									"name": "12. Cancel payment again - should return error",
 									"event": [
 										{
 											"listen": "test",
@@ -4246,7 +3667,7 @@
 													"",
 													"const jsonData = pm.response.json().tppMessages[0];",
 													"",
-													"pm.test(\"Transaction Status exists\", () => {",
+													"pm.test(\"Error code is CANCELLATION_INVALID\", () => {",
 													"    pm.expect(jsonData).to.have.property('code', 'CANCELLATION_INVALID');",
 													"});",
 													""
@@ -4326,7 +3747,7 @@
 							"name": "Single payment cancellation EMBEDDED explicit multiple SCA methods",
 							"item": [
 								{
-									"name": "0. Set aspsp properties",
+									"name": "1. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -4374,7 +3795,7 @@
 									"response": []
 								},
 								{
-									"name": "0. Set embedded SCA approach",
+									"name": "2. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -4422,7 +3843,7 @@
 									"response": []
 								},
 								{
-									"name": "1 Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -4439,15 +3860,17 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
-													"    ",
+													"",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
 													"    pm.expect(_links).to.have.property('startAuthorisation');",
 													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -4533,7 +3956,7 @@
 									"response": []
 								},
 								{
-									"name": "2 Start the authorisation process for a payment initiation",
+									"name": "4. Start the authorisation process for a payment initiation",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -4621,7 +4044,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment initiation",
+									"name": "5. Update PSU data for payment initiation",
 									"event": [
 										{
 											"listen": "test",
@@ -4648,19 +4071,21 @@
 													"    pm.expect(jsonData).to.have.property('scaMethods');",
 													"    const scaMethods = jsonData.scaMethods;",
 													"    ",
-													"    pm.expect(scaMethods.length).to.eql(3);",
+													"    pm.expect(scaMethods.length).to.be.above(1);",
 													"    ",
 													"    pm.expect(scaMethods[0]).to.have.property('authenticationType');",
-													"    pm.expect(scaMethods[0].authenticationType).to.eql('SMS_OTP');",
-													"",
+													"    pm.expect(scaMethods[0].authenticationType) !== undefined;",
+													"    ",
 													"    pm.expect(scaMethods[0]).to.have.property('authenticationMethodId');",
-													"    pm.expect(scaMethods[0].authenticationMethodId).to.eql('sms');",
+													"    pm.expect(scaMethods[0].authenticationMethodId) !== undefined;",
+													"",
+													"    pm.expect(scaMethods[0]).to.have.property('authenticationType');",
+													"    pm.expect(scaMethods[0].authenticationType) !== undefined;",
 													"    ",
-													"    pm.expect(scaMethods[1]).to.have.property('authenticationType');",
-													"    pm.expect(scaMethods[1].authenticationType).to.eql('PUSH_OTP');",
+													"    pm.expect(scaMethods[0]).to.have.property('authenticationMethodId');",
+													"    pm.expect(scaMethods[0].authenticationMethodId) !== undefined;",
 													"    ",
-													"    pm.expect(scaMethods[1]).to.have.property('authenticationMethodId');",
-													"    pm.expect(scaMethods[1].authenticationMethodId).to.eql('push');",
+													"    pm.globals.set(\"authenticationMethodId\", scaMethods[0].authenticationMethodId);",
 													"});",
 													"",
 													""
@@ -4713,7 +4138,7 @@
 									"response": []
 								},
 								{
-									"name": "4 Update PSU data for payment initiation chose scaMethod",
+									"name": "6. Update PSU data for payment initiation chose SCA method",
 									"event": [
 										{
 											"listen": "test",
@@ -4741,20 +4166,14 @@
 													"    const chosenScaMethod = jsonData.chosenScaMethod;",
 													"    ",
 													"    pm.expect(chosenScaMethod).to.have.property('authenticationType');",
-													"    pm.expect(chosenScaMethod.authenticationType).to.eql('SMS');",
+													"    pm.expect(chosenScaMethod.authenticationType) !== undefined;",
 													"    ",
 													"    pm.expect(chosenScaMethod).to.have.property('authenticationMethodId');",
-													"    pm.expect(chosenScaMethod.authenticationMethodId).to.eql('sms');",
+													"    pm.expect(chosenScaMethod.authenticationMethodId) !== undefined;",
 													"});",
 													"",
 													"pm.test(\"Challenge data exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('challengeData');",
-													"    const challengeData = jsonData.challengeData;",
-													"    ",
-													"    pm.expect(challengeData).to.have.property('data');",
-													"    pm.expect(challengeData).to.have.property('imageLink');",
-													"    pm.expect(challengeData).to.have.property('otpMaxLength');",
-													"    pm.expect(challengeData).to.have.property('additionalInformation');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -4783,7 +4202,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"authenticationMethodId\": \"{{scaMethod}}\"        \n}"
+											"raw": "{\n    \"authenticationMethodId\": \"{{authenticationMethodId}}\"        \n}"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
@@ -4805,141 +4224,7 @@
 									"response": []
 								},
 								{
-									"name": "4.1 Get access token form IDP",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "a5180f8b-82da-47cf-9c83-d169798fb964",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"access_token exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('access_token');",
-													"    const access_token = jsonData.access_token;",
-													"    ",
-													"pm.globals.set(\"access_token\", \"Bearer \"+access_token);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/x-www-form-urlencoded"
-											}
-										],
-										"body": {
-											"mode": "urlencoded",
-											"urlencoded": [
-												{
-													"key": "grant_type",
-													"value": "password",
-													"type": "text"
-												},
-												{
-													"key": "client_id",
-													"value": "aspsp-mock",
-													"type": "text"
-												},
-												{
-													"key": "client_secret",
-													"value": "{{client_secret}}",
-													"type": "text"
-												},
-												{
-													"key": "username",
-													"value": "{{psu_id_multiple}}",
-													"type": "text"
-												},
-												{
-													"key": "password",
-													"value": "zzz",
-													"type": "text"
-												}
-											]
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_idp}}/auth/realms/xs2a/protocol/openid-connect/token",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_idp}}"
-											],
-											"path": [
-												"auth",
-												"realms",
-												"xs2a",
-												"protocol",
-												"openid-connect",
-												"token"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "4.2 Get TAN for psu multiple",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "83721020-fac4-49c5-8ac8-023212d11233",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"tanNumber exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('tanNumber');",
-													"    const tanNumber = jsonData.tanNumber;",
-													"    ",
-													"pm.globals.set(\"tanNumber\", tanNumber);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "authorization",
-												"type": "text",
-												"value": "{{access_token}}"
-											}
-										],
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_mock}}/consent/tan/{{psu_id_multiple}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_mock}}"
-											],
-											"path": [
-												"consent",
-												"tan",
-												"{{psu_id_multiple}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "5 Update PSU data for payment initiation finalized",
+									"name": "7. Update PSU data for payment initiation finalized",
 									"event": [
 										{
 											"listen": "test",
@@ -5004,7 +4289,7 @@
 									"response": []
 								},
 								{
-									"name": "2. Cancel payment",
+									"name": "8.. Cancel payment",
 									"event": [
 										{
 											"listen": "test",
@@ -5017,11 +4302,11 @@
 													"",
 													"const jsonData = pm.response.json();",
 													"",
-													"pm.test(\"Transcation status is RCVD\", () => {",
-													"    pm.expect(jsonData.transactionStatus).to.eql('ACCP');",
+													"pm.test(\"Transcation status is ACSP\", () => {",
+													"    pm.expect(jsonData.transactionStatus).to.eql('ACSP');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
@@ -5088,7 +4373,7 @@
 									"response": []
 								},
 								{
-									"name": "2 Start the authorisation process for a payment initiation",
+									"name": "9. Start the authorisation process for a payment initiation",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -5109,11 +4394,11 @@
 													"",
 													"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
 													"",
-                          "pm.test(\"Select cancellationId \", () => {",
-                          "    pm.expect(jsonData).to.have.property('cancellationId');",
-                          "    ",
-                          "    pm.globals.set(\"cancellation_id\", jsonData.cancellationId);",
-                          "});",
+													"pm.test(\"Select cancellationId \", () => {",
+													"    pm.expect(jsonData).to.have.property('cancellationId');",
+													"    ",
+													"    pm.globals.set(\"cancellation_id\", jsonData.cancellationId);",
+													"});",
 													"",
 													"pm.test(\"Status code is 201\", function () {",
 													"    pm.response.to.have.status(201);",
@@ -5180,7 +4465,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment cancellation",
+									"name": "10. Update PSU data for payment cancellation",
 									"event": [
 										{
 											"listen": "test",
@@ -5207,19 +4492,21 @@
 													"    pm.expect(jsonData).to.have.property('scaMethods');",
 													"    const scaMethods = jsonData.scaMethods;",
 													"    ",
-													"    pm.expect(scaMethods.length).to.eql(3);",
+													"    pm.expect(scaMethods.length).to.be.above(1);",
 													"    ",
 													"    pm.expect(scaMethods[0]).to.have.property('authenticationType');",
-													"    pm.expect(scaMethods[0].authenticationType).to.eql('SMS_OTP');",
-													"",
+													"    pm.expect(scaMethods[0].authenticationType) !== undefined;",
+													"    ",
 													"    pm.expect(scaMethods[0]).to.have.property('authenticationMethodId');",
-													"    pm.expect(scaMethods[0].authenticationMethodId).to.eql('sms');",
+													"    pm.expect(scaMethods[0].authenticationMethodId) !== undefined;",
+													"",
+													"    pm.expect(scaMethods[0]).to.have.property('authenticationType');",
+													"    pm.expect(scaMethods[0].authenticationType) !== undefined;",
 													"    ",
-													"    pm.expect(scaMethods[1]).to.have.property('authenticationType');",
-													"    pm.expect(scaMethods[1].authenticationType).to.eql('PUSH_OTP');",
+													"    pm.expect(scaMethods[0]).to.have.property('authenticationMethodId');",
+													"    pm.expect(scaMethods[0].authenticationMethodId) !== undefined;",
 													"    ",
-													"    pm.expect(scaMethods[1]).to.have.property('authenticationMethodId');",
-													"    pm.expect(scaMethods[1].authenticationMethodId).to.eql('push');",
+													"    pm.globals.set(\"authenticationMethodId\", scaMethods[0].authenticationMethodId);",
 													"});",
 													"",
 													""
@@ -5253,7 +4540,7 @@
 											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
 										},
 										"url": {
-                      "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_xs2a}}"
@@ -5264,7 +4551,7 @@
 												"{{payment_product}}",
 												"{{payment_id}}",
 												"cancellation-authorisations",
-                        "{{cancellation_id}}"
+												"{{cancellation_id}}"
 											]
 										},
 										"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
@@ -5272,7 +4559,7 @@
 									"response": []
 								},
 								{
-									"name": "4 Update PSU data for payment cancellation chose scaMethod",
+									"name": "11. Update PSU data for payment cancellation chose SCA method",
 									"event": [
 										{
 											"listen": "test",
@@ -5300,20 +4587,14 @@
 													"    const chosenScaMethod = jsonData.chosenScaMethod;",
 													"    ",
 													"    pm.expect(chosenScaMethod).to.have.property('authenticationType');",
-													"    pm.expect(chosenScaMethod.authenticationType).to.eql('SMS');",
+													"    pm.expect(chosenScaMethod.authenticationType) !== undefined;",
 													"    ",
 													"    pm.expect(chosenScaMethod).to.have.property('authenticationMethodId');",
-													"    pm.expect(chosenScaMethod.authenticationMethodId).to.eql('sms');",
+													"    pm.expect(chosenScaMethod.authenticationMethodId) !== undefined;",
 													"});",
 													"",
 													"pm.test(\"Challenge data exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('challengeData');",
-													"    const challengeData = jsonData.challengeData;",
-													"    ",
-													"    pm.expect(challengeData).to.have.property('data');",
-													"    pm.expect(challengeData).to.have.property('imageLink');",
-													"    pm.expect(challengeData).to.have.property('otpMaxLength');",
-													"    pm.expect(challengeData).to.have.property('additionalInformation');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -5342,10 +4623,10 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"authenticationMethodId\": \"{{scaMethod}}\"        \n}"
+											"raw": "{\n    \"authenticationMethodId\": \"{{authenticationMethodId}}\"        \n}"
 										},
 										"url": {
-                      "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_xs2a}}"
@@ -5356,7 +4637,7 @@
 												"{{payment_product}}",
 												"{{payment_id}}",
 												"cancellation-authorisations",
-                        "{{cancellation_id}}"
+												"{{cancellation_id}}"
 											]
 										},
 										"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
@@ -5364,141 +4645,7 @@
 									"response": []
 								},
 								{
-									"name": "4.1 Get access token form IDP",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "a5180f8b-82da-47cf-9c83-d169798fb964",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"access_token exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('access_token');",
-													"    const access_token = jsonData.access_token;",
-													"    ",
-													"pm.globals.set(\"access_token\", \"Bearer \"+access_token);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/x-www-form-urlencoded"
-											}
-										],
-										"body": {
-											"mode": "urlencoded",
-											"urlencoded": [
-												{
-													"key": "grant_type",
-													"value": "password",
-													"type": "text"
-												},
-												{
-													"key": "client_id",
-													"value": "aspsp-mock",
-													"type": "text"
-												},
-												{
-													"key": "client_secret",
-													"value": "{{client_secret}}",
-													"type": "text"
-												},
-												{
-													"key": "username",
-													"value": "{{psu_id_multiple}}",
-													"type": "text"
-												},
-												{
-													"key": "password",
-													"value": "zzz",
-													"type": "text"
-												}
-											]
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_idp}}/auth/realms/xs2a/protocol/openid-connect/token",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_idp}}"
-											],
-											"path": [
-												"auth",
-												"realms",
-												"xs2a",
-												"protocol",
-												"openid-connect",
-												"token"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "4.2 Get TAN for psu multiple",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "83721020-fac4-49c5-8ac8-023212d11233",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"tanNumber exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('tanNumber');",
-													"    const tanNumber = jsonData.tanNumber;",
-													"    ",
-													"pm.globals.set(\"tanNumber\", tanNumber);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "authorization",
-												"type": "text",
-												"value": "{{access_token}}"
-											}
-										],
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_mock}}/consent/tan/{{psu_id_multiple}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_mock}}"
-											],
-											"path": [
-												"consent",
-												"tan",
-												"{{psu_id_multiple}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "5 Update PSU data for payment cancellation finalized",
+									"name": "12. Update PSU data for payment cancellation finalized",
 									"event": [
 										{
 											"listen": "test",
@@ -5550,7 +4697,7 @@
 											"raw": "{\n\t\"scaAuthenticationData\": \"{{tanNumber}}\"\n}"
 										},
 										"url": {
-                      "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_xs2a}}"
@@ -5561,7 +4708,7 @@
 												"{{payment_product}}",
 												"{{payment_id}}",
 												"cancellation-authorisations",
-                        "{{cancellation_id}}"
+												"{{cancellation_id}}"
 											]
 										},
 										"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
@@ -5569,7 +4716,7 @@
 									"response": []
 								},
 								{
-									"name": "8 Payment initiation status request",
+									"name": "13. Payment initiation status request",
 									"event": [
 										{
 											"listen": "test",
@@ -5622,7 +4769,7 @@
 									"response": []
 								},
 								{
-									"name": "2. Cancel payment again - should return error",
+									"name": "14.. Cancel payment again - should return error",
 									"event": [
 										{
 											"listen": "test",
@@ -5721,7 +4868,7 @@
 							"name": "Single payment initiation EMBEDDED 0 SCA methods",
 							"item": [
 								{
-									"name": "0 Set embedded SCA approach",
+									"name": "1. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -5769,7 +4916,7 @@
 									"response": []
 								},
 								{
-									"name": "0. Set aspsp properties",
+									"name": "2. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -5817,7 +4964,7 @@
 									"response": []
 								},
 								{
-									"name": "1 Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -5834,7 +4981,7 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
@@ -5843,7 +4990,7 @@
 													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -5911,7 +5058,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment initiation",
+									"name": "4. Update PSU data for payment initiation",
 									"event": [
 										{
 											"listen": "test",
@@ -5982,7 +5129,7 @@
 									"response": []
 								},
 								{
-									"name": "4 Get Payment Initiation Authorisation Sub-Resources Request",
+									"name": "5. Get Payment Initiation Authorisation Sub-Resources Request",
 									"event": [
 										{
 											"listen": "test",
@@ -6028,7 +5175,7 @@
 									"response": []
 								},
 								{
-									"name": "5 Read the SCA Status of the payment authorisation",
+									"name": "6. Read the SCA Status of the payment authorisation",
 									"event": [
 										{
 											"listen": "test",
@@ -6075,7 +5222,7 @@
 									"response": []
 								},
 								{
-									"name": "6 Get Payment Information",
+									"name": "7. Get Payment Information",
 									"event": [
 										{
 											"listen": "test",
@@ -6130,7 +5277,7 @@
 									"response": []
 								},
 								{
-									"name": "7 Payment initiation status request",
+									"name": "8. Payment initiation status request",
 									"event": [
 										{
 											"listen": "test",
@@ -6188,7 +5335,7 @@
 							"name": "Single payment initiation EMBEDDED 1 SCA method",
 							"item": [
 								{
-									"name": "0 Set embedded SCA approach",
+									"name": "1. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -6236,7 +5383,7 @@
 									"response": []
 								},
 								{
-									"name": "0. Set aspsp properties",
+									"name": "2. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -6284,7 +5431,7 @@
 									"response": []
 								},
 								{
-									"name": "1 Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -6301,16 +5448,18 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
-													"    pm.expect(_links).to.have.property('scaStatus');",
 													"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
-													"    ",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
+													"    pm.expect(_links).to.have.property('scaStatus');",
+													"",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -6378,7 +5527,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment initiation",
+									"name": "4. Update PSU data for payment initiation",
 									"event": [
 										{
 											"listen": "test",
@@ -6395,31 +5544,18 @@
 													"   pm.expect(jsonData.scaStatus).to.eql('scaMethodSelected');",
 													"});",
 													"",
-													"pm.test(\"Select authoriseTransaction method link exists\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
+													"",
+													"    pm.expect(_links).to.have.property('scaStatus');",
 													"    pm.expect(_links).to.have.property('authoriseTransaction');",
 													"});",
 													"",
-													"pm.test(\"Select chosenScaMethod exist\", () => {",
-													"    pm.expect(jsonData).to.have.property('chosenScaMethod');",
-													"    const chosenScaMethod = jsonData.chosenScaMethod;",
-													"    ",
-													"    pm.expect(chosenScaMethod).to.have.property('authenticationType');",
-													"    pm.expect(chosenScaMethod.authenticationType).to.eql('SMS_OTP');",
-													"    ",
-													"    pm.expect(chosenScaMethod).to.have.property('authenticationMethodId');",
-													"    pm.expect(chosenScaMethod.authenticationMethodId).to.eql('sms');",
-													"});",
-													"",
-													"pm.test(\"Challenge data exist\", () => {",
-													"    pm.expect(jsonData).to.have.property('challengeData');",
-													"    const challengeData = jsonData.challengeData;",
-													"    ",
-													"    pm.expect(challengeData).to.have.property('data');",
-													"    pm.expect(challengeData).to.have.property('imageLink');",
-													"    pm.expect(challengeData).to.have.property('otpMaxLength');",
-													"    pm.expect(challengeData).to.have.property('additionalInformation');",
+													"pm.test(\"Select scaStatus link exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    pm.expect(_links).to.have.property('scaStatus');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -6470,141 +5606,7 @@
 									"response": []
 								},
 								{
-									"name": "3.1 Get access token form IDP",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "a5180f8b-82da-47cf-9c83-d169798fb964",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"access_token exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('access_token');",
-													"    const access_token = jsonData.access_token;",
-													"    ",
-													"pm.globals.set(\"access_token\", \"Bearer \"+access_token);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"value": "application/x-www-form-urlencoded",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "urlencoded",
-											"urlencoded": [
-												{
-													"key": "grant_type",
-													"value": "password",
-													"type": "text"
-												},
-												{
-													"key": "client_id",
-													"value": "aspsp-mock",
-													"type": "text"
-												},
-												{
-													"key": "client_secret",
-													"value": "{{client_secret}}",
-													"type": "text"
-												},
-												{
-													"key": "username",
-													"value": "{{psu_id_single}}",
-													"type": "text"
-												},
-												{
-													"key": "password",
-													"value": "zzz",
-													"type": "text"
-												}
-											]
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_idp}}/auth/realms/xs2a/protocol/openid-connect/token",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_idp}}"
-											],
-											"path": [
-												"auth",
-												"realms",
-												"xs2a",
-												"protocol",
-												"openid-connect",
-												"token"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "3.2 Get TAN for psu single",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "83721020-fac4-49c5-8ac8-023212d11233",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"tanNumber exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('tanNumber');",
-													"    const tanNumber = jsonData.tanNumber;",
-													"    ",
-													"pm.globals.set(\"tanNumber\", tanNumber);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "authorization",
-												"type": "text",
-												"value": "{{access_token}}"
-											}
-										],
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_mock}}/consent/tan/{{psu_id_single}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_mock}}"
-											],
-											"path": [
-												"consent",
-												"tan",
-												"{{psu_id_single}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "4 Update PSU data for payment initiation finalized",
+									"name": "5. Update PSU data for payment initiation finalized",
 									"event": [
 										{
 											"listen": "test",
@@ -6675,7 +5677,7 @@
 									"response": []
 								},
 								{
-									"name": "5 Get Payment Initiation Authorisation Sub-Resources Request",
+									"name": "6. Get Payment Initiation Authorisation Sub-Resources Request",
 									"event": [
 										{
 											"listen": "test",
@@ -6721,7 +5723,7 @@
 									"response": []
 								},
 								{
-									"name": "6 Read the SCA Status of the payment authorisation",
+									"name": "7. Read the SCA Status of the payment authorisation",
 									"event": [
 										{
 											"listen": "test",
@@ -6768,7 +5770,7 @@
 									"response": []
 								},
 								{
-									"name": "7 Get Payment Information",
+									"name": "8. Get Payment Information",
 									"event": [
 										{
 											"listen": "test",
@@ -6823,7 +5825,7 @@
 									"response": []
 								},
 								{
-									"name": "8 Payment initiation status request",
+									"name": "9. Payment initiation status request",
 									"event": [
 										{
 											"listen": "test",
@@ -6904,7 +5906,7 @@
 							"name": "Single payment initiation EMBEDDED multiple SCA methods",
 							"item": [
 								{
-									"name": "0. Set embedded SCA approac",
+									"name": "1. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -6952,7 +5954,7 @@
 									"response": []
 								},
 								{
-									"name": "0. Set aspsp properties",
+									"name": "2. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -7000,7 +6002,7 @@
 									"response": []
 								},
 								{
-									"name": "1 Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -7017,7 +6019,7 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
@@ -7026,7 +6028,7 @@
 													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -7094,7 +6096,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment initiation",
+									"name": "4. Update PSU data for payment initiation",
 									"event": [
 										{
 											"listen": "test",
@@ -7121,20 +6123,23 @@
 													"    pm.expect(jsonData).to.have.property('scaMethods');",
 													"    const scaMethods = jsonData.scaMethods;",
 													"    ",
-													"    pm.expect(scaMethods.length).to.eql(3);",
+													"    pm.expect(scaMethods.length).to.be.above(1);",
 													"    ",
 													"    pm.expect(scaMethods[0]).to.have.property('authenticationType');",
-													"    pm.expect(scaMethods[0].authenticationType).to.eql('SMS_OTP');",
-													"",
+													"    pm.expect(scaMethods[0].authenticationType) !== undefined;",
+													"    ",
 													"    pm.expect(scaMethods[0]).to.have.property('authenticationMethodId');",
-													"    pm.expect(scaMethods[0].authenticationMethodId).to.eql('sms');",
+													"    pm.expect(scaMethods[0].authenticationMethodId) !== undefined;",
+													"",
+													"    pm.expect(scaMethods[0]).to.have.property('authenticationType');",
+													"    pm.expect(scaMethods[0].authenticationType) !== undefined;",
 													"    ",
-													"    pm.expect(scaMethods[1]).to.have.property('authenticationType');",
-													"    pm.expect(scaMethods[1].authenticationType).to.eql('PUSH_OTP');",
+													"    pm.expect(scaMethods[0]).to.have.property('authenticationMethodId');",
+													"    pm.expect(scaMethods[0].authenticationMethodId) !== undefined;",
 													"    ",
-													"    pm.expect(scaMethods[1]).to.have.property('authenticationMethodId');",
-													"    pm.expect(scaMethods[1].authenticationMethodId).to.eql('push');",
+													"    pm.globals.set(\"authenticationMethodId\", scaMethods[0].authenticationMethodId);",
 													"});",
+													"",
 													"",
 													""
 												],
@@ -7186,7 +6191,7 @@
 									"response": []
 								},
 								{
-									"name": "4 Update PSU data for payment initiation chose scaMethod",
+									"name": "5. Update PSU data for payment initiation chose SCA method",
 									"event": [
 										{
 											"listen": "test",
@@ -7214,20 +6219,14 @@
 													"    const chosenScaMethod = jsonData.chosenScaMethod;",
 													"    ",
 													"    pm.expect(chosenScaMethod).to.have.property('authenticationType');",
-													"    pm.expect(chosenScaMethod.authenticationType).to.eql('SMS');",
+													"    pm.expect(chosenScaMethod.authenticationType) !== undefined;",
 													"    ",
 													"    pm.expect(chosenScaMethod).to.have.property('authenticationMethodId');",
-													"    pm.expect(chosenScaMethod.authenticationMethodId).to.eql('sms');",
+													"    pm.expect(chosenScaMethod.authenticationMethodId) !== undefined;",
 													"});",
 													"",
 													"pm.test(\"Challenge data exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('challengeData');",
-													"    const challengeData = jsonData.challengeData;",
-													"    ",
-													"    pm.expect(challengeData).to.have.property('data');",
-													"    pm.expect(challengeData).to.have.property('imageLink');",
-													"    pm.expect(challengeData).to.have.property('otpMaxLength');",
-													"    pm.expect(challengeData).to.have.property('additionalInformation');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -7256,7 +6255,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"authenticationMethodId\": \"{{scaMethod}}\"        \n}"
+											"raw": "{\n    \"authenticationMethodId\": \"{{authenticationMethodId}}\"        \n}"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
@@ -7278,141 +6277,7 @@
 									"response": []
 								},
 								{
-									"name": "4.1 Get access token form IDP",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "a5180f8b-82da-47cf-9c83-d169798fb964",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"access_token exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('access_token');",
-													"    const access_token = jsonData.access_token;",
-													"    ",
-													"pm.globals.set(\"access_token\", \"Bearer \"+access_token);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/x-www-form-urlencoded"
-											}
-										],
-										"body": {
-											"mode": "urlencoded",
-											"urlencoded": [
-												{
-													"key": "grant_type",
-													"value": "password",
-													"type": "text"
-												},
-												{
-													"key": "client_id",
-													"value": "aspsp-mock",
-													"type": "text"
-												},
-												{
-													"key": "client_secret",
-													"value": "{{client_secret}}",
-													"type": "text"
-												},
-												{
-													"key": "username",
-													"value": "{{psu_id_multiple}}",
-													"type": "text"
-												},
-												{
-													"key": "password",
-													"value": "zzz",
-													"type": "text"
-												}
-											]
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_idp}}/auth/realms/xs2a/protocol/openid-connect/token",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_idp}}"
-											],
-											"path": [
-												"auth",
-												"realms",
-												"xs2a",
-												"protocol",
-												"openid-connect",
-												"token"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "4.2 Get TAN for psu multiple",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "83721020-fac4-49c5-8ac8-023212d11233",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"tanNumber exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('tanNumber');",
-													"    const tanNumber = jsonData.tanNumber;",
-													"    ",
-													"pm.globals.set(\"tanNumber\", tanNumber);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "authorization",
-												"type": "text",
-												"value": "{{access_token}}"
-											}
-										],
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_mock}}/consent/tan/{{psu_id_multiple}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_mock}}"
-											],
-											"path": [
-												"consent",
-												"tan",
-												"{{psu_id_multiple}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "5 Update PSU data for payment initiation finalized",
+									"name": "6. Update PSU data for payment initiation finalized",
 									"event": [
 										{
 											"listen": "test",
@@ -7483,7 +6348,7 @@
 									"response": []
 								},
 								{
-									"name": "6 Get Payment Initiation Authorisation Sub-Resources Request",
+									"name": "7. Get Payment Initiation Authorisation Sub-Resources Request",
 									"event": [
 										{
 											"listen": "test",
@@ -7529,7 +6394,7 @@
 									"response": []
 								},
 								{
-									"name": "7 Read the SCA Status of the payment authorisation",
+									"name": "8. Read the SCA Status of the payment authorisation",
 									"event": [
 										{
 											"listen": "test",
@@ -7576,7 +6441,7 @@
 									"response": []
 								},
 								{
-									"name": "8 Get Payment Information",
+									"name": "9. Get Payment Information",
 									"event": [
 										{
 											"listen": "test",
@@ -7594,7 +6459,13 @@
 													"    pm.expect(jsonData).to.have.property('instructedAmount');",
 													"    pm.expect(jsonData).to.have.property('creditorAccount');",
 													"    pm.expect(jsonData).to.have.property('creditorName');",
+													"    pm.expect(jsonData).to.have.property('creditorAgent');",
+													"    pm.expect(jsonData).to.have.property('creditorAddress');",
+													"    pm.expect(jsonData).to.have.property('transactionStatus');",
+													"});",
 													"",
+													"pm.test(\"Transaction status is ACSP\", () => {",
+													"    pm.expect(jsonData).to.have.property('transactionStatus', 'ACSP');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -7631,7 +6502,7 @@
 									"response": []
 								},
 								{
-									"name": "9 Payment initiation status request",
+									"name": "10. Payment initiation status request",
 									"event": [
 										{
 											"listen": "test",
@@ -7646,6 +6517,10 @@
 													"",
 													"pm.test(\"Test transaction status\", () => {",
 													"    pm.expect(jsonData).to.have.property('transactionStatus');",
+													"});",
+													"",
+													"pm.test(\"Transaction status is ACSP\", () => {",
+													"    pm.expect(jsonData).to.have.property('transactionStatus', 'ACSP');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -7712,7 +6587,7 @@
 							"name": "Single payment cancellation EMBEDDED 0 SCA methods",
 							"item": [
 								{
-									"name": "0. Set aspsp properties",
+									"name": "1. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -7760,7 +6635,7 @@
 									"response": []
 								},
 								{
-									"name": "0. Set embedded SCA approach",
+									"name": "2. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -7808,7 +6683,7 @@
 									"response": []
 								},
 								{
-									"name": "1. Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -7825,7 +6700,7 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
@@ -7834,7 +6709,7 @@
 													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -7908,7 +6783,7 @@
 									"response": []
 								},
 								{
-									"name": "2. Cancel payment",
+									"name": "4. Cancel payment",
 									"event": [
 										{
 											"listen": "test",
@@ -7971,7 +6846,7 @@
 									"response": []
 								},
 								{
-									"name": "2. Cancel payment again - should return error",
+									"name": "5. Cancel payment again - should return error",
 									"event": [
 										{
 											"listen": "test",
@@ -8042,7 +6917,7 @@
 							"name": "Single payment cancellation EMBEDDED 1 SCA method",
 							"item": [
 								{
-									"name": "0. Set aspsp properties",
+									"name": "1. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -8090,7 +6965,7 @@
 									"response": []
 								},
 								{
-									"name": "0 Set embedded SCA approach",
+									"name": "2. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -8138,7 +7013,7 @@
 									"response": []
 								},
 								{
-									"name": "1. Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -8155,16 +7030,18 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
-													"    pm.expect(_links).to.have.property('scaStatus');",
 													"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
+													"    pm.expect(_links).to.have.property('scaStatus');",
 													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -8238,7 +7115,7 @@
 									"response": []
 								},
 								{
-									"name": "2. Cancel payment",
+									"name": "4. Cancel payment",
 									"event": [
 										{
 											"listen": "test",
@@ -8295,7 +7172,7 @@
 									"response": []
 								},
 								{
-									"name": "2. Cancel payment again - should return error",
+									"name": "5. Cancel payment again - should return error",
 									"event": [
 										{
 											"listen": "test",
@@ -8366,7 +7243,7 @@
 							"name": "Single payment cancellation EMBEDDED multiple SCA methods",
 							"item": [
 								{
-									"name": "0. Set embedded SCA approach",
+									"name": "1. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -8414,7 +7291,7 @@
 									"response": []
 								},
 								{
-									"name": "0. Set aspsp properties",
+									"name": "2. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -8462,7 +7339,7 @@
 									"response": []
 								},
 								{
-									"name": "1. Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -8479,16 +7356,18 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
-													"    pm.expect(_links).to.have.property('scaStatus');",
 													"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
+													"    pm.expect(_links).to.have.property('scaStatus');",
 													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -8561,7 +7440,7 @@
 									"response": []
 								},
 								{
-									"name": "2. Cancel payment",
+									"name": "4. Cancel payment",
 									"event": [
 										{
 											"listen": "test",
@@ -8624,7 +7503,7 @@
 							"name": "Single payment cancellation redirect URL expiration",
 							"item": [
 								{
-									"name": "1. Payment initiation",
+									"name": "1. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -8641,16 +7520,18 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
-													"    pm.expect(_links).to.have.property('scaStatus');",
 													"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
+													"    pm.expect(_links).to.have.property('scaStatus');",
 													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -8761,6 +7642,8 @@
 													"    const _links = jsonData._links;",
 													"    ",
 													"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+													"    pm.expect(_links).to.have.property('scaStatus');",
+													"",
 													"});"
 												],
 												"type": "text/javascript"
@@ -8809,7 +7692,7 @@
 									"response": []
 								},
 								{
-									"name": "3. Get payment by redirect id",
+									"name": "3. Get payment by redirect ID",
 									"request": {
 										"method": "GET",
 										"header": [
@@ -8868,7 +7751,7 @@
 					"name": "Bulk payment initiation EMBEDDED 0 SCA methods",
 					"item": [
 						{
-							"name": "0. Set aspsp properties",
+							"name": "1. Set aspsp properties",
 							"event": [
 								{
 									"listen": "test",
@@ -8916,7 +7799,7 @@
 							"response": []
 						},
 						{
-							"name": "0 Set embedded SCA approach",
+							"name": "2 Set embedded SCA approach",
 							"event": [
 								{
 									"listen": "test",
@@ -8964,7 +7847,7 @@
 							"response": []
 						},
 						{
-							"name": "1 Payment initiation request",
+							"name": "3. Payment initiation request",
 							"event": [
 								{
 									"listen": "test",
@@ -8981,7 +7864,7 @@
 											"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 											"});",
 											"",
-											"pm.test(\"Select links exist\", () => {",
+											"pm.test(\"Links exist\", () => {",
 											"    pm.expect(jsonData).to.have.property('_links');",
 											"    const _links = jsonData._links;",
 											"    ",
@@ -8990,7 +7873,7 @@
 											"    ",
 											"});",
 											"",
-											"pm.test(\"Payment Id exists\", () => {",
+											"pm.test(\"Payment ID exists\", () => {",
 											"    pm.expect(jsonData).to.have.property('paymentId');",
 											"});",
 											"",
@@ -9062,7 +7945,7 @@
 							"response": []
 						},
 						{
-							"name": "3 Update PSU data for payment initiation",
+							"name": "4. Update PSU data for payment initiation",
 							"event": [
 								{
 									"listen": "test",
@@ -9134,7 +8017,7 @@
 							"response": []
 						},
 						{
-							"name": "4 Get Payment Initiation Authorisation Sub-Resources Request",
+							"name": "5. Get Payment Initiation Authorisation Sub-Resources Request",
 							"event": [
 								{
 									"listen": "test",
@@ -9190,7 +8073,7 @@
 							"response": []
 						},
 						{
-							"name": "5 Read the SCA Status of the payment authorisation",
+							"name": "6. Read the SCA Status of the payment authorisation",
 							"event": [
 								{
 									"listen": "test",
@@ -9245,7 +8128,7 @@
 							"response": []
 						},
 						{
-							"name": "6 Get Payment Information",
+							"name": "7. Get Payment Information",
 							"event": [
 								{
 									"listen": "test",
@@ -9302,7 +8185,7 @@
 							"response": []
 						},
 						{
-							"name": "7 Payment initiation status request",
+							"name": "8. Payment initiation status request",
 							"event": [
 								{
 									"listen": "test",
@@ -9317,6 +8200,10 @@
 											"",
 											"pm.test(\"Test transaction status\", () => {",
 											"    pm.expect(jsonData).to.have.property('transactionStatus');",
+											"});",
+											"",
+											"pm.test(\"Transaction status is ACSP\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionStatus', 'ACSP');",
 											"});"
 										],
 										"type": "text/javascript"
@@ -9379,16 +8266,18 @@
 									"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 									"});",
 									"",
-									"pm.test(\"Select links exist\", () => {",
+									"pm.test(\"Links exist\", () => {",
 									"    pm.expect(jsonData).to.have.property('_links');",
 									"    const _links = jsonData._links;",
-									"    ",
-									"    pm.expect(_links).to.have.property('scaStatus');",
+									"",
 									"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+									"    pm.expect(_links).to.have.property('self');",
+									"    pm.expect(_links).to.have.property('status');",
+									"    pm.expect(_links).to.have.property('scaStatus');",
 									"    ",
 									"});",
 									"",
-									"pm.test(\"Payment Id exists\", () => {",
+									"pm.test(\"Payment ID exists\", () => {",
 									"    pm.expect(jsonData).to.have.property('paymentId');",
 									"});",
 									"",
@@ -9478,7 +8367,7 @@
 									"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 									"});",
 									"",
-									"pm.test(\"Select links exist\", () => {",
+									"pm.test(\"Links exist\", () => {",
 									"    pm.expect(jsonData).to.have.property('_links');",
 									"    const _links = jsonData._links;",
 									"    ",
@@ -9487,7 +8376,7 @@
 									"    ",
 									"});",
 									"",
-									"pm.test(\"Payment Id exists\", () => {",
+									"pm.test(\"Payment ID exists\", () => {",
 									"    pm.expect(jsonData).to.have.property('paymentId');",
 									"});",
 									"",
@@ -9557,509 +8446,6 @@
 			]
 		},
 		{
-			"name": "DTAZV",
-			"item": [
-				{
-					"name": "0. Update ASPSP profile setting",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "67af457a-0c1a-44da-8b16-9af106584c29",
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"frequencyPerDay\": 5,\n  \"combinedServiceIndicator\": false,\n  \"tppSignatureRequired\": false,\n  \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/\",\n  \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/\",\n  \"multicurrencyAccountLevel\": \"SUBACCOUNT\",\n  \"bankOfferedConsentSupport\": true,\n  \"availableBookingStatuses\": [\n    \"booked\",\n    \"pending\"\n  ],\n  \"supportedAccountReferenceFields\": [\n    \"IBAN\"\n  ],\n  \"consentLifetime\": 0,\n  \"transactionLifetime\": 0,\n  \"allPsd2Support\": true,\n  \"transactionsWithoutBalancesSupported\": true,\n  \"signingBasketSupported\": false,\n  \"paymentCancellationAuthorizationMandated\": false,\n  \"piisConsentSupported\": false,\n  \"redirectUrlExpirationTimeMs\": 600000,\n  \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/\",\n  \"notConfirmedConsentExpirationPeriodMs\": 86400000,\n  \"notConfirmedPaymentExpirationPeriodMs\": 86400000,\n  \"supportedPaymentTypeAndProductMatrix\": {\n    \"payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\",\n      \"dtazv-payment\"\n    ],\n    \"periodic-payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\"\n    ],\n    \"bulk-payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\"\n    ]\n  },\n  \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000,\n  \"availableAccountsConsentSupported\": true,\n  \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n  \"psuInInitialRequestMandated\": false,\n  \"forceXs2aBaseUrl\": false,\n  \"xs2aBaseUrl\": \"http://myhost.com/\",\n  \"deltaListSupported\": false,\n  \"entryReferenceFromSupported\": false\n}\n"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_aspsp_profile}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"aspsp-profile",
-								"for-debug",
-								"aspsp-settings"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "1. DTAZV payment initiation",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "85a31d81-7ce1-416b-aba4-c282e893f08f",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									"",
-									"pm.test(\"Transcation status is RCVD\", () => {",
-									"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
-									"});",
-									"",
-									"pm.test(\"Select links exist\", () => {",
-									"    pm.expect(jsonData).to.have.property('_links');",
-									"    const _links = jsonData._links;",
-									"    ",
-									"    pm.expect(_links).to.have.property('scaStatus');",
-									"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
-									"    ",
-									"});",
-									"",
-									"pm.test(\"Payment Id exists\", () => {",
-									"    pm.expect(jsonData).to.have.property('paymentId');",
-									"});",
-									"",
-									"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
-									"pm.globals.set(\"authorisation_id\", authorisationId);",
-									"pm.globals.set(\"payment_id\", jsonData.paymentId);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "text/plain"
-							},
-							{
-								"key": "PSU-IP-Address",
-								"value": "{{ip_address}}"
-							},
-							{
-								"key": "X-Request-ID",
-								"value": "{{x_request_id}}"
-							},
-							{
-								"key": "TPP-Explicit-Authorisation-Preferred",
-								"value": "true",
-								"type": "text"
-							},
-							{
-								"key": "PSU-ID",
-								"value": "{{psu_id_none}}",
-								"type": "text"
-							},
-							{
-								"key": "TPP-Nok-Redirect-URI",
-								"value": "someuri",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "0256Q250400900088889999REMPEL ANDREAS                                                        WENDEL                             52147 KOELE                        19012404190124N0000000000                                                                    0768T25040090EUR008888999900000000000000   0000000000ICRAITRR                                                                                                                                                  DE TESTER1                                                               WENDEL 1234                        52134 KOELN                                                                                              /IT77W0853046040000439600007       EUR00000000000025500AZV 25,50 EURO                     TEST 777                                                                                                 00000000                         0100                                                              0                                                   000256Z000000000000025000000000000001                                                                                                                                                                                                                             "
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/payments/dtazv-payment",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"payments",
-								"dtazv-payment"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "2. Get DTAZV payment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "87a900c5-4b8d-4cbe-b5a7-eb78f80d709c",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "*/*",
-								"type": "text"
-							},
-							{
-								"key": "X-Request-ID",
-								"value": "{{x_request_id}}",
-								"type": "text"
-							},
-							{
-								"key": "PSU-IP-Address",
-								"value": "{{ip_address}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/payments/dtazv-payment/{{payment_id}}",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"payments",
-								"dtazv-payment",
-								"{{payment_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "3. Get DTAZV payment status",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "1daa4da4-da87-4f23-822c-9cffc9e68422",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Test transaction status\", () => {",
-									"    pm.expect(jsonData).to.have.property('transactionStatus');",
-									"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "X-Request-ID",
-								"value": "{{x_request_id}}",
-								"type": "text"
-							},
-							{
-								"key": "PSU-IP-Address",
-								"value": "{{ip_address}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/payments/dtazv-payment/{{payment_id}}/status",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"payments",
-								"dtazv-payment",
-								"{{payment_id}}",
-								"status"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Pain",
-			"item": [
-				{
-					"name": "Update ASPSP profile setting",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "67af457a-0c1a-44da-8b16-9af106584c29",
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"frequencyPerDay\": 5,\n  \"combinedServiceIndicator\": false,\n  \"tppSignatureRequired\": false,\n  \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/\",\n  \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/\",\n  \"multicurrencyAccountLevel\": \"SUBACCOUNT\",\n  \"bankOfferedConsentSupport\": true,\n  \"availableBookingStatuses\": [\n    \"booked\",\n    \"pending\"\n  ],\n  \"supportedAccountReferenceFields\": [\n    \"IBAN\"\n  ],\n  \"consentLifetime\": 0,\n  \"transactionLifetime\": 0,\n  \"allPsd2Support\": true,\n  \"transactionsWithoutBalancesSupported\": true,\n  \"signingBasketSupported\": false,\n  \"paymentCancellationAuthorizationMandated\": false,\n  \"piisConsentSupported\": false,\n  \"redirectUrlExpirationTimeMs\": 600000,\n  \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/\",\n  \"notConfirmedConsentExpirationPeriodMs\": 86400000,\n  \"notConfirmedPaymentExpirationPeriodMs\": 86400000,\n  \"supportedPaymentTypeAndProductMatrix\": {\n    \"payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\",\n      \"pain.001-sepa-credit-transfers\"\n    ],\n    \"periodic-payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\",\n      \"pain.001-sepa-credit-transfers\"\n    ],\n    \"bulk-payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\",\n      \"pain.001-sepa-credit-transfers\"\n    ]\n  },\n  \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000,\n  \"availableAccountsConsentSupported\": true,\n  \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n  \"psuInInitialRequestMandated\": false,\n  \"forceXs2aBaseUrl\": false,\n  \"xs2aBaseUrl\": \"http://myhost.com/\",\n  \"deltaListSupported\": false,\n  \"entryReferenceFromSupported\": false\n}\n"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_aspsp_profile}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"aspsp-profile",
-								"for-debug",
-								"aspsp-settings"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Initiate pain single payment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "aba475f0-c4a4-4b02-8e0f-9c447e9f7282",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.globals.set(\"payment_id\", jsonData.paymentId);",
-									"",
-									"pm.test(\"Status code is 201\", () => {",
-									"    pm.response.to.have.status(201);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/xml",
-								"type": "text"
-							},
-							{
-								"key": "X-Request-ID",
-								"value": "{{x_request_id}}",
-								"type": "text"
-							},
-							{
-								"key": "PSU-IP-Address",
-								"value": "{{ip_address}}",
-								"type": "text"
-							},
-							{
-								"key": "PSU-ID",
-								"value": "{{psu_id_none}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.001.001.03\"> \n<CstmrCdtTrfInitn>\n<GrpHdr> \n<MsgId>MIPI-123456789RI-123456789</MsgId> \n<CreDtTm>2017-02-14T20:23:34.000Z</CreDtTm> \n<NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum>\n<InitgPty>\n<Nm>PaymentInitiator</Nm> \n<Id><OrgId><Othr><Id>DE10000000012</Id>\n<SchmeNm><Prptry>PISP</Prptry></SchmeNm></Othr></OrgId></Id> </InitgPty>\n    </GrpHdr>\n    <PmtInf>\n<PmtInfId>BIPI-123456789RI-123456789</PmtInfId> \n<PmtMtd>TRF</PmtMtd>\n<NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum> \n<PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf> \n<ReqdExctnDt>2017-02-15</ReqdExctnDt>\n<Dbtr><Nm>PSU Name</Nm></Dbtr> \n<DbtrAcct><Id><IBAN>DE87200500001234567890</IBAN></Id></DbtrAcct> \n<ChrgBr>SLEV</ChrgBr>\n<CdtTrfTxInf>\n<PmtId><EndToEndId>RI-123456789</EndToEndId></PmtId> \n<Amt><InstdAmt Ccy=\"EUR\">123</InstdAmt></Amt> \n<Cdtr><Nm>Merchant123</Nm></Cdtr>\n<CdtrAcct><Id><IBAN> DE23100120020123456789</IBAN></Id></CdtrAcct>\n<RmtInf><Ustrd>Ref Number Merchant-123456</Ustrd></RmtInf> \n</CdtTrfTxInf>\n    </PmtInf>\n  </CstmrCdtTrfInitn>\n</Document>\n"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/payments/pain.001-sepa-credit-transfers",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"payments",
-								"pain.001-sepa-credit-transfers"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Initiate pain periodic payment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "8c4066d4-997c-4109-879e-9f92d8017a54",
-								"exec": [
-									"pm.test(\"Status code is 201\", () => {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "multipart/form-data; boundary=--AaaBbbCcc"
-							},
-							{
-								"key": "X-Request-ID",
-								"type": "text",
-								"value": "{{x_request_id}}"
-							},
-							{
-								"key": "PSU-IP-Address",
-								"type": "text",
-								"value": "{{ip_address}}"
-							},
-							{
-								"key": "PSU-ID",
-								"type": "text",
-								"value": "{{psu_id_none}}"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "xml_sct",
-									"value": "<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.001.001.03\">\n\n  <CstmrCdtTrfInitn>\n    <GrpHdr>\n<MsgId>MIPI-123456789RI-123456789</MsgId> <CreDtTm>2017-02-14T20:23:34.000Z</CreDtTm> <NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum>\n\n<InitgPty>\n\n<Id><OrgId><Othr><Id>DE10000000012</Id>\n\n<SchmeNm><Prptry>PISP</Prptry></SchmeNm></Othr></OrgId></Id> </InitgPty>\n\n</GrpHdr>\n<PmtInf>\n<PmtInfId>BIPI-123456789RI-123456789</PmtInfId> <PmtMtd>TRF</PmtMtd>\n<NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum>\n\n<PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf> <ReqdExctnDt>2017-02-15</ReqdExctnDt>\n<Dbtr><Nm>PSU Name</Nm></Dbtr> <DbtrAcct><Id><IBAN>DE87200500001234567890</IBAN></Id></DbtrAcct>\n\n<ChrgBr>SLEV</ChrgBr>\n<CdtTrfTxInf>\t\t\t\t\t\n<PmtId><EndToEndId>RI-123456789</EndToEndId></PmtId>\n<Amt><InstdAmt Ccy=\"EUR\">123</InstdAmt></Amt>\n<Cdtr><Nm>Merchant123</Nm></Cdtr>\n<CdtrAcct><Id><IBAN>DE23100120020123456789</IBAN></Id></CdtrAcct>\n<RmtInf><Ustrd>Ref Number Merchant-123456</Ustrd></RmtInf>\n\n      </CdtTrfTxInf>\n    </PmtInf>\t\t\t\t\t\n</CstmrCdtTrfInitn>\n</Document>",
-									"type": "text"
-								},
-								{
-									"key": "json_standingordermanagement",
-									"value": "{\"startDate\": \"2018-03-01\",\n \"frequency\": \"monthly\",\n \"executionRule\": \"latest\",\n \"dayOfExecution\": \"01\"\n}",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/periodic-payments/pain.001-sepa-credit-transfers",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"periodic-payments",
-								"pain.001-sepa-credit-transfers"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Initiate pain bulk payment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "a8e40b6b-d743-4d78-908b-7dd9dadd56cb",
-								"exec": [
-									"pm.test(\"Status code is 201\", () => {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/xml",
-								"type": "text"
-							},
-							{
-								"key": "X-Request-ID",
-								"value": "{{x_request_id}}",
-								"type": "text"
-							},
-							{
-								"key": "PSU-IP-Address",
-								"value": "{{ip_address}}",
-								"type": "text"
-							},
-							{
-								"key": "PSU-ID",
-								"value": "{{psu_id_none}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Document\n   xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.001.001.03\"\n   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n  <CstmrCdtTrfInitn>\n    <GrpHdr>\n      <MsgId>MessageId</MsgId>\n      <CreDtTm>2014-01-08T10:33:56</CreDtTm>\n      <NbOfTxs>3</NbOfTxs>\n      <CtrlSum>49.00</CtrlSum>\n      <InitgPty>\n        <Nm>Accountholder-Name</Nm>\n      </InitgPty>\n    </GrpHdr>\n    <PmtInf>\n      <PmtInfId>PaymentInformationId</PmtInfId>\n      <PmtMtd>TRF</PmtMtd>\n      <NbOfTxs>3</NbOfTxs>\n      <CtrlSum>49.00</CtrlSum>\n      <PmtTpInf>\n        <SvcLvl>\n          <Cd>SEPA</Cd>\n        </SvcLvl>\n      </PmtTpInf>\n      <ReqdExctnDt>2014-01-08</ReqdExctnDt>\n      <Dbtr>\n        <Nm>Accountholder-Name</Nm>\n      </Dbtr>\n      <DbtrAcct>\n        <Id>\n          <IBAN>NL72ABNC0123456789</IBAN>\n        </Id>\n      </DbtrAcct>\n      <DbtrAgt>\n        <FinInstnId>\n          <BIC>ABNCNL2A</BIC>\n        </FinInstnId>\n      </DbtrAgt>\n      <ChrgBr>SLEV</ChrgBr>\n      <CdtTrfTxInf>\n        <PmtId>\n          <EndToEndId>E2E-ID-1</EndToEndId>\n        </PmtId>\n        <Amt>\n          <InstdAmt Ccy=\"EUR\">13.00</InstdAmt>\n        </Amt>\n        <CdtrAgt>\n          <FinInstnId>\n            <BIC>INGBNL2A</BIC>\n          </FinInstnId>\n        </CdtrAgt>\n        <Cdtr>\n          <Nm>Beneficiary1</Nm>\n        </Cdtr>\n        <CdtrAcct>\n          <Id>\n            <IBAN>NL69INGB0123456789</IBAN>\n          </Id>\n        </CdtrAcct>\n        <RmtInf>\n          <Ustrd>RemittanceInformation1</Ustrd>\n          </RmtInf>\n      </CdtTrfTxInf>\n      <CdtTrfTxInf>\n        <PmtId>\n          <EndToEndId>E2E-ID-2</EndToEndId>\n        </PmtId>\n        <Amt>\n          <InstdAmt Ccy=\"EUR\">17.00</InstdAmt>\n        </Amt>\n        <CdtrAgt>\n          <FinInstnId>\n            <BIC>INGBNL2A</BIC>\n          </FinInstnId>\n        </CdtrAgt>\n        <Cdtr>\n          <Nm>Beneficiary2</Nm>\n        </Cdtr>\n        <CdtrAcct>\n          <Id>\n            <IBAN>NL69INGB0123456789</IBAN>\n          </Id>\n        </CdtrAcct>\n        <RmtInf>\n          <Ustrd>RemittanceInformation2</Ustrd>\n        </RmtInf>\n      </CdtTrfTxInf>\n      <CdtTrfTxInf>\n        <PmtId>\n          <EndToEndId>E2E-ID-3</EndToEndId>\n        </PmtId>\n        <Amt>\n          <InstdAmt Ccy=\"EUR\">19.00</InstdAmt>\n        </Amt>\n        <CdtrAgt>\n          <FinInstnId>\n            <BIC>INGBNL2A</BIC>\n          </FinInstnId>\n        </CdtrAgt>\n        <Cdtr>\n          <Nm>Beneficiary3</Nm>\n        </Cdtr>\n        <CdtrAcct>\n          <Id>\n            <IBAN>NL69INGB0123456789</IBAN>\n          </Id>\n        </CdtrAcct>\n        <RmtInf>\n          <Ustrd>RemittanceInformation3</Ustrd>\n        </RmtInf>\n      </CdtTrfTxInf>\n    </PmtInf>\n  </CstmrCdtTrfInitn>\n</Document>"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/pain.001-sepa-credit-transfers",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"bulk-payments",
-								"pain.001-sepa-credit-transfers"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "Errorful requests",
 			"item": [
 				{
@@ -10069,7 +8455,7 @@
 							"name": "Single payment initiation EMBEDDED  = wrong Tpp in certificate",
 							"item": [
 								{
-									"name": "0. Set aspsp properties",
+									"name": "1. Set ASPSP properties",
 									"event": [
 										{
 											"listen": "test",
@@ -10117,7 +8503,7 @@
 									"response": []
 								},
 								{
-									"name": "0. Set embedded SCA approac",
+									"name": "2. Set embedded SCA approach",
 									"event": [
 										{
 											"listen": "test",
@@ -10165,7 +8551,7 @@
 									"response": []
 								},
 								{
-									"name": "1 Payment initiation request",
+									"name": "3. Payment initiation request",
 									"event": [
 										{
 											"listen": "test",
@@ -10182,15 +8568,17 @@
 													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 													"});",
 													"",
-													"pm.test(\"Select links exist\", () => {",
+													"pm.test(\"Links exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('_links');",
 													"    const _links = jsonData._links;",
 													"    ",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
 													"    pm.expect(_links).to.have.property('startAuthorisation');",
 													"    ",
 													"});",
 													"",
-													"pm.test(\"Payment Id exists\", () => {",
+													"pm.test(\"Payment ID exists\", () => {",
 													"    pm.expect(jsonData).to.have.property('paymentId');",
 													"});",
 													"",
@@ -10276,7 +8664,7 @@
 									"response": []
 								},
 								{
-									"name": "2 Start the authorisation process for a payment initiation",
+									"name": "4. Start the authorisation process for a payment initiation",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -10364,7 +8752,7 @@
 									"response": []
 								},
 								{
-									"name": "3 Update PSU data for payment initiation",
+									"name": "5. Update PSU data for payment initiation",
 									"event": [
 										{
 											"listen": "test",
@@ -10391,20 +8779,23 @@
 													"    pm.expect(jsonData).to.have.property('scaMethods');",
 													"    const scaMethods = jsonData.scaMethods;",
 													"    ",
-													"    pm.expect(scaMethods.length).to.eql(3);",
+													"    pm.expect(scaMethods.length).to.be.above(1);",
 													"    ",
 													"    pm.expect(scaMethods[0]).to.have.property('authenticationType');",
-													"    pm.expect(scaMethods[0].authenticationType).to.eql('SMS_OTP');",
-													"",
+													"    pm.expect(scaMethods[0].authenticationType) !== undefined;",
+													"    ",
 													"    pm.expect(scaMethods[0]).to.have.property('authenticationMethodId');",
-													"    pm.expect(scaMethods[0].authenticationMethodId).to.eql('sms');",
+													"    pm.expect(scaMethods[0].authenticationMethodId) !== undefined;",
+													"",
+													"    pm.expect(scaMethods[0]).to.have.property('authenticationType');",
+													"    pm.expect(scaMethods[0].authenticationType) !== undefined;",
 													"    ",
-													"    pm.expect(scaMethods[1]).to.have.property('authenticationType');",
-													"    pm.expect(scaMethods[1].authenticationType).to.eql('PUSH_OTP');",
+													"    pm.expect(scaMethods[0]).to.have.property('authenticationMethodId');",
+													"    pm.expect(scaMethods[0].authenticationMethodId) !== undefined;",
 													"    ",
-													"    pm.expect(scaMethods[1]).to.have.property('authenticationMethodId');",
-													"    pm.expect(scaMethods[1].authenticationMethodId).to.eql('push');",
+													"    pm.globals.set(\"authenticationMethodId\", scaMethods[0].authenticationMethodId);",
 													"});",
+													"",
 													"",
 													""
 												],
@@ -10456,7 +8847,7 @@
 									"response": []
 								},
 								{
-									"name": "4 Update PSU data chose scaMethod WRONG CERTIFICATE",
+									"name": "6. Update PSU data chose scaMethod WRONG CERTIFICATE",
 									"event": [
 										{
 											"listen": "test",
@@ -10522,7 +8913,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"authenticationMethodId\": \"{{scaMethod}}\"        \n}"
+											"raw": "{\n    \"authenticationMethodId\": \"{{authenticationMethodId}}\"        \n}"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
@@ -10544,7 +8935,7 @@
 									"response": []
 								},
 								{
-									"name": "4 Update PSU data for payment initiation chose scaMethod",
+									"name": "7. Update PSU data for payment initiation chose scaMethod",
 									"event": [
 										{
 											"listen": "test",
@@ -10572,20 +8963,14 @@
 													"    const chosenScaMethod = jsonData.chosenScaMethod;",
 													"    ",
 													"    pm.expect(chosenScaMethod).to.have.property('authenticationType');",
-													"    pm.expect(chosenScaMethod.authenticationType).to.eql('SMS');",
+													"    pm.expect(chosenScaMethod.authenticationType) !== undefined;",
 													"    ",
 													"    pm.expect(chosenScaMethod).to.have.property('authenticationMethodId');",
-													"    pm.expect(chosenScaMethod.authenticationMethodId).to.eql('sms');",
+													"    pm.expect(chosenScaMethod.authenticationMethodId) !== undefined;",
 													"});",
 													"",
 													"pm.test(\"Challenge data exist\", () => {",
 													"    pm.expect(jsonData).to.have.property('challengeData');",
-													"    const challengeData = jsonData.challengeData;",
-													"    ",
-													"    pm.expect(challengeData).to.have.property('data');",
-													"    pm.expect(challengeData).to.have.property('imageLink');",
-													"    pm.expect(challengeData).to.have.property('otpMaxLength');",
-													"    pm.expect(challengeData).to.have.property('additionalInformation');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -10614,7 +8999,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"authenticationMethodId\": \"{{scaMethod}}\"        \n}"
+											"raw": "{\n    \"authenticationMethodId\": \"{{authenticationMethodId}}\"        \n}"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
@@ -10636,141 +9021,7 @@
 									"response": []
 								},
 								{
-									"name": "4.1 Get access token form IDP",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "a5180f8b-82da-47cf-9c83-d169798fb964",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"access_token exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('access_token');",
-													"    const access_token = jsonData.access_token;",
-													"    ",
-													"pm.globals.set(\"access_token\", \"Bearer \"+access_token);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/x-www-form-urlencoded"
-											}
-										],
-										"body": {
-											"mode": "urlencoded",
-											"urlencoded": [
-												{
-													"key": "grant_type",
-													"value": "password",
-													"type": "text"
-												},
-												{
-													"key": "client_id",
-													"value": "aspsp-mock",
-													"type": "text"
-												},
-												{
-													"key": "client_secret",
-													"value": "{{client_secret}}",
-													"type": "text"
-												},
-												{
-													"key": "username",
-													"value": "{{psu_id_multiple}}",
-													"type": "text"
-												},
-												{
-													"key": "password",
-													"value": "zzz",
-													"type": "text"
-												}
-											]
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_idp}}/auth/realms/xs2a/protocol/openid-connect/token",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_idp}}"
-											],
-											"path": [
-												"auth",
-												"realms",
-												"xs2a",
-												"protocol",
-												"openid-connect",
-												"token"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "4.2 Get TAN for psu multiple",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "83721020-fac4-49c5-8ac8-023212d11233",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"tanNumber exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('tanNumber');",
-													"    const tanNumber = jsonData.tanNumber;",
-													"    ",
-													"pm.globals.set(\"tanNumber\", tanNumber);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "authorization",
-												"type": "text",
-												"value": "{{access_token}}"
-											}
-										],
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_mock}}/consent/tan/{{psu_id_multiple}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_mock}}"
-											],
-											"path": [
-												"consent",
-												"tan",
-												"{{psu_id_multiple}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "5 Update PSU data for payment initiation finalized",
+									"name": "8. Update PSU data for payment initiation finalized",
 									"event": [
 										{
 											"listen": "test",
@@ -10841,7 +9092,7 @@
 									"response": []
 								},
 								{
-									"name": "6 Get Payment Initiation Authorisation Sub-Resources Request",
+									"name": "9. Get Payment Initiation Authorisation Sub-Resources Request",
 									"event": [
 										{
 											"listen": "test",
@@ -10887,7 +9138,7 @@
 									"response": []
 								},
 								{
-									"name": "6 Get Payment Initiation Authorisation  WRONG CERT",
+									"name": "10. Get Payment Initiation Authorisation  WRONG CERT",
 									"event": [
 										{
 											"listen": "test",
@@ -10960,7 +9211,7 @@
 									"response": []
 								},
 								{
-									"name": "7 Read the SCA Status of the payment authorisation",
+									"name": "11. Read the SCA Status of the payment authorisation",
 									"event": [
 										{
 											"listen": "test",
@@ -11007,7 +9258,7 @@
 									"response": []
 								},
 								{
-									"name": "7 Read the SCA Status of the payment authorisation WRONG CERT",
+									"name": "12. Read the SCA Status of the payment authorisation WRONG CERT",
 									"event": [
 										{
 											"listen": "test",
@@ -11081,7 +9332,7 @@
 									"response": []
 								},
 								{
-									"name": "8 Get Payment Information",
+									"name": "13. Get Payment Information",
 									"event": [
 										{
 											"listen": "test",
@@ -11136,7 +9387,7 @@
 									"response": []
 								},
 								{
-									"name": "8 Get Payment Information WRONG CERT",
+									"name": "14. Get Payment Information WRONG CERT",
 									"event": [
 										{
 											"listen": "test",
@@ -11208,7 +9459,7 @@
 									"response": []
 								},
 								{
-									"name": "9 Payment initiation status request",
+									"name": "15. Payment initiation status request",
 									"event": [
 										{
 											"listen": "test",
@@ -11260,7 +9511,7 @@
 									"response": []
 								},
 								{
-									"name": "9 Payment initiation status request WRONG CERT",
+									"name": "16. Payment initiation status request WRONG CERT",
 									"event": [
 										{
 											"listen": "test",

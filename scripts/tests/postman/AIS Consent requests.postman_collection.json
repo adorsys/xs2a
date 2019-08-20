@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "41dd61b4-223f-4920-8f49-aa054a310a3b",
+		"_postman_id": "42b5658c-d62e-438e-9f1f-93332e4fc26d",
 		"name": "AIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -4183,7 +4183,7 @@
 											"",
 											"var dd_end = end.getDate();",
 											"var mm_end = end.getMonth(); ",
-											"var yyyy_end = end.getFullYear();",
+											"var yyyy_end = end.getFullYear() + 1;",
 											"if(dd_end<10) ",
 											"{",
 											"    dd_end='0'+dd_end;",
