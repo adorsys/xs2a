@@ -19,10 +19,24 @@ package de.adorsys.psd2.xs2a.web.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
+import de.adorsys.psd2.model.PaymentInitiationWithStatusResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
+import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
+import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.domain.pis.GetPaymentStatusResponse;
+import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
+import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapperImpl;
+import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
+import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +44,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Currency;
 
 import static org.junit.Assert.*;
 
@@ -43,6 +64,7 @@ public class PaymentModelMapperPsd2Test {
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACCP;
     private static final boolean FUNDS_AVAILABLE = true;
     private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE);
+    private static final String AMOUNT = "100";
 
     private PaymentModelMapperPsd2 mapper;
     @Autowired
@@ -63,11 +85,15 @@ public class PaymentModelMapperPsd2Test {
     private PurposeCodeMapper purposeCodeMapper;
 
     private JsonReader jsonReader = new JsonReader();
+    private AccountModelMapper accountModelMapper;
+    private AmountModelMapper amountModelMapper;
 
     @Before
     public void setUp() {
-        mapper = new PaymentModelMapperPsd2(coreObjectsMapper, null, tppRedirectUriMapper,
-                                            null, hrefLinkMapper, standardPaymentProductsResolver,
+        accountModelMapper = new AccountModelMapperImpl();
+        amountModelMapper = new AmountModelMapper(null);
+        mapper = new PaymentModelMapperPsd2(coreObjectsMapper, accountModelMapper, tppRedirectUriMapper,
+                                            amountModelMapper, hrefLinkMapper, standardPaymentProductsResolver,
                                             scaMethodsMapper, xs2aAddressMapper, remittanceMapper, purposeCodeMapper);
     }
 
@@ -84,5 +110,36 @@ public class PaymentModelMapperPsd2Test {
         PaymentInitiationStatusResponse200Json response = mapper.mapToStatusResponse(PAYMENT_STATUS_RESPONSE);
         assertEquals(response.getTransactionStatus(), de.adorsys.psd2.model.TransactionStatus.ACCP);
         assertEquals(response.getFundsAvailable(), true);
+    }
+
+    @Test
+    public void mapToGetPaymentResponse_SinglePayment() {
+        SinglePayment inputData = getSpiSingle();
+        PaymentInitiationWithStatusResponse actualResponse = (PaymentInitiationWithStatusResponse) mapper.mapToGetPaymentResponse(inputData, PaymentType.SINGLE, "sepa-credit-transfers");
+        PaymentInitiationWithStatusResponse expectedResponse = jsonReader.getObjectFromFile("json/service/mapper/payment-initiation-with-status-response.json", PaymentInitiationWithStatusResponse.class);
+        assertEquals(expectedResponse, actualResponse);
+    }
+
+    private SinglePayment getSpiSingle() {
+        SinglePayment spiPayment = new SinglePayment();
+        spiPayment.setEndToEndIdentification("WBG-123456789");
+        spiPayment.setDebtorAccount(getSpiAccountReference());
+        spiPayment.setInstructedAmount(new Xs2aAmount(Currency.getInstance("EUR"), AMOUNT));
+        spiPayment.setCreditorAccount(getSpiAccountReference());
+        spiPayment.setCreditorAgent("AAAADEBBXXX");
+        spiPayment.setCreditorName("WBG");
+        spiPayment.setCreditorAddress(getXs2aAddress());
+        spiPayment.setRemittanceInformationUnstructured("Ref. Number WBG-1222");
+        spiPayment.setRequestedExecutionDate(LocalDate.of(2025, 5, 5));
+        spiPayment.setTransactionStatus(TransactionStatus.RCVD);
+        return spiPayment;
+    }
+
+    private AccountReference getSpiAccountReference() {
+        return jsonReader.getObjectFromFile("json/service/mapper/spi-account-reference.json", AccountReference.class);
+    }
+
+    private Xs2aAddress getXs2aAddress() {
+        return jsonReader.getObjectFromFile("json/service/mapper/xs2a-address.json", Xs2aAddress.class);
     }
 }
