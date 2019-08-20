@@ -69,7 +69,7 @@ public class CancelPaymentServiceTest {
     private static final String AUTHORISATION_ID = "auth id";
     private static final String PAYMENT_NOT_FOUND_MESSAGE = "Payment not found";
     private static final PsuIdData PSU_DATA = buildPsuIdData();
-    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_DATA.getPsuId(), PSU_DATA.getPsuIdType(), PSU_DATA.getPsuCorporateId(), PSU_DATA.getPsuCorporateIdType());
+    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_DATA.getPsuId(), PSU_DATA.getPsuIdType(), PSU_DATA.getPsuCorporateId(), PSU_DATA.getPsuCorporateIdType(), null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
 
     @InjectMocks

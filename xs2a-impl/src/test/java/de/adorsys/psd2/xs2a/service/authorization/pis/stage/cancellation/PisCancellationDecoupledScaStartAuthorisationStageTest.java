@@ -71,7 +71,7 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
     private static final TransactionStatus ACCP_TRANSACTION_STATUS = TransactionStatus.ACCP;
     private static final SpiAuthorisationStatus SUCCESS_SPI_AUTHORISATION_STATUS = SpiAuthorisationStatus.SUCCESS;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
-    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null);
+    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     private static final byte[] PAYMENT_DATA = "Test payment data".getBytes();
     private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfo();

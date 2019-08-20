@@ -71,7 +71,7 @@ public class AisScaMethodSelectedStageTest {
     private static final ScaStatus METHOD_SELECTED_SCA_STATUS = ScaStatus.SCAMETHODSELECTED;
     private static final MessageErrorCode ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final PsuIdData PSU_DATA = new PsuIdData("some psuId", null, null, null);
-    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
+    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     private static final ScaStatus FAILED_SCA_STATUS = ScaStatus.FAILED;
     private static final String PSU_SUCCESS_MESSAGE = "Test psuSuccessMessage";

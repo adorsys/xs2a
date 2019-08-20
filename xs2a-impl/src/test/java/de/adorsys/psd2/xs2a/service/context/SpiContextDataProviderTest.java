@@ -42,8 +42,9 @@ public class SpiContextDataProviderTest {
     private static final TppInfo TPP_INFO = buildTppInfo();
     private final static UUID X_REQUEST_ID = UUID.fromString("c818a31f-ccdd-4fff-a404-22ad15ba9754");
     private final static UUID INTERNAL_REQUEST_ID = UUID.fromString("b571c834-4eb1-468f-91b0-f5e83589bc22");
+    private final static String PSU_IP_ADDRESS = "IP Address";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
-    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
+    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", PSU_IP_ADDRESS);
     private static final SpiContextData SPI_CONTEXT_DATA = buildSpiContextData(null);
     private static final SpiContextData SPI_CONTEXT_DATA_WITH_PSU_DATA = buildSpiContextData(SPI_PSU_DATA);
 
@@ -94,7 +95,7 @@ public class SpiContextDataProviderTest {
     @Test
     public void provide_withParameters_success() {
         //Given
-        when(psuDataMapper.mapToSpiPsuData(PSU_DATA))
+        when(psuDataMapper.mapToSpiPsuData(PSU_DATA, null))
             .thenReturn(SPI_PSU_DATA);
 
         //When
@@ -103,6 +104,22 @@ public class SpiContextDataProviderTest {
         //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(SPI_CONTEXT_DATA_WITH_PSU_DATA);
+    }
+
+    @Test
+    public void provide_withPsuIpAddress_success() {
+        //Given
+        when(requestProviderService.getPsuIpAddress())
+            .thenReturn(PSU_IP_ADDRESS);
+        when(psuDataMapper.mapToSpiPsuData(PSU_DATA, PSU_IP_ADDRESS))
+            .thenReturn(SPI_PSU_DATA);
+
+        //When
+        SpiContextData actualResponse = spiContextDataProvider.provide(PSU_DATA, TPP_INFO);
+
+        //Then
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.getPsuData()).isEqualTo(SPI_PSU_DATA);
     }
 
     private static TppInfo buildTppInfo() {

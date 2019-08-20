@@ -102,7 +102,7 @@ public class ConsentServiceTest {
     private static final LocalDate DATE = LocalDate.now().plusDays(1);
     private static final boolean EXPLICIT_PREFERRED = true;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
-    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(CORRECT_PSU_ID, null, null, null);
+    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(CORRECT_PSU_ID, null, null, null, null);
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();

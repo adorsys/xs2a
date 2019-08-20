@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -38,16 +39,13 @@ public class Xs2aToSpiPsuDataMapper {
     }
 
     public SpiPsuData mapToSpiPsuData(PsuIdData psuIdData) {
-        if (psuIdData == null) {
-            return new SpiPsuData(null, null, null, null);
-        }
+        return mapToSpiPsuData(psuIdData, null);
+    }
 
-        return new SpiPsuData(
-            psuIdData.getPsuId(),
-            psuIdData.getPsuIdType(),
-            psuIdData.getPsuCorporateId(),
-            psuIdData.getPsuCorporateIdType()
-        );
+    public SpiPsuData mapToSpiPsuData(PsuIdData psuIdData, String psuIpAddress) {
+        return Optional.ofNullable(psuIdData)
+                   .map(psu -> new SpiPsuData(psu.getPsuId(), psu.getPsuIdType(), psu.getPsuCorporateId(), psu.getPsuCorporateIdType(), psuIpAddress))
+                   .orElseGet(() -> new SpiPsuData(null, null, null, null, psuIpAddress));
     }
 
 
