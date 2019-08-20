@@ -38,7 +38,7 @@ public class CmsAspspPiisController {
 
     private final CmsAspspPiisService cmsAspspPiisService;
 
-    @PostMapping(path = "/")
+    @PostMapping
     @ApiOperation(value = "Creates new PIIS consent")
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = String.class),
@@ -59,7 +59,7 @@ public class CmsAspspPiisController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
-    @GetMapping(path = "/")
+    @GetMapping
     @ApiOperation(value = "Returns a list of PIIS Consent objects by PSU ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
