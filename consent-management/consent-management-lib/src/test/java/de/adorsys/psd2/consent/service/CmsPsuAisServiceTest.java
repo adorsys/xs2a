@@ -417,9 +417,6 @@ public class CmsPsuAisServiceTest {
 
     @Test(expected = RedirectUrlIsExpiredException.class)
     public void getConsentByRedirectId_Fail_RedirectExpire() throws RedirectUrlIsExpiredException {
-        // Given
-        when(mockAisConsentAuthorization.getConsent()).thenReturn(aisConsent);
-
         // When
         cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }

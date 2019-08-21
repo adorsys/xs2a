@@ -37,6 +37,7 @@ import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
@@ -113,6 +114,10 @@ public class InitiatePayments_successfulTest {
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
 
+    private static final String TPP_REDIRECT_URI = "request/redirect_uri";
+    private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
+    private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
+
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
     private HttpHeaders httpHeadersImplicit = new HttpHeaders();
@@ -158,7 +163,8 @@ public class InitiatePayments_successfulTest {
         headerMap.put("PSU-Corporate-ID", "Some corporate id");
         headerMap.put("PSU-Corporate-ID-Type", "Some corporate id type");
         headerMap.put("PSU-IP-Address", "1.1.1.1");
-        headerMap.put("TPP-Redirect-URI", "ok.uri");
+        headerMap.put("TPP-Redirect-URI", TPP_REDIRECT_URI);
+        headerMap.put("TPP-NOK-Redirect-URI", TPP_NOK_REDIRECT_URI);
 
         httpHeadersImplicit.setAll(headerMap);
         // when Implicit auth mode we need to set 'false'
@@ -431,11 +437,11 @@ public class InitiatePayments_successfulTest {
     }
 
     private CreatePisAuthorisationRequest getPisAuthorisationRequest(ScaApproach scaApproach) {
-        return new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PsuIdDataBuilder.buildPsuIdData(), scaApproach);
+        return new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PsuIdDataBuilder.buildPsuIdData(), scaApproach, TPP_REDIRECT_URIs);
     }
 
     private CreatePisAuthorisationRequest getPisAuthorisationRequestWithEmptyPsuIdData(ScaApproach scaApproach) {
-        return new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PsuIdDataBuilder.buildEmptyPsuIdData(), scaApproach);
+        return new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PsuIdDataBuilder.buildEmptyPsuIdData(), scaApproach, TPP_REDIRECT_URIs);
     }
 
     private void initiateSinglePayment_successful(HttpHeaders headers, ScaApproach scaApproach, boolean multilevelSca, boolean isPsuIdDataEmpty) throws Exception {

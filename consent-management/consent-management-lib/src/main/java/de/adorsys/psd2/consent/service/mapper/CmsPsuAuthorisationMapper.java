@@ -16,15 +16,11 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
-import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface CmsPsuAuthorisationMapper {
@@ -37,17 +33,5 @@ public interface CmsPsuAuthorisationMapper {
     @Mapping(target = "psuId", source = "psuData.psuId")
     @Mapping(target = "authorisationId", source = "externalId")
     @Mapping(target = "authorisationType", ignore = true)
-    @Mapping(target = "tppOkRedirectUri", source = "consent.tppInfo.redirectUri")
-    @Mapping(target = "tppNokRedirectUri", source = "consent.tppInfo.nokRedirectUri")
     CmsPsuAuthorisation mapToCmsPsuAuthorisationAis(AisConsentAuthorization consentAuthorization);
-
-    @AfterMapping
-    default void mapToCmsPsuAuthorisationPisAfterMapping(PisAuthorization pisAuthorization,
-                                                         @MappingTarget CmsPsuAuthorisation cmsPsuAuthorisation) {
-        TppInfoEntity tppInfo = pisAuthorization.getPaymentData().getTppInfo();
-
-        boolean isPaymentCreated = pisAuthorization.getAuthorizationType() == PaymentAuthorisationType.CREATED;
-        cmsPsuAuthorisation.setTppOkRedirectUri(isPaymentCreated ? tppInfo.getRedirectUri() : tppInfo.getCancelRedirectUri());
-        cmsPsuAuthorisation.setTppNokRedirectUri(isPaymentCreated ? tppInfo.getNokRedirectUri() : tppInfo.getCancelNokRedirectUri());
-    }
 }

@@ -104,6 +104,14 @@ public class RequestProviderService {
         return getHeader(Xs2aHeaderConstant.PSU_IP_ADDRESS);
     }
 
+    public String getTppRedirectURI() {
+        return getHeader(Xs2aHeaderConstant.TPP_REDIRECT_URI);
+    }
+
+    public String getTppNokRedirectURI() {
+        return getHeader(Xs2aHeaderConstant.TPP_NOK_REDIRECT_URI);
+    }
+
     private String getHeader(String headerName) {
         return httpServletRequest.getHeader(headerName);
     }

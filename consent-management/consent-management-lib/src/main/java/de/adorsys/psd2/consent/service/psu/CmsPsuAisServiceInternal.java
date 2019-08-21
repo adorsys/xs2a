@@ -109,9 +109,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
                 log.info("Authorisation ID [{}]. Check redirect URL and get consent failed, because authorisation is expired",
                          redirectId);
                 updateAuthorisationOnExpiration(authorisation);
-                String tppNokRedirectUri = authorisation.getConsent().getTppInfo().getNokRedirectUri();
 
-                throw new RedirectUrlIsExpiredException(tppNokRedirectUri);
+                throw new RedirectUrlIsExpiredException(authorisation.getTppNokRedirectUri());
             }
             return createCmsAisConsentResponseFromAisConsent(authorisation.getConsent(), redirectId);
         }
@@ -376,7 +375,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
         if (authorization.isPresent() && !authorization.get().isAuthorisationNotExpired()) {
             log.info("Authorisation ID [{}], Instance ID: [{}]. Authorisation is expired", authorisationId, instanceId);
-            throw new AuthorisationIsExpiredException(authorization.get().getConsent().getTppInfo().getNokRedirectUri());
+            throw new AuthorisationIsExpiredException(authorization.get().getTppNokRedirectUri());
         }
         return authorization;
     }

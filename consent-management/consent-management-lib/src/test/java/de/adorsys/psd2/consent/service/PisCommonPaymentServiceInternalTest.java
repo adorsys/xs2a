@@ -38,6 +38,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.apache.commons.collections4.IteratorUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
@@ -95,8 +96,11 @@ public class PisCommonPaymentServiceInternalTest {
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("id", "type", "corporate ID", "corporate type");
     private final static PsuData PSU_DATA = new PsuData("id", "type", "corporate ID", "corporate type");
+    private static final String TPP_REDIRECT_URI = "request/redirect_uri";
+    private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
+    private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
 
-    private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_ID_DATA, ScaApproach.REDIRECT);
+    private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_ID_DATA, ScaApproach.REDIRECT, TPP_REDIRECT_URIs);
     private static final JsonReader jsonReader = new JsonReader();
 
     @Before

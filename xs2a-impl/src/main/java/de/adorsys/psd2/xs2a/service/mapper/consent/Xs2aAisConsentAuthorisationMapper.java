@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import org.springframework.stereotype.Service;
@@ -49,13 +50,14 @@ public class Xs2aAisConsentAuthorisationMapper {
                    .orElse(null);
     }
 
-    public AisConsentAuthorizationRequest mapToAisConsentAuthorization(ScaStatus scaStatus, PsuIdData psuData, ScaApproach scaApproach) {
+    public AisConsentAuthorizationRequest mapToAisConsentAuthorization(ScaStatus scaStatus, PsuIdData psuData, ScaApproach scaApproach, String tppRedirectURI, String tppNOKRedirectURI) {
         return Optional.ofNullable(scaStatus)
                    .map(st -> {
                        AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
                        consentAuthorization.setPsuData(psuData);
                        consentAuthorization.setScaStatus(scaStatus);
                        consentAuthorization.setScaApproach(scaApproach);
+                       consentAuthorization.setTppRedirectURIs(new TppRedirectUri(tppRedirectURI,tppNOKRedirectURI));
                        return consentAuthorization;
                    })
                    .orElse(null);
