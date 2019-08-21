@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +22,18 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
+import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class Xs2aUpdatePisCommonPaymentPsuDataResponse implements AuthorisationResponse {
+public class Xs2aUpdatePisCommonPaymentPsuDataResponse implements AuthorisationResponse, CancellationAuthorisationResponse {
     private ErrorHolder errorHolder;
     private String psuMessage;
     private String paymentId;
@@ -66,6 +69,18 @@ public class Xs2aUpdatePisCommonPaymentPsuDataResponse implements AuthorisationR
      */
     public Xs2aAuthenticationObject getChosenScaMethodForPsd2Response() {
         return getChosenScaMethod();
+    }
+
+    @NotNull
+    @Override
+    public String getCancellationId() {
+        return authorisationId;
+    }
+
+    @NotNull
+    @Override
+    public AuthorisationResponseType getAuthorisationResponseType() {
+        return AuthorisationResponseType.UPDATE;
     }
 }
 

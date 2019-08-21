@@ -17,10 +17,12 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -125,9 +127,10 @@ public class CancelPaymentService {
         // in payment cancellation case 'multilevelScaRequired' is always false
         boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(tppExplicitAuthorisationPreferred, false);
         if (implicitMethod) {
-            ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> authorizationResponse = paymentCancellationAuthorisationService.createPisCancellationAuthorization(encryptedPaymentId, null, payment.getPaymentType(), payment.getPaymentProduct());
+            Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(encryptedPaymentId, new PsuIdData(null, null, null, null), payment.getPaymentProduct(), payment.getPaymentType().getValue(), null);
+            ResponseObject<CancellationAuthorisationResponse> authorisationResponse = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(request);
 
-            if (authorizationResponse.hasError()) {
+            if (authorisationResponse.hasError()) {
                 log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Can't create implicit authorisation",
                          requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId);
                 return ResponseObject.<CancelPaymentResponse>builder()
@@ -135,9 +138,9 @@ public class CancelPaymentService {
                            .build();
             }
 
-            Xs2aCreatePisCancellationAuthorisationResponse authorisationResponse = authorizationResponse.getBody();
-            cancelPaymentResponse.setAuthorizationId(authorisationResponse.getCancellationId());
-            cancelPaymentResponse.setScaStatus(authorisationResponse.getScaStatus());
+            CancellationAuthorisationResponse authorisationResponseBody = authorisationResponse.getBody();
+            cancelPaymentResponse.setAuthorizationId(authorisationResponseBody.getCancellationId());
+            cancelPaymentResponse.setScaStatus(authorisationResponseBody.getScaStatus());
         }
 
         return ResponseObject.<CancelPaymentResponse>builder()

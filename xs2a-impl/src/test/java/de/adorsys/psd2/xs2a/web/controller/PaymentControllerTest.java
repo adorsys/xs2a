@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
@@ -23,12 +24,12 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.HrefType;
-import de.adorsys.psd2.xs2a.domain.Links;
-import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.domain.*;
+import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ConsentService;
@@ -39,13 +40,11 @@ import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
+import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.header.PaymentCancellationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.PaymentInitiationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
-import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
-import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
-import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
-import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
+import de.adorsys.psd2.xs2a.web.mapper.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.junit.Before;
@@ -65,8 +64,9 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.*;
 
@@ -95,6 +95,7 @@ public class PaymentControllerTest {
     private static final PaymentInitationRequestResponse201 PAYMENT_OBJECT = new PaymentInitationRequestResponse201();
     private static final ResponseHeaders RESPONSE_HEADERS = ResponseHeaders.builder().aspspScaApproach(ScaApproach.REDIRECT).build();
     private static final boolean EXPLICIT_PREFERRED_FALSE = false;
+    private static final String PSU_DATA_PASSWORD_JSON_PATH = "json/web/controller/psuData-password.json";
 
     @InjectMocks
     private PaymentController paymentController;
@@ -125,6 +126,11 @@ public class PaymentControllerTest {
     private PaymentInitiationParameters paymentInitiationParameters;
     @Mock
     private PaymentInitiationHeadersBuilder paymentInitiationHeadersBuilder;
+    @Mock
+    private AuthorisationModelMapper authorisationModelMapper;
+    @Mock
+    private PaymentCancellationHeadersBuilder paymentCancellationHeadersBuilder;
+    private JsonReader jsonReader = new JsonReader();
 
     @Before
     public void setUp() {
@@ -132,9 +138,9 @@ public class PaymentControllerTest {
             .thenReturn(ResponseObject.builder().body(getXs2aPayment()).build());
 
         when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(CORRECT_PAYMENT_ID)))
-            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP,null)).build());
+            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null)).build());
         when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(WRONG_PAYMENT_ID)))
-            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP,null)).build());
+            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null)).build());
 
     }
 
@@ -187,7 +193,7 @@ public class PaymentControllerTest {
     public void getTransactionStatusById_Success() {
         doReturn(new ResponseEntity<>(getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus.ACCP), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
-        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID)).thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP,null)).build());
+        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID)).thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null)).build());
 
         //Given:
         PaymentInitiationStatusResponse200Json expectedBody = getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus.ACCP);
@@ -278,7 +284,7 @@ public class PaymentControllerTest {
                                                                                                                                                                null, null, null, null, null,
                                                                                                                                                                null, null,
                                                                                                                                                                null, null, null, null, null,
-                                                                                                                                                               null, null,  EXPLICIT_PREFERRED_FALSE);
+                                                                                                                                                               null, null, EXPLICIT_PREFERRED_FALSE);
 
         // Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -603,7 +609,7 @@ public class PaymentControllerTest {
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData()))
             .thenReturn(paymentInitiationParameters);
 
-        when(paymentModelMapperXs2a.mapToXs2aPayment(anyObject(), eq(paymentInitiationParameters)))
+        when(paymentModelMapperXs2a.mapToXs2aPayment(any(), eq(paymentInitiationParameters)))
             .thenReturn(PAYMENT_OBJECT);
 
         when(xs2aPaymentService.createPayment(PAYMENT_OBJECT, paymentInitiationParameters))
@@ -634,7 +640,7 @@ public class PaymentControllerTest {
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData()))
             .thenReturn(paymentInitiationParameters);
 
-        when(paymentModelMapperXs2a.mapToXs2aPayment(anyObject(), eq(paymentInitiationParameters)))
+        when(paymentModelMapperXs2a.mapToXs2aPayment(any(), eq(paymentInitiationParameters)))
             .thenReturn(PAYMENT_OBJECT);
 
         when(xs2aPaymentService.createPayment(PAYMENT_OBJECT, paymentInitiationParameters))
@@ -751,10 +757,100 @@ public class PaymentControllerTest {
         ResponseObject expectedResponseObject = buildSuccessResponseObjectWithLinksNullType();
 
         paymentController.initiatePayment(REQUEST_ID, null, CORRECT_PAYMENT_SERVICE, PRODUCT,
-                                                                  XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                  null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
-                                                                  null, null, null, null, null, null,
-                                                                  null, null, null, null, null);
+                                          XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
+                                          null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
+                                          null, null, null, null, null, null,
+                                          null, null, null, null, null);
+    }
+
+    @Test
+    public void startPaymentInitiationCancellationAuthorisation() {
+        // Given
+        String password = "some password";
+        Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
+        });
+
+        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+
+        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(CORRECT_PAYMENT_ID, psuIdData, PRODUCT, CORRECT_PAYMENT_SERVICE, password);
+        when(authorisationMapper.mapToXs2aCreatePisAuthorisationRequest(any(), anyString(), anyString(), anyString(), any()))
+            .thenReturn(request);
+
+        ResponseObject<CancellationAuthorisationResponse> serviceResponse = ResponseObject.<CancellationAuthorisationResponse>builder()
+                                                                                .body(new Xs2aUpdatePisCommonPaymentPsuDataResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, psuIdData))
+                                                                                .build();
+        when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(request))
+            .thenReturn(serviceResponse);
+
+        StartCancellationScaProcessResponse expectedResponse = new StartCancellationScaProcessResponse();
+        // noinspection unchecked
+        when(responseMapper.created(eq(serviceResponse), any(), eq(RESPONSE_HEADERS)))
+            .thenReturn(new ResponseEntity(expectedResponse, CREATED));
+
+        when(paymentCancellationHeadersBuilder.buildStartPaymentCancellationAuthorisationHeaders(CANCELLATION_AUTHORISATION_ID)).thenReturn(RESPONSE_HEADERS);
+
+        // When
+        ResponseEntity actual = paymentController.startPaymentInitiationCancellationAuthorisation(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT,
+                                                                                                  CORRECT_PAYMENT_ID, body, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
+                                                                                                  TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, null, null, null,
+                                                                                                  null, null, null, null, null, null,
+                                                                                                  null, null, null);
+
+        // Then
+        assertNotNull(actual);
+        assertEquals(CREATED, actual.getStatusCode());
+        assertEquals(expectedResponse, actual.getBody());
+
+        verify(responseMapper).created(eq(serviceResponse), any(), eq(RESPONSE_HEADERS));
+        verify(paymentCancellationHeadersBuilder).buildStartPaymentCancellationAuthorisationHeaders(CANCELLATION_AUTHORISATION_ID);
+
+        verify(paymentCancellationHeadersBuilder, never()).buildErrorStartPaymentCancellationAuthorisationHeaders();
+        verify(responseErrorMapper, never()).generateErrorResponse(any(), any());
+    }
+
+    @Test
+    public void startPaymentInitiationCancellationAuthorisation_withServiceError_shouldReturnError() {
+        // Given
+        String password = "some password";
+
+        MessageError serviceError = new MessageError(PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
+        ResponseHeaders errorHeaders = ResponseHeaders.builder().build();
+
+        Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
+        });
+
+        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(CORRECT_PAYMENT_ID, psuIdData, PRODUCT, CORRECT_PAYMENT_SERVICE, password);
+        when(authorisationMapper.mapToXs2aCreatePisAuthorisationRequest(any(), anyString(), anyString(), anyString(), any()))
+            .thenReturn(request);
+        ResponseObject<CancellationAuthorisationResponse> serviceResponse = ResponseObject.<CancellationAuthorisationResponse>builder()
+                                                                                .fail(serviceError)
+                                                                                .build();
+        when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(request))
+            .thenReturn(serviceResponse);
+
+        Object errorResponse = new Object();
+        when(responseErrorMapper.generateErrorResponse(eq(serviceError), eq(errorHeaders)))
+            .thenReturn(new ResponseEntity<>(errorResponse, NOT_FOUND));
+        when(paymentCancellationHeadersBuilder.buildErrorStartPaymentCancellationAuthorisationHeaders()).thenReturn(errorHeaders);
+
+        // When
+        ResponseEntity actual = paymentController.startPaymentInitiationCancellationAuthorisation(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT,
+                                                                                                  CORRECT_PAYMENT_ID, body, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
+                                                                                                  TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, null, null, null,
+                                                                                                  null, null, null, null, null, null,
+                                                                                                  null, null, null);
+
+        // Then
+        assertNotNull(actual);
+        assertEquals(NOT_FOUND, actual.getStatusCode());
+        assertEquals(errorResponse, actual.getBody());
+
+        verify(paymentCancellationHeadersBuilder).buildErrorStartPaymentCancellationAuthorisationHeaders();
+        verify(responseErrorMapper).generateErrorResponse(serviceError, errorHeaders);
+
+        verify(paymentCancellationHeadersBuilder, never()).buildStartPaymentCancellationAuthorisationHeaders(anyString());
+        verify(responseMapper, never()).created(any(), any(), any());
     }
 
     private ResponseObject<CancelPaymentResponse> getCancelPaymentResponseObject(boolean startAuthorisationRequired) {

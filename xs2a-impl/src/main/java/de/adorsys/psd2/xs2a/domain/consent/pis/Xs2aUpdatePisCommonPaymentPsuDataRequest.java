@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ public class Xs2aUpdatePisCommonPaymentPsuDataRequest {
     private String password;
     private String authenticationMethodId;
     private ScaStatus scaStatus;
+    // TODO change the type from String to PaymentType https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1019
     private String paymentService;
     private String scaAuthenticationData;
     private String paymentProduct;
