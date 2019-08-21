@@ -8,6 +8,8 @@
 * Bugfix: create PIIS consent needs closing "/" in URL
 * Bugfix: missing `requestedExecutionDate` on get payment request for future dated payment
 * Pass PSU-IP-Address to SPI Context
+* Handling wrong HTTP methods in all XS2A endpoints
+
 
 == Remove deprecated constructor in `SpiContextData`
 
@@ -39,3 +41,7 @@ From now on, in Get Payment Request `GET /v1/{payment-service}/{payment_product}
 
 == Pass PSU-IP-Address to SPI Context
 From now on, `PSU-IP-Address` header is provided to SPI level as `psuIpAddress` field in SpiPsuData object.
+
+== Handling wrong HTTP methods in all XS2A endpoints
+
+From now on, any HTTP request to XS2A endpoint with unsupported HTTP method will result in `405 METHOD NOT ALLOWED` response with text error description provided (ex, `HTTP method 'PURGE' is not supported`).
