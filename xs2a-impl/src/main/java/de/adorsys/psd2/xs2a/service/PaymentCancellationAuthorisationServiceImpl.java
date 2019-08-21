@@ -22,6 +22,8 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
@@ -33,7 +35,10 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
-import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.*;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.GetPaymentCancellationAuthorisationScaStatusValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.GetPaymentCancellationAuthorisationsValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.UpdatePisCancellationPsuDataPO;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.UpdatePisCancellationPsuDataValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -61,33 +66,38 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     /**
      * Creates authorisation for payment cancellation request if given psu data is valid
      *
-     * @param paymentId      String representation of payment identification
-     * @param psuData        Contains authorisation data about PSU
-     * @param paymentType    Payment type supported by aspsp
-     * @param paymentProduct payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
+     * @param request parameters for creating new authorisation
      * @return Xs2aCreatePisCancellationAuthorisationResponse that contains authorisationId, scaStatus, paymentType and related links
      */
     @Override
-    public ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createPisCancellationAuthorization(String paymentId, PsuIdData psuData, PaymentType paymentType, String paymentProduct) {
-        xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
+    public ResponseObject<CancellationAuthorisationResponse> createPisCancellationAuthorisation(Xs2aCreatePisAuthorisationRequest request) {
+        String paymentService = request.getPaymentService();
+        PaymentType paymentType = PaymentType.getByValue(paymentService)
+                                      .orElseThrow(() -> new IllegalArgumentException("Unsupported payment service: " + paymentService));
+        ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> cancellationAuthorisation =
+            createCancellationAuthorisation(request.getPaymentId(), request.getPsuData(), paymentType);
 
-        Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
-        if (!pisCommonPaymentResponse.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS Cancellation Authorization has failed. Payment not found by id.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
-            return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
+        if (cancellationAuthorisation.hasError()) {
+            return ResponseObject.<CancellationAuthorisationResponse>builder().fail(cancellationAuthorisation.getError()).build();
+        }
+
+        if (request.hasNoUpdateData()) {
+            return ResponseObject.<CancellationAuthorisationResponse>builder().body(cancellationAuthorisation.getBody()).build();
+        }
+
+        String cancellationId = cancellationAuthorisation.getBody().getCancellationId();
+        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = new Xs2aUpdatePisCommonPaymentPsuDataRequest(request, cancellationId);
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePsuDataResponse = updatePisCancellationPsuData(updateRequest);
+
+        if (updatePsuDataResponse.hasError()) {
+            return ResponseObject.<CancellationAuthorisationResponse>builder()
+                       .fail(updatePsuDataResponse.getError())
                        .build();
         }
 
-        PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
-        return pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(paymentId, paymentType, psuData)
-                   .map(resp -> ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                                    .body(resp)
-                                    .build())
-                   .orElseGet(ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                                  .fail(PIS_400, of(FORMAT_ERROR))
-                                  ::build);
+        return ResponseObject.<CancellationAuthorisationResponse>builder()
+                   .body(updatePsuDataResponse.getBody())
+                   .build();
     }
 
     /**
@@ -213,5 +223,27 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
         return ResponseObject.<ScaStatus>builder()
                    .body(scaStatus.get())
                    .build();
+    }
+
+    private ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createCancellationAuthorisation(String paymentId, PsuIdData psuData, PaymentType paymentType) {
+        xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
+
+        Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
+        if (!pisCommonPaymentResponse.isPresent()) {
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS Cancellation Authorization has failed. Payment not found by id.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
+            return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
+                       .build();
+        }
+
+        PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
+        return pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(paymentId, paymentType, psuData)
+                   .map(resp -> ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                                    .body(resp)
+                                    .build())
+                   .orElseGet(ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                                  .fail(PIS_400, of(FORMAT_ERROR))
+                                  ::build);
     }
 }

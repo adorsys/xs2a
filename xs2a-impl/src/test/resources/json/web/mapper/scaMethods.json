@@ -1,0 +1,9 @@
+[
+  {
+    "authenticationType": "some type",
+    "authenticationVersion": "some version",
+    "authenticationMethodId": "some method id",
+    "name": "some name",
+    "explanation": "some explanation"
+  }
+]

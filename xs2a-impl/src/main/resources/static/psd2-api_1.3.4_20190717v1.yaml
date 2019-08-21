@@ -1011,7 +1011,16 @@ paths:
         - $ref: "#/components/parameters/PSU-Http-Method"
         - $ref: "#/components/parameters/PSU-Device-ID"
         - $ref: "#/components/parameters/PSU-Geo-Location"
-      #NO REQUEST BODY
+
+      requestBody:
+          content:
+              application/json:
+                  schema:
+                      oneOf: #Different Authorisation Bodies
+                          - {}
+                          - $ref: "#/components/schemas/updatePsuAuthentication"
+                          - $ref: "#/components/schemas/selectPsuAuthenticationMethod"
+                          - $ref: "#/components/schemas/transactionAuthorisation"
 
       responses:
         '201':
@@ -1319,7 +1328,7 @@ paths:
 
       responses:
         '200':
-          $ref: "#/components/responses/OK_200_UpdatePsuData"
+            $ref: "#/components/responses/OK_200_UpdateCancellationPsuData"
 
         '400':
           $ref: "#/components/responses/BAD_REQUEST_400_PIS"
@@ -6561,6 +6570,27 @@ components:
         authorisationId:
           $ref: "#/components/schemas/authorisationId"
 
+    updateCancellationPsuAuthenticationResponse:
+        description: Body of the JSON response for a successful update PSU Authentication request.
+        type: object
+        required:
+            - scaStatus
+        properties:
+            chosenScaMethod:
+                $ref: "#/components/schemas/chosenScaMethod"
+            challengeData:
+                $ref: "#/components/schemas/challengeData"
+            scaMethods:
+                $ref: "#/components/schemas/scaMethods"
+            _links:
+                $ref: "#/components/schemas/_linksUpdatePsuAuthentication"
+            scaStatus:
+                $ref: "#/components/schemas/scaStatus"
+            psuMessage:
+                $ref: "#/components/schemas/psuMessageText"
+            cancellationId:
+                $ref: "#/components/schemas/cancellationId"
+
 
     selectPsuAuthenticationMethodResponse:
       description: Body of the JSON response for a successful select PSU Authentication Method request.
@@ -11131,6 +11161,33 @@ components:
             "Transaction Authorisation (Embedded Approach)":
               $ref: "#/components/examples/transactionAuthorisationResponseExample"
 
+    OK_200_UpdateCancellationPsuData:
+        description: OK
+
+        headers:
+            X-Request-ID:
+                $ref: "#/components/headers/X-Request-ID"
+            ASPSP-SCA-Approach:
+                $ref: "#/components/headers/ASPSP-SCA-Approach"
+
+        content:
+            application/json:
+                schema:
+
+                    oneOf: #Different Authorisation Bodies
+                        - $ref: "#/components/schemas/updatePsuIdenticationResponse" #Update PSU Identification
+                        - $ref: "#/components/schemas/updateCancellationPsuAuthenticationResponse" #Update PSU Authentication
+                        - $ref: "#/components/schemas/selectPsuAuthenticationMethodResponse" #Select Authentication Method
+                        - $ref: "#/components/schemas/scaStatusResponse" #Transaction Authorisation
+                examples:
+                    "Update PSU Identification - Payment Initiation (Decoupled Approach)":
+                        $ref: "#/components/examples/updatePsuIdentificationResponseExample_Decoupled_payments"
+                    "Update PSU Authentication - Payment Initiation (Embedded Approach)":
+                        $ref: "#/components/examples/updatePsuAuthenticationResponseExample_Embedded_payments"
+                    "Select PSU Authentication - Payment Initiation Method (Embedded Approach)":
+                        $ref: "#/components/examples/selectPsuAuthenticationMethodResponseExample_Embedded_payments"
+                    "Transaction Authorisation (Embedded Approach)":
+                        $ref: "#/components/examples/transactionAuthorisationResponseExample"
 
     OK_200_GetSigningBasket:
       description: OK

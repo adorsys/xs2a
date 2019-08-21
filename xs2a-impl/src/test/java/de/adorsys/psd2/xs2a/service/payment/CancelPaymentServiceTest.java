@@ -25,6 +25,8 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -58,8 +60,8 @@ import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -70,6 +72,7 @@ public class CancelPaymentServiceTest {
     private static final String PAYMENT_NOT_FOUND_MESSAGE = "Payment not found";
     private static final PsuIdData PSU_DATA = buildPsuIdData();
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_DATA.getPsuId(), PSU_DATA.getPsuIdType(), PSU_DATA.getPsuCorporateId(), PSU_DATA.getPsuCorporateIdType(), null);
+    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
 
     @InjectMocks
@@ -318,8 +321,8 @@ public class CancelPaymentServiceTest {
         cancelPaymentResponseExpected.setAuthorizationId(AUTHORISATION_ID);
         cancelPaymentResponseExpected.setScaStatus(ScaStatus.RECEIVED);
 
-        when(paymentCancellationAuthorisationService.createPisCancellationAuthorization(ENCRYPTED_PAYMENT_ID, null, spiPayment.getPaymentType(), spiPayment.getPaymentProduct()))
-            .thenReturn(ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+        when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(ENCRYPTED_PAYMENT_ID, EMPTY_PSU_DATA, spiPayment.getPaymentProduct(), spiPayment.getPaymentType().getValue(), null)))
+            .thenReturn(ResponseObject.<CancellationAuthorisationResponse>builder()
                             .body(cancellationResponse)
                             .build());
         when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, TransactionStatus.ACTC)), eq(getSpiPayment(PAYMENT_ID, ACTC)), eq(ENCRYPTED_PAYMENT_ID)))
@@ -349,8 +352,8 @@ public class CancelPaymentServiceTest {
     public void initiatePaymentCancellation_authorisationRequired_implicit_hasError() {
         SpiPayment spiPayment = getSpiPayment(PAYMENT_ID, ACTC);
 
-        when(paymentCancellationAuthorisationService.createPisCancellationAuthorization(ENCRYPTED_PAYMENT_ID, null, spiPayment.getPaymentType(), spiPayment.getPaymentProduct()))
-            .thenReturn(ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+        when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(ENCRYPTED_PAYMENT_ID, EMPTY_PSU_DATA, spiPayment.getPaymentProduct(), spiPayment.getPaymentType().getValue(), null)))
+            .thenReturn(ResponseObject.<CancellationAuthorisationResponse>builder()
                             .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                             .build());
 

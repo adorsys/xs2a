@@ -19,12 +19,18 @@ package de.adorsys.psd2.xs2a.web.aspect;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
+import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.PisAuthorisationCancellationLinks;
+import de.adorsys.psd2.xs2a.web.link.UpdatePisCancellationPsuDataLinks;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,17 +50,26 @@ public class CreatePisAuthorisationCancellationAspectTest {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
     private static final String ERROR_TEXT = "Error occurred while processing";
+    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
+    private static final Xs2aCreatePisAuthorisationRequest REQUEST =
+        new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, EMPTY_PSU_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), null);
 
     @InjectMocks
     private CreatePisAuthorisationCancellationAspect aspect;
 
-    @Mock private ScaApproachResolver scaApproachResolver;
-    @Mock private MessageService messageService;
-    @Mock private AspspProfileService aspspProfileService;
-    @Mock private Xs2aCreatePisCancellationAuthorisationResponse response;
+    @Mock
+    private ScaApproachResolver scaApproachResolver;
+    @Mock
+    private MessageService messageService;
+    @Mock
+    private AspspProfileService aspspProfileService;
+    @Mock
+    private Xs2aCreatePisCancellationAuthorisationResponse createResponse;
+    @Mock
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse updateResponse;
 
     private AspspSettings aspspSettings;
-    private ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> responseObject;
+    private ResponseObject<CancellationAuthorisationResponse> responseObject;
 
     @Before
     public void setUp() {
@@ -63,17 +78,35 @@ public class CreatePisAuthorisationCancellationAspectTest {
     }
 
     @Test
-    public void createPisAuthorizationAspect() {
+    public void createPisAuthorisationAspect_withStartResponseType_shouldSetAuthorisationCancellationLinks() {
+        when(createResponse.getAuthorisationResponseType()).thenReturn(AuthorisationResponseType.START);
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
 
-        responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                             .body(response)
+        responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
+                             .body(createResponse)
                              .build();
-        ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse =
-            aspect.createPisAuthorizationAspect(responseObject, PAYMENT_ID, null, PaymentType.SINGLE, PAYMENT_PRODUCT);
+        ResponseObject<CancellationAuthorisationResponse> actualResponse =
+            aspect.createPisAuthorisationAspect(responseObject, REQUEST);
 
         verify(aspspProfileService, times(2)).getAspspSettings();
-        verify(response, times(1)).setLinks(any(PisAuthorisationCancellationLinks.class));
+        verify(createResponse, times(1)).setLinks(any(PisAuthorisationCancellationLinks.class));
+
+        assertFalse(actualResponse.hasError());
+    }
+
+    @Test
+    public void createPisAuthorisationAspect_withUpdateResponseType_shouldSetUpdatePsuDataLinks() {
+        when(updateResponse.getAuthorisationResponseType()).thenReturn(AuthorisationResponseType.UPDATE);
+        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+
+        responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
+                             .body(updateResponse)
+                             .build();
+        ResponseObject<CancellationAuthorisationResponse> actualResponse =
+            aspect.createPisAuthorisationAspect(responseObject, REQUEST);
+
+        verify(aspspProfileService, times(1)).getAspspSettings();
+        verify(updateResponse, times(1)).setLinks(any(UpdatePisCancellationPsuDataLinks.class));
 
         assertFalse(actualResponse.hasError());
     }
@@ -84,11 +117,11 @@ public class CreatePisAuthorisationCancellationAspectTest {
         when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
         // When
-        responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+        responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                              .build();
-        ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse =
-            aspect.createPisAuthorizationAspect(responseObject, PAYMENT_ID, null, PaymentType.SINGLE, PAYMENT_PRODUCT);
+        ResponseObject<CancellationAuthorisationResponse> actualResponse =
+            aspect.createPisAuthorisationAspect(responseObject, REQUEST);
 
         // Then
         assertTrue(actualResponse.hasError());
