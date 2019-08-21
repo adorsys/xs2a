@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,6 +67,9 @@ public class AisAuthorisationServiceInternalTest {
     private static final ScaApproach SCA_APPROACH = ScaApproach.EMBEDDED;
     private static final String AUTHENTICATION_METHOD_ID = "Method id";
     private static final String WRONG_AUTHENTICATION_METHOD_ID = "Wrong method id";
+    private static final String TPP_REDIRECT_URI = "request/redirect_uri";
+    private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
+    private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
 
     private AisConsent aisConsent;
     private AisConsentAuthorization aisConsentAuthorisation;
@@ -186,6 +190,7 @@ public class AisAuthorisationServiceInternalTest {
         AisConsentAuthorizationRequest aisConsentAuthorisationRequest = new AisConsentAuthorizationRequest();
         aisConsentAuthorisationRequest.setPsuData(PSU_ID_DATA);
         aisConsentAuthorisationRequest.setScaStatus(aisConsentAuthorisation.getScaStatus());
+        aisConsentAuthorisationRequest.setTppRedirectURIs(TPP_REDIRECT_URIs);
 
         // When
         Optional<CreateAisConsentAuthorizationResponse> actual = aisAuthorisationServiceInternal.createAuthorizationWithResponse(EXTERNAL_CONSENT_ID, aisConsentAuthorisationRequest);

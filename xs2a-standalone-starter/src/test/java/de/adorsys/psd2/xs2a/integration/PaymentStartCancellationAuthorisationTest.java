@@ -35,6 +35,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
@@ -92,6 +93,9 @@ public class PaymentStartCancellationAuthorisationTest {
     private static final String PSU_ID = "PSU-123";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String AUTHORISATION_RESPONSE = "/json/payment/cancellation/res/explicit/cancellation_authorisation_response.json";
+    private static final String TPP_REDIRECT_URI = "request/redirect_uri";
+    private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
+    private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
 
     @Autowired
     private MockMvc mockMvc;
@@ -119,6 +123,8 @@ public class PaymentStartCancellationAuthorisationTest {
         httpHeadersExplicit.add("tpp-qwac-certificate", "qwac certificate");
         httpHeadersExplicit.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         httpHeadersExplicit.add("PSU-ID", PSU_ID);
+        httpHeadersExplicit.add("TPP-Redirect-URI", TPP_REDIRECT_URI);
+        httpHeadersExplicit.add("TPP-Nok-Redirect-URI", TPP_NOK_REDIRECT_URI);
 
         given(tppService.getTppInfo()).willReturn(TPP_INFO);
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo())).willReturn(false);
@@ -148,7 +154,7 @@ public class PaymentStartCancellationAuthorisationTest {
         CreatePisAuthorisationRequest expectedCreatePisAuthorisationRequest =
             new CreatePisAuthorisationRequest(PaymentAuthorisationType.CANCELLED,
                                               new PsuIdData(PSU_ID, null, null, null),
-                                              ScaApproach.EMBEDDED);
+                                              ScaApproach.EMBEDDED, TPP_REDIRECT_URIs);
 
         //When
         ResultActions resultActions = mockMvc.perform(requestBuilder);

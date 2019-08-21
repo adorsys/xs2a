@@ -41,6 +41,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -440,7 +441,9 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         pisAuthorisation.setAuthorisationExpirationTimestamp(countAuthorisationExpirationTimestamp());
         pisAuthorisation.setScaApproach(request.getScaApproach());
         pisAuthorisation.setPaymentData(paymentData);
-
+        TppRedirectUri redirectURIs = request.getTppRedirectURIs();
+        pisAuthorisation.setTppOkRedirectUri(redirectURIs.getUri());
+        pisAuthorisation.setTppNokRedirectUri(redirectURIs.getNokUri());
         return pisAuthorisationRepository.save(pisAuthorisation);
     }
 

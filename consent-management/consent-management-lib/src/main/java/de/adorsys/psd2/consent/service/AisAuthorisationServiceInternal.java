@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -277,6 +278,9 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
         consentAuthorization.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
         consentAuthorization.setAuthorisationExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getAuthorisationExpirationTimeMs(), ChronoUnit.MILLIS));
         consentAuthorization.setScaApproach(request.getScaApproach());
+        TppRedirectUri redirectURIs = request.getTppRedirectURIs();
+        consentAuthorization.setTppOkRedirectUri(redirectURIs.getUri());
+        consentAuthorization.setTppNokRedirectUri(redirectURIs.getNokUri());
         return aisConsentAuthorisationRepository.save(consentAuthorization);
     }
 

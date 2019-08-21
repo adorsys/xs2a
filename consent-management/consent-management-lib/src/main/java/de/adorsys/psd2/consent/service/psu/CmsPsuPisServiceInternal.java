@@ -98,8 +98,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                          authorisation.getId(), instanceId);
                 changeAuthorisationStatusToFailed(authorisation);
 
-                String tppNokRedirectUri = authorisation.getPaymentData().getTppInfo().getNokRedirectUri();
-                throw new RedirectUrlIsExpiredException(tppNokRedirectUri);
+            throw new RedirectUrlIsExpiredException(authorisation.getTppNokRedirectUri());
             }
             return Optional.of(buildCmsPaymentResponse(authorisation, false));
         }
@@ -146,8 +145,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                          redirectId, instanceId);
                 changeAuthorisationStatusToFailed(authorisation);
 
-                String tppNokRedirectUri = authorisation.getPaymentData().getTppInfo().getNokRedirectUri();
-                throw new RedirectUrlIsExpiredException(tppNokRedirectUri);
+                throw new RedirectUrlIsExpiredException(authorisation.getTppNokRedirectUri());
             }
             return Optional.of(buildCmsPaymentResponse(authorisation, true));
         }
@@ -313,7 +311,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
         if (authorization.isPresent() && !authorization.get().isAuthorisationNotExpired()) {
             log.info("Authorisation ID [{}], Instance ID: [{}]. Authorisation is expired", authorisationId, instanceId);
-            throw new AuthorisationIsExpiredException(authorization.get().getPaymentData().getTppInfo().getNokRedirectUri());
+            throw new AuthorisationIsExpiredException(authorization.get().getTppNokRedirectUri());
         }
         return authorization;
     }
