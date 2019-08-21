@@ -1,0 +1,49 @@
+@startuml
+artifact "XS2AService"
+
+artifact "ASPSPProfile"
+
+ASPSPProfile <.. XS2AService
+
+database CMS_DB
+
+node CMS_node{
+artifact "Consent Management" as CMS {
+
+        component "consent-xs2a-web.jar" as cms_xs2a_api
+
+        component "aspsp-profile-remote.jar" as profile_remote
+
+        component "consent-psu-web.jar" as cms_psu_api
+        component "consent-aspsp-web.jar" as cms_aspsp_api
+
+
+
+        component "consent-management-lib.jar" as cms_lib
+
+        cms_xs2a_api .> cms_lib
+        profile_remote <.. cms_lib
+
+        cms_lib <. cms_psu_api
+        cms_lib <. cms_aspsp_api
+
+}
+    component "Consent Management Application\n(cms-standalone-service)" as main #lightblue
+   file "application.yml" as config
+   file "logback.xml" as logback
+
+    main -- config
+   main -- logback
+   cms_lib <.. main
+}
+ASPSPProfile <.. profile_remote
+XS2AService .> cms_xs2a_api
+
+
+config -[hidden]- CMS_DB
+
+
+cms_lib ..> CMS_DB
+
+
+@enduml
