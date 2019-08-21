@@ -16,13 +16,15 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisConsentTppInfoValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +35,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.STATUS_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
@@ -42,9 +45,12 @@ import static org.mockito.Mockito.when;
 public class UpdateConsentPsuDataValidatorTest {
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
     private static final MessageError TPP_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
+    private static final MessageError STATUS_VALIDATION_ERROR =
+        new MessageError(ErrorType.AIS_409, TppMessageInformation.of(STATUS_INVALID));
 
     @Mock
     private AisConsentTppInfoValidator aisConsentTppInfoValidator;
@@ -67,9 +73,10 @@ public class UpdateConsentPsuDataValidatorTest {
     public void validate_withValidConsentObject_shouldReturnValid() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        AccountConsentAuthorization authorisation = buildAccountConsentAuthorization(SCA_STATUS);
 
         // When
-        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new CommonConsentObject(accountConsent));
+        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation));
 
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -83,9 +90,10 @@ public class UpdateConsentPsuDataValidatorTest {
     public void validate_withInvalidTppInConsent_shouldReturnTppValidationError() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
+        AccountConsentAuthorization authorisation = buildAccountConsentAuthorization(SCA_STATUS);
 
         // When
-        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new CommonConsentObject(accountConsent));
+        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation));
 
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -93,6 +101,21 @@ public class UpdateConsentPsuDataValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    public void validate_withFailedAuthorisation_shouldReturnError() {
+        // Given
+        AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        AccountConsentAuthorization authorisation = buildAccountConsentAuthorization(ScaStatus.FAILED);
+
+        // When
+        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation));
+
+        // Then
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+        assertEquals(STATUS_VALIDATION_ERROR, validationResult.getMessageError());
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {
@@ -106,5 +129,11 @@ public class UpdateConsentPsuDataValidatorTest {
                                   null, null, false, false,
                                   Collections.emptyList(), tppInfo, null, false,
                                   Collections.emptyList(), null, Collections.emptyMap());
+    }
+
+    private AccountConsentAuthorization buildAccountConsentAuthorization(ScaStatus scaStatus) {
+        AccountConsentAuthorization authorisation = new AccountConsentAuthorization();
+        authorisation.setScaStatus(scaStatus);
+        return authorisation;
     }
 }

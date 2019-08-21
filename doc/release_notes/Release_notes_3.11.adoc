@@ -10,6 +10,7 @@
 * Pass PSU-IP-Address to SPI Context
 * Handling wrong HTTP methods in all XS2A endpoints
 * Bugfix: Start authorisation for payment cancellation ignores request body
+* Bugfix: Update PSU Data with failed AIS authorisation results in 500 INTERNAL_SERVER_ERROR
 
 == Remove deprecated constructor in `SpiContextData`
 
@@ -53,3 +54,8 @@ From now on, any HTTP request to XS2A endpoint with unsupported HTTP method will
 From now on, it's possible to send PSU password in the request body on starting authorisation for payment cancellation
 (`POST /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations`) to authenticate the PSU without sending separate request.
 This can be achieved by sending both PSU-ID header and PSU password in the request body on starting cancellation authorisation.
+
+== Bugfix: Update PSU Data with failed AIS authorisation results in 500 INTERNAL_SERVER_ERROR
+
+From now on, trying to update PSU Data for AIS authorisation (`PUT /v1/consents/{consentId}/authorisations/{authorsationId}`)
+with `FAILED` authorisation status will result in `409 STATUS_INVALID` error being returned to the TPP.
