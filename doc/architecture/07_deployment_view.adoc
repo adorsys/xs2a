@@ -33,6 +33,10 @@ _<description of the mapping>_
 
 image::07_multiservice_xs2a.png[Multiservice deployment XS2A, title="Multiservice deployment XS2A", align="center"]
 
+==== CMS Service Deployment
+
+image::07_multiservice_cms.png[Multiservice deployment CMS, title="Multiservice deployment CMS", align="center"]
+
 === Infrastructure Level 1 - Single service deployment
 
 image::07_allinone_deployment.png[Single service deployment, title="Single service deployment", align="center"]
