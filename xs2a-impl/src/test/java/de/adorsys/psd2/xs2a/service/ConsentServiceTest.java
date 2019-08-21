@@ -55,6 +55,7 @@ import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.*;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -80,8 +81,6 @@ import java.util.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -112,6 +111,8 @@ public class ConsentServiceTest {
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     private static final MessageError CONSENT_UNKNOWN_403_ERROR =
         new MessageError(ErrorType.AIS_403, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_403));
+    private static final MessageError RESOURCE_UNKNOWN_ERROR =
+        new MessageError(ErrorType.AIS_404, TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404));
     private static final TppRedirectUri TPP_REDIRECT_URI = new TppRedirectUri("redirectUri", "nokRedirectUri");
 
     @InjectMocks
@@ -222,7 +223,7 @@ public class ConsentServiceTest {
             .thenReturn(ValidationResult.valid());
         when(createConsentAuthorisationValidator.validate(any(CommonConsentObject.class)))
             .thenReturn(ValidationResult.valid());
-        when(updateConsentPsuDataValidator.validate(any(CommonConsentObject.class)))
+        when(updateConsentPsuDataValidator.validate(any(UpdateConsentPsuDataRequestObject.class)))
             .thenReturn(ValidationResult.valid());
         when(getConsentAuthorisationsValidator.validate(any(CommonConsentObject.class)))
             .thenReturn(ValidationResult.valid());
@@ -876,21 +877,27 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void updateConsentPsuData_withInvalidConsent_shouldReturnValidationError() {
+    public void updateConsentPsuData_withInvalidRequest_shouldReturnValidationError() {
         // Given
         UpdateConsentPsuDataReq updateConsentPsuDataReq = buildUpdateConsentPsuDataReq(CONSENT_ID);
+        AccountConsentAuthorization authorisation = new AccountConsentAuthorization();
 
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(true);
 
-        when(updateConsentPsuDataValidator.validate(any(CommonConsentObject.class)))
+        when(aisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
+
+        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
+            .thenReturn(Optional.of(authorisation));
+
+        when(updateConsentPsuDataValidator.validate(any(UpdateConsentPsuDataRequestObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
         ResponseObject<UpdateConsentPsuDataResponse> actualResponse = consentService.updateConsentPsuData(updateConsentPsuDataReq);
 
         // Then
-        verify(updateConsentPsuDataValidator).validate(new CommonConsentObject(accountConsent));
+        verify(updateConsentPsuDataValidator).validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation));
         assertValidationErrorIsPresent(actualResponse);
     }
 
@@ -908,6 +915,30 @@ public class ConsentServiceTest {
 
         // Then
         assertThat(response.getError()).isEqualTo(CONSENT_UNKNOWN_403_ERROR);
+    }
+
+    @Test
+    public void updateConsentPsuData_withUnknownAuthorisationId_shouldReturnResourceUnknownError() {
+        // Given
+        String authorisationId = "unknown id";
+        UpdateConsentPsuDataReq updateConsentPsuDataReq = buildUpdateConsentPsuDataReq(CONSENT_ID, authorisationId);
+
+        when(endpointAccessCheckerService.isEndpointAccessible(authorisationId, CONSENT_ID))
+            .thenReturn(true);
+
+        when(aisScaAuthorisationServiceResolver.getServiceInitiation(authorisationId)).thenReturn(redirectAisAuthorizationService);
+
+        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(authorisationId, CONSENT_ID))
+            .thenReturn(Optional.empty());
+
+        // When
+        ResponseObject<UpdateConsentPsuDataResponse> actualResponse = consentService.updateConsentPsuData(updateConsentPsuDataReq);
+
+        // Then
+        assertTrue(actualResponse.hasError());
+        assertEquals(RESOURCE_UNKNOWN_ERROR, actualResponse.getError());
+
+        verify(updateConsentPsuDataValidator, never()).validate(any());
     }
 
     @Test
@@ -1096,9 +1127,13 @@ public class ConsentServiceTest {
     }
 
     private UpdateConsentPsuDataReq buildUpdateConsentPsuDataReq(String consentId) {
+        return buildUpdateConsentPsuDataReq(consentId, AUTHORISATION_ID);
+    }
+
+    private UpdateConsentPsuDataReq buildUpdateConsentPsuDataReq(String consentId, String authorisationId) {
         UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
         request.setConsentId(consentId);
-        request.setAuthorizationId(AUTHORISATION_ID);
+        request.setAuthorizationId(authorisationId);
         return request;
     }
 

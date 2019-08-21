@@ -46,6 +46,7 @@ import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.*;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -456,7 +457,19 @@ public class ConsentService {
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
 
-        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new CommonConsentObject(accountConsent.get()));
+        Optional<AccountConsentAuthorization> authorisationOptional = aisScaAuthorisationServiceResolver.getServiceInitiation(updatePsuData.getAuthorizationId())
+                                                                          .getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId());
+
+        if (!authorisationOptional.isPresent()) {
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}], Authorisation-ID: [{}]. Update consent PSU data failed: authorisation not found by id",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId);
+            return ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                       .fail(AIS_404, of(RESOURCE_UNKNOWN_404))
+                       .build();
+        }
+
+        AccountConsentAuthorization authorisation = authorisationOptional.get();
+        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent.get(), authorisation));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, validationResult.getMessageError());
@@ -473,16 +486,7 @@ public class ConsentService {
                        .build();
         }
 
-        return aisScaAuthorisationServiceResolver.getServiceInitiation(updatePsuData.getAuthorizationId())
-                   .getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId())
-                   .map(conAuth -> getUpdateConsentPsuDataResponse(updatePsuData, conAuth))
-                   .orElseGet(() -> {
-                       log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Update consent PSU data failed: consent not found at CMS by id",
-                                requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
-                       return ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                                  .fail(AIS_404, of(RESOURCE_UNKNOWN_404))
-                                  .build();
-                   });
+        return getUpdateConsentPsuDataResponse(updatePsuData, authorisation);
     }
 
     private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentPsuDataResponse(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {

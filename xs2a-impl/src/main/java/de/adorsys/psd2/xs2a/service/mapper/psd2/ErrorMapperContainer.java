@@ -76,6 +76,7 @@ public class ErrorMapperContainer {
     private final AIS404ErrorMapper ais404ErrorMapper;
     private final AIS405ErrorMapper ais405ErrorMapper;
     private final AIS406ErrorMapper ais406ErrorMapper;
+    private final AIS409ErrorMapper ais409ErrorMapper;
     private final AIS429ErrorMapper ais429ErrorMapper;
 
     @PostConstruct
@@ -107,6 +108,7 @@ public class ErrorMapperContainer {
         mapperContainer.put(AIS_404, ais404ErrorMapper);
         mapperContainer.put(AIS_405, ais405ErrorMapper);
         mapperContainer.put(AIS_406, ais406ErrorMapper);
+        mapperContainer.put(AIS_409, ais409ErrorMapper);
         mapperContainer.put(AIS_415, ais415ErrorMapper);
         mapperContainer.put(AIS_429, ais429ErrorMapper);
         mapperContainer.put(AIS_500, ais500ErrorMapper);

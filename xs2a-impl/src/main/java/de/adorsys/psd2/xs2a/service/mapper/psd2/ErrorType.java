@@ -49,6 +49,7 @@ public enum ErrorType {
     AIS_404(ServiceType.AIS, 404),
     AIS_405(ServiceType.AIS, 405),
     AIS_406(ServiceType.AIS, 406),
+    AIS_409(ServiceType.AIS, 409),
     AIS_415(ServiceType.AIS, 415),
     AIS_429(ServiceType.AIS, 429),
     AIS_500(ServiceType.AIS, 500),
