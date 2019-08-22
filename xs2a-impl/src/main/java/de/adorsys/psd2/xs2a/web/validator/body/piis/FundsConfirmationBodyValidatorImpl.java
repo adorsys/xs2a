@@ -17,25 +17,31 @@
 package de.adorsys.psd2.xs2a.web.validator.body.piis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.model.Amount;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.CurrencyValidator;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
 import java.util.Optional;
 
 @Component
 public class FundsConfirmationBodyValidatorImpl extends AbstractBodyValidatorImpl implements FundsConfirmationBodyValidator {
 
     private final AccountReferenceValidator accountReferenceValidator;
+    private final AmountValidator amountValidator;
+    private final CurrencyValidator currencyValidator;
 
-    public FundsConfirmationBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper, AccountReferenceValidator accountReferenceValidator) {
+    public FundsConfirmationBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper, AccountReferenceValidator accountReferenceValidator, AmountValidator amountValidator, CurrencyValidator currencyValidator) {
         super(errorBuildingService, objectMapper);
         this.accountReferenceValidator = accountReferenceValidator;
+        this.amountValidator = amountValidator;
+        this.currencyValidator = currencyValidator;
     }
 
     @Override
@@ -49,10 +55,21 @@ public class FundsConfirmationBodyValidatorImpl extends AbstractBodyValidatorImp
 
         ConfirmationOfFunds confirmationOfFunds = confirmationOfFundsOptional.get();
 
-        if (Objects.isNull(confirmationOfFunds.getAccount())) {
+        if (confirmationOfFunds.getAccount() == null) {
             errorBuildingService.enrichMessageError(messageError, "Value 'access' should not be null");
         } else {
             accountReferenceValidator.validate(confirmationOfFunds.getAccount(), messageError);
         }
+
+        if (confirmationOfFunds.getInstructedAmount() == null) {
+            errorBuildingService.enrichMessageError(messageError, "Value 'instructedAmount' should not be null");
+        } else {
+            validateAmount(confirmationOfFunds.getInstructedAmount(), messageError);
+        }
+    }
+
+    private void validateAmount(Amount instructedAmount, MessageError messageError) {
+        currencyValidator.validateCurrency(instructedAmount.getCurrency(), messageError);
+        amountValidator.validateAmount(instructedAmount.getAmount(), messageError);
     }
 }

@@ -27,10 +27,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
-import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
-import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
-import de.adorsys.psd2.xs2a.web.validator.body.OptionalFieldMaxLengthValidator;
-import de.adorsys.psd2.xs2a.web.validator.body.StringMaxLengthValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.*;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
@@ -69,6 +66,7 @@ public class AccountAccessValidatorImplTest {
     private JsonReader jsonReader;
     private AccountReferenceValidator accountReferenceValidator;
     private FieldExtractor fieldExtractor;
+    private CurrencyValidator currencyValidator;
 
     @Mock
     private JsonConverter jsonConverter;
@@ -82,8 +80,9 @@ public class AccountAccessValidatorImplTest {
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
         fieldExtractor = new FieldExtractor(errorService, jsonConverter);
         dateFieldValidator = new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor);
+        currencyValidator = new CurrencyValidator(errorService);
         OptionalFieldMaxLengthValidator stringValidator = new OptionalFieldMaxLengthValidator(new StringMaxLengthValidator(errorService));
-        accountReferenceValidator = new AccountReferenceValidator(errorService, stringValidator);
+        accountReferenceValidator = new AccountReferenceValidator(errorService, stringValidator, currencyValidator);
 
         validator = createValidator(consents);
     }
@@ -161,7 +160,7 @@ public class AccountAccessValidatorImplTest {
 
         validator.validate(request, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Invalid currency code format", messageError.getTppMessage().getText());
+        assertEquals("Value 'currency' should not be null", messageError.getTppMessage().getText());
     }
 
     @Test
