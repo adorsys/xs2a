@@ -113,3 +113,25 @@ endpoints for retrieving events report from the *cms-aspsp-api* should be disabl
 Logging implementation uses *SLF4J* for recording events, meaning that it's possible to configure and use any logging framework that's compatible with *SLF4J*.
 All events are being written to a separate logger *event-log* at *INFO* level.
 See <<SPI_Developer_Guide.adoc#configuring-logging,XS2A Logging configuring>> for more details on how to configure *SLF4J* logging.
+
+
+==== Adjusting swagger UI
+
+Swagger UI is not enabled for XS2A by default.
+
+To enable Swagger in XS2A you have to add `@EnableXs2aSwagger` annotation on any of Spring configuration classes / Spring boot Application class in your application.
+
+To disable Swagger just remove it.
+
+Adjustment Swagger UI implies updating appropriate .yaml file:
+
+* At first put PSD2 API yaml file to the resource folder of your Connector to override default PSD2 API and
+set `xs2a.swagger.psd2.api.location` property in your application.properties file e.g. `xs2a.swagger.psd.api.location=path/in/my/classpath/my_swagger_api.yml`
+* Next steps involve adding and changing necessary parameters in the .yaml file.
+
+The default version of PSD2 API yaml file can be found under:
+```
+xs2a-impl->src->main->resources->static->psd2-api....yaml
+```
+
+NOTE: for adding additional products e.g., it should be updated ASPSP-Profile as well.
