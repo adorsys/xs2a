@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.IBANValidator;
@@ -37,7 +38,6 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.EXECUTION_DATE_INVALID;
 
@@ -45,12 +45,14 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.EXECUTION_DATE_IN
 public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl implements PaymentTypeValidator {
 
     PaymentMapper paymentMapper;
+    private AmountValidator amountValidator;
 
     @Autowired
     public SinglePaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
-                                          PaymentMapper paymentMapper) {
+                                          PaymentMapper paymentMapper, AmountValidator amountValidator) {
         super(errorBuildingService, objectMapper);
         this.paymentMapper = paymentMapper;
+        this.amountValidator = amountValidator;
     }
 
     @Override
@@ -109,7 +111,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         checkOptionalFieldForMaxLength(address.getTownName(), "townName", 100, messageError);
         checkOptionalFieldForMaxLength(address.getPostCode(), "postCode", 5, messageError);
 
-        if ( Objects.isNull(address.getCountry()) || StringUtils.isBlank(address.getCountry().getCode()) ) {
+        if (Objects.isNull(address.getCountry()) || StringUtils.isBlank(address.getCountry().getCode())) {
             errorBuildingService.enrichMessageError(messageError, "Value 'address.country' is required");
         } else if (!Arrays.asList(Locale.getISOCountries()).contains(address.getCountry().getCode())) {
             errorBuildingService.enrichMessageError(messageError, "Value 'address.country' should be ISO 3166 ALPHA2 country code");
@@ -123,13 +125,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         if (Objects.isNull(instructedAmount.getAmount())) {
             errorBuildingService.enrichMessageError(messageError, "Value 'amount' should not be null");
         } else {
-            validateAmount(instructedAmount.getAmount(), messageError);
-        }
-    }
-
-    private void validateAmount(String amount, MessageError messageError) {
-        if (!Pattern.matches("-?[0-9]{1,14}(.[0-9]{1,3})?", amount)) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'amount' has wrong format");
+            amountValidator.validateAmount(instructedAmount.getAmount(), messageError);
         }
     }
 

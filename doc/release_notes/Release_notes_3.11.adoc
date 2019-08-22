@@ -11,6 +11,7 @@
 * Handling wrong HTTP methods in all XS2A endpoints
 * Bugfix: Start authorisation for payment cancellation ignores request body
 * Bugfix: Update PSU Data with failed AIS authorisation results in 500 INTERNAL_SERVER_ERROR
+* Funds confirmation request validation.
 
 == Remove deprecated constructor in `SpiContextData`
 
@@ -59,3 +60,8 @@ This can be achieved by sending both PSU-ID header and PSU password in the reque
 
 From now on, trying to update PSU Data for AIS authorisation (`PUT /v1/consents/{consentId}/authorisations/{authorsationId}`)
 with `FAILED` authorisation status will result in `409 STATUS_INVALID` error being returned to the TPP.
+
+== Funds confirmation request validation.
+
+New validation was added for POST request `/v1/funds-confirmations`, currently value `instructedAmount` and its fields
+`amount` and `currency` are all mandatory. Also, `currency` has validation for correct currency code format.

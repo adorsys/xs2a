@@ -26,7 +26,6 @@ import org.apache.commons.validator.routines.IBANValidator;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import java.util.Currency;
 import java.util.Objects;
 
 import static de.adorsys.psd2.xs2a.web.validator.body.StringMaxLengthValidator.MaxLengthRequirement;
@@ -37,6 +36,7 @@ public class AccountReferenceValidator implements ObjectValidator<AccountReferen
 
     private final ErrorBuildingService errorBuildingService;
     private final OptionalFieldMaxLengthValidator optionalFieldMaxLengthValidator;
+    private final CurrencyValidator currencyValidator;
 
     @Override
     public void validate(@NotNull AccountReference accountReference, @NotNull MessageError messageError) {
@@ -54,7 +54,7 @@ public class AccountReferenceValidator implements ObjectValidator<AccountReferen
                                                                           "MSISDN", 35), messageError);
 
         if (Objects.nonNull(accountReference.getCurrency())) {
-            validateCurrency(accountReference.getCurrency(), messageError);
+            currencyValidator.validateCurrency(accountReference.getCurrency(), messageError);
         }
     }
 
@@ -69,21 +69,6 @@ public class AccountReferenceValidator implements ObjectValidator<AccountReferen
     private boolean isValidBban(String bban) {
         return normalizeString(bban).length() >= 11
                    && normalizeString(bban).length() <= 28; // Can be extended with aprox 50 country specific masks
-    }
-
-    private boolean isValidCurrency(String currency) {
-        try {
-            Currency.getInstance(currency);
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-        return true;
-    }
-
-    private void validateCurrency(String currency, MessageError messageError) {
-        if (!isValidCurrency(currency)) {
-            errorBuildingService.enrichMessageError(messageError, "Invalid currency code format");
-        }
     }
 
     private String normalizeString(String string) {
