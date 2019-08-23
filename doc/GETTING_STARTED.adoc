@@ -1,3 +1,5 @@
+:imagesdir: architecture/images
+
 # Getting started
 
 ## Prerequisites
@@ -92,3 +94,25 @@ Open a browser on page [http://localhost:8080/swagger-ui.html](http://localhost:
 
 Now you may try to put some data using the xs2a-interface.
 See some test scripts [for Postman](../scripts/tests/postman) or [Insomnia](../scripts/tests/insomnia) as a starting point.
+
+### Recommended Hardware Requirements:
+
+- CPU 2Cores
+
+- Memory 2GB
+
+- Free disk space 6GB*
+
+[small]
+
+----
+*for all components that need to build install and run application
+----
+
+.CPU load
+image::cpu_load.png[Cpu and memory load,100%, aligh="center"]
+
+.Memory usage
+image::memory_usage.png[Cpu and memory load,100%, aligh="center"]
+
+
