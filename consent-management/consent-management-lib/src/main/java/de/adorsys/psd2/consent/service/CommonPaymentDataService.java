@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
-import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PisCommonPaymentDataSpecification;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -37,7 +36,6 @@ import java.util.Optional;
 public class CommonPaymentDataService {
     private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
     private final PisCommonPaymentDataSpecification pisCommonPaymentDataSpecification;
-    private final TppInfoRepository tppInfoRepository;
 
     public Optional<PisCommonPaymentData> getPisCommonPaymentData(String paymentId, @Nullable String instanceId) {
         Specification<PisCommonPaymentData> specification = Optional.ofNullable(instanceId)
@@ -56,8 +54,10 @@ public class CommonPaymentDataService {
     }
 
     @Transactional
-    public boolean updateCancelTppRedirectURIs(Long tppInfoId, @NotNull TppRedirectUri tppRedirectUri) {
-        int saved = tppInfoRepository.updateCancelRedirectUrisById(tppInfoId, tppRedirectUri.getUri(), tppRedirectUri.getNokUri());
-        return saved == 1;
+    public boolean updateCancelTppRedirectURIs(PisCommonPaymentData paymentData, @NotNull TppRedirectUri tppRedirectUri) {
+        paymentData.getAuthorisationTemplate().setCancelRedirectUri(tppRedirectUri.getUri());
+        paymentData.getAuthorisationTemplate().setCancelNokRedirectUri(tppRedirectUri.getNokUri());
+        PisCommonPaymentData saved = pisCommonPaymentDataRepository.save(paymentData);
+        return saved.getPaymentId() != null;
     }
 }

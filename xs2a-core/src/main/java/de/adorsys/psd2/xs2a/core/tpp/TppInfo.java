@@ -60,6 +60,7 @@ public class TppInfo {
     @ApiModelProperty(value = "State", required = true, example = "Bayern")
     private String state;
 
+    @Deprecated // TODO: Remove the field in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1017
     @Nullable
     @ApiModelProperty(value = "TPP redirect URIs")
     private TppRedirectUri tppRedirectUri;

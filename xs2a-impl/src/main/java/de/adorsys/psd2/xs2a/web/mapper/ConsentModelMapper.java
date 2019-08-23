@@ -22,6 +22,7 @@ import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
@@ -41,7 +42,7 @@ public class ConsentModelMapper {
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
 
-    public CreateConsentReq mapToCreateConsentReq(Consents consent) {
+    public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri) {
         return Optional.ofNullable(consent)
                    .map(cnst -> {
                        CreateConsentReq createAisConsentRequest = new CreateConsentReq();
@@ -50,6 +51,7 @@ public class ConsentModelMapper {
                        createAisConsentRequest.setValidUntil(cnst.getValidUntil());
                        createAisConsentRequest.setFrequencyPerDay(cnst.getFrequencyPerDay());
                        createAisConsentRequest.setCombinedServiceIndicator(BooleanUtils.toBoolean(cnst.isCombinedServiceIndicator()));
+                       createAisConsentRequest.setTppRedirectUri(tppRedirectUri);
                        return createAisConsentRequest;
                    })
                    .orElse(null);

@@ -61,6 +61,7 @@ public class Xs2aAisConsentMapper {
                        aisRequest.setValidUntil(r.getValidUntil());
                        aisRequest.setRecurringIndicator(r.isRecurringIndicator());
                        aisRequest.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
+                       aisRequest.setTppRedirectUri(r.getTppRedirectUri());
 
                        return aisRequest;
                    })

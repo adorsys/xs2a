@@ -12,6 +12,7 @@
 * Bugfix: Start authorisation for payment cancellation ignores request body
 * Bugfix: Update PSU Data with failed AIS authorisation results in 500 INTERNAL_SERVER_ERROR
 * Funds confirmation request validation.
+* Moved columns `redirect_uri` and `nok_redirect_uri` from `tpp_info` to `authorisation_template`
 
 == Remove deprecated constructor in `SpiContextData`
 
@@ -65,3 +66,10 @@ with `FAILED` authorisation status will result in `409 STATUS_INVALID` error bei
 
 New validation was added for POST request `/v1/funds-confirmations`, currently value `instructedAmount` and its fields
 `amount` and `currency` are all mandatory. Also, `currency` has validation for correct currency code format.
+
+== Moved columns `redirect_uri` and `nok_redirect_uri` from `tpp_info` to `authorisation_template`
+
+The columns `redirect_uri`, `nok_redirect_uri`, `cancel_redirect_uri`, `cancel_nok_redirect_uri` were moved to
+`authorisation_template` table from `tpp_info`. The link `authorisation_template_id` on newly created table `authorisation_template`
+was added to `ais_consent` and `pis_common_payment` tables.
+

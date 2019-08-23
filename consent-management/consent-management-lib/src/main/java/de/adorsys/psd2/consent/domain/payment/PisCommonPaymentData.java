@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.domain.payment;
 
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
@@ -65,6 +66,10 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tpp_info_id", nullable = false)
     private TppInfoEntity tppInfo;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "authorisation_template_id", nullable = false)
+    private AuthorisationTemplateEntity authorisationTemplate;
 
     @OneToMany(mappedBy = "paymentData",
         cascade = CascadeType.ALL,

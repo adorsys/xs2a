@@ -81,7 +81,7 @@ public class ConsentAspectTest {
         ResponseObject<CreateConsentResponse> responseObject = ResponseObject.<CreateConsentResponse>builder()
                                                                    .body(createConsentResponse)
                                                                    .build();
-        ResponseObject actualResponse = aspect.invokeCreateAccountConsentAspect(responseObject, new CreateConsentReq(), null, true, null);
+        ResponseObject actualResponse = aspect.invokeCreateAccountConsentAspect(responseObject, new CreateConsentReq(), null, true);
 
         verify(aspspProfileService, times(2)).getAspspSettings();
         verify(createConsentResponse, times(1)).setLinks(any(CreateConsentLinks.class));
@@ -96,7 +96,7 @@ public class ConsentAspectTest {
         ResponseObject<CreateConsentResponse> responseObject = ResponseObject.<CreateConsentResponse>builder()
                                                                    .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                    .build();
-        ResponseObject actualResponse = aspect.invokeCreateAccountConsentAspect(responseObject, new CreateConsentReq(), null, true, null);
+        ResponseObject actualResponse = aspect.invokeCreateAccountConsentAspect(responseObject, new CreateConsentReq(), null, true);
 
         assertTrue(actualResponse.hasError());
         assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());

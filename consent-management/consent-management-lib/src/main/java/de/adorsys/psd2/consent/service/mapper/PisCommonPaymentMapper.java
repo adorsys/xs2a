@@ -22,7 +22,9 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.payment.*;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -60,6 +62,13 @@ public class PisCommonPaymentMapper {
         commonPaymentData.setPsuDataList(psuDataMapper.mapToPsuDataList(paymentInfo.getPsuDataList()));
         commonPaymentData.setMultilevelScaRequired(paymentInfo.isMultilevelScaRequired());
         commonPaymentData.setAspspAccountId(paymentInfo.getAspspAccountId());
+        AuthorisationTemplateEntity authorisationTemplate = new AuthorisationTemplateEntity();
+        TppRedirectUri tppRedirectUri = paymentInfo.getTppRedirectUri();
+        if (tppRedirectUri != null) {
+            authorisationTemplate.setRedirectUri(tppRedirectUri.getUri());
+            authorisationTemplate.setNokRedirectUri(tppRedirectUri.getNokUri());
+        }
+        commonPaymentData.setAuthorisationTemplate(authorisationTemplate);
         return commonPaymentData;
     }
 

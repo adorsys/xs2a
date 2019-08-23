@@ -80,6 +80,8 @@ public class AisConsentMapperTest {
     @Mock
     private TppInfoMapper tppInfoMapper;
     @Mock
+    private AuthorisationTemplateMapper authorisationTemplateMapper;
+    @Mock
     private AisConsentUsageService aisConsentUsageService;
 
     @InjectMocks

@@ -68,12 +68,12 @@ public class ConsentController implements ConsentApi {
                                         String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
                                         String psUGeoLocation) {
 
-        CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body);
+        TppRedirectUri tppRedirectUri = tppRedirectUriMapper.mapToTppRedirectUri(tpPRedirectURI, tpPNokRedirectURI);
+        CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body, tppRedirectUri);
 
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType);
-        TppRedirectUri tppRedirectUri = tppRedirectUriMapper.mapToTppRedirectUri(tpPRedirectURI, tpPNokRedirectURI);
         ResponseObject<CreateConsentResponse> createResponse =
-            consentService.createAccountConsentsWithResponse(createConsent, psuData, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), tppRedirectUri);
+            consentService.createAccountConsentsWithResponse(createConsent, psuData, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred));
 
         if (createResponse.hasError()) {
             return responseErrorMapper.generateErrorResponse(createResponse.getError(),

@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -57,4 +58,7 @@ public class PisPaymentInfo {
 
     @ApiModelProperty(value = "Timestamp of the last payment transaction status changing")
     private OffsetDateTime statusChangeTimestamp;
+
+    @ApiModelProperty(value = "Tpp redirect URI object'")
+    private TppRedirectUri tppRedirectUri;
 }

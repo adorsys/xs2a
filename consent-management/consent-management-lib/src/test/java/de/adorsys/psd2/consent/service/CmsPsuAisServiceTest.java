@@ -45,8 +45,6 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,8 +81,6 @@ public class CmsPsuAisServiceTest {
     private AisConsentAuthorization mockAisConsentAuthorization;
     @Mock
     private AisAccountConsent mockAisAccountConsent;
-    @Mock
-    private TppInfo tppInfo;
     @Mock
     private AisConsentAuthorizationSpecification aisConsentAuthorizationSpecification;
     @Mock
@@ -442,8 +438,8 @@ public class CmsPsuAisServiceTest {
         when(mockAisConsentAuthorization.isRedirectUrlNotExpired()).thenReturn(true);
         when(mockAisConsentAuthorization.getConsent()).thenReturn(aisConsent);
         when(aisConsentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(mockAisAccountConsent);
-        when(mockAisAccountConsent.getTppInfo()).thenReturn(tppInfo);
-        when(tppInfo.getTppRedirectUri()).thenReturn(buildTppRedirectUri());
+        when(mockAisConsentAuthorization.getTppOkRedirectUri()).thenReturn(TPP_OK_REDIRECT_URI);
+        when(mockAisConsentAuthorization.getTppNokRedirectUri()).thenReturn(TPP_NOK_REDIRECT_URI);
 
         // When
         Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -658,12 +654,8 @@ public class CmsPsuAisServiceTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false, Collections.emptyList(), Collections.emptyMap(), OffsetDateTime.now(),
+                                     false, false, null, null, null, null, false, Collections.emptyList(), Collections.emptyMap(), OffsetDateTime.now(),
                                      OffsetDateTime.now());
-    }
-
-    private TppRedirectUri buildTppRedirectUri() {
-        return new TppRedirectUri(TPP_OK_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
     }
 
     private AisAccountAccess getAisAccountAccess(AccountReference accountReference) {
