@@ -129,14 +129,26 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
 
     @Override
     public Optional<GetPisAuthorisationResponse> getPisAuthorisationById(String authorizationId) {
-        return Optional.ofNullable(consentRestTemplate.exchange(remotePisCommonPaymentUrls.getPisAuthorisationById(), HttpMethod.GET, null, GetPisAuthorisationResponse.class, authorizationId))
-                   .map(ResponseEntity::getBody);
+        try {
+            return Optional.ofNullable(consentRestTemplate.exchange(remotePisCommonPaymentUrls.getPisAuthorisationById(), HttpMethod.GET, null, GetPisAuthorisationResponse.class, authorizationId))
+                       .map(ResponseEntity::getBody);
+        } catch (CmsRestException cmsRestException) {
+            log.info("Authorisation ID: [{}]. No initiation authorisation could be found by given authorisation ID", authorizationId);
+        }
+
+        return Optional.empty();
     }
 
     @Override
     public Optional<GetPisAuthorisationResponse> getPisCancellationAuthorisationById(String cancellationId) {
-        return Optional.ofNullable(consentRestTemplate.exchange(remotePisCommonPaymentUrls.getPisCancellationAuthorisationById(), HttpMethod.GET, null, GetPisAuthorisationResponse.class, cancellationId))
-                   .map(ResponseEntity::getBody);
+        try {
+            return Optional.ofNullable(consentRestTemplate.exchange(remotePisCommonPaymentUrls.getPisCancellationAuthorisationById(), HttpMethod.GET, null, GetPisAuthorisationResponse.class, cancellationId))
+                       .map(ResponseEntity::getBody);
+        } catch (CmsRestException cmsRestException) {
+            log.info("Authorisation ID: [{}]. No cancellation authorisation could be found by given cancellation ID", cancellationId);
+        }
+
+        return Optional.empty();
     }
 
     @Override

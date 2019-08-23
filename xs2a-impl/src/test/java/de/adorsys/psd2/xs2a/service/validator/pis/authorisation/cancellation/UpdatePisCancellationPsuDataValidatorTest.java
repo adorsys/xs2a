@@ -17,16 +17,17 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,10 +36,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import java.util.UUID;
 
-
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
 import static org.junit.Assert.*;
@@ -50,11 +50,13 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
     private static final String AUTHORISATION_ID = "authorisation id";
+    private static final String INVALID_AUTHORISATION_ID_FOR_ENDPOINT = "invalid authorisation id for endpoint";
     private static final String INVALID_AUTHORISATION_ID = "invalid authorisation id";
 
     private static final MessageError TPP_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED, "Invalid TPP"));
     private static final MessageError BLOCKED_ENDPOINT_ERROR = new MessageError(PIS_403, of(SERVICE_BLOCKED));
+    private static final MessageError INVALID_AUTHORISATION_ERROR = new MessageError(PIS_403, of(RESOURCE_UNKNOWN_403));
 
     private static final MessageError PAYMENT_PRODUCT_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_404, TppMessageInformation.of(PRODUCT_UNKNOWN));
@@ -70,6 +72,8 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     PaymentTypeAndProductValidator paymentProductAndTypeValidator;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private PisAuthorisationValidator pisAuthorisationValidator;
 
     @InjectMocks
     private UpdatePisCancellationPsuDataValidator updatePisCancellationPsuDataValidator;
@@ -86,7 +90,7 @@ public class UpdatePisCancellationPsuDataValidatorTest {
 
         when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
             .thenReturn(true);
-        when(pisEndpointAccessCheckerService.isEndpointAccessible(INVALID_AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(INVALID_AUTHORISATION_ID_FOR_ENDPOINT, PaymentAuthorisationType.CANCELLED))
             .thenReturn(false);
         when(paymentProductAndTypeValidator.validateTypeAndProduct(PaymentType.SINGLE, CORRECT_PAYMENT_PRODUCT))
             .thenReturn(ValidationResult.valid());
@@ -99,6 +103,8 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     public void validate_withValidPaymentObject_shouldReturnValid() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
+        when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
+            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(commonPaymentResponse, AUTHORISATION_ID));
@@ -142,12 +148,12 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidAuthorisation_shouldReturnValidationError() {
+    public void validate_withInvalidAuthorisationForEndpoint_shouldReturnValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
 
         // When
-        ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(commonPaymentResponse, INVALID_AUTHORISATION_ID));
+        ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(commonPaymentResponse, INVALID_AUTHORISATION_ID_FOR_ENDPOINT));
 
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
@@ -158,9 +164,29 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidTppAndInvalidAuthorisation_shouldReturnTppValidationErrorFirst() {
+    public void validate_withInvalidTppAndInvalidAuthorisationForEndpoint_shouldReturnTppValidationErrorFirst() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(INVALID_TPP_INFO);
+
+        // When
+        ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(commonPaymentResponse, INVALID_AUTHORISATION_ID_FOR_ENDPOINT));
+
+        // Then
+        verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+        assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    public void validate_withInvalidAuthorisation_shouldReturnAuthorisationValidationError() {
+        // Given
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(INVALID_AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
+            .thenReturn(true);
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
+        when(pisAuthorisationValidator.validate(INVALID_AUTHORISATION_ID, commonPaymentResponse))
+            .thenReturn(ValidationResult.invalid(INVALID_AUTHORISATION_ERROR));
 
         // When
         ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(commonPaymentResponse, INVALID_AUTHORISATION_ID));
@@ -170,7 +196,7 @@ public class UpdatePisCancellationPsuDataValidatorTest {
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
-        assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+        assertEquals(INVALID_AUTHORISATION_ERROR, validationResult.getMessageError());
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {
