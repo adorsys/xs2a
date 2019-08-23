@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.api.ConsentType;
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
@@ -88,6 +89,10 @@ public class AisConsent extends InstanceDependableEntity {
     @JoinColumn(name = "tpp_info_id", nullable = false)
     @ApiModelProperty(value = "Information about TPP", required = true)
     private TppInfoEntity tppInfo;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "authorisation_template_id", nullable = false)
+    private AuthorisationTemplateEntity authorisationTemplate;
 
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)

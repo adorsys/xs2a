@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
-import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PisCommonPaymentDataSpecification;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -45,8 +45,6 @@ public class CommonPaymentDataServiceTest {
     private PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
     @Mock
     private PisCommonPaymentDataSpecification pisCommonPaymentDataSpecification;
-    @Mock
-    private TppInfoRepository tppInfoRepository;
 
     @Test
     public void getPisCommonPaymentData() {
@@ -68,11 +66,15 @@ public class CommonPaymentDataServiceTest {
 
     @Test
     public void updateCancelTppRedirectURIs() {
+        PisCommonPaymentData paymentData = new PisCommonPaymentData();
+        paymentData.setAuthorisationTemplate(new AuthorisationTemplateEntity());
         TppRedirectUri tppRedirectUri = new TppRedirectUri("ok_url", "nok_url");
 
-        when(tppInfoRepository.updateCancelRedirectUrisById(1234L, "ok_url", "nok_url")).thenReturn(1);
+        when(pisCommonPaymentDataRepository.save(paymentData)).thenReturn(new PisCommonPaymentData());
 
-        assertTrue(commonPaymentDataService.updateCancelTppRedirectURIs(1234L, tppRedirectUri));
+        commonPaymentDataService.updateCancelTppRedirectURIs(paymentData, tppRedirectUri);
+        assertEquals("ok_url", paymentData.getAuthorisationTemplate().getCancelRedirectUri());
+        assertEquals("nok_url", paymentData.getAuthorisationTemplate().getCancelNokRedirectUri());
     }
 
     @Test
@@ -88,10 +90,12 @@ public class CommonPaymentDataServiceTest {
 
     @Test
     public void updateCancelTppRedirectURIs_Fail() {
+        PisCommonPaymentData paymentData = new PisCommonPaymentData();
+        paymentData.setAuthorisationTemplate(new AuthorisationTemplateEntity());
         TppRedirectUri tppRedirectUri = new TppRedirectUri("ok_url", "nok_url");
 
-        when(tppInfoRepository.updateCancelRedirectUrisById(1234L, "ok_url", "nok_url")).thenReturn(0);
+        when(pisCommonPaymentDataRepository.save(paymentData)).thenReturn(paymentData);
 
-        assertFalse(commonPaymentDataService.updateCancelTppRedirectURIs(1234L, tppRedirectUri));
+        assertFalse(commonPaymentDataService.updateCancelTppRedirectURIs(paymentData, tppRedirectUri));
     }
 }

@@ -98,9 +98,8 @@ public class ConsentControllerTest {
 
     @Before
     public void setUp() {
-        when(consentModelMapper.mapToCreateConsentReq(any())).thenReturn(getCreateConsentReq());
-        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA), eq(EXPLICIT_PREFERRED), any())).thenReturn(createXs2aConsentResponse(CONSENT_ID));
-        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA_WRONG), eq(EXPLICIT_PREFERRED), any())).thenReturn(createXs2aConsentResponse(null));
+        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(CONSENT_ID));
+        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA_WRONG), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(null));
         when(consentService.getAccountConsentsStatusById(eq(CONSENT_ID))).thenReturn(ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(ConsentStatus.RECEIVED)).build());
         when(consentService.getAccountConsentsStatusById(eq(WRONG_CONSENT_ID))).thenReturn(ResponseObject.<ConsentStatusResponse>builder().fail(MESSAGE_ERROR_AIS_404).build());
         when(consentService.getAccountConsentById(eq(CONSENT_ID))).thenReturn(getConsent(CONSENT_ID));
@@ -138,7 +137,7 @@ public class ConsentControllerTest {
     @Test(expected = IllegalArgumentException.class)
     public void createAccountConsent_WithNullInLinks() {
         //Given:
-        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA), eq(EXPLICIT_PREFERRED), any())).thenReturn(createXs2aConsentResponseWithoutLinks(CONSENT_ID));
+        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponseWithoutLinks(CONSENT_ID));
         Consents consents = getConsents();
 
         //When:

@@ -7,5 +7,9 @@
   },
   "frequencyPerDay": "1",
   "recurringIndicator": "false",
-  "validUntil": "2017-08-06"
+  "validUntil": "2017-08-06",
+  "tppRedirectUri": {
+    "uri": "ok.url",
+    "nokUri": "nok.url"
+  }
 }

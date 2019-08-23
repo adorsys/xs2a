@@ -106,7 +106,6 @@ public class PaymentService {
         }
 
         TppInfo tppInfo = tppService.getTppInfo();
-        tppInfo.setTppRedirectUri(paymentInitiationParameters.getTppRedirectUri());
 
         if (standardPaymentProductsResolver.isRawPaymentProduct(paymentInitiationParameters.getPaymentProduct())) {
             CommonPayment request = new CommonPayment();

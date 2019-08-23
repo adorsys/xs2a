@@ -20,7 +20,6 @@ import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
@@ -100,7 +99,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
             throw new RedirectUrlIsExpiredException(authorisation.getTppNokRedirectUri());
             }
-            return Optional.of(buildCmsPaymentResponse(authorisation, false));
+            return Optional.of(buildCmsPaymentResponse(authorisation));
         }
 
         log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get payment failed, because authorisation not found or has finalised status",
@@ -147,7 +146,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
                 throw new RedirectUrlIsExpiredException(authorisation.getTppNokRedirectUri());
             }
-            return Optional.of(buildCmsPaymentResponse(authorisation, true));
+            return Optional.of(buildCmsPaymentResponse(authorisation));
         }
         log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get payment cancellation failed, because authorisation not found or has finalised status",
                  redirectId, instanceId);
@@ -289,16 +288,14 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    });
     }
 
-    private CmsPaymentResponse buildCmsPaymentResponse(PisAuthorization authorisation, boolean isPaymentCancellation) {
+    private CmsPaymentResponse buildCmsPaymentResponse(PisAuthorization authorisation) {
         PisCommonPaymentData commonPayment = authorisation.getPaymentData();
         CmsPayment payment = cmsPsuPisMapper.mapPaymentDataToCmsPayment(commonPayment);
-        TppInfoEntity tppInfo = commonPayment.getTppInfo();
 
-        return new CmsPaymentResponse(
-            payment,
+        return new CmsPaymentResponse(payment,
             authorisation.getExternalId(),
-            isPaymentCancellation ? tppInfo.getCancelRedirectUri() : tppInfo.getRedirectUri(),
-            isPaymentCancellation ? tppInfo.getCancelNokRedirectUri() : tppInfo.getNokRedirectUri());
+            authorisation.getTppOkRedirectUri(),
+            authorisation.getTppNokRedirectUri());
     }
 
     private void changeAuthorisationStatusToFailed(PisAuthorization authorisation) {

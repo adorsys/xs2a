@@ -20,6 +20,7 @@ package de.adorsys.psd2.xs2a.web.mapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
@@ -121,7 +122,7 @@ public class ConsentModelMapperTest {
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAvailableAccountsWithBalances.json", Consents.class);
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAvailableAccountsWithBalances.json", CreateConsentReq.class);
         //When
-        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent);
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"));
         //Then
         assertEquals(expected, actual);
     }

@@ -259,7 +259,7 @@ public class ConsentServiceTest {
                             .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
                             .build());
         // When
-        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
 
         // Then
@@ -285,7 +285,7 @@ public class ConsentServiceTest {
                             .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), true, TEST_PSU_MESSAGE))
                             .build());
         // When
-        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
 
         // Then
@@ -311,7 +311,7 @@ public class ConsentServiceTest {
                             .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), true, TEST_PSU_MESSAGE))
                             .build());
         // When
-        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
 
         // Then
@@ -336,7 +336,7 @@ public class ConsentServiceTest {
                             .build());
 
         // When
-        consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+        consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
 
         // Then
         verify(xs2aEventService, times(1)).recordTppRequest(argumentCaptor.capture(), any());
@@ -359,7 +359,7 @@ public class ConsentServiceTest {
                             .build());
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
 
         // Then
@@ -378,7 +378,7 @@ public class ConsentServiceTest {
 
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
 
         MessageError messageError = responseObj.getError();
 
@@ -407,7 +407,7 @@ public class ConsentServiceTest {
                             .build());
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
 
         // Then
@@ -431,7 +431,7 @@ public class ConsentServiceTest {
                             .build());
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
 
         CreateConsentResponse response = responseObj.getBody();
 
@@ -456,7 +456,7 @@ public class ConsentServiceTest {
                             .build());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
         // Then
         assertResponseIsCorrect(response);
@@ -480,7 +480,7 @@ public class ConsentServiceTest {
 
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
 
         CreateConsentResponse response = responseObj.getBody();
 
@@ -500,7 +500,7 @@ public class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
 
         ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         // Then
         assertThat(responseObj.getError().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }
@@ -516,8 +516,8 @@ public class ConsentServiceTest {
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_400, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
 
-        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+        ResponseObject<CreateConsentResponse> responseObj = consentService .createAccountConsentsWithResponse(
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         MessageError messageError = responseObj.getError();
 
         // Then
@@ -542,7 +542,7 @@ public class ConsentServiceTest {
             .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_405, MessageErrorCode.SERVICE_INVALID_405)));
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         MessageError messageError = responseObj.getError();
 
         //Then
@@ -566,7 +566,7 @@ public class ConsentServiceTest {
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<CreateConsentResponse> actualResponse = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED, TPP_REDIRECT_URI);
+        ResponseObject<CreateConsentResponse> actualResponse = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
 
         // Then
         verify(createConsentRequestValidator).validate(new CreateConsentRequestObject(req, PSU_ID_DATA));

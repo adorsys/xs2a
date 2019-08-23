@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.core.autorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -30,6 +31,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.psd2.xs2a.integration.builder.AuthorisationTemplateBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 
@@ -44,6 +46,7 @@ import static org.apache.commons.io.IOUtils.resourceToString;
 
 public class AisConsentBuilder {
     private final static TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
+    private final static AuthorisationTemplate AUTHORISATION_TEMPLATE = AuthorisationTemplateBuilder.buildAuthorisationTemplate();
     private final static PsuIdData PSU_DATA = PsuIdDataBuilder.buildPsuIdData();
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
@@ -71,6 +74,7 @@ public class AisConsentBuilder {
                             getAisConsentRequestType(cr.getAccess()),
                             Collections.singletonList(PSU_DATA),
                             TPP_INFO,
+                            AUTHORISATION_TEMPLATE,
                             false,
                             Collections.singletonList(new AisAccountConsentAuthorisation(PSU_DATA, ScaStatus.RECEIVED)),
                             Collections.emptyMap(),

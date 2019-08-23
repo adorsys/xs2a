@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.repository;
+package de.adorsys.psd2.xs2a.core.autorisation;
 
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.data.repository.CrudRepository;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+@Data
+public class AuthorisationTemplate {
 
-public interface TppInfoRepository extends CrudRepository<TppInfoEntity, Long> {
+    @Nullable
+    @ApiModelProperty(value = "TPP redirect URIs")
+    private TppRedirectUri tppRedirectUri;
 
-    Optional<TppInfoEntity> findFirstByAuthorisationNumberAndInstanceId(@NotNull String tppAuthorisationNumber, @NotNull String instanceId);
-
+    @Nullable
+    @ApiModelProperty(value = "Cancel TPP redirect URIs")
+    private TppRedirectUri cancelTppRedirectUri;
 }

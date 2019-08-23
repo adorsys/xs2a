@@ -56,6 +56,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         paymentInfo.setPsuDataList(Collections.singletonList(paymentInitiationParameters.getPsuData()));
         paymentInfo.setMultilevelScaRequired(response.isMultilevelScaRequired());
         paymentInfo.setAspspAccountId(response.getAspspAccountId());
+        paymentInfo.setTppRedirectUri(paymentInitiationParameters.getTppRedirectUri());
         return paymentInfo;
     }
 

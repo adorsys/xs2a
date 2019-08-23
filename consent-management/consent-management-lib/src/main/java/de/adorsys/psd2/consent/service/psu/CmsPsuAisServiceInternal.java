@@ -47,8 +47,6 @@ import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -112,7 +110,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
                 throw new RedirectUrlIsExpiredException(authorisation.getTppNokRedirectUri());
             }
-            return createCmsAisConsentResponseFromAisConsent(authorisation.getConsent(), redirectId);
+            return createCmsAisConsentResponseFromAisConsent(authorisation, redirectId);
         }
 
         log.info("Authorisation ID [{}]. Check redirect URL and get consent failed, because authorisation not found or has finalised status",
@@ -338,7 +336,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         aisConsentAuthorisationRepository.save(authorisation);
     }
 
-    private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAisConsent(AisConsent aisConsent, String redirectId) {
+    private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAisConsent(AisConsentAuthorization authorisation, String redirectId) {
+        AisConsent aisConsent = authorisation.getConsent();
         if (aisConsent == null) {
             log.info("Authorisation ID [{}]. Check redirect URL and get consent failed in createCmsAisConsentResponseFromAisConsent method, because AIS consent is null",
                      redirectId);
@@ -346,28 +345,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         }
 
         AisAccountConsent aisAccountConsent = consentMapper.mapToAisAccountConsent(aisConsent);
-
-        Optional<TppInfo> tppInfoOptional = Optional.ofNullable(aisAccountConsent)
-                                                .map(AisAccountConsent::getTppInfo);
-
-        if (!tppInfoOptional.isPresent()) {
-            log.info("Authorisation ID [{}]. Check redirect URL and get consent failed in createCmsAisConsentResponseFromAisConsent method, because TPP info is not present",
-                     redirectId);
-            return Optional.empty();
-        }
-
-        Optional<TppRedirectUri> tppRedirectUriOptional = tppInfoOptional.map(TppInfo::getTppRedirectUri);
-
-        String tppOkRedirectUri = null;
-        String tppNokRedirectUri = null;
-
-        if (tppRedirectUriOptional.isPresent()) {
-            TppRedirectUri tppRedirectUri = tppRedirectUriOptional.get();
-            tppOkRedirectUri = tppRedirectUri.getUri();
-            tppNokRedirectUri = tppRedirectUri.getNokUri();
-        }
-
-        return Optional.of(new CmsAisConsentResponse(aisAccountConsent, redirectId, tppOkRedirectUri, tppNokRedirectUri));
+        return Optional.of(new CmsAisConsentResponse(aisAccountConsent, redirectId, authorisation.getTppOkRedirectUri(),
+                                                     authorisation.getTppNokRedirectUri()));
     }
 
     private Optional<AisConsentAuthorization> getAuthorisationByExternalId(@NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException {

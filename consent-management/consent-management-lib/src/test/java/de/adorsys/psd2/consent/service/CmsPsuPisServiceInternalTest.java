@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
@@ -538,7 +539,8 @@ public class CmsPsuPisServiceInternalTest {
         pisCommonPaymentData.setPaymentType(PaymentType.SINGLE);
         pisCommonPaymentData.setPaymentProduct(PAYMENT_PRODUCT);
         pisCommonPaymentData.setPayments(buildPisPaymentDataListForCommonData());
-        pisCommonPaymentData.setTppInfo(buildTppInfo());
+        pisCommonPaymentData.setTppInfo(new TppInfoEntity());
+        pisCommonPaymentData.setAuthorisationTemplate(buildAuthorisationTemplate());
         pisCommonPaymentData.setPaymentId(PAYMENT_ID);
         pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
         return pisCommonPaymentData;
@@ -556,7 +558,8 @@ public class CmsPsuPisServiceInternalTest {
         pisCommonPaymentData.setPaymentType(PaymentType.SINGLE);
         pisCommonPaymentData.setPaymentProduct(PAYMENT_PRODUCT);
         pisCommonPaymentData.setPayments(buildPisPaymentDataListForCommonData());
-        pisCommonPaymentData.setTppInfo(buildTppInfo());
+        pisCommonPaymentData.setTppInfo(new TppInfoEntity());
+        pisCommonPaymentData.setAuthorisationTemplate(buildAuthorisationTemplate());
         pisCommonPaymentData.setPaymentId(PAYMENT_ID);
         pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
         pisCommonPaymentData.setAuthorizations(Collections.singletonList(buildFinalisedAuthorisationNoPsuData()));
@@ -570,18 +573,19 @@ public class CmsPsuPisServiceInternalTest {
         pisCommonPaymentData.setPaymentType(PaymentType.SINGLE);
         pisCommonPaymentData.setPaymentProduct(PAYMENT_PRODUCT);
         pisCommonPaymentData.setPayments(buildPisPaymentDataListForCommonData());
-        pisCommonPaymentData.setTppInfo(buildTppInfo());
+        pisCommonPaymentData.setTppInfo(new TppInfoEntity());
+        pisCommonPaymentData.setAuthorisationTemplate(buildAuthorisationTemplate());
         pisCommonPaymentData.setPaymentId(PAYMENT_ID);
         pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
         return pisCommonPaymentData;
     }
 
-    private TppInfoEntity buildTppInfo() {
-        TppInfoEntity tppInfoEntity = new TppInfoEntity();
-        tppInfoEntity.setNokRedirectUri("tpp nok redirect uri");
-        tppInfoEntity.setRedirectUri("tpp ok redirect uri");
+    private AuthorisationTemplateEntity buildAuthorisationTemplate() {
+        AuthorisationTemplateEntity entity = new AuthorisationTemplateEntity();
+        entity.setNokRedirectUri("tpp nok redirect uri");
+        entity.setRedirectUri("tpp ok redirect uri");
 
-        return tppInfoEntity;
+        return entity;
     }
 
     private PsuData buildPsuData() {

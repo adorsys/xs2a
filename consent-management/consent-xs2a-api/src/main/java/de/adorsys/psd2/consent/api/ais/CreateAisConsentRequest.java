@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.api.ais;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -54,4 +55,7 @@ public class CreateAisConsentRequest {
 
     @ApiModelProperty(value = "If 'true' indicates that a payment initiation service will be addressed in the same 'session'", required = true, example = "false")
     private boolean combinedServiceIndicator;
+
+    @ApiModelProperty(value = "TPP redirect URI object'")
+    private TppRedirectUri tppRedirectUri;
 }
