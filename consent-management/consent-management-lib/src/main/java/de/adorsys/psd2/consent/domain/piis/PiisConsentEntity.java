@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package de.adorsys.psd2.consent.domain.piis;
 
-import de.adorsys.psd2.consent.domain.*;
+import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
+import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
+import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
 import io.swagger.annotations.ApiModel;
@@ -66,10 +69,6 @@ public class PiisConsentEntity extends InstanceDependableEntity {
     @JoinColumn(name = "tpp_info_id")
     @ApiModelProperty(value = "Information about TPP")
     private TppInfoEntity tppInfo;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "authorisation_template_id", nullable = false)
-    private AuthorisationTemplateEntity authorisationTemplate;
 
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
