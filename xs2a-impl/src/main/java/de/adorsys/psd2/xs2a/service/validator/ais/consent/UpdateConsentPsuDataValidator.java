@@ -16,21 +16,21 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
-
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.STATUS_INVALID;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_409;
 
 /**
  * Validator to be used for validating update consent psu data request according to some business rules
  */
 @Component
+@RequiredArgsConstructor
 public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<UpdateConsentPsuDataRequestObject> {
+    private final AisAuthorisationStatusValidator aisAuthorisationStatusValidator;
+
     /**
      * Validates update consent psu data request
      *
@@ -41,8 +41,10 @@ public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<U
     @Override
     protected ValidationResult executeBusinessValidation(UpdateConsentPsuDataRequestObject requestObject) {
         AccountConsentAuthorization authorisation = requestObject.getAuthorisation();
-        if (authorisation.getScaStatus() == ScaStatus.FAILED) {
-            return ValidationResult.invalid(AIS_409, STATUS_INVALID);
+
+        ValidationResult authorisationValidationResult = aisAuthorisationStatusValidator.validate(authorisation.getScaStatus());
+        if (authorisationValidationResult.isNotValid()) {
+            return authorisationValidationResult;
         }
 
         return ValidationResult.valid();

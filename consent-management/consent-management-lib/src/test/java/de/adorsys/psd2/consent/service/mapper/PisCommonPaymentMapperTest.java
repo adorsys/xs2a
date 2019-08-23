@@ -18,12 +18,16 @@ package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.consent.reader.JsonReader;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -32,8 +36,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -50,6 +55,8 @@ public class PisCommonPaymentMapperTest {
     private PsuDataMapper psuDataMapper;
     @Mock
     private TppInfoMapper tppInfoMapper;
+    @Mock
+    private AuthorisationMapper authorisationMapper;
 
     @Test
     public void mapToGetPisAuthorizationResponse() {
@@ -98,6 +105,44 @@ public class PisCommonPaymentMapperTest {
         //Then
         PisPaymentData pisPaymentData = pisPaymentDataList.get(0);
         assertEquals(pisPayment.getBatchBookingPreferred(), pisPaymentData.getBatchBookingPreferred());
+    }
+
+    @Test
+    public void mapToPisCommonPaymentResponse() {
+        // Given
+        TppInfoEntity tppInfoEntity = jsonReader.getObjectFromFile("json/service/mapper/tpp-info-entity.json", TppInfoEntity.class);
+        TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
+        when(tppInfoMapper.mapToTppInfo(tppInfoEntity)).thenReturn(tppInfo);
+
+        PsuData psuDataEntity = jsonReader.getObjectFromFile("json/service/mapper/psu-data.json", PsuData.class);
+        PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
+        when(psuDataMapper.mapToPsuIdDataList(Collections.singletonList(psuDataEntity)))
+            .thenReturn(Collections.singletonList(psuIdData));
+
+        PisAuthorization pisAuthorisation = jsonReader.getObjectFromFile("json/service/mapper/pis-authorisation.json", PisAuthorization.class);
+        Authorisation authorisation = jsonReader.getObjectFromFile("json/service/mapper/authorisation.json", Authorisation.class);
+        when(authorisationMapper.mapToAuthorisations(Collections.singletonList(pisAuthorisation)))
+            .thenReturn(Collections.singletonList(authorisation));
+
+        PisCommonPaymentData pisCommonPaymentDataEntity = jsonReader.getObjectFromFile("json/service/mapper/pis-common-payment-data.json", PisCommonPaymentData.class);
+        pisCommonPaymentDataEntity.getPayments().forEach(p -> p.setPaymentData(pisCommonPaymentDataEntity));
+        PisCommonPaymentResponse expected = jsonReader.getObjectFromFile("json/service/mapper/pis-common-payment-response.json", PisCommonPaymentResponse.class);
+
+        // When
+        Optional<PisCommonPaymentResponse> actual = pisCommonPaymentMapper.mapToPisCommonPaymentResponse(pisCommonPaymentDataEntity);
+
+        // Then
+        assertTrue(actual.isPresent());
+        assertEquals(expected, actual.get());
+    }
+
+    @Test
+    public void mapToPisCommonPaymentResponse_withNullPaymentData_shouldReturnEmpty() {
+        // When
+        Optional<PisCommonPaymentResponse> actual = pisCommonPaymentMapper.mapToPisCommonPaymentResponse(null);
+
+        // Then
+        assertFalse(actual.isPresent());
     }
 
     private PisAuthorization buildPisAuthorization() {

@@ -1,6 +1,6 @@
 {
 	"info": {
-    "_postman_id": "60abaa94-b9fe-4869-9acc-c0d5f5c47d9b",
+    "_postman_id": "40f2b40f-b026-4d61-8881-397760d32d2e",
 		"name": "AIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -12722,6 +12722,11 @@
                     "type": "text"
                   },
                   {
+                    "key": "psu-ip-address",
+                    "value": "{{ip_address}}",
+                    "type": "text"
+                  },
+                  {
                     "key": "X-Request-ID",
                     "value": "{{x_request_id}}",
                     "type": "text"
@@ -12729,11 +12734,6 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json",
-                    "type": "text"
-                  },
-                  {
-                    "key": "psu-ip-address",
-                    "value": "{{ip_address}}",
                     "type": "text"
                   }
                 ],
@@ -12922,7 +12922,13 @@
                       "pm.test(\"Status code is 200\", () => {",
                       "    pm.response.to.have.status(200);",
                       "});",
-                      ""
+                      "",
+                      "pm.test(\"scaStatus is failed\", () => {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData).to.have.property('scaStatus');",
+                      "    const scaStatus = jsonData.scaStatus;",
+                      "    pm.expect(scaStatus).to.eql('failed');",
+                      "});"
                     ],
                     "type": "text/javascript"
                   }

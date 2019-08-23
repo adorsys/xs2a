@@ -392,8 +392,7 @@ public class PaymentController implements PaymentApi {
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = paymentCancellationAuthorisationService.updatePisCancellationPsuData(consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, cancellationId, paymentService, paymentProduct, (Map) body));
 
         if (serviceResponse.hasError()) {
-            return responseErrorMapper.generateErrorResponse(serviceResponse.getError(),
-                                                             paymentCancellationHeadersBuilder.buildErrorUpdatePaymentCancellationPsuDataHeaders(cancellationId));
+            return responseErrorMapper.generateErrorResponse(serviceResponse.getError());
         }
 
         ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildUpdatePaymentCancellationPsuDataHeaders(cancellationId);
@@ -419,8 +418,7 @@ public class PaymentController implements PaymentApi {
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = paymentAuthorisationService.updatePisCommonPaymentPsuData(request);
 
         if (serviceResponse.hasError()) {
-            return responseErrorMapper.generateErrorResponse(serviceResponse.getError(),
-                                                             paymentInitiationHeadersBuilder.buildErrorUpdatePaymentInitiationPsuDataHeaders(authorisationId));
+            return responseErrorMapper.generateErrorResponse(serviceResponse.getError());
         }
 
         ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildUpdatePaymentInitiationPsuDataHeaders(authorisationId);

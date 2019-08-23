@@ -152,23 +152,4 @@ public class PaymentInitiationHeadersBuilderTest {
         HttpHeaders actualHttpHeaders = responseHeaders.getHttpHeaders();
         assertEquals(expectedHttpHeaders, actualHttpHeaders);
     }
-
-    @Test
-    public void buildErrorUpdatePaymentInitiationPsuDataHeaders_shouldReturnScaApproachFromAuthorisation() {
-        // Given
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
-            .thenReturn(SCA_APPROACH);
-
-        HttpHeaders expectedHttpHeaders = new HttpHeaders();
-        expectedHttpHeaders.add(ASPSP_SCA_APPROACH_HEADER, SCA_APPROACH.name());
-
-        // When
-        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildErrorUpdatePaymentInitiationPsuDataHeaders(AUTHORISATION_ID);
-
-        // Then
-        verify(scaApproachResolver, never()).resolveScaApproach();
-
-        HttpHeaders actualHttpHeaders = responseHeaders.getHttpHeaders();
-        assertEquals(expectedHttpHeaders, actualHttpHeaders);
-    }
 }

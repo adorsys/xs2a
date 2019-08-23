@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public class PisCommonPaymentMapper {
     private final TppInfoMapper tppInfoMapper;
     private final PsuDataMapper psuDataMapper;
     private final AccountReferenceMapper accountReferenceMapper;
+    private final AuthorisationMapper authorisationMapper;
 
     public List<PisPaymentData> mapToPisPaymentDataList(List<PisPayment> payments, PisCommonPaymentData pisCommonPayment) {
         if (CollectionUtils.isEmpty(payments)) {
@@ -132,6 +133,7 @@ public class PisCommonPaymentMapper {
                        response.setPaymentData(cmd.getPayment());
                        response.setTransactionStatus(cmd.getTransactionStatus());
                        response.setStatusChangeTimestamp(cmd.getStatusChangeTimestamp());
+                       response.setAuthorisations(authorisationMapper.mapToAuthorisations(cmd.getAuthorizations()));
                        return response;
                    });
     }

@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -850,6 +851,178 @@ public class PaymentControllerTest {
         verify(responseErrorMapper).generateErrorResponse(serviceError, errorHeaders);
 
         verify(paymentCancellationHeadersBuilder, never()).buildStartPaymentCancellationAuthorisationHeaders(anyString());
+        verify(responseMapper, never()).created(any(), any(), any());
+    }
+
+    @Test
+    public void updatePaymentCancellationPsuData() {
+        // Given
+        Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
+        });
+
+        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        when(consentModelMapper.mapToPisUpdatePsuData(psuIdData, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, CORRECT_PAYMENT_SERVICE, PRODUCT, body))
+            .thenReturn(request);
+
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
+                                                                                        .body(new Xs2aUpdatePisCommonPaymentPsuDataResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, psuIdData))
+                                                                                        .build();
+
+        when(paymentCancellationAuthorisationService.updatePisCancellationPsuData(request))
+            .thenReturn(serviceResponse);
+
+        when(paymentCancellationHeadersBuilder.buildUpdatePaymentCancellationPsuDataHeaders(CANCELLATION_AUTHORISATION_ID))
+            .thenReturn(RESPONSE_HEADERS);
+
+        UpdatePsuAuthenticationResponse expectedResponse = new UpdatePsuAuthenticationResponse();
+        // noinspection unchecked
+        when(responseMapper.ok(eq(serviceResponse), any(), eq(RESPONSE_HEADERS)))
+            .thenReturn(new ResponseEntity(expectedResponse, OK));
+
+        // When
+        ResponseEntity actual = paymentController.updatePaymentCancellationPsuData(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT,
+                                                                                   CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, body, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
+                                                                                   null, null, null, null,
+                                                                                   null, null, null, null, null, null);
+
+        // Then
+        assertNotNull(actual);
+        assertEquals(OK, actual.getStatusCode());
+        assertEquals(expectedResponse, actual.getBody());
+
+        verify(responseMapper).ok(eq(serviceResponse), any(), eq(RESPONSE_HEADERS));
+        verify(paymentCancellationHeadersBuilder).buildUpdatePaymentCancellationPsuDataHeaders(CANCELLATION_AUTHORISATION_ID);
+
+        verify(responseErrorMapper, never()).generateErrorResponse(any());
+    }
+
+    @Test
+    public void updatePaymentCancellationPsuData_withServiceError_shouldReturnError() {
+        // Given
+        MessageError serviceError = new MessageError(PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
+
+        Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
+        });
+
+        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        when(consentModelMapper.mapToPisUpdatePsuData(psuIdData, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, CORRECT_PAYMENT_SERVICE, PRODUCT, body))
+            .thenReturn(request);
+
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
+                                                                                        .fail(serviceError)
+                                                                                        .build();
+
+        when(paymentCancellationAuthorisationService.updatePisCancellationPsuData(request))
+            .thenReturn(serviceResponse);
+
+        Object errorResponse = new Object();
+        when(responseErrorMapper.generateErrorResponse(eq(serviceError)))
+            .thenReturn(new ResponseEntity<>(errorResponse, NOT_FOUND));
+
+        // When
+        ResponseEntity actual = paymentController.updatePaymentCancellationPsuData(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT,
+                                                                                   CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, body, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
+                                                                                   null, null, null, null,
+                                                                                   null, null, null, null, null, null);
+
+
+        // Then
+        assertNotNull(actual);
+        assertEquals(NOT_FOUND, actual.getStatusCode());
+        assertEquals(errorResponse, actual.getBody());
+
+        verify(responseErrorMapper).generateErrorResponse(serviceError);
+
+        verify(paymentCancellationHeadersBuilder, never()).buildUpdatePaymentCancellationPsuDataHeaders(anyString());
+        verify(responseMapper, never()).created(any(), any(), any());
+    }
+
+    @Test
+    public void updatePaymentPsuData() {
+        // Given
+        Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
+        });
+
+        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        when(consentModelMapper.mapToPisUpdatePsuData(psuIdData, CORRECT_PAYMENT_ID, AUTHORISATION_ID, CORRECT_PAYMENT_SERVICE, PRODUCT, body))
+            .thenReturn(request);
+
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
+                                                                                        .body(new Xs2aUpdatePisCommonPaymentPsuDataResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED, CORRECT_PAYMENT_ID, AUTHORISATION_ID, psuIdData))
+                                                                                        .build();
+
+        when(paymentAuthorisationService.updatePisCommonPaymentPsuData(request))
+            .thenReturn(serviceResponse);
+
+        when(paymentInitiationHeadersBuilder.buildUpdatePaymentInitiationPsuDataHeaders(AUTHORISATION_ID))
+            .thenReturn(RESPONSE_HEADERS);
+
+        UpdatePsuAuthenticationResponse expectedResponse = new UpdatePsuAuthenticationResponse();
+        // noinspection unchecked
+        when(responseMapper.ok(eq(serviceResponse), any(), eq(RESPONSE_HEADERS)))
+            .thenReturn(new ResponseEntity(expectedResponse, OK));
+
+        // When
+        ResponseEntity actual = paymentController.updatePaymentPsuData(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT,
+                                                                       CORRECT_PAYMENT_ID, AUTHORISATION_ID, body, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
+                                                                       null, null, null, null,
+                                                                       null, null, null, null, null, null);
+
+        // Then
+        assertNotNull(actual);
+        assertEquals(OK, actual.getStatusCode());
+        assertEquals(expectedResponse, actual.getBody());
+
+        verify(responseMapper).ok(eq(serviceResponse), any(), eq(RESPONSE_HEADERS));
+        verify(paymentInitiationHeadersBuilder).buildUpdatePaymentInitiationPsuDataHeaders(AUTHORISATION_ID);
+
+        verify(responseErrorMapper, never()).generateErrorResponse(any());
+    }
+
+    @Test
+    public void updatePaymentPsuData_withServiceError_shouldReturnError() {
+        // Given
+        MessageError serviceError = new MessageError(PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
+
+        Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
+        });
+
+        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        when(consentModelMapper.mapToPisUpdatePsuData(psuIdData, CORRECT_PAYMENT_ID, AUTHORISATION_ID, CORRECT_PAYMENT_SERVICE, PRODUCT, body))
+            .thenReturn(request);
+
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
+                                                                                        .fail(serviceError)
+                                                                                        .build();
+
+        when(paymentAuthorisationService.updatePisCommonPaymentPsuData(request))
+            .thenReturn(serviceResponse);
+
+        Object errorResponse = new Object();
+        when(responseErrorMapper.generateErrorResponse(eq(serviceError)))
+            .thenReturn(new ResponseEntity<>(errorResponse, NOT_FOUND));
+
+        // When
+        ResponseEntity actual = paymentController.updatePaymentPsuData(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT,
+                                                                       CORRECT_PAYMENT_ID, AUTHORISATION_ID, body, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
+                                                                       null, null, null, null,
+                                                                       null, null, null, null, null, null);
+
+
+        // Then
+        assertNotNull(actual);
+        assertEquals(NOT_FOUND, actual.getStatusCode());
+        assertEquals(errorResponse, actual.getBody());
+
+        verify(responseErrorMapper).generateErrorResponse(serviceError);
+
+        verify(paymentInitiationHeadersBuilder, never()).buildUpdatePaymentInitiationPsuDataHeaders(anyString());
         verify(responseMapper, never()).created(any(), any(), any());
     }
 

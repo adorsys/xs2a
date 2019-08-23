@@ -46,6 +46,7 @@ public class UpdateConsentPsuDataValidatorTest {
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
+    private static final ScaStatus INVALID_SCA_STATUS = ScaStatus.FAILED;
 
     private static final MessageError TPP_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
@@ -54,6 +55,8 @@ public class UpdateConsentPsuDataValidatorTest {
 
     @Mock
     private AisConsentTppInfoValidator aisConsentTppInfoValidator;
+    @Mock
+    private AisAuthorisationStatusValidator aisAuthorisationStatusValidator;
 
     @InjectMocks
     private UpdateConsentPsuDataValidator updateConsentPsuDataValidator;
@@ -72,6 +75,7 @@ public class UpdateConsentPsuDataValidatorTest {
     @Test
     public void validate_withValidConsentObject_shouldReturnValid() {
         // Given
+        when(aisAuthorisationStatusValidator.validate(SCA_STATUS)).thenReturn(ValidationResult.valid());
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         AccountConsentAuthorization authorisation = buildAccountConsentAuthorization(SCA_STATUS);
 
@@ -107,7 +111,9 @@ public class UpdateConsentPsuDataValidatorTest {
     public void validate_withFailedAuthorisation_shouldReturnError() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
-        AccountConsentAuthorization authorisation = buildAccountConsentAuthorization(ScaStatus.FAILED);
+        AccountConsentAuthorization authorisation = buildAccountConsentAuthorization(INVALID_SCA_STATUS);
+        when(aisAuthorisationStatusValidator.validate(INVALID_SCA_STATUS))
+            .thenReturn(ValidationResult.invalid(STATUS_VALIDATION_ERROR));
 
         // When
         ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation));

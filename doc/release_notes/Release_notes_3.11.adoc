@@ -59,8 +59,13 @@ This can be achieved by sending both PSU-ID header and PSU password in the reque
 
 == Bugfix: Update PSU Data with failed AIS authorisation results in 500 INTERNAL_SERVER_ERROR
 
-From now on, trying to update PSU Data for AIS authorisation (`PUT /v1/consents/{consentId}/authorisations/{authorsationId}`)
-with `FAILED` authorisation status will result in `409 STATUS_INVALID` error being returned to the TPP.
+From now on, trying to update PSU Data in authorisation with `FAILED` status will result in `409 STATUS_INVALID` error being returned to the TPP.
+
+Affected endpoints:
+
+ - Update PSU Data for account consent authorisation (`PUT /v1/consents/{consentId}/authorisations/{authorsationId}`)
+ - Update PSU Data for payment initiation authorisation (`PUT /v1/{payment-service}/{payment- product}/{paymentId}/authorisations/{authorisationId}`)
+ - Update PSU Data for payment cancellation authorisation (`PUT /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}`)
 
 == Funds confirmation request validation.
 
