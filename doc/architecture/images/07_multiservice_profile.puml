@@ -1,0 +1,25 @@
+@startuml
+
+artifact XS2AService as xs2a
+artifact "Consent-management-system" as CMS
+CMS -[hidden]- xs2a
+
+node "ASPSP-Profile" as node_profile {
+    artifact "ASPSPProfile" {
+        component "aspsp-profile-lib" as lib
+        component "aspsp-profile-server" as server
+
+        lib <.. server
+    }
+    file "application.yml" as config #lightblue
+    file "bank_profile.yml" as bank_profile #lightblue
+
+    server -> config
+    lib -> bank_profile
+    bank_profile -[hidden]- config
+}
+
+xs2a .> server
+CMS .> server
+
+@enduml

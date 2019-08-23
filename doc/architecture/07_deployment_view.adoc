@@ -37,6 +37,10 @@ image::07_multiservice_xs2a.png[Multiservice deployment XS2A, title="Multiservic
 
 image::07_multiservice_cms.png[Multiservice deployment CMS, title="Multiservice deployment CMS", align="center"]
 
+==== ASPSP Profile Service Deployment
+
+image::07_multiservice_profile.png[Multiservice deployment CMS, title="Multiservice deployment CMS", align="center"]
+
 === Infrastructure Level 1 - Single service deployment
 
 image::07_allinone_deployment.png[Single service deployment, title="Single service deployment", align="center"]
