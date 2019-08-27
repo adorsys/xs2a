@@ -21,6 +21,7 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.ScaMethod;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
@@ -198,7 +199,8 @@ public class AisAuthorisationServiceInternalTest {
         // Then
         assertTrue(actual.isPresent());
         verify(aisConsentAuthorisationRepository).save(argument.capture());
-        assertSame(argument.getValue().getScaStatus(), ScaStatus.PSUIDENTIFIED);
+        AisConsentAuthorization aisConsentAuthorization = argument.getValue();
+        assertSame(ScaStatus.PSUIDENTIFIED, aisConsentAuthorization.getScaStatus());
 
         verify(aisConsentAuthorisationRepository).saveAll(failedAuthorisationsArgument.capture());
         List<AisConsentAuthorization> failedAuthorisations = failedAuthorisationsArgument.getValue();
@@ -207,6 +209,49 @@ public class AisAuthorisationServiceInternalTest {
                                          .collect(Collectors.toSet());
         assertEquals(scaStatuses.size(), 1);
         assertTrue(scaStatuses.contains(ScaStatus.FAILED));
+        assertEquals(TPP_REDIRECT_URIs.getUri(), aisConsentAuthorization.getTppOkRedirectUri());
+        assertEquals(TPP_REDIRECT_URIs.getNokUri(), aisConsentAuthorization.getTppNokRedirectUri());
+    }
+
+    @Test
+    public void createAuthorizationWithClosingPreviousAuthorisationsTppRedirectLinksFromAuthorisationTemplate_success() {
+        //Given
+        AuthorisationTemplateEntity authorisationTemplateEntity = buildAuthorisationTemplateEntity();
+        AisConsent aisConsent = buildConsent(EXTERNAL_CONSENT_ID, authorisationTemplateEntity);
+        ArgumentCaptor<AisConsentAuthorization> argument = ArgumentCaptor.forClass(AisConsentAuthorization.class);
+        //noinspection unchecked
+        ArgumentCaptor<List<AisConsentAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass(List.class);
+
+        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
+        when(aisConsentAuthorisationRepository.save(any(AisConsentAuthorization.class))).thenReturn(aisConsentAuthorisation);
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(cmsPsuService.definePsuDataForAuthorisation(any(), any())).thenReturn(Optional.of(PSU_DATA));
+        when(cmsPsuService.enrichPsuData(any(), any())).thenReturn(Collections.singletonList(PSU_DATA));
+
+        AisConsentAuthorizationRequest aisConsentAuthorisationRequest = new AisConsentAuthorizationRequest();
+        aisConsentAuthorisationRequest.setPsuData(PSU_ID_DATA);
+        aisConsentAuthorisationRequest.setScaStatus(aisConsentAuthorisation.getScaStatus());
+        aisConsentAuthorisationRequest.setTppRedirectURIs(new TppRedirectUri("", ""));
+
+        // When
+        Optional<CreateAisConsentAuthorizationResponse> actual = aisAuthorisationServiceInternal.createAuthorizationWithResponse(EXTERNAL_CONSENT_ID, aisConsentAuthorisationRequest);
+
+        // Then
+        assertTrue(actual.isPresent());
+        verify(aisConsentAuthorisationRepository).save(argument.capture());
+        AisConsentAuthorization aisConsentAuthorization = argument.getValue();
+        assertSame(ScaStatus.PSUIDENTIFIED, aisConsentAuthorization.getScaStatus());
+
+        verify(aisConsentAuthorisationRepository).saveAll(failedAuthorisationsArgument.capture());
+        List<AisConsentAuthorization> failedAuthorisations = failedAuthorisationsArgument.getValue();
+        Set<ScaStatus> scaStatuses = failedAuthorisations.stream()
+                                         .map(AisConsentAuthorization::getScaStatus)
+                                         .collect(Collectors.toSet());
+        assertEquals(1, scaStatuses.size());
+        assertTrue(scaStatuses.contains(ScaStatus.FAILED));
+        assertEquals(authorisationTemplateEntity.getRedirectUri(), aisConsentAuthorization.getTppOkRedirectUri());
+        assertEquals(authorisationTemplateEntity.getNokRedirectUri(), aisConsentAuthorization.getTppNokRedirectUri());
     }
 
     @Test
@@ -330,6 +375,12 @@ public class AisAuthorisationServiceInternalTest {
         return buildConsent(externalId, Collections.singletonList(psuDataMocked));
     }
 
+    private AisConsent buildConsent(String externalId, AuthorisationTemplateEntity authorisationTemplateEntity) {
+        AisConsent aisConsent = buildConsent(externalId, Collections.singletonList(psuDataMocked));
+        aisConsent.setAuthorisationTemplate(authorisationTemplateEntity);
+        return aisConsent;
+    }
+
     private AisConsent buildConsent(String externalId, List<PsuData> psuDataList) {
         return buildConsent(externalId, psuDataList, LocalDate.now());
     }
@@ -342,6 +393,7 @@ public class AisAuthorisationServiceInternalTest {
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
         aisConsent.setAuthorizations(aisConsentAuthorisationList);
         aisConsent.setPsuDataList(psuDataList);
+        aisConsent.setAuthorisationTemplate(new AuthorisationTemplateEntity());
         return aisConsent;
     }
 
@@ -366,5 +418,14 @@ public class AisAuthorisationServiceInternalTest {
 
     private CmsScaMethod buildCmsScaMethod(boolean decoupled) {
         return new CmsScaMethod(AUTHENTICATION_METHOD_ID, decoupled);
+    }
+
+    private AuthorisationTemplateEntity buildAuthorisationTemplateEntity() {
+        AuthorisationTemplateEntity authorisationTemplateEntity = new AuthorisationTemplateEntity();
+        authorisationTemplateEntity.setRedirectUri("template_redirect_uri");
+        authorisationTemplateEntity.setNokRedirectUri("template_nok_redirect_uri");
+        authorisationTemplateEntity.setCancelRedirectUri("template_cancel_redirect_uri");
+        authorisationTemplateEntity.setCancelNokRedirectUri("template_cancel_nok_redirect_uri");
+        return authorisationTemplateEntity;
     }
 }

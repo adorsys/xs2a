@@ -38,6 +38,7 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.pis.stage.PisScaStage;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,7 @@ public class PisAuthorisationService {
     private final Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
     private final ScaApproachResolver scaApproachResolver;
     private final RequestProviderService requestProviderService;
+    private final TppRedirectUriMapper tppRedirectUriMapper;
 
     /**
      * Sends a POST request to CMS to store created pis authorisation
@@ -64,7 +66,7 @@ public class PisAuthorisationService {
      * @return a response object containing authorisation id
      */
     public CreatePisAuthorisationResponse createPisAuthorisation(String paymentId, PsuIdData psuData) {
-        TppRedirectUri redirectURIs = new TppRedirectUri( requestProviderService.getTppRedirectURI(), requestProviderService.getTppNokRedirectURI() );
+        TppRedirectUri redirectURIs = tppRedirectUriMapper.mapToTppRedirectUri(requestProviderService.getTppRedirectURI(), requestProviderService.getTppNokRedirectURI());
 
         CreatePisAuthorisationRequest request = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, psuData, scaApproachResolver.resolveScaApproach(), redirectURIs );
         return pisCommonPaymentServiceEncrypted.createAuthorization(paymentId, request)
@@ -163,7 +165,7 @@ public class PisAuthorisationService {
      * @return long representation of identifier of stored pis authorisation cancellation
      */
     public CreatePisAuthorisationResponse createPisAuthorisationCancellation(String paymentId, PsuIdData psuData) {
-        TppRedirectUri redirectURIs = new TppRedirectUri( requestProviderService.getTppRedirectURI(), requestProviderService.getTppNokRedirectURI() );
+        TppRedirectUri redirectURIs = tppRedirectUriMapper.mapToTppRedirectUri(requestProviderService.getTppRedirectURI(), requestProviderService.getTppNokRedirectURI());
 
         CreatePisAuthorisationRequest request = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CANCELLED, psuData, scaApproachResolver.resolveScaApproach(), redirectURIs );
         return pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(paymentId, request)

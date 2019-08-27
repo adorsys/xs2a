@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationReque
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
@@ -344,7 +345,67 @@ public class PisCommonPaymentServiceInternalTest {
         // Then
         assertTrue(actual.isPresent());
         verify(pisAuthorisationRepository).save(argument.capture());
-        assertSame(argument.getValue().getScaStatus(), ScaStatus.PSUIDENTIFIED);
+        PisAuthorization pisAuthorization = argument.getValue();
+        assertSame(pisAuthorization.getScaStatus(), ScaStatus.PSUIDENTIFIED);
+        assertEquals(TPP_REDIRECT_URI, pisAuthorization.getTppOkRedirectUri());
+        assertEquals(TPP_NOK_REDIRECT_URI, pisAuthorization.getTppNokRedirectUri());
+    }
+
+    @Test
+    public void createAuthorizationWithClosingPreviousAuthorisationsTppRedirectLinksFromAuthorisationTemplate_success() {
+        //Given
+        AuthorisationTemplateEntity authorisationTemplateEntity = buildAuthorisationTemplateEntity();
+        PisCommonPaymentData paymentData = buildPisCommonPaymentData(authorisationTemplateEntity);
+        PisPaymentData pisPaymentData = buildPaymentData(paymentData);
+        CreatePisAuthorisationRequest createPisAuthorisationRequest = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_ID_DATA, ScaApproach.REDIRECT, new TppRedirectUri("", ""));
+
+        ArgumentCaptor<PisAuthorization> argument = ArgumentCaptor.forClass(PisAuthorization.class);
+        //noinspection unchecked
+        ArgumentCaptor<List<PisAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass((Class) List.class);
+        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
+        when(pisAuthorisationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
+        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID, Arrays.asList(RCVD, PATC))).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
+        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(paymentData)).thenReturn(paymentData);
+        when(cmsPsuService.definePsuDataForAuthorisation(any(), any())).thenReturn(Optional.of(PSU_DATA));
+        when(cmsPsuService.enrichPsuData(any(), any())).thenReturn(Collections.singletonList(PSU_DATA));
+
+        // When
+        Optional<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, createPisAuthorisationRequest);
+
+        // Then
+        assertTrue(actual.isPresent());
+        verify(pisAuthorisationRepository).save(argument.capture());
+        PisAuthorization pisAuthorization = argument.getValue();
+        assertEquals(authorisationTemplateEntity.getRedirectUri(), pisAuthorization.getTppOkRedirectUri());
+        assertEquals(authorisationTemplateEntity.getNokRedirectUri(), pisAuthorization.getTppNokRedirectUri());
+    }
+
+    @Test
+    public void createAuthorizationCancellationWithClosingPreviousAuthorisationsTppRedirectLinksFromAuthorisationTemplate_success() {
+        //Given
+        AuthorisationTemplateEntity authorisationTemplateEntity = buildAuthorisationTemplateEntity();
+        PisCommonPaymentData paymentData = buildPisCommonPaymentData(authorisationTemplateEntity);
+        PisPaymentData pisPaymentData = buildPaymentData(paymentData);
+        CreatePisAuthorisationRequest createPisAuthorisationRequest = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CANCELLED, PSU_ID_DATA, ScaApproach.REDIRECT, new TppRedirectUri("", ""));
+
+        ArgumentCaptor<PisAuthorization> argument = ArgumentCaptor.forClass(PisAuthorization.class);
+        //noinspection unchecked
+        ArgumentCaptor<List<PisAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass((Class) List.class);
+        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
+        when(pisAuthorisationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
+        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID, Arrays.asList(RCVD, PATC))).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
+        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(paymentData)).thenReturn(paymentData);
+        when(cmsPsuService.definePsuDataForAuthorisation(any(), any())).thenReturn(Optional.of(PSU_DATA));
+
+        // When
+        Optional<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, createPisAuthorisationRequest);
+
+        // Then
+        assertTrue(actual.isPresent());
+        verify(pisAuthorisationRepository).save(argument.capture());
+        PisAuthorization pisAuthorization = argument.getValue();
+        assertEquals(authorisationTemplateEntity.getCancelRedirectUri(), pisAuthorization.getTppOkRedirectUri());
+        assertEquals(authorisationTemplateEntity.getCancelNokRedirectUri(), pisAuthorization.getTppNokRedirectUri());
     }
 
     @Test
@@ -400,11 +461,16 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     private PisCommonPaymentData buildPisCommonPaymentData() {
+        return buildPisCommonPaymentData(new AuthorisationTemplateEntity());
+    }
+
+    private PisCommonPaymentData buildPisCommonPaymentData(AuthorisationTemplateEntity authorisationTemplateEntity) {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setId(PIS_PAYMENT_DATA_ID);
         pisCommonPaymentData.setPaymentId(PAYMENT_ID);
         pisCommonPaymentData.setTransactionStatus(RCVD);
         pisCommonPaymentData.setAuthorizations(pisAuthorizationList);
+        pisCommonPaymentData.setAuthorisationTemplate(authorisationTemplateEntity);
         return pisCommonPaymentData;
     }
 
@@ -433,5 +499,14 @@ public class PisCommonPaymentServiceInternalTest {
         paymentData.setPaymentId(PAYMENT_ID);
         paymentData.setPaymentData(pisCommonPaymentData);
         return paymentData;
+    }
+
+    private AuthorisationTemplateEntity buildAuthorisationTemplateEntity() {
+        AuthorisationTemplateEntity authorisationTemplateEntity = new AuthorisationTemplateEntity();
+        authorisationTemplateEntity.setRedirectUri("template_redirect_uri");
+        authorisationTemplateEntity.setNokRedirectUri("template_nok_redirect_uri");
+        authorisationTemplateEntity.setCancelRedirectUri("template_cancel_redirect_uri");
+        authorisationTemplateEntity.setCancelNokRedirectUri("template_cancel_nok_redirect_uri");
+        return authorisationTemplateEntity;
     }
 }
