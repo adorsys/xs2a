@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.pis.stage.initiation.PisScaReceivedAuthorisationStage;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
+import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -89,6 +90,8 @@ public class PisAuthorisationServiceTest {
     private PisScaReceivedAuthorisationStage pisScaReceivedAuthorisationStage;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private TppRedirectUriMapper tppRedirectUriMapper;
 
     @Before
     public void setUp() {
@@ -114,6 +117,8 @@ public class PisAuthorisationServiceTest {
             .thenReturn(TPP_REDIRECT_URI);
         when(requestProviderService.getTppNokRedirectURI())
             .thenReturn(TPP_NOK_REDIRECT_URI);
+        when(tppRedirectUriMapper.mapToTppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI))
+            .thenReturn(new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI));
 
         // When
         CreatePisAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisation(PAYMENT_ID, PSU_ID_DATA);
@@ -188,6 +193,8 @@ public class PisAuthorisationServiceTest {
             .thenReturn(TPP_REDIRECT_URI);
         when(requestProviderService.getTppNokRedirectURI())
             .thenReturn(TPP_NOK_REDIRECT_URI);
+        when(tppRedirectUriMapper.mapToTppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI))
+            .thenReturn(new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI));
 
         // When
         CreatePisAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisationCancellation(PAYMENT_ID, PSU_ID_DATA);

@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationService;
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.ScaMethod;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
@@ -39,6 +40,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -279,8 +281,9 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
         consentAuthorization.setAuthorisationExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getAuthorisationExpirationTimeMs(), ChronoUnit.MILLIS));
         consentAuthorization.setScaApproach(request.getScaApproach());
         TppRedirectUri redirectURIs = request.getTppRedirectURIs();
-        consentAuthorization.setTppOkRedirectUri(redirectURIs.getUri());
-        consentAuthorization.setTppNokRedirectUri(redirectURIs.getNokUri());
+        AuthorisationTemplateEntity authorisationTemplate = aisConsent.getAuthorisationTemplate();
+        consentAuthorization.setTppOkRedirectUri(StringUtils.defaultIfBlank(redirectURIs.getUri(), authorisationTemplate.getRedirectUri()));
+        consentAuthorization.setTppNokRedirectUri(StringUtils.defaultIfBlank(redirectURIs.getNokUri(), authorisationTemplate.getNokRedirectUri()));
         return aisConsentAuthorisationRepository.save(consentAuthorization);
     }
 

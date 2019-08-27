@@ -21,15 +21,18 @@ import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class Xs2aAisConsentAuthorisationMapper {
+    private final TppRedirectUriMapper tppRedirectUriMapper;
 
     public AccountConsentAuthorization mapToAccountConsentAuthorization(
         AisConsentAuthorizationResponse spiConsentAuthorization) {
@@ -57,7 +60,7 @@ public class Xs2aAisConsentAuthorisationMapper {
                        consentAuthorization.setPsuData(psuData);
                        consentAuthorization.setScaStatus(scaStatus);
                        consentAuthorization.setScaApproach(scaApproach);
-                       consentAuthorization.setTppRedirectURIs(new TppRedirectUri(tppRedirectURI,tppNOKRedirectURI));
+                       consentAuthorization.setTppRedirectURIs(tppRedirectUriMapper.mapToTppRedirectUri(tppRedirectURI,tppNOKRedirectURI));
                        return consentAuthorization;
                    })
                    .orElse(null);

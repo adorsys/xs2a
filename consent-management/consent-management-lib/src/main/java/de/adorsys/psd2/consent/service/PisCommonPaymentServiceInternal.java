@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.ScaMethod;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
@@ -427,7 +428,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
 
         if (psuDataOptional.isPresent()) {
             PsuData psuData = psuDataOptional.get();
-            if (PaymentAuthorisationType.CANCELLED != request.getAuthorizationType()){
+            if (PaymentAuthorisationType.CANCELLED != request.getAuthorizationType()) {
                 paymentData.setPsuDataList(cmsPsuService.enrichPsuData(psuData, paymentData.getPsuDataList()));
             }
             pisAuthorisation.setPsuData(psuData);
@@ -442,8 +443,20 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         pisAuthorisation.setScaApproach(request.getScaApproach());
         pisAuthorisation.setPaymentData(paymentData);
         TppRedirectUri redirectURIs = request.getTppRedirectURIs();
-        pisAuthorisation.setTppOkRedirectUri(redirectURIs.getUri());
-        pisAuthorisation.setTppNokRedirectUri(redirectURIs.getNokUri());
+        AuthorisationTemplateEntity authorisationTemplate = paymentData.getAuthorisationTemplate();
+
+        boolean isCreatedType = PaymentAuthorisationType.CREATED == request.getAuthorizationType();
+
+        String uri = StringUtils.defaultIfBlank(redirectURIs.getUri(), isCreatedType
+                                                                           ? authorisationTemplate.getRedirectUri()
+                                                                           : authorisationTemplate.getCancelRedirectUri());
+
+        String nokUri = StringUtils.defaultIfBlank(redirectURIs.getNokUri(), isCreatedType
+                                                                                 ? authorisationTemplate.getNokRedirectUri()
+                                                                                 : authorisationTemplate.getCancelNokRedirectUri());
+
+        pisAuthorisation.setTppOkRedirectUri(uri);
+        pisAuthorisation.setTppNokRedirectUri(nokUri);
         return pisAuthorisationRepository.save(pisAuthorisation);
     }
 
