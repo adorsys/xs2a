@@ -13,6 +13,7 @@
 * Bugfix: Update PSU Data with failed AIS authorisation results in 500 INTERNAL_SERVER_ERROR
 * Funds confirmation request validation.
 * Moved columns `redirect_uri` and `nok_redirect_uri` from `tpp_info` to `authorisation_template`
+* Bugfix: Error on updating PSU Data with no body in the request
 
 == Remove deprecated constructor in `SpiContextData`
 
@@ -78,3 +79,12 @@ The columns `redirect_uri`, `nok_redirect_uri`, `cancel_redirect_uri`, `cancel_n
 `authorisation_template` table from `tpp_info`. The link `authorisation_template_id` on newly created table `authorisation_template`
 was added to `ais_consent` and `pis_common_payment` tables.
 
+
+== Bugfix: Error on updating PSU Data with no body in the request
+
+From now on, you can send update PSU Data in the context of an Account Information Consent Request
+`PUT /v1/consents/{consentId}/authorisations/{authorsationId}` and
+update PSU Data in the context of a Payment Initiation Request
+`PUT /v1/{payment-service}/{paymentId}/{payment- product}/authorisations/{authorisationId}` without body.
+As a result you'll receive response with `scaStatus` `psuIdentified`. This result is the same if you
+sent these requests with empty json body `{}`.

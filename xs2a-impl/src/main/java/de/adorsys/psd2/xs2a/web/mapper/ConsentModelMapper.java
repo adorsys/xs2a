@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class ConsentModelMapper {
-    private final CoreObjectsMapper coreObjectsMapper;
     private final ObjectMapper objectMapper;
     public final AccountModelMapper accountModelMapper;
     private final HrefLinkMapper hrefLinkMapper;
@@ -174,8 +173,7 @@ public class ConsentModelMapper {
         updatePsuData.setPsuData(psuData);
         updatePsuData.setConsentId(consentId);
         updatePsuData.setAuthorizationId(authorizationId);
-
-        if (!body.isEmpty()) {
+        if (body != null && !body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
                 .ifPresent(psuDataMap -> updatePsuData.setPassword(psuDataMap.get("password")));
@@ -207,7 +205,7 @@ public class ConsentModelMapper {
         request.setAuthorisationId(authorisationId);
         request.setPaymentService(paymentService);
         request.setPaymentProduct(paymentProduct);
-        if (!body.isEmpty()) {
+        if (body != null && !body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
                 .ifPresent(psuDataMap -> request.setPassword(psuDataMap.get("password")));

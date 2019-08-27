@@ -1,0 +1,11 @@
+{
+  "access": {
+    "accounts": [],
+    "balances": [],
+    "transactions": []
+  },
+  "recurringIndicator": "false",
+  "validUntil": "2019-08-22",
+  "frequencyPerDay": 4,
+  "consentStatus": "valid"
+}
