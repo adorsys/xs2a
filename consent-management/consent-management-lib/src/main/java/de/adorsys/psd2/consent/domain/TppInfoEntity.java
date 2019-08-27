@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.domain;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import java.util.List;
@@ -33,6 +34,7 @@ public class TppInfoEntity extends InstanceDependableEntity {
     @SequenceGenerator(name = "tpp_info_generator", sequenceName = "tpp_info_id_seq", allocationSize = 1)
     private Long id;
 
+    @NaturalId
     @Column(name = "authorisation_number", nullable = false)
     private String authorisationNumber;
 
@@ -70,12 +72,15 @@ public class TppInfoEntity extends InstanceDependableEntity {
     @Column(name = "redirect_uri")
     private String redirectUri;
 
+    @Deprecated // TODO: Remove the columns in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1017
     @Column(name = "nok_redirect_uri")
     private String nokRedirectUri;
 
+    @Deprecated // TODO: Remove the columns in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1017
     @Column(name = "cancel_redirect_uri")
     private String cancelRedirectUri;
 
+    @Deprecated // TODO: Remove the columns in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1017
     @Column(name = "cancel_nok_redirect_uri")
     private String cancelNokRedirectUri;
 }

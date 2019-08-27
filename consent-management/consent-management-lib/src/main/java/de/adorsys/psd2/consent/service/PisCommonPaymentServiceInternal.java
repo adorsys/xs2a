@@ -32,6 +32,7 @@ import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
+import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.service.mapper.PisCommonPaymentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
@@ -69,6 +70,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     private final PisAuthorisationRepository pisAuthorisationRepository;
     private final PisPaymentDataRepository pisPaymentDataRepository;
     private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
+    private final TppInfoRepository tppInfoRepository;
     private final AspspProfileService aspspProfileService;
     private final PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
     private final ScaMethodMapper scaMethodMapper;
@@ -84,6 +86,8 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Transactional
     public Optional<CreatePisCommonPaymentResponse> createCommonPayment(PisPaymentInfo request) {
         PisCommonPaymentData commonPaymentData = pisCommonPaymentMapper.mapToPisCommonPaymentData(request);
+        tppInfoRepository.findByAuthorisationNumber(request.getTppInfo().getAuthorisationNumber()).ifPresent(commonPaymentData::setTppInfo);
+
         PisCommonPaymentData saved = pisCommonPaymentDataRepository.save(commonPaymentData);
 
         if (saved.getId() == null) {

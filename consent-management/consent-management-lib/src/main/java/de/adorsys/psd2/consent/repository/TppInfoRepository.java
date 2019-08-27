@@ -24,6 +24,8 @@ import java.util.Optional;
 
 public interface TppInfoRepository extends CrudRepository<TppInfoEntity, Long> {
 
+    Optional<TppInfoEntity> findByAuthorisationNumber(@NotNull String tppAuthorisationNumber);
+
     Optional<TppInfoEntity> findFirstByAuthorisationNumberAndInstanceId(@NotNull String tppAuthorisationNumber, @NotNull String instanceId);
 
 }

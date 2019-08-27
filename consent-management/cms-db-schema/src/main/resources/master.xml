@@ -101,5 +101,5 @@
     <include relativeToChangelogFile="true" file="migration/0073-remove-deprecated-column-from-tpp-stop-list-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0074-add-tpp-redirect-nok-redirect-columns-to-aispis-consent-authorization-tables.xml"/>
     <include relativeToChangelogFile="true" file="migration/0075-add-authorisation-template-table.xml"/>
-
+    <include relativeToChangelogFile="true" file="migration/0076-add-unique-null-constraint-to-tpp-authorisation-number.xml"/>
 </databaseChangeLog>
