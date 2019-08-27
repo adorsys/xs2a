@@ -19,17 +19,20 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet author="iiu@adorsys.com.ua" id="2019-08-20">
-        <comment>Remove tpp_info_id foreign key from ais_consent, pis_common_payment and piis_consent tables</comment>
+    <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-1">
+        <comment>
+            Remove tpp_info_id foreign key constraints from ais_consent, pis_common_payment and piis_consent tables
+        </comment>
 
         <dropForeignKeyConstraint baseTableName="ais_consent" constraintName="fk__ais_consent__tpp_info"/>
         <dropForeignKeyConstraint baseTableName="pis_common_payment" constraintName="fk_com_payment_tpp_info"/>
         <dropForeignKeyConstraint baseTableName="piis_consent" constraintName="fk__piis_consent__tpp_info"/>
-
     </changeSet>
 
-    <changeSet author="iiu@adorsys.com.ua" id="2019-08-21-1">
-        <comment>Update tpp_info_id in ais_consent, pis_common_payment, piis_consent and tpp_info_role</comment>
+    <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-2">
+        <comment>
+            Update tpp_info_id in ais_consent, pis_common_payment, piis_consent and tpp_info_role
+        </comment>
 
         <sql>
             UPDATE ais_consent a
@@ -82,39 +85,12 @@
             ON t.authorisation_number = n.authorisation_number
             WHERE r.tpp_info_id = t.tpp_info_id);
         </sql>
-
     </changeSet>
 
-    <changeSet author="iiu@adorsys.com.ua" id="2019-08-21-2">
-        <comment>Delete non-unique records in tpp_info table</comment>
-
-        <sql>
-            DELETE FROM tpp_info
-            WHERE tpp_info_id NOT IN
-            (SELECT MIN(tpp_info_id) AS tpp_info_id
-            FROM tpp_info
-            GROUP BY authorisation_number)
-        </sql>
-
-    </changeSet>
-
-    <changeSet author="iiu@adorsys.com.ua" id="2019-08-21-3">
+    <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-3">
         <comment>
-            Set redirect_uri, nok_redirect_uri, cancel_redirect_uri, cancel_nok_redirect_uri in tpp_info table to NULL
+            Add foreign key constraints for tpp_info column to ais_consent, pis_common_payment and piis_consent tables
         </comment>
-
-        <sql>
-            UPDATE tpp_info
-            SET redirect_uri = NULL,
-            nok_redirect_uri = NULL,
-            cancel_redirect_uri = NULL,
-            cancel_nok_redirect_uri = NULL
-        </sql>
-
-    </changeSet>
-
-    <changeSet author="iiu@adorsys.com.ua" id="2019-08-21-4">
-        <comment>Add foreign key constraints for tpp_info_column</comment>
 
         <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="ais_consent"
                                  constraintName="fk__ais_consent__tpp_info" deferrable="false"
@@ -130,16 +106,35 @@
                                  constraintName="fk__piis_consent__tpp_info" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="tpp_info_id" referencedTableName="tpp_info"/>
-
-        <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="authorisation_template"
-                                 constraintName="fk__auth_templ__tpp_info" deferrable="false"
-                                 initiallyDeferred="false"
-                                 referencedColumnNames="tpp_info_id" referencedTableName="tpp_info"/>
-
     </changeSet>
 
-    <changeSet author="iiu@adorsys.com.ua" id="2019-08-21-5">
-        <comment>Add unique constraints for authorisation_number column in tpp_info table</comment>
+    <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-4">
+        <comment>
+            Delete non-unique records in tpp_info table;
+            Set redirect_uri, nok_redirect_uri, cancel_redirect_uri, cancel_nok_redirect_uri in tpp_info table to NULL
+        </comment>
+
+        <sql>
+            DELETE FROM tpp_info
+            WHERE tpp_info_id NOT IN
+            (SELECT MIN(tpp_info_id) AS tpp_info_id
+            FROM tpp_info
+            GROUP BY authorisation_number)
+        </sql>
+
+        <sql>
+            UPDATE tpp_info
+            SET redirect_uri = NULL,
+            nok_redirect_uri = NULL,
+            cancel_redirect_uri = NULL,
+            cancel_nok_redirect_uri = NULL
+        </sql>
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-5">
+        <comment>
+            Add unique constraint for authorisation_number column in tpp_info table
+        </comment>
 
         <addUniqueConstraint columnNames="authorisation_number"
                              constraintName="uniq_auth_num"
