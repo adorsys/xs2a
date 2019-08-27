@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
+import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.AccountReferenceMapper;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
@@ -74,6 +75,8 @@ public class CmsAspspPiisServiceInternalTest {
     private static TppInfo tppInfo;
 
     @Mock
+    private TppInfoRepository tppInfoRepository;
+    @Mock
     private PiisConsentRepository piisConsentRepository;
     @Mock
     private PiisConsentMapper piisConsentMapper;
@@ -89,6 +92,7 @@ public class CmsAspspPiisServiceInternalTest {
         psuIdData = buildPsuIdData();
         when(piisConsentMapper.mapToPiisConsent(buildPiisConsentEntity())).thenReturn(buildPiisConsent());
         when(piisConsentRepository.save(any(PiisConsentEntity.class))).thenReturn(buildPiisConsentEntity());
+        when(tppInfoRepository.findByAuthorisationNumber(any())).thenReturn(Optional.of(buildTppInfoEntity()));
     }
 
     @Test

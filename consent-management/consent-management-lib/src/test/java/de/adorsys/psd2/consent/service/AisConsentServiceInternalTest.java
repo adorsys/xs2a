@@ -33,6 +33,7 @@ import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
@@ -115,6 +116,8 @@ public class AisConsentServiceInternalTest {
     private AisConsentUsageService aisConsentUsageService;
     @Mock
     private AisConsentActionRepository aisConsentActionRepository;
+    @Mock
+    private TppInfoRepository tppInfoRepository;
 
     @Mock
     private ScaMethodMapper scaMethodMapper;
@@ -130,6 +133,7 @@ public class AisConsentServiceInternalTest {
         when(tppInfoMapper.mapToTppInfoEntity(buildTppInfo())).thenReturn(buildTppInfoEntity());
         AisConsentAction action = buildAisConsentAction();
         when(aisConsentActionRepository.save(action)).thenReturn(action);
+        when(tppInfoRepository.findByAuthorisationNumber(any())).thenReturn(Optional.of(buildTppInfoEntity()));
     }
 
     @Test
