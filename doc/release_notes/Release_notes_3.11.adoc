@@ -17,6 +17,7 @@
 * The `tpp_info` table was refactored
 * Remove TPP Role validation based on certificate
 * NullPointerException in AccountReferenceAccessValidator
+* Bugfix: Incorrect response for Update PSU data for payment initiation request without psuId in header
 
 == Remove deprecated constructor in `SpiContextData`
 
@@ -107,3 +108,10 @@ This validation is already performed beforehand.
 
 This exception was occurring when TPP was trying to read transaction or balance report without read account list.
 From now on, if TPP does the same it will receive 401 response code with `CONSENT_INVALID` message.
+
+== Bugfix: Incorrect response for Update PSU data for payment initiation request without psuId in header
+
+From now on, `PUT /v1/{payment-service}/{payment-product}/{paymentId}/authorisations/{authorisationId}` and
+`PUT v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}` requests can be
+used without specifying PSU-ID in the header, provided an authorisation, implicitly or explicitly, has already been
+performed.
