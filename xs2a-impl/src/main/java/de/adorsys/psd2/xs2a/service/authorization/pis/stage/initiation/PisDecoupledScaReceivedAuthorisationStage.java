@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
@@ -77,22 +78,26 @@ public class PisDecoupledScaReceivedAuthorisationStage extends PisScaStage<Xs2aU
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse applyAuthorisation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, GetPisAuthorisationResponse pisAuthorisationResponse) {
+        PsuIdData psuData = extractPsuIdData(request, false);
+        request.setPsuData(psuData);
         PaymentType paymentType = pisAuthorisationResponse.getPaymentType();
         String paymentProduct = pisAuthorisationResponse.getPaymentProduct();
         SpiPayment payment = mapToSpiPayment(pisAuthorisationResponse, paymentType, paymentProduct);
+        String paymentId = request.getPaymentId();
 
-        SpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getPaymentId());
+        SpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(paymentId);
 
-        SpiPsuData psuData = xs2aToSpiPsuDataMapper.mapToSpiPsuData(request.getPsuData());
-        SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(request.getPsuData());
+        SpiPsuData spiPsuData = xs2aToSpiPsuDataMapper.mapToSpiPsuData(psuData);
+        SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(psuData);
 
-        SpiResponse<SpiAuthorisationStatus> authPsuResponse = paymentAuthorisationSpi.authorisePsu(contextData, psuData, request.getPassword(), payment, aspspConsentDataProvider);
+        SpiResponse<SpiAuthorisationStatus> authPsuResponse = paymentAuthorisationSpi.authorisePsu(contextData, spiPsuData, request.getPassword(), payment, aspspConsentDataProvider);
 
+        String authenticationId = request.getAuthorisationId();
         if (authPsuResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(authPsuResponse, ServiceType.PIS);
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_DECOUPLED_RECEIVED stage. Authorise PSU when apply payment authorisation has failed. Error msg: [{}].",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId(), psuData.getPsuId(), errorHolder);
-            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authenticationId, psuData.getPsuId(), errorHolder);
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, psuData);
         }
 
         return pisCommonDecoupledService.proceedDecoupledInitiation(request, payment);

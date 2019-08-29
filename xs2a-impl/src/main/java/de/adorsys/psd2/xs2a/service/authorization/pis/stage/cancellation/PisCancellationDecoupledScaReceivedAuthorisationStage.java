@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage.cancellation;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
@@ -65,6 +66,8 @@ public class PisCancellationDecoupledScaReceivedAuthorisationStage extends PisSc
 
     @Override
     public Xs2aUpdatePisCommonPaymentPsuDataResponse apply(Xs2aUpdatePisCommonPaymentPsuDataRequest request, GetPisAuthorisationResponse pisAuthorisationResponse) {
+        PsuIdData psuData = extractPsuIdData(request, true);
+        request.setPsuData(psuData);
         PaymentType paymentType = pisAuthorisationResponse.getPaymentType();
         String paymentProduct = pisAuthorisationResponse.getPaymentProduct();
         SpiPayment payment = mapToSpiPayment(pisAuthorisationResponse, paymentType, paymentProduct);
@@ -73,16 +76,16 @@ public class PisCancellationDecoupledScaReceivedAuthorisationStage extends PisSc
 
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getPaymentId());
 
-        SpiPsuData psuData = xs2aToSpiPsuDataMapper.mapToSpiPsuData(request.getPsuData());
-        SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(request.getPsuData());
+        SpiPsuData spiPsuData = xs2aToSpiPsuDataMapper.mapToSpiPsuData(psuData);
+        SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(psuData);
 
-        SpiResponse<SpiAuthorisationStatus> authPsuResponse = paymentCancellationSpi.authorisePsu(contextData, psuData, request.getPassword(), payment, spiAspspConsentDataProvider);
+        SpiResponse<SpiAuthorisationStatus> authPsuResponse = paymentCancellationSpi.authorisePsu(contextData, spiPsuData, request.getPassword(), payment, spiAspspConsentDataProvider);
 
         if (authPsuResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(authPsuResponse, ServiceType.PIS);
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_CANCELLATION_DECOUPLED_RECEIVED stage. Authorise PSU has failed. Error msg: {}.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authenticationId, psuData.getPsuId(), errorHolder);
-            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, request.getPsuData());
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, psuData);
         }
 
         return pisCommonDecoupledService.proceedDecoupledCancellation(request, payment);
