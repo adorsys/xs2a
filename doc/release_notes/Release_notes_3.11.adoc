@@ -93,10 +93,10 @@ sent these requests with empty json body `{}`.
 
 == The `tpp_info` table was refactored
 
-From now on, `authorisation_number` is a unique value in `tpp_info` table. All duplicate values were removed and `tpp_info_id`
-values in `ais_consent`, `pis_common_payment` and `piis_consent` were replaced by corresponding values. `redirect_uri`,
-`nok_redirect_uri`, `cancel_redirect_uri`, `cancel_nok_redirect_uri` were marked as `@Deprecated` and will be removed in
-version 5.2.
+From now on, `authorisation_number` is a unique value in `tpp_info` table. Warning: all duplicate values in `tpp_info_id`
+table will be removed; duplicating `tpp_info_id` values in `ais_consent`, `pis_common_payment`, `piis_consent` and `tpp_info_role`
+will be replaced by corresponding unique values. Columns `redirect_uri`, `nok_redirect_uri`, `cancel_redirect_uri`,
+`cancel_nok_redirect_uri` in `tpp_info` table will be cleared and are marked as `@Deprecated` and will be removed in version 5.2.
 
 == Remove TPP Role validation based on certificate
 

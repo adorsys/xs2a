@@ -21,17 +21,33 @@
 
     <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-1">
         <comment>
-            Remove tpp_info_id foreign key constraints from ais_consent, pis_common_payment and piis_consent tables
+            Remove tpp_info_id foreign key constraint from ais_consent table
         </comment>
 
         <dropForeignKeyConstraint baseTableName="ais_consent" constraintName="fk__ais_consent__tpp_info"/>
-        <dropForeignKeyConstraint baseTableName="pis_common_payment" constraintName="fk_com_payment_tpp_info"/>
-        <dropForeignKeyConstraint baseTableName="piis_consent" constraintName="fk__piis_consent__tpp_info"/>
     </changeSet>
 
     <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-2">
         <comment>
-            Update tpp_info_id in ais_consent, pis_common_payment, piis_consent and tpp_info_role
+            Remove tpp_info_id foreign key constraint from pis_common_payment table
+        </comment>
+
+        <dropForeignKeyConstraint baseTableName="pis_common_payment" constraintName="fk_com_payment_tpp_info"/>
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-3">
+        <comment>
+            Remove tpp_info_id foreign key constraint from piis_consent table
+        </comment>
+
+        <dropForeignKeyConstraint baseTableName="piis_consent" constraintName="fk__piis_consent__tpp_info"/>
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-4">
+        <comment>
+            Update tpp_info_id in ais_consent, pis_common_payment, piis_consent and tpp_info_role tables;
+            Delete non-unique records in tpp_info_role and tpp_info tables;
+            Set redirect_uri, nok_redirect_uri, cancel_redirect_uri, cancel_nok_redirect_uri in tpp_info table to NULL
         </comment>
 
         <sql>
@@ -74,45 +90,15 @@
         </sql>
 
         <sql>
-            UPDATE tpp_info_role r
-            SET tpp_info_id =
-            (SELECT n.new_tpp_info_id
-            FROM tpp_info t
-            INNER JOIN
-            (SELECT MIN(tpp_info_id) AS new_tpp_info_id, authorisation_number
+            DELETE FROM tpp_info_role
+            WHERE tpp_info_id IN
+            (SELECT i.tpp_info_id
+            FROM tpp_info i
+            WHERE i.tpp_info_id NOT IN
+            (SELECT MIN(tpp_info_id) AS tpp_info_id
             FROM tpp_info
-            GROUP BY authorisation_number) n
-            ON t.authorisation_number = n.authorisation_number
-            WHERE r.tpp_info_id = t.tpp_info_id);
+            GROUP BY authorisation_number))
         </sql>
-    </changeSet>
-
-    <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-3">
-        <comment>
-            Add foreign key constraints for tpp_info column to ais_consent, pis_common_payment and piis_consent tables
-        </comment>
-
-        <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="ais_consent"
-                                 constraintName="fk__ais_consent__tpp_info" deferrable="false"
-                                 initiallyDeferred="false"
-                                 referencedColumnNames="tpp_info_id" referencedTableName="tpp_info"/>
-
-        <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="pis_common_payment"
-                                 constraintName="fk_com_payment_tpp_info" deferrable="false"
-                                 initiallyDeferred="false"
-                                 referencedColumnNames="tpp_info_id" referencedTableName="tpp_info"/>
-
-        <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="piis_consent"
-                                 constraintName="fk__piis_consent__tpp_info" deferrable="false"
-                                 initiallyDeferred="false"
-                                 referencedColumnNames="tpp_info_id" referencedTableName="tpp_info"/>
-    </changeSet>
-
-    <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-4">
-        <comment>
-            Delete non-unique records in tpp_info table;
-            Set redirect_uri, nok_redirect_uri, cancel_redirect_uri, cancel_nok_redirect_uri in tpp_info table to NULL
-        </comment>
 
         <sql>
             DELETE FROM tpp_info
@@ -132,6 +118,39 @@
     </changeSet>
 
     <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-5">
+        <comment>
+            Add foreign key constraint for tpp_info column to ais_consent piis_consent table
+        </comment>
+
+        <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="ais_consent"
+                                 constraintName="fk__ais_consent__tpp_info" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="tpp_info_id" referencedTableName="tpp_info"/>
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-6">
+        <comment>
+            Add foreign key constraint for tpp_info column to pis_common_payment table
+        </comment>
+
+        <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="pis_common_payment"
+                                 constraintName="fk_com_payment_tpp_info" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="tpp_info_id" referencedTableName="tpp_info"/>
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-7">
+        <comment>
+            Add foreign key constraint for tpp_info column to piis_consent table
+        </comment>
+
+        <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="piis_consent"
+                                 constraintName="fk__piis_consent__tpp_info" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="tpp_info_id" referencedTableName="tpp_info"/>
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2019-08-27-8">
         <comment>
             Add unique constraint for authorisation_number column in tpp_info table
         </comment>
