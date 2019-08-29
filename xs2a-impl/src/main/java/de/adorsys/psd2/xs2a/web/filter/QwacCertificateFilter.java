@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
-import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
@@ -58,13 +57,11 @@ import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 @Slf4j
 @RequiredArgsConstructor
 public class QwacCertificateFilter extends AbstractXs2aFilter {
-    private final TppRoleValidationService tppRoleValidationService;
     private final TppInfoHolder tppInfoHolder;
     private final RequestProviderService requestProviderService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-
         String encodedTppQwacCert = getEncodedTppQwacCert(request);
 
         if (StringUtils.isNotBlank(encodedTppQwacCert)) {
@@ -98,15 +95,6 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                                                  .collect(Collectors.toList());
                 tppInfo.setTppRoles(xs2aTppRoles);
                 tppInfo.setDnsList(tppCertificateData.getDnsList());
-
-                if (!tppRoleValidationService.hasAccess(tppInfo, request)) {
-                    log.info("InR-ID: [{}], X-Request-ID: [{}], Access forbidden for TPP with authorisation number: [{}]",
-                             requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), tppCertificateData.getPspAuthorisationNumber());
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().print(new TppErrorMessage(ERROR, CERTIFICATE_INVALID, "You don't have access to this resource"));
-                    return;
-                }
-
                 tppInfoHolder.setTppInfo(tppInfo);
             } catch (CertificateValidationException e) {
                 log.info("InR-ID: [{}], X-Request-ID: [{}], TPP unauthorised because CertificateValidationException: {}",
