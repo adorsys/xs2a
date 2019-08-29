@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -50,7 +51,7 @@ public class AccountReferenceAccessValidator {
     private boolean isValidAccountByAccess(String accountId, List<AccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)
                    && allowedAccountData.stream()
-                          .anyMatch(a -> a.getResourceId().equals(accountId));
+                                  .anyMatch(a -> StringUtils.equals(a.getResourceId(), accountId));
     }
 
     private boolean isConsentForAllAvailableAccounts(Xs2aAccountAccess accountAccess) {

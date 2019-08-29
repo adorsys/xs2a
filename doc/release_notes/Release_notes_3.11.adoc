@@ -16,6 +16,7 @@
 * Bugfix: Error on updating PSU Data with no body in the request
 * The `tpp_info` table was refactored
 * Remove TPP Role validation based on certificate
+* NullPointerException in AccountReferenceAccessValidator
 
 == Remove deprecated constructor in `SpiContextData`
 
@@ -101,3 +102,8 @@ version 5.2.
 
 From now on, validation of TPP Roles, based on the certificate, has been completely removed from XS2A.
 This validation is already performed beforehand.
+
+== NullPointerException in AccountReferenceAccessValidator
+
+This exception was occurring when TPP was trying to read transaction or balance report without read account list.
+From now on, if TPP does the same it will receive 401 response code with `CONSENT_INVALID` message.
