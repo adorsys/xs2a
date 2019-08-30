@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
+import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -48,6 +49,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.TERMINATED_BY_ASPS
 @Transactional(readOnly = true)
 public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     private final PiisConsentRepository piisConsentRepository;
+    private final TppInfoRepository tppInfoRepository;
     private final PiisConsentEntitySpecification piisConsentEntitySpecification;
     private final PiisConsentMapper piisConsentMapper;
 
@@ -62,6 +64,11 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         closePreviousPiisConsents(psuIdData, request);
 
         PiisConsentEntity consent = piisConsentMapper.mapToPiisConsentEntity(psuIdData, request);
+
+        if (request.getTppInfo() != null) {
+            tppInfoRepository.findByAuthorisationNumber(request.getTppInfo().getAuthorisationNumber()).ifPresent(consent::setTppInfo);
+        }
+
         PiisConsentEntity saved = piisConsentRepository.save(consent);
 
         if (saved.getId() != null) {

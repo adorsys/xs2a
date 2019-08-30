@@ -42,6 +42,7 @@ public class AisConsentMapper {
     private final PsuDataMapper psuDataMapper;
     private final TppInfoMapper tppInfoMapper;
     private final AisConsentUsageService aisConsentUsageService;
+    private final AuthorisationTemplateMapper authorisationTemplateMapper;
 
     /**
      * Maps AisConsent to AisAccountConsent with accesses populated with account references, provided by ASPSP.
@@ -71,6 +72,7 @@ public class AisConsentMapper {
             consent.getAisConsentRequestType(),
             psuDataMapper.mapToPsuIdDataList(consent.getPsuDataList()),
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
+            authorisationTemplateMapper.mapToAuthorisationTemplate(consent.getAuthorisationTemplate()),
             consent.isMultilevelScaRequired(),
             mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
             usageCounterMap,
@@ -100,6 +102,7 @@ public class AisConsentMapper {
             consent.getAisConsentRequestType(),
             psuDataMapper.mapToPsuIdDataList(consent.getPsuDataList()),
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
+            authorisationTemplateMapper.mapToAuthorisationTemplate(consent.getAuthorisationTemplate()),
             consent.isMultilevelScaRequired(),
             mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
             usageCounterMap,

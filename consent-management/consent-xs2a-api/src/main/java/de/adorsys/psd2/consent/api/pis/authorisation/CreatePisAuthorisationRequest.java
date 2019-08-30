@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.api.pis.authorisation;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -36,4 +37,7 @@ public class CreatePisAuthorisationRequest {
 
     @ApiModelProperty(value = "SCA approach")
     private ScaApproach scaApproach;
+
+    @ApiModelProperty(value="TPP redirect URIs")
+    private TppRedirectUri tppRedirectURIs;
 }

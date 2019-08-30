@@ -15,7 +15,6 @@
  */
 
 
-
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
@@ -31,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,7 +55,10 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     private static final PaymentAuthorisationType AUTHORISATION_TYPE = PaymentAuthorisationType.CREATED;
     private static final String AUTHORISATION_ID = "46f2e3a7-1855-4815-8755-5ca76769a1a4";
     private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
-    private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_DATA, ScaApproach.REDIRECT);
+    private static final String TPP_REDIRECT_URI = "request/redirect_uri";
+    private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
+    private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
+    private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_DATA, ScaApproach.REDIRECT, TPP_REDIRECT_URIs);
 
     @InjectMocks
     private PisCommonPaymentServiceInternalEncrypted pisCommonPaymentServiceInternalEncrypted;

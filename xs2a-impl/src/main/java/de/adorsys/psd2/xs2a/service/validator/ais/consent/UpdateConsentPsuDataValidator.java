@@ -16,8 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -25,16 +27,26 @@ import org.springframework.stereotype.Component;
  * Validator to be used for validating update consent psu data request according to some business rules
  */
 @Component
-public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<CommonConsentObject> {
+@RequiredArgsConstructor
+public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<UpdateConsentPsuDataRequestObject> {
+    private final AisAuthorisationStatusValidator aisAuthorisationStatusValidator;
+
     /**
      * Validates update consent psu data request
      *
-     * @param consentObject consent information object
+     * @param requestObject consent information object
      * @return valid result if the consent is valid, invalid result with appropriate error otherwise
      */
     @NotNull
     @Override
-    protected ValidationResult executeBusinessValidation(CommonConsentObject consentObject) {
+    protected ValidationResult executeBusinessValidation(UpdateConsentPsuDataRequestObject requestObject) {
+        AccountConsentAuthorization authorisation = requestObject.getAuthorisation();
+
+        ValidationResult authorisationValidationResult = aisAuthorisationStatusValidator.validate(authorisation.getScaStatus());
+        if (authorisationValidationResult.isNotValid()) {
+            return authorisationValidationResult;
+        }
+
         return ValidationResult.valid();
     }
 }

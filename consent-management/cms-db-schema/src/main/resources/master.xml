@@ -98,5 +98,8 @@
     <include relativeToChangelogFile="true" file="migration/0070-add-internal-request-id-to-event-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0071-add-tpp-authorisation-number-to-piis-consent-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0072-add-batch-booking-preferred-to-pis-payment-data-table.xml"/>
-
+    <include relativeToChangelogFile="true" file="migration/0073-remove-deprecated-column-from-tpp-stop-list-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0074-add-tpp-redirect-nok-redirect-columns-to-aispis-consent-authorization-tables.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0075-add-authorisation-template-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0076-add-unique-null-constraint-to-tpp-authorisation-number.xml"/>
 </databaseChangeLog>

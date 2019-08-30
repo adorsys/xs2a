@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -38,7 +37,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdatePaymentAfterSpiServiceInternalTest {
     private static final String PAYMENT_ID = "payment id";
-    private static final Long TPP_INFO_ID = 2345676L;
 
     @InjectMocks
     private UpdatePaymentAfterSpiServiceInternal updatePaymentAfterSpiServiceInternal;
@@ -52,9 +50,6 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
     public void setUp() {
         tppRedirectUri = new TppRedirectUri("ok_url", "nok_url");
         pisCommonPaymentData = new PisCommonPaymentData();
-        TppInfoEntity tppInfo = new TppInfoEntity();
-        tppInfo.setId(TPP_INFO_ID);
-        pisCommonPaymentData.setTppInfo(tppInfo);
     }
 
     @Test
@@ -97,12 +92,12 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.ACCP);
 
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));
-        when(commonPaymentDataService.updateCancelTppRedirectURIs(TPP_INFO_ID, tppRedirectUri)).thenReturn(true);
+        when(commonPaymentDataService.updateCancelTppRedirectURIs(pisCommonPaymentData, tppRedirectUri)).thenReturn(true);
 
         assertTrue(updatePaymentAfterSpiServiceInternal.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri));
 
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
-        verify(commonPaymentDataService, times(1)).updateCancelTppRedirectURIs(any(Long.class), eq(tppRedirectUri));
+        verify(commonPaymentDataService, times(1)).updateCancelTppRedirectURIs(eq(pisCommonPaymentData), eq(tppRedirectUri));
     }
 
     @Test
@@ -114,7 +109,7 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
         assertFalse(updatePaymentAfterSpiServiceInternal.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri));
 
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
-        verify(commonPaymentDataService, never()).updateCancelTppRedirectURIs(any(Long.class), eq(tppRedirectUri));
+        verify(commonPaymentDataService, never()).updateCancelTppRedirectURIs(any(PisCommonPaymentData.class), eq(tppRedirectUri));
     }
 
     @Test
@@ -124,7 +119,7 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
         assertFalse(updatePaymentAfterSpiServiceInternal.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri));
 
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
-        verify(commonPaymentDataService, never()).updateCancelTppRedirectURIs(any(Long.class), eq(tppRedirectUri));
+        verify(commonPaymentDataService, never()).updateCancelTppRedirectURIs(any(PisCommonPaymentData.class), eq(tppRedirectUri));
     }
 
 }

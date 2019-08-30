@@ -57,7 +57,6 @@ public class UpdatePaymentAfterSpiServiceInternal implements UpdatePaymentAfterS
                      paymentId);
             return false;
         }
-        Long tppInfoId = paymentDataOptional.get().getTppInfo().getId();
-        return commonPaymentDataService.updateCancelTppRedirectURIs(tppInfoId, tppRedirectUri);
+        return commonPaymentDataService.updateCancelTppRedirectURIs(paymentDataOptional.get(), tppRedirectUri);
     }
 }

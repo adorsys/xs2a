@@ -26,12 +26,14 @@ import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.pis.stage.initiation.PisScaReceivedAuthorisationStage;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
+import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,6 +59,10 @@ public class PisAuthorisationServiceTest {
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final String CANCELLATION_AUTHORISATION_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
     private static final String WRONG_CANCELLATION_AUTHORISATION_ID = "wrong cancellation authorisation id";
+    private static final String TPP_REDIRECT_URI = "request/redirect_uri";
+    private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
+    private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
+
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final List<String> SOME_LIST = Collections.emptyList();
     private static final ScaApproach SCA_APPROACH = ScaApproach.OAUTH;
@@ -84,6 +90,8 @@ public class PisAuthorisationServiceTest {
     private PisScaReceivedAuthorisationStage pisScaReceivedAuthorisationStage;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private TppRedirectUriMapper tppRedirectUriMapper;
 
     @Before
     public void setUp() {
@@ -105,6 +113,12 @@ public class PisAuthorisationServiceTest {
             .thenReturn(SCA_APPROACH);
         when(pisCommonPaymentServiceEncrypted.createAuthorization(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CREATED))
             .thenReturn(Optional.of(CREATE_PIS_AUTHORISATION_RESPONSE));
+        when(requestProviderService.getTppRedirectURI())
+            .thenReturn(TPP_REDIRECT_URI);
+        when(requestProviderService.getTppNokRedirectURI())
+            .thenReturn(TPP_NOK_REDIRECT_URI);
+        when(tppRedirectUriMapper.mapToTppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI))
+            .thenReturn(new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI));
 
         // When
         CreatePisAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisation(PAYMENT_ID, PSU_ID_DATA);
@@ -118,8 +132,10 @@ public class PisAuthorisationServiceTest {
         // Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
-        when(pisCommonPaymentServiceEncrypted.createAuthorization(WRONG_PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CREATED))
-            .thenReturn(Optional.empty());
+        when(requestProviderService.getTppRedirectURI())
+            .thenReturn(TPP_REDIRECT_URI);
+        when(requestProviderService.getTppNokRedirectURI())
+            .thenReturn(TPP_NOK_REDIRECT_URI);
 
         // When
         CreatePisAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisation(WRONG_PAYMENT_ID, PSU_ID_DATA);
@@ -173,6 +189,12 @@ public class PisAuthorisationServiceTest {
             .thenReturn(SCA_APPROACH);
         when(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CANCELLED))
             .thenReturn(Optional.of(CREATE_PIS_AUTHORISATION_RESPONSE));
+        when(requestProviderService.getTppRedirectURI())
+            .thenReturn(TPP_REDIRECT_URI);
+        when(requestProviderService.getTppNokRedirectURI())
+            .thenReturn(TPP_NOK_REDIRECT_URI);
+        when(tppRedirectUriMapper.mapToTppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI))
+            .thenReturn(new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI));
 
         // When
         CreatePisAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisationCancellation(PAYMENT_ID, PSU_ID_DATA);
@@ -186,8 +208,10 @@ public class PisAuthorisationServiceTest {
         // Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
-        when(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(WRONG_PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CANCELLED))
-            .thenReturn(Optional.empty());
+        when(requestProviderService.getTppRedirectURI())
+            .thenReturn(TPP_REDIRECT_URI);
+        when(requestProviderService.getTppNokRedirectURI())
+            .thenReturn(TPP_NOK_REDIRECT_URI);
 
         // When
         CreatePisAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisationCancellation(WRONG_PAYMENT_ID, PSU_ID_DATA);
@@ -289,11 +313,11 @@ public class PisAuthorisationServiceTest {
     }
 
     private static CreatePisAuthorisationRequest buildCreatePisAuthorisationRequestCancelled() {
-        return new CreatePisAuthorisationRequest(PaymentAuthorisationType.CANCELLED, PSU_ID_DATA, SCA_APPROACH);
+        return new CreatePisAuthorisationRequest(PaymentAuthorisationType.CANCELLED, PSU_ID_DATA, SCA_APPROACH, TPP_REDIRECT_URIs);
     }
 
     private static CreatePisAuthorisationRequest buildCreatePisAuthorisationRequestCreated() {
-        return new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_ID_DATA, SCA_APPROACH);
+        return new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_ID_DATA, SCA_APPROACH, TPP_REDIRECT_URIs);
     }
 
     private static Xs2aUpdatePisCommonPaymentPsuDataRequest buildXs2aUpdatePisCommonPaymentPsuDataRequest() {

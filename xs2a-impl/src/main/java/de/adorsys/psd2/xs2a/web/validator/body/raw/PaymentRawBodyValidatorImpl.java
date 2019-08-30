@@ -16,14 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.raw;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
-import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
-import org.jetbrains.annotations.NotNull;
+import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,35 +25,17 @@ import javax.servlet.http.HttpServletRequest;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.PAYMENT_DATE_FIELDS;
 
 @Component
-public class PaymentRawBodyValidatorImpl extends AbstractRawBodyValidatorImpl implements PaymentRawBodyValidator {
+public class PaymentRawBodyValidatorImpl implements PaymentRawBodyValidator {
 
-    private static final String DAY_OF_EXECUTION_FIELD_NAME = "dayOfExecution";
-    private static final String DAY_OF_MONTH_REGEX = "(0?[1-9]|[12]\\d|3[01])";
-    private static final String DAY_OF_EXECUTION_WRONG_VALUE_ERROR = "Value 'dayOfExecution' should be a number of day in month";
+    private DateFieldValidator dateFieldValidator;
 
-    protected PaymentRawBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper, JsonConverter jsonConverter, LocalDateConverter localDateConverter) {
-        super(errorBuildingService, objectMapper, jsonConverter, localDateConverter);
+    protected PaymentRawBodyValidatorImpl(DateFieldValidator dateFieldValidator) {
+        this.dateFieldValidator = dateFieldValidator;
     }
 
     @Override
     public void validate(HttpServletRequest request, MessageError messageError) {
-        String dayOfExecution = extractField(request, DAY_OF_EXECUTION_FIELD_NAME, messageError);
-        validateDayOfExecutionValue(dayOfExecution, messageError);
-
-        validateRawDataDates(request, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
-    }
-
-    private void validateDayOfExecutionValue(String value, MessageError messageError) {
-        if (value == null) {
-            return;
-        }
-
-        if (!isNumberADayOfMonth(value)) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, DAY_OF_EXECUTION_WRONG_VALUE_ERROR));
-        }
-    }
-
-    private boolean isNumberADayOfMonth(@NotNull String value) {
-        return value.matches(DAY_OF_MONTH_REGEX);
+        dateFieldValidator.validateDayOfExecution(request, messageError);
+        dateFieldValidator.validateRawDataDates(request, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
     }
 }

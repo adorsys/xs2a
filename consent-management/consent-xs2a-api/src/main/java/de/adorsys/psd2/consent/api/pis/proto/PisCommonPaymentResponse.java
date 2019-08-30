@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.api.pis.proto;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -26,6 +27,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -57,4 +59,7 @@ public class PisCommonPaymentResponse {
 
     @ApiModelProperty(value = "Timestamp of the last payment transaction status changing")
     private OffsetDateTime statusChangeTimestamp;
+
+    @ApiModelProperty(value = "List of corresponding PSU", required = true)
+    private List<Authorisation> authorisations = new ArrayList<>();
 }

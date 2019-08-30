@@ -1,6 +1,3 @@
-
-
-
 /*
  * Copyright 2018-2019 adorsys GmbH & Co KG
  *

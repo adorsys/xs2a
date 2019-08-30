@@ -71,6 +71,12 @@ public class PisAuthorization extends InstanceDependableEntity {
     @Column(name = "tan")
     private String tan;
 
+    @Column(name = "redirect_uri")
+    private String tppOkRedirectUri;
+
+    @Column(name = "nok_redirect_uri")
+    private String tppNokRedirectUri;
+
     @ElementCollection
     @CollectionTable(name = "pis_available_sca_method", joinColumns = @JoinColumn(name = "authorisation_id"))
     private List<ScaMethod> availableScaMethods = new ArrayList<>();

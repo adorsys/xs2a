@@ -1,0 +1,117 @@
+= Release notes v. 3.11
+
+== Table of Contents
+* Remove deprecated constructor in `SpiContextData`
+* Remove deprecated column `authority_id` from `tpp_stop_list` table
+* Missing error response body on reading transaction list with not supported format
+* Bugfix: NPE in creation periodic payment without field `frequency` or with wrong `frequency` format
+* Bugfix: create PIIS consent needs closing "/" in URL
+* Bugfix: missing `requestedExecutionDate` on get payment request for future dated payment
+* Pass PSU-IP-Address to SPI Context
+* Handling wrong HTTP methods in all XS2A endpoints
+* Bugfix: Start authorisation for payment cancellation ignores request body
+* Bugfix: Update PSU Data with failed AIS authorisation results in 500 INTERNAL_SERVER_ERROR
+* Funds confirmation request validation.
+* Moved columns `redirect_uri` and `nok_redirect_uri` from `tpp_info` to `authorisation_template`
+* Bugfix: Error on updating PSU Data with no body in the request
+* The `tpp_info` table was refactored
+* Remove TPP Role validation based on certificate
+* NullPointerException in AccountReferenceAccessValidator
+* Bugfix: Incorrect response for Update PSU data for payment initiation request without psuId in header
+
+== Remove deprecated constructor in `SpiContextData`
+
+From now on, there is no constructor with three arguments in class `SpiContextData`:
+`psuData`, `tppInfo`, `xRequestId`. New constructor uses such arguments:
+ `psuData`, `tppInfo`, `xRequestId`, `internalRequestId`.
+
+== Remove deprecated column `authority_id` from `tpp_stop_list` table
+
+From now on, the column `authority_id` in `tpp_stop_list` table doesn't exist anymore.
+Adequate changes in controllers and services have been made.
+
+== Missing error response body on reading transaction list with not supported format
+
+From now on, `406 REQUESTED_FORMATS_INVALID` is responded as text for not supported `text/plain` Accept header by bank profile (configuration property `supportedTransactionApplicationTypes`).
+
+== Bugfix: NPE in creation periodic payment without field `frequency` or with wrong `frequency` format
+
+From now on, if you try to create periodic payment without field `frequency` or with wrong
+value for this field, the error `400 FORMAT_ERROR` will be given to TPP.
+
+== Bugfix: create PIIS consent needs closing "/" in URL
+
+From now on create PIIS consent doesn't need closing "/" in URL.
+
+== Bugfix: Missing requestedExecutionDate on get payment request for future dated payment
+
+From now on, in Get Payment Request `GET /v1/{payment-service}/{payment_product}/{paymentId}` field
+`requestedExecutionDate` is present in the response object of get payment request.
+
+== Pass PSU-IP-Address to SPI Context
+
+From now on, `PSU-IP-Address` header is provided to SPI level as `psuIpAddress` field in SpiPsuData object.
+
+== Handling wrong HTTP methods in all XS2A endpoints
+
+From now on, any HTTP request to XS2A endpoint with unsupported HTTP method will result in `405 METHOD NOT ALLOWED` response with text error description provided (ex, `HTTP method 'PURGE' is not supported`).
+
+== Bugfix: Start authorisation for payment cancellation ignores request body
+
+From now on, it's possible to send PSU password in the request body on starting authorisation for payment cancellation
+(`POST /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations`) to authenticate the PSU without sending separate request.
+This can be achieved by sending both PSU-ID header and PSU password in the request body on starting cancellation authorisation.
+
+== Bugfix: Update PSU Data with failed AIS authorisation results in 500 INTERNAL_SERVER_ERROR
+
+From now on, trying to update PSU Data in authorisation with `FAILED` status will result in `409 STATUS_INVALID` error being returned to the TPP.
+
+Affected endpoints:
+
+ - Update PSU Data for account consent authorisation (`PUT /v1/consents/{consentId}/authorisations/{authorsationId}`)
+ - Update PSU Data for payment initiation authorisation (`PUT /v1/{payment-service}/{payment- product}/{paymentId}/authorisations/{authorisationId}`)
+ - Update PSU Data for payment cancellation authorisation (`PUT /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}`)
+
+== Funds confirmation request validation.
+
+New validation was added for POST request `/v1/funds-confirmations`, currently value `instructedAmount` and its fields
+`amount` and `currency` are all mandatory. Also, `currency` has validation for correct currency code format.
+
+== Moved columns `redirect_uri` and `nok_redirect_uri` from `tpp_info` to `authorisation_template`
+
+The columns `redirect_uri`, `nok_redirect_uri`, `cancel_redirect_uri`, `cancel_nok_redirect_uri` were moved to
+`authorisation_template` table from `tpp_info`. The link `authorisation_template_id` on newly created table `authorisation_template`
+was added to `ais_consent` and `pis_common_payment` tables.
+
+== Bugfix: Error on updating PSU Data with no body in the request
+
+From now on, you can send update PSU Data in the context of an Account Information Consent Request
+`PUT /v1/consents/{consentId}/authorisations/{authorsationId}` and
+update PSU Data in the context of a Payment Initiation Request
+`PUT /v1/{payment-service}/{paymentId}/{payment- product}/authorisations/{authorisationId}` without body.
+As a result you'll receive response with `scaStatus` `psuIdentified`. This result is the same if you
+sent these requests with empty json body `{}`.
+
+== The `tpp_info` table was refactored
+
+From now on, `authorisation_number` is a unique value in `tpp_info` table. Warning: all duplicate values in `tpp_info_id`
+table will be removed; duplicating `tpp_info_id` values in `ais_consent`, `pis_common_payment`, `piis_consent` and `tpp_info_role`
+will be replaced by corresponding unique values. Columns `redirect_uri`, `nok_redirect_uri`, `cancel_redirect_uri`,
+`cancel_nok_redirect_uri` in `tpp_info` table will be cleared and are marked as `@Deprecated` and will be removed in version 5.2.
+
+== Remove TPP Role validation based on certificate
+
+From now on, validation of TPP Roles, based on the certificate, has been completely removed from XS2A.
+This validation is already performed beforehand.
+
+== NullPointerException in AccountReferenceAccessValidator
+
+This exception was occurring when TPP was trying to read transaction or balance report without read account list.
+From now on, if TPP does the same it will receive 401 response code with `CONSENT_INVALID` message.
+
+== Bugfix: Incorrect response for Update PSU data for payment initiation request without psuId in header
+
+From now on, `PUT /v1/{payment-service}/{payment-product}/{paymentId}/authorisations/{authorisationId}` and
+`PUT v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}` requests can be
+used without specifying PSU-ID in the header, provided an authorisation, implicitly or explicitly, has already been
+performed.

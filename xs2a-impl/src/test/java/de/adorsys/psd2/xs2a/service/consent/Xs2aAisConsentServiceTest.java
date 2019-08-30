@@ -64,6 +64,8 @@ public class Xs2aAisConsentServiceTest {
     private static final String AUTHENTICATION_METHOD_ID = "19ff-4b5a-8188";
     private static final String TPP_ID = "Test TppId";
     private static final String REQUEST_URI = "request/uri";
+    private static final String REDIRECT_URI = "request/redirect_uri";
+    private static final String NOK_REDIRECT_URI = "request/nok_redirect_uri";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final ScaApproach SCA_APPROACH = ScaApproach.DECOUPLED;
     private static final CreateConsentReq CREATE_CONSENT_REQ = buildCreateConsentReq();
@@ -254,10 +256,14 @@ public class Xs2aAisConsentServiceTest {
         //Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
-        when(aisConsentAuthorisationMapper.mapToAisConsentAuthorization(SCA_STATUS, PSU_DATA, SCA_APPROACH))
+        when(aisConsentAuthorisationMapper.mapToAisConsentAuthorization(SCA_STATUS, PSU_DATA, SCA_APPROACH, REDIRECT_URI, NOK_REDIRECT_URI))
             .thenReturn(AIS_CONSENT_AUTHORIZATION_REQUEST);
         when(aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
             .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
+        when(requestProviderService.getTppRedirectURI())
+            .thenReturn(REDIRECT_URI);
+        when(requestProviderService.getTppNokRedirectURI())
+            .thenReturn(NOK_REDIRECT_URI);
 
         //When
         Optional<CreateAisConsentAuthorizationResponse> actualResponse = xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA);
@@ -272,10 +278,6 @@ public class Xs2aAisConsentServiceTest {
         //Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
-        when(aisConsentAuthorisationMapper.mapToAisConsentAuthorization(SCA_STATUS, PSU_DATA, SCA_APPROACH))
-            .thenReturn(AIS_CONSENT_AUTHORIZATION_REQUEST);
-        when(aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
-            .thenReturn(Optional.empty());
 
         //When
         Optional<CreateAisConsentAuthorizationResponse> actualResponse = xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA);

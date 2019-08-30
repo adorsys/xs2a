@@ -27,4 +27,5 @@ public class SpiPsuData {
     private String psuIdType;
     private String psuCorporateId;
     private String psuCorporateIdType;
+    private String psuIpAddress;
 }

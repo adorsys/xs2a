@@ -186,7 +186,7 @@ public class ReadSinglePaymentServiceTest {
 
     private static SpiContextData getSpiContextData() {
         return new SpiContextData(
-            new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
+            new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress"),
             new TppInfo(),
             UUID.randomUUID(),
             UUID.randomUUID()

@@ -22,6 +22,7 @@ import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
@@ -35,13 +36,12 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class ConsentModelMapper {
-    private final CoreObjectsMapper coreObjectsMapper;
     private final ObjectMapper objectMapper;
     public final AccountModelMapper accountModelMapper;
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
 
-    public CreateConsentReq mapToCreateConsentReq(Consents consent) {
+    public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri) {
         return Optional.ofNullable(consent)
                    .map(cnst -> {
                        CreateConsentReq createAisConsentRequest = new CreateConsentReq();
@@ -50,6 +50,7 @@ public class ConsentModelMapper {
                        createAisConsentRequest.setValidUntil(cnst.getValidUntil());
                        createAisConsentRequest.setFrequencyPerDay(cnst.getFrequencyPerDay());
                        createAisConsentRequest.setCombinedServiceIndicator(BooleanUtils.toBoolean(cnst.isCombinedServiceIndicator()));
+                       createAisConsentRequest.setTppRedirectUri(tppRedirectUri);
                        return createAisConsentRequest;
                    })
                    .orElse(null);
@@ -172,8 +173,7 @@ public class ConsentModelMapper {
         updatePsuData.setPsuData(psuData);
         updatePsuData.setConsentId(consentId);
         updatePsuData.setAuthorizationId(authorizationId);
-
-        if (!body.isEmpty()) {
+        if (body != null && !body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
                 .ifPresent(psuDataMap -> updatePsuData.setPassword(psuDataMap.get("password")));
@@ -205,7 +205,7 @@ public class ConsentModelMapper {
         request.setAuthorisationId(authorisationId);
         request.setPaymentService(paymentService);
         request.setPaymentProduct(paymentProduct);
-        if (!body.isEmpty()) {
+        if (body != null && !body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
                 .ifPresent(psuDataMap -> request.setPassword(psuDataMap.get("password")));

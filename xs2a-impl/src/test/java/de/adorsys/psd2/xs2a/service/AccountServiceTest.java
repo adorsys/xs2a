@@ -100,7 +100,7 @@ public class AccountServiceTest {
     private static final List<SpiAccountDetails> EMPTY_ACCOUNT_DETAILS_LIST = Collections.emptyList();
     private static final AccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
     private static final AccountReference XS2A_ACCOUNT_REFERENCE_WITHOUT_ASPSP_IDS = buildXs2aAccountReferenceWithoutAspspIds();
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     private static final MessageError VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
 

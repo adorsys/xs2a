@@ -87,16 +87,6 @@ public class PaymentInitiationHeadersBuilder {
         return buildHeadersForExistingAuthorisation(authorisationId);
     }
 
-    /**
-     * Builds response headers for update payment initiation PSU Data request that resulted in some error
-     *
-     * @param authorisationId id of the authorisation, used in the request
-     * @return response headers
-     */
-    public ResponseHeaders buildErrorUpdatePaymentInitiationPsuDataHeaders(@NotNull String authorisationId) {
-        return buildHeadersForExistingAuthorisation(authorisationId);
-    }
-
     private ResponseHeaders buildHeadersForExistingAuthorisation(String authorisationId) {
         ScaApproach authorisationScaApproach = scaApproachResolver.getInitiationScaApproach(authorisationId);
         return buildScaApproachHeader(authorisationScaApproach);

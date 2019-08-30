@@ -107,7 +107,7 @@ public class SpiToXs2aSinglePaymentMapperTest {
         payment.setRemittanceInformationUnstructured("Ref. Number TELEKOM-1222");
         payment.setRequestedExecutionDate(OFFSET_DATE_TIME.toLocalDate());
         payment.setRequestedExecutionTime(OFFSET_DATE_TIME);
-        payment.setPsuDataList(Collections.singletonList(new SpiPsuData("psuId", "", "", "")));
+        payment.setPsuDataList(Collections.singletonList(new SpiPsuData("psuId", "", "", "", "")));
         payment.setStatusChangeTimestamp(OFFSET_DATE_TIME);
         return payment;
     }

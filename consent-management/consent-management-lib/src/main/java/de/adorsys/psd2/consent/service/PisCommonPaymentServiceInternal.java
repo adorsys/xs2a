@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.ScaMethod;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
@@ -31,6 +32,7 @@ import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
+import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.service.mapper.PisCommonPaymentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
@@ -41,6 +43,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -67,6 +70,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     private final PisAuthorisationRepository pisAuthorisationRepository;
     private final PisPaymentDataRepository pisPaymentDataRepository;
     private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
+    private final TppInfoRepository tppInfoRepository;
     private final AspspProfileService aspspProfileService;
     private final PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
     private final ScaMethodMapper scaMethodMapper;
@@ -82,6 +86,8 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Transactional
     public Optional<CreatePisCommonPaymentResponse> createCommonPayment(PisPaymentInfo request) {
         PisCommonPaymentData commonPaymentData = pisCommonPaymentMapper.mapToPisCommonPaymentData(request);
+        tppInfoRepository.findByAuthorisationNumber(request.getTppInfo().getAuthorisationNumber()).ifPresent(commonPaymentData::setTppInfo);
+
         PisCommonPaymentData saved = pisCommonPaymentDataRepository.save(commonPaymentData);
 
         if (saved.getId() == null) {
@@ -426,7 +432,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
 
         if (psuDataOptional.isPresent()) {
             PsuData psuData = psuDataOptional.get();
-            if (PaymentAuthorisationType.CANCELLED != request.getAuthorizationType()){
+            if (PaymentAuthorisationType.CANCELLED != request.getAuthorizationType()) {
                 paymentData.setPsuDataList(cmsPsuService.enrichPsuData(psuData, paymentData.getPsuDataList()));
             }
             pisAuthorisation.setPsuData(psuData);
@@ -440,7 +446,21 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         pisAuthorisation.setAuthorisationExpirationTimestamp(countAuthorisationExpirationTimestamp());
         pisAuthorisation.setScaApproach(request.getScaApproach());
         pisAuthorisation.setPaymentData(paymentData);
+        TppRedirectUri redirectURIs = request.getTppRedirectURIs();
+        AuthorisationTemplateEntity authorisationTemplate = paymentData.getAuthorisationTemplate();
 
+        boolean isCreatedType = PaymentAuthorisationType.CREATED == request.getAuthorizationType();
+
+        String uri = StringUtils.defaultIfBlank(redirectURIs.getUri(), isCreatedType
+                                                                           ? authorisationTemplate.getRedirectUri()
+                                                                           : authorisationTemplate.getCancelRedirectUri());
+
+        String nokUri = StringUtils.defaultIfBlank(redirectURIs.getNokUri(), isCreatedType
+                                                                                 ? authorisationTemplate.getNokRedirectUri()
+                                                                                 : authorisationTemplate.getCancelNokRedirectUri());
+
+        pisAuthorisation.setTppOkRedirectUri(uri);
+        pisAuthorisation.setTppNokRedirectUri(nokUri);
         return pisAuthorisationRepository.save(pisAuthorisation);
     }
 

@@ -64,6 +64,12 @@ public class AisConsentAuthorization extends InstanceDependableEntity {
     @Column(name = "expiration_timestamp")
     private OffsetDateTime authorisationExpirationTimestamp;
 
+    @Column(name = "redirect_uri")
+    private String tppOkRedirectUri;
+
+    @Column(name = "nok_redirect_uri")
+    private String tppNokRedirectUri;
+
     @ElementCollection
     @CollectionTable(name = "ais_available_sca_method", joinColumns = @JoinColumn(name = "authorisation_id"))
     private List<ScaMethod> availableScaMethods = new ArrayList<>();

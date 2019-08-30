@@ -60,7 +60,7 @@ public class ConsentController implements ConsentApi {
 
     @Override
     public ResponseEntity createConsent(UUID xRequestID, Consents body, String digest, String signature,
-                                        byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID,
+                                        byte[] tpPSignatureCertificate, String psuId, String psUIDType, String psUCorporateID,
                                         String psUCorporateIDType, Boolean tpPRedirectPreferred, String tpPRedirectURI,
                                         String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred,
                                         String tpPNotificationURI, String tpPNotificationContentPreferred, String psUIPAddress,
@@ -68,12 +68,12 @@ public class ConsentController implements ConsentApi {
                                         String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
                                         String psUGeoLocation) {
 
-        CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body);
-
-        PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         TppRedirectUri tppRedirectUri = tppRedirectUriMapper.mapToTppRedirectUri(tpPRedirectURI, tpPNokRedirectURI);
+        CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body, tppRedirectUri);
+
+        PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType);
         ResponseObject<CreateConsentResponse> createResponse =
-            consentService.createAccountConsentsWithResponse(createConsent, psuData, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), tppRedirectUri);
+            consentService.createAccountConsentsWithResponse(createConsent, psuData, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred));
 
         if (createResponse.hasError()) {
             return responseErrorMapper.generateErrorResponse(createResponse.getError(),
@@ -84,7 +84,7 @@ public class ConsentController implements ConsentApi {
         ResponseHeaders headers = consentHeadersBuilder.buildCreateConsentHeaders(createConsentResponse.getAuthorizationId(),
                                                                                   Optional.ofNullable(createConsentResponse.getLinks().getSelf())
                                                                                       .map(HrefType::getHref)
-                                                                                      .orElse(null));
+                                                                                      .orElseThrow(() -> new IllegalArgumentException("Wrong href type in self link")));
 
         return responseMapper.created(createResponse, consentModelMapper::mapToConsentsResponse201, headers);
     }
@@ -105,7 +105,7 @@ public class ConsentController implements ConsentApi {
     @Override
     public ResponseEntity startConsentAuthorisation(UUID xRequestID, String consentId, Object body,
                                                     String digest, String signature, byte[] tpPSignatureCertificate,
-                                                    String PSU_ID, String psUIDType, String psUCorporateID,
+                                                    String psuId, String psUIDType, String psUCorporateID,
                                                     String psUCorporateIDType, Boolean tpPRedirectPreferred,
                                                     String tpPRedirectURI, String tpPNokRedirectURI,
                                                     String tpPNotificationURI, String tpPNotificationContentPreferred,
@@ -114,7 +114,7 @@ public class ConsentController implements ConsentApi {
                                                     String psUAcceptLanguage, String psUUserAgent,
                                                     String psUHttpMethod, UUID psUDeviceID,
                                                     String psUGeoLocation) {
-        PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
+        PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType);
         String password = authorisationMapper.mapToPasswordFromBody((Map) body);
 
         ResponseObject<AuthorisationResponse> createResponse = consentService.createAisAuthorisation(psuData, consentId, password);
@@ -135,12 +135,12 @@ public class ConsentController implements ConsentApi {
 
     @Override
     public ResponseEntity updateConsentsPsuData(UUID xRequestID, String consentId, String authorisationId, Object body, String digest,
-                                                String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType,
+                                                String signature, byte[] tpPSignatureCertificate, String psuId, String psUIDType,
                                                 String psUCorporateID, String psUCorporateIDType, String psUIPAddress, String psUIPPort,
                                                 String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage,
                                                 String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
-        PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
+        PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType);
 
         return updateAisAuthorisation(psuData, authorisationId, consentId, body);
     }

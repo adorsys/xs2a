@@ -16,11 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.raw;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
-import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
+import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,14 +25,15 @@ import javax.servlet.http.HttpServletRequest;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS;
 
 @Component
-public class ConsentRawBodyValidatorImpl extends AbstractRawBodyValidatorImpl implements ConsentRawBodyValidator {
+public class ConsentRawBodyValidatorImpl implements ConsentRawBodyValidator {
+    private DateFieldValidator dateFieldValidator;
 
-    protected ConsentRawBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper, JsonConverter jsonConverter, LocalDateConverter localDateConverter) {
-        super(errorBuildingService, objectMapper, jsonConverter, localDateConverter);
+    protected ConsentRawBodyValidatorImpl(DateFieldValidator dateFieldValidator) {
+        this.dateFieldValidator = dateFieldValidator;
     }
 
     @Override
     public void validate(HttpServletRequest request, MessageError messageError) {
-        validateRawDataDates(request, AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError);
+        dateFieldValidator.validateRawDataDates(request, AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError);
     }
 }

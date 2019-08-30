@@ -82,9 +82,9 @@ public class PisScaStartAuthorisationStageTest {
     private static final String PAYMENT_ID = "123456789";
     private static final String PSU_ID = "Test psuId";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
-    private static final SpiContextData CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
-    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null);
+    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null, null);
     private static final List<SpiAuthenticationObject> MULTIPLE_SPI_SCA_METHODS = Arrays.asList(buildSpiSmsAuthenticationObject(false), buildSpiPushAuthenticationObject(true));
     private static final List<SpiAuthenticationObject> ONE_SPI_SCA_METHOD_EMBEDDED = Collections.singletonList(buildSpiSmsAuthenticationObject(false));
     private static final List<SpiAuthenticationObject> ONE_SPI_SCA_METHOD_DECOUPLED = Collections.singletonList(buildSpiSmsAuthenticationObject(true));

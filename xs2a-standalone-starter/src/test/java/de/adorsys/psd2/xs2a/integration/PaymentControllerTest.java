@@ -39,6 +39,7 @@ import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponseBuilder;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.apache.commons.io.IOUtils;
@@ -63,17 +64,13 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -100,6 +97,9 @@ public class PaymentControllerTest {
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
+
+    private static final String TPP_REDIRECT_URI = "request/redirect_uri";
+    private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
 
     private static final String CANCELLATION_AUTHORISATIONS_RESP = "/json/payment/res/explicit/SinglePaymentCancellationAuth_response.json";
     private static final String CANCELLATION_AUTHORISATIONS_REDIRECT_OAUTH_RESP = "/json/payment/res/explicit/SinglePaymentCancellationAuth_Redirect_OAuth_response.json";
@@ -153,6 +153,8 @@ public class PaymentControllerTest {
         httpHeadersExplicit.add("PSU-Corporate-ID", "Some corporate id");
         httpHeadersExplicit.add("PSU-Corporate-ID-Type", "Some corporate id type");
         httpHeadersExplicit.add("PSU-IP-Address", "1.1.1.1");
+        httpHeadersExplicit.add( "TPP-Redirect-URI", TPP_REDIRECT_URI );
+        httpHeadersExplicit.add( "TPP-Nok-Redirect-URI", TPP_NOK_REDIRECT_URI );
 
         // when we use Explicit auth mode we need to set 'true' and value 'signingBasketSupported' in profile also should be 'true'
         httpHeadersExplicit.add("TPP-Explicit-Authorisation-Preferred", "true");

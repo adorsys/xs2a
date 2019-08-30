@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.AccountReferenceCollector;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -53,6 +54,9 @@ public class CreateConsentReq implements AccountReferenceCollector {
     @ApiModelProperty(value = "If 'true' indicates that a payment initiation service will be addressed in the same 'session'", required = true)
     @NotNull
     private boolean combinedServiceIndicator;
+
+    @ApiModelProperty(value = "TPP redirect URI object'")
+    private TppRedirectUri tppRedirectUri;
 
     @JsonIgnore
     @Override

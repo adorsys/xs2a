@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c0c6e851-70ae-4745-84d3-48ba0f183db3",
+		"_postman_id": "dc00cccf-2ab5-4c69-a99a-d2eb86e0efa8",
 		"name": "PIIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -12,7 +12,7 @@
 					"name": "wrong TPP in certificate",
 					"item": [
 						{
-							"name": "0. Set aspsp properties piisConsentSupported=true",
+							"name": "1. Set ASPSP properties piisConsentSupported=true",
 							"event": [
 								{
 									"listen": "test",
@@ -60,7 +60,7 @@
 							"response": []
 						},
 						{
-							"name": "1 Create PIIS consent request",
+							"name": "2. Create PIIS consent request",
 							"event": [
 								{
 									"listen": "test",
@@ -139,7 +139,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"DE89370400440532013000\"\n  },\n  \"allowedFrequencyPerDay\": 4,\n  \"cardExpiryDate\": \"2020-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppInfo\": {\n    \"authorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n    \"authorityId\": \"DE-FAKENCA\",\n    \"authorityName\": \"authority name\",\n    \"city\": \"Nuremberg\",\n    \"country\": \"Germany\",\n    \"issuerCN\": \"Authority CA Domain Name\",\n    \"organisation\": \"Organisation\",\n    \"organisationUnit\": \"Organisation unit\",\n    \"state\": \"Bayern\",\n    \"tppName\": \"Tpp company\",\n    \"tppRedirectUri\": {\n      \"nokUri\": \"Nok redirect URI\",\n      \"uri\": \"Redirect URI\"\n    },\n    \"tppRoles\": [\n      \"PISP\"\n    ]\n  },\n  \"validUntil\": \"2020-10-10\"\n}"
+									"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"{{iban_multiple}}\"\n  },\n  \"allowedFrequencyPerDay\": 4,\n  \"cardExpiryDate\": \"2020-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppInfo\": {\n    \"authorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n    \"authorityId\": \"DE-FAKENCA\",\n    \"authorityName\": \"authority name\",\n    \"city\": \"Nuremberg\",\n    \"country\": \"Germany\",\n    \"issuerCN\": \"Authority CA Domain Name\",\n    \"organisation\": \"Organisation\",\n    \"organisationUnit\": \"Organisation unit\",\n    \"state\": \"Bayern\",\n    \"tppName\": \"Tpp company\",\n    \"tppRedirectUri\": {\n      \"nokUri\": \"Nok redirect URI\",\n      \"uri\": \"Redirect URI\"\n    },\n    \"tppRoles\": [\n      \"PISP\"\n    ]\n  },\n  \"validUntil\": \"2020-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
@@ -160,63 +160,7 @@
 							"response": []
 						},
 						{
-							"name": "Fund confirmation request(sufficient)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "02b43079-3a6d-4e12-b69f-0a6d74a5c9b9",
-										"exec": [
-											"pm.test(\"Status code is 200\", function () {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.test(\"Funds are available\", () => {",
-											"    pm.expect(jsonData).to.have.property('fundsAvailable', true);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Accept",
-										"value": "application/json"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "X-Request-ID",
-										"value": "{{x_request_id}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"account\": {\n   \"currency\": \"EUR\",\n   \"iban\": \"DE89370400440532013000\"\n},\n  \"cardNumber\": \"12345\",\n  \"instructedAmount\": {\n    \"amount\": \"160.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
-								},
-								"url": {
-									"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_xs2a}}"
-									],
-									"path": [
-										"v1",
-										"funds-confirmations"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Fund confirmation request(sufficient) WRONG CERT",
+							"name": "3. Fund confirmation request WRONG certificate",
 							"event": [
 								{
 									"listen": "test",
@@ -300,7 +244,7 @@
 					"name": "TPP does not have role for PIIS",
 					"item": [
 						{
-							"name": "0. Set aspsp properties piisConsentSupported=true",
+							"name": "1. Set ASPSP properties piisConsentSupported=true",
 							"event": [
 								{
 									"listen": "test",
@@ -348,7 +292,7 @@
 							"response": []
 						},
 						{
-							"name": "1 Create PIIS consent request",
+							"name": "2. Create PIIS consent request",
 							"event": [
 								{
 									"listen": "test",
@@ -427,7 +371,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"DE89370400440532013000\"\n  },\n  \"allowedFrequencyPerDay\": 4,\n  \"cardExpiryDate\": \"2020-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppInfo\": {\n    \"authorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n    \"authorityId\": \"DE-FAKENCA\",\n    \"authorityName\": \"authority name\",\n    \"city\": \"Nuremberg\",\n    \"country\": \"Germany\",\n    \"issuerCN\": \"Authority CA Domain Name\",\n    \"organisation\": \"Organisation\",\n    \"organisationUnit\": \"Organisation unit\",\n    \"state\": \"Bayern\",\n    \"tppName\": \"Tpp company\",\n    \"tppRedirectUri\": {\n      \"nokUri\": \"Nok redirect URI\",\n      \"uri\": \"Redirect URI\"\n    },\n    \"tppRoles\": [\n      \"PISP\"\n    ]\n  },\n  \"validUntil\": \"2020-10-10\"\n}"
+									"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"{{iban_multiple}}\"\n  },\n  \"allowedFrequencyPerDay\": 4,\n  \"cardExpiryDate\": \"2020-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppInfo\": {\n    \"authorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n    \"authorityId\": \"DE-FAKENCA\",\n    \"authorityName\": \"authority name\",\n    \"city\": \"Nuremberg\",\n    \"country\": \"Germany\",\n    \"issuerCN\": \"Authority CA Domain Name\",\n    \"organisation\": \"Organisation\",\n    \"organisationUnit\": \"Organisation unit\",\n    \"state\": \"Bayern\",\n    \"tppName\": \"Tpp company\",\n    \"tppRedirectUri\": {\n      \"nokUri\": \"Nok redirect URI\",\n      \"uri\": \"Redirect URI\"\n    },\n    \"tppRoles\": [\n      \"PISP\"\n    ]\n  },\n  \"validUntil\": \"2020-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
@@ -448,63 +392,7 @@
 							"response": []
 						},
 						{
-							"name": "Fund confirmation request(sufficient)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "02b43079-3a6d-4e12-b69f-0a6d74a5c9b9",
-										"exec": [
-											"pm.test(\"Status code is 200\", function () {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.test(\"Funds are available\", () => {",
-											"    pm.expect(jsonData).to.have.property('fundsAvailable', true);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Accept",
-										"value": "application/json"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "X-Request-ID",
-										"value": "{{x_request_id}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"account\": {\n   \"currency\": \"EUR\",\n   \"iban\": \"DE89370400440532013000\"\n},\n  \"cardNumber\": \"12345\",\n  \"instructedAmount\": {\n    \"amount\": \"160.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
-								},
-								"url": {
-									"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_xs2a}}"
-									],
-									"path": [
-										"v1",
-										"funds-confirmations"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Fund confirmation request(sufficient) WRONG 400",
+							"name": "3. Fund confirmation request WRONG certificate",
 							"event": [
 								{
 									"listen": "test",
@@ -976,7 +864,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"account\": {\n  \t\"currency\": \"EUR\",\n    \"iban\": \"{{iban_none}}\"\n  },\n  \"instructedAmount\": {\n    \"amount\": \"100.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
+					"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\"\n  },\n  \"instructedAmount\": {\n    \"amount\": \"100.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
 				},
 				"url": {
 					"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",

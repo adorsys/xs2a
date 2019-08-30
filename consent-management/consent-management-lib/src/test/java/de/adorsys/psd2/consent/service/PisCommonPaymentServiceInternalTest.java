@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationReque
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
@@ -38,6 +39,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.apache.commons.collections4.IteratorUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
@@ -95,8 +97,11 @@ public class PisCommonPaymentServiceInternalTest {
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("id", "type", "corporate ID", "corporate type");
     private final static PsuData PSU_DATA = new PsuData("id", "type", "corporate ID", "corporate type");
+    private static final String TPP_REDIRECT_URI = "request/redirect_uri";
+    private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
+    private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
 
-    private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_ID_DATA, ScaApproach.REDIRECT);
+    private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_ID_DATA, ScaApproach.REDIRECT, TPP_REDIRECT_URIs);
     private static final JsonReader jsonReader = new JsonReader();
 
     @Before
@@ -340,7 +345,67 @@ public class PisCommonPaymentServiceInternalTest {
         // Then
         assertTrue(actual.isPresent());
         verify(pisAuthorisationRepository).save(argument.capture());
-        assertSame(argument.getValue().getScaStatus(), ScaStatus.PSUIDENTIFIED);
+        PisAuthorization pisAuthorization = argument.getValue();
+        assertSame(pisAuthorization.getScaStatus(), ScaStatus.PSUIDENTIFIED);
+        assertEquals(TPP_REDIRECT_URI, pisAuthorization.getTppOkRedirectUri());
+        assertEquals(TPP_NOK_REDIRECT_URI, pisAuthorization.getTppNokRedirectUri());
+    }
+
+    @Test
+    public void createAuthorizationWithClosingPreviousAuthorisationsTppRedirectLinksFromAuthorisationTemplate_success() {
+        //Given
+        AuthorisationTemplateEntity authorisationTemplateEntity = buildAuthorisationTemplateEntity();
+        PisCommonPaymentData paymentData = buildPisCommonPaymentData(authorisationTemplateEntity);
+        PisPaymentData pisPaymentData = buildPaymentData(paymentData);
+        CreatePisAuthorisationRequest createPisAuthorisationRequest = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_ID_DATA, ScaApproach.REDIRECT, new TppRedirectUri("", ""));
+
+        ArgumentCaptor<PisAuthorization> argument = ArgumentCaptor.forClass(PisAuthorization.class);
+        //noinspection unchecked
+        ArgumentCaptor<List<PisAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass((Class) List.class);
+        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
+        when(pisAuthorisationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
+        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID, Arrays.asList(RCVD, PATC))).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
+        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(paymentData)).thenReturn(paymentData);
+        when(cmsPsuService.definePsuDataForAuthorisation(any(), any())).thenReturn(Optional.of(PSU_DATA));
+        when(cmsPsuService.enrichPsuData(any(), any())).thenReturn(Collections.singletonList(PSU_DATA));
+
+        // When
+        Optional<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, createPisAuthorisationRequest);
+
+        // Then
+        assertTrue(actual.isPresent());
+        verify(pisAuthorisationRepository).save(argument.capture());
+        PisAuthorization pisAuthorization = argument.getValue();
+        assertEquals(authorisationTemplateEntity.getRedirectUri(), pisAuthorization.getTppOkRedirectUri());
+        assertEquals(authorisationTemplateEntity.getNokRedirectUri(), pisAuthorization.getTppNokRedirectUri());
+    }
+
+    @Test
+    public void createAuthorizationCancellationWithClosingPreviousAuthorisationsTppRedirectLinksFromAuthorisationTemplate_success() {
+        //Given
+        AuthorisationTemplateEntity authorisationTemplateEntity = buildAuthorisationTemplateEntity();
+        PisCommonPaymentData paymentData = buildPisCommonPaymentData(authorisationTemplateEntity);
+        PisPaymentData pisPaymentData = buildPaymentData(paymentData);
+        CreatePisAuthorisationRequest createPisAuthorisationRequest = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CANCELLED, PSU_ID_DATA, ScaApproach.REDIRECT, new TppRedirectUri("", ""));
+
+        ArgumentCaptor<PisAuthorization> argument = ArgumentCaptor.forClass(PisAuthorization.class);
+        //noinspection unchecked
+        ArgumentCaptor<List<PisAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass((Class) List.class);
+        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
+        when(pisAuthorisationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
+        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID, Arrays.asList(RCVD, PATC))).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
+        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(paymentData)).thenReturn(paymentData);
+        when(cmsPsuService.definePsuDataForAuthorisation(any(), any())).thenReturn(Optional.of(PSU_DATA));
+
+        // When
+        Optional<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, createPisAuthorisationRequest);
+
+        // Then
+        assertTrue(actual.isPresent());
+        verify(pisAuthorisationRepository).save(argument.capture());
+        PisAuthorization pisAuthorization = argument.getValue();
+        assertEquals(authorisationTemplateEntity.getCancelRedirectUri(), pisAuthorization.getTppOkRedirectUri());
+        assertEquals(authorisationTemplateEntity.getCancelNokRedirectUri(), pisAuthorization.getTppNokRedirectUri());
     }
 
     @Test
@@ -396,11 +461,16 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     private PisCommonPaymentData buildPisCommonPaymentData() {
+        return buildPisCommonPaymentData(new AuthorisationTemplateEntity());
+    }
+
+    private PisCommonPaymentData buildPisCommonPaymentData(AuthorisationTemplateEntity authorisationTemplateEntity) {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setId(PIS_PAYMENT_DATA_ID);
         pisCommonPaymentData.setPaymentId(PAYMENT_ID);
         pisCommonPaymentData.setTransactionStatus(RCVD);
         pisCommonPaymentData.setAuthorizations(pisAuthorizationList);
+        pisCommonPaymentData.setAuthorisationTemplate(authorisationTemplateEntity);
         return pisCommonPaymentData;
     }
 
@@ -429,5 +499,14 @@ public class PisCommonPaymentServiceInternalTest {
         paymentData.setPaymentId(PAYMENT_ID);
         paymentData.setPaymentData(pisCommonPaymentData);
         return paymentData;
+    }
+
+    private AuthorisationTemplateEntity buildAuthorisationTemplateEntity() {
+        AuthorisationTemplateEntity authorisationTemplateEntity = new AuthorisationTemplateEntity();
+        authorisationTemplateEntity.setRedirectUri("template_redirect_uri");
+        authorisationTemplateEntity.setNokRedirectUri("template_nok_redirect_uri");
+        authorisationTemplateEntity.setCancelRedirectUri("template_cancel_redirect_uri");
+        authorisationTemplateEntity.setCancelNokRedirectUri("template_cancel_nok_redirect_uri");
+        return authorisationTemplateEntity;
     }
 }

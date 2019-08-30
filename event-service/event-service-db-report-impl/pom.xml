@@ -21,7 +21,7 @@
     <parent>
         <artifactId>event-service</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>3.10</version>
+        <version>3.11</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -101,7 +101,7 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
+            <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
         <!-- Test dependencies-->

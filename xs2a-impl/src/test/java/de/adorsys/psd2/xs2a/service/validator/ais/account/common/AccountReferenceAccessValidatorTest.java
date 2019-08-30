@@ -92,4 +92,14 @@ public class AccountReferenceAccessValidatorTest {
         assertEquals(ErrorType.AIS_401, validationResult.getMessageError().getErrorType());
         assertEquals(CONSENT_INVALID, validationResult.getMessageError().getTppMessage().getMessageErrorCode());
     }
+
+    @Test
+    public void validate_AccountReferenceWithoutResourceId() {
+        AccountReference accountReference = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-reference-without-resource-id.json", AccountReference.class);
+        ValidationResult validationResult = validator.validate(this.accountAccess, Collections.singletonList(accountReference), ACCOUNT_ID);
+
+        assertTrue(validationResult.isNotValid());
+        assertEquals(ErrorType.AIS_401, validationResult.getMessageError().getErrorType());
+        assertEquals(CONSENT_INVALID, validationResult.getMessageError().getTppMessage().getMessageErrorCode());
+    }
 }

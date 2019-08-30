@@ -17,18 +17,20 @@
 package de.adorsys.psd2.xs2a.web.validator.body.payment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.model.FrequencyCode;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
-import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
-import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidatorContext;
+import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -46,8 +48,13 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
     private static final String PURPOSE_CODE_FIELD_NAME = "purposeCode";
+    private static final String FREQUENCY_FIELD_NAME = "frequency";
     private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
+    private static final String PERIODIC_PAYMENT_PATH_VAR = "periodic-payments";
     static final String PURPOSE_CODE_ERROR_FORMAT = "Field 'purposeCode' has wrong value";
+    static final String NO_FREQUENCY_ERROR_FORMAT = "Field 'frequency' should not be null";
+    static final String WRONG_FREQUENCY_FORMAT = "Wrong format for field 'frequency'";
+    static final String EMPTY_STRING = "";
 
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
     private DateFieldValidator dateFieldValidator;
@@ -55,19 +62,22 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     private final JsonConverter jsonConverter;
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
+    private final FieldExtractor fieldExtractor;
 
     @Autowired
     public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
                                     PaymentTypeValidatorContext paymentTypeValidatorContext,
                                     StandardPaymentProductsResolver standardPaymentProductsResolver,
                                     JsonConverter jsonConverter, TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
-                                    DateFieldValidator dateFieldValidator) {
+                                    DateFieldValidator dateFieldValidator,
+                                    FieldExtractor fieldExtractor) {
         super(errorBuildingService, objectMapper);
         this.paymentTypeValidatorContext = paymentTypeValidatorContext;
         this.standardPaymentProductsResolver = standardPaymentProductsResolver;
         this.dateFieldValidator = dateFieldValidator;
         this.jsonConverter = jsonConverter;
         this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
+        this.fieldExtractor = fieldExtractor;
     }
 
     @Override
@@ -96,10 +106,23 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
 
     @Override
     public void validateRawData(HttpServletRequest request, MessageError messageError) {
+        Optional<String> frequencyOptional = fieldExtractor.extractField(request, FREQUENCY_FIELD_NAME, messageError);
+        boolean paymentIsPeriodic = getPathParameters(request).get(PAYMENT_SERVICE_PATH_VAR).equals(PERIODIC_PAYMENT_PATH_VAR);
+        if (paymentIsPeriodic && !frequencyOptional.isPresent()) {
+            errorBuildingService.enrichMessageError(messageError, NO_FREQUENCY_ERROR_FORMAT);
+        } else if (paymentIsPeriodic) {
+            validateFrequency(frequencyOptional.get(), messageError);
+        }
         dateFieldValidator.validateDayOfExecution(request, messageError);
         dateFieldValidator.validateDateFormat(request, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
         List<String> purposeCodes = extractPurposeCodes(request, messageError);
         validatePurposeCodes(purposeCodes, messageError);
+    }
+
+    private void validateFrequency(String frequency, MessageError messageError) {
+        if (FrequencyCode.fromValue(frequency) == null) {
+            errorBuildingService.enrichMessageError(messageError, WRONG_FREQUENCY_FORMAT);
+        }
     }
 
     private void validateInitiatePaymentBody(Object body, Map<String, String> pathParametersMap, MessageError messageError) {

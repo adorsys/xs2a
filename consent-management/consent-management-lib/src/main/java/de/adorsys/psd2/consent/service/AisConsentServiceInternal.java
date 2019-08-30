@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
@@ -31,12 +32,14 @@ import de.adorsys.psd2.consent.domain.account.AspspAccountAccessHolder;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccessHolder;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -57,6 +60,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 public class AisConsentServiceInternal implements AisConsentService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
+    private final TppInfoRepository tppInfoRepository;
     private final AisConsentMapper consentMapper;
     private final PsuDataMapper psuDataMapper;
     private final AspspProfileService aspspProfileService;
@@ -81,6 +85,8 @@ public class AisConsentServiceInternal implements AisConsentService {
             return Optional.empty();
         }
         AisConsent consent = createConsentFromRequest(request);
+        tppInfoRepository.findByAuthorisationNumber(request.getTppInfo().getAuthorisationNumber()).ifPresent(consent::setTppInfo);
+
         AisConsent saved = aisConsentRepository.save(consent);
 
         if (saved.getId() != null) {
@@ -290,6 +296,13 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setExpireDate(adjustExpireDate(request.getValidUntil()));
         consent.setPsuDataList(psuDataMapper.mapToPsuDataList(Collections.singletonList(request.getPsuData())));
         consent.setTppInfo(tppInfoMapper.mapToTppInfoEntity(request.getTppInfo()));
+        AuthorisationTemplateEntity authorisationTemplate = new AuthorisationTemplateEntity();
+        TppRedirectUri tppRedirectUri = request.getTppRedirectUri();
+        if (tppRedirectUri != null) {
+            authorisationTemplate.setRedirectUri(tppRedirectUri.getUri());
+            authorisationTemplate.setNokRedirectUri(tppRedirectUri.getNokUri());
+        }
+        consent.setAuthorisationTemplate(authorisationTemplate);
         consent.addAccountAccess(new TppAccountAccessHolder(request.getAccess())
                                      .getAccountAccesses());
         consent.setRecurringIndicator(request.isRecurringIndicator());

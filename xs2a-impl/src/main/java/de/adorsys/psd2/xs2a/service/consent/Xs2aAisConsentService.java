@@ -146,7 +146,9 @@ public class Xs2aAisConsentService {
      * @return CreateAisConsentAuthorizationResponse object with authorization id and scaStatus
      */
     public Optional<CreateAisConsentAuthorizationResponse> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
-        AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorization(scaStatus, psuData, scaApproachResolver.resolveScaApproach());
+        String tppRedirectURI = requestProviderService.getTppRedirectURI();
+        String tppNOKRedirectURI = requestProviderService.getTppNokRedirectURI();
+        AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorization(scaStatus, psuData, scaApproachResolver.resolveScaApproach(), tppRedirectURI, tppNOKRedirectURI);
         return aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(consentId, request);
     }
 

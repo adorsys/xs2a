@@ -109,7 +109,7 @@ public class TransactionServiceTest {
     private static final SpiAccountReference SPI_ACCOUNT_REFERENCE_GLOBAL = buildSpiAccountReferenceGlobal();
     private static final AccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
     private static final SpiTransactionReport SPI_TRANSACTION_REPORT = buildSpiTransactionReport();
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     private static final BookingStatus BOOKING_STATUS = BookingStatus.BOTH;
     private static final MessageError VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));

@@ -94,17 +94,11 @@ public class CmsPsuAuthorisationMapperTest {
         pisAuthorization.setExternalId(EXTERNAL_ID);
         pisAuthorization.setScaStatus(ScaStatus.RECEIVED);
         pisAuthorization.setPsuData(new PsuData(PSU_ID, PSU_ID_TYPE, "", ""));
-
         pisAuthorization.setAuthorizationType(PaymentAuthorisationType.CREATED);
         pisAuthorization.setAuthorisationExpirationTimestamp(EXPIRATION_TIMESTAMP);
         pisAuthorization.setScaApproach(ScaApproach.EMBEDDED);
-        PisCommonPaymentData paymentData = new PisCommonPaymentData();
-        TppInfoEntity tppInfo = new TppInfoEntity();
-        tppInfo.setRedirectUri(OK_REDIRECT_URI);
-        tppInfo.setNokRedirectUri(NOK_REDIRECT_URI);
-
-        paymentData.setTppInfo(tppInfo);
-        pisAuthorization.setPaymentData(paymentData);
+        pisAuthorization.setTppOkRedirectUri(OK_REDIRECT_URI);
+        pisAuthorization.setTppNokRedirectUri(NOK_REDIRECT_URI);
         return pisAuthorization;
     }
 
@@ -114,16 +108,10 @@ public class CmsPsuAuthorisationMapperTest {
         authorization.setExternalId(EXTERNAL_ID);
         authorization.setScaStatus(ScaStatus.RECEIVED);
         authorization.setPsuData(new PsuData("PSU ID", "PSU ID type", "", ""));
-
         authorization.setAuthorisationExpirationTimestamp(EXPIRATION_TIMESTAMP);
         authorization.setScaApproach(ScaApproach.EMBEDDED);
-        AisConsent aisConsent = new AisConsent();
-        TppInfoEntity tppInfo = new TppInfoEntity();
-        tppInfo.setRedirectUri(OK_REDIRECT_URI);
-        tppInfo.setNokRedirectUri(NOK_REDIRECT_URI);
-
-        aisConsent.setTppInfo(tppInfo);
-        authorization.setConsent(aisConsent);
+        authorization.setTppOkRedirectUri(OK_REDIRECT_URI);
+        authorization.setTppNokRedirectUri(NOK_REDIRECT_URI);
         return authorization;
     }
 }

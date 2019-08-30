@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
+import de.adorsys.psd2.xs2a.core.autorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -45,6 +46,7 @@ public class AisAccountConsent {
     private AisConsentRequestType aisConsentRequestType;
     private List<PsuIdData> psuIdDataList;
     private TppInfo tppInfo;
+    private AuthorisationTemplate authorisationTemplate;
     private boolean multilevelScaRequired;
     private List<AisAccountConsentAuthorisation> accountConsentAuthorizations;
     private Map<String, Integer> usageCounterMap;

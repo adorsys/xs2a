@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,9 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.payment.*;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,7 @@ public class PisCommonPaymentMapper {
     private final TppInfoMapper tppInfoMapper;
     private final PsuDataMapper psuDataMapper;
     private final AccountReferenceMapper accountReferenceMapper;
+    private final AuthorisationMapper authorisationMapper;
 
     public List<PisPaymentData> mapToPisPaymentDataList(List<PisPayment> payments, PisCommonPaymentData pisCommonPayment) {
         if (CollectionUtils.isEmpty(payments)) {
@@ -60,6 +63,13 @@ public class PisCommonPaymentMapper {
         commonPaymentData.setPsuDataList(psuDataMapper.mapToPsuDataList(paymentInfo.getPsuDataList()));
         commonPaymentData.setMultilevelScaRequired(paymentInfo.isMultilevelScaRequired());
         commonPaymentData.setAspspAccountId(paymentInfo.getAspspAccountId());
+        AuthorisationTemplateEntity authorisationTemplate = new AuthorisationTemplateEntity();
+        TppRedirectUri tppRedirectUri = paymentInfo.getTppRedirectUri();
+        if (tppRedirectUri != null) {
+            authorisationTemplate.setRedirectUri(tppRedirectUri.getUri());
+            authorisationTemplate.setNokRedirectUri(tppRedirectUri.getNokUri());
+        }
+        commonPaymentData.setAuthorisationTemplate(authorisationTemplate);
         return commonPaymentData;
     }
 
@@ -123,6 +133,7 @@ public class PisCommonPaymentMapper {
                        response.setPaymentData(cmd.getPayment());
                        response.setTransactionStatus(cmd.getTransactionStatus());
                        response.setStatusChangeTimestamp(cmd.getStatusChangeTimestamp());
+                       response.setAuthorisations(authorisationMapper.mapToAuthorisations(cmd.getAuthorizations()));
                        return response;
                    });
     }
