@@ -4,7 +4,10 @@ On this page release notes for each version released are published.
 For Versionsing policy se [Versioning, Release and Support policy](Version_Policy.md).
 For upcoming versions see our [Roadmap](roadmap.md).
 
-## Mainline 3.x (Development)
+## Mainline 5.x (Development)
+
+## Mainline 4.x (Stable. Supported minimum till 01.03.2020)
+* [Version 4.0   (release date: ?)](release_notes/Release_notes_4.0.adoc)
 
 ## Mainline 2.x (Stable. Supported minimum till 01.08.2019)
 * [Version 2.7   (release date: ?)](release_notes/Release_notes_2.7.adoc)
