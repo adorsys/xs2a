@@ -38,7 +38,7 @@ variables:
   ############################
 
   OPENSHIFT_NAMESPACE_SUPPORT: "multibanking-xs2a"
-
+  OPENSHIFT_NAMESPACE_SUPPORT_4_X: "adorsys-psd2-support-4-x"
   OPENSHIFT_NAMESPACE_DEV: "adorsys-psd2-develop"
   OPENSHIFT_NAMESPACE_INTEG: "adorsys-psd2-integ"
   OPENSHIFT_NAMESPACE_DEMO: "adorsys-psd2-demo"
@@ -293,6 +293,28 @@ Deploy to Openshift (support):
       --dest-creds=openshift:${OPENSHIFT_TOKEN}
       "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:support"
       "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:latest"
+
+#Build Support-4.x imnages and deploy to support-4.x
+
+Push to DockerHub (support-4.x):
+  stage: "Package"
+  only:
+    - support-4.x
+  variables:
+    DOCKER_TAG: support-4-x
+  <<: *build_dockerhub_image
+
+Deploy to Openshift (support-4.x):
+  stage: "Deploy"
+  cache: {}
+  dependencies: []
+  only:
+    - support-4.x
+  variables:
+    GIT_STRATEGY: none
+    DOCKER_TAG: support-4-x # Dockerhub source tag
+    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_SUPPORT_4_X} # Openshift target namespace
+  <<: *deploy_openshift
 
 # Build NIGHTLY image and deploy (scheduled) to INTEG
 
