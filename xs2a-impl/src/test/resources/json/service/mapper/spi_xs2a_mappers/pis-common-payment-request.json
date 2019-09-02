@@ -1,0 +1,43 @@
+{
+  "payments": [
+    {
+      "paymentId": "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI",
+      "endToEndIdentification": "RI-123456789",
+      "debtorAccount": {
+        "aspspAccountId": "1234567890",
+        "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+        "iban": "DE52500105173911841934",
+        "bban": "Test BBAN",
+        "pan": "1111",
+        "maskedPan": "23456xxxxxx1234",
+        "msisdn": "0172/1111111",
+        "currency": "EUR"
+      },
+      "currency": "EUR",
+      "amount": 1000.00,
+      "creditorAccount": {
+        "aspspAccountId": "1234567890",
+        "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+        "iban": "DE52500105173911841934",
+        "bban": "Test BBAN",
+        "pan": "1111",
+        "maskedPan": "23456xxxxxx1234",
+        "msisdn": "0172/1111111",
+        "currency": "EUR"
+      },
+      "creditorAgent": "BCENECEQ",
+      "creditorName": "Telekom",
+      "creditorAddress": {
+        "street": "WBG Straße",
+        "buildingNumber": "56",
+        "city": "Nürnberg",
+        "postalCode": "90543",
+        "country": "DE"
+      },
+      "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+      "purposeCode": ""
+    }
+  ],
+  "paymentProduct": "sepa-credit-transfers",
+  "tppInfo": {}
+}

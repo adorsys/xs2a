@@ -95,16 +95,6 @@ public class Xs2aAisConsentService {
     }
 
     /**
-     * Requests CMS to retrieve AIS consent status by its identifier
-     *
-     * @param consentId String representation of identifier of stored consent
-     * @return Response containing AIS Consent Status
-     */
-    public Optional<ConsentStatus> getAccountConsentStatusById(String consentId) {
-        return aisConsentService.getConsentStatusById(consentId);
-    }
-
-    /**
      * Requests CMS to find old consents for current TPP and PSU and terminate them.
      *
      * @param newConsentId id of new consent
@@ -131,7 +121,7 @@ public class Xs2aAisConsentService {
      * @param consentId    String representation of identifier of stored consent
      * @param actionStatus Enum value representing whether the action is successful or errors occurred
      * @param requestUri   target URL of the request
-     * @param updateUsage   Update usage indicator
+     * @param updateUsage  Update usage indicator
      */
     public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus, String requestUri, boolean updateUsage) {
         aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(tppId, consentId, actionStatus, requestUri, updateUsage));
@@ -185,7 +175,6 @@ public class Xs2aAisConsentService {
      *
      * @param consentId            consentId String representation of identifier of stored consent
      * @param aisAccountAccessInfo AIS account access information
-     *
      * @return Response containing AIS Consent
      */
     public Optional<AccountConsent> updateAspspAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {

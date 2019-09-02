@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.domain.pis;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
@@ -27,12 +26,11 @@ import java.util.List;
 
 @Data
 public class CommonPayment {
-    private String paymentId;
-    private String paymentProduct;
-    private TransactionStatus transactionStatus;
-    private PaymentType paymentType;
-    private byte[] paymentData;
-    private TppInfo tppInfo;
-    private List<PsuIdData> psuDataList;
-    private OffsetDateTime statusChangeTimestamp;
+    protected String paymentId;
+    protected String paymentProduct;
+    protected TransactionStatus transactionStatus;
+    protected PaymentType paymentType;
+    protected byte[] paymentData;
+    protected List<PsuIdData> psuDataList;
+    protected OffsetDateTime statusChangeTimestamp;
 }

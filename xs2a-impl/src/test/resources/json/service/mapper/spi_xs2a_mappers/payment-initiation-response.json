@@ -1,0 +1,51 @@
+{
+  "scaStatus": "RECEIVED",
+  "transactionStatus": "ACCP",
+  "transactionFees": {
+    "currency": "UAH",
+    "amount": "100"
+  },
+  "transactionFeeIndicator": true,
+  "multilevelScaRequired": false,
+  "paymentId": "test-id",
+  "scaMethods": [
+    {
+      "authenticationType": "some type",
+      "authenticationVersion": "some version",
+      "authenticationMethodId": "some method id",
+      "name": "some name",
+      "explanation": "some explanation"
+    }
+  ],
+  "challengeData": {
+    "image": null,
+    "data": [
+      "some data"
+    ],
+    "imageLink": "some link",
+    "otpMaxLength": 1,
+    "otpFormat": null,
+    "additionalInformation": "some info"
+  },
+  "psuMessage": "hello, world!",
+  "tppMessages": [],
+  "_links": {
+    "scaRedirect": {
+      "href": "http://localhost:4200/consent/confirmation/pis"
+    },
+    "updatePsuIdentification": {
+      "href": "http://localhost/api/v1/payments/sepa-credit-transfers/932f8184-59dc-4fdb-848e-58b887b3ba02"
+    },
+    "updatePsuAuthentication": {
+      "href": "http://localhost/api/v1/payments/sepa-credit-transfers/932f8184-59dc-4fdb-848e-58b887b3ba02"
+    },
+    "self": {
+      "href": "http://localhost/api/v1/payments/sepa-credit-transfers/932f8184-59dc-4fdb-848e-58b887b3ba02"
+    },
+    "status": {
+      "href": "http://localhost/api/v1/payments/sepa-credit-transfers/status"
+    }
+  },
+  "authorizationId": "test-id",
+  "aspspAccountId": "account-id"
+}

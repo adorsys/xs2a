@@ -2,12 +2,14 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +46,24 @@ public class Xs2AUpdatePaymentAfterSpiServiceTest {
         boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS);
 
         //Then
+        assertThat(actualResponse).isFalse();
+    }
+
+    @Test
+    public void updatePaymentCancellationTppRedirectUri_success() {
+        TppRedirectUri tppRedirectUri = new TppRedirectUri("ok.url", "nok.url");
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri)).thenReturn(true);
+
+        boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updatePaymentCancellationTppRedirectUri(PAYMENT_ID,    tppRedirectUri);
+        assertThat(actualResponse).isTrue();
+    }
+
+    @Test
+    public void updatePaymentCancellationTppRedirectUri_failed() {
+        TppRedirectUri tppRedirectUri = new TppRedirectUri("ok.url", "nok.url");
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri)).thenReturn(false);
+
+        boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updatePaymentCancellationTppRedirectUri(PAYMENT_ID,    tppRedirectUri);
         assertThat(actualResponse).isFalse();
     }
 }
