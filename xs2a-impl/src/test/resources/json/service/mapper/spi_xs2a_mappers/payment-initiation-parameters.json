@@ -1,0 +1,16 @@
+{
+  "paymentType": "payments",
+  "paymentProduct": "sepa-credit-transfers",
+  "qwacCertificate": "test-certificate",
+  "tppRedirectUri": {
+    "uri": "http://test.com",
+    "nokUri": "ttp://test-not-ok.com"
+  },
+  "tppExplicitAuthorisationPreferred": false,
+  "psuData": {
+    "psuId": "psu Id",
+    "psuIdType": "psuId Type",
+    "psuCorporateId": "psu Corporate Id",
+    "psuCorporateIdType": "psuCorporate Id Type"
+  }
+}

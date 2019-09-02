@@ -62,32 +62,6 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void createCommonPayment_by_parameters_tppInfo_success() {
-        //Given
-        when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO_NULL))
-            .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
-
-        //When
-        CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PAYMENT_INITIATION_PARAMETERS, TPP_INFO);
-
-        //Then
-        assertThat(actualResponse).isEqualTo(CREATE_PIS_COMMON_PAYMENT_RESPONSE);
-    }
-
-    @Test
-    public void createCommonPayment_by_parameters_tppInfo_failed() {
-        //Given
-        when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO_NULL))
-            .thenReturn(Optional.empty());
-
-        //When
-        CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PAYMENT_INITIATION_PARAMETERS, TPP_INFO);
-
-        //Then
-        assertThat(actualResponse).isNull();
-    }
-
-    @Test
     public void createCommonPayment_by_request_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
@@ -111,19 +85,6 @@ public class Xs2aPisCommonPaymentServiceTest {
 
         //Then
         assertThat(actualResponse).isNull();
-    }
-
-    @Test
-    public void createCommonPayment_by_parameters_tppInfo_paymentData_success() {
-        //Given
-        when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
-            .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
-
-        //When
-        CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PAYMENT_INITIATION_PARAMETERS, TPP_INFO, PAYMENT_DATA);
-
-        //Then
-        assertThat(actualResponse).isEqualTo(CREATE_PIS_COMMON_PAYMENT_RESPONSE);
     }
 
     @Test

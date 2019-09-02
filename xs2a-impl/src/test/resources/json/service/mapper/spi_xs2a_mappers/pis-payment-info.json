@@ -1,0 +1,27 @@
+{
+  "paymentId": "test-id",
+  "paymentProduct": "sepa-credit-transfers",
+  "paymentType": "payments",
+  "transactionStatus": "ACCP",
+  "tppInfo": {
+    "authorisationNumber": "fc488759-d8a2-4a51-b797-7d4cf7ac0447",
+    "tppRoles": [
+      "AISP",
+      "PISP"
+    ]
+  },
+  "psuDataList": [
+    {
+      "psuId": "psu Id",
+      "psuIdType": "psuId Type",
+      "psuCorporateId": "psu Corporate Id",
+      "psuCorporateIdType": "psuCorporate Id Type"
+    }
+  ],
+  "multilevelScaRequired": false,
+  "aspspAccountId": "account-id",
+  "tppRedirectUri" : {
+    "uri": "http://test.com",
+    "nokUri": "ttp://test-not-ok.com"
+  }
+}

@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.xs2a.domain.pis;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.AccountReferenceCollector;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -30,17 +30,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
-public class BulkPayment implements AccountReferenceCollector {
-    private String paymentId;
-    private Boolean batchBookingPreferred;
+@EqualsAndHashCode(callSuper = true)
+public class BulkPayment extends CommonPayment implements AccountReferenceCollector {
+
+    protected String paymentProduct;
+    protected PaymentType paymentType = PaymentType.BULK;
+
     @NotNull
     private AccountReference debtorAccount;
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
     private List<SinglePayment> payments;
-    private TransactionStatus transactionStatus;
-    private List<PsuIdData> psuDataList;
-    private OffsetDateTime statusChangeTimestamp;
+    private Boolean batchBookingPreferred;
 
     @Override
     public Set<AccountReference> getAccountReferences() {
@@ -51,5 +52,10 @@ public class BulkPayment implements AccountReferenceCollector {
         accountReferences.add(debtorAccount);
 
         return accountReferences;
+    }
+
+    @Override
+    public PaymentType getPaymentType() {
+        return PaymentType.BULK;
     }
 }
