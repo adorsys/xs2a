@@ -64,14 +64,14 @@ Parameter is mandatory in the request "Read Transaction List". |BOOKED, PENDING 
 
 If not  (transactionsWithoutBalancesSupported = false) then ASPSP might add balance information into list. |FALSE |TRUE, FALSE
 |supportedTransactionApplicationTypes |This field contains transaction application types supported by ASPSP  |JSON |JSON, XML, TEXT
-|*deltaReportSupported:* | | |
+|*delta report settings:* | | |
 |entryReferenceFromSupported |This field indicates if an ASPSP supports Delta reports for transaction details with query parameter entryReferenceFrom.
 
 If parameter = FALSE then XS2A sends the response with HTTP code 400 PARAMETER_NOT_SUPPORTED |FALSE |TRUE, FALSE
 |deltaListSupported |This field indicates if an ASPSP supports Delta reports for transaction details with query parameter deltaList.
 
 If parameter = FALSE then XS2A sends the response with HTTP code 400 PARAMETER_NOT_SUPPORTED  |FALSE |TRUE, FALSE
-|*oneTimeConsentScaRequired:* | | |
+|*sca requirements for one-time consents:* | | |
 |scaByOneTimeAvailableAccountsConsentRequired |This field indicates if ASPSP requires usage of SCA to validate a one-time available accounts consent.
 
 If parameter = FALSE  and sub-attribute within the "access" attribute with the value "allAccounts" then one-factor authorisation (PSU-ID and password) should be done to set consent status to Valid.
