@@ -1,110 +1,64 @@
 = Roadmap
 
-Starting 15th of March 2019 XS2A Team is providing development within two branches:
+Starting 1st of September 2019 XS2A Team is providing development within two branches:
 
-*Stable branch 2.x*
+*Stable branch 4.x*
 
 Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3
 
-Stable branch 2.x will be supported till 01.09.2019 and will be replaced by the version 4.x
-
-*Development branch 3.x*
+*Development branch 5.x*
 
 Development branch is oriented on implementation of new features and optional endpoints.
-No backward compatibility with 2.x is guaranteed. Since 01.09.2019 development branch 3.x will be continued with bugfixing in branch 4.x and new Development branch 5.x will be started.
+No backward compatibility with 4.x is guaranteed. 
 
 |===
-|release date|version 2.x|version 3.x|version 4.x|version 5.x
-
-|30.08.2019
-
-a|2.13 (end of line)
-
-* Bugfix: Wrong error body on using incorrect HTTP method on creating consent
-
-a|3.11
-
-* All fixes from v.2.13
-
-* Add headers TPP URIs for startAuthorisation request
-
-* Pass PSU-IP-Address to SPI Context 
-
-* CMS `tpp_info` table refactoring 
-
-* Remove columns `redirect_uri` and `nok_redirect_uri` from tpp-info to Authorisation Template and authorisation object 
-
-* Move PaymentAuthorisationType to the xs2a-core 
-
-* Remove deprecated SpiContextData constructor
-
-* Remove deprecated column authority_id from tpp_stop_list table
-
-* Bugfix: Periodic payment without frequency causes NullPointerException
-
-* Bugfix: Missing error response body on reading transaction list with not supported format 
-
-* Bugfix: Start authorisation for payment cancellation ignores request body 
-
-* Bugfix: Update PSU Data with failed AIS authorisation results in 500 INTERNAL_SERVER_ERROR 
-
-* Bugfix: Missing requestedExecutionDate on get payment request for future dated payment 
-
-* Bugfix: Create PIIS consent needs closing "/" in URL 
-
-
-
-a|
-
-a|
+|release date|version 4.x|version 5.x
 
 |13.09.2019
 
-a|
-
-a|
-
 a|4.0
 
-* Bugfix: Wrong authorisationId can 'authorise' actions 
-
-* Bugfix: Wrong PSU-ID can authorise endpoints 
-
-* Bugfix: Error on updating PSU Data with no body in the request 
+* Bugfix: Providing incorrect request body on PIIS consent creation results in Internal Server Error 
 
 * Bugfix: Consents without successful authorisation should expire with status Rejected
 
-* Bugfix: Incorrect response for Update PSU data for payment initiation request without psuId in header
+* Remove column `tpp_info_id` from `authorisation_template` table
 
-* Bugfix: supportedTransactionApplicationTypes in profile should be String 
+* Remove deprecated TppInfo from PiisConsent
 
-* Bugfix: Empty array "account" in Read Balances and Read Transaction List responses
+* Remove deprecated frequencyPerDay for PiisConsent
 
-* Bugfix: Check incoming requests to have required information
+* Describe "Microservices Deployment" at SPI Developer Guide 
 
 a|5.0
 
 * All fixes from v.4.0
 
+* Extend XS2A with Austria requirements to payment products 
+
 * Multilevel SCA for Payment Initiation in Redirect approach
 
-* Multilevel SCA for Establish Consent in Redirect approach 
+* Multilevel SCA for Establish Consent in Redirect approach
 
 * Restructure profile by services
 
 |27.09.2019
 
-a|
-
-a|
-
 a|4.1
 
-* Bugfix: Error on initiating payment with custom payment product and JSON body 
+* Bugfix: Wrong error for embedded payment with not funded account or invalid debtor 
+
+* Bugfix: Incorrect link in response for Update PSU data for consent with empty body 
+
+* Bugfix: link updatePsuAuthentication missing in response for Update PSU data for payment cancelation with empty body 
 
 * Bugfix: PSU data should be updated for both payment\consent and authorisation 
 
-* Bugfix: Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow 
+* Bugfix: supportedTransactionApplicationTypes in profile should be String 
+
+* Bugfix: SpiAccountConsent shouldn't return real ID (PK from DB)
+
+* ScaApproachResolver cleanup
 
 a|5.1
 
@@ -114,17 +68,40 @@ a|5.1
 
 * Optional SCA for Global Consent 
 
+
+|11.10.2019
+
+a|4.2
+
+* Bugfix: Wrong authorisationId can 'authorise' actions 
+
+* Bugfix: Wrong PSU-ID can authorise endpoints 
+
+* Bugfix: Empty array "account" in Read Balances and Read Transaction List responses
+
+* Bugfix: Check incoming requests to have required information
+
+* Bugfix: Error on initiating payment with custom payment product and JSON body 
+
+* Bugfix: Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow 
+
+* Remove TppRedirectUri from TppInfo
+
+a|5.2
+
+* Implement CommonPaymentSpi interface in connector-examples 
+
+* Create Bulk Payment validators 
+
+* Add instance_id for export PIIS consent 
+
+* Error handling with SPI method exit with error status
+
 |Further development
 
 a|
 
-a|
-
-a|
-
 a|* Bugfix: When bank returns PATC status for payment, multilevel flag in CMS should be set to true 
-
-* Bugfix: SpiAccountConsent shouldn't return real ID (PK from DB)
 
 * Bugfix: Populating PSU_DATA table with excessive data
 
@@ -137,8 +114,6 @@ a|* Bugfix: When bank returns PATC status for payment, multilevel flag in CMS sh
 * Bugfix: Incorrect error code in response for ReadAccountList for consent which was revoked by PSU
 
 * Bugfix: Wrong response for provision of an invalid TAN or password 
-
-* Create Bulk Payment validators 
 
 * Implementation of delta access for transaction list request 
 
