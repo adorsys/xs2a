@@ -43,9 +43,6 @@ public class PiisConsent {
     private ConsentStatus consentStatus;
     private AccountReference account;
     private PiisConsentTppAccessType tppAccessType;
-    // TODO: Remove the field in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/970
-    @Deprecated
-    private int allowedFrequencyPerDay;
     private OffsetDateTime creationTimestamp;
     private String instanceId;
     private String cardNumber;

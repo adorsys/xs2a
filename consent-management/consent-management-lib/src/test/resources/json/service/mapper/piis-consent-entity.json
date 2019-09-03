@@ -35,7 +35,6 @@
     "iban": "DE15500105172295759744"
   },
   "tppAccessType": "SINGLE_TPP",
-  "allowedFrequencyPerDay": 2,
   "creationTimestamp": "2019-07-26T13:29:50.042136+03:00",
   "cardNumber": "1234567891234",
   "cardExpiryDate": "2020-12-31",
