@@ -106,7 +106,7 @@ public class TppDomainValidator {
     private List<String> getDomainsFromTppInfo() {
         TppInfo tppInfo = tppService.getTppInfo();
         List<String> dnsList = new ArrayList<>();
-        Optional.ofNullable(tppInfo.getTppName()).ifPresent(dnsList::add);
+        Optional.ofNullable(tppInfo.getTppName()).filter(InternetDomainName::isValid).ifPresent(dnsList::add);
         dnsList.addAll(tppInfo.getDnsList());
         return dnsList.stream()
                    .filter(StringUtils::isNotBlank)
