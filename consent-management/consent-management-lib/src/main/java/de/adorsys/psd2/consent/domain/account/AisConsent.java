@@ -189,10 +189,6 @@ public class AisConsent extends InstanceDependableEntity {
         return LocalDate.now().compareTo(expireDate) > 0;
     }
 
-    public boolean isStatusNotExpired() {
-        return consentStatus != ConsentStatus.EXPIRED;
-    }
-
     public boolean isConfirmationExpired(long expirationPeriodMs) {
         if (isNotConfirmed()) {
             return creationTimestamp.plus(expirationPeriodMs, ChronoUnit.MILLIS)
@@ -200,6 +196,10 @@ public class AisConsent extends InstanceDependableEntity {
         }
 
         return false;
+    }
+
+    public boolean isStatusNotExpired() {
+        return consentStatus != ConsentStatus.EXPIRED;
     }
 
     public boolean isNotConfirmed() {
