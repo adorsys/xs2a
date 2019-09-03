@@ -71,7 +71,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final AisConsentRequestTypeService aisConsentRequestTypeService;
 
     /**
-     * Create AIS consent
+     * Creates AIS consent.
      *
      * @param request needed parameters for creating AIS consent
      * @return String consent id
@@ -92,16 +92,16 @@ public class AisConsentServiceInternal implements AisConsentService {
         if (saved.getId() != null) {
             return Optional.of(saved.getExternalId());
         } else {
-            log.info("TPP ID: [{}], External Consent ID: [{}]. Ais consent cannot be created, because when saving to DB got null ID",
+            log.info("TPP ID: [{}], External Consent ID: [{}]. AIS consent cannot be created, because when saving to DB got null ID",
                      request.getTppInfo().getAuthorisationNumber(), consent.getExternalId());
             return Optional.empty();
         }
     }
 
     /**
-     * Read status of consent by id
+     * Reads status of consent by ID.
      *
-     * @param consentId id of consent
+     * @param consentId ID of consent
      * @return ConsentStatus
      */
     @Override
@@ -113,15 +113,15 @@ public class AisConsentServiceInternal implements AisConsentService {
                        .map(this::checkAndUpdateOnExpiration)
                        .map(AisConsent::getConsentStatus);
         } else {
-            log.info("Consent ID: [{}]. Get consent failed, because consent is not found", consentId);
+            log.info("Consent ID: [{}]. Get consent failed, because consent not found", consentId);
             return Optional.empty();
         }
     }
 
     /**
-     * Update consent status by id
+     * Updates consent status by ID.
      *
-     * @param consentId id of consent
+     * @param consentId ID of consent
      * @param status    new consent status
      * @return Boolean
      */
@@ -131,16 +131,16 @@ public class AisConsentServiceInternal implements AisConsentService {
         return getActualAisConsent(consentId)
                    .map(c -> setStatusAndSaveConsent(c, status))
                    .orElseGet(() -> {
-                       log.info("Consent ID [{}]. Update consent status by id failed, because consent not found",
+                       log.info("Consent ID [{}]. Update consent status by ID failed, because consent not found",
                                 consentId);
                        return false;
                    });
     }
 
     /**
-     * Read full information of consent by id
+     * Reads full information of consent by ID.
      *
-     * @param consentId id of consent
+     * @param consentId ID of consent
      * @return AisAccountConsent
      */
     @Override
@@ -153,9 +153,9 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     /**
-     * Read full initial information of consent by id
+     * Reads full initial information of consent by ID.
      *
-     * @param consentId id of consent
+     * @param consentId ID of consent
      * @return AisAccountConsent
      */
     @Override
@@ -166,13 +166,19 @@ public class AisConsentServiceInternal implements AisConsentService {
                    .map(consentMapper::mapToInitialAisAccountConsent);
     }
 
+    /**
+     * Searches the old AIS consents and updates their statuses according to authorisation states and PSU data.
+     *
+     * @param newConsentId ID of new consent that was created
+     * @return true if old consents were updated, false otherwise
+     */
     @Override
     @Transactional
     public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
         AisConsent newConsent = aisConsentRepository.findByExternalId(newConsentId)
                                     .orElseThrow(() -> {
-                                        log.info("Consent ID: [{}]. Cannot find consent by id", newConsentId);
-                                        return new IllegalArgumentException("Wrong consent id: " + newConsentId);
+                                        log.info("Consent ID: [{}]. Cannot find consent by ID", newConsentId);
+                                        return new IllegalArgumentException("Wrong consent ID: " + newConsentId);
                                     });
 
         if (newConsent.isOneAccessType()) {
@@ -181,7 +187,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         if (newConsent.isWrongConsentData()) {
-            log.info("Consent ID: [{}]. Find old consents failed, because consent psu data list is empty or tppInfo is null", newConsentId);
+            log.info("Consent ID: [{}]. Find old consents failed, because consent PSU data list is empty or TPP Info is null", newConsentId);
             throw new IllegalArgumentException("Wrong consent data");
         }
 
@@ -203,19 +209,19 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                                 .collect(Collectors.toList());
 
         if (oldConsentsWithExactPsuDataLists.isEmpty()) {
-            log.info("Consent ID: [{}]. Cannot find old consents, because consent hasn't exact psu data lists as old consents", newConsentId);
+            log.info("Consent ID: [{}]. Cannot find old consents, because consent hasn't exact PSU data lists as old consents", newConsentId);
             return false;
         }
 
-        oldConsentsWithExactPsuDataLists.forEach(c -> c.setConsentStatus(TERMINATED_BY_TPP));
+        oldConsentsWithExactPsuDataLists.forEach(this::updateStatus);
         aisConsentRepository.saveAll(oldConsentsWithExactPsuDataLists);
         return true;
     }
 
     /**
-     * Save information about uses of consent
+     * Saves information about consent usage and consent's sub-resources usage.
      *
-     * @param request needed parameters for logging usage AIS consent
+     * @param request {@link AisConsentActionRequest} needed parameters for logging usage AIS consent
      */
     @Override
     @Transactional
@@ -234,11 +240,11 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     /**
-     * Update AIS consent account access by id
+     * Updates AIS consent account access by ID.
      *
      * @param request   needed parameters for updating AIS consent
-     * @param consentId id of the consent to be updated
-     * @return String   consent id
+     * @param consentId ID of the consent to be updated
+     * @return String   consent ID
      */
     @Override
     @Transactional
@@ -360,7 +366,7 @@ public class AisConsentServiceInternal implements AisConsentService {
 
     private boolean setStatusAndSaveConsent(AisConsent consent, ConsentStatus status) {
         if (consent.getConsentStatus().isFinalisedStatus()) {
-            log.info("Consent ID: [{}], Consent status [{}]. Update consent status by id failed, because consent status is finalised",
+            log.info("Consent ID: [{}], Consent status [{}]. Update consent status by ID failed, because consent status is finalised",
                      consent.getExternalId(), consent.getConsentStatus());
             return false;
         }
@@ -377,5 +383,11 @@ public class AisConsentServiceInternal implements AisConsentService {
         aisConsentUsageService.incrementUsage(consent, request.getRequestUri());
         consent.setLastActionDate(LocalDate.now());
         aisConsentRepository.save(consent);
+    }
+
+    private void updateStatus(AisConsent aisConsent) {
+        aisConsent.setConsentStatus(aisConsent.getConsentStatus() == RECEIVED || aisConsent.getConsentStatus() == PARTIALLY_AUTHORISED
+                                        ? REJECTED
+                                        : TERMINATED_BY_TPP);
     }
 }

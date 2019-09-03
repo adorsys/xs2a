@@ -3,6 +3,7 @@
 == Table of Contents
 * Bugfix: TPP domain validator ignores non-domain `tppName` field
 * Remove deprecated frequencyPerDay for PiisConsent
+* Bugfix: statuses of obsoleted AIS consents
 
 == Bugfix: TPP domain validator ignores non-domain `tppName` field
 
@@ -13,3 +14,11 @@ java `IllegalArgumentException` was thrown by the validator.
 
 From now on, the deprecated field `frequencyPerDay` has been removed from `CreatePiisConsentRequest`,
 `PiisConsentEntity`, and `PiisConsent`. The field has also been removed from the `piis_consent` table.
+
+== Bugfix: statuses of obsoleted AIS consents
+
+Some changes were made in AIS consents statuses switching: obsoleted consents that were not confirmed with authorisation
+now get status `REJECTED` (before it was `EXPIRED`).
+When new AIS consent for account for one TPP and one PSU is created with reccuringIndicator=true, old authorised consents
+get status `TERMINATED_BY_TPP`, but old unauthorised consents get status `REJECTED`. The same works for consents with `multilevelSca`
+set to `true`: if old consents have `PARTIALLY_AUTHORISED` status - they obtain `REJECTED` status.

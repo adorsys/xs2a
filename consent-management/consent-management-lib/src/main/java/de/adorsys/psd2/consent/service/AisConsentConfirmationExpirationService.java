@@ -84,7 +84,7 @@ public class AisConsentConfirmationExpirationService {
     }
 
     private AisConsent obsoleteConsent(AisConsent consent) {
-        consent.setConsentStatus(ConsentStatus.EXPIRED);
+        consent.setConsentStatus(ConsentStatus.REJECTED);
         consent.getAuthorizations().forEach(auth -> auth.setScaStatus(ScaStatus.FAILED));
         consent.setLastActionDate(LocalDate.now());
         return consent;
