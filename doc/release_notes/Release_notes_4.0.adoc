@@ -2,8 +2,14 @@
 
 == Table of Contents
 * Bugfix: TPP domain validator ignores non-domain `tppName` field
+* Remove deprecated frequencyPerDay for PiisConsent
 
 == Bugfix: TPP domain validator ignores non-domain `tppName` field
 
 From now on, if `tppName` is not a proper domain name, it will be ignored by XS2A in TPP domain validation. Before,
 java `IllegalArgumentException` was thrown by the validator.
+
+== Remove deprecated frequencyPerDay for PiisConsent
+
+From now on, the deprecated field `frequencyPerDay` has been removed from `CreatePiisConsentRequest`,
+`PiisConsentEntity`, and `PiisConsent`. The field has also been removed from the `piis_consent` table.

@@ -168,7 +168,6 @@ public class PiisConsentIT {
         CreatePiisConsentRequest request = new CreatePiisConsentRequest();
         request.setAccount(accountReference);
         request.setValidUntil(LocalDate.now().plusDays(1));
-        request.setAllowedFrequencyPerDay(1);
         request.setTppInfo(buildTppInfo());
         return request;
     }
