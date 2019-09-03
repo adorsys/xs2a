@@ -24,10 +24,7 @@ import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
-import de.adorsys.psd2.consent.service.mapper.AccountReferenceMapper;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
-import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -64,7 +61,6 @@ public class CmsAspspPiisServiceInternalTest {
     private static final String PSU_ID = "PSU-ID-1";
     private static final String PSU_ID_WRONG = "PSU-ID-2";
     private static final LocalDate EXPIRE_DATE = LocalDate.now().plusDays(100);
-    private static final int FREQUENCY_PER_DAY = 4;
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
     private static final OffsetDateTime CREATION_TIMESTAMP = OffsetDateTime.of(2019, 2, 4, 12, 0, 0, 0, ZoneOffset.UTC);
     private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
@@ -121,7 +117,6 @@ public class CmsAspspPiisServiceInternalTest {
         Assert.assertEquals(buildTppInfoEntity(), piisConsent.getTppInfo());
         Assert.assertEquals(buildAccountReferenceEntity(), piisConsent.getAccount());
         Assert.assertEquals(validUntil, piisConsent.getExpireDate());
-        Assert.assertEquals(request.getAllowedFrequencyPerDay(), piisConsent.getAllowedFrequencyPerDay());
         Assert.assertEquals(request.getCardNumber(), piisConsent.getCardNumber());
         Assert.assertEquals(request.getCardExpiryDate(), piisConsent.getCardExpiryDate());
         Assert.assertEquals(request.getCardInformation(), piisConsent.getCardInformation());
@@ -403,7 +398,6 @@ public class CmsAspspPiisServiceInternalTest {
         piisConsent.setPsuData(buildPsuData());
         piisConsent.setConsentStatus(ConsentStatus.RECEIVED);
         piisConsent.setExpireDate(LocalDate.now().plusDays(1));
-        piisConsent.setAllowedFrequencyPerDay(FREQUENCY_PER_DAY);
         piisConsent.setCardNumber(CARD_NUMBER);
         piisConsent.setCardExpiryDate(LocalDate.now().plusDays(1));
         piisConsent.setCardInformation(CARD_INFORMATION);
@@ -472,7 +466,6 @@ public class CmsAspspPiisServiceInternalTest {
         request.setTppInfo(tppInfo);
         request.setAccount(account);
         request.setValidUntil(validUntil);
-        request.setAllowedFrequencyPerDay(FREQUENCY_PER_DAY);
         request.setCardNumber(CARD_NUMBER);
         request.setCardExpiryDate(CARD_EXPIRY_DATE);
         request.setCardInformation(CARD_INFORMATION);

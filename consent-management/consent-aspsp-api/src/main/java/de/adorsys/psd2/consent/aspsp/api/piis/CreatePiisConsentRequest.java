@@ -41,10 +41,6 @@ public class CreatePiisConsentRequest {
     @ApiModelProperty(value = "Consent`s expiration date. The content is the local ASPSP date in ISODate Format", example = "2020-10-10")
     private LocalDate validUntil;
 
-    @Deprecated // TODO: Remove the column in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/970
-    @ApiModelProperty(value = "Maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
-    private int allowedFrequencyPerDay;
-
     @ApiModelProperty(value = "Card Number of the card issued by the PIISP. Should be delivered if available.", example = "1234567891234")
     private String cardNumber;
 

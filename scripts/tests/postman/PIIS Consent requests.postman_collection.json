@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "dc00cccf-2ab5-4c69-a99a-d2eb86e0efa8",
-		"name": "PIIS Consent requests",
+		"_postman_id": "7dfd925d-25d8-4ba1-bacb-1b774b20cf3a",
+		"name": "PIIS Consent requests copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -139,7 +139,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"{{iban_multiple}}\"\n  },\n  \"allowedFrequencyPerDay\": 4,\n  \"cardExpiryDate\": \"2020-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppInfo\": {\n    \"authorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n    \"authorityId\": \"DE-FAKENCA\",\n    \"authorityName\": \"authority name\",\n    \"city\": \"Nuremberg\",\n    \"country\": \"Germany\",\n    \"issuerCN\": \"Authority CA Domain Name\",\n    \"organisation\": \"Organisation\",\n    \"organisationUnit\": \"Organisation unit\",\n    \"state\": \"Bayern\",\n    \"tppName\": \"Tpp company\",\n    \"tppRedirectUri\": {\n      \"nokUri\": \"Nok redirect URI\",\n      \"uri\": \"Redirect URI\"\n    },\n    \"tppRoles\": [\n      \"PISP\"\n    ]\n  },\n  \"validUntil\": \"2020-10-10\"\n}"
+									"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"{{iban_multiple}}\"\n  },\n  \"cardExpiryDate\": \"2020-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppInfo\": {\n    \"authorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n    \"authorityId\": \"DE-FAKENCA\",\n    \"authorityName\": \"authority name\",\n    \"city\": \"Nuremberg\",\n    \"country\": \"Germany\",\n    \"issuerCN\": \"Authority CA Domain Name\",\n    \"organisation\": \"Organisation\",\n    \"organisationUnit\": \"Organisation unit\",\n    \"state\": \"Bayern\",\n    \"tppName\": \"Tpp company\",\n    \"tppRedirectUri\": {\n      \"nokUri\": \"Nok redirect URI\",\n      \"uri\": \"Redirect URI\"\n    },\n    \"tppRoles\": [\n      \"PISP\"\n    ]\n  },\n  \"validUntil\": \"2020-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
@@ -222,235 +222,6 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"account\": {\n\t\t\"currency\": \"EUR\",\n\t    \"iban\": \"{{iban_multiple}}\"\n},\n  \"cardNumber\": \"12345\",\n  \"instructedAmount\": {\n    \"amount\": \"160.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
-								},
-								"url": {
-									"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_xs2a}}"
-									],
-									"path": [
-										"v1",
-										"funds-confirmations"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "TPP does not have role for PIIS",
-					"item": [
-						{
-							"name": "1. Set ASPSP properties piisConsentSupported=true",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"frequencyPerDay\": 5,\n  \"combinedServiceIndicator\": false,\n  \"tppSignatureRequired\": false,\n  \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n  \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\",\n  \"multicurrencyAccountLevel\": \"SUBACCOUNT\",\n  \"bankOfferedConsentSupport\": true,\n  \"availableBookingStatuses\": [\n    \"both\"\n  ],\n  \"supportedAccountReferenceFields\": [\n    \"MSISDN\",\n    \"IBAN\"\n  ],\n  \"consentLifetime\": 0,\n  \"transactionLifetime\": 0,\n  \"allPsd2Support\": true,\n  \"transactionsWithoutBalancesSupported\": true,\n  \"signingBasketSupported\": true,\n  \"paymentCancellationAuthorizationMandated\": false,\n  \"piisConsentSupported\": true,\n  \"redirectUrlExpirationTimeMs\": 600000,\n  \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n  \"notConfirmedConsentExpirationPeriodMs\": 86400000,\n  \"notConfirmedPaymentExpirationPeriodMs\": 86400000,\n  \"supportedPaymentTypeAndProductMatrix\": {\n    \"payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\"\n    ],\n    \"periodic-payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\"\n    ],\n    \"bulk-payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\"\n    ]\n  },\n  \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000,\n  \"availableAccountsConsentSupported\": true,\n  \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n  \"psuInInitialRequestMandated\": false,\n  \"forceXs2aBaseUrl\": false,\n  \"deltaListSupported\": false,\n  \"entryReferenceFromSupported\": false,\n  \"supportedTransactionApplicationTypes\": []\n}"
-								},
-								"url": {
-									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_aspsp_profile}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"aspsp-profile",
-										"for-debug",
-										"aspsp-settings"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "2. Create PIIS consent request",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
-										"exec": [
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.test(\"Status code is 201\", function () {",
-											"    pm.response.to.have.status(201);",
-											"});",
-											"",
-											"pm.test(\"consentId is exist\", () => {",
-											"    ",
-											"    pm.expect(jsonData).to.have.property('consentId');",
-											"    ",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
-										"exec": [
-											"pm.globals.unset(\"payment_id\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Accept",
-										"type": "text",
-										"value": "application/json"
-									},
-									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									},
-									{
-										"key": "PSU-ID",
-										"type": "text",
-										"value": "{{psu_id_multiple}}"
-									},
-									{
-										"key": "PSU-IP-Address",
-										"type": "text",
-										"value": "{{ip_address}}"
-									},
-									{
-										"key": "X-Request-ID",
-										"type": "text",
-										"value": "{{x_request_id}}"
-									},
-									{
-										"key": "TPP-Explicit-Authorisation-Preferred",
-										"type": "text",
-										"value": "true"
-									},
-									{
-										"key": "TPP-Redirect-URI",
-										"type": "text",
-										"value": "TPP-Redirect-URI"
-									},
-									{
-										"key": "TPP-Nok-Redirect-URI",
-										"type": "text",
-										"value": "TPP-Nok-Redirect-URI"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"{{iban_multiple}}\"\n  },\n  \"allowedFrequencyPerDay\": 4,\n  \"cardExpiryDate\": \"2020-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppInfo\": {\n    \"authorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n    \"authorityId\": \"DE-FAKENCA\",\n    \"authorityName\": \"authority name\",\n    \"city\": \"Nuremberg\",\n    \"country\": \"Germany\",\n    \"issuerCN\": \"Authority CA Domain Name\",\n    \"organisation\": \"Organisation\",\n    \"organisationUnit\": \"Organisation unit\",\n    \"state\": \"Bayern\",\n    \"tppName\": \"Tpp company\",\n    \"tppRedirectUri\": {\n      \"nokUri\": \"Nok redirect URI\",\n      \"uri\": \"Redirect URI\"\n    },\n    \"tppRoles\": [\n      \"PISP\"\n    ]\n  },\n  \"validUntil\": \"2020-10-10\"\n}"
-								},
-								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_cms}}"
-									],
-									"path": [
-										"aspsp-api",
-										"v1",
-										"piis",
-										"consents",
-										""
-									]
-								},
-								"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
-							},
-							"response": []
-						},
-						{
-							"name": "3. Fund confirmation request WRONG certificate",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "02b43079-3a6d-4e12-b69f-0a6d74a5c9b9",
-										"exec": [
-											"pm.test('Status code is 401', () => {",
-											"   pm.response.to.have.status(401);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.test('TppMessages and error are exist', () => {",
-											"    ",
-											"    pm.expect(jsonData).to.have.property('tppMessages');",
-											"    ",
-											"    var error = jsonData.tppMessages[0];",
-											"       ",
-											"    pm.expect(error).to.have.property('category');",
-											"    pm.expect(error).to.have.property('code');",
-											"    pm.expect(error).to.have.property('text');",
-											"       ",
-											"    pm.expect(error.category).to.eql('ERROR');",
-											"    pm.expect(error.code).to.eql('CERTIFICATE_INVALID');",
-											"    pm.expect(error.text).to.eql(\"You don't have access to this resource\");",
-											"    ",
-											"});",
-											"",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Accept",
-										"value": "application/json"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "X-Request-ID",
-										"value": "{{x_request_id}}"
-									},
-									{
-										"key": "tpp-qwac-certificate",
-										"value": "-----BEGIN CERTIFICATE-----MIIFNzCCAx+gAwIBAgIEM/yggTANBgkqhkiG9w0BAQsFADB4MQswCQYDVQQGEwJERTEQMA4GA1UECAwHQkFWQVJJQTESMBAGA1UEBwwJTnVyZW1iZXJnMSIwIAYDVQQKDBlUcnVzdCBTZXJ2aWNlIFByb3ZpZGVyIEFHMR8wHQYDVQQLDBZJbmZvcm1hdGlvbiBUZWNobm9sb2d5MB4XDTE5MDcwMzA5NDY1MloXDTIwMDcwMjAwMDAwMFowgdUxITAfBgNVBAoMGEZpY3Rpb25hbCBDb3Jwb3JhdGlvbiBBRzEhMB8GA1UEAwwYRmljdGlvbmFsIENvcnBvcmF0aW9uIEFHMR4wHAYKCZImiZPyLGQBGRYOYXdlc29tZS10cHAuZGUxFjAUBgNVBAsMDUlUIGRlcGFydG1lbnQxEDAOBgNVBAYTB0dlcm1hbnkxDzANBgNVBAgMBkJheWVybjESMBAGA1UEBwwJTnVyZW1iZXJnMR4wHAYDVQRhDBVQU0RERS1GQUtFTkNBLUlEMTIzNDUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCQag3wAbJHT+H0oCAxUcvNJIGikcNTIhtKf4Z5Xo2qkcy70STIkCTfO/woPFMtFuxByBJg9rGjB5AwqHSfxwgqVXzHMM159IgHIIkc/iR4ckuenDZDAzWPfvzZxPaFjspoezlt1SWVKcVzTjnbMeu/sCaFAFy0BUNPRP162YwiI4gGxhrDQ2SYTmTCNLODi7buL1DkDWPqVdlwNB8zSzh6jwYo0hgVn8kIxRK3F9JqkVGpKxvnyHIcdekmx/2XEmGTCQzc4r/Jkk7ZfytLIZG0wgB3YVz0HGnJm/8VYO8epL/WQgtfRZdxiIFqcDQYdzEtetcPNmfUvqEpw7UUEErZAgMBAAGjazBpMGcGCCsGAQUFBwEDBFswWQYGBACBmCcCME8wJjARBgcEAIGYJwEDDAZQU1BfQUkwEQYHBACBmCcBAgwGUFNQX1BJDBlUcnVzdCBTZXJ2aWNlIFByb3ZpZGVyIEFHDApERS1GQUtFTkNBMA0GCSqGSIb3DQEBCwUAA4ICAQB/DTm+hsrMIO/tuFZYRshlRdHoiH94aCYTT3rmaD6Yus0aKWeczvSl+vInUWHXxSyA3F6UN724Pai4anj8U2TvLt0mRpDvbeAy3KciDBztAvYjHcG58/nAdYVDs153fik6zcrgevJxY4cFGFpTMSizFzW9ybOsTtrNAt2z2sKAAzMBosiqjL9eNdiJhMOj7JfQOym9XvqLbCz8qtSkNcNHvb3PyHkLP/JME/AS7ZLepEsTbkVmuk7WXTHuN/2LtodEVI5MvbH6pLvHIhoT34xB4EEtk5xc5AKXxYu3RdRCBuocqujiiMZBZE6E+jCYnvHvgHjk0TEvibnK0b7hbRrP3B0DGfRxscVe3xyRu0oYy4trAWKO0EsD+ou5RI8056vMD7Ob+WPMKsjgoLNPWlgO59Hwq6BPJpFTUKyW22bng81Lw7u8YEtgl+IXWBgRcQeBL18ovOTVAZ1ZFUXe4LJ1tO0vPyyXGd2iVtwbUBiF/ixt+MYUhAavDPgfOxsPebWt+AcffBUDlE2z9jKLQvjT/8mYWIyFAJsmjlabPKCfI1AbyymLSa0UQZkREfS1mJWYhZyW9zBAc9PHcvWzQzZdb/KnZbJQpktaJsOD6oYLRSPlxxzrzYtGLnXoB3o4XQnViw8d/IGs6vJ9V5FGPERlXF/6P0c5SlRvCHDlT0PTKQ==-----END CERTIFICATE-----",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"account\": {\n\t\t\"iban\": \"DE54500105173424724776\",\n\t\t\"currency\": \"EUR\"\n\t\t\n\t},\n\t\"instructedAmount\":{ \n\t\t\"currency\": \"EUR\", \n\t\t\"amount\": \"55\" }\n}\n"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",
@@ -561,7 +332,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\"\n  },\n  \"allowedFrequencyPerDay\": 4,\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2020-10-10\"\n}"
+					"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2020-10-10\"\n}"
 				},
 				"url": {
 					"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
