@@ -1,3 +1,9 @@
 = Release notes v.4.0
 
 == Table of Contents
+* Bugfix: TPP domain validator ignores non-domain `tppName` field
+
+== Bugfix: TPP domain validator ignores non-domain `tppName` field
+
+From now on, if `tppName` is not a proper domain name, it will be ignored by XS2A in TPP domain validation. Before,
+java `IllegalArgumentException` was thrown by the validator.
