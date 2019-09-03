@@ -27,7 +27,6 @@
     "iban": "DE15500105172295759744"
   },
   "validUntil": "2018-07-13",
-  "allowedFrequencyPerDay": 2,
   "cardNumber": "1234567891234",
   "cardExpiryDate": "2020-12-31",
   "cardInformation": "MyMerchant Loyalty Card",

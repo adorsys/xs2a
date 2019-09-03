@@ -84,11 +84,6 @@ public class PiisConsentEntity extends InstanceDependableEntity {
     @ApiModelProperty(value = "Type of the tpp access: SINGLE_TPP or ALL_TPP.", required = true, example = "ALL_TPP")
     private PiisConsentTppAccessType tppAccessType;
 
-    // TODO: Remove the column in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/970
-    @Column(name = "allowed_frequency_per_day", nullable = false)
-    @ApiModelProperty(value = "Maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
-    private int allowedFrequencyPerDay;
-
     @Column(name = "creation_timestamp", nullable = false)
     private OffsetDateTime creationTimestamp = OffsetDateTime.now();
 

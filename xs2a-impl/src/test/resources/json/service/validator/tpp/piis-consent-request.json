@@ -8,6 +8,5 @@
     "psuId": "PSU_ID"
   },
   "consentStatus": "VALID",
-  "tppAccessType": "SINGLE_TPP",
-  "allowedFrequencyPerDay": 10
+  "tppAccessType": "SINGLE_TPP"
 }
