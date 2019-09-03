@@ -4,6 +4,7 @@
 * Bugfix: TPP domain validator ignores non-domain `tppName` field
 * Remove deprecated frequencyPerDay for PiisConsent
 * Bugfix: statuses of obsoleted AIS consents
+* Remove column `tpp_info_id` from `authorisation_template` table
 
 == Bugfix: TPP domain validator ignores non-domain `tppName` field
 
@@ -22,3 +23,8 @@ now get status `REJECTED` (before it was `EXPIRED`).
 When new AIS consent for account for one TPP and one PSU is created with reccuringIndicator=true, old authorised consents
 get status `TERMINATED_BY_TPP`, but old unauthorised consents get status `REJECTED`. The same works for consents with `multilevelSca`
 set to `true`: if old consents have `PARTIALLY_AUTHORISED` status - they obtain `REJECTED` status.
+
+== Remove column `tpp_info_id` from `authorisation_template` table
+
+From now on, `tpp_info_id` column has been removed from `authorisation_template` table.
+
