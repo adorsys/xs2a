@@ -143,4 +143,14 @@ public interface CmsPsuAisService {
      * @return list of info objects about psu data and authorisation scaStatuses
      */
     Optional<List<CmsAisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String consentId, @NotNull String instanceId);
+
+    /**
+     * Puts a Status of AIS Consent object by its ID and PSU ID to PARTIALLY_AUTHORISED
+     *
+     * @param psuIdData  PSU credentials data
+     * @param consentId  ID of Consent
+     * @param instanceId optional ID of particular service instance
+     * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
+     */
+    boolean authorisePartiallyConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 }
