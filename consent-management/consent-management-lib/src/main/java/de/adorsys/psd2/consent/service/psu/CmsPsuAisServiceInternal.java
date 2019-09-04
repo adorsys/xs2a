@@ -201,6 +201,12 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
+    public boolean authorisePartiallyConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
+        return changeConsentStatus(consentId, PARTIALLY_AUTHORISED, instanceId);
+    }
+
+    @Override
+    @Transactional
     public boolean updateAccountAccessInConsent(@NotNull String consentId, @NotNull CmsAisConsentAccessRequest accountAccessRequest, @NotNull String instanceId) {
         Optional<AisConsent> aisConsentOptional = getActualAisConsent(consentId, instanceId);
         if (aisConsentOptional.isPresent()) {
@@ -288,6 +294,9 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             log.info("Consent ID: [{}], Consent status: [{}]. Confirmation of consent failed in updateConsentStatus method, because consent has finalised status",
                      consent.getExternalId(), consent.getConsentStatus().getValue());
             return false;
+        }
+        if (status == PARTIALLY_AUTHORISED) {
+            consent.setMultilevelScaRequired(true);
         }
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);

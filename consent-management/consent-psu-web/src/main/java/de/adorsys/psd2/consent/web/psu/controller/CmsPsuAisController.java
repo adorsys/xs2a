@@ -16,12 +16,14 @@
 
 package de.adorsys.psd2.consent.web.psu.controller;
 
+import de.adorsys.psd2.consent.api.CmsConstant;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
+import de.adorsys.psd2.consent.web.psu.PsuHeadersDescription;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -52,11 +54,11 @@ public class CmsPsuAisController {
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsAisConsentResponse.class)
     })
     public ResponseEntity updatePsuDataInConsent(
-        @SuppressWarnings("unused") @ApiParam(name = "consent-id", value = "The consent identifier", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
-        @PathVariable("consent-id") String consentId,
-        @ApiParam(name = "authorisation-id", value = "The authorisation identifier of the current authorisation session", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
-        @PathVariable("authorisation-id") String authorisationId,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
+        @SuppressWarnings("unused") @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The consent identifier", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
+        @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
+        @ApiParam(name = CmsConstant.PATH.AUTHORISATION_ID, value = "The authorisation identifier of the current authorisation session", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
+        @PathVariable(CmsConstant.PATH.AUTHORISATION_ID) String authorisationId,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
         @RequestBody PsuIdData psuIdData) {
 
         try {
@@ -74,22 +76,19 @@ public class CmsPsuAisController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Bad Request"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsAisConsentResponse.class)})
+    @PsuHeadersDescription
     public ResponseEntity updateAuthorisationStatus(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId,
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @ApiParam(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised', 'failed', 'exempted'. These values might be extended by ASPSP by more values.", allowableValues = "RECEIVED, PSUIDENTIFIED, PSUAUTHENTICATED, SCAMETHODSELECTED,  STARTED,  FINALISED, FAILED, EXEMPTED")
-        @PathVariable("status") String status,
-        @ApiParam(name = "authorisation-id", value = "The consent authorisation identification assigned to the created authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("authorisation-id") String authorisationId,
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
-        @RequestHeader(value = "psu-id", required = false) String psuId,
-        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
-        @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @PathVariable(CmsConstant.PATH.STATUS) String status,
+        @ApiParam(name = CmsConstant.PATH.AUTHORISATION_ID, value = "The consent authorisation identification assigned to the created authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable(CmsConstant.PATH.AUTHORISATION_ID) String authorisationId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID, required = false) String psuId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID_TYPE, required = false) String psuIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID, required = false) String psuCorporateId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID_TYPE, required = false) String psuCorporateIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         ScaStatus scaStatus = ScaStatus.fromValue(status);
         if (scaStatus == null) {
             return ResponseEntity.badRequest().build();
@@ -110,18 +109,15 @@ public class CmsPsuAisController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
         @ApiResponse(code = 404, message = "Not Found")})
+    @PsuHeadersDescription
     public ResponseEntity<Boolean> confirmConsent(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId,
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
-        @RequestHeader(value = "psu-id", required = false) String psuId,
-        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
-        @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID, required = false) String psuId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID_TYPE, required = false) String psuIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID, required = false) String psuCorporateId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID_TYPE, required = false) String psuCorporateIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
         return new ResponseEntity<>(cmsPsuAisService.confirmConsent(psuIdData, consentId, instanceId), HttpStatus.OK);
     }
@@ -131,18 +127,15 @@ public class CmsPsuAisController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
         @ApiResponse(code = 404, message = "Not Found")})
+    @PsuHeadersDescription
     public ResponseEntity<Boolean> rejectConsent(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId,
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
-        @RequestHeader(value = "psu-id", required = false) String psuId,
-        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
-        @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID, required = false) String psuId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID_TYPE, required = false) String psuIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID, required = false) String psuCorporateId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID_TYPE, required = false) String psuCorporateIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
         return new ResponseEntity<>(cmsPsuAisService.rejectConsent(psuIdData, consentId, instanceId), HttpStatus.OK);
     }
@@ -152,16 +145,13 @@ public class CmsPsuAisController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
+    @PsuHeadersDescription
     public ResponseEntity<List<AisAccountConsent>> getConsentsForPsu(
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
-        @RequestHeader(value = "psu-id", required = false) String psuId,
-        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
-        @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID, required = false) String psuId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID_TYPE, required = false) String psuIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID, required = false) String psuCorporateId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID_TYPE, required = false) String psuCorporateIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
         return new ResponseEntity<>(cmsPsuAisService.getConsentsForPsu(psuIdData, instanceId), HttpStatus.OK);
     }
@@ -171,20 +161,35 @@ public class CmsPsuAisController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
         @ApiResponse(code = 404, message = "Not Found")})
+    @PsuHeadersDescription
     public ResponseEntity<Boolean> revokeConsent(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId,
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
-        @RequestHeader(value = "psu-id", required = false) String psuId,
-        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
-        @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID, required = false) String psuId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID_TYPE, required = false) String psuIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID, required = false) String psuCorporateId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID_TYPE, required = false) String psuCorporateIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
         return new ResponseEntity<>(cmsPsuAisService.revokeConsent(psuIdData, consentId, instanceId), HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/{consent-id}/authorise-partially-consent")
+    @ApiOperation(value = "Puts a Status of AIS Consent object by its ID and PSU ID to PARTIALLY_AUTHORISED.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = Boolean.class),
+        @ApiResponse(code = 404, message = "Not Found")})
+    @PsuHeadersDescription
+    public ResponseEntity<Boolean> authorisePartiallyConsent(
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID, required = false) String psuId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID_TYPE, required = false) String psuIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID, required = false) String psuCorporateId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID_TYPE, required = false) String psuCorporateIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
+        return new ResponseEntity<>(cmsPsuAisService.authorisePartiallyConsent(psuIdData, consentId, instanceId), HttpStatus.OK);
     }
 
     @GetMapping(path = "/redirect/{redirect-id}")
@@ -194,9 +199,9 @@ public class CmsPsuAisController {
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsAisConsentResponse.class)})
     public ResponseEntity getConsentIdByRedirectId(
-        @ApiParam(name = "redirect-id", value = "The redirect identification assigned to the created consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("redirect-id") String redirectId,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @ApiParam(name = CmsConstant.PATH.REDIRECT_ID, value = "The redirect identification assigned to the created consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable(CmsConstant.PATH.REDIRECT_ID) String redirectId,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
         Optional<CmsAisConsentResponse> response;
         try {
@@ -217,18 +222,15 @@ public class CmsPsuAisController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = AisAccountConsent.class),
         @ApiResponse(code = 404, message = "Not Found")})
+    @PsuHeadersDescription
     public ResponseEntity<AisAccountConsent> getConsentByConsentId(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId,
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
-        @RequestHeader(value = "psu-id", required = false) String psuId,
-        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
-        @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID, required = false) String psuId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_ID_TYPE, required = false) String psuIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID, required = false) String psuCorporateId,
+        @RequestHeader(value = CmsConstant.HEADERS.PSU_CORPORATE_ID_TYPE, required = false) String psuCorporateIdType,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
         return cmsPsuAisService.getConsent(psuIdData, consentId, instanceId)
                    .map(aisAccountConsent -> new ResponseEntity<>(aisAccountConsent, HttpStatus.OK))
@@ -241,9 +243,9 @@ public class CmsPsuAisController {
         @ApiResponse(code = 200, message = "OK", response = CmsPsuAuthorisation.class),
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<CmsPsuAuthorisation> getAuthorisationByAuthorisationId(
-        @ApiParam(name = "authorisation-id", value = "The authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("authorisation-id") String authorisationId,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @ApiParam(name = CmsConstant.PATH.AUTHORISATION_ID, value = "The authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable(CmsConstant.PATH.AUTHORISATION_ID) String authorisationId,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
         return cmsPsuAisService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
                    .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
@@ -256,10 +258,10 @@ public class CmsPsuAisController {
         @ApiResponse(code = 200, message = "OK", reference = "Access saved"),
         @ApiResponse(code = 404, message = "Not Found", reference = "Consent not found or not active")})
     public ResponseEntity<Void> putAccountAccessInConsent(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId,
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @RequestBody CmsAisConsentAccessRequest accountAccessRequest,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
         boolean accessSaved = cmsPsuAisService.updateAccountAccessInConsent(consentId, accountAccessRequest, instanceId);
 
@@ -279,9 +281,9 @@ public class CmsPsuAisController {
         @ApiResponse(code = 200, message = "OK", response = CmsAisPsuDataAuthorisation.class, responseContainer = "List"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<List<CmsAisPsuDataAuthorisation>> psuDataAuthorisations(
-        @ApiParam(name = "consent-id", value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
         return cmsPsuAisService.getPsuDataAuthorisations(consentId, instanceId)
                    .map(ResponseEntity::ok)

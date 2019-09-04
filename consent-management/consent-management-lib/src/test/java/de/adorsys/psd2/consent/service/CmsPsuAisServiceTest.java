@@ -351,6 +351,24 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
+    public void authorisePartiallyConsentSuccess() {
+        //Given
+        AisConsent aisConsent = buildConsentByStatus(ConsentStatus.PARTIALLY_AUTHORISED);
+        aisConsent.setMultilevelScaRequired(true);
+        when(aisConsentRepository.save(aisConsent))
+            .thenReturn(aisConsent);
+        ArgumentCaptor<AisConsent> argumentCaptor = ArgumentCaptor.forClass(AisConsent.class);
+        // When
+        boolean updateAuthorisationStatus = cmsPsuAisService.authorisePartiallyConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        // Then
+        assertTrue(updateAuthorisationStatus);
+        verify(aisConsentRepository).save(argumentCaptor.capture());
+        AisConsent aisConsentActual = argumentCaptor.getValue();
+        assertEquals(ConsentStatus.PARTIALLY_AUTHORISED, aisConsentActual.getConsentStatus());
+        assertTrue(aisConsentActual.isMultilevelScaRequired());
+    }
+
+    @Test
     public void confirmConsent_FinalisedStatus_Fail() {
         // When
         boolean result = cmsPsuAisService.confirmConsent(psuIdData, FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
