@@ -43,7 +43,7 @@ public class UpdateConsentLinks extends AbstractLinks {
                 setAuthoriseTransaction(authorisationLink);
             }
         } else if (scaStatus == ScaStatus.PSUIDENTIFIED) {
-            setStartAuthorisationWithPsuAuthentication(authorisationLink);
+            setUpdatePsuAuthentication(authorisationLink);
         }
     }
 }

@@ -5,6 +5,7 @@
 * Remove deprecated frequencyPerDay for PiisConsent
 * Bugfix: statuses of obsoleted AIS consents
 * Remove column `tpp_info_id` from `authorisation_template` table
+* Bugfix: changed link for update PSU data without password
 
 == Bugfix: TPP domain validator ignores non-domain `tppName` field
 
@@ -28,3 +29,8 @@ set to `true`: if old consents have `PARTIALLY_AUTHORISED` status - they obtain 
 
 From now on, `tpp_info_id` column has been removed from `authorisation_template` table.
 
+== Bugfix: changed link for update PSU data without password
+
+From now on, after sending the update PSU data request (PUT `/v1/consents/{consentId}/authorisations/{authorisationId}`)
+with `PSU-ID` header but with no body, the response contains `updatePsuAuthentication` link. This works if you start the
+authorisation in EMBEDDED approach explicitly.
