@@ -25,8 +25,10 @@ import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.AccountService;
-import de.adorsys.psd2.xs2a.service.TransactionService;
+import de.adorsys.psd2.xs2a.service.ais.AccountDetailsService;
+import de.adorsys.psd2.xs2a.service.ais.AccountListService;
+import de.adorsys.psd2.xs2a.service.ais.BalanceService;
+import de.adorsys.psd2.xs2a.service.ais.TransactionService;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
@@ -62,7 +64,9 @@ public class AccountController implements AccountApi {
 
     private final HttpServletRequest request;
     private final HttpServletResponse response;
-    private final AccountService accountService;
+    private final BalanceService balanceService;
+    private final AccountListService accountListService;
+    private final AccountDetailsService accountDetailsService;
     private final TransactionService transactionService;
     private final ResponseMapper responseMapper;
     private final AccountModelMapper accountModelMapper;
@@ -70,7 +74,7 @@ public class AccountController implements AccountApi {
 
     @Override
     public ResponseEntity getAccountList(UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<Xs2aAccountListHolder> accountList = accountService.getAccountList(consentID, Optional.ofNullable(withBalance).orElse(false), trimEndingSlash(request.getRequestURI()));
+        ResponseObject<Xs2aAccountListHolder> accountList = accountListService.getAccountList(consentID, Optional.ofNullable(withBalance).orElse(false), trimEndingSlash(request.getRequestURI()));
         return accountList.hasError()
                    ? responseErrorMapper.generateErrorResponse(accountList.getError())
                    : responseMapper.ok(accountList, accountModelMapper::mapToAccountList);
@@ -78,7 +82,7 @@ public class AccountController implements AccountApi {
 
     @Override
     public ResponseEntity readAccountDetails(String accountId, UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<Xs2aAccountDetailsHolder> accountDetails = accountService.getAccountDetails(consentID, accountId, Optional.ofNullable(withBalance).orElse(false), trimEndingSlash(request.getRequestURI()));
+        ResponseObject<Xs2aAccountDetailsHolder> accountDetails = accountDetailsService.getAccountDetails(consentID, accountId, Optional.ofNullable(withBalance).orElse(false), trimEndingSlash(request.getRequestURI()));
         return accountDetails.hasError()
                    ? responseErrorMapper.generateErrorResponse(accountDetails.getError())
                    : responseMapper.ok(accountDetails, accountModelMapper::mapToInlineResponse200);
@@ -86,7 +90,7 @@ public class AccountController implements AccountApi {
 
     @Override
     public ResponseEntity getBalances(String accountId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<Xs2aBalancesReport> balancesReport = accountService.getBalancesReport(consentID, accountId, trimEndingSlash(request.getRequestURI()));
+        ResponseObject<Xs2aBalancesReport> balancesReport = balanceService.getBalancesReport(consentID, accountId, trimEndingSlash(request.getRequestURI()));
         return balancesReport.hasError()
                    ? responseErrorMapper.generateErrorResponse(balancesReport.getError())
                    : responseMapper.ok(balancesReport, accountModelMapper::mapToBalance);

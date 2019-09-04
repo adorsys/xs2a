@@ -42,7 +42,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         super(messageService, aspspProfileService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountDetails(..)) && args( consentId, accountId, withBalance, requestUri)", returning = "result", argNames = "result,consentId,accountId,withBalance,requestUri")
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ais.AccountDetailsService.getAccountDetails(..)) && args( consentId, accountId, withBalance, requestUri)", returning = "result", argNames = "result,consentId,accountId,withBalance,requestUri")
     public ResponseObject<Xs2aAccountDetailsHolder> getAccountDetailsAspect(ResponseObject<Xs2aAccountDetailsHolder> result, String consentId, String accountId, boolean withBalance, String requestUri) {
         if (!result.hasError()) {
             Xs2aAccountDetailsHolder body = result.getBody();
@@ -54,7 +54,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountList(..)) && args( consentId, withBalance, requestUri)", returning = "result", argNames = "result,consentId,withBalance,requestUri")
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ais.AccountListService.getAccountList(..)) && args( consentId, withBalance, requestUri)", returning = "result", argNames = "result,consentId,withBalance,requestUri")
     public ResponseObject<Xs2aAccountListHolder> getAccountDetailsListAspect(ResponseObject<Xs2aAccountListHolder> result, String consentId, boolean withBalance, String requestUri) {
         if (!result.hasError()) {
             Xs2aAccountListHolder body = result.getBody();
