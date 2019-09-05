@@ -7,23 +7,24 @@
 * Remove column `tpp_info_id` from `authorisation_template` table
 * Multilevel SCA for Establish Consent in Redirect approach
 * Bugfix: changed link for update PSU data without password
+* Remove deprecated TppInfo from PiisConsent
 
 == Bugfix: TPP domain validator ignores non-domain `tppName` field
 
-From now on, if `tppName` is not a proper domain name, it will be ignored by XS2A in TPP domain validation. Before,
-java `IllegalArgumentException` was thrown by the validator.
+From now on, if `tppName` is not a proper domain name, it will be ignored by XS2A in TPP domain validation.
+Before, java `IllegalArgumentException` was thrown by the validator.
 
 == Remove deprecated frequencyPerDay for PiisConsent
 
 From now on, the deprecated field `frequencyPerDay` has been removed from `CreatePiisConsentRequest`,
-`PiisConsentEntity`, and `PiisConsent`. The field has also been removed from the `piis_consent` table.
+`PiisConsentEntity`, and `PiisConsent`.
+The field has also been removed from the `piis_consent` table.
 
 == Bugfix: statuses of obsoleted AIS consents
 
-Some changes were made in AIS consents statuses switching: obsoleted consents that were not confirmed with authorisation
-now get status `REJECTED` (before it was `EXPIRED`).
-When new AIS consent for account for one TPP and one PSU is created with reccuringIndicator=true, old authorised consents
-get status `TERMINATED_BY_TPP`, but old unauthorised consents get status `REJECTED`. The same works for consents with `multilevelSca`
+Some changes were made in AIS consents statuses switching: obsoleted consents that were not confirmed with authorisation now get status `REJECTED` (before it was `EXPIRED`).
+When new AIS consent for account for one TPP and one PSU is created with reccuringIndicator=true, old authorised consents get status `TERMINATED_BY_TPP`, but old unauthorised consents get status `REJECTED`.
+The same works for consents with `multilevelSca`
 set to `true`: if old consents have `PARTIALLY_AUTHORISED` status - they obtain `REJECTED` status.
 
 == Remove column `tpp_info_id` from `authorisation_template` table
@@ -39,3 +40,10 @@ New method `CmsPsuAisServiceInternal::authorisePartiallyConsent` was added to CM
 From now on, after sending the update PSU data request (PUT `/v1/consents/{consentId}/authorisations/{authorisationId}`)
 with `PSU-ID` header but with no body, the response contains `updatePsuAuthentication` link. This works if you start the
 authorisation in EMBEDDED approach explicitly.
+
+== Remove deprecated TppInfo from PiisConsent
+
+From now on, the deprecated field `tppInfo` is removed from `PiisConsentEntity`, `PiisConsent`, and
+`CreatePiisConsentRequest`.
+Also, all data has been migrated from `tppInfo` column to `tppAuthorisationNumber` column in
+`piis_consent` table.

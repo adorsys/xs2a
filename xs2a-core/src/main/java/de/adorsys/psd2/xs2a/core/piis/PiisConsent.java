@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.core.piis;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,9 +36,6 @@ public class PiisConsent {
     private LocalDate lastActionDate;
     private LocalDate expireDate;
     private PsuIdData psuData;
-    // TODO: Remove the field in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/971 use tppAuthorisationNumber instead
-    @Deprecated
-    private TppInfo tppInfo;
     private ConsentStatus consentStatus;
     private AccountReference account;
     private PiisConsentTppAccessType tppAccessType;

@@ -104,4 +104,5 @@
     <include relativeToChangelogFile="true" file="migration/0076-add-unique-null-constraint-to-tpp-authorisation-number.xml"/>
     <include relativeToChangelogFile="true" file="migration/0077-remove-deprecated-column-allowed-frequency-per-day-from-piis-consent-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0078-remove-column-tpp-info-id-from-authorisation-template-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0079-remove-foreign-key-tpp-info-id-from-piis-consent.xml"/>
 </databaseChangeLog>

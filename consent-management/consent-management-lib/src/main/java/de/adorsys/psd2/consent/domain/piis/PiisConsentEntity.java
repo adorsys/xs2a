@@ -19,7 +19,6 @@ package de.adorsys.psd2.consent.domain.piis;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
 import io.swagger.annotations.ApiModel;
@@ -63,12 +62,6 @@ public class PiisConsentEntity extends InstanceDependableEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "psu_id")
     private PsuData psuData;
-
-    // TODO: Remove the column in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/971
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tpp_info_id")
-    @ApiModelProperty(value = "Information about TPP")
-    private TppInfoEntity tppInfo;
 
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)

@@ -57,7 +57,7 @@ public class PiisTppInfoValidatorTest {
     public void validateTpp_authorisationNumber_success() {
         when(tppService.getTppInfo()).thenReturn(tppInRequest);
 
-        ValidationResult actual = validator.validateTpp(AUTHORISATION_NUMBER, null);
+        ValidationResult actual = validator.validateTpp(AUTHORISATION_NUMBER);
 
         verify(tppService, times(1)).getTppInfo();
 
@@ -65,21 +65,8 @@ public class PiisTppInfoValidatorTest {
     }
 
     @Test
-    public void validateTpp_tppInfo_success() {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber(AUTHORISATION_NUMBER);
-        when(tppService.getTppInfo()).thenReturn(tppInRequest);
-
-        ValidationResult actual = validator.validateTpp(null, tppInfo);
-
-        verify(tppService, times(1)).getTppInfo();
-
-        assertTrue(actual.isValid());
-    }
-
-    @Test
-    public void validateTpp_bothNull_error() {
-        ValidationResult actual = validator.validateTpp(null, null);
+    public void validateTpp_authorisationNumber_null_error() {
+        ValidationResult actual = validator.validateTpp(null);
 
         verify(tppService, never()).getTppInfo();
 

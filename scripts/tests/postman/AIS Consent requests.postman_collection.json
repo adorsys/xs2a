@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "488d53f4-3dcb-4bc2-b450-3fa05d3839d1",
+		"_postman_id": "64f7f4ba-da08-4a47-ab44-23d0f4f567f4",
 		"name": "AIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -7865,7 +7865,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts",
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_xs2a}}"
