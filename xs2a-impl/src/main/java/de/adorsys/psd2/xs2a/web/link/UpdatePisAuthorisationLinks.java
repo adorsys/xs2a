@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -40,7 +39,6 @@ public class UpdatePisAuthorisationLinks extends AbstractLinks {
 
         if (isScaStatusMethodAuthenticated(scaStatus)) {
             setSelectAuthenticationMethod(authorisationLink);
-            // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/722
         } else if (isScaStatusMethodSelected(response.getChosenScaMethod(), scaStatus) &&
                        scaApproachResolver.getInitiationScaApproach(response.getAuthorisationId()) == EMBEDDED) {
             setAuthoriseTransaction(authorisationLink);
@@ -52,18 +50,5 @@ public class UpdatePisAuthorisationLinks extends AbstractLinks {
     private HrefType buildAuthorisationLink(Xs2aUpdatePisCommonPaymentPsuDataResponse response, Xs2aCreatePisAuthorisationRequest createRequest) {
         return buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, createRequest.getPaymentService(),
                          createRequest.getPaymentProduct(), createRequest.getPaymentId(), response.getAuthorisationId());
-    }
-
-    private boolean isScaStatusMethodSelected(Xs2aAuthenticationObject chosenScaMethod, ScaStatus scaStatus) {
-        return chosenScaMethod != null
-                   && scaStatus == ScaStatus.SCAMETHODSELECTED;
-    }
-
-    private boolean isScaStatusMethodAuthenticated(ScaStatus scaStatus) {
-        return scaStatus == ScaStatus.PSUAUTHENTICATED;
-    }
-
-    private boolean isScaStatusMethodIdentified(ScaStatus scaStatus) {
-        return scaStatus == ScaStatus.PSUIDENTIFIED;
     }
 }

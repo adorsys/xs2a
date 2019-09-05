@@ -41,6 +41,8 @@ public class UpdatePisCancellationPsuDataLinks extends AbstractLinks {
             setSelectAuthenticationMethod(authorisationLink);
         } else if (isScaStatusMethodSelected(chosenScaMethod, scaStatus) || isDecoupledScaApproach(request)) {
             setAuthoriseTransaction(authorisationLink);
+        } else if (isScaStatusMethodIdentified(scaStatus)) {
+            setUpdatePsuAuthentication(authorisationLink);
         }
     }
 
@@ -51,14 +53,5 @@ public class UpdatePisCancellationPsuDataLinks extends AbstractLinks {
 
     private boolean isDecoupledScaApproach(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         return scaApproachResolver.getCancellationScaApproach(request.getAuthorisationId()) == ScaApproach.DECOUPLED;
-    }
-
-    private boolean isScaStatusMethodSelected(Xs2aAuthenticationObject chosenScaMethod, ScaStatus scaStatus) {
-        return chosenScaMethod != null
-                   && scaStatus == ScaStatus.SCAMETHODSELECTED;
-    }
-
-    private boolean isScaStatusMethodAuthenticated(ScaStatus scaStatus) {
-        return scaStatus == ScaStatus.PSUAUTHENTICATED;
     }
 }
