@@ -115,11 +115,6 @@ public class CmsToXs2aPaymentMapperTest {
     @Spy
     private Xs2aRemittanceMapper xs2aRemittanceMapper = Mappers.getMapper(Xs2aRemittanceMapper.class);
 
-    @Before
-    public void setUp() {
-
-    }
-
     @Test
     public void mapToPeriodicPayment() {
         PisPayment pisPayment = buildPisPayment();

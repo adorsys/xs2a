@@ -86,7 +86,8 @@ public class CreateCommonPaymentServiceTest {
     private ScaPaymentService scaPaymentService;
     @Mock
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
-    @Mock    private PisAspspDataService pisAspspDataService;
+    @Mock
+    private PisAspspDataService pisAspspDataService;
     @Mock
     private AspspDataService aspspDataService;
     @Mock

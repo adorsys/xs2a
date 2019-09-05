@@ -164,14 +164,13 @@ public class ScaPaymentServiceTest {
         SpiResponse<SpiSinglePaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
                                                                                       .error(FORMAT_ERROR)
                                                                                       .build();
-        ErrorHolder expectedError = EXPECTED_ERROR;
 
         when(xs2AToSpiSinglePaymentMapper.mapToSpiSinglePayment(SINGLE_PAYMENT, PRODUCT))
             .thenReturn(SPI_SINGLE_PAYMENT);
         when(singlePaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(expectedFailureResponse);
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
-            .thenReturn(expectedError);
+            .thenReturn(EXPECTED_ERROR);
 
         // When
         SinglePaymentInitiationResponse actualResponse = scaPaymentService.createSinglePayment(SINGLE_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
