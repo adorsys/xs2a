@@ -46,6 +46,7 @@ public class Xs2aPisCommonPaymentService {
     private final Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
     private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
 
+
     public CreatePisCommonPaymentResponse createCommonPayment(PisPaymentInfo request) {
         return pisCommonPaymentServiceEncrypted.createCommonPayment(request)
                    .orElseGet(() -> {

@@ -295,7 +295,6 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(TRANSACTION_STATUS, commonPayment.getTransactionStatus());
         assertEquals(PAYMENT_TYPE, commonPayment.getPaymentType());
         assertEquals(PAYMENT_DATA, commonPayment.getPaymentData());
-        assertEquals(TPP_INFO, commonPayment.getTppInfo());
         assertEquals(PSU_ID_DATA_LIST, commonPayment.getPsuDataList());
         assertEquals(STATUS_CHANGE_TIMESTAMP, commonPayment.getStatusChangeTimestamp());
     }

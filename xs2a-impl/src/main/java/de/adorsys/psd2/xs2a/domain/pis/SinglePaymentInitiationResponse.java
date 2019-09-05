@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.domain.pis;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,10 +28,5 @@ public class SinglePaymentInitiationResponse extends PaymentInitiationResponse {
 
     public SinglePaymentInitiationResponse(ErrorHolder errorHolder) {
         super(errorHolder);
-    }
-
-    @Override
-    PaymentType getPaymentType() {
-        return PaymentType.SINGLE;
     }
 }
