@@ -39,8 +39,6 @@ public class UpdatePisPsuDataLinks extends AbstractLinks {
 
         if (isScaStatusMethodAuthenticated(scaStatus)) {
             setSelectAuthenticationMethod(authorisationLink);
-
-            // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/722
         } else if (isScaStatusMethodSelected(chosenScaMethod, scaStatus) && isEmbeddedScaApproach(request.getAuthorisationId())) {
             setAuthoriseTransaction(authorisationLink);
         } else if (isScaStatusFinalised(scaStatus)) {
@@ -61,18 +59,5 @@ public class UpdatePisPsuDataLinks extends AbstractLinks {
 
     private boolean isScaStatusFinalised(ScaStatus scaStatus) {
         return scaStatus == ScaStatus.FINALISED;
-    }
-
-    private boolean isScaStatusMethodSelected(Xs2aAuthenticationObject chosenScaMethod, ScaStatus scaStatus) {
-        return chosenScaMethod != null
-                   && scaStatus == ScaStatus.SCAMETHODSELECTED;
-    }
-
-    private boolean isScaStatusMethodAuthenticated(ScaStatus scaStatus) {
-        return scaStatus == ScaStatus.PSUAUTHENTICATED;
-    }
-
-    private boolean isScaStatusMethodIdentified(ScaStatus scaStatus) {
-        return scaStatus == ScaStatus.PSUIDENTIFIED;
     }
 }
