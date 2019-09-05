@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.pis.proto;
 
+import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -32,7 +33,7 @@ import java.util.List;
 
 @Data
 @ApiModel(description = "Pis payment initialisation common payment response", value = "PisCommonPaymentResponse")
-public class PisCommonPaymentResponse {
+public class PisCommonPaymentResponse implements CommonPaymentData {
     @ApiModelProperty(value = "Payment data", required = true)
     private List<PisPayment> payments;
 

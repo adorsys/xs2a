@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
@@ -57,16 +57,16 @@ public class SpiToXs2aPaymentInfoMapperTest {
         spiPaymentInfo.setPsuDataList(Collections.singletonList(new SpiPsuData("psuId", "", "", "", "")));
         spiPaymentInfo.setPaymentData(PAYMENT_DATA);
 
-        PisPaymentInfo pisPaymentInfo = mapper.mapToXs2aPaymentInfo(spiPaymentInfo);
+        CommonPayment commonPayment = mapper.mapToXs2aPaymentInfo(spiPaymentInfo);
 
-        PisPaymentInfo expectedPisPaymentInfo = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-payment-info.json", PisPaymentInfo.class);
-        expectedPisPaymentInfo.setStatusChangeTimestamp(OFFSET_DATE_TIME);
-        assertEquals(expectedPisPaymentInfo, pisPaymentInfo);
+        CommonPayment expectedCommonPayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-payment-info.json", CommonPayment.class);
+        expectedCommonPayment.setStatusChangeTimestamp(OFFSET_DATE_TIME);
+        assertEquals(expectedCommonPayment, commonPayment);
     }
 
     @Test
     public void mapToXs2aPaymentInfo_nullValue() {
-        PisPaymentInfo pisPaymentInfo = mapper.mapToXs2aPaymentInfo(null);
-        assertNull(pisPaymentInfo);
+        CommonPayment commonPayment = mapper.mapToXs2aPaymentInfo(null);
+        assertNull(commonPayment);
     }
 }

@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,5 +26,5 @@ public interface SpiToXs2aPaymentInfoMapper {
 
     @Mapping(target = "psuDataList", ignore = true)
     @Mapping(target = "transactionStatus", source = "status")
-    PisPaymentInfo mapToXs2aPaymentInfo(SpiPaymentInfo paymentInfo);
+    CommonPayment mapToXs2aPaymentInfo(SpiPaymentInfo paymentInfo);
 }

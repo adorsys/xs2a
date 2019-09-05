@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,17 @@ public class Xs2aToSpiPaymentInfoMapper {
         info.setPaymentData(commonPayment.getPaymentData());
         info.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(commonPayment.getPsuDataList()));
         info.setStatusChangeTimestamp(commonPayment.getStatusChangeTimestamp());
+        return info;
+    }
+
+    public SpiPaymentInfo mapToSpiPaymentInfo(CommonPaymentData commonPaymentData) {
+        SpiPaymentInfo info = new SpiPaymentInfo(commonPaymentData.getPaymentProduct());
+        info.setPaymentId(commonPaymentData.getExternalId());
+        info.setPaymentType(commonPaymentData.getPaymentType());
+        info.setStatus(commonPaymentData.getTransactionStatus());
+        info.setPaymentData(commonPaymentData.getPaymentData());
+        info.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(commonPaymentData.getPsuData()));
+        info.setStatusChangeTimestamp(commonPaymentData.getStatusChangeTimestamp());
         return info;
     }
 }
