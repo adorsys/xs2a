@@ -21,9 +21,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
@@ -36,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,18 +46,6 @@ public class Xs2aPisCommonPaymentService {
     private final Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
     private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
 
-    /**
-     * Creates PIS consent
-     *
-     * @param parameters Payment request parameters to get needed payment info
-     * @param tppInfo    information about TPP
-     * @return String consentId
-     */
-    // TODO refactoring for orElse(null)
-    public CreatePisCommonPaymentResponse createCommonPayment(PaymentInitiationParameters parameters, TppInfo tppInfo) {
-        return createCommonPayment(parameters, tppInfo, null);
-    }
-
     public CreatePisCommonPaymentResponse createCommonPayment(PisPaymentInfo request) {
         return pisCommonPaymentServiceEncrypted.createCommonPayment(request)
                    .orElseGet(() -> {
@@ -68,17 +53,6 @@ public class Xs2aPisCommonPaymentService {
                                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId());
                        return null;
                    });
-    }
-
-    public CreatePisCommonPaymentResponse createCommonPayment(PaymentInitiationParameters parameters, TppInfo tppInfo, byte[] paymentData) {
-        PisPaymentInfo request = new PisPaymentInfo();
-        request.setPaymentProduct(parameters.getPaymentProduct());
-        request.setPaymentType(parameters.getPaymentType());
-        request.setTransactionStatus(TransactionStatus.RCVD);
-        request.setPaymentData(paymentData);
-        request.setTppInfo(tppInfo);
-        request.setPsuDataList(Collections.singletonList(parameters.getPsuData()));
-        return createCommonPayment(request);
     }
 
     public Optional<PisCommonPaymentResponse> getPisCommonPaymentById(String paymentId) {

@@ -198,7 +198,6 @@ public class PaymentControllerTest {
 
         //Given:
         PaymentInitiationStatusResponse200Json expectedBody = getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus.ACCP);
-        HttpStatus expectedHttpStatus = OK;
 
         //When:
         ResponseEntity<PaymentInitiationStatusResponse200Json> actualResponse =
@@ -210,7 +209,7 @@ public class PaymentControllerTest {
 
         //Then:
         HttpStatus actualHttpStatus = actualResponse.getStatusCode();
-        assertThat(actualHttpStatus).isEqualTo(expectedHttpStatus);
+        assertThat(actualHttpStatus).isEqualTo(OK);
         assertThat(actualResponse.getBody()).isEqualTo(expectedBody);
     }
 
@@ -225,7 +224,6 @@ public class PaymentControllerTest {
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
         when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, WRONG_PAYMENT_ID)).thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().fail(createMessageError(PIS_403, RESOURCE_UNKNOWN_403)).build());
         //Given:
-        HttpStatus expectedHttpStatus = FORBIDDEN;
 
         //When:
         ResponseEntity<PaymentInitiationStatusResponse200Json> actualResponse =
@@ -236,7 +234,7 @@ public class PaymentControllerTest {
                 null, null);
 
         //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedHttpStatus);
+        assertThat(actualResponse.getStatusCode()).isEqualTo(FORBIDDEN);
     }
 
     @Test
@@ -276,11 +274,10 @@ public class PaymentControllerTest {
         when(xs2aPaymentService.cancelPayment(paymentCancellationRequest)).thenReturn(getCancelPaymentResponseObject(true));
 
         // Given
-        PaymentType paymentType = PaymentType.SINGLE;
         ResponseEntity<PaymentInitiationCancelResponse202> expectedResult = new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.ACTC), HttpStatus.ACCEPTED);
 
         // When
-        ResponseEntity<PaymentInitiationCancelResponse202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse202>) paymentController.cancelPayment(paymentType.getValue(), PRODUCT,
+        ResponseEntity<PaymentInitiationCancelResponse202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse202>) paymentController.cancelPayment(PaymentType.SINGLE.getValue(), PRODUCT,
                                                                                                                                                                CORRECT_PAYMENT_ID, null, null, null,
                                                                                                                                                                null, null, null, null, null,
                                                                                                                                                                null, null,
@@ -296,12 +293,11 @@ public class PaymentControllerTest {
     public void cancelPayment_WithoutAuthorisation_Fail_FinalisedStatus() {
         ResponseObject<CancelPaymentResponse> cancelPaymentResponse = getErrorOnPaymentCancellation();
         ResponseEntity expectedResult = ResponseEntity.status(BAD_REQUEST).build();
-        PaymentType paymentType = SINGLE;
 
         when(responseErrorMapper.generateErrorResponse(cancelPaymentResponse.getError())).thenReturn(expectedResult);
 
         // Given
-        ResponseEntity actualResult = paymentController.cancelPayment(paymentType.getValue(), PRODUCT,
+        ResponseEntity actualResult = paymentController.cancelPayment(SINGLE.getValue(), PRODUCT,
                                                                       CORRECT_PAYMENT_ID, REQUEST_ID, null, null,
                                                                       null, null, null, null, null,
                                                                       null, null,
@@ -322,10 +318,9 @@ public class PaymentControllerTest {
         when(responseErrorMapper.generateErrorResponse(createMessageError(ErrorType.PIS_400, FORMAT_ERROR))).thenReturn(ResponseEntity.status(BAD_REQUEST).build());
 
         // Given
-        PaymentType paymentType = PaymentType.SINGLE;
         ResponseEntity<PaymentInitiationCancelResponse202> expectedResult = ResponseEntity.badRequest().build();
         // When
-        ResponseEntity actualResult = paymentController.cancelPayment(paymentType.getValue(), PRODUCT,
+        ResponseEntity actualResult = paymentController.cancelPayment(PaymentType.SINGLE.getValue(), PRODUCT,
                                                                       CORRECT_PAYMENT_ID, REQUEST_ID, null, null,
                                                                       null, null, null, null,
                                                                       null, null,

@@ -26,7 +26,6 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
@@ -72,8 +71,6 @@ public class ReadBulkPaymentServiceTest {
     private ReadBulkPaymentService readBulkPaymentService;
 
     @Mock
-    private PisAspspDataService pisAspspDataService;
-    @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
     private Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
@@ -108,12 +105,10 @@ public class ReadBulkPaymentServiceTest {
 
     @Test
     public void getPayment_success() {
-        //Given
-
-        //When
+        // When
         PaymentInformationResponse<BulkPayment> actualResponse = readBulkPaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getPayment()).isNotNull();
         assertThat(actualResponse.getPayment()).isEqualTo(BULK_PAYMENT);
@@ -122,13 +117,13 @@ public class ReadBulkPaymentServiceTest {
 
     @Test
     public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_failed() {
-        //Given
+        // Given
         when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
 
-        //When
+        // When
         PaymentInformationResponse<BulkPayment> actualResponse = readBulkPaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getPayment()).isNotNull();
         assertThat(actualResponse.getPayment()).isEqualTo(BULK_PAYMENT);
@@ -150,7 +145,7 @@ public class ReadBulkPaymentServiceTest {
         when(spiErrorMapper.mapToErrorHolder(spiResponseError, ServiceType.PIS))
             .thenReturn(expectedError);
 
-        //When
+        // When
         PaymentInformationResponse<BulkPayment> actualResponse = readBulkPaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
         // Then
