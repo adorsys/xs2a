@@ -1,4 +1,4 @@
-= Release notes v. 5.0
+= Release notes v.5.0
 
 == Table of Contents
 * Bugfix: TPP domain validator ignores non-domain `tppName` field
@@ -8,6 +8,7 @@
 * Multilevel SCA for Establish Consent in Redirect approach
 * Bugfix: changed link for update PSU data without password
 * Remove deprecated TppInfo from PiisConsent
+* Bugfix: changed link for update PSU data without password for payment cancellation
 
 == Bugfix: TPP domain validator ignores non-domain `tppName` field
 
@@ -47,3 +48,9 @@ From now on, the deprecated field `tppInfo` is removed from `PiisConsentEntity`,
 `CreatePiisConsentRequest`.
 Also, all data has been migrated from `tppInfo` column to `tppAuthorisationNumber` column in
 `piis_consent` table.
+
+== Bugfix: changed link for update PSU data without password for payment cancellation
+
+From now on, after sending the update PSU data request for payment cancellation (PUT `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}`)
+with `PSU-ID` header but with no body, the response contains `updatePsuAuthentication` link. This works if you start the
+authorisation for payment cancellation in EMBEDDED approach.

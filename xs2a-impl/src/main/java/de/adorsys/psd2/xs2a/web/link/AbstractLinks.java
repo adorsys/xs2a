@@ -16,8 +16,10 @@
 
 package de.adorsys.psd2.xs2a.web.link;
 
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
@@ -37,4 +39,18 @@ class AbstractLinks extends Links {
                                 .buildAndExpand(params)
                                 .toUriString());
     }
+
+    protected boolean isScaStatusMethodSelected(Xs2aAuthenticationObject chosenScaMethod, ScaStatus scaStatus) {
+        return chosenScaMethod != null
+                   && scaStatus == ScaStatus.SCAMETHODSELECTED;
+    }
+
+    protected boolean isScaStatusMethodAuthenticated(ScaStatus scaStatus) {
+        return scaStatus == ScaStatus.PSUAUTHENTICATED;
+    }
+
+    protected boolean isScaStatusMethodIdentified(ScaStatus scaStatus) {
+        return scaStatus == ScaStatus.PSUIDENTIFIED;
+    }
+
 }
