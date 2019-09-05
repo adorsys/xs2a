@@ -49,6 +49,9 @@ public class CommonPaymentDataService {
     @Transactional
     public boolean updateStatusInPaymentData(PisCommonPaymentData paymentData, TransactionStatus status) {
         paymentData.setTransactionStatus(status);
+        if (status == TransactionStatus.PATC) {
+            paymentData.setMultilevelScaRequired(true);
+        }
         PisCommonPaymentData saved = pisCommonPaymentDataRepository.save(paymentData);
         return saved.getPaymentId() != null;
     }
