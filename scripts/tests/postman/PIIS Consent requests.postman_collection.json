@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7dfd925d-25d8-4ba1-bacb-1b774b20cf3a",
+		"_postman_id": "283ec40d-23c1-4300-a1d2-175aa5a04918",
 		"name": "PIIS Consent requests copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -139,7 +139,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"{{iban_multiple}}\"\n  },\n  \"cardExpiryDate\": \"2020-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppInfo\": {\n    \"authorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n    \"authorityId\": \"DE-FAKENCA\",\n    \"authorityName\": \"authority name\",\n    \"city\": \"Nuremberg\",\n    \"country\": \"Germany\",\n    \"issuerCN\": \"Authority CA Domain Name\",\n    \"organisation\": \"Organisation\",\n    \"organisationUnit\": \"Organisation unit\",\n    \"state\": \"Bayern\",\n    \"tppName\": \"Tpp company\",\n    \"tppRedirectUri\": {\n      \"nokUri\": \"Nok redirect URI\",\n      \"uri\": \"Redirect URI\"\n    },\n    \"tppRoles\": [\n      \"PISP\"\n    ]\n  },\n  \"validUntil\": \"2020-10-10\"\n}"
+									"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"{{iban_multiple}}\"\n  },\n  \"cardExpiryDate\": \"2020-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2020-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",

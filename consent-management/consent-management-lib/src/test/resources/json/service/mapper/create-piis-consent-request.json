@@ -1,26 +1,4 @@
 {
-  "tppInfo": {
-    "authorisationNumber": "12345987",
-    "tppName": "Tpp company",
-    "tppRoles": [
-      "PISP"
-    ],
-    "authorityId": "authority id",
-    "authorityName": "authority name",
-    "country": "Germany",
-    "organisation": "Organisation",
-    "organisationUnit": "Organisation unit",
-    "city": "Nuremberg",
-    "state": "Bayern",
-    "tppRedirectUri": {
-      "uri": "TPP-Redirect-URI",
-      "nokUri": "TPP-Nok-Redirect-URI"
-    },
-    "cancelTppRedirectUri": {
-      "uri": "TPP-Redirect-URI-Cancel",
-      "nokUri": "TPP-Nok-Redirect-URI-Cancel"
-    }
-  },
   "tppAuthorisationNumber": "PSDDE-FAKENCA-87B2AC",
   "account": {
     "currency": "EUR",

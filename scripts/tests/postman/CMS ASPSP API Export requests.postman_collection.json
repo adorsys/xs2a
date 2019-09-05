@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "878e914e-8ded-4b04-8985-6daa05c1c2b1",
+		"_postman_id": "d83d9483-4dc3-49f4-919b-1a3021c8801f",
 		"name": "CMS ASPSP API Export requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1110,7 +1110,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"account\": \n    {\n      \"currency\": \"EUR\",\n      \"iban\": \"LU280019400644750000\",\n      \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    }\n  ,\n  \"allowedFrequencyPerDay\": 4,\n  \"tppInfo\": {\n    \"authorisationNumber\": \"{{tpp_id}}\",\n    \"authorityId\": \"authority id\",\n    \"tppRedirectUri\": {\n      \"nokUri\": \"Nok redirect URI\",\n      \"uri\": \"Redirect URI\"\n    },\n    \"tppRoles\": [\n      \"PISP\"\n    ]\n  },\n  \"validUntil\": \"2021-10-10\"\n}"
+							"raw": "{\n  \"account\": \n    {\n      \"currency\": \"EUR\",\n      \"iban\": \"LU280019400644750000\",\n      \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n  \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n  \"validUntil\": \"2021-10-10\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",

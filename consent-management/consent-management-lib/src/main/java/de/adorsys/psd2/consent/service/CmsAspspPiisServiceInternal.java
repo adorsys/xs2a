@@ -20,7 +20,6 @@ import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
-import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -49,7 +48,6 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.TERMINATED_BY_ASPS
 @Transactional(readOnly = true)
 public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     private final PiisConsentRepository piisConsentRepository;
-    private final TppInfoRepository tppInfoRepository;
     private final PiisConsentEntitySpecification piisConsentEntitySpecification;
     private final PiisConsentMapper piisConsentMapper;
 
@@ -64,11 +62,6 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         closePreviousPiisConsents(psuIdData, request);
 
         PiisConsentEntity consent = piisConsentMapper.mapToPiisConsentEntity(psuIdData, request);
-
-        if (request.getTppInfo() != null) {
-            tppInfoRepository.findByAuthorisationNumber(request.getTppInfo().getAuthorisationNumber()).ifPresent(consent::setTppInfo);
-        }
-
         PiisConsentEntity saved = piisConsentRepository.save(consent);
 
         if (saved.getId() != null) {
@@ -112,14 +105,8 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     }
 
     private void closePreviousPiisConsents(PsuIdData psuIdData, CreatePiisConsentRequest request) {
-
         AccountReference accountReference = request.getAccount();
-
-        // TODO: remove this elvis operator when removing TppInfo in CreatePiisConsentRequest
-        //  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/971
-        Specification<PiisConsentEntity> specification = StringUtils.isEmpty(request.getTppAuthorisationNumber())
-                                                             ? piisConsentEntitySpecification.byPsuIdDataAndTppInfoAndAccountReference(psuIdData, request.getTppInfo().getAuthorisationNumber(), accountReference)
-                                                             : piisConsentEntitySpecification.byPsuIdDataAndTppInfoAndAccountReferenceWithoutJoin(psuIdData, request.getTppAuthorisationNumber(), accountReference);
+        Specification<PiisConsentEntity> specification = piisConsentEntitySpecification.byPsuIdDataAndAuthorisationNumberAndAccountReference(psuIdData, request.getTppAuthorisationNumber(), accountReference);
 
         List<PiisConsentEntity> piisConsentEntities = piisConsentRepository.findAll(specification);
         piisConsentEntities.forEach(con -> con.setConsentStatus(ConsentStatus.REVOKED_BY_PSU));
@@ -127,10 +114,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     }
 
     private boolean isInvalidConsentCreationRequest(@NotNull PsuIdData psuIdData, CreatePiisConsentRequest request) {
-        boolean invalidTpp = (request.getTppInfo() == null || request.getTppInfo().isNotValid()) &&
-                                 StringUtils.isBlank(request.getTppAuthorisationNumber());
-
-        return invalidTpp
+        return StringUtils.isBlank(request.getTppAuthorisationNumber())
                    || psuIdData.isEmpty()
                    || request.getAccount() == null
                    || request.getValidUntil() == null
