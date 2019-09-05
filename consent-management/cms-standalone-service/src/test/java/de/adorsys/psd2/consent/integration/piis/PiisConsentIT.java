@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -168,7 +167,6 @@ public class PiisConsentIT {
         CreatePiisConsentRequest request = new CreatePiisConsentRequest();
         request.setAccount(accountReference);
         request.setValidUntil(LocalDate.now().plusDays(1));
-        request.setTppInfo(buildTppInfo());
         return request;
     }
 
@@ -182,17 +180,6 @@ public class PiisConsentIT {
 
     private AccountReference buildAccountReference() {
         return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
-    }
-
-    private List<AccountReference> buildAccountReferenceList() {
-        return Collections.singletonList(buildAccountReference());
-    }
-
-    private TppInfo buildTppInfo() {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber(TPP_AUTHORISATION_NUMBER);
-        tppInfo.setAuthorityId(TPP_AUTHORITY_ID);
-        return tppInfo;
     }
 
     /**
