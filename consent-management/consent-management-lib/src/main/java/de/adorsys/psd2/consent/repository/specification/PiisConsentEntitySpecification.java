@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Join;
@@ -39,7 +38,7 @@ import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSp
 public class PiisConsentEntitySpecification extends GenericSpecification {
 
     public Specification<PiisConsentEntity> byConsentIdAndInstanceId(String consentId, String instanceId) {
-        return Specifications.<PiisConsentEntity>where(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId))
+        return Specification.<PiisConsentEntity>where(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId))
                    .and(provideSpecificationForEntityAttribute(CONSENT_EXTERNAL_ID_ATTRIBUTE, consentId));
     }
 
@@ -58,7 +57,8 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
                                                                                               @Nullable LocalDate createDateTo,
                                                                                               @Nullable PsuIdData psuIdData,
                                                                                               @Nullable String instanceId) {
-        return Specifications.<PiisConsentEntity>where(byTppAuthorisationNumber(tppAuthorisationNumber))
+
+        return Specification.<PiisConsentEntity>where(byTppAuthorisationNumberWithoutJoin(tppAuthorisationNumber))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byPsuIdData(psuIdData))
                    .and(byInstanceId(instanceId));
@@ -77,7 +77,7 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
                                                                                       @Nullable LocalDate createDateFrom,
                                                                                       @Nullable LocalDate createDateTo,
                                                                                       @Nullable String instanceId) {
-        return Specifications.<PiisConsentEntity>where(byPsuIdData(psuIdData))
+        return Specification.<PiisConsentEntity>where(byPsuIdData(psuIdData))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byInstanceId(instanceId));
     }
@@ -96,7 +96,7 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
                                                                                            @Nullable LocalDate createDateFrom,
                                                                                            @Nullable LocalDate createDateTo,
                                                                                            @Nullable String instanceId) {
-        return Specifications.where(byAspspAccountIdInAccount(aspspAccountId))
+        return Specification.where(byAspspAccountIdInAccount(aspspAccountId))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byInstanceId(instanceId));
     }
@@ -109,25 +109,9 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
      * @param accountReference       mandatory PIIS Account Reference
      * @return resulting specification for PiisConsentEntity
      */
-    public Specification<PiisConsentEntity> byPsuIdDataAndTppInfoAndAccountReference(@NotNull PsuIdData psuIdData,
-                                                                                     @NotNull String tppAuthorisationNumber,
-                                                                                     @NotNull AccountReference accountReference) {
-        return Specifications.<PiisConsentEntity>where(byPsuIdData(psuIdData))
-                   .and(byTppAuthorisationNumber(tppAuthorisationNumber))
-                   .and(byAccountReference(accountReference));
-    }
-
-    /**
-     * Returns specification for PiisConsentEntity for filtering consents by PsuIdData, TppInfo and AccountReference.
-     *
-     * @param psuIdData              mandatory PSU ID data
-     * @param tppAuthorisationNumber mandatory TPP authorisation number
-     * @param accountReference       mandatory PIIS Account Reference
-     * @return resulting specification for PiisConsentEntity
-     */
-    public Specification<PiisConsentEntity> byPsuIdDataAndTppInfoAndAccountReferenceWithoutJoin(@NotNull PsuIdData psuIdData,
-                                                                                     @NotNull String tppAuthorisationNumber,
-                                                                                     @NotNull AccountReference accountReference) {
+    public Specification<PiisConsentEntity> byPsuIdDataAndAuthorisationNumberAndAccountReference(@NotNull PsuIdData psuIdData,
+                                                                                                 @NotNull String tppAuthorisationNumber,
+                                                                                                 @NotNull AccountReference accountReference) {
         return Specification.<PiisConsentEntity>where(byPsuIdData(psuIdData))
                    .and(byTppAuthorisationNumberWithoutJoin(tppAuthorisationNumber))
                    .and(byAccountReference(accountReference));
@@ -198,8 +182,8 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
         return (root, query, cb) -> {
             AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
             Join<PiisConsentEntity, AccountReferenceEntity> accountJoin = root.join(ACCOUNT_ATTRIBUTE);
-            Specifications specifications = Specifications
-                                            .where(provideSpecificationForJoinedEntityAttribute(accountJoin, selector.getAccountReferenceType().getValue(), selector.getAccountValue()));
+            Specification specifications = Specification
+                                               .where(provideSpecificationForJoinedEntityAttribute(accountJoin, selector.getAccountReferenceType().getValue(), selector.getAccountValue()));
 
             if (accountReference.getCurrency() != null) {
                 specifications.and(provideSpecificationForJoinedEntityAttribute(accountJoin, CURRENCY_ATTRIBUTE, accountReference.getCurrency()));

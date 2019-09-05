@@ -77,7 +77,7 @@ public class PiisConsentValidation {
         if (piisConsent.getTppAccessType() == PiisConsentTppAccessType.ALL_TPP) {
             return ValidationResult.valid();
         } else if (piisConsent.getTppAccessType() == PiisConsentTppAccessType.SINGLE_TPP) {
-            return piisTppInfoValidator.validateTpp(piisConsent.getTppAuthorisationNumber(), piisConsent.getTppInfo());
+            return piisTppInfoValidator.validateTpp(piisConsent.getTppAuthorisationNumber());
         } else {
             PiisConsentTppAccessType accessType = piisConsent.getTppAccessType();
 

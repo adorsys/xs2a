@@ -86,7 +86,6 @@ public class PiisConsentMapperTest {
     public void mapToPiisConsentEntity_noTppInfoAndAuthorisationNumber_accessTypeAllTpp() {
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
         CreatePiisConsentRequest createPiisConsentRequest = jsonReader.getObjectFromFile("json/service/mapper/create-piis-consent-request.json", CreatePiisConsentRequest.class);
-        createPiisConsentRequest.setTppInfo(null);
         createPiisConsentRequest.setTppAuthorisationNumber(null);
 
         PiisConsentEntity actualPiisConsentEntity = piisConsentMapper.mapToPiisConsentEntity(psuIdData, createPiisConsentRequest);
@@ -99,7 +98,6 @@ public class PiisConsentMapperTest {
         expectedPiisConsentEntity.setExternalId(actualPiisConsentEntity.getExternalId());
         expectedPiisConsentEntity.setRequestDateTime(actualPiisConsentEntity.getRequestDateTime());
         expectedPiisConsentEntity.setCreationTimestamp(actualPiisConsentEntity.getCreationTimestamp());
-        expectedPiisConsentEntity.setTppInfo(null);
         expectedPiisConsentEntity.setTppAuthorisationNumber(null);
         expectedPiisConsentEntity.setTppAccessType(PiisConsentTppAccessType.ALL_TPP);
 

@@ -38,8 +38,8 @@ public class PiisTppInfoValidator {
     private final RequestProviderService requestProviderService;
     private final TppService tppService;
 
-    public ValidationResult validateTpp(String authorisationNumber, TppInfo tppInfo) {
-        if (differsFromTppInRequest(authorisationNumber, tppInfo)) {
+    public ValidationResult validateTpp(String authorisationNumber) {
+        if (differsFromTppInRequest(authorisationNumber)) {
             log.info("InR-ID: [{}], X-Request-ID: [{}]. TPP validation has failed: TPP in consent/payment doesn't match the TPP in request",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
             return ValidationResult.invalid(PIIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400, TPP_ERROR_MESSAGE));
@@ -48,15 +48,12 @@ public class PiisTppInfoValidator {
         return ValidationResult.valid();
     }
 
-    private boolean differsFromTppInRequest(String tppAuthorisationNumber, TppInfo tppInfo) {
-        if (StringUtils.isBlank(tppAuthorisationNumber) && (tppInfo == null || tppInfo.isNotValid())) {
+    private boolean differsFromTppInRequest(String tppAuthorisationNumber) {
+        if (StringUtils.isBlank(tppAuthorisationNumber)) {
             return true;
         }
 
-        String authorisationNumber = StringUtils.isNotBlank(tppAuthorisationNumber) ?
-                                         tppAuthorisationNumber :
-                                         tppInfo.getAuthorisationNumber();
         TppInfo tppInRequest = tppService.getTppInfo();
-        return !tppInRequest.getAuthorisationNumber().equals(authorisationNumber);
+        return !tppInRequest.getAuthorisationNumber().equals(tppAuthorisationNumber);
     }
 }
