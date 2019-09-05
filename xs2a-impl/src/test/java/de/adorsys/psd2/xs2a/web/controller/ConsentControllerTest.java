@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
@@ -113,7 +112,7 @@ public class ConsentControllerTest {
     @Test
     public void createAccountConsent_Success() {
         //Given:
-        doReturn(new ResponseEntity<>(createConsentResponse(CONSENT_ID).getBody(), HttpStatus.CREATED))
+        doReturn(new ResponseEntity<>(createConsentResponse().getBody(), HttpStatus.CREATED))
             .when(responseMapper).created(any(), any(Function.class), eq(RESPONSE_HEADERS));
         when(consentHeadersBuilder.buildCreateConsentHeaders(any(), any())).thenReturn(RESPONSE_HEADERS);
         Consents consents = getConsents();
@@ -137,7 +136,7 @@ public class ConsentControllerTest {
     @Test(expected = IllegalArgumentException.class)
     public void createAccountConsent_WithNullInLinks() {
         //Given:
-        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponseWithoutLinks(CONSENT_ID));
+        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponseWithoutLinks());
         Consents consents = getConsents();
 
         //When:
@@ -196,11 +195,11 @@ public class ConsentControllerTest {
         // Given
         ResponseHeaders responseHeaders = ResponseHeaders.builder().build();
 
-        CreateConsentAuthorizationResponse expectedResponse = getCreateConsentAuthorizationResponse(CONSENT_ID);
+        CreateConsentAuthorizationResponse expectedResponse = getCreateConsentAuthorizationResponse();
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .body(expectedResponse)
                                                                    .build();
-        doReturn(new ResponseEntity<>(getCreateConsentAuthorizationResponse(CONSENT_ID), HttpStatus.CREATED))
+        doReturn(new ResponseEntity<>(getCreateConsentAuthorizationResponse(), HttpStatus.CREATED))
             .when(responseMapper).created(any(), eq(responseHeaders));
         when(authorisationMapper.mapToPasswordFromBody(BODY)).thenReturn(PASSWORD);
         when(authorisationMapper.mapToAisCreateOrUpdateAuthorisationResponse(responseObject)).thenReturn(new StartScaprocessResponse());
@@ -298,11 +297,11 @@ public class ConsentControllerTest {
                                                        .build();
         when(consentService.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(responseObject);
-        doReturn(ResponseEntity.ok(buildScaStatusResponse(de.adorsys.psd2.model.ScaStatus.RECEIVED)))
+        doReturn(ResponseEntity.ok(buildReceivedScaStatusResponse()))
             .when(responseMapper).ok(eq(responseObject), any());
 
         // Given
-        ScaStatusResponse expected = buildScaStatusResponse(de.adorsys.psd2.model.ScaStatus.RECEIVED);
+        ScaStatusResponse expected = buildReceivedScaStatusResponse();
 
         // When
         ResponseEntity actual = consentController.getConsentScaStatus(CONSENT_ID, AUTHORISATION_ID, REQUEST_ID,
@@ -335,13 +334,13 @@ public class ConsentControllerTest {
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
-    private ResponseObject<ConsentsResponse201> createConsentResponse(String consentId) {
+    private ResponseObject<ConsentsResponse201> createConsentResponse() {
         ConsentsResponse201 response = new ConsentsResponse201();
         response.setConsentStatus(de.adorsys.psd2.model.ConsentStatus.RECEIVED);
-        response.setConsentId(consentId);
+        response.setConsentId(CONSENT_ID);
         response.setPsuMessage(PSU_MESSAGE_RESPONSE);
 
-        return isEmpty(consentId)
+        return isEmpty(CONSENT_ID)
                    ? ResponseObject.<ConsentsResponse201>builder().fail(ErrorType.AIS_404, of(MessageErrorCode.RESOURCE_UNKNOWN_404)).build()
                    : ResponseObject.<ConsentsResponse201>builder().body(response).build();
     }
@@ -357,11 +356,11 @@ public class ConsentControllerTest {
         return ResponseObject.<CreateConsentResponse>builder().body(consentResponse).build();
     }
 
-    private ResponseObject<CreateConsentResponse> createXs2aConsentResponseWithoutLinks(String consentId) {
-        if (isEmpty(consentId)) {
+    private ResponseObject<CreateConsentResponse> createXs2aConsentResponseWithoutLinks() {
+        if (isEmpty(CONSENT_ID)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(MESSAGE_ERROR_AIS_404).build();
         }
-        CreateConsentResponse consentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null, false);
+        CreateConsentResponse consentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), ConsentControllerTest.CONSENT_ID, null, null, null, null, false);
         return ResponseObject.<CreateConsentResponse>builder().body(consentResponse).build();
     }
 
@@ -392,14 +391,6 @@ public class ConsentControllerTest {
         return ResponseObject.<ConsentInformationResponse200Json>builder().body(consent).build();
     }
 
-    private CreateConsentReq getCreateConsentReq() {
-        CreateConsentReq req = new CreateConsentReq();
-        Xs2aAccountAccess access = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
-                                                         AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS);
-        req.setAccess(access);
-        return req;
-    }
-
     private Consents getConsents() {
         Consents consents = new Consents();
         AccountAccess access = new AccountAccess();
@@ -407,16 +398,16 @@ public class ConsentControllerTest {
         return consents;
     }
 
-    private CreateConsentAuthorizationResponse getCreateConsentAuthorizationResponse(String consentId) {
+    private CreateConsentAuthorizationResponse getCreateConsentAuthorizationResponse() {
         CreateConsentAuthorizationResponse response = new CreateConsentAuthorizationResponse();
-        response.setConsentId(consentId);
+        response.setConsentId(CONSENT_ID);
         response.setAuthorisationId(AUTHORISATION_ID);
         response.setScaStatus(ScaStatus.RECEIVED);
         return response;
     }
 
-    private ScaStatusResponse buildScaStatusResponse(de.adorsys.psd2.model.ScaStatus scaStatus) {
-        return new ScaStatusResponse().scaStatus(scaStatus);
+    private ScaStatusResponse buildReceivedScaStatusResponse() {
+        return new ScaStatusResponse().scaStatus(de.adorsys.psd2.model.ScaStatus.RECEIVED);
     }
 
     private ResponseObject<ScaStatus> buildScaStatusError() {

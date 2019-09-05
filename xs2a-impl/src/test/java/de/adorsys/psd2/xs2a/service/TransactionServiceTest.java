@@ -84,8 +84,6 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

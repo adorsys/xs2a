@@ -61,7 +61,6 @@ import java.util.UUID;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.FINALISED;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
