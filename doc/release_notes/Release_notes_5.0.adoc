@@ -9,6 +9,7 @@
 * Bugfix: changed link for update PSU data without password
 * Remove deprecated TppInfo from PiisConsent
 * Bugfix: changed link for update PSU data without password for payment cancellation
+* Update enum MessageErrorCode.
 
 == Bugfix: TPP domain validator ignores non-domain `tppName` field
 
@@ -54,3 +55,8 @@ Also, all data has been migrated from `tppInfo` column to `tppAuthorisationNumbe
 From now on, after sending the update PSU data request for payment cancellation (PUT `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}`)
 with `PSU-ID` header but with no body, the response contains `updatePsuAuthentication` link. This works if you start the
 authorisation for payment cancellation in EMBEDDED approach.
+
+== Update enum MessageErrorCode.
+
+From now on, enum `MessageErrorCode` contains new values: `PARAMETER_NOT_CONSISTENT`, `REFERENCE_MIX_INVALID`,
+`REFERENCE_STATUS_INVALID`, `ROLE_INVALID`.
