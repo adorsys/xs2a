@@ -29,6 +29,7 @@ import java.util.Optional;
 public enum MessageErrorCode {
     SERVICE_NOT_SUPPORTED(406), // Requested service or it's part is not supported by ASPSP
     CERTIFICATE_INVALID(401),  // "The contents of the signature/corporate seal certificate are not matching PSD2 general PSD2 or attribute requirements
+    ROLE_INVALID (401), // The TPP does not have the correct PSD2 role to access this service
     CERTIFICATE_EXPIRED(401),  //Signature/corporate seal certificate is expired
     CERTIFICATE_BLOCKED(401),  //Signature/corporate seal certificate has been blocked by the ASPSP
     CERTIFICATE_REVOKED(401),  //Signature/corporate seal certificate has been revoked by QSTP
@@ -58,6 +59,10 @@ public enum MessageErrorCode {
     EXECUTION_DATE_INVALID(400), //The requested execution date is not a valid execution date for the ASPSP.
     CARD_INVALID(400), //Addressed card number is unknown to the ASPSP or not associated to the PSU.
     NO_PIIS_ACTIVATION(400), //The PSU has not activated the addressed account for the usage of the PIIS associated with the TPP.
+
+    // Signing Basket Specific Error Codes
+    REFERENCE_MIX_INVALID(400),
+    REFERENCE_STATUS_INVALID (409),
 
     // AIS specific error code
     //todo task: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/38
@@ -133,6 +138,7 @@ public enum MessageErrorCode {
             return "RESOURCE_EXPIRED";
         }
     }, // 400 if payload
+    PARAMETER_NOT_CONSISTENT(400),
     PARAMETER_NOT_SUPPORTED(400),
     BEARER_TOKEN_EMPTY(400),
     INTERNAL_SERVER_ERROR(500),
