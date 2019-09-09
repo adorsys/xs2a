@@ -72,7 +72,7 @@ public class AspspProfileServiceTest {
     private static final boolean FORCE_XS2A_BASE_URL = false;
     private static final String XS2A_BASE_URL = "http://myhost.com/";
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
-    private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("JSON", "XML");
+    private static final String SUPPORTED_TRANSACTION_APPLICATION_TYPES = "JSON";
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
 
 
