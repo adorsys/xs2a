@@ -12,6 +12,7 @@
 * Update enum MessageErrorCode.
 * Add indexes to the CMS database
 * Bugfix: Providing incorrect request body on PIIS consent creation in CMS-ASPSP-API results in Internal Server Error
+* SupportedTransactionApplicationTypes in profile should be String
 
 == Bugfix: TPP domain validator ignores non-domain `tppName` field
 
@@ -76,3 +77,9 @@ Several indexes were added to the CMS database to increase performance:
 
 From now on, when you try to create PIIS consent `POST /aspsp-api/v1/piis/consents` with incorrect
 request body, you'll get status `400 Bad request` and message `Http message is not readable`.
+
+== SupportedTransactionApplicationTypes in profile should be String
+
+From now on, the field `supportedTransactionApplicationTypes` is a String. Also, the endpoint
+`GET /v1/accounts/{account-id}/balances` now responds with `401 Unauthorized - CONSENT_INVALID`, if providing an empty
+`account-id`.
