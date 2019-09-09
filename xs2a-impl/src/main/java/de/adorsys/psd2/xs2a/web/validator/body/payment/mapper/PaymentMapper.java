@@ -78,6 +78,7 @@ public class PaymentMapper {
         payment.setInstructedAmount(mapToXs2aAmount(paymentRequest.getInstructedAmount()));
         payment.setCreditorAccount(mapToXs2aAccountReference(paymentRequest.getCreditorAccount()));
         payment.setCreditorAgent(paymentRequest.getCreditorAgent());
+        payment.setCreditorId(paymentRequest.getCreditorId());
         payment.setCreditorName(paymentRequest.getCreditorName());
         payment.setCreditorAddress(mapToXs2aAddress(paymentRequest.getCreditorAddress()));
         payment.setRemittanceInformationUnstructured(paymentRequest.getRemittanceInformationUnstructured());
@@ -97,6 +98,7 @@ public class PaymentMapper {
         payment.setInstructedAmount(mapToXs2aAmount(paymentRequest.getInstructedAmount()));
         payment.setCreditorAccount(mapToXs2aAccountReference(paymentRequest.getCreditorAccount()));
         payment.setCreditorAgent(paymentRequest.getCreditorAgent());
+        payment.setCreditorId(paymentRequest.getCreditorId());
         payment.setCreditorName(paymentRequest.getCreditorName());
         payment.setCreditorAddress(mapToXs2aAddress(paymentRequest.getCreditorAddress()));
         payment.setRemittanceInformationUnstructured(paymentRequest.getRemittanceInformationUnstructured());

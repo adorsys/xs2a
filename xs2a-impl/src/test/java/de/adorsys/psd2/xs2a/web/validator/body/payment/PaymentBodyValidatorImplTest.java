@@ -69,7 +69,6 @@ public class PaymentBodyValidatorImplTest {
     private static final String CORRECT_FORMAT_TIME = "2019-01-01T12:00:00+01:00";
     private static final String WRONG_FORMAT_DATE = "07/01/2019";
     private static final String WRONG_FORMAT_TIME = "07/01/2019 00:00:00";
-    private static final String FREQUENCY_FIELD_NAME = "Monthly";
 
     private static final MessageError DESERIALISATION_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Cannot deserialize the request body"));

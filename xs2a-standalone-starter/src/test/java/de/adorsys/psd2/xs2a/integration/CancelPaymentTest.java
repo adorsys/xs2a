@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
+import de.adorsys.psd2.starter.config.validation.PaymentValidationConfigImpl;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -81,7 +82,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     ObjectMapperConfig.class,
     WebConfig.class,
     Xs2aEndpointPathConstant.class,
-    Xs2aInterfaceConfig.class
+    Xs2aInterfaceConfig.class,
+    PaymentValidationConfigImpl.class
 })
 public class CancelPaymentTest {
     private static final Charset UTF_8 = Charset.forName("utf-8");
