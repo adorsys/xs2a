@@ -1,0 +1,53 @@
+{
+  "endToEndIdentification": {
+    "maxLength": 35
+  },
+  "ultimateDebtor": {
+    "maxLength": 70
+  },
+  "ultimateCreditor": {
+    "maxLength": 70
+  },
+  "streetName": {
+    "maxLength": 100
+  },
+  "buildingNumber": {
+    "maxLength": 20
+  },
+  "townName": {
+    "maxLength": 100
+  },
+  "postCode": {
+    "maxLength": 5
+  },
+  "pan": {
+    "maxLength": 35
+  },
+  "maskedPan": {
+    "maxLength": 35
+  },
+  "msisdn": {
+    "maxLength": 35
+  },
+  "executionRule": {
+    "use": "REQUIRED",
+    "maxLength": 140
+  },
+  "reference": {
+    "use": "REQUIRED",
+    "maxLength": 35
+  },
+  "referenceType": {
+    "maxLength": 35
+  },
+  "referenceIssuer": {
+    "maxLength": 35
+  },
+  "creditorName": {
+    "use": "REQUIRED",
+    "maxLength": 70
+  },
+  "creditorId": {
+    "use": "SKIP"
+  }
+}

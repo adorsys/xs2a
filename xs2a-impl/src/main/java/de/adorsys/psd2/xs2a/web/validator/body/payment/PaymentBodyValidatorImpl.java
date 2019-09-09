@@ -54,7 +54,6 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     static final String PURPOSE_CODE_ERROR_FORMAT = "Field 'purposeCode' has wrong value";
     static final String NO_FREQUENCY_ERROR_FORMAT = "Field 'frequency' should not be null";
     static final String WRONG_FREQUENCY_FORMAT = "Wrong format for field 'frequency'";
-    static final String EMPTY_STRING = "";
 
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
     private DateFieldValidator dateFieldValidator;
@@ -106,22 +105,22 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
 
     @Override
     public void validateRawData(HttpServletRequest request, MessageError messageError) {
-        Optional<String> frequencyOptional = fieldExtractor.extractField(request, FREQUENCY_FIELD_NAME, messageError);
-        boolean paymentIsPeriodic = getPathParameters(request).get(PAYMENT_SERVICE_PATH_VAR).equals(PERIODIC_PAYMENT_PATH_VAR);
-        if (paymentIsPeriodic && !frequencyOptional.isPresent()) {
-            errorBuildingService.enrichMessageError(messageError, NO_FREQUENCY_ERROR_FORMAT);
-        } else if (paymentIsPeriodic) {
-            validateFrequency(frequencyOptional.get(), messageError);
-        }
         dateFieldValidator.validateDayOfExecution(request, messageError);
         dateFieldValidator.validateDateFormat(request, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
-        List<String> purposeCodes = extractPurposeCodes(request, messageError);
-        validatePurposeCodes(purposeCodes, messageError);
+
+        validateFrequencyForPeriodicPayment(request, messageError);
+        validatePurposeCodes(request, messageError);
     }
 
-    private void validateFrequency(String frequency, MessageError messageError) {
-        if (FrequencyCode.fromValue(frequency) == null) {
-            errorBuildingService.enrichMessageError(messageError, WRONG_FREQUENCY_FORMAT);
+    private void validateFrequencyForPeriodicPayment(HttpServletRequest request, MessageError messageError) {
+        Optional<String> frequencyOptional = fieldExtractor.extractField(request, FREQUENCY_FIELD_NAME, messageError);
+        boolean isPeriodicPayment = getPathParameters(request).get(PAYMENT_SERVICE_PATH_VAR).equals(PERIODIC_PAYMENT_PATH_VAR);
+        if (isPeriodicPayment) {
+            if (!frequencyOptional.isPresent()) {
+                errorBuildingService.enrichMessageError(messageError, NO_FREQUENCY_ERROR_FORMAT);
+            } else if (FrequencyCode.fromValue(frequencyOptional.get()) == null) {
+                errorBuildingService.enrichMessageError(messageError, WRONG_FREQUENCY_FORMAT);
+            }
         }
     }
 
@@ -140,12 +139,13 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         return standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct);
     }
 
-    private void validatePurposeCodes(List<String> purposeCodes, MessageError messageError) {
-        boolean isPurposeCodesNotValid = purposeCodes.stream()
+    private void validatePurposeCodes(HttpServletRequest request, MessageError messageError) {
+        List<String> purposeCodes = extractPurposeCodes(request, messageError);
+        boolean isPurposeCodeInvalid = purposeCodes.stream()
                                              .map(PurposeCode::fromValue)
                                              .anyMatch(Objects::isNull);
 
-        if (isPurposeCodesNotValid) {
+        if (isPurposeCodeInvalid) {
             enrichFormatMessageError(PURPOSE_CODE_ERROR_FORMAT, messageError);
         }
     }
