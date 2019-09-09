@@ -37,6 +37,7 @@ public class SpiSinglePayment implements SpiPayment {
     private SpiAmount instructedAmount;
     private SpiAccountReference creditorAccount;
     private String creditorAgent;
+    private String creditorId;
     private String creditorName;
     private SpiAddress creditorAddress;
     private String remittanceInformationUnstructured;
