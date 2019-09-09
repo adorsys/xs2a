@@ -18,126 +18,116 @@ package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService;
+import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmsAspspAisExportControllerTest {
-    private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
-    private static final String WRONG_TPP_AUTHORISATION_NUMBER = "wrong authorisation number";
-    private static final LocalDate CREATION_DATE_FROM = LocalDate.of(2019, 1, 1);
-    private static final LocalDate CREATION_DATE_TO = LocalDate.of(2020, 12, 1);
-    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
-    private static final String PSU_ID = "psu id";
-    private static final String WRONG_PSU_ID = "wrong psu id";
-    private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
-    private static final OffsetDateTime CREATION_DATE_TIME = OffsetDateTime.now();
-    private static final OffsetDateTime STATUS_CHANGE_DATE_TIME = OffsetDateTime.now();
+    private final String PSU_ID = "marion.mueller";
+    private final String TPP_ID = "PSDDE-FAKENCA-87B2AC";
+    private final String ACCOUNT_ID = "account_id";
+    private final String EXPORT_AIS_CONSENT_BY_TPP = "/aspsp-api/v1/ais/consents/tpp/PSDDE-FAKENCA-87B2AC";
+    private final String EXPORT_AIS_CONSENT_BY_PSU = "/aspsp-api/v1/ais/consents/psu/";
+    private final String EXPORT_AIS_CONSENT_BY_ACCOUNT = "/aspsp-api/v1/ais/consents/account/account_id";
+    private final LocalDate START_DATE = LocalDate.of(2019, 2, 25);
+    private final LocalDate END_DATE = LocalDate.of(2020, 7, 22);
+    private final String INSTANCE_ID = "UNDEFINED";
+    private final String LIST_OF_AIS_ACCOUNT_CONSENT_PATH = "json/ais/list-ais-account-consent.json";
 
-    @Mock
-    private CmsAspspAisExportService cmsAspspAisExportService;
+    private MockMvc mockMvc;
+    private JsonReader jsonReader = new JsonReader();
+    private HttpHeaders httpHeaders = new HttpHeaders();
+    private PsuIdData psuIdData;
+    private AisAccountConsent aisAccountConsent;
+    private Collection<AisAccountConsent> consents;
+
     @InjectMocks
     private CmsAspspAisExportController cmsAspspAisExportController;
 
+    @Mock
+    private CmsAspspAisExportService cmsAspspAisExportService;
+
     @Before
     public void setUp() {
-        PsuIdData psuIdData = buildPsuIdData(PSU_ID);
-        when(cmsAspspAisExportService.exportConsentsByTpp(eq(TPP_AUTHORISATION_NUMBER), eq(CREATION_DATE_FROM),
-                                                          eq(CREATION_DATE_TO), eq(psuIdData), eq(DEFAULT_SERVICE_INSTANCE_ID)))
-            .thenReturn(Collections.singletonList(buildAisAccountConsent()));
-        when(cmsAspspAisExportService.exportConsentsByTpp(eq(WRONG_TPP_AUTHORISATION_NUMBER), any(), any(), any(), any()))
-            .thenReturn(Collections.emptyList());
+        ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
 
-        when(cmsAspspAisExportService.exportConsentsByPsu(eq(psuIdData), eq(CREATION_DATE_FROM), eq(CREATION_DATE_TO), eq(DEFAULT_SERVICE_INSTANCE_ID)))
-            .thenReturn(Collections.singletonList(buildAisAccountConsent()));
-        PsuIdData wrongPsuIdData = buildPsuIdData(WRONG_PSU_ID);
-        when(cmsAspspAisExportService.exportConsentsByPsu(eq(wrongPsuIdData), any(), any(), any()))
-            .thenReturn(Collections.emptyList());
+        psuIdData = jsonReader.getObjectFromFile("json/psu-id-data.json", PsuIdData.class);
+        aisAccountConsent = jsonReader.getObjectFromFile("json/ais/ais-account-consent.json", AisAccountConsent.class);
+        consents = Collections.singletonList(aisAccountConsent);
+
+        httpHeaders.add("psu-id", PSU_ID);
+        httpHeaders.add("Content-Type", "application/json");
+        httpHeaders.add("Start-Date", START_DATE.toString());
+        httpHeaders.add("End-Date", END_DATE.toString());
+        httpHeaders.add("instance-id", INSTANCE_ID);
+
+        mockMvc = MockMvcBuilders
+                      .standaloneSetup(cmsAspspAisExportController)
+                      .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapperTestConfig.getObjectMapper()))
+                      .build();
     }
 
     @Test
-    public void getConsentsByTpp_success() {
-        // Given
-        Collection<AisAccountConsent> expected = Collections.singletonList(buildAisAccountConsent());
+    public void getConsentsByTpp_Success() throws Exception {
+        when(cmsAspspAisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID))
+            .thenReturn(consents);
 
-        // When
-        ResponseEntity<Collection<AisAccountConsent>> actual =
-            cmsAspspAisExportController.getConsentsByTpp(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
-                                                         CREATION_DATE_TO, PSU_ID, null,
-                                                         null, null, DEFAULT_SERVICE_INSTANCE_ID);
+        mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_TPP)
+            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .headers(httpHeaders))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
 
-        // Then
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
-        assertEquals(expected, actual.getBody());
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID);
     }
 
     @Test
-    public void getConsentsByTpp_failure_wrongTppAuthorisationNumber() {
-        // When
-        ResponseEntity<Collection<AisAccountConsent>> actual =
-            cmsAspspAisExportController.getConsentsByTpp(WRONG_TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
-                                                         CREATION_DATE_TO, PSU_ID, null,
-                                                         null, null, DEFAULT_SERVICE_INSTANCE_ID);
+    public void getConsentsByPsu_Success() throws Exception {
+        when(cmsAspspAisExportService.exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID))
+            .thenReturn(consents);
 
-        // Then
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
-        assertEquals(Collections.emptyList(), actual.getBody());
+        mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_PSU)
+                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .headers(httpHeaders))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
+
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID);
     }
 
     @Test
-    public void getConsentsByPsu_success() {
-        // Given
-        Collection<AisAccountConsent> expected = Collections.singletonList(buildAisAccountConsent());
+    public void getConsentsByAccount_Success() throws Exception {
+        when(cmsAspspAisExportService.exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID))
+            .thenReturn(consents);
 
-        // When
-        ResponseEntity<Collection<AisAccountConsent>> actual =
-            cmsAspspAisExportController.getConsentsByPsu(CREATION_DATE_FROM, CREATION_DATE_TO, PSU_ID, null,
-                                                         null, null, DEFAULT_SERVICE_INSTANCE_ID);
+        mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_ACCOUNT)
+                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .headers(httpHeaders))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
 
-        // Then
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
-        assertEquals(expected, actual.getBody());
-    }
-
-    @Test
-    public void getConsentsByPsu_failure_wrongPsuIdData() {
-        // When
-        ResponseEntity<Collection<AisAccountConsent>> actual =
-            cmsAspspAisExportController.getConsentsByPsu(CREATION_DATE_FROM, CREATION_DATE_TO, WRONG_PSU_ID, null,
-                                                         null, null, DEFAULT_SERVICE_INSTANCE_ID);
-
-        // Then
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
-        assertEquals(Collections.emptyList(), actual.getBody());
-    }
-
-    private PsuIdData buildPsuIdData(String id) {
-        return new PsuIdData(id, null, null, null);
-    }
-
-    private AisAccountConsent buildAisAccountConsent() {
-        return new AisAccountConsent(EXTERNAL_CONSENT_ID,
-                                     null, false,
-                                     null, 0,
-                                     null, null,
-                                     false, false, null, null, null, null, false, Collections.emptyList(), new HashMap<>(), CREATION_DATE_TIME, STATUS_CHANGE_DATE_TIME);
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID);
     }
 }

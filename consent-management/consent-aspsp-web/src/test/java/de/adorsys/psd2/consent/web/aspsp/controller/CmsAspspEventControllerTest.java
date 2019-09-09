@@ -16,18 +16,24 @@
 
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
+import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.event.service.AspspEventService;
+import de.adorsys.psd2.event.service.model.AspspEvent;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -41,33 +47,46 @@ public class CmsAspspEventControllerTest {
     private static final String START = "2019-07-11T11:51:00Z";
     private static final String END = "2019-07-11T20:00:00Z";
     private static final String INSTANCE_ID = "UNDEFINED";
+    private static final String EVENT_LIST_PATH = "json/list-aspsp-event.json";
+    private static final String GET_ASPSP_EVENT_LIST_URL = "/aspsp-api/v1/events/";
 
     @Mock
     private AspspEventService aspspEventService;
 
+    private JsonReader jsonReader = new JsonReader();
+    private HttpHeaders httpHeaders = new HttpHeaders();
     private MockMvc mockMvc;
+    private AspspEvent event;
+    private List<AspspEvent> events;
 
     @Before
     public void setUp() {
+        ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
+
+        event = jsonReader.getObjectFromFile("json/aspsp-event.json", AspspEvent.class);
+        events = Collections.singletonList(event);
+
+        httpHeaders.add("start-date", START);
+        httpHeaders.add("end-date", END);
+
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                       .standaloneSetup(new CmsAspspEventController(aspspEventService))
+                      .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapperTestConfig.getObjectMapper()))
                       .build();
     }
 
     @Test
     public void getEventsForDates_success() throws Exception {
         when(aspspEventService.getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID))
-            .thenReturn(Collections.emptyList());
+            .thenReturn(events);
 
-        mockMvc.perform(get("/aspsp-api/v1/events/")
-                            .header("start-date", START)
-                            .header("end-date", END)
-                            .header("instance-id", INSTANCE_ID)
-                            )
-            .andDo(print())
+        mockMvc.perform(get(GET_ASPSP_EVENT_LIST_URL)
+                            .headers(httpHeaders)
+                            .header("instance-id", INSTANCE_ID))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().json(jsonReader.getStringFromFile(EVENT_LIST_PATH)))
             .andReturn();
 
         verify(aspspEventService, times(1)).getEventsForPeriod(eq(OffsetDateTime.parse(START)), eq(OffsetDateTime.parse(END)), eq(INSTANCE_ID));
@@ -76,15 +95,13 @@ public class CmsAspspEventControllerTest {
     @Test
     public void getEventsForDates_withoutInstanceId() throws Exception {
         when(aspspEventService.getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID))
-            .thenReturn(Collections.emptyList());
+            .thenReturn(events);
 
-        mockMvc.perform(get("/aspsp-api/v1/events/")
-                            .header("start-date", START)
-                            .header("end-date", END)
-        )
-            .andDo(print())
+        mockMvc.perform(get(GET_ASPSP_EVENT_LIST_URL)
+                            .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().json(jsonReader.getStringFromFile(EVENT_LIST_PATH)))
             .andReturn();
 
         verify(aspspEventService, times(1)).getEventsForPeriod(eq(OffsetDateTime.parse(START)), eq(OffsetDateTime.parse(END)), eq(INSTANCE_ID));

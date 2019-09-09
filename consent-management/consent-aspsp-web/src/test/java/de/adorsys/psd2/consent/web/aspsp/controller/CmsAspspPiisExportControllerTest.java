@@ -17,160 +17,117 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisFundsExportService;
+import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmsAspspPiisExportControllerTest {
-    private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
-    private static final String WRONG_TPP_AUTHORISATION_NUMBER = "wrong authorisation number";
-    private static final LocalDate CREATION_DATE_FROM = LocalDate.of(2019, 1, 1);
-    private static final LocalDate CREATION_DATE_TO = LocalDate.of(2020, 12, 1);
-    private static final String PSU_ID = "psu id";
-    private static final String WRONG_PSU_ID = "wrong psu id";
-    private static final String ASPSP_ACCOUNT_ID = "account id";
-    private static final String WRONG_ASPSP_ACCOUNT_ID = "wrong account id";
-    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
-    private static final OffsetDateTime CREATION_TIMESTAMP =
-        OffsetDateTime.of(2019, 2, 4, 12, 0, 0, 0, ZoneOffset.UTC);
+    private final String PSU_ID = "marion.mueller";
+    private final String TPP_ID = "PSDDE-FAKENCA-87B2AC";
+    private final String ACCOUNT_ID = "account_id";
+    private final String EXPORT_PIIS_CONSENT_BY_TPP = "/aspsp-api/v1/piis/consents/tpp/PSDDE-FAKENCA-87B2AC";
+    private final String EXPORT_PIIS_CONSENT_BY_PSU = "/aspsp-api/v1/piis/consents/psu";
+    private final String EXPORT_PIIS_CONSENT_BY_ACCOUNT = "/aspsp-api/v1/piis/consents/account/account_id";
+    private final LocalDate START_DATE = LocalDate.of(2019, 2, 25);
+    private final LocalDate END_DATE = LocalDate.of(2020, 7, 22);
+    private final String INSTANCE_ID = "UNDEFINED";
+    private final String LIST_OF_PIIS_CONSENTS_PATH = "json/piis/list-piis-consent.json";
 
-    @Mock
-    private CmsAspspPiisFundsExportService cmsAspspPiisFundsExportService;
+    private MockMvc mockMvc;
+    private JsonReader jsonReader = new JsonReader();
+    private HttpHeaders httpHeaders = new HttpHeaders();
+    private PsuIdData psuIdData;
+    private PiisConsent piisConsent;
+    private Collection<PiisConsent> piisConsents;
+
     @InjectMocks
     private CmsAspspPiisExportController cmsAspspPiisExportController;
 
+    @Mock
+    private CmsAspspPiisFundsExportService cmsAspspPiisExportService;
+
     @Before
     public void setUp() {
-        PsuIdData psuIdData = buildPsuIdData(PSU_ID);
-        when(cmsAspspPiisFundsExportService.exportConsentsByTpp(eq(TPP_AUTHORISATION_NUMBER), eq(CREATION_DATE_FROM),
-                                                                eq(CREATION_DATE_TO), eq(psuIdData), eq(DEFAULT_SERVICE_INSTANCE_ID)))
-            .thenReturn(Collections.singletonList(buildPiisConsent()));
-        when(cmsAspspPiisFundsExportService.exportConsentsByTpp(eq(WRONG_TPP_AUTHORISATION_NUMBER), any(), any(), any(), any()))
-            .thenReturn(Collections.emptyList());
+        ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
 
-        when(cmsAspspPiisFundsExportService.exportConsentsByPsu(eq(psuIdData), eq(CREATION_DATE_FROM), eq(CREATION_DATE_TO), eq(DEFAULT_SERVICE_INSTANCE_ID)))
-            .thenReturn(Collections.singletonList(buildPiisConsent()));
-        PsuIdData wrongPsuIdData = buildPsuIdData(WRONG_PSU_ID);
-        when(cmsAspspPiisFundsExportService.exportConsentsByPsu(eq(wrongPsuIdData), any(), any(), any()))
-            .thenReturn(Collections.emptyList());
+        psuIdData = jsonReader.getObjectFromFile("json/psu-id-data.json", PsuIdData.class);
+        piisConsent = jsonReader.getObjectFromFile("json/piis/piis-consent.json", PiisConsent.class);
+        piisConsents = Collections.singletonList(piisConsent);
 
-        when(cmsAspspPiisFundsExportService.exportConsentsByAccountId(eq(ASPSP_ACCOUNT_ID), eq(CREATION_DATE_FROM), eq(CREATION_DATE_TO), eq(DEFAULT_SERVICE_INSTANCE_ID)))
-            .thenReturn(Collections.singletonList(buildPiisConsent()));
-        when(cmsAspspPiisFundsExportService.exportConsentsByAccountId(eq(WRONG_ASPSP_ACCOUNT_ID), any(), any(), any()))
-            .thenReturn(Collections.emptyList());
+        httpHeaders.add("psu-id", PSU_ID);
+        httpHeaders.add("Content-Type", "application/json");
+        httpHeaders.add("Start-Date", START_DATE.toString());
+        httpHeaders.add("End-Date", END_DATE.toString());
+        httpHeaders.add("instance-id", INSTANCE_ID);
 
+        mockMvc = MockMvcBuilders
+                      .standaloneSetup(cmsAspspPiisExportController)
+                      .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapperTestConfig.getObjectMapper()))
+                      .build();
     }
 
     @Test
-    public void getConsentsByTpp_success() {
-        // Given
-        Collection<PiisConsent> expected = Collections.singletonList(buildPiisConsent());
+    public void getConsentsByTpp_Success() throws Exception {
+        when(cmsAspspPiisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID))
+            .thenReturn(piisConsents);
 
-        // When
-        ResponseEntity<Collection<PiisConsent>> actual =
-            cmsAspspPiisExportController.getConsentsByTpp(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
-                                                          CREATION_DATE_TO, PSU_ID, null,
-                                                          null, null, DEFAULT_SERVICE_INSTANCE_ID);
+        mockMvc.perform(get(EXPORT_PIIS_CONSENT_BY_TPP)
+                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .headers(httpHeaders))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        // Then
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
-        assertEquals(expected, actual.getBody());
+        verify(cmsAspspPiisExportService, times(1)).exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID);
     }
 
     @Test
-    public void getConsentsByTpp_failure_wrongTppAuthorisationNumber() {
-        // When
-        ResponseEntity<Collection<PiisConsent>> actual =
-            cmsAspspPiisExportController.getConsentsByTpp(WRONG_TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
-                                                          CREATION_DATE_TO, PSU_ID, null,
-                                                          null, null, DEFAULT_SERVICE_INSTANCE_ID);
+    public void getConsentsByPsu_Success() throws Exception {
+        when(cmsAspspPiisExportService.exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID))
+            .thenReturn(piisConsents);
 
-        // Then
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
-        assertEquals(Collections.emptyList(), actual.getBody());
+        mockMvc.perform(get(EXPORT_PIIS_CONSENT_BY_PSU)
+                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .headers(httpHeaders))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
+
+        verify(cmsAspspPiisExportService, times(1)).exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID);
     }
 
     @Test
-    public void getConsentsByPsu_success() {
-        // Given
-        Collection<PiisConsent> expected = Collections.singletonList(buildPiisConsent());
+    public void getConsentsByAccount_Success() throws Exception {
+        when(cmsAspspPiisExportService.exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID))
+            .thenReturn(piisConsents);
 
-        // When
-        ResponseEntity<Collection<PiisConsent>> actual =
-            cmsAspspPiisExportController.getConsentsByPsu(CREATION_DATE_FROM, CREATION_DATE_TO, PSU_ID, null,
-                                                          null, null, DEFAULT_SERVICE_INSTANCE_ID);
+        mockMvc.perform(get(EXPORT_PIIS_CONSENT_BY_ACCOUNT)
+                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .headers(httpHeaders))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        // Then
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
-        assertEquals(expected, actual.getBody());
-    }
-
-    @Test
-    public void getConsentsByPsu_failure_wrongPsuIdData() {
-        // When
-        ResponseEntity<Collection<PiisConsent>> actual =
-            cmsAspspPiisExportController.getConsentsByPsu(CREATION_DATE_FROM, CREATION_DATE_TO, WRONG_PSU_ID, null,
-                                                          null, null, DEFAULT_SERVICE_INSTANCE_ID);
-
-        // Then
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
-        assertEquals(Collections.emptyList(), actual.getBody());
-    }
-
-    @Test
-    public void getConsentsByAccountId_success() {
-        // Given
-        Collection<PiisConsent> expected = Collections.singletonList(buildPiisConsent());
-
-        // When
-        ResponseEntity<Collection<PiisConsent>> actual =
-            cmsAspspPiisExportController.getConsentsByAccountId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM, CREATION_DATE_TO,
-                                                                DEFAULT_SERVICE_INSTANCE_ID);
-
-        // Then
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
-        assertEquals(expected, actual.getBody());
-    }
-
-    @Test
-    public void getConsentsByAccountId_failure_wrongAccountId() {
-        // When
-        ResponseEntity<Collection<PiisConsent>> actual =
-            cmsAspspPiisExportController.getConsentsByAccountId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM, CREATION_DATE_TO,
-                                                                DEFAULT_SERVICE_INSTANCE_ID);
-
-        // Then
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
-        assertEquals(Collections.emptyList(), actual.getBody());
-    }
-
-    private PiisConsent buildPiisConsent() {
-        PiisConsent piisConsent = new PiisConsent();
-        piisConsent.setPsuData(buildPsuIdData(PSU_ID));
-        piisConsent.setCreationTimestamp(CREATION_TIMESTAMP);
-        return piisConsent;
-    }
-
-    private PsuIdData buildPsuIdData(String id) {
-        return new PsuIdData(id, null, null, null);
+        verify(cmsAspspPiisExportService, times(1)).exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID);
     }
 }
