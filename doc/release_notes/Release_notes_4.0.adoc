@@ -9,6 +9,7 @@
 * Bugfix: changed link for update PSU data without password
 * Remove deprecated TppInfo from PiisConsent
 * Bugfix: changed link for update PSU data without password for payment cancellation
+* Add indexes to the CMS database
 
 == Bugfix: TPP domain validator ignores non-domain `tppName` field
 
@@ -50,3 +51,12 @@ Also, all data has been migrated from `tppInfo` column to `tppAuthorisationNumbe
 From now on, after sending the update PSU data request for payment cancellation (PUT `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}`)
 with `PSU-ID` header but with no body, the response contains `updatePsuAuthentication` link. This works if you start the
 authorisation for payment cancellation in EMBEDDED approach.
+
+== Add indexes to the CMS database
+
+Several indexes were added to the CMS database to increase performance:
+
+- index on `external_id` in `ais_consent` table
+- index on `payment_id` in `pis_common_payment` table
+- index on `payment_id` in `pis_payment_data` table
+- index on `tpp_info_id` in `tpp_info_role` table
