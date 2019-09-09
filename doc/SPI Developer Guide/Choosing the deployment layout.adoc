@@ -7,6 +7,27 @@
 
 === Microservices Deployment
 
+To deploy the XS2A service, one should use the following modules:
+
+- ASPSP profile (static configuration for your ASPSP)
+- Consent Management System (basic entities CRUD services and underlying database to store them)
+- XS2A library itself (xs2a-impl, implementation of NextGenPSD2 Interface of Berlin Group)
+
+Each of the specified components is a separate jar file (or several files) that can be deployed on web-server or in a docker container. Each
+component can be started as a Spring Boot application and is written in Java 1.8 with Maven build system.
+
+All of these can be deployed separately (using the network for communication) or as monolith in one server.
+This setup depends on the current bank network configuration, data security and available hardware. More details can be
+found at
+xref:GETTING_STARTED.adoc[Getting started]
+page.
+
+These 3 services are basic configuration and to integrate them into whole ASPSP system one should use SPI implementation
+(connector between XS2A and core-banking) and core-banking module. SPI implementation and core-banking should be
+implemented by the bank itself.
+
+
+
 === Embedded Deployment
 
 === Embedding XS2A Library
