@@ -1,0 +1,160 @@
+= ASPSP Profile
+
+This component provides a static configuration of ASPSP, that allows XS2A to perform only with features and options,
+supported by other ASPSP systems.
+
+The component consists of 4 modules:
+
+* xref:aspsp-profile-api/README.md[aspsp-profile-api] - an API of profile, that is used by other components of the system;
+* xref:aspsp-profile-lib/README.md[aspsp-profile-lib] - a service implementation that is used on the server side and may be used as well in embedded approach;
+* xref:aspsp-profile-remote/README.md[aspsp-profile-remote] - a service implementation that uses remotely deployed service (by aspsp-profile-server) via HTTP;
+* xref:aspsp-profile-server/README.md[aspsp-profile-server] - a spring-boot application that serves ASPSP Profile via HTTP endpoints.
+
+== Usage
+
+This component can be used in two variants:
+*standalone* (with a spring boot server running) and *embedded*.
+Generally standalone approach is recommended.
+
+To access the ASPSP Profile service from your code, one shall use aspsp-profile-api dependency, connecting corresponding implementation dependency to a starter module.
+
+Please note that other components, also on ASPSP side, may also need to access ASPSP Profile, so to use it embedded please plan your endpoints and connections accordingly.
+
+Please refer for documentation of components for details of running and usage.
+
+== Configuration
+
+Configuration can be supplied using the yaml-file in the file system.
+If no file is supplied, default configuration will be used.
+To supply file please provide a property to spring framework (i.e. via application.properties of your app or environment variable):
+`bank_profile.path=/path/to/yaml-file`.
+
+=== Supported configuration options
+
+|===
+|Option |Description |Default value |Possible values
+
+|*AIS:* | | |
+| *consent types:* | | |
+|bankOfferedConsentSupported |This field defines whether the ASPSP supports Bank offered consent:
+
+If parameter = FALSE then XS2A sends the response with HTTP code 405 SERVICE_INVALID|FALSE |TRUE, FALSE
+|globalConsentSupported  |This field defines if the ASPSP supports Global Consent.
+
+It implies a consent on all available accounts of the PSU on all PSD2 related account information services (meaning access to all account endpoints including balances and transactions).
+
+If parameter = FALSE then XS2A sends the response with HTTP code 405 SERVICE_INVALID |FALSE |TRUE, FALSE
+|availableAccountsConsentSupported |This field indicates if ASPSP supports consents for providing a list of available accounts of a PSU which are open for access through the XS2A interface.
+
+If parameter = FALSE then XS2A sends the response with HTTP code 405 SERVICE_INVALID |TRUE |TRUE, FALSE
+|accountAccessFrequencyPerDay |This attribute defines the maximum allowed by bank accesses for consent's usage per unique resource for each endpoint.
+
+Attribute frequencyPerDay is mandatory for Account Information Consent request. In case of attribute value in request is more than allowed by bank, then value will be adjusted according to accountAccessFrequencyPerDay in the ASPSP Profile. |4 |1, 2, 3 ...
+|notConfirmedConsentExpirationTimeMs |This field contains the limit of an expiration time of not confirmed consent set in milliseconds.
+
+Not confirmed during this period of time AIS consents will be considered obsolete. The default value is set to 24 hours. |86 400 000 |milliseconds (1, 2,...)
+|maxConsentValidityDays |This field defines consent lifetime - maximum validity days of consent. When this value equals to 0 or empty, then the maximum lifetime of Consent is infinity. |0 |days (0, 1, ...)
+|*redirect link to online-banking:* | | |
+|aisRedirectUrlToAspsp |Link to online-banking to authorise consent with Redirect approach. Attribute is available to be configured with custom url pattern and redirectId parameter. |http://localhost:4200/ais/ |String
+|*transaction parameters:* | | |
+|availableBookingStatuses |This field contains booking statuses supported by ASPSP.
+
+Parameter is mandatory in the request "Read Transaction List". |BOOKED, PENDING |BOOKED, PENDING, BOTH
+|transactionsWithoutBalancesSupported |This field defines if the ASPSP supports transaction lists without balances.
+
+If not  (transactionsWithoutBalancesSupported = false) then ASPSP might add balance information into list. |FALSE |TRUE, FALSE
+|supportedTransactionApplicationTypes |This field contains transaction application types supported by ASPSP  |JSON |JSON, XML, TEXT
+|*delta report settings:* | | |
+|entryReferenceFromSupported |This field indicates if an ASPSP supports Delta reports for transaction details with query parameter entryReferenceFrom.
+
+If parameter = FALSE then XS2A sends the response with HTTP code 400 PARAMETER_NOT_SUPPORTED |FALSE |TRUE, FALSE
+|deltaListSupported |This field indicates if an ASPSP supports Delta reports for transaction details with query parameter deltaList.
+
+If parameter = FALSE then XS2A sends the response with HTTP code 400 PARAMETER_NOT_SUPPORTED  |FALSE |TRUE, FALSE
+|*sca requirements for one-time consents:* | | |
+|scaByOneTimeAvailableAccountsConsentRequired |This field indicates if ASPSP requires usage of SCA to validate a one-time available accounts consent.
+
+If parameter = FALSE  and sub-attribute within the "access" attribute with the value "allAccounts" then one-factor authorisation (PSU-ID and password) should be done to set consent status to Valid.
+
+If parameter = TRUE and  sub-attribute within the "access" attribute with the value "allAccounts", then two-factor authorisation(PSU-ID and password + TAN) should be done.|TRUE |TRUE, FALSE
+|*PIS:* | | |
+|supportedPaymentTypeAndProductMatrix |This field defines possible combination of payment-product/payment-type that ASPSP supports. Other payment products can be added for every payment type.
+
+Matrix contain available payment products for each type:
+
+SINGLE:
+
+   - sepa-credit-transfers
+
+   - instant-sepa-credit-transfers
+
+  PERIODIC:
+
+   - sepa-credit-transfers
+
+   - instant-sepa-credit-transfers
+
+  BULK:
+
+   - sepa-credit-transfers
+
+   - instant-sepa-credit-transfers. |SINGLE: sepa-credit-transfers, instant-sepa-credit-transfers |(SINGLE, BULK, PERIODIC): sepa-credit-transfers, instant-sepa-credit-transfers, target-2-payments, cross-border-credit-transfers,
+   pain.001-sepa-credit-transfers, pain.001-instant-sepa-credit-transfers, pain.001-target-2-payments, pain.001-cross-border-credit-transfers
+|maxTransactionValidityDays |This field defines transaction lifetime - maximum validity days of payment transaction. When value equals to 0 or empty, then the maximum lifetime of transaction is infinity. |0 |days (0, 1, ...)
+|notConfirmedPaymentExpirationTimeMs |This field contains the limit of an expiration time of not confirmed payment set in milliseconds.
+
+ Not confirmed during this period of time payment will be considered obsolete. The default value is set to 24 hours.|86 400 000	 |milliseconds (1, 2,...)
+|paymentCancellationAuthorizationMandated |This field defines if an authorisation of the payment cancellation is mandated by the ASPSP. |FALSE |TRUE, FALSE
+|*redirect link to online-banking:* | | |
+|pisRedirectUrlToAspsp |Link to online-banking to authorise payment with Redirect approach. Attribute is available to be configured with custom url pattern and redirectId parameter. |http://localhost:4200/pis/ |String
+|pisPaymentCancellationRedirectUrlToAspsp |	Link to online-banking to authorise payment cancellation with Redirect approach. Attribute is available to be configured with custom url pattern and redirectId parameter. |http://localhost:4200/pis/cancellation/ |String
+|paymentCancellationRedirectUrlExpirationTimeMs |This field contains the limit of expiration time of Payment cancellation redirect URL set in milliseconds.
+
+The value for expiration time is counted with formula "current time of authorisation creation + payment cancellation redirect URL expiration time (set in ASPSP-profile)".|600 000 |milliseconds (1, 2,...)
+
+|*PIIS:* | | |
+|piisConsentSupported |This field indicates whether ASPSP supports storing PIIS consent in CMS.
+
+If piisConsentSupported = TRUE then PIIS consent should be stored in CMS and request is sent to SPI with stored value.
+
+If piisConsentSupported = FALSE then PIIS consent is not stored in CMS and request is sent to SPI with NULL value. |FALSE |TRUE, FALSE
+|*Common:* | | |
+|scaApproachesSupported |This field contains the List of SCA Approach supported by ASPSP ordered by priority - first one with the highest priority. |REDIRECT |	REDIRECT, EMBEDDED, DECOUPLED
+|scaRedirectFlow |This field defines variant of the SCA redirect approach |REDIRECT |REDIRECT, OAUTH
+|startAuthorisationMode |This field defines variant of forced mode of Authorisation.
+
+ASPSP may have Explicit\Implicit\Auto start of authorisation in any case of all flows.
+
+Attribute accepts 3 values (case-insensetive):
+
+- Explicit - always explicit
+
+- Auto - current behaviour (and also default value if no option is set)
+
+- Implicit - always implicit
+
+This force overrides multilevel SCA, signing baskets etc.|Auto |Explicit, Auto, Implicit
+|tppSignatureRequired |This field defines whether TPP Signature is required for the request or not. |FALSE |TRUE, FALSE
+|psuInInitialRequestMandated |This field indicates if PSU-ID is mandatory in Initial request for Payment request or Establishing Consent. |FALSE |TRUE, FALSE
+|redirectUrlExpirationTimeMs |This field contains the limit of an expiration time of redirect url for payments and consents set in milliseconds.
+
+The value for expiration time is counted with formula.
+"current time of authorisation creation + redirect url expiration time (set in ASPSP-profile)". |600 000 |milliseconds (1, 2,...)
+|authorisationExpirationTimeMs |This field contains the limit of an expiration time of authorisation resource set in milliseconds |86 400 000 |milliseconds (1, 2,...)
+|forceXs2aBaseLinksUrl |This field defines availability to generate links using internal URL.
+
+If forceXs2aBaseLinksUrl = TRUE then links in responses (except "scaRedirect") shall be generated with the base URL set by xs2aBaseLinksUrl.
+
+If forceXs2aBaseLinksUrl = FALSE then links in responses (except "scaRedirect") shall be generated with the base URL of controller. |FALSE |TRUE, FALSE
+|xs2aBaseLinksUrl |This field defines base URL for forceXs2aBaseLinksUrl. |http://myhost.com/ |String
+|supportedAccountReferenceFields |This field defines supported account identifier type. |MSISDN |IBAN, BBAN, PAN, MASKEDPAN, MSISDN
+|multicurrencyAccountLevelSupported |This field defines abstract level for multicurrency accounts on which the ASPSP offered services might be implemented. |SUBACCOUNT |SUBACCOUNT, AGGREGATION, AGGREGATION_AND_SUBACCOUNT
+|aisPisSessionsSupported |This field defines if ASPSP support Combined_session.
+
+If "yes", ASPSP should logically support sessions with calls: (AIS - PIS).
+
+If parameter = FALSE then XS2A sends the response with HTTP code 400 SESSIONS_NOT_SUPPORTED "sessions are not supported by ASPSP".|FALSE |TRUE, FALSE
+|signingBasketSupported |This field indicates if an ASPSP supports signing basket or not.
+
+If parameter = FALSE then XS2A sends the response with HTTP code 400 FORMAT_ERROR "Signing basket is not supported by ASPSP" |FALSE |TRUE, FALSE
+|===
