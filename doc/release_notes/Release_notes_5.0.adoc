@@ -11,6 +11,7 @@
 * Bugfix: changed link for update PSU data without password for payment cancellation
 * Update enum MessageErrorCode.
 * Add indexes to the CMS database
+* Bugfix: Providing incorrect request body on PIIS consent creation in CMS-ASPSP-API results in Internal Server Error
 
 == Bugfix: TPP domain validator ignores non-domain `tppName` field
 
@@ -70,3 +71,8 @@ Several indexes were added to the CMS database to increase performance:
 - index on `payment_id` in `pis_common_payment` table
 - index on `payment_id` in `pis_payment_data` table
 - index on `tpp_info_id` in `tpp_info_role` table
+
+== Bugfix: Providing incorrect request body on PIIS consent creation in CMS-ASPSP-API results in Internal Server Error
+
+From now on, when you try to create PIIS consent `POST /aspsp-api/v1/piis/consents` with incorrect
+request body, you'll get status `400 Bad request` and message `Http message is not readable`.
