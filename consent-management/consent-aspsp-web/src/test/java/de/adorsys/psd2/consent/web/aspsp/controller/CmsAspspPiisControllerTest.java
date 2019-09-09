@@ -18,128 +18,130 @@ package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
-import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentResponse;
+import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmsAspspPiisControllerTest {
-    private static final String CONSENT_ID = "5bcf664f-68ce-498d-9a93-fe0cce32f6b6";
-    private static final String WRONG_CONSENT_ID = "efe6d8bd-c6bc-4866-81a3-87ac755ffa4b";
-    private static final String PSU_ID = "PSU-ID-1";
-    private static final String WRONG_PSU_ID = "PSU-ID-2";
-    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
-    private static final LocalDate VALID_UNTIL = LocalDate.now();
+    private final String CONSENT_ID = "03f0fccb-8462-43e8-9f7e-fce2887bcf38";
+    private final String CREATE_PIIS_CONSENT_URL = "/aspsp-api/v1/piis/consents/";
+    private final String DELETE_PIIS_CONSENT_URL = "/aspsp-api/v1/piis/consents/03f0fccb-8462-43e8-9f7e-fce2887bcf38";
+    private final String PSU_ID = "marion.mueller";
+    private final String CREATE_PIIS_CONSENT_REQUEST_PATH = "json/piis/create-piis-consent-request.json";
+    private final String CREATE_PIIS_CONSENT_RESPONSE_PATH = "json/piis/create-piis-consent-response.json";
+    private final String LIST_OF_PIIS_CONSENTS_PATH = "json/piis/list-piis-consent.json";
+    private final String INSTANCE_ID = "UNDEFINED";
+    private final String TRUE = "true";
 
-    @Mock
-    private CmsAspspPiisService cmsAspspPiisService;
+    private MockMvc mockMvc;
+    private JsonReader jsonReader = new JsonReader();
+    private HttpHeaders httpHeaders = new HttpHeaders();
+    private PsuIdData psuIdData;
+    private CreatePiisConsentRequest createPiisConsentRequest;
+    private PiisConsent piisConsent;
 
     @InjectMocks
     private CmsAspspPiisController cmsAspspPiisController;
 
+    @Mock
+    private CmsAspspPiisService cmsAspspPiisService;
+
     @Before
     public void setUp() {
-        when(cmsAspspPiisService.createConsent(any(), any()))
+        ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
+
+        psuIdData = jsonReader.getObjectFromFile("json/psu-id-data.json", PsuIdData.class);
+        createPiisConsentRequest = jsonReader.getObjectFromFile("json/piis/create-piis-consent-request.json", CreatePiisConsentRequest.class);
+        piisConsent = jsonReader.getObjectFromFile("json/piis/piis-consent.json", PiisConsent.class);
+
+        httpHeaders.add("psu-id", PSU_ID);
+        httpHeaders.add("Content-Type", "application/json");
+        httpHeaders.add("instance-id", INSTANCE_ID);
+
+        mockMvc = MockMvcBuilders
+                      .standaloneSetup(cmsAspspPiisController)
+                      .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapperTestConfig.getObjectMapper()))
+                      .build();
+    }
+
+    @Test
+    public void createConsent_Success() throws Exception {
+        when(cmsAspspPiisService.createConsent(psuIdData, createPiisConsentRequest))
             .thenReturn(Optional.of(CONSENT_ID));
-        when(cmsAspspPiisService.getConsentsForPsu(eq(buildPsuIdData(PSU_ID)), eq(DEFAULT_SERVICE_INSTANCE_ID)))
-            .thenReturn(buildPiisConsentList());
-        when(cmsAspspPiisService.getConsentsForPsu(eq(buildPsuIdData(WRONG_PSU_ID)), eq(DEFAULT_SERVICE_INSTANCE_ID)))
-            .thenReturn(Collections.emptyList());
-        when(cmsAspspPiisService.terminateConsent(eq(CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+
+        mockMvc.perform(post(CREATE_PIIS_CONSENT_URL)
+                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .headers(httpHeaders)
+                            .content(jsonReader.getStringFromFile(CREATE_PIIS_CONSENT_REQUEST_PATH)))
+            .andExpect(status().is(HttpStatus.CREATED.value()))
+            .andExpect(content().json(jsonReader.getStringFromFile(CREATE_PIIS_CONSENT_RESPONSE_PATH)));
+
+        verify(cmsAspspPiisService, times(1)).createConsent(psuIdData, createPiisConsentRequest);
+    }
+
+    @Test
+    public void createConsent_BadRequest() throws Exception {
+        when(cmsAspspPiisService.createConsent(psuIdData, createPiisConsentRequest))
+            .thenReturn(Optional.empty());
+
+        mockMvc.perform(post(CREATE_PIIS_CONSENT_URL)
+                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .headers(httpHeaders)
+                            .content(jsonReader.getStringFromFile(CREATE_PIIS_CONSENT_REQUEST_PATH)))
+            .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+
+        verify(cmsAspspPiisService, times(1)).createConsent(psuIdData, createPiisConsentRequest);
+    }
+
+    @Test
+    public void getConsentsForPsu_Success() throws Exception {
+        List<PiisConsent> consents = Collections.singletonList(piisConsent);
+        when(cmsAspspPiisService.getConsentsForPsu(psuIdData, INSTANCE_ID))
+            .thenReturn(consents);
+
+        mockMvc.perform(get(CREATE_PIIS_CONSENT_URL)
+                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .headers(httpHeaders))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
+
+        verify(cmsAspspPiisService, times(1)).getConsentsForPsu(psuIdData, INSTANCE_ID);
+    }
+
+    @Test
+    public void terminateConsent_ReturnTrue() throws Exception {
+        when(cmsAspspPiisService.terminateConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(true);
-        when(cmsAspspPiisService.terminateConsent(eq(WRONG_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
-            .thenReturn(false);
-    }
 
-    @Test
-    public void createConsent_Success() {
-        //When
-        ResponseEntity<CreatePiisConsentResponse> actual =
-            cmsAspspPiisController.createConsent(buildCreatePiisConsentRequest(), null, null, null, null);
+        mockMvc.perform(delete(DELETE_PIIS_CONSENT_URL)
+                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .headers(httpHeaders))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().string(TRUE));
 
-        //Then
-        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(actual.getBody().getConsentId()).isEqualTo(CONSENT_ID);
-    }
-
-    @Test
-    public void getConsentsForPsu_Success() {
-        // Given
-        List<PiisConsent> expected = buildPiisConsentList();
-
-        //When
-        ResponseEntity<List<PiisConsent>> actual =
-            cmsAspspPiisController.getConsentsForPsu(PSU_ID, null, null, null, DEFAULT_SERVICE_INSTANCE_ID);
-
-        //Then
-        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(actual.getBody()).isEqualTo(expected);
-    }
-
-    @Test
-    public void getConsentsForPsu_Failure() {
-        //When
-        ResponseEntity<List<PiisConsent>> actual =
-            cmsAspspPiisController.getConsentsForPsu(WRONG_PSU_ID, null, null, null, null);
-
-        //Then
-        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(actual.getBody().isEmpty()).isTrue();
-    }
-
-    @Test
-    public void terminateConsent_Success() {
-        //When
-        ResponseEntity<Boolean> actual =
-            cmsAspspPiisController.terminateConsent(CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
-
-        //Then
-        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(actual.getBody()).isTrue();
-    }
-
-    @Test
-    public void terminateConsent_Failure() {
-        //When
-        ResponseEntity<Boolean> actual =
-            cmsAspspPiisController.terminateConsent(WRONG_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
-
-        //Then
-        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(actual.getBody()).isFalse();
-    }
-
-    private CreatePiisConsentRequest buildCreatePiisConsentRequest() {
-        CreatePiisConsentRequest request = new CreatePiisConsentRequest();
-        request.setAccount(new AccountReference());
-        request.setValidUntil(VALID_UNTIL);
-        return request;
-    }
-
-    private PsuIdData buildPsuIdData(String id) {
-        return new PsuIdData(id, null, null, null);
-    }
-
-    private List<PiisConsent> buildPiisConsentList() {
-        return Collections.singletonList(new PiisConsent());
+        verify(cmsAspspPiisService, times(1)).terminateConsent(CONSENT_ID, INSTANCE_ID);
     }
 }
