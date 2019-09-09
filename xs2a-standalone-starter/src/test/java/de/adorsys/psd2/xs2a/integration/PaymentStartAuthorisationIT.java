@@ -29,6 +29,7 @@ import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
+import de.adorsys.psd2.starter.config.validation.PaymentValidationConfigImpl;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
@@ -101,14 +102,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         ObjectMapperConfig.class,
         WebConfig.class,
         Xs2aEndpointPathConstant.class,
-        Xs2aInterfaceConfig.class
+        Xs2aInterfaceConfig.class,
+        PaymentValidationConfigImpl.class
     })
 public class PaymentStartAuthorisationIT {
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
     private static final String PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
-    private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private static final String PSU_ID = "PSU-123";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";

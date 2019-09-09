@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.integration;
+package de.adorsys.psd2.xs2a.web.validator.body.payment.config;
 
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-public class TestConfiguration {
-
-    static {
-        System.setProperty("server_key", "123"); // in embedded mode we need this environment property
-    }
+public enum Occurrence {
+    REQUIRED, OPTIONAL, SKIP, NONE
 }

@@ -17,9 +17,9 @@
 package de.adorsys.psd2.xs2a.web.validator.body;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.psd2.xs2a.domain.pis.Remittance;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
+import de.adorsys.psd2.xs2a.web.validator.body.payment.config.ValidationObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -55,18 +55,19 @@ public class AbstractBodyValidatorImpl implements BodyValidator {
         }
     }
 
-    protected void checkRequiredFieldForMaxLength(String fieldToCheck, String fieldName, int maxLength, MessageError messageError) {
-        if (StringUtils.isBlank(fieldToCheck)) {
-            String text = String.format("Value '%s' cannot be empty", fieldName);
+    protected void checkFieldForMaxLength(String fieldToCheck, String fieldName, ValidationObject validationObject, MessageError messageError) {
+        if (validationObject.isNone() && StringUtils.isNotBlank(fieldToCheck)) {
+            String text = String.format("The field '%s' is not expected in the request.", fieldName);
             errorBuildingService.enrichMessageError(messageError, text);
-        } else {
-            checkFieldForMaxLength(fieldToCheck, fieldName, maxLength, messageError);
-        }
-    }
-
-    protected void checkOptionalFieldForMaxLength(String field, String fieldName, int maxLength, MessageError messageError) {
-        if (StringUtils.isNotBlank(field)) {
-            checkFieldForMaxLength(field, fieldName, maxLength, messageError);
+        } else if (validationObject.isRequired()) {
+            if (StringUtils.isBlank(fieldToCheck)) {
+                String text = String.format("Value '%s' cannot be empty", fieldName);
+                errorBuildingService.enrichMessageError(messageError, text);
+            } else {
+                checkFieldForMaxLength(fieldToCheck, fieldName, validationObject.getMaxLength(), messageError);
+            }
+        } else if (validationObject.isOptional() && StringUtils.isNotBlank(fieldToCheck)) {
+            checkFieldForMaxLength(fieldToCheck, fieldName, validationObject.getMaxLength(), messageError);
         }
     }
 
@@ -85,21 +86,5 @@ public class AbstractBodyValidatorImpl implements BodyValidator {
         }
 
         return Optional.empty();
-    }
-
-    protected void validateUltimateDebtor(String field, MessageError messageError) {
-        checkOptionalFieldForMaxLength(field, "ultimateDebtor", 70, messageError);
-    }
-
-    protected void validateUltimateCreditor(String field, MessageError messageError) {
-        checkOptionalFieldForMaxLength(field, "ultimateCreditor", 70, messageError);
-    }
-
-    protected void validateRemittanceInformationStructured(Remittance remittance, MessageError messageError) {
-        if (remittance != null) {
-            checkRequiredFieldForMaxLength(remittance.getReference(), "reference", 35, messageError);
-            checkOptionalFieldForMaxLength(remittance.getReferenceType(), "referenceType", 35, messageError);
-            checkOptionalFieldForMaxLength(remittance.getReferenceIssuer(), "referenceIssuer", 35, messageError);
-        }
     }
 }

@@ -5747,6 +5747,10 @@ components:
           $ref: "#/components/schemas/creditorName"
         creditorAddress:
           $ref: "#/components/schemas/address"
+        creditorId:
+          description: Identification of Creditors, e.g. a SEPA Creditor ID.
+          type: string
+          maxLength: 35
 #        creditorNameAndAddress: # N.A. for all, but can be used by ASPSP if needed
 #          $ref: "#/components/schemas/creditorNameAndAddress"
         ultimateCreditor: # N.A. for all, but can be used by ASPSP if needed
@@ -5862,6 +5866,10 @@ components:
           $ref: "#/components/schemas/creditorName"
         creditorAddress:
           $ref: "#/components/schemas/address"
+        creditorId:
+          description: Identification of Creditors, e.g. a SEPA Creditor ID.
+          type: string
+          maxLength: 35
 #        creditorNameAndAddress: # N.A. for all, but can be used by ASPSP if needed
 #          $ref: "#/components/schemas/creditorNameAndAddress"
         ultimateCreditor: # N.A. for all, but can be used by ASPSP if needed
@@ -5971,6 +5979,10 @@ components:
           $ref: "#/components/schemas/creditorName"
         creditorAddress:
           $ref: "#/components/schemas/address"
+        creditorId:
+          description: Identification of Creditors, e.g. a SEPA Creditor ID.
+          type: string
+          maxLength: 35
         ultimateCreditor: # N.A.
           $ref: "#/components/schemas/ultimateCreditor"
         purposeCode: # N.A.

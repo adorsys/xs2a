@@ -31,6 +31,8 @@ import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.payment.config.DefaultPaymentValidationConfigImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.payment.config.PaymentValidationConfig;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
@@ -70,10 +72,13 @@ public class PeriodicPaymentTypeValidatorImplTest {
         RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
         ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.AIS_400);
 
+        PaymentValidationConfig paymentValidationConfig = jsonReader.getObjectFromFile("json/validation/payment-validation-config.json",
+                                                                                       DefaultPaymentValidationConfigImpl.class);
+
         validator = new PeriodicPaymentTypeValidatorImpl(errorBuildingServiceMock,
                                                          objectMapper,
                                                          new PaymentMapper(objectMapper, purposeCodeMapper, remittanceMapper),
-                                                         new AmountValidator(errorBuildingServiceMock));
+                                                         new AmountValidator(errorBuildingServiceMock), paymentValidationConfig);
     }
 
     @Test

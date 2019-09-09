@@ -101,6 +101,7 @@ public class SpiToXs2aBulkPaymentMapperTest {
         SpiAccountReference accountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json", SpiAccountReference.class);
         payment.setCreditorAccount(accountReference);
         payment.setCreditorAgent("BCENECEQ");
+        payment.setCreditorId("27ad-46db-8491-71e629d82baa");
         payment.setCreditorName("Telekom");
         payment.setCreditorAddress(jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-address.json", SpiAddress.class));
         payment.setDebtorAccount(accountReference);
