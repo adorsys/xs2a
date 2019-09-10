@@ -19,7 +19,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>[%-5level][%d{HH:mm:ss.SSS}] - %logger: %message%n%xException</pattern>
+            <pattern>[%-5level][%d{yyyy-MM-dd HH:mm:ss.SSS}] - %logger: %message%n%xException</pattern>
         </encoder>
     </appender>
 
