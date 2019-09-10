@@ -14,6 +14,7 @@
 * Bugfix: Providing incorrect request body on PIIS consent creation in CMS-ASPSP-API results in Internal Server Error
 * SupportedTransactionApplicationTypes in profile should be String
 * Extend XS2A with Austria requirements to payment products
+* Bugfix: Incorrect error code in response for ReadAccountList for consent which was revoked by PSU
 
 == Bugfix: TPP domain validator ignores non-domain `tppName` field
 
@@ -98,3 +99,8 @@ To extend configuration for another country create new `application-<country>.pr
 To apply new file add `<country>` to active profiles for application.
 
 By default, configuration is for Germany and configuration for Austria was added as well.
+
+== Bugfix: Incorrect error code in response for ReadAccountList for consent which was revoked by PSU
+
+From now on, when you try to get Account List for consent which was revoked by PSU with request `GET /v1/accounts`
+you will get response code `401 'CONSENT_INVALID'` with text `Consent was revoked by PSU`
