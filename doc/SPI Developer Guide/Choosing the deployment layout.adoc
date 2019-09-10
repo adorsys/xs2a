@@ -23,8 +23,7 @@ xref:GETTING_STARTED.adoc[Getting started]
 page.
 
 These 3 services are basic configuration and to integrate them into whole ASPSP system one should use SPI implementation
-(connector between XS2A and core-banking) and core-banking module. SPI implementation and core-banking should be
-implemented by the bank itself.
+(connector between XS2A and ASPSP system) and ASPSP system.
 
 
 
