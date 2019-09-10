@@ -28,8 +28,7 @@ import java.time.LocalDate;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_429;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
 @Component
 @RequiredArgsConstructor
@@ -43,10 +42,7 @@ public class AccountConsentValidator {
 
         ConsentStatus consentStatus = accountConsent.getConsentStatus();
         if (consentStatus != ConsentStatus.VALID) {
-            MessageErrorCode messageErrorCode = consentStatus == ConsentStatus.RECEIVED
-                                                    ? CONSENT_INVALID
-                                                    : CONSENT_EXPIRED;
-            return ValidationResult.invalid(AIS_401, of(messageErrorCode));
+            return processConsentInvalidStatus(consentStatus);
         }
 
         if (isAccessExceeded(accountConsent, requestUri)) {
@@ -54,6 +50,14 @@ public class AccountConsentValidator {
         }
 
         return ValidationResult.valid();
+    }
+
+    private ValidationResult processConsentInvalidStatus(ConsentStatus consentStatus) {
+        if (consentStatus == ConsentStatus.REVOKED_BY_PSU) {
+            return ValidationResult.invalid(AIS_401, of(CONSENT_INVALID, "Consent was revoked by PSU"));
+        }
+        MessageErrorCode messageErrorCode = consentStatus == ConsentStatus.RECEIVED ? CONSENT_INVALID : CONSENT_EXPIRED;
+        return ValidationResult.invalid(AIS_401, of(messageErrorCode));
     }
 
     private boolean isAccessExceeded(AccountConsent accountConsent, String requestUri) {

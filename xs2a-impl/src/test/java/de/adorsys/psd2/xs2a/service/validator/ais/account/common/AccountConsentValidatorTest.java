@@ -42,6 +42,7 @@ import static org.mockito.Mockito.when;
 public class AccountConsentValidatorTest {
     private static final String AUTHORISATION_NUMBER = "authorisation number";
     private static final String REQUEST_URI = "/accounts";
+    private static final String REVOKED_BY_PSU = "Consent was revoked by PSU";
 
     private static final MessageError AIS_CONSENT_EXPIRED_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_EXPIRED));
@@ -49,6 +50,8 @@ public class AccountConsentValidatorTest {
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
     private static final MessageError AIS_CONSENT_ACCESS_EXCEEDED_ERROR =
         new MessageError(ErrorType.AIS_429, TppMessageInformation.of(ACCESS_EXCEEDED));
+    private static final MessageError AIS_CONSENT_INVALID_REVOKED_BY_PSU =
+        new MessageError((ErrorType.AIS_401), TppMessageInformation.of(CONSENT_INVALID, REVOKED_BY_PSU));
 
     @InjectMocks
     private AccountConsentValidator accountConsentValidator;
@@ -65,6 +68,19 @@ public class AccountConsentValidatorTest {
 
         // Then
         assertTrue(actual.isValid());
+    }
+
+    @Test
+    public void testValidateInvalid_shouldReturnInvalidErrorWithTextConsentRevoked() {
+        // Given
+        AccountConsent accountConsent = buildAccountConsentInvalidRevokedByPsu();
+
+        // When
+        ValidationResult actual = accountConsentValidator.validate(accountConsent, REQUEST_URI);
+
+        // Then
+        assertTrue(actual.isNotValid());
+        assertEquals(AIS_CONSENT_INVALID_REVOKED_BY_PSU, actual.getMessageError());
     }
 
     @Test
@@ -108,6 +124,20 @@ public class AccountConsentValidatorTest {
     }
 
     @Test
+    public void testValidateAccessExceeded_shouldReturnValid_UsageCounterMapNotContainsRequestUri() {
+        // Given
+        when(requestProviderService.isRequestFromPsu()).thenReturn(false);
+        AccountConsent accountConsent = buildAccountConsentAccessExceededIsOneAccessType();
+
+        // When
+        ValidationResult actual = accountConsentValidator.validate(accountConsent, REQUEST_URI);
+
+        // Then
+        assertTrue(actual.isValid());
+    }
+
+
+    @Test
     public void testValidateAccessExceeded_shouldReturnValid() {
         // Given
         when(requestProviderService.isRequestFromPsu()).thenReturn(true);
@@ -119,7 +149,6 @@ public class AccountConsentValidatorTest {
         // Then
         assertTrue(actual.isValid());
     }
-
 
     @Test
     public void testValidateAccessExceeded_oneOff_shouldReturnExceededError() {
@@ -156,6 +185,13 @@ public class AccountConsentValidatorTest {
                                   Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 10));
     }
 
+    private AccountConsent buildAccountConsentInvalidRevokedByPsu() {
+        return new AccountConsent("id", null, false, LocalDate.now().plusYears(1), 0,
+                                  null, ConsentStatus.REVOKED_BY_PSU, false, false,
+                                  Collections.emptyList(), buildTppInfo(), null, false,
+                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 10));
+    }
+
     private AccountConsent buildOneOffAccountConsentAccessExceeded() {
         return new AccountConsent("id", null, false, LocalDate.now().plusYears(1), 1,
                                   null, ConsentStatus.VALID, false, false,
@@ -168,6 +204,13 @@ public class AccountConsentValidatorTest {
                                   null, ConsentStatus.VALID, false, false,
                                   Collections.emptyList(), buildTppInfo(), null, false,
                                   Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 0));
+    }
+
+    private AccountConsent buildAccountConsentAccessExceededIsOneAccessType() {
+        return new AccountConsent("id", null, false, LocalDate.now().plusYears(1), 0,
+                                  null, ConsentStatus.VALID, false, false,
+                                  Collections.emptyList(), buildTppInfo(), null, false,
+                                  Collections.emptyList(), null, Collections.emptyMap());
     }
 
     private static TppInfo buildTppInfo() {
