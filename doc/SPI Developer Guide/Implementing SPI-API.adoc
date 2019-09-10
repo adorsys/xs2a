@@ -8,21 +8,21 @@ toc::[]
 
 === General requirements
 
-SPI-API is used for connection between XS2A interface and core-banking, that's why this system is also called `connector`
+SPI-API is used for connection between XS2A interface and ASPSP system, that's why this system is also called `connector`
 and this word will be used in all chapters below.
 XS2A provides interfaces in java (`de.adorsys.psd2.xs2a.spi.service` package), that should be implemented in the connector's code.
 Basic responsibilities of the connector:
 
 - Receive the input data from XS2A
-- Provide this data to the core-banking system (and/or add some business logic, if necessary)
-- Retrieve the response from core-banking
-- Provide the core-banking response back to XS2A using `SpiResponse` class
+- Provide this data to the ASPSP system (and/or add some business logic, if necessary)
+- Retrieve the response from ASPSP system
+- Provide the ASPSP system's response back to XS2A using `SpiResponse` class
 
 Input data for the connector is provided from TPP through XS2A and some parameters in the interfaces' signatures
 are the same for all of them:
 
 - `SpiContextData` - the information about PSU and TPP
-- `SpiAspspConsentDataProvider` - this service is used for providing ASPSP consent data to connector and core-banking
+- `SpiAspspConsentDataProvider` - this service is used for providing ASPSP consent data to connector and ASPSP system
 
 The response from the connector to XS2A is described in the next chapter.
 
