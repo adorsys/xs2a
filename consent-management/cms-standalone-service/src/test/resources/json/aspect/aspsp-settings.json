@@ -1,0 +1,7 @@
+{
+  "redirectUrlExpirationTimeMs": 10000,
+  "paymentCancellationRedirectUrlExpirationTimeMs": 10000,
+  "authorisationExpirationTimeMs": 10000,
+  "notConfirmedConsentExpirationPeriodMs": 10000,
+  "notConfirmedPaymentExpirationPeriodMs":10000
+}

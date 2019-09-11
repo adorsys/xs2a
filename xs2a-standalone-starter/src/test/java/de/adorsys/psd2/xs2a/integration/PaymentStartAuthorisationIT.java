@@ -31,6 +31,7 @@ import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.starter.config.validation.PaymentValidationConfigImpl;
 import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -232,6 +233,12 @@ public class PaymentStartAuthorisationIT {
         pisCommonPaymentResponse.setTppInfo(TPP_INFO);
         pisCommonPaymentResponse.setPaymentType(SINGLE_PAYMENT_TYPE);
         pisCommonPaymentResponse.setPaymentProduct(SEPA_PAYMENT_PRODUCT);
+        pisCommonPaymentResponse.setAuthorisations(Collections.singletonList(buildAuthorisation()));
         return pisCommonPaymentResponse;
+    }
+
+    private Authorisation buildAuthorisation() {
+        Authorisation result = new Authorisation(AUTHORISATION_ID, ScaStatus.RECEIVED);
+        return result;
     }
 }
