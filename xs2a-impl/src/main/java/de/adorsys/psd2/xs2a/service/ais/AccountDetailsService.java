@@ -29,7 +29,6 @@ import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountDetailsMapper;
@@ -51,7 +50,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 
@@ -142,14 +140,6 @@ public class AccountDetailsService {
     private ResponseObject<Xs2aAccountDetailsHolder> checkSpiResponse(String consentId, String accountId, SpiResponse<SpiAccountDetails> spiResponse) {
         UUID internalRequestId = requestProviderService.getInternalRequestId();
         UUID xRequestId = requestProviderService.getRequestId();
-
-        if (spiResponse.getPayload() == null) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get account details failed: account details empty for consent.",
-                     internalRequestId, xRequestId, accountId, consentId);
-            return ResponseObject.<Xs2aAccountDetailsHolder>builder()
-                       .fail(ErrorType.AIS_404, of(RESOURCE_UNKNOWN_404))
-                       .build();
-        }
 
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
         log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get account details failed: couldn't get account details. Error msg: [{}]",
