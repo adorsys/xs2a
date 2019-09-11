@@ -32,7 +32,6 @@ import static org.junit.Assert.*;
     classes = {SpiToXs2aTransactionMapperImpl.class, SpiToXs2aAmountMapperImpl.class,
         SpiToXs2aExchangeRateMapperImpl.class, SpiToXs2aAccountReferenceMapperImpl.class})
 public class SpiToXs2aTransactionMapperTest {
-
     private JsonReader jsonReader = new JsonReader();
 
     @Autowired
@@ -41,7 +40,7 @@ public class SpiToXs2aTransactionMapperTest {
     @Test
     public void mapToXs2aTransaction() {
         Transactions transactions = mapper.mapToXs2aTransaction(
-            jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-transactions.json", SpiTransaction.class));
+            jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-transaction.json", SpiTransaction.class));
 
         Transactions expectedTransactions = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/transactions.json", Transactions.class);
         assertEquals(expectedTransactions, transactions);

@@ -361,7 +361,7 @@ public class TransactionService {
     private ResponseObject<Xs2aTransactionsReport> getXs2aTransactionsReportResponseObject(Xs2aTransactionsReportByPeriodRequest request,
                                                                                            AccountConsent accountConsent,
                                                                                            SpiTransactionReport spiTransactionReport) {
-        Xs2aTransactionsReport transactionsReport =  mapToTransactionsReport(request, accountConsent, spiTransactionReport);
+        Xs2aTransactionsReport transactionsReport = mapToTransactionsReport(request, accountConsent, spiTransactionReport);
         ResponseObject<Xs2aTransactionsReport> response = ResponseObject.<Xs2aTransactionsReport>builder()
                                                               .body(transactionsReport)
                                                               .build();
@@ -376,10 +376,11 @@ public class TransactionService {
 
     @NotNull
     private Xs2aTransactionsReport mapToTransactionsReport(Xs2aTransactionsReportByPeriodRequest request,
-                                                                           AccountConsent accountConsent,
-                                                                           SpiTransactionReport spiTransactionReport) {
+                                                           AccountConsent accountConsent,
+                                                           SpiTransactionReport spiTransactionReport) {
         Xs2aAccountReport report = transactionsToAccountReportMapper
-                                       .mapToXs2aAccountReport(spiTransactionReport.getTransactions(),
+                                       .mapToXs2aAccountReport(request.getBookingStatus(),
+                                                               spiTransactionReport.getTransactions(),
                                                                spiTransactionReport.getTransactionsRaw())
                                        .orElse(null);
 

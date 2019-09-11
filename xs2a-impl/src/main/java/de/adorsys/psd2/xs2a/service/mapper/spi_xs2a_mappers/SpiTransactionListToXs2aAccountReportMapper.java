@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
@@ -25,6 +26,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -38,7 +40,7 @@ public class SpiTransactionListToXs2aAccountReportMapper {
 
     private final SpiToXs2aTransactionMapper toXs2aTransactionMapper;
 
-    public Optional<Xs2aAccountReport> mapToXs2aAccountReport(List<SpiTransaction> spiTransactions, byte[] rawTransactionsResponse) {
+    public Optional<Xs2aAccountReport> mapToXs2aAccountReport(BookingStatus queryStatus, List<SpiTransaction> spiTransactions, byte[] rawTransactionsResponse) {
         if (ArrayUtils.isNotEmpty(rawTransactionsResponse)) {
             return Optional.of(new Xs2aAccountReport(null, null, rawTransactionsResponse));
         }
@@ -46,8 +48,17 @@ public class SpiTransactionListToXs2aAccountReportMapper {
             return Optional.empty();
         }
 
-        List<Transactions> booked = filterTransaction(spiTransactions, BOOKED_PREDICATE);
-        List<Transactions> pending = filterTransaction(spiTransactions, PENDING_PREDICATE);
+        List<Transactions> booked = Collections.emptyList();
+        List<Transactions> pending = Collections.emptyList();
+
+
+        if (queryStatus != BookingStatus.PENDING) {
+            booked = filterTransaction(spiTransactions, BOOKED_PREDICATE);
+        }
+
+        if (queryStatus != BookingStatus.BOOKED) {
+            pending = filterTransaction(spiTransactions, PENDING_PREDICATE);
+        }
 
         return Optional.of(new Xs2aAccountReport(booked, pending, null));
     }
