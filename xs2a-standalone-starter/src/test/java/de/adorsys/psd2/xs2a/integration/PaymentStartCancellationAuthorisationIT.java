@@ -85,7 +85,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class,
     PaymentValidationConfigImpl.class
 })
-public class PaymentStartCancellationAuthorisationTest {
+public class PaymentStartCancellationAuthorisationIT {
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
