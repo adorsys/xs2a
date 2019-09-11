@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.consent.integration.pis;
 
+import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
@@ -26,12 +28,15 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
+import de.adorsys.xs2a.reader.JsonReader;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
@@ -41,10 +46,11 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @ActiveProfiles("integration-test")
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = IntegrationTestConfiguration.class)
+@ContextConfiguration(classes = IntegrationTestConfiguration.class)
 @DataJpaTest
 public class PisCommonPaymentIT {
     private static final String TPP_ID = "Test TppId";
@@ -60,6 +66,17 @@ public class PisCommonPaymentIT {
     private EntityManager entityManager;
     @Autowired
     private PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
+    @MockBean
+    private AspspProfileService aspspProfileService;
+
+    private JsonReader jsonReader = new JsonReader();
+
+    @Before
+    public void setUp() {
+        AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+
+        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+    }
 
     @Test
     public void createPisCommonPayment_successWithNewStatus() {

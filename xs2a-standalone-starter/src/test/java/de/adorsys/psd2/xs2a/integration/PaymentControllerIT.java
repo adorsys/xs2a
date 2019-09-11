@@ -87,7 +87,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class,
     PaymentValidationConfigImpl.class
 })
-public class PaymentControllerTest {
+public class PaymentControllerIT {
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
