@@ -16,6 +16,8 @@
 * SupportedTransactionApplicationTypes in profile should be String
 * Extend XS2A with Austria requirements to payment products
 * Bugfix: Incorrect error code in response for ReadAccountList for consent which was revoked by PSU
+* Bugfix: Incorrect TransactionId in read transaction details leads to internal server error
+* Only Pending transactions should be available in getTransactionList response when query param set to "pending"
 
 == ASPSP profile was refactored and REQUIRES MIGRATION!
 
@@ -126,3 +128,13 @@ By default, configuration is for Germany and configuration for Austria was added
 
 From now on, when you try to get Account List for consent which was revoked by PSU with request `GET /v1/accounts`
 you will get response code `401 'CONSENT_INVALID'` with text `Consent was revoked by PSU`
+
+== Incorrect TransactionId in read transaction details leads to internal server error
+
+From now on, if TPP provides incorrect transaction ID in read transaction details `GET /v1/accounts/{account-id}/transactions/{resourceId}` it will receive 403 response code with `RESOURCE_UNKNOWN` message.
+
+== Only Pending transactions should be available in getTransactionList response when query param set to "pending"
+
+From now on, the query parameter `bookingStatus` in `GET /v1/accounts/{account-id}/transactions`
+is capable of filtering. The endpoint returns only those types of transactions, whose `bookingStatus` equals
+the parameters value.
