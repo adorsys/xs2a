@@ -543,7 +543,7 @@ public class TransactionServiceTest {
         ResponseObject<Transactions> actualResponse = transactionService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID, REQUEST_URI);
 
         // Then
-        assertThatErrorIs(actualResponse, RESOURCE_UNKNOWN_404);
+        assertThatErrorIs(actualResponse, RESOURCE_UNKNOWN_403);
     }
 
     @Test

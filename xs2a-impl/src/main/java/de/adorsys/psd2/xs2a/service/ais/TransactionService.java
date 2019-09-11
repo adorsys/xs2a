@@ -336,7 +336,7 @@ public class TransactionService {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transaction details failed: transaction details empty for account and transaction.",
                      internalRequestId, xRequestId, accountId, consentId);
             return ResponseObject.<Transactions>builder()
-                       .fail(ErrorType.AIS_404, of(RESOURCE_UNKNOWN_404))
+                       .fail(ErrorType.AIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
