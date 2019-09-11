@@ -299,14 +299,6 @@ public class TransactionService {
                        .build();
         }
 
-        if (spiResponse.getPayload() == null) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transactions report by period failed: transactions empty for account.",
-                     internalRequestId, xRequestId, request.getAccountId(), request.getConsentId());
-            return ResponseObject.<Xs2aTransactionsReport>builder()
-                       .fail(ErrorType.AIS_404, of(RESOURCE_UNKNOWN_404))
-                       .build();
-        }
-
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
         log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transactions report by period failed: Request transactions for account fail at SPI level: {}",
                  internalRequestId, xRequestId, request.getAccountId(), request.getConsentId(), errorHolder);
@@ -332,14 +324,6 @@ public class TransactionService {
         UUID internalRequestId = requestProviderService.getInternalRequestId();
         UUID xRequestId = requestProviderService.getRequestId();
 
-        if (spiResponse.getPayload() == null) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transaction details failed: transaction details empty for account and transaction.",
-                     internalRequestId, xRequestId, accountId, consentId);
-            return ResponseObject.<Transactions>builder()
-                       .fail(ErrorType.AIS_404, of(RESOURCE_UNKNOWN_404))
-                       .build();
-        }
-
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
         log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transaction details failed: Request transactions for account fail at SPI level: {}",
                  internalRequestId, xRequestId, accountId, consentId, errorHolder);
@@ -364,14 +348,6 @@ public class TransactionService {
                                                                                                             String downloadId,
                                                                                                             SpiResponse<SpiTransactionsDownloadResponse> spiResponse) {
         UUID xRequestId = requestProviderService.getRequestId();
-
-        if (spiResponse.getPayload() == null) {
-            log.info("X-Request-ID: [{}], Consent-ID [{}], Account-ID: [{}], Download-ID: [{}]. Download transactions failed: spiResponse is empty.",
-                     xRequestId, consentId, accountId, downloadId);
-            return ResponseObject.<Xs2aTransactionsDownloadResponse>builder()
-                       .fail(ErrorType.AIS_404, of(RESOURCE_UNKNOWN_404))
-                       .build();
-        }
 
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
         log.info("X-Request-ID: [{}], Consent-ID [{}], Account-ID: [{}], Download-ID: [{}]. Download transactions failed: couldn't get download transactions stream by link.",
