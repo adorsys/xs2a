@@ -288,7 +288,7 @@ public class TransactionServiceTest {
 
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
 
-        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.emptyList(), null))
+        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
             .thenReturn(Optional.of(xs2aAccountReport));
 
         when(referenceMapper.mapToXs2aAccountReference(spiAccountReference))
@@ -333,7 +333,7 @@ public class TransactionServiceTest {
 
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
 
-        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.emptyList(), null))
+        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
             .thenReturn(Optional.of(xs2aAccountReport));
 
         when(referenceMapper.mapToXs2aAccountReference(SPI_ACCOUNT_REFERENCE_GLOBAL))
@@ -369,7 +369,7 @@ public class TransactionServiceTest {
         when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
-        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.emptyList(), null))
+        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
             .thenReturn(Optional.of(xs2aAccountReport));
         when(referenceMapper.mapToXs2aAccountReference(spiAccountReference))
             .thenReturn(XS2A_ACCOUNT_REFERENCE);
