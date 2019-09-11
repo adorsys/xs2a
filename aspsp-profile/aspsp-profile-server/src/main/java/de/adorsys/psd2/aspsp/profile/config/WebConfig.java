@@ -56,7 +56,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        ObjectMapper yamlMapper = new YAMLMapper().configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true);
+        ObjectMapper yamlMapper = new YAMLMapper()
+                                      .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
+                                      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         converters.add(new YamlJackson2HttpMessageConverter(yamlMapper));
     }
 
