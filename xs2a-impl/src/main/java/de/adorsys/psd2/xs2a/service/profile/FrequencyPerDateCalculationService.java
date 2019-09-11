@@ -16,20 +16,19 @@
 
 package de.adorsys.psd2.xs2a.service.profile;
 
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class FrequencyPerDateCalculationService {
-    private final AspspProfileService aspspProfileService;
+    private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     public int getMinFrequencyPerDay(int tppFrequency) {
         return Math.min(Math.abs(tppFrequency), getFrequencyPerDay());
     }
 
     private Integer getFrequencyPerDay() {
-        return aspspProfileService.getAspspSettings().getFrequencyPerDay();
+        return aspspProfileServiceWrapper.getAccountAccessFrequencyPerDay();
     }
 }

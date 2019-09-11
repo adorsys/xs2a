@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.ais.AccountResponseType;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -36,11 +36,11 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.REQUESTED_FORMATS
 @Component
 @RequiredArgsConstructor
 public class TransactionReportAcceptHeaderValidator {
-    private final AspspProfileService aspspProfileService;
+    private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     public ValidationResult validate(String acceptHeader) {
         if (StringUtils.isNotBlank(acceptHeader)) {
-            String supportedTransactionApplicationTypes = aspspProfileService.getAspspSettings().getSupportedTransactionApplicationTypes();
+            String supportedTransactionApplicationTypes = aspspProfileServiceWrapper.getSupportedTransactionApplicationType();
 
             if (!isAcceptHeaderSupported(supportedTransactionApplicationTypes, acceptHeader)) {
                 return ValidationResult.invalid(ErrorType.AIS_406, TppMessageInformation.of(REQUESTED_FORMATS_INVALID));

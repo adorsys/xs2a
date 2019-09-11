@@ -17,6 +17,8 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.aspsp.profile.domain.ais.AisAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.ais.ConsentTypeSetting;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ActionStatus;
@@ -38,8 +40,6 @@ import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -217,8 +217,8 @@ public class AisConsentServiceInternalTest {
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
 
-        int consentLifeTime = 0;
-        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings(consentLifeTime));
+        int maxConsentValidityDays = 0;
+        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings(maxConsentValidityDays));
         int validDays = 5;
         LocalDate validUntil = LocalDate.now().plusDays(validDays - 1);
 
@@ -236,8 +236,8 @@ public class AisConsentServiceInternalTest {
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
 
-        int consentLifeTime = 10;
-        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings(consentLifeTime));
+        int maxConsentValidityDays = 10;
+        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings(maxConsentValidityDays));
         int validDays = 5;
         LocalDate validUntil = LocalDate.now().plusDays(validDays - 1);
 
@@ -255,8 +255,8 @@ public class AisConsentServiceInternalTest {
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
 
-        int consentLifeTime = 5;
-        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings(consentLifeTime));
+        int maxConsentValidityDays = 5;
+        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings(maxConsentValidityDays));
         int validDays = 10;
         LocalDate validUntil = LocalDate.now().plusDays(validDays - 1);
 
@@ -265,7 +265,7 @@ public class AisConsentServiceInternalTest {
 
         // Then
         verify(aisConsentRepository).save(argument.capture());
-        assertEquals(argument.getValue().getExpireDate(), LocalDate.now().plusDays(consentLifeTime - 1));
+        assertEquals(argument.getValue().getExpireDate(), LocalDate.now().plusDays(maxConsentValidityDays - 1));
     }
 
     @Test
@@ -637,11 +637,8 @@ public class AisConsentServiceInternalTest {
     }
 
     @NotNull
-    private AspspSettings getAspspSettings(int consentLifeTime) {
-        return new AspspSettings(1, false, false, null, null,
-                                 null, false, null, null, consentLifeTime, 1, false,
-                                 false, false, false, false, 1, 1,
-                                 null, 1, 1, null, 1, false, false, false, false, null, ScaRedirectFlow.REDIRECT, false, false, null, StartAuthorisationMode.AUTO);
+    private AspspSettings getAspspSettings(int maxConsentValidityDays) {
+        return new AspspSettings(new AisAspspProfileSetting(new ConsentTypeSetting(false, false, false, 0, 0, maxConsentValidityDays), null, null, null, null), null, null, null);
     }
 
     private AisConsent buildConsent(String externalId) {

@@ -1,6 +1,7 @@
 = Release notes v.5.0
 
 == Table of Contents
+* ASPSP profile was refactored and REQUIRES MIGRATION!
 * Bugfix: TPP domain validator ignores non-domain `tppName` field
 * Remove deprecated frequencyPerDay for PiisConsent
 * Bugfix: statuses of obsoleted AIS consents
@@ -16,6 +17,27 @@
 * Extend XS2A with Austria requirements to payment products
 * Bugfix: Incorrect error code in response for ReadAccountList for consent which was revoked by PSU
 * Bugfix: Incorrect TransactionId in read transaction details leads to internal server error
+
+== ASPSP profile was refactored and REQUIRES MIGRATION!
+
+`bank_profile.yml` file was updated to a new format. The ASPSP profile WON'T WORK without migration to the new format.
+This ASPSP profile YAML file update includes the following changes:
+
+* all properties were grouped into `ais`, `pis`, `piis` and `common` categories
+* some properties were renamed to the more appropriate names
+* some default values were changed
+
+The description of a new `bank_profile.yml` file can be found here: https://github.com/adorsys/xs2a/tree/develop/aspsp-profile.
+The migration to the new format can be performed either manually or by using a new POST `/api/v1/aspsp-profile/convert-profile/aspsp-settings`
+migration controller. In the HTTP body, it takes the content of the old `bank_profile.yml` and returns the new version of ASPSP profile.
+This response can be inserted in the `bank_profile.yml` file instead of old content. To enable this endpoint, the `debug_mode`
+profile for `aspsp-profile-server` application should be enabled. The migration sequence of actions if the following:
+
+ - launch  application with `debug_mode` profile active
+ - select POST `/api/v1/aspsp-profile/convert-profile/aspsp-settings`  and copy the content of current `bank_profile.yml`
+ file to the its body
+ - replace the content of `bank_profile.yml` with the response of the endpoint call
+ - restart `aspsp-profile-server` (`debug_mode` profile  is not needed anymore)
 
 == Bugfix: TPP domain validator ignores non-domain `tppName` field
 

@@ -19,6 +19,11 @@ package de.adorsys.psd2.aspsp.profile.web;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.aspsp.profile.domain.ais.*;
+import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -43,35 +48,35 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AspspProfileControllerTest {
-    private static final int FREQUENCY_PER_DAY = 5;
-    private static final boolean COMBINED_SERVICE_INDICATOR = false;
+    private static final int ACCOUNT_ACCESS_FREQUENCY_PER_DAY = 5;
+    private static final boolean AIS_PIS_SESSION_SUPPORTED = false;
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final String PIS_REDIRECT_LINK = "https://localhost/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://localhost/view/account/";
-    private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
+    private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final List<SupportedAccountReferenceField> SUPPORTED_ACCOUNT_REFERENCE_FIELDS = getSupportedAccountReferenceFields();
-    private static final int CONSENT_LIFETIME = 0;
-    private static final int TRANSACTION_LIFETIME = 0;
-    private static final boolean ALL_PSD_2_SUPPORT = false;
-    private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
+    private static final int MAX_CONSENT_VALIDITY_DAYS = 0;
+    private static final int MAX_TRANSACTION_VALIDITY_DAYS = 0;
+    private static final boolean GLOBAL_CONSENT_SUPPORTED = false;
+    private static final boolean BANK_OFFERED_CONSENT_SUPPORTED = false;
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = false;
     private static final boolean SIGNING_BASKET_SUPPORTED = true;
-    private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
+    private static final boolean PAYMENT_CANCELLATION_AUTHORISATION_MANDATED = false;
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
     private static final boolean DELTA_LIST_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final long AUTHORISATION_EXPIRATION_TIME_MS = 86400000;
-    private static final long NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS = 86400000;
-    private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS = 86400000;
+    private static final long NOT_CONFIRMED_CONSENT_EXPIRATION_TIME_MS = 86400000;
+    private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS = 86400000;
     private static final String PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP = "https://localhost/payment/cancellation/";
     private static Map<PaymentType, Set<String>> SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX = buildSupportedPaymentTypeAndProductMatrix();
     private static final long PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final boolean AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED = false;
-    private static final boolean SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED = false;
+    private static final boolean SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED = false;
     private static final boolean PSU_IN_INITIAL_REQUEST_MANDATED = false;
-    private static final boolean FORCE_XS2A_BASE_URL = false;
-    private static final String XS2A_BASEURL = "http://myhost.com/";
+    private static final boolean FORCE_XS2A_BASE_LINKS_URL = false;
+    private static final String XS2A_BASE_LINKS_URL = "http://myhost.com/";
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
     private static final String SUPPORTED_TRANSACTION_APPLICATION_TYPES = "JSON";
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
@@ -118,40 +123,43 @@ public class AspspProfileControllerTest {
     }
 
     private static AspspSettings buildAspspSettings() {
-        return new AspspSettings(
-            FREQUENCY_PER_DAY,
-            COMBINED_SERVICE_INDICATOR,
-            TPP_SIGNATURE_REQUIRED,
-            PIS_REDIRECT_LINK,
-            AIS_REDIRECT_LINK,
-            MULTICURRENCY_ACCOUNT_LEVEL,
-            BANK_OFFERED_CONSENT_SUPPORT,
-            AVAILABLE_BOOKING_STATUSES,
-            SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
-            CONSENT_LIFETIME,
-            TRANSACTION_LIFETIME,
-            ALL_PSD_2_SUPPORT,
-            TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,
-            SIGNING_BASKET_SUPPORTED,
-            PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
-            PIIS_CONSENT_SUPPORTED,
-            REDIRECT_URL_EXPIRATION_TIME_MS,
-            AUTHORISATION_EXPIRATION_TIME_MS,
-            PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP,
-            NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS,
-            NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS,
-            SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX,
-            PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS,
-            AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED,
-            SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED,
-            PSU_IN_INITIAL_REQUEST_MANDATED,
-            FORCE_XS2A_BASE_URL,
-            XS2A_BASEURL,
-            SCA_REDIRECT_FLOW,
-            DELTA_LIST_SUPPORTED,
-            ENTRY_REFERENCE_FROM_SUPPORTED,
-            SUPPORTED_TRANSACTION_APPLICATION_TYPES,
-            START_AUTHORISATION_MODE);
+        ConsentTypeSetting consentTypes = new ConsentTypeSetting(BANK_OFFERED_CONSENT_SUPPORTED,
+                                                                 GLOBAL_CONSENT_SUPPORTED,
+                                                                 AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED,
+                                                                 ACCOUNT_ACCESS_FREQUENCY_PER_DAY,
+                                                                 NOT_CONFIRMED_CONSENT_EXPIRATION_TIME_MS,
+                                                                 MAX_CONSENT_VALIDITY_DAYS);
+        AisRedirectLinkSetting aisRedirectLinkToOnlineBanking = new AisRedirectLinkSetting(AIS_REDIRECT_LINK);
+        AisTransactionSetting transactionParameters = new AisTransactionSetting(AVAILABLE_BOOKING_STATUSES,
+                                                                                TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,
+                                                                                SUPPORTED_TRANSACTION_APPLICATION_TYPES);
+        DeltaReportSetting deltaReportSettings = new DeltaReportSetting(ENTRY_REFERENCE_FROM_SUPPORTED,
+                                                                        DELTA_LIST_SUPPORTED);
+        OneTimeConsentScaSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaSetting(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED);
+        AisAspspProfileSetting ais = new AisAspspProfileSetting(consentTypes, aisRedirectLinkToOnlineBanking, transactionParameters, deltaReportSettings, scaRequirementsForOneTimeConsents);
+        PisRedirectLinkSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkSetting(PIS_REDIRECT_LINK,
+                                                                                           PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP,
+                                                                                           PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS);
+        PisAspspProfileSetting pis = new PisAspspProfileSetting(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX,
+                                                                MAX_TRANSACTION_VALIDITY_DAYS,
+                                                                NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS,
+                                                                PAYMENT_CANCELLATION_AUTHORISATION_MANDATED,
+                                                                pisRedirectLinkToOnlineBanking);
+        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED);
+        CommonAspspProfileSetting common = new CommonAspspProfileSetting(SCA_REDIRECT_FLOW,
+                                                                         START_AUTHORISATION_MODE,
+                                                                         TPP_SIGNATURE_REQUIRED,
+                                                                         PSU_IN_INITIAL_REQUEST_MANDATED,
+                                                                         REDIRECT_URL_EXPIRATION_TIME_MS,
+                                                                         AUTHORISATION_EXPIRATION_TIME_MS,
+                                                                         FORCE_XS2A_BASE_LINKS_URL,
+                                                                         XS2A_BASE_LINKS_URL,
+                                                                         SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
+                                                                         MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
+                                                                         AIS_PIS_SESSION_SUPPORTED,
+                                                                         SIGNING_BASKET_SUPPORTED);
+
+        return new AspspSettings(ais, pis, piis, common);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
@@ -168,7 +176,7 @@ public class AspspProfileControllerTest {
 
     private static Map<PaymentType, Set<String>> buildSupportedPaymentTypeAndProductMatrix() {
         Map<PaymentType, Set<String>> matrix = new HashMap<>();
-        Set<String> availablePaymentProducts = Collections.singleton( "sepa-credit-transfers");
+        Set<String> availablePaymentProducts = Collections.singleton("sepa-credit-transfers");
         matrix.put(PaymentType.SINGLE, availablePaymentProducts);
         return matrix;
     }

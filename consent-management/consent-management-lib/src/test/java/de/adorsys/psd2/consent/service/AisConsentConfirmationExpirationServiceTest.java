@@ -17,13 +17,13 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.aspsp.profile.domain.ais.AisAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.ais.ConsentTypeSetting;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -160,10 +160,7 @@ public class AisConsentConfirmationExpirationServiceTest {
         return aisConsent;
     }
 
-    private AspspSettings buildAspspSettings(Long notConfirmedConsentExpirationPeriodMs) {
-        return new AspspSettings(1, false, false, null, null,
-                                 null, false, null, null, 1, 1, false,
-                                 false, false, false, false, 1, 1,
-                                 null, notConfirmedConsentExpirationPeriodMs, 1, null, 1, false, false, false, false, null, ScaRedirectFlow.REDIRECT, false, false, null, StartAuthorisationMode.AUTO);
+    private AspspSettings buildAspspSettings(Long notConfirmedConsentExpirationTimeMs) {
+        return new AspspSettings(new AisAspspProfileSetting(new ConsentTypeSetting(false, false, false, 0, notConfirmedConsentExpirationTimeMs, 0), null, null, null, null), null, null, null);
     }
 }

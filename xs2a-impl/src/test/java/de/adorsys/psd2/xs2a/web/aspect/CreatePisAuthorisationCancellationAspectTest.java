@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -28,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisatio
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.PisAuthorisationCancellationLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdatePisCancellationPsuDataLinks;
@@ -62,11 +62,11 @@ public class CreatePisAuthorisationCancellationAspectTest {
     @Mock
     private MessageService messageService;
     @Mock
-    private AspspProfileService aspspProfileService;
-    @Mock
     private Xs2aCreatePisCancellationAuthorisationResponse createResponse;
     @Mock
     private Xs2aUpdatePisCommonPaymentPsuDataResponse updateResponse;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     private AspspSettings aspspSettings;
     private ResponseObject<CancellationAuthorisationResponse> responseObject;
@@ -75,20 +75,19 @@ public class CreatePisAuthorisationCancellationAspectTest {
     public void setUp() {
         JsonReader jsonReader = new JsonReader();
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
     }
 
     @Test
     public void createPisAuthorisationAspect_withStartResponseType_shouldSetAuthorisationCancellationLinks() {
         when(createResponse.getAuthorisationResponseType()).thenReturn(AuthorisationResponseType.START);
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
-
         responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
                              .body(createResponse)
                              .build();
         ResponseObject<CancellationAuthorisationResponse> actualResponse =
             aspect.createPisAuthorisationAspect(responseObject, REQUEST);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
         verify(createResponse, times(1)).setLinks(any(PisAuthorisationCancellationLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -97,7 +96,6 @@ public class CreatePisAuthorisationCancellationAspectTest {
     @Test
     public void createPisAuthorisationAspect_withUpdateResponseType_shouldSetUpdatePsuDataLinks() {
         when(updateResponse.getAuthorisationResponseType()).thenReturn(AuthorisationResponseType.UPDATE);
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
 
         responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
                              .body(updateResponse)
@@ -105,7 +103,6 @@ public class CreatePisAuthorisationCancellationAspectTest {
         ResponseObject<CancellationAuthorisationResponse> actualResponse =
             aspect.createPisAuthorisationAspect(responseObject, REQUEST);
 
-        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(updateResponse, times(1)).setLinks(any(UpdatePisCancellationPsuDataLinks.class));
 
         assertFalse(actualResponse.hasError());

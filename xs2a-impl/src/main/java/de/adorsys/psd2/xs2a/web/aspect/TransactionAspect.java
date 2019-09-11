@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
@@ -24,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsDownloadResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.controller.AccountController;
 import de.adorsys.psd2.xs2a.web.link.TransactionsReportAccountLinks;
 import de.adorsys.psd2.xs2a.web.link.TransactionsReportDownloadLinks;
@@ -37,8 +37,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class TransactionAspect extends AbstractLinkAspect<AccountController> {
 
-    public TransactionAspect(MessageService messageService, AspspProfileService aspspProfileService) {
-        super(messageService, aspspProfileService);
+    public TransactionAspect(MessageService messageService, AspspProfileServiceWrapper aspspProfileServiceWrapper) {
+        super(messageService, aspspProfileServiceWrapper);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ais.TransactionService.getTransactionsReportByPeriod(..)) && args(request)", returning = "result", argNames = "result,request")

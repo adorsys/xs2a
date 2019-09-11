@@ -29,12 +29,12 @@ is mandated by the ASPSP,
 a corresponding hyperlink will be contained
 in the response message.
 end note
-alt paymentCancellationAuthorizationMandated = FALSE
+alt paymentCancellationAuthorisationMandated = FALSE
 |||
       XS2A-->TPP: Response "http Code: 204 successful\n{"transactionStatus": "CANC"}"
 deactivate XS2A
 |||
-else paymentCancellationAuthorizationMandated = TRUE
+else paymentCancellationAuthorisationMandated = TRUE
 |||
       XS2A-->TPP: Payment Cancellation Response\n"link startAuthorisation"\n"http Code: 202 successful"
 |||

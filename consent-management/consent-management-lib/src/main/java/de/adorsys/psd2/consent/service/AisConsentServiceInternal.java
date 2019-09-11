@@ -323,7 +323,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private LocalDate adjustExpireDate(LocalDate validUntil) {
-        int lifetime = aspspProfileService.getAspspSettings().getConsentLifetime();
+        int lifetime = aspspProfileService.getAspspSettings().getAis().getConsentTypes().getMaxConsentValidityDays();
         if (lifetime <= 0) {
             return validUntil;
         }

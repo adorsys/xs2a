@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.UpdatePisCancellationPsuDataLinks;
 import org.junit.Before;
@@ -48,9 +49,9 @@ public class UpdatePisCancellationPsuDataAspectTest {
     @Mock
     private MessageService messageService;
     @Mock
-    private AspspProfileService aspspProfileService;
-    @Mock
     private Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisCommonPaymentPsuDataResponse;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     private AspspSettings aspspSettings;
     private ResponseObject responseObject;
@@ -60,20 +61,19 @@ public class UpdatePisCancellationPsuDataAspectTest {
     public void setUp() {
         JsonReader jsonReader = new JsonReader();
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
         request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
     }
 
     @Test
     public void updatePisCancellationAuthorizationAspect_success() {
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
         when(updatePisCommonPaymentPsuDataResponse.getScaStatus()).thenReturn(ScaStatus.PSUAUTHENTICATED);
 
         responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                              .body(updatePisCommonPaymentPsuDataResponse)
                              .build();
         ResponseObject actualResponse = aspect.updatePisCancellationAuthorizationAspect(responseObject, request);
-
-        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(updatePisCommonPaymentPsuDataResponse, times(1)).setLinks(any(UpdatePisCancellationPsuDataLinks.class));
 
         assertFalse(actualResponse.hasError());

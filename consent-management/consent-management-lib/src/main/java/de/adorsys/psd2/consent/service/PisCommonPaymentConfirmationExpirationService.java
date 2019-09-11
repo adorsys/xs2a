@@ -47,7 +47,7 @@ public class PisCommonPaymentConfirmationExpirationService {
     }
 
     public boolean isPaymentDataOnConfirmationExpired(PisCommonPaymentData pisCommonPaymentData) {
-        long expirationPeriodMs = aspspProfileService.getAspspSettings().getNotConfirmedPaymentExpirationPeriodMs();
+        long expirationPeriodMs = aspspProfileService.getAspspSettings().getPis().getNotConfirmedPaymentExpirationTimeMs();
         return pisCommonPaymentData != null && pisCommonPaymentData.isConfirmationExpired(expirationPeriodMs);
     }
 

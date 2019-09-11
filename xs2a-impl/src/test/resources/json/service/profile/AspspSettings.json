@@ -1,5 +1,9 @@
 {
-  "availableBookingStatuses": [
-    "booked"
-  ]
+  "ais": {
+    "transactionParameters": {
+      "availableBookingStatuses": [
+        "BOOKED"
+      ]
+    }
+  }
 }

@@ -21,6 +21,7 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import de.adorsys.psd2.xs2a.domain.account.SupportedAccountReferenceField;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class AspspProfileServiceWrapper {
      * @return Map with payment types and  products supported by current ASPSP
      */
     public Map<PaymentType, Set<String>> getSupportedPaymentTypeAndProductMatrix() {
-        return readAspspSettings().getSupportedPaymentTypeAndProductMatrix();
+        return readAspspSettings().getPis().getSupportedPaymentTypeAndProductMatrix();
     }
 
     /**
@@ -60,7 +61,7 @@ public class AspspProfileServiceWrapper {
      * @return 'true' if tpp signature is required, 'false' if not
      */
     public Boolean getTppSignatureRequired() {
-        return readAspspSettings().isTppSignatureRequired();
+        return readAspspSettings().getCommon().isTppSignatureRequired();
     }
 
     /**
@@ -69,7 +70,7 @@ public class AspspProfileServiceWrapper {
      * @return Url in order to redirect SCA approach
      */
     public String getPisRedirectUrlToAspsp() {
-        return readAspspSettings().getPisRedirectUrlToAspsp();
+        return readAspspSettings().getPis().getRedirectLinkToOnlineBanking().getPisRedirectUrlToAspsp();
     }
 
     /**
@@ -78,7 +79,7 @@ public class AspspProfileServiceWrapper {
      * @return Url in order to redirect SCA approach
      */
     public String getAisRedirectUrlToAspsp() {
-        return readAspspSettings().getAisRedirectUrlToAspsp();
+        return readAspspSettings().getAis().getRedirectLinkToOnlineBanking().getAisRedirectUrlToAspsp();
     }
 
     /**
@@ -87,28 +88,28 @@ public class AspspProfileServiceWrapper {
      * @return List of supported fields
      */
     public List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
-        List<de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField> supportedAccountReferenceFields = readAspspSettings().getSupportedAccountReferenceFields();
+        List<de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField> supportedAccountReferenceFields = readAspspSettings().getCommon().getSupportedAccountReferenceFields();
         return supportedAccountReferenceFields.stream()
                    .map(reference -> SupportedAccountReferenceField.valueOf(reference.name()))
                    .collect(Collectors.toList());
     }
 
     /**
-     * Reads value of maximum consent lifetime
+     * Reads maximum lifetime of consent set in days
      *
-     * @return int value of maximum consent lifetime
+     * @return int maximum lifetime of consent set in days
      */
-    public int getConsentLifetime() {
-        return readAspspSettings().getConsentLifetime();
+    public int getMaxConsentValidityDays() {
+        return readAspspSettings().getAis().getConsentTypes().getMaxConsentValidityDays();
     }
 
     /**
-     * Reads value of AllPsd2Support from ASPSP profile service
+     * Reads value of globalConsentSupported from ASPSP profile service
      *
      * @return true if ASPSP supports Global consents, false if doesn't
      */
-    public Boolean getAllPsd2Support() {
-        return readAspspSettings().isAllPsd2Support();
+    public Boolean isGlobalConsentSupported() {
+        return readAspspSettings().getAis().getConsentTypes().isGlobalConsentSupported();
     }
 
     /**
@@ -117,7 +118,7 @@ public class AspspProfileServiceWrapper {
      * @return boolean representation of support of Bank Offered Consent
      */
     public boolean isBankOfferedConsentSupported() {
-        return readAspspSettings().isBankOfferedConsentSupport();
+        return readAspspSettings().getAis().getConsentTypes().isBankOfferedConsentSupported();
     }
 
     /**
@@ -126,7 +127,7 @@ public class AspspProfileServiceWrapper {
      * @return true if ASPSP transactions without balances supported, false if doesn't
      */
     public boolean isTransactionsWithoutBalancesSupported() {
-        return readAspspSettings().isTransactionsWithoutBalancesSupported();
+        return readAspspSettings().getAis().getTransactionParameters().isTransactionsWithoutBalancesSupported();
     }
 
     /**
@@ -135,16 +136,16 @@ public class AspspProfileServiceWrapper {
      * @return true if ASPSP supports signing basket , false if doesn't
      */
     public boolean isSigningBasketSupported() {
-        return readAspspSettings().isSigningBasketSupported();
+        return readAspspSettings().getCommon().isSigningBasketSupported();
     }
 
     /**
-     * Reads if is payment cancellation authorization mandated from ASPSP profile service
+     * Reads if is payment cancellation authorisation mandated from ASPSP profile service
      *
-     * @return true if payment cancellation authorization is mandated, false if doesn't
+     * @return true if payment cancellation authorisation is mandated, false if doesn't
      */
-    public boolean isPaymentCancellationAuthorizationMandated() {
-        return readAspspSettings().isPaymentCancellationAuthorizationMandated();
+    public boolean isPaymentCancellationAuthorisationMandated() {
+        return readAspspSettings().getPis().isPaymentCancellationAuthorisationMandated();
     }
 
     /**
@@ -153,7 +154,7 @@ public class AspspProfileServiceWrapper {
      * @return true if piis consent is supported, false if doesn't
      */
     public boolean isPiisConsentSupported() {
-        return readAspspSettings().isPiisConsentSupported();
+        return readAspspSettings().getPiis().isPiisConsentSupported();
     }
 
     /**
@@ -162,7 +163,7 @@ public class AspspProfileServiceWrapper {
      * @return long value of redirect url expiration time
      */
     public long getRedirectUrlExpirationTimeMs() {
-        return readAspspSettings().getRedirectUrlExpirationTimeMs();
+        return readAspspSettings().getCommon().getRedirectUrlExpirationTimeMs();
     }
 
     /**
@@ -171,7 +172,7 @@ public class AspspProfileServiceWrapper {
      * @return long value of authorisation expiration time
      */
     public long getAuthorisationExpirationTimeMs() {
-        return readAspspSettings().getAuthorisationExpirationTimeMs();
+        return readAspspSettings().getCommon().getAuthorisationExpirationTimeMs();
     }
 
     /**
@@ -180,7 +181,7 @@ public class AspspProfileServiceWrapper {
      * @return Url in order to redirect SCA approach
      */
     public String getPisPaymentCancellationRedirectUrlToAspsp() {
-        return readAspspSettings().getPisPaymentCancellationRedirectUrlToAspsp();
+        return readAspspSettings().getPis().getRedirectLinkToOnlineBanking().getPisPaymentCancellationRedirectUrlToAspsp();
     }
 
     /**
@@ -189,7 +190,7 @@ public class AspspProfileServiceWrapper {
      * @return true if ASPSP supports available accounts for consent
      */
     public boolean isAvailableAccountsConsentSupported() {
-        return readAspspSettings().isAvailableAccountsConsentSupported();
+        return readAspspSettings().getAis().getConsentTypes().isAvailableAccountsConsentSupported();
     }
 
     /**
@@ -198,7 +199,7 @@ public class AspspProfileServiceWrapper {
      * @return true if ASPSP requires usage of SCA to validate a one-time available accounts consent
      */
     public boolean isScaByOneTimeAvailableAccountsConsentRequired() {
-        return readAspspSettings().isScaByOneTimeAvailableAccountsConsentRequired();
+        return readAspspSettings().getAis().getScaRequirementsForOneTimeConsents().isScaByOneTimeAvailableAccountsConsentRequired();
     }
 
     /**
@@ -207,16 +208,16 @@ public class AspspProfileServiceWrapper {
      * @return true if ASPSP requires PSU in initial request for payment initiation or establishing consent
      */
     public boolean isPsuInInitialRequestMandated() {
-        return readAspspSettings().isPsuInInitialRequestMandated();
+        return readAspspSettings().getCommon().isPsuInInitialRequestMandated();
     }
 
     /**
-     * Reads if links shall be generated with the base URL set by `xs2aBaseUrl`
+     * Reads if links shall be generated with the base URL set by `xs2aBaseLinksUrl`
      *
-     * @return true if ASPSP requires that links shall be generated with the base URL set by `xs2aBaseUrl` property
+     * @return true if ASPSP requires that links shall be generated with the base URL set by `xs2aBaseLinksUrl` property
      */
     public boolean isForceXs2aBaseLinksUrl() {
-        return readAspspSettings().isForceXs2aBaseUrl();
+        return readAspspSettings().getCommon().isForceXs2aBaseLinksUrl();
     }
 
     /**
@@ -224,8 +225,8 @@ public class AspspProfileServiceWrapper {
      *
      * @return String value of the url
      */
-    public String getXs2aBaseUrl() {
-        return readAspspSettings().getXs2aBaseUrl();
+    public String getXs2aBaseLinksUrl() {
+        return readAspspSettings().getCommon().getXs2aBaseLinksUrl();
     }
 
     /**
@@ -233,26 +234,26 @@ public class AspspProfileServiceWrapper {
      *
      * @return true if a payment initiation service will be addressed in the same session
      */
-    public boolean isCombinedServiceIndicator() {
-        return readAspspSettings().isCombinedServiceIndicator();
+    public boolean isAisPisSessionsSupported() {
+        return readAspspSettings().getCommon().isAisPisSessionsSupported();
     }
 
     /**
-     * Reads if 'deltaList' parameter in transaction report is supported from ASPSP profile service
+     * Reads if 'deltaListSupported' parameter in transaction report is supported from ASPSP profile service
      *
-     * @return true if ASPSP supports 'deltaList' parameter in transaction report
+     * @return true if ASPSP supports 'deltaListSupported' parameter in transaction report
      */
     public boolean isDeltaListSupported() {
-        return readAspspSettings().isDeltaListSupported();
+        return readAspspSettings().getAis().getDeltaReportSettings().isDeltaListSupported();
     }
 
     /**
-     * Reads if 'entryReferenceFrom' parameter in transaction report is supported from ASPSP profile service
+     * Reads if 'entryReferenceFromSupported' parameter in transaction report is supported from ASPSP profile service
      *
-     * @return true if ASPSP supports 'entryReferenceFrom' parameter in transaction report
+     * @return true if ASPSP supports 'entryReferenceFromSupported' parameter in transaction report
      */
     public boolean isEntryReferenceFromSupported() {
-        return readAspspSettings().isEntryReferenceFromSupported();
+        return readAspspSettings().getAis().getDeltaReportSettings().isEntryReferenceFromSupported();
     }
 
     /**
@@ -261,7 +262,7 @@ public class AspspProfileServiceWrapper {
      * @return list of available booking statuses
      */
     public List<BookingStatus> getAvailableBookingStatuses() {
-        return readAspspSettings().getAvailableBookingStatuses();
+        return readAspspSettings().getAis().getTransactionParameters().getAvailableBookingStatuses();
     }
 
     /**
@@ -270,7 +271,35 @@ public class AspspProfileServiceWrapper {
      * @return String with the selected mode.
      */
     public StartAuthorisationMode getStartAuthorisationMode() {
-        return readAspspSettings().getStartAuthorisationMode();
+        return readAspspSettings().getCommon().getStartAuthorisationMode();
+    }
+
+    /**
+     * Reads the variant of redirect approach to be used.
+     *
+     * @return the variant of redirect approach to be used.
+     */
+    public ScaRedirectFlow getScaRedirectFlow() {
+        return readAspspSettings().getCommon().getScaRedirectFlow();
+    }
+
+
+    /**
+     * Reads the maximum allowed by bank accesses for consent's usage per unique resource for each endpoint.
+     *
+     * @return int limit of each endpoint usages.
+     */
+    public int getAccountAccessFrequencyPerDay() {
+        return readAspspSettings().getAis().getConsentTypes().getAccountAccessFrequencyPerDay();
+    }
+
+    /**
+     * Reads transaction application type supported by ASPSP (JSON, XML or TEXT).
+     *
+     * @return List of transaction application type supported by ASPSP.
+     */
+    public String getSupportedTransactionApplicationType() {
+        return readAspspSettings().getAis().getTransactionParameters().getSupportedTransactionApplicationType();
     }
 
     private AspspSettings readAspspSettings() {

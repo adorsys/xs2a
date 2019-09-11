@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -26,6 +25,7 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import de.adorsys.psd2.xs2a.web.link.PaymentCancellationLinks;
@@ -43,12 +43,12 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
     private final RedirectIdService redirectIdService;
 
     public PaymentCancellationAspect(MessageService messageService, PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider,
-                                     AspspProfileService aspspProfileService,
+                                     AspspProfileServiceWrapper aspspProfileServiceWrapper,
                                      ScaApproachResolver scaApproachResolver,
                                      RedirectLinkBuilder redirectLinkBuilder,
                                      AuthorisationMethodDecider authorisationMethodDecider,
                                      RedirectIdService redirectIdService) {
-        super(messageService, aspspProfileService);
+        super(messageService, aspspProfileServiceWrapper);
         this.cancellationScaNeededDecider = cancellationScaNeededDecider;
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
