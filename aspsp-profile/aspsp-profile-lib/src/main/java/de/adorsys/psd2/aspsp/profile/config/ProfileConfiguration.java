@@ -36,32 +36,34 @@ public class ProfileConfiguration implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        setDefaultScaApproach(ScaApproach.REDIRECT);
-        setDefaultBookingStatus(BOOKED);
-        setDefaultScaRedirectFlow();
-        setDefaultStartAuthorisationMode();
+        if (setting.getCommon() != null && setting.getAis() != null) {
+            setDefaultScaApproach(ScaApproach.REDIRECT);
+            setDefaultBookingStatus(BOOKED);
+            setDefaultScaRedirectFlow();
+            setDefaultStartAuthorisationMode();
+        }
     }
 
     private void setDefaultScaApproach(ScaApproach scaApproach) {
-        if (CollectionUtils.isEmpty(setting.getScaApproaches())) {
-            setting.setScaApproaches(Collections.singletonList(scaApproach));
+        if (CollectionUtils.isEmpty(setting.getCommon().getScaApproachesSupported())) {
+            setting.getCommon().setScaApproachesSupported(Collections.singletonList(scaApproach));
         }
     }
 
     private void setDefaultScaRedirectFlow() {
-        if (Objects.isNull(setting.getScaRedirectFlow())) {
-            setting.setScaRedirectFlow(ScaRedirectFlow.REDIRECT);
+        if (Objects.isNull(setting.getCommon().getScaRedirectFlow())) {
+            setting.getCommon().setScaRedirectFlow(ScaRedirectFlow.REDIRECT);
         }
     }
 
     private void setDefaultStartAuthorisationMode() {
-        if (Objects.isNull(setting.getStartAuthorisationMode())) {
-            setting.setStartAuthorisationMode(StartAuthorisationMode.AUTO.getValue());
+        if (Objects.isNull(setting.getCommon().getStartAuthorisationMode())) {
+            setting.getCommon().setStartAuthorisationMode(StartAuthorisationMode.AUTO.getValue());
         }
     }
 
     private void setDefaultBookingStatus(BookingStatus necessaryStatus) {
-        List<BookingStatus> availableBookingStatuses = setting.getAvailableBookingStatuses();
+        List<BookingStatus> availableBookingStatuses = setting.getAis().getTransactionParameters().getAvailableBookingStatuses();
         if (!availableBookingStatuses.contains(necessaryStatus)) {
             availableBookingStatuses.add(necessaryStatus);
         }

@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -26,6 +25,7 @@ import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.ConsentController;
 import de.adorsys.psd2.xs2a.web.link.CreateAisAuthorisationLinks;
@@ -51,9 +51,9 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
                          MessageService messageService,
                          AuthorisationMethodDecider authorisationMethodDecider,
                          RedirectLinkBuilder redirectLinkBuilder,
-                         AspspProfileService aspspProfileService,
+                         AspspProfileServiceWrapper aspspProfileServiceWrapper,
                          RedirectIdService redirectIdService) {
-        super(messageService, aspspProfileService);
+        super(messageService, aspspProfileServiceWrapper);
         this.scaApproachResolver = scaApproachResolver;
         this.authorisationMethodDecider = authorisationMethodDecider;
         this.redirectLinkBuilder = redirectLinkBuilder;

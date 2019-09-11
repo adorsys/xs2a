@@ -17,13 +17,13 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.CreatePisAuthorisationLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdatePisAuthorisationLinks;
@@ -56,7 +56,7 @@ public class CreatePisAuthorizationAspectTest {
     @Mock
     private MessageService messageService;
     @Mock
-    private AspspProfileService aspspProfileService;
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
     @Mock
     private Xs2aCreatePisAuthorisationResponse createPisAuthorisationResponse;
     @Mock
@@ -70,20 +70,19 @@ public class CreatePisAuthorizationAspectTest {
     public void setUp() {
         JsonReader jsonReader = new JsonReader();
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
 
         request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, null, PAYMENT_PRODUCT, PAYMENT_SERVICE, "");
     }
 
     @Test
     public void createPisAuthorizationAspect_successOnCreatePisAuthorization() {
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
-
         responseObject = ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
                              .body(createPisAuthorisationResponse)
                              .build();
         ResponseObject actualResponse = aspect.createPisAuthorizationAspect(responseObject, request);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
         verify(createPisAuthorisationResponse, times(1)).setLinks(any(CreatePisAuthorisationLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -91,14 +90,12 @@ public class CreatePisAuthorizationAspectTest {
 
     @Test
     public void updatePisAuthorizationAspect_successOnUpdateAuthorization() {
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
 
         responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                              .body(updatePisCommonPaymentPsuDataResponse)
                              .build();
         ResponseObject actualResponse = aspect.createPisAuthorizationAspect(responseObject, request);
 
-        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(updatePisCommonPaymentPsuDataResponse, times(1)).setLinks(any(UpdatePisAuthorisationLinks.class));
 
         assertFalse(actualResponse.hasError());

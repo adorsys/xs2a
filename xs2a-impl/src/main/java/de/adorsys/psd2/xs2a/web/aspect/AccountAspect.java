@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
@@ -24,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetailsHolder;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountListHolder;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.controller.AccountController;
 import de.adorsys.psd2.xs2a.web.link.AccountDetailsLinks;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +38,8 @@ import java.util.List;
 @Component
 public class AccountAspect extends AbstractLinkAspect<AccountController> {
 
-    public AccountAspect(MessageService messageService, AspspProfileService aspspProfileService) {
-        super(messageService, aspspProfileService);
+    public AccountAspect(MessageService messageService, AspspProfileServiceWrapper aspspProfileServiceWrapper) {
+        super(messageService, aspspProfileServiceWrapper);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ais.AccountDetailsService.getAccountDetails(..)) && args( consentId, accountId, withBalance, requestUri)", returning = "result", argNames = "result,consentId,accountId,withBalance,requestUri")

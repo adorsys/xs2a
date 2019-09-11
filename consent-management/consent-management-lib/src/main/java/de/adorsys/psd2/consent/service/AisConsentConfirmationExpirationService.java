@@ -48,7 +48,7 @@ public class AisConsentConfirmationExpirationService {
     }
 
     public boolean isConsentConfirmationExpired(AisConsent consent) {
-        long expirationPeriodMs = aspspProfileService.getAspspSettings().getNotConfirmedConsentExpirationPeriodMs();
+        long expirationPeriodMs = aspspProfileService.getAspspSettings().getAis().getConsentTypes().getNotConfirmedConsentExpirationTimeMs();
         return consent != null && consent.isConfirmationExpired(expirationPeriodMs);
     }
 

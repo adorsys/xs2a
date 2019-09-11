@@ -64,13 +64,17 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -154,8 +158,8 @@ public class PaymentControllerTest {
         httpHeadersExplicit.add("PSU-Corporate-ID", "Some corporate id");
         httpHeadersExplicit.add("PSU-Corporate-ID-Type", "Some corporate id type");
         httpHeadersExplicit.add("PSU-IP-Address", "1.1.1.1");
-        httpHeadersExplicit.add( "TPP-Redirect-URI", TPP_REDIRECT_URI );
-        httpHeadersExplicit.add( "TPP-Nok-Redirect-URI", TPP_NOK_REDIRECT_URI );
+        httpHeadersExplicit.add("TPP-Redirect-URI", TPP_REDIRECT_URI);
+        httpHeadersExplicit.add("TPP-Nok-Redirect-URI", TPP_NOK_REDIRECT_URI);
 
         // when we use Explicit auth mode we need to set 'true' and value 'signingBasketSupported' in profile also should be 'true'
         httpHeadersExplicit.add("TPP-Explicit-Authorisation-Preferred", "true");
@@ -211,10 +215,9 @@ public class PaymentControllerTest {
     public void cancelPaymentAuthorisation_Redirect_OAuth_successful() throws Exception {
         // Given
         AspspSettings aspspSettings = AspspSettingsBuilder.buildAspspSettings();
-        aspspSettings.setScaRedirectFlow(ScaRedirectFlow.OAUTH);
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
         given(aspspProfileService.getAspspSettings())
-            .willReturn(aspspSettings);
+            .willReturn(AspspSettingsBuilder.buildAspspSettingsWithScaRedirectFlow(ScaRedirectFlow.OAUTH));
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .willReturn(Optional.of(ScaStatus.RECEIVED));
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))

@@ -1,1 +1,11 @@
-{}
+{
+  "pis": {
+    "redirectLinkToOnlineBanking": {
+      "paymentCancellationRedirectUrlExpirationTimeMs": 100
+    }
+  },
+  "common": {
+    "redirectUrlExpirationTimeMs": 1000,
+    "authorisationExpirationTimeMs": 100
+  }
+}

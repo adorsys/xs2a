@@ -41,6 +41,6 @@ public class BankProfileReaderConfigurationTest {
         //When
         ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
         //Then
-        assertEquals(ScaRedirectFlow.REDIRECT, profileConfiguration.getSetting().getScaRedirectFlow());
+        assertEquals(ScaRedirectFlow.REDIRECT, profileConfiguration.getSetting().getCommon().getScaRedirectFlow());
     }
 }

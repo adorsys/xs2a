@@ -75,7 +75,7 @@ public class BankProfileReaderConfigurationTest {
 
         ProfileConfiguration configurationWithCustomProfile = bankProfileReaderConfiguration.profileConfiguration();
         //Then
-        assertEquals(ScaRedirectFlow.OAUTH, configurationWithCustomProfile.getSetting().getScaRedirectFlow());
+        assertEquals(ScaRedirectFlow.OAUTH, configurationWithCustomProfile.getSetting().getCommon().getScaRedirectFlow());
     }
 
     @Test
@@ -88,6 +88,6 @@ public class BankProfileReaderConfigurationTest {
 
         ProfileConfiguration configurationWithCustomProfile = bankProfileReaderConfiguration.profileConfiguration();
         //Then
-        assertEquals(ScaRedirectFlow.REDIRECT, configurationWithCustomProfile.getSetting().getScaRedirectFlow());
+        assertEquals(ScaRedirectFlow.REDIRECT, configurationWithCustomProfile.getSetting().getCommon().getScaRedirectFlow());
     }
 }

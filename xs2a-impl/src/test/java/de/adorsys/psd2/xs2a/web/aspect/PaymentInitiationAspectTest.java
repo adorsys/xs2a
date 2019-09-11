@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.PaymentInitiationLinks;
 import org.junit.Before;
@@ -49,7 +50,7 @@ public class PaymentInitiationAspectTest {
     @Mock
     private MessageService messageService;
     @Mock
-    private AspspProfileService aspspProfileService;
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
     @Mock
     private PaymentInitiationResponse paymentInitiationResponse;
     @Mock
@@ -64,11 +65,12 @@ public class PaymentInitiationAspectTest {
     public void setUp() {
         JsonReader jsonReader = new JsonReader();
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
     }
 
     @Test
     public void createPaymentAspect_success() {
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
         when(requestParameters.isTppExplicitAuthorisationPreferred()).thenReturn(true);
         when(paymentInitiationResponse.isMultilevelScaRequired()).thenReturn(true);
         when(authorisationMethodDecider.isExplicitMethod(true, true)).thenReturn(true);
@@ -79,7 +81,6 @@ public class PaymentInitiationAspectTest {
                              .build();
         ResponseObject actualResponse = aspect.createPaymentAspect(responseObject, null, requestParameters);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
         verify(paymentInitiationResponse, times(1)).setLinks(any(PaymentInitiationLinks.class));
 
         assertFalse(actualResponse.hasError());

@@ -169,7 +169,7 @@ public class CreateConsentRequestValidatorTest {
     @Test
     public void validate_withSupportedCombinedServiceIndicator_shouldReturnValid() {
         //Given
-        when(aspspProfileService.isCombinedServiceIndicator()).thenReturn(true);
+        when(aspspProfileService.isAisPisSessionsSupported()).thenReturn(true);
         CreateConsentReq createConsentReq = buildCreateConsentReqWithCombinedServiceIndicator(true);
 
         //When
@@ -206,7 +206,7 @@ public class CreateConsentRequestValidatorTest {
     @Test
     public void validate_withNotSupportedCombinedServiceIndicator_shouldReturnFormatError() {
         //Given
-        when(aspspProfileService.isCombinedServiceIndicator()).thenReturn(false);
+        when(aspspProfileService.isAisPisSessionsSupported()).thenReturn(false);
         CreateConsentReq createConsentReq = buildCreateConsentReqWithCombinedServiceIndicator(true);
 
         //When

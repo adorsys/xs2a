@@ -1,4 +1,6 @@
 {
-  "forceXs2aBaseUrl": true,
-  "xs2aBaseUrl": "http://base.url"
+  "common": {
+    "forceXs2aBaseLinksUrl": true,
+    "xs2aBaseLinksUrl": "http://base.url"
+  }
 }
