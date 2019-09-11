@@ -276,27 +276,6 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void getTransactionsReportByPeriod_WithNullSpiTransactionReport() {
-        // Given
-        doNothing().when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
-
-        when(aspspProfileService.isTransactionsWithoutBalancesSupported())
-            .thenReturn(true);
-
-        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(null));
-
-        when(consentMapper.mapToSpiAccountConsent(any()))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
-        // When
-        ResponseObject<Xs2aTransactionsReport> actualResponse = transactionService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
-
-        // Then
-        assertThatErrorIs(actualResponse, RESOURCE_UNKNOWN_404);
-    }
-
-    @Test
     public void getTransactionsReportByPeriod_Success() {
         // Given
         doNothing().when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
@@ -501,24 +480,6 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void downloadTransactions_WithNullSpiTransactionsDownloadResponse() {
-        // Given
-        when(downloadTransactionsReportValidator.validate(any(DownloadTransactionListRequestObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(consentMapper.mapToSpiAccountConsent(any()))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
-        when(accountSpi.requestTransactionsByDownloadLink(SPI_CONTEXT_DATA, SPI_ACCOUNT_CONSENT, new String(Base64.getDecoder().decode(BASE64_STRING_EXAMPLE)), spiAspspConsentDataProvider))
-            .thenReturn(buildErrorSpiResponse(null));
-
-        // When
-        ResponseObject<Xs2aTransactionsDownloadResponse> actualResponse = transactionService.downloadTransactions(CONSENT_ID, ACCOUNT_ID, BASE64_STRING_EXAMPLE);
-
-        // Then
-        assertThatErrorIs(actualResponse, RESOURCE_UNKNOWN_404);
-    }
-
-    @Test
     public void getTransactionDetails_Failure_NoAccountConsent() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.empty());
@@ -526,24 +487,6 @@ public class TransactionServiceTest {
         ResponseObject<Transactions> actualResponse = transactionService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID, REQUEST_URI);
         // Then
         assertThatErrorIs(actualResponse, CONSENT_UNKNOWN_400);
-    }
-
-    @Test
-    public void getTransactionDetails_WithNullSpiTransaction() {
-        // Given
-        doNothing().when(validatorService).validateAccountIdTransactionId(ACCOUNT_ID, TRANSACTION_ID);
-
-        when(consentMapper.mapToSpiAccountConsent(any()))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
-        when(accountSpi.requestTransactionForAccountByTransactionId(SPI_CONTEXT_DATA, TRANSACTION_ID, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
-            .thenReturn(buildErrorSpiResponse(null));
-
-        // When
-        ResponseObject<Transactions> actualResponse = transactionService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID, REQUEST_URI);
-
-        // Then
-        assertThatErrorIs(actualResponse, RESOURCE_UNKNOWN_404);
     }
 
     @Test

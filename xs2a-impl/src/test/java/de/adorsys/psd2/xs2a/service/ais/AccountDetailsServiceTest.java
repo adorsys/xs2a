@@ -172,22 +172,6 @@ public class AccountDetailsServiceTest {
     }
 
     @Test
-    public void getAccountDetails_WithNullSpiTransactionReport() {
-        // Given
-        when(accountSpi.requestAccountDetailForAccount(SPI_CONTEXT_DATA, WITH_BALANCE, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
-            .thenReturn(buildErrorSpiResponse(null));
-
-        when(consentMapper.mapToSpiAccountConsent(any()))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
-        // When
-        ResponseObject<Xs2aAccountDetailsHolder> actualResponse = accountDetailsService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI);
-
-        // Then
-        assertThatErrorIs(actualResponse, RESOURCE_UNKNOWN_404);
-    }
-
-    @Test
     public void getAccountDetails_Failure_SpiResponseHasError() {
         // Given
         when(accountSpi.requestAccountDetailForAccount(SPI_CONTEXT_DATA, WITH_BALANCE, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
