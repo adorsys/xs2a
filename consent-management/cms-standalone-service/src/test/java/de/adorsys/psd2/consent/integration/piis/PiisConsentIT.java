@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
@@ -45,7 +46,7 @@ import static org.junit.Assert.*;
 
 @ActiveProfiles("integration-test")
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = IntegrationTestConfiguration.class)
+@ContextConfiguration(classes = IntegrationTestConfiguration.class)
 @DataJpaTest
 public class PiisConsentIT {
     private static final String PSU_ID = "ID";
@@ -62,7 +63,6 @@ public class PiisConsentIT {
     private static final String MSISDN = "Test MSISDN";
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
-    private static final String TPP_AUTHORITY_ID = "authority id";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu", null, "corpId", null);
 
     @Autowired
@@ -84,7 +84,7 @@ public class PiisConsentIT {
 
         // Then
         // First, we check that creation timestamp is equals to status change timestamp
-        assertTrue(savedEntity.getStatusChangeTimestamp().equals(savedEntity.getCreationTimestamp()));
+        assertEquals(savedEntity.getStatusChangeTimestamp(), savedEntity.getCreationTimestamp());
 
         // When
         cmsAspspPiisServiceInternal.terminateConsent(savedEntity.getExternalId(), DEFAULT_SERVICE_INSTANCE_ID);
@@ -165,6 +165,7 @@ public class PiisConsentIT {
     @NotNull
     private CreatePiisConsentRequest buildCreatePiisConsentRequest(AccountReference accountReference) {
         CreatePiisConsentRequest request = new CreatePiisConsentRequest();
+        request.setTppAuthorisationNumber(TPP_AUTHORISATION_NUMBER);
         request.setAccount(accountReference);
         request.setValidUntil(LocalDate.now().plusDays(1));
         return request;
