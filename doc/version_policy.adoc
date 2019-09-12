@@ -26,8 +26,8 @@ For stable mainlines we provide backward compatiblity of APIs and Database schem
 Although for stable versions backward compatibility is high priority and we try our best to keep it as much as possible,
 we can guarantee backward compatibility only for two versions before.
 
-I.e. if you get version `2.25`, it will keep backward compatibility with `2.24` and `2.23`,
-but some changes may appear between APIs of version `2.25` with version `2.22`.
+I.e. if you get version `4.25`, it will keep backward compatibility with `4.24` and `4.23`,
+but some changes may appear between APIs of version `4.25` with version `4.22`.
 
 The same is valid for the database schema.
 
@@ -38,16 +38,25 @@ If you need extended support, please contact https://adorsys.de/en/psd2[adorsys 
 Stable versions are recommended for production usage. Normally they have support period of time at least 6 months.
 If you need additional support, please contact https://adorsys.de/en/psd2[adorsys Team].
 
-==== Mainline 2.x
+==== Mainline 4.x
 
-Mainline 2.x is released on 01.03.2019. The main goal is to support mandatory requirements of Berlin Group specification 1.3.
-This version will be supported at least till 01.09.2019.
+Mainline 4.x is released on 13.09.2019. The main goal is to support mandatory requirements of Berlin Group specification 1.3.4.
+This version will be supported till 01.03.2020.
+
+==== Mainline 2.x (till 01.09.2019)
+
+Mainline 2.x was released on 01.03.2019. The main goal was to support mandatory requirements of Berlin Group specification 1.3.
+This version was supported till 01.09.2019.
 
 === Development versions
 
-==== Mainline 3.x
+==== Mainline 5.x
 
-The goal is to implement all additional features defined in the Berlin group specification 1.3.
+The goal is to implement new features and optional endpoints of Berlin Group specification 1.3.4.
+
+==== Mainline 3.x (till 01.09.2019)
+
+The goal was to implement all additional features defined in the Berlin group specification 1.3.
 
 ==== Mainline 1.x (till 01.03.2019)
 
