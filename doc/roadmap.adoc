@@ -9,50 +9,12 @@ Stable branch will contain bugfixing and possibly necessary changes to support m
 *Development branch 5.x*
 
 Development branch is oriented on implementation of new features and optional endpoints.
-No backward compatibility with 4.x is guaranteed. 
+No backward compatibility with 4.x is guaranteed.
 
 
 [cols="3*.<"]
 |===
 |release date|version 4.x|version 5.x
-
-|13.09.2019|4.0|5.0
-
-a|
-
-a|* Bugfix: Providing incorrect request body on PIIS consent creation results in Internal Server Error 
-
-* Bugfix: Consents without successful authorisation should expire with status Rejected
-
-* Remove column `tpp_info_id` from `authorisation_template` table
-
-* Remove deprecated TppInfo from PiisConsent
-
-* Remove deprecated frequencyPerDay for PiisConsent
-
-* Describe "Microservices Deployment" at SPI Developer Guide 
-
-* Bugfix: Wrong error for embedded payment with not funded account or invalid debtor 
-
-* Bugfix: Incorrect link in response for Update PSU data for consent with empty body 
-
-* Bugfix: link updatePsuAuthentication missing in response for Update PSU data for payment cancelation with empty body 
-
-* Bugfix: supportedTransactionApplicationTypes in profile should be String 
-
-* Bugfix: Only Pending transactions should be available in getTransactionList response when query param set to "pending"
-
-* Bugfix: Incorrect error code in response for ReadAccountList for consent which was revoked by PSU
-
-a|* All fixes from v.4.0
-
-* Extend XS2A with Austria requirements to payment products 
-
-* Multilevel SCA for Payment Initiation in Redirect approach
-
-* Multilevel SCA for Establish Consent in Redirect approach
-
-* Restructure profile by services
 
 |27.09.2019|4.1|5.1
 
@@ -60,19 +22,18 @@ a|
 
 a|* ScaApproachResolver cleanup
 
-* Bugfix: Wrong scaStatus after consent authorisation with zero sca methods for Embedded approach
+* Change yaml-generator to correct model Objects equals
 
-* Bugfix: Wrong authorisationId can 'authorise' actions 
+* Aggregate all messages sent to TPP to message bundle
 
-* Bugfix: Wrong PSU-ID can authorise endpoints 
+* Bugfix: Don't provide "creditorAddress" field in Get payment response if it was absent in "initiatePayment" request
 
-* Bugfix: Empty array "account" in Read Balances and Read Transaction List responses
+* Bugfix: Wrong authorisationId can 'authorise' actions
 
-* Bugfix: Check incoming requests to have required information
+* Bugfix: Wrong PSU-ID can authorise endpoints
 
-* Bugfix: Error on initiating payment with custom payment product and JSON body 
+* Describe "Work with ASPSP-Consent-Data object" at SPI Developer Guide
 
-* Bugfix: Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow 
 
 a|* All fixes from v.4.1
 
@@ -80,24 +41,28 @@ a|* All fixes from v.4.1
 
 * Support of relative links
 
-* Optional SCA for Global Consent 
+* Optional SCA for Global Consent
 
 
 |11.10.2019|4.2|5.2
 
 a|
 
-a|* Bugfix: When bank returns PATC status for payment, multilevel flag in CMS should be set to true 
+a|* Bugfix: Wrong scaStatus after consent authorisation with zero sca methods for Embedded approach
 
-* Bugfix: Populating PSU_DATA table with excessive data
+* Bugfix: Check incoming requests to have required information
 
-* Bugfix: Incorrect TransactionId in read transaction details leads to internal server error
+* Bugfix: Error on initiating payment with custom payment product and JSON body
+
+* Bugfix: Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow
+
+* Bugfix: When bank returns PATC status for payment, multilevel flag in CMS should be set to true
 
 * Remove TppRedirectUri from TppInfo
 
 a|* All fixes from v.4.2
 
-* Create Bulk Payment validators 
+* Create Bulk Payment validators
 
 * Create Component for scheduled batch processing
 
@@ -107,7 +72,9 @@ a|
 
 a|
 
-a|* Implementation of delta access for transaction list request 
+a|* Bugfix: Empty array "account" in Read Balances and Read Transaction List responses
+
+* Implementation of delta access for transaction list request
 
 * Implement support of Multicurrency Accounts
 
@@ -115,7 +82,7 @@ a|* Implementation of delta access for transaction list request
 
 * _Support of Signing Basket:_
 
-- Create Signing Basket in CMS 
+- Create Signing Basket in CMS
 
 - Implement Establish Signing Basket request
 
@@ -129,31 +96,31 @@ a|* Implementation of delta access for transaction list request
 
 - Implement Get Authorisation Sub-resources for Signing Baskets
 
-- Add getBasketAuthorisationByAuthorisationId to CMS-PSU-API 
+- Add getBasketAuthorisationByAuthorisationId to CMS-PSU-API
 
-- Add getBasketIdByRedirectId to CMS-PSU-API 
+- Add getBasketIdByRedirectId to CMS-PSU-API
 
 - Add getBasketByBasketId to CMS-PSU-API
 
-- Add updatePSUInBasket to CMS-PSU-API 
+- Add updatePSUInBasket to CMS-PSU-API
 
-- Add updateBasketStatus to CMS-PSU-API 
+- Add updateBasketStatus to CMS-PSU-API
 
 - Add updateBasketAuthorisationStatus to CMS-PSU-API
 
 - Implement Get Signing Basket Status Request
 
-- Implement Get Signing Basket Request 
+- Implement Get Signing Basket Request
 
 - Implement Get SCA Status request for Signing Baskets
 
-- Add calls to SPI for Signing Basket 
+- Add calls to SPI for Signing Basket
 
-- Adjust xs2a-connector-examples for Signing Basket 
+- Adjust xs2a-connector-examples for Signing Basket
 
 * _Support of FundsConfirmation Consent:_
 
-- Establish FundsConfirmationConsent 
+- Establish FundsConfirmationConsent
 
 - Get FundsConfirmationConsent Status + object
 
@@ -167,7 +134,7 @@ a|* Implementation of delta access for transaction list request
 
 - Get Authorisation Sub-resource request for FundsConfirmationConsent
 
-- Get Sca Status request for FundsConfirmationConsent 
+- Get Sca Status request for FundsConfirmationConsent
 
 - Create interface in cms-aspsp-api to get FundsConfirmationConsent
 
