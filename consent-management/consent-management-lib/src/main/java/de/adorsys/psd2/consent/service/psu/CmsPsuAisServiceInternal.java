@@ -249,9 +249,10 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             .ifPresent(consent::setCombinedServiceIndicator);
 
         Set<AspspAccountAccess> aspspAccountAccesses = consentMapper.mapAspspAccountAccesses(accountAccess);
+        consent.addAspspAccountAccess(aspspAccountAccesses);
         AisConsentRequestType aisConsentRequestType = aisConsentRequestTypeService.getRequestTypeFromConsent(consent);
         consent.setAisConsentRequestType(aisConsentRequestType);
-        consent.addAspspAccountAccess(aspspAccountAccesses);
+
         consent.setExpireDate(request.getValidUntil());
         consent.setAllowedFrequencyPerDay(request.getFrequencyPerDay());
         aisConsentUsageService.resetUsage(consent);
