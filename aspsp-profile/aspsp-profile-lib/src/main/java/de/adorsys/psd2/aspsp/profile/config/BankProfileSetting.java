@@ -16,190 +16,36 @@
 
 package de.adorsys.psd2.aspsp.profile.config;
 
-import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
-import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
-import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.aspsp.profile.domain.ais.AisAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BankProfileSetting {
-    /**
-     * This field indicates the requested maximum frequency for an access per day
-     */
-    private int frequencyPerDay;
 
     /**
-     * If "true" indicates that a payment initiation service will be addressed in the same "session"
+     * Contains all settings regarding to AIS
      */
-    private boolean combinedServiceIndicator;
+    private AisAspspProfileBankSetting ais;
 
     /**
-     * List of SCA Approach supported by ASPSP ordered by priority
+     * Contains all settings regarding to PIS
      */
-    private List<ScaApproach> scaApproaches = new ArrayList<>();
+    private PisAspspProfileBankSetting pis;
 
     /**
-     * A signature of the request by the TPP on application level.
-     * If the value is `true`, the signature is mandated by ASPSP.
-     * If the value is `false`, the signature can be omitted.
+     * Contains all settings regarding to PIIS
      */
-    private boolean tppSignatureRequired;
+    private PiisAspspProfileBankSetting piis;
 
     /**
-     * URL to ASPSP service in order to to work with PIS
+     * Contains common for consents and payments settings
      */
-    private String pisRedirectUrlToAspsp;
-
-    /**
-     * URL to ASPSP service in order to work with AIS
-     */
-    private String aisRedirectUrlToAspsp;
-
-    /**
-     * Multicurrency account types supported by ASPSP
-     */
-    private MulticurrencyAccountLevel multicurrencyAccountLevel;
-
-    /**
-     * If "true" indicates that an ASPSP supports "Bank Offered Consent" consent model
-     */
-    private boolean bankOfferedConsentSupport;
-
-    /**
-     * Booking statuses supported by ASPSP, such as Booked, Pending and Both
-     */
-    private List<BookingStatus> availableBookingStatuses = new ArrayList<>();
-
-    /**
-     * Account Reference fields supported by ASPSP, such as: IBAN, PAN, MSIDN
-     */
-    private List<SupportedAccountReferenceField> supportedAccountReferenceFields = new ArrayList<>();
-
-    /**
-     * The limit of a maximum lifetime of consent set in days
-     */
-    private int consentLifetime;
-
-    /**
-     * The limit of a maximum lifetime of transaction set in days
-     */
-    private int transactionLifetime;
-
-    /**
-     * AllPsd2Support status, that shows if ASPSP supports Global consents
-     */
-    private boolean allPsd2Support;
-
-    /**
-     * If "false" indicates that an ASPSP might add balance information to transactions list
-     */
-    private boolean transactionsWithoutBalancesSupported;
-
-    /**
-     * If the option is set to "false", than ASPSP does not support signing basket
-     */
-    private boolean signingBasketSupported;
-
-    /**
-     * If the option is set to "true", then authorization of the payment cancellation is mandated by the ASPSP
-     */
-    private boolean paymentCancellationAuthorizationMandated;
-
-    /**
-     * If the option is set to "true", than PIIS consent should be stored in CMS
-     */
-    private boolean piisConsentSupported;
-
-    /**
-     * If the option is set to "true", that ASPSP supports reading transactions report with `deltaList` option
-     */
-    private boolean deltaListSupported;
-
-    /**
-     * The limit of an expiration time of redirect url set in milliseconds
-     */
-    private long redirectUrlExpirationTimeMs;
-
-    /**
-     * The limit of authorisation time for PIS authorisation, PIS cancellation authorisation and AIS authorisation. Set in milliseconds.
-     */
-    private long authorisationExpirationTimeMs;
-
-    /**
-     * URL to ASPSP service in order to to work with PIS payment cancellation
-     */
-    private String pisPaymentCancellationRedirectUrlToAspsp;
-
-    /**
-     * The limit of an expiration time of not confirmed consent url set in milliseconds
-     */
-    private long notConfirmedConsentExpirationPeriodMs;
-
-    /**
-     * The limit of an expiration time of not confirmed payment url set in milliseconds
-     */
-    private long notConfirmedPaymentExpirationPeriodMs;
-
-    /**
-     * A matrix payment-product/payment-type which allows to choose needed types
-     */
-    private Map<PaymentType, Set<String>> supportedPaymentTypeAndProductMatrix;
-
-    /**
-     * This field contains the limit of an expiration time of redirect url for payment cancellation set in milliseconds
-     */
-    private long paymentCancellationRedirectUrlExpirationTimeMs;
-
-    /**
-     * If "true" indicates that an ASPSP supports available accounts for consent
-     */
-    private boolean availableAccountsConsentSupported;
-
-    /**
-     * If "true" indicates that an ASPSP requires usage of SCA to validate a one-time available accounts consent
-     */
-    private boolean scaByOneTimeAvailableAccountsConsentRequired;
-
-    /**
-     * If "true" indicates that an ASPSP requires PSU in initial request for payment initiation or establishing consent
-     */
-    private boolean psuInInitialRequestMandated;
-
-    /**
-     * If "true" indicates that links in responses (except "scaRedirect") shall be generated with the base URL set by `xs2aBaseUrl`, if "false" - with the base URL of controller
-     */
-    private boolean forceXs2aBaseUrl;
-
-    /**
-     * This url is used as base url for TPP Links in case when `forceXs2aBaseLinksUrl` property is set to "true"
-     */
-    private String xs2aBaseUrl;
-
-    /**
-     * This field indicates what variant of Redirect approach will be used
-     */
-    private ScaRedirectFlow scaRedirectFlow;
-
-    /**
-     * If the option is set to "true", that ASPSP supports reading transactions report with `entryReferenceFrom` option
-     */
-    private boolean entryReferenceFromSupported;
-
-    /**
-     * Transaction application types supported by ASPSP, such as JSON, XML or TEXT
-     */
-    private List<String> supportedTransactionApplicationTypes = new ArrayList<>();
-
-    /**
-     * The mode of authorisation from the ASPSP profile service.
-     */
-    private String startAuthorisationMode;
+    private CommonAspspProfileBankSetting common;
 }

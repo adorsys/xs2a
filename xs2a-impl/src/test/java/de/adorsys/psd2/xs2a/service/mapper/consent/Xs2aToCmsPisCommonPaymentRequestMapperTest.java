@@ -18,8 +18,9 @@ package de.adorsys.psd2.xs2a.service.mapper.consent;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
-import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
-import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,12 +37,57 @@ import static org.junit.Assert.assertEquals;
 public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
     private final static JsonReader jsonReader = new JsonReader();
     private final static String PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private final static byte[] PAYMENT_DATA = "test".getBytes();
+
     private SinglePayment singlePayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-single-payment.json", SinglePayment.class);
 
     @InjectMocks
     private Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
     @Mock
     private Xs2aRemittanceMapper xs2aRemittanceMapper;
+
+    @Test
+    public void mapToPisPaymentInfo() {
+        // Given
+        PaymentInitiationParameters paymentInitiationParameters = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/payment-initiation-parameters.json", PaymentInitiationParameters.class);
+        TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/tpp-info.json", TppInfo.class);
+        PaymentInitiationResponse response = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/payment-initiation-response.json", SinglePaymentInitiationResponse.class);
+
+        PisPaymentInfo expected = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/pis-payment-info.json", PisPaymentInfo.class);
+        expected.setPaymentData(PAYMENT_DATA);
+
+        // When
+        PisPaymentInfo actual = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, PAYMENT_DATA);
+
+        // Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void mapToCmsSinglePisCommonPaymentRequest() {
+        // Given
+        SinglePayment singlePayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-single-payment.json", SinglePayment.class);
+        PisCommonPaymentRequest expected = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/pis-common-payment-request.json", PisCommonPaymentRequest.class);
+
+        // When
+        PisCommonPaymentRequest actual = xs2aToCmsPisCommonPaymentRequestMapper.mapToCmsSinglePisCommonPaymentRequest(singlePayment, PAYMENT_PRODUCT);
+
+        // Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void mapToCmsPeriodicPisCommonPaymentRequest() {
+        // Given
+        PeriodicPayment periodicPayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-periodic-payment.json", PeriodicPayment.class);
+        PisCommonPaymentRequest expected = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/pis-common-payment-request-periodic.json", PisCommonPaymentRequest.class);
+
+        // When
+        PisCommonPaymentRequest actual = xs2aToCmsPisCommonPaymentRequestMapper.mapToCmsPeriodicPisCommonPaymentRequest(periodicPayment, PAYMENT_PRODUCT);
+
+        // Then
+        assertEquals(expected, actual);
+    }
 
     @Test
     public void mapToListPisPayment() {

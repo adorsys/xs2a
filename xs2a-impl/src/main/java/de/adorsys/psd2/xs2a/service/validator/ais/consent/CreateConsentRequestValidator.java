@@ -102,7 +102,7 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
 
     private boolean isNotSupportedGlobalConsentForAllPsd2(CreateConsentReq request) {
         return isConsentGlobal(request)
-                   && !aspspProfileService.getAllPsd2Support();
+                   && !aspspProfileService.isGlobalConsentSupported();
     }
 
     private boolean isNotSupportedBankOfferedConsent(CreateConsentReq request) {
@@ -138,6 +138,6 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
 
     private boolean isNotSupportedCombinedServiceIndicator(CreateConsentReq request) {
         return request.isCombinedServiceIndicator()
-                   && !aspspProfileService.isCombinedServiceIndicator();
+                   && !aspspProfileService.isAisPisSessionsSupported();
     }
 }

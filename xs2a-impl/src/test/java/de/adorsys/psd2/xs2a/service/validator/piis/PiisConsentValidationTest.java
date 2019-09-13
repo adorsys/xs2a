@@ -63,10 +63,10 @@ public class PiisConsentValidationTest {
 
     @Before
     public void setUp() {
-        when(piisTppInfoValidator.validateTpp(DIFFERENT_AUTHORISATION_NUMBER, null))
+        when(piisTppInfoValidator.validateTpp(DIFFERENT_AUTHORISATION_NUMBER))
             .thenReturn(ValidationResult.invalid(PIIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400, "TPP certificate doesn’t match the initial request")));
 
-        when(piisTppInfoValidator.validateTpp(AUTHORISATION_NUMBER, null)).thenReturn(ValidationResult.valid());
+        when(piisTppInfoValidator.validateTpp(AUTHORISATION_NUMBER)).thenReturn(ValidationResult.valid());
         when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
     }
 

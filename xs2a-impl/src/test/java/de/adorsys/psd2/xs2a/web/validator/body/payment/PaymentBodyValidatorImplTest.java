@@ -69,7 +69,6 @@ public class PaymentBodyValidatorImplTest {
     private static final String CORRECT_FORMAT_TIME = "2019-01-01T12:00:00+01:00";
     private static final String WRONG_FORMAT_DATE = "07/01/2019";
     private static final String WRONG_FORMAT_TIME = "07/01/2019 00:00:00";
-    private static final String FREQUENCY_FIELD_NAME = "Monthly";
 
     private static final MessageError DESERIALISATION_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Cannot deserialize the request body"));
@@ -159,7 +158,7 @@ public class PaymentBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_dayOfExecutionWrongValue_wrongFormat_error() throws IOException {
+    public void validate_dayOfExecutionWrongValue_wrongFormat_error() {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
@@ -175,7 +174,7 @@ public class PaymentBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_requestedExecutionDateWrongValue_wrongFormat_error() throws IOException {
+    public void validate_requestedExecutionDateWrongValue_wrongFormat_error() {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
@@ -217,7 +216,7 @@ public class PaymentBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_requestedExecutionTimeWrongValue_wrongFormat_error() throws IOException {
+    public void validate_requestedExecutionTimeWrongValue_wrongFormat_error() {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
@@ -294,7 +293,7 @@ public class PaymentBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_purposeCodes_shouldReturnError() throws IOException {
+    public void validate_purposeCodes_shouldReturnError() {
         // Given
         String purposeCode = "CDCQ";
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();

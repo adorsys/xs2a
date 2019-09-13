@@ -22,11 +22,13 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
+import de.adorsys.psd2.xs2a.domain.pis.Remittance;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.payment.config.PaymentValidationConfig;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.IBANValidator;
@@ -46,13 +48,15 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
 
     PaymentMapper paymentMapper;
     private AmountValidator amountValidator;
+    protected PaymentValidationConfig validationConfig;
 
     @Autowired
     public SinglePaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
-                                          PaymentMapper paymentMapper, AmountValidator amountValidator) {
+                                          PaymentMapper paymentMapper, AmountValidator amountValidator, PaymentValidationConfig validationConfig) {
         super(errorBuildingService, objectMapper);
         this.paymentMapper = paymentMapper;
         this.amountValidator = amountValidator;
+        this.validationConfig = validationConfig;
     }
 
     @Override
@@ -70,7 +74,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     }
 
     void doSingleValidation(SinglePayment singlePayment, MessageError messageError) {
-        checkOptionalFieldForMaxLength(singlePayment.getEndToEndIdentification(), "endToEndIdentification", 35, messageError);
+        checkFieldForMaxLength(singlePayment.getEndToEndIdentification(), "endToEndIdentification", validationConfig.getEndToEndIdentification(), messageError);
 
         if (Objects.isNull(singlePayment.getDebtorAccount())) {
             errorBuildingService.enrichMessageError(messageError, "Value 'debtorAccount' should not be null");
@@ -90,7 +94,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
             validateAccount(singlePayment.getCreditorAccount(), messageError);
         }
 
-        checkRequiredFieldForMaxLength(singlePayment.getCreditorName(), "creditorName", 70, messageError);
+        checkFieldForMaxLength(singlePayment.getCreditorName(), "creditorName", validationConfig.getCreditorName(), messageError);
 
         if (Objects.nonNull(singlePayment.getCreditorAddress())) {
             validateAddress(singlePayment.getCreditorAddress(), messageError);
@@ -100,16 +104,17 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(EXECUTION_DATE_INVALID, "Value 'requestedExecutionDate' should not be in the past"));
         }
 
-        validateUltimateDebtor(singlePayment.getUltimateDebtor(), messageError);
-        validateUltimateCreditor(singlePayment.getUltimateCreditor(), messageError);
+        checkFieldForMaxLength(singlePayment.getCreditorId(), "creditorId", validationConfig.getCreditorId(), messageError);
+        checkFieldForMaxLength(singlePayment.getUltimateDebtor(), "ultimateDebtor", validationConfig.getUltimateDebtor(), messageError);
+        checkFieldForMaxLength(singlePayment.getUltimateCreditor(), "ultimateCreditor", validationConfig.getUltimateDebtor(), messageError);
         validateRemittanceInformationStructured(singlePayment.getRemittanceInformationStructured(), messageError);
     }
 
     void validateAddress(Xs2aAddress address, MessageError messageError) {
-        checkOptionalFieldForMaxLength(address.getStreetName(), "streetName", 100, messageError);
-        checkOptionalFieldForMaxLength(address.getBuildingNumber(), "buildingNumber", 20, messageError);
-        checkOptionalFieldForMaxLength(address.getTownName(), "townName", 100, messageError);
-        checkOptionalFieldForMaxLength(address.getPostCode(), "postCode", 5, messageError);
+        checkFieldForMaxLength(address.getStreetName(), "streetName", validationConfig.getStreetName(), messageError);
+        checkFieldForMaxLength(address.getBuildingNumber(), "buildingNumber", validationConfig.getBuildingNumber(), messageError);
+        checkFieldForMaxLength(address.getTownName(), "townName", validationConfig.getTownName(), messageError);
+        checkFieldForMaxLength(address.getPostCode(), "postCode", validationConfig.getPostCode(), messageError);
 
         if (Objects.isNull(address.getCountry()) || StringUtils.isBlank(address.getCountry().getCode())) {
             errorBuildingService.enrichMessageError(messageError, "Value 'address.country' is required");
@@ -137,9 +142,9 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
             errorBuildingService.enrichMessageError(messageError, "Invalid BBAN format");
         }
 
-        checkOptionalFieldForMaxLength(accountReference.getPan(), "PAN", 35, messageError);
-        checkOptionalFieldForMaxLength(accountReference.getMaskedPan(), "Masked PAN", 35, messageError);
-        checkOptionalFieldForMaxLength(accountReference.getMsisdn(), "MSISDN", 35, messageError);
+        checkFieldForMaxLength(accountReference.getPan(), "PAN", validationConfig.getPan(), messageError);
+        checkFieldForMaxLength(accountReference.getMaskedPan(), "Masked PAN", validationConfig.getMaskedPan(), messageError);
+        checkFieldForMaxLength(accountReference.getMsisdn(), "MSISDN", validationConfig.getMsisdn(), messageError);
     }
 
     private boolean isValidIban(String iban) {
@@ -154,6 +159,14 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
 
     private String normalizeString(String string) {
         return string.replaceAll("[^a-zA-Z0-9]", "");
+    }
+
+    private void validateRemittanceInformationStructured(Remittance remittance, MessageError messageError) {
+        if (remittance != null) {
+            checkFieldForMaxLength(remittance.getReference(), "reference", validationConfig.getReference(), messageError);
+            checkFieldForMaxLength(remittance.getReferenceType(), "referenceType", validationConfig.getReferenceType(), messageError);
+            checkFieldForMaxLength(remittance.getReferenceIssuer(), "referenceIssuer", validationConfig.getReferenceIssuer(), messageError);
+        }
     }
 
     boolean isDateInThePast(LocalDate dateToCheck) {

@@ -115,11 +115,6 @@ public class CmsToXs2aPaymentMapperTest {
     @Spy
     private Xs2aRemittanceMapper xs2aRemittanceMapper = Mappers.getMapper(Xs2aRemittanceMapper.class);
 
-    @Before
-    public void setUp() {
-
-    }
-
     @Test
     public void mapToPeriodicPayment() {
         PisPayment pisPayment = buildPisPayment();
@@ -300,7 +295,6 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(TRANSACTION_STATUS, commonPayment.getTransactionStatus());
         assertEquals(PAYMENT_TYPE, commonPayment.getPaymentType());
         assertEquals(PAYMENT_DATA, commonPayment.getPaymentData());
-        assertEquals(TPP_INFO, commonPayment.getTppInfo());
         assertEquals(PSU_ID_DATA_LIST, commonPayment.getPsuDataList());
         assertEquals(STATUS_CHANGE_TIMESTAMP, commonPayment.getStatusChangeTimestamp());
     }

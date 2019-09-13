@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
@@ -26,6 +25,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +54,7 @@ public class TransactionAspectTest {
     private Xs2aTransactionsReportByPeriodRequest xs2aTransactionsReportByPeriodRequest;
 
     @Mock
-    private AspspProfileService aspspProfileService;
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
     @Mock
     private MessageService messageService;
     @Mock
@@ -67,15 +67,16 @@ public class TransactionAspectTest {
 
     @Before
     public void setUp() {
-        aspect = new TransactionAspect(messageService, aspspProfileService);
+        aspect = new TransactionAspect(messageService, aspspProfileServiceWrapper);
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
     }
 
     @Test
     public void getTransactionsReportByPeriod_successReport() {
         xs2aTransactionsReportByPeriodRequest = jsonReader.getObjectFromFile("json/Xs2aTransactionsReportByPeriodRequest.json", Xs2aTransactionsReportByPeriodRequest.class);
 
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
         when(transactionsReport.getAccountReport()).thenReturn(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null));
 
         responseObject = ResponseObject.<Xs2aTransactionsReport>builder()

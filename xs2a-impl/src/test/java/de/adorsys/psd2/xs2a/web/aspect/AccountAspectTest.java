@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetailsHolder;
@@ -25,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountListHolder;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.AccountDetailsLinks;
 import org.junit.Before;
@@ -50,7 +50,7 @@ public class AccountAspectTest {
     private static final String ERROR_TEXT = "Error occurred while processing";
 
     @Mock
-    private AspspProfileService aspspProfileService;
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
     @Mock
     private MessageService messageService;
 
@@ -63,22 +63,20 @@ public class AccountAspectTest {
 
     @Before
     public void setUp() {
-        aspect = new AccountAspect(messageService, aspspProfileService);
+        aspect = new AccountAspect(messageService, aspspProfileServiceWrapper);
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
         accountConsent = jsonReader.getObjectFromFile("json/aspect/account_consent.json", AccountConsent.class);
         accountDetails = jsonReader.getObjectFromFile("json/aspect/account_details.json", Xs2aAccountDetails.class);
     }
 
     @Test
     public void getAccountDetailsAspect_success() {
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
-
         responseObject = ResponseObject.<Xs2aAccountDetailsHolder>builder()
                              .body(new Xs2aAccountDetailsHolder(accountDetails, accountConsent))
                              .build();
         ResponseObject actualResponse = aspect.getAccountDetailsAspect(responseObject, CONSENT_ID, ACCOUNT_ID, true, REQUEST_URI);
-
-        verify(aspspProfileService, times(1)).getAspspSettings();
         assertNotNull(accountDetails.getLinks());
         assertTrue(accountDetails.getLinks() instanceof AccountDetailsLinks);
 
@@ -100,14 +98,10 @@ public class AccountAspectTest {
 
     @Test
     public void getAccountDetailsListAspect_success() {
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
-
         responseObject = ResponseObject.<Xs2aAccountListHolder>builder()
                              .body(new Xs2aAccountListHolder(Collections.singletonList(accountDetails), accountConsent))
                              .build();
         ResponseObject actualResponse = aspect.getAccountDetailsListAspect(responseObject, CONSENT_ID, true, REQUEST_URI);
-
-        verify(aspspProfileService, times(1)).getAspspSettings();
         assertNotNull(accountDetails.getLinks());
         assertTrue(accountDetails.getLinks() instanceof AccountDetailsLinks);
 

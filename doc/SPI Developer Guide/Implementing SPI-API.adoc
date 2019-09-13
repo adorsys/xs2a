@@ -8,7 +8,42 @@ toc::[]
 
 === General requirements
 
+SPI-API is used for connection between XS2A interface and ASPSP system, that's why this system is also called `connector`
+and this word will be used in all chapters below.
+XS2A provides interfaces in java (`de.adorsys.psd2.xs2a.spi.service` package), that should be implemented in the connector's code.
+Basic responsibilities of the connector:
+
+- Receive the input data from XS2A
+- Provide this data to the ASPSP system (and/or add some business logic, if necessary)
+- Retrieve the response from ASPSP system
+- Provide the ASPSP system's response back to XS2A using `SpiResponse` class
+
+Input data for the connector is provided from TPP through XS2A and some parameters in the interfaces' signatures
+are the same for all of them:
+
+- `SpiContextData` - the information about PSU and TPP
+- `SpiAspspConsentDataProvider` - this service is used for providing ASPSP consent data to connector and ASPSP system
+
+The response from the connector to XS2A is described in the next chapter.
+
 === SpiResponse
+
+This class acts as the container for all responses from the connector to XS2A. It is a generic class and it uses builder
+pattern to create the response. Main fields of the class:
+
+- `T payload`
+- `List<TppMessage> errors`
+
+`payload` should be used to create successful response to XS2A. It should contain the entity which current SPI method deals with.
+`errors` should be used in case the response fails. The list should contain at least one error element inside the `TppMessage`
+container. It is possible to provide several errors, if necessary. Both `payload` and `errors` fields should use `build()`
+method after them while creating the response. Typical usage of builder pattern for happy-path response:
+
+`return SpiResponse.<SpiAuthorisationStatus>builder()
+                   .payload(SpiAuthorisationStatus.SUCCESS)
+                   .build();`
+
+In this example the `SpiAuthorisationStatus` enumerator value is returned.
 
 === Work with ASPSP-Consent-Data object
 

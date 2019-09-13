@@ -29,8 +29,8 @@ public class AccountResponseTypeTest {
         assertEquals(AccountResponseType.XML, AccountResponseType.fromValue("XmL"));
         assertEquals(AccountResponseType.TEXT, AccountResponseType.fromValue("text"));
 
-        assertNull(AccountResponseType.fromValue("234567890"));
-        assertNull(AccountResponseType.fromValue(""));
-        assertNull(AccountResponseType.fromValue(null));
+        assertEquals(AccountResponseType.JSON, AccountResponseType.fromValue("234567890"));
+        assertEquals(AccountResponseType.JSON, AccountResponseType.fromValue(""));
+        assertEquals(AccountResponseType.JSON, AccountResponseType.fromValue(null));
     }
 }

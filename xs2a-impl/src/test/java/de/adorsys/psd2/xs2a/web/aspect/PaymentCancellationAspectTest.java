@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.link.PaymentCancellationLinks;
@@ -63,8 +64,6 @@ public class PaymentCancellationAspectTest {
     @Mock
     private MessageService messageService;
     @Mock
-    private AspspProfileService aspspProfileService;
-    @Mock
     private AuthorisationMethodDecider authorisationMethodDecider;
     @Mock
     private PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider;
@@ -74,6 +73,8 @@ public class PaymentCancellationAspectTest {
     private RedirectLinkBuilder redirectLinkBuilder;
     @Mock
     private RedirectIdService redirectIdService;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     private AspspSettings aspspSettings;
     private ResponseObject<CancelPaymentResponse> responseObject;
@@ -84,6 +85,8 @@ public class PaymentCancellationAspectTest {
         JsonReader jsonReader = new JsonReader();
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
 
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
         when(cancellationScaNeededDecider.isScaRequired(true)).thenReturn(true);
 
         when(authorisationMethodDecider.isExplicitMethod(false, false)).thenReturn(false);
@@ -120,15 +123,12 @@ public class PaymentCancellationAspectTest {
 
     @Test
     public void cancelPayment_success() {
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
         PaymentCancellationLinks links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, false);
 
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
                              .body(response)
                              .build();
         ResponseObject<CancelPaymentResponse> actualResponse = aspect.cancelPayment(responseObject, paymentCancellationRequest);
-
-        verify(aspspProfileService, times(1)).getAspspSettings();
 
         assertFalse(actualResponse.hasError());
         assertEquals(actualResponse.getBody().getLinks(), links);

@@ -199,33 +199,6 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentStatusById_success() {
-        //Given
-        when(aisConsentServiceEncrypted.getConsentStatusById(CONSENT_ID))
-            .thenReturn(Optional.of(CONSENT_STATUS));
-
-        //When
-        Optional<ConsentStatus> actualResponse = xs2aAisConsentService.getAccountConsentStatusById(CONSENT_ID);
-
-        //Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(CONSENT_STATUS);
-    }
-
-    @Test
-    public void getAccountConsentStatusById_failed() {
-        //Given
-        when(aisConsentServiceEncrypted.getConsentStatusById(CONSENT_ID))
-            .thenReturn(Optional.empty());
-
-        //When
-        Optional<ConsentStatus> actualResponse = xs2aAisConsentService.getAccountConsentStatusById(CONSENT_ID);
-
-        //Then
-        assertThat(actualResponse.isPresent()).isFalse();
-    }
-
-    @Test
     public void findAndTerminateOldConsentsByNewConsentId_success() {
         //Given
         when(aisConsentServiceEncrypted.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))

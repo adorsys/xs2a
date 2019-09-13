@@ -42,16 +42,17 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class TppDomainValidatorTest {
     private static final String URL_HEADER_CORRECT = "www.example-TPP.com/xs2a-client/v1/ASPSPidentifcation/mytransaction-id";
+    private static final String URL_HEADER_CORRECT_DE = "www.example-TPP.de/xs2a-client/v1/ASPSPidentifcation/mytransaction-id";
     private static final String URL_HEADER_SUBDOMAIN_CORRECT = "redirections.example-TPP.com/xs2a-client/v1/ASPSPidentifcation/mytransaction-id";
     private static final String URL_HEADER_WRONG_DOMAIN = "www.bad-example-TPP.com/xs2a-client/v1/ASPSPidentifcation/mytransaction-id";
     private static final String URL_HEADER_WRONG_TLD = "www.example-TPP.bad/xs2a-client/v1/ASPSPidentifcation/mytransaction-id";
     private static final String URL_HEADER_WRONG = "example-TPP";
 
     private static final String TPP_NAME_DOMAIN = "www.example-TPP.com";
+    private static final String TPP_NAME_NON_DOMAIN = "Some bank name";
     private static final String TPP_DNS_DOMAIN = "www.example-TPP.de";
     private static final String TPP_WILDCARD_DOMAIN = "*.example-TPP.de";
     private static final TppMessageInformation TPP_MESSAGE_INFORMATION = TppMessageInformation.of(FORMAT_ERROR, TppDomainValidator.ERROR_TEXT);
-
 
     @InjectMocks
     private TppDomainValidator tppDomainValidator;
@@ -188,6 +189,35 @@ public class TppDomainValidatorTest {
             .thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
         //When
         ValidationResult validate = tppDomainValidator.validate(URL_HEADER_WRONG_TLD);
+        //Then
+        assertTrue(validate.isNotValid());
+        MessageError messageError = validate.getMessageError();
+        assertNotNull(messageError);
+        assertEquals(TPP_MESSAGE_INFORMATION, messageError.getTppMessage());
+    }
+
+    @Test
+    public void validate_nonDomainTppName_valid() {
+        //Given
+        when(scaApproachResolver.resolveScaApproach())
+            .thenReturn(ScaApproach.REDIRECT);
+        when(tppService.getTppInfo())
+            .thenReturn(buildTppInfo(TPP_NAME_NON_DOMAIN, TPP_DNS_DOMAIN));
+        //When
+        ValidationResult validate = tppDomainValidator.validate(URL_HEADER_CORRECT_DE);
+        //Then
+        assertEquals(ValidationResult.valid(), validate);
+    }
+
+    @Test
+    public void validate_nonDomainTppName_invalid() {
+        //Given
+        when(scaApproachResolver.resolveScaApproach())
+            .thenReturn(ScaApproach.REDIRECT);
+        when(tppService.getTppInfo())
+            .thenReturn(buildTppInfo(TPP_NAME_NON_DOMAIN, TPP_DNS_DOMAIN));
+        //When
+        ValidationResult validate = tppDomainValidator.validate(URL_HEADER_WRONG_DOMAIN);
         //Then
         assertTrue(validate.isNotValid());
         MessageError messageError = validate.getMessageError();

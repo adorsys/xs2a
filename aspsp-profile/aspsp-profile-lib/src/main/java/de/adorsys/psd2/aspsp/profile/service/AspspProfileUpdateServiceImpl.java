@@ -19,8 +19,8 @@ package de.adorsys.psd2.aspsp.profile.service;
 import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.aspsp.profile.mapper.AspspSettingsToBankProfileSettingMapper;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -32,6 +32,7 @@ import java.util.List;
 public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService {
 
     private final ProfileConfiguration profileConfiguration;
+    private final AspspSettingsToBankProfileSettingMapper profileSettingMapper;
 
     /**
      * Update sca approach
@@ -41,7 +42,8 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     @Override
     public void updateScaApproaches(List<ScaApproach> scaApproaches) {
         profileConfiguration.getSetting()
-            .setScaApproaches(scaApproaches);
+            .getCommon()
+            .setScaApproachesSupported(scaApproaches);
     }
 
     /**
@@ -56,38 +58,6 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     @Override
     public void updateAspspSettings(@NotNull AspspSettings aspspSettings) {
         BankProfileSetting setting = profileConfiguration.getSetting();
-        setting.setFrequencyPerDay(aspspSettings.getFrequencyPerDay());
-        setting.setCombinedServiceIndicator(aspspSettings.isCombinedServiceIndicator());
-        setting.setTppSignatureRequired(aspspSettings.isTppSignatureRequired());
-        setting.setPisRedirectUrlToAspsp(aspspSettings.getPisRedirectUrlToAspsp());
-        setting.setAisRedirectUrlToAspsp(aspspSettings.getAisRedirectUrlToAspsp());
-        setting.setMulticurrencyAccountLevel(aspspSettings.getMulticurrencyAccountLevel());
-        setting.setBankOfferedConsentSupport(aspspSettings.isBankOfferedConsentSupport());
-        setting.setAvailableBookingStatuses(aspspSettings.getAvailableBookingStatuses());
-        setting.setSupportedAccountReferenceFields(aspspSettings.getSupportedAccountReferenceFields());
-        setting.setConsentLifetime(aspspSettings.getConsentLifetime());
-        setting.setTransactionLifetime(aspspSettings.getTransactionLifetime());
-        setting.setAllPsd2Support(aspspSettings.isAllPsd2Support());
-        setting.setTransactionsWithoutBalancesSupported(aspspSettings.isTransactionsWithoutBalancesSupported());
-        setting.setSigningBasketSupported(aspspSettings.isSigningBasketSupported());
-        setting.setPaymentCancellationAuthorizationMandated(aspspSettings.isPaymentCancellationAuthorizationMandated());
-        setting.setPiisConsentSupported(aspspSettings.isPiisConsentSupported());
-        setting.setDeltaListSupported(aspspSettings.isDeltaListSupported());
-        setting.setRedirectUrlExpirationTimeMs(aspspSettings.getRedirectUrlExpirationTimeMs());
-        setting.setAuthorisationExpirationTimeMs(aspspSettings.getAuthorisationExpirationTimeMs());
-        setting.setPisPaymentCancellationRedirectUrlToAspsp(aspspSettings.getPisPaymentCancellationRedirectUrlToAspsp());
-        setting.setNotConfirmedConsentExpirationPeriodMs(aspspSettings.getNotConfirmedConsentExpirationPeriodMs());
-        setting.setNotConfirmedPaymentExpirationPeriodMs(aspspSettings.getNotConfirmedPaymentExpirationPeriodMs());
-        setting.setSupportedPaymentTypeAndProductMatrix(aspspSettings.getSupportedPaymentTypeAndProductMatrix());
-        setting.setPaymentCancellationRedirectUrlExpirationTimeMs(aspspSettings.getPaymentCancellationRedirectUrlExpirationTimeMs());
-        setting.setAvailableAccountsConsentSupported(aspspSettings.isAvailableAccountsConsentSupported());
-        setting.setScaByOneTimeAvailableAccountsConsentRequired(aspspSettings.isScaByOneTimeAvailableAccountsConsentRequired());
-        setting.setPsuInInitialRequestMandated(aspspSettings.isPsuInInitialRequestMandated());
-        setting.setForceXs2aBaseUrl(aspspSettings.isForceXs2aBaseUrl());
-        setting.setXs2aBaseUrl(aspspSettings.getXs2aBaseUrl());
-        setting.setScaRedirectFlow(aspspSettings.getScaRedirectFlow());
-        setting.setEntryReferenceFromSupported(aspspSettings.isEntryReferenceFromSupported());
-        setting.setSupportedTransactionApplicationTypes(aspspSettings.getSupportedTransactionApplicationTypes());
-        setting.setStartAuthorisationMode(aspspSettings.getStartAuthorisationMode() == null ? StartAuthorisationMode.AUTO.getValue() : aspspSettings.getStartAuthorisationMode().getValue());
+        profileSettingMapper.updateBankProfileSetting(aspspSettings, setting);
     }
 }

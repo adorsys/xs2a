@@ -48,8 +48,6 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -246,7 +244,7 @@ public class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    public void validate_availableAccounts_invalidValue_error() throws IOException {
+    public void validate_availableAccounts_invalidValue_error() {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccounts-invalidValue.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
@@ -266,7 +264,7 @@ public class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    public void validate_availableAccounts_invalidType_error() throws IOException {
+    public void validate_availableAccounts_invalidType_error() {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccounts-invalidValue.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
@@ -287,7 +285,7 @@ public class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    public void validate_allPsd2_invalidValue_error() throws IOException {
+    public void validate_allPsd2_invalidValue_error() {
         // Given
         String jsonFilePath = "json/validation/ais/consents-allPsd2-invalidValue.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
@@ -308,7 +306,7 @@ public class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    public void validate_allPsd2_invalidType_error() throws IOException {
+    public void validate_allPsd2_invalidType_error() {
         // Given
         String jsonFilePath = "json/validation/ais/consents-allPsd2-invalidType.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
@@ -329,7 +327,7 @@ public class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    public void validate_availableAccountsWithBalance_invalidValue_error() throws IOException {
+    public void validate_availableAccountsWithBalance_invalidValue_error() {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccountsWithBalances-invalidValue.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
@@ -349,7 +347,7 @@ public class ConsentBodyFieldsValidatorImplTest {
     }
 
     @Test
-    public void validate_availableAccountsWithBalance_invalidType_error() throws IOException {
+    public void validate_availableAccountsWithBalance_invalidType_error() {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccountsWithBalances-invalidType.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);

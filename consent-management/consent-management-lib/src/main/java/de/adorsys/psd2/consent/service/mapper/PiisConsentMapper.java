@@ -37,7 +37,6 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 @RequiredArgsConstructor
 public class PiisConsentMapper {
     private final PsuDataMapper psuDataMapper;
-    private final TppInfoMapper tppInfoMapper;
     private final AccountReferenceMapper accountReferenceMapper;
 
     public PiisConsent mapToPiisConsent(PiisConsentEntity piisConsentEntity) {
@@ -47,11 +46,9 @@ public class PiisConsentMapper {
                                piisConsentEntity.getLastActionDate(),
                                piisConsentEntity.getExpireDate(),
                                psuDataMapper.mapToPsuIdData(piisConsentEntity.getPsuData()),
-                               tppInfoMapper.mapToTppInfo(piisConsentEntity.getTppInfo()),
                                piisConsentEntity.getConsentStatus(),
                                accountReferenceMapper.mapToAccountReferenceEntity(piisConsentEntity.getAccount()),
                                piisConsentEntity.getTppAccessType(),
-                               piisConsentEntity.getAllowedFrequencyPerDay(),
                                piisConsentEntity.getCreationTimestamp(),
                                piisConsentEntity.getInstanceId(),
                                piisConsentEntity.getCardNumber(),
@@ -75,10 +72,8 @@ public class PiisConsentMapper {
         consent.setRequestDateTime(OffsetDateTime.now());
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuData(psuDataMapper.mapToPsuData(psuIdData));
-        consent.setTppInfo(tppInfoMapper.mapToTppInfoEntity(request.getTppInfo()));
         consent.setAccount(accountReferenceMapper.mapToAccountReferenceEntity(request.getAccount()));
         consent.setTppAccessType(getAccessType(request));
-        consent.setAllowedFrequencyPerDay(request.getAllowedFrequencyPerDay());
         consent.setCardNumber(request.getCardNumber());
         consent.setCardExpiryDate(request.getCardExpiryDate());
         consent.setCardInformation(request.getCardInformation());
@@ -89,7 +84,7 @@ public class PiisConsentMapper {
 
     @NotNull
     private PiisConsentTppAccessType getAccessType(CreatePiisConsentRequest request) {
-        return request.getTppInfo() != null || StringUtils.isNotBlank(request.getTppAuthorisationNumber()) ?
+        return StringUtils.isNotBlank(request.getTppAuthorisationNumber()) ?
                    PiisConsentTppAccessType.SINGLE_TPP :
                    PiisConsentTppAccessType.ALL_TPP;
     }

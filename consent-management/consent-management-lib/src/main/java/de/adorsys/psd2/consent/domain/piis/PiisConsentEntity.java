@@ -19,7 +19,6 @@ package de.adorsys.psd2.consent.domain.piis;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
 import io.swagger.annotations.ApiModel;
@@ -64,12 +63,6 @@ public class PiisConsentEntity extends InstanceDependableEntity {
     @JoinColumn(name = "psu_id")
     private PsuData psuData;
 
-    // TODO: Remove the column in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/971
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tpp_info_id")
-    @ApiModelProperty(value = "Information about TPP")
-    private TppInfoEntity tppInfo;
-
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
@@ -83,11 +76,6 @@ public class PiisConsentEntity extends InstanceDependableEntity {
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Type of the tpp access: SINGLE_TPP or ALL_TPP.", required = true, example = "ALL_TPP")
     private PiisConsentTppAccessType tppAccessType;
-
-    // TODO: Remove the column in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/970
-    @Column(name = "allowed_frequency_per_day", nullable = false)
-    @ApiModelProperty(value = "Maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
-    private int allowedFrequencyPerDay;
 
     @Column(name = "creation_timestamp", nullable = false)
     private OffsetDateTime creationTimestamp = OffsetDateTime.now();

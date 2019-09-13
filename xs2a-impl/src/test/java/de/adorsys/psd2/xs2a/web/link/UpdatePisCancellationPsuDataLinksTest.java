@@ -75,6 +75,15 @@ public class UpdatePisCancellationPsuDataLinksTest {
     }
 
     @Test
+    public void isScaStatusMethodIdentified() {
+        links = new UpdatePisCancellationPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.PSUIDENTIFIED, authenticationObject);
+
+        expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
+        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
+        assertEquals(expectedLinks, links);
+    }
+
+    @Test
     public void isAnotherScaStatus_failed() {
         links = new UpdatePisCancellationPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.FAILED, authenticationObject);
 

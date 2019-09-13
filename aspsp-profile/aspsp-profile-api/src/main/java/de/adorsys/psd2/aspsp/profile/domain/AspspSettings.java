@@ -16,51 +16,18 @@
 
 package de.adorsys.psd2.aspsp.profile.domain;
 
-import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
+import de.adorsys.psd2.aspsp.profile.domain.ais.AisAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
 public class AspspSettings {
-    private int frequencyPerDay;
-    private boolean combinedServiceIndicator;
-    private boolean tppSignatureRequired;
-    private String pisRedirectUrlToAspsp;
-    private String aisRedirectUrlToAspsp;
-    private MulticurrencyAccountLevel multicurrencyAccountLevel;
-    private boolean bankOfferedConsentSupport;
-    private List<BookingStatus> availableBookingStatuses;
-    private List<SupportedAccountReferenceField> supportedAccountReferenceFields;
-    private int consentLifetime;
-    private int transactionLifetime;
-    private boolean allPsd2Support;
-    private boolean transactionsWithoutBalancesSupported;
-    private boolean signingBasketSupported;
-    private boolean paymentCancellationAuthorizationMandated;
-    private boolean piisConsentSupported;
-    private long redirectUrlExpirationTimeMs;
-    private long authorisationExpirationTimeMs;
-    private String pisPaymentCancellationRedirectUrlToAspsp;
-    private long notConfirmedConsentExpirationPeriodMs;
-    private long notConfirmedPaymentExpirationPeriodMs;
-    private Map<PaymentType, Set<String>> supportedPaymentTypeAndProductMatrix;
-    private long paymentCancellationRedirectUrlExpirationTimeMs;
-    private boolean availableAccountsConsentSupported;
-    private boolean scaByOneTimeAvailableAccountsConsentRequired;
-    private boolean psuInInitialRequestMandated;
-    private boolean forceXs2aBaseUrl;
-    private String xs2aBaseUrl;
-    private ScaRedirectFlow scaRedirectFlow;
-    private boolean deltaListSupported;
-    private boolean entryReferenceFromSupported;
-    private List<String> supportedTransactionApplicationTypes;
-    private StartAuthorisationMode startAuthorisationMode;
+    private AisAspspProfileSetting ais;
+    private PisAspspProfileSetting pis;
+    private PiisAspspProfileSetting piis;
+    private CommonAspspProfileSetting common;
 }

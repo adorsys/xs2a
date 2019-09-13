@@ -25,7 +25,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableXs2aSwagger
 @EnableXs2aInterface
 @SpringBootApplication
-@ComponentScan(basePackages = {"de.adorsys.psd2.stub"})
+@ComponentScan(basePackages = {"de.adorsys.psd2.stub", "de.adorsys.psd2.starter.config"})
 public class Xs2aStandaloneStarter {
     public static void main(String[] args) {
         SpringApplication.run(Xs2aStandaloneStarter.class, args);

@@ -48,7 +48,7 @@ public class AisConsentConfirmationExpirationService {
     }
 
     public boolean isConsentConfirmationExpired(AisConsent consent) {
-        long expirationPeriodMs = aspspProfileService.getAspspSettings().getNotConfirmedConsentExpirationPeriodMs();
+        long expirationPeriodMs = aspspProfileService.getAspspSettings().getAis().getConsentTypes().getNotConfirmedConsentExpirationTimeMs();
         return consent != null && consent.isConfirmationExpired(expirationPeriodMs);
     }
 
@@ -84,7 +84,7 @@ public class AisConsentConfirmationExpirationService {
     }
 
     private AisConsent obsoleteConsent(AisConsent consent) {
-        consent.setConsentStatus(ConsentStatus.EXPIRED);
+        consent.setConsentStatus(ConsentStatus.REJECTED);
         consent.getAuthorizations().forEach(auth -> auth.setScaStatus(ScaStatus.FAILED));
         consent.setLastActionDate(LocalDate.now());
         return consent;

@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
@@ -25,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.CreateConsentLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdateConsentLinks;
@@ -50,7 +50,7 @@ public class ConsentAspectTest {
     private ConsentAspect aspect;
 
     @Mock
-    private AspspProfileService aspspProfileService;
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
     @Mock
     private ScaApproachResolver scaApproachResolver;
     @Mock
@@ -70,11 +70,12 @@ public class ConsentAspectTest {
     public void setUp() {
         JsonReader jsonReader = new JsonReader();
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
     }
 
     @Test
     public void invokeCreateAccountConsentAspect_success() {
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
         when(createConsentResponse.isMultilevelScaRequired()).thenReturn(true);
         when(authorisationMethodDecider.isExplicitMethod(true, true)).thenReturn(true);
 
@@ -83,7 +84,6 @@ public class ConsentAspectTest {
                                                                    .build();
         ResponseObject actualResponse = aspect.invokeCreateAccountConsentAspect(responseObject, new CreateConsentReq(), null, true);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
         verify(createConsentResponse, times(1)).setLinks(any(CreateConsentLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -105,14 +105,12 @@ public class ConsentAspectTest {
     @Test
     public void invokeCreateConsentPsuDataAspect_success() {
         when(updateConsentPsuDataResponse.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
 
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .body(updateConsentPsuDataResponse)
                                                                    .build();
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
-        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(updateConsentPsuDataResponse, times(1)).setLinks(any(UpdateConsentLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -125,7 +123,6 @@ public class ConsentAspectTest {
                                                                    .build();
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
-        verify(aspspProfileService, never()).getAspspSettings();
         verify(updateConsentPsuDataResponse, times(1)).setLinks(null);
 
         assertFalse(actualResponse.hasError());
@@ -133,14 +130,11 @@ public class ConsentAspectTest {
 
     @Test
     public void invokeCreateConsentPsuDataAspect_wrongResponseType() {
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
 
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .body(createConsentAuthorisationResponse)
                                                                    .build();
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
-
-        verify(aspspProfileService, times(1)).getAspspSettings();
 
         assertFalse(actualResponse.hasError());
         assertEquals(responseObject, actualResponse);
@@ -162,14 +156,12 @@ public class ConsentAspectTest {
     @Test
     public void invokeUpdateConsentPsuDataAspect_success() {
         when(updateConsentPsuDataResponse.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
 
         ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                                                           .body(updateConsentPsuDataResponse)
                                                                           .build();
         ResponseObject actualResponse = aspect.invokeUpdateConsentPsuDataAspect(responseObject, new UpdateConsentPsuDataReq());
 
-        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(updateConsentPsuDataResponse, times(1)).setLinks(any(UpdateConsentLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -182,7 +174,6 @@ public class ConsentAspectTest {
                                                                           .build();
         ResponseObject actualResponse = aspect.invokeUpdateConsentPsuDataAspect(responseObject, new UpdateConsentPsuDataReq());
 
-        verify(aspspProfileService, never()).getAspspSettings();
         verify(updateConsentPsuDataResponse, times(1)).setLinks(null);
 
         assertFalse(actualResponse.hasError());

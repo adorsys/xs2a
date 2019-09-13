@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
@@ -25,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import de.adorsys.psd2.xs2a.web.link.CreatePisAuthorisationLinks;
@@ -43,9 +43,9 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
     private final RedirectIdService redirectIdService;
 
     public CreatePisAuthorizationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService,
-                                        AspspProfileService aspspProfileService, RedirectLinkBuilder redirectLinkBuilder,
+                                        AspspProfileServiceWrapper aspspProfileServiceWrapper, RedirectLinkBuilder redirectLinkBuilder,
                                         RedirectIdService redirectIdService) {
-        super(messageService, aspspProfileService);
+        super(messageService, aspspProfileServiceWrapper);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.redirectIdService = redirectIdService;

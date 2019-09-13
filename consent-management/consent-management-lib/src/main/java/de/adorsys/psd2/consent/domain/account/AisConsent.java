@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -189,10 +189,6 @@ public class AisConsent extends InstanceDependableEntity {
         return LocalDate.now().compareTo(expireDate) > 0;
     }
 
-    public boolean isStatusNotExpired() {
-        return consentStatus != ConsentStatus.EXPIRED;
-    }
-
     public boolean isConfirmationExpired(long expirationPeriodMs) {
         if (isNotConfirmed()) {
             return creationTimestamp.plus(expirationPeriodMs, ChronoUnit.MILLIS)
@@ -200,6 +196,10 @@ public class AisConsent extends InstanceDependableEntity {
         }
 
         return false;
+    }
+
+    public boolean isStatusNotExpired() {
+        return consentStatus != ConsentStatus.EXPIRED;
     }
 
     public boolean isNotConfirmed() {

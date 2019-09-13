@@ -36,6 +36,7 @@ public enum AccountResponseType {
     public static AccountResponseType fromValue(String value) {
         return Arrays.stream(values())
                    .filter(type -> type.name().equalsIgnoreCase(value))
-                   .findFirst().orElse(null);
+                   .findFirst()
+                   .orElse(JSON);
     }
 }

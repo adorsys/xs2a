@@ -20,7 +20,7 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import lombok.Data;
 
 @Data
-public class PaymentInformationResponse<T> {
+public class PaymentInformationResponse<T extends CommonPayment> {
     private T payment;
     private ErrorHolder errorHolder;
 

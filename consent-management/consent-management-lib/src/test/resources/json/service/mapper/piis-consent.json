@@ -10,35 +10,12 @@
     "psuCorporateId": "PSU CORPORATE ID",
     "psuCorporateIdType": "PSU CORPORATE ID TYPE"
   },
-  "tppInfo": {
-    "authorisationNumber": "12345987",
-    "tppName": "Tpp company",
-    "tppRoles": [
-      "PISP"
-    ],
-    "authorityId": "authority id",
-    "authorityName": "authority name",
-    "country": "Germany",
-    "organisation": "Organisation",
-    "organisationUnit": "Organisation unit",
-    "city": "Nuremberg",
-    "state": "Bayern",
-    "tppRedirectUri": {
-      "uri": "TPP-Redirect-URI",
-      "nokUri": "TPP-Nok-Redirect-URI"
-    },
-    "cancelTppRedirectUri": {
-      "uri": "TPP-Redirect-URI-Cancel",
-      "nokUri": "TPP-Nok-Redirect-URI-Cancel"
-    }
-  },
   "consentStatus": "VALID",
   "account": {
     "currency": "EUR",
     "iban": "DE15500105172295759744"
   },
   "tppAccessType": "SINGLE_TPP",
-  "allowedFrequencyPerDay": 2,
   "creationTimestamp": "2019-07-26T13:29:50.042136+03:00",
   "cardNumber": "1234567891234",
   "cardExpiryDate": "2020-12-31",

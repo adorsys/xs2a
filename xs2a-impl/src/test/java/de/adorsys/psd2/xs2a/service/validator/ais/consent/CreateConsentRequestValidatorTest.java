@@ -47,7 +47,6 @@ import java.util.Currency;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SESSIONS_NOT_SUPPORTED;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -170,7 +169,7 @@ public class CreateConsentRequestValidatorTest {
     @Test
     public void validate_withSupportedCombinedServiceIndicator_shouldReturnValid() {
         //Given
-        when(aspspProfileService.isCombinedServiceIndicator()).thenReturn(true);
+        when(aspspProfileService.isAisPisSessionsSupported()).thenReturn(true);
         CreateConsentReq createConsentReq = buildCreateConsentReqWithCombinedServiceIndicator(true);
 
         //When
@@ -207,7 +206,7 @@ public class CreateConsentRequestValidatorTest {
     @Test
     public void validate_withNotSupportedCombinedServiceIndicator_shouldReturnFormatError() {
         //Given
-        when(aspspProfileService.isCombinedServiceIndicator()).thenReturn(false);
+        when(aspspProfileService.isAisPisSessionsSupported()).thenReturn(false);
         CreateConsentReq createConsentReq = buildCreateConsentReqWithCombinedServiceIndicator(true);
 
         //When

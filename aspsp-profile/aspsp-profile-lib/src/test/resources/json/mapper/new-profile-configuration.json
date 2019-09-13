@@ -1,0 +1,81 @@
+{
+  "setting": {
+    "ais": {
+      "consentTypes": {
+        "accountAccessFrequencyPerDay": 5,
+        "availableAccountsConsentSupported": true,
+        "bankOfferedConsentSupported": true,
+        "globalConsentSupported": true,
+        "maxConsentValidityDays": 0,
+        "notConfirmedConsentExpirationTimeMs": 86400000
+      },
+      "deltaReportSettings": {
+        "deltaListSupported": false,
+        "entryReferenceFromSupported": false
+      },
+      "redirectLinkToOnlineBanking": {
+        "aisRedirectUrlToAspsp": "http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}"
+      },
+      "scaRequirementsForOneTimeConsents": {
+        "scaByOneTimeAvailableAccountsConsentRequired": true
+      },
+      "transactionParameters": {
+        "availableBookingStatuses": [
+          "BOOKED",
+          "PENDING"
+        ],
+        "supportedTransactionApplicationType": "JSON",
+        "transactionsWithoutBalancesSupported": true
+      }
+    },
+    "common": {
+      "aisPisSessionsSupported": false,
+      "authorisationExpirationTimeMs": 86400000,
+      "forceXs2aBaseLinksUrl": false,
+      "multicurrencyAccountLevelSupported": "SUBACCOUNT",
+      "psuInInitialRequestMandated": false,
+      "redirectUrlExpirationTimeMs": 600000,
+      "scaApproachesSupported": [
+        "REDIRECT",
+        "EMBEDDED",
+        "DECOUPLED"
+      ],
+      "scaRedirectFlow": "REDIRECT",
+      "signingBasketSupported": false,
+      "startAuthorisationMode": "auto",
+      "supportedAccountReferenceFields": [
+        "MSISDN",
+        "IBAN"
+      ],
+      "tppSignatureRequired": false,
+      "xs2aBaseLinksUrl": "http://myhost.com/"
+    },
+    "piis": {
+      "piisConsentSupported": false
+    },
+    "pis": {
+      "maxTransactionValidityDays": 0,
+      "notConfirmedPaymentExpirationTimeMs": 86400000,
+      "paymentCancellationAuthorisationMandated": false,
+      "redirectLinkToOnlineBanking": {
+        "paymentCancellationRedirectUrlExpirationTimeMs": 600000,
+        "pisPaymentCancellationRedirectUrlToAspsp": "http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}",
+        "pisRedirectUrlToAspsp": "http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}"
+      },
+      "supportedPaymentTypeAndProductMatrix": {
+        "bulk-payments": [
+          "sepa-credit-transfers",
+          "instant-sepa-credit-transfers"
+        ],
+        "periodic-payments": [
+          "sepa-credit-transfers",
+          "instant-sepa-credit-transfers"
+        ],
+        "payments": [
+          "sepa-credit-transfers",
+          "instant-sepa-credit-transfers"
+        ]
+      }
+    }
+  }
+}

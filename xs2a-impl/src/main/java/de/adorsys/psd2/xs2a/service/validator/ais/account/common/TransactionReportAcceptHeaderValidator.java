@@ -16,18 +16,14 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.ais.AccountResponseType;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Objects;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.REQUESTED_FORMATS_INVALID;
 
@@ -40,13 +36,13 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.REQUESTED_FORMATS
 @Component
 @RequiredArgsConstructor
 public class TransactionReportAcceptHeaderValidator {
-    private final AspspProfileService aspspProfileService;
+    private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     public ValidationResult validate(String acceptHeader) {
         if (StringUtils.isNotBlank(acceptHeader)) {
-            List<String> supportedTransactionApplicationTypes = aspspProfileService.getAspspSettings().getSupportedTransactionApplicationTypes();
+            String supportedTransactionApplicationTypes = aspspProfileServiceWrapper.getSupportedTransactionApplicationType();
 
-            if (!isAtLeastOneAcceptHeaderSupported(supportedTransactionApplicationTypes, acceptHeader)) {
+            if (!isAcceptHeaderSupported(supportedTransactionApplicationTypes, acceptHeader)) {
                 return ValidationResult.invalid(ErrorType.AIS_406, TppMessageInformation.of(REQUESTED_FORMATS_INVALID));
             }
         }
@@ -54,12 +50,7 @@ public class TransactionReportAcceptHeaderValidator {
         return ValidationResult.valid();
     }
 
-    private boolean isAtLeastOneAcceptHeaderSupported(List<String> supportedHeaders, String acceptHeader) {
-        return CollectionUtils.isEmpty(supportedHeaders) ||
-                   supportedHeaders.stream()
-                       .map(AccountResponseType::fromValue)
-                       .filter(Objects::nonNull)
-                       .anyMatch(tp -> acceptHeader.toLowerCase().contains(tp.getValue()));
-
+    private boolean isAcceptHeaderSupported(String supportedHeader, String acceptHeader) {
+        return AccountResponseType.fromValue(supportedHeader).getValue().equalsIgnoreCase(acceptHeader);
     }
 }

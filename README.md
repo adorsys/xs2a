@@ -43,7 +43,7 @@ All mandatory API endpoints defined in Berlin Group specification are implemente
 
 ## Getting Started
 
-[These instructions](doc/GETTING_STARTED.md) will get you a copy of the project up and running on your local machine for development and testing purposes. 
+[These instructions](doc/GETTING_STARTED.adoc) will get you a copy of the project up and running on your local machine for development and testing purposes. 
 
 ## Built With
 

@@ -21,7 +21,7 @@
     <parent>
         <artifactId>event-service</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>3.11</version>
+        <version>5.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -59,7 +59,7 @@
 
         <dependency>
             <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-jdk8</artifactId>
+            <artifactId>mapstruct</artifactId>
         </dependency>
 
         <dependency>

@@ -17,10 +17,10 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
@@ -44,16 +44,17 @@ public class TransactionReportAcceptHeaderValidatorTest {
 
     @InjectMocks
     private TransactionReportAcceptHeaderValidator validator;
-
     @Mock
-    private AspspProfileService aspspProfileService;
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     private JsonReader jsonReader = new JsonReader();
 
     @Before
     public void setUp() {
         AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(aspspProfileServiceWrapper.getSupportedTransactionApplicationType()).thenReturn(aspspSettings.getAis()
+                                                                                                  .getTransactionParameters()
+                                                                                                  .getSupportedTransactionApplicationType());
     }
 
     @Test

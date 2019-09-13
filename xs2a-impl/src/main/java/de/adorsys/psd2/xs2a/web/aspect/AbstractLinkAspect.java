@@ -16,13 +16,12 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +39,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @RequiredArgsConstructor
 public abstract class AbstractLinkAspect<T> {
     private final MessageService messageService;
-    private final AspspProfileService aspspProfileService;
+    private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     protected <B> boolean hasError(ResponseEntity<B> target) {
         Optional<B> body = Optional.ofNullable(target.getBody());
@@ -49,7 +48,7 @@ public abstract class AbstractLinkAspect<T> {
     }
 
     ScaRedirectFlow getScaRedirectFlow() {
-        return aspspProfileService.getAspspSettings().getScaRedirectFlow();
+        return aspspProfileServiceWrapper.getScaRedirectFlow();
     }
 
     <R> ResponseObject<R> enrichErrorTextMessage(ResponseObject<R> response) {
@@ -65,9 +64,8 @@ public abstract class AbstractLinkAspect<T> {
     }
 
     String getHttpUrl() {
-        AspspSettings aspspSettings = aspspProfileService.getAspspSettings();
-        return aspspSettings.isForceXs2aBaseUrl()
-                   ? aspspSettings.getXs2aBaseUrl()
+        return aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()
+                   ? aspspProfileServiceWrapper.getXs2aBaseLinksUrl()
                    : linkTo(getControllerClass()).toString();
     }
 

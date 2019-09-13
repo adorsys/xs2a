@@ -468,16 +468,16 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         long redirectUrlExpirationTimeMs;
 
         if (authorisationType == PaymentAuthorisationType.CANCELLED) {
-            redirectUrlExpirationTimeMs = aspspProfileService.getAspspSettings().getPaymentCancellationRedirectUrlExpirationTimeMs();
+            redirectUrlExpirationTimeMs = aspspProfileService.getAspspSettings().getPis().getRedirectLinkToOnlineBanking().getPaymentCancellationRedirectUrlExpirationTimeMs();
         } else {
-            redirectUrlExpirationTimeMs = aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs();
+            redirectUrlExpirationTimeMs = aspspProfileService.getAspspSettings().getCommon().getRedirectUrlExpirationTimeMs();
         }
 
         return OffsetDateTime.now().plus(redirectUrlExpirationTimeMs, ChronoUnit.MILLIS);
     }
 
     private OffsetDateTime countAuthorisationExpirationTimestamp() {
-        long authorisationExpirationTimeMs = aspspProfileService.getAspspSettings().getAuthorisationExpirationTimeMs();
+        long authorisationExpirationTimeMs = aspspProfileService.getAspspSettings().getCommon().getAuthorisationExpirationTimeMs();
 
         return OffsetDateTime.now().plus(authorisationExpirationTimeMs, ChronoUnit.MILLIS);
     }

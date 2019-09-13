@@ -43,6 +43,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CANCELLATION_INVALID;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_CANC_405;
@@ -67,7 +69,7 @@ public class CancelPaymentService {
      *
      * @param payment                           Payment to be cancelled
      * @param encryptedPaymentId                encrypted identifier of the payment
-     * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
+     * @param tppExplicitAuthorisationPreferred value of TPP's choice of authorisation method
      * @param tppRedirectUri                    TPP's redirect URIs
      * @return Response containing information about cancelled payment or corresponding error
      */
@@ -81,10 +83,13 @@ public class CancelPaymentService {
 
         SpiResponse<SpiPaymentCancellationResponse> spiResponse = paymentCancellationSpi.initiatePaymentCancellation(spiContextData, payment, aspspConsentDataProvider);
 
+        UUID internalRequestId = requestProviderService.getInternalRequestId();
+        UUID xRequestId = requestProviderService.getRequestId();
+
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Error msg: {}.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId, errorHolder);
+                     internalRequestId, xRequestId, encryptedPaymentId, errorHolder);
             return ResponseObject.<CancelPaymentResponse>builder()
                        .fail(errorHolder)
                        .build();
@@ -104,7 +109,7 @@ public class CancelPaymentService {
 
         if (resultStatus == TransactionStatus.CANC) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Payment status - CANCELED",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId);
+                     internalRequestId, xRequestId, encryptedPaymentId);
             return ResponseObject.<CancelPaymentResponse>builder()
                        .body(cancelPaymentResponse)
                        .build();
@@ -112,7 +117,7 @@ public class CancelPaymentService {
 
         if (resultStatus.isFinalisedStatus()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Payment has finalised status",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId);
+                     internalRequestId, xRequestId, encryptedPaymentId);
             return ResponseObject.<CancelPaymentResponse>builder()
                        .fail(PIS_CANC_405, of(CANCELLATION_INVALID))
                        .build();
@@ -132,7 +137,7 @@ public class CancelPaymentService {
 
             if (authorisationResponse.hasError()) {
                 log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Can't create implicit authorisation",
-                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId);
+                         internalRequestId, xRequestId, encryptedPaymentId);
                 return ResponseObject.<CancelPaymentResponse>builder()
                            .fail(PIS_CANC_405, of(CANCELLATION_INVALID))
                            .build();
@@ -154,7 +159,7 @@ public class CancelPaymentService {
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Proceed NoSca Cancellation failed. Can't Cancel Payment without SCA at SPI-level. Error msg: {}.",
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Proceed no SCA Cancellation failed. Can't Cancel Payment without SCA at SPI level. Error msg: {}.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedPaymentId, errorHolder);
             return ResponseObject.<CancelPaymentResponse>builder()
                        .fail(errorHolder)

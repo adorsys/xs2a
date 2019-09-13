@@ -22,12 +22,12 @@
     <parent>
         <artifactId>aspsp-profile</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>3.11</version>
+        <version>5.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>aspsp-profile-server</artifactId>
-    <version>3.11</version>
+    <version>5.0</version>
     <packaging>jar</packaging>
 
     <name>aspsp-profile-server</name>
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-lib</artifactId>
-            <version>3.11</version>
+            <version>5.0</version>
         </dependency>
 
         <dependency>
@@ -73,6 +73,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-parameter-names</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
         </dependency>
 
         <dependency>

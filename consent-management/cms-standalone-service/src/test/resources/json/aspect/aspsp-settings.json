@@ -1,0 +1,17 @@
+{
+  "ais": {
+    "consentTypes": {
+      "notConfirmedConsentExpirationTimeMs": 10000
+    }
+  },
+  "pis": {
+    "redirectLinkToOnlineBanking": {
+      "paymentCancellationRedirectUrlExpirationTimeMs": 10000
+    },
+    "notConfirmedPaymentExpirationTimeMs":10000
+  },
+  "common": {
+    "redirectUrlExpirationTimeMs": 10000,
+    "authorisationExpirationTimeMs": 10000
+  }
+}

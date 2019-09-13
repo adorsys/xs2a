@@ -78,14 +78,29 @@ public class CommonPaymentDataServiceTest {
     }
 
     @Test
-    public void updateStatusInPaymentData() {
+    public void updateStatusInPaymentData_TransactionStatusACSP() {
+        TransactionStatus transactionStatus = TransactionStatus.ACSP;
         PisCommonPaymentData paymentData = new PisCommonPaymentData();
         assertNull(paymentData.getTransactionStatus());
 
         when(pisCommonPaymentDataRepository.save(paymentData)).thenReturn(new PisCommonPaymentData());
 
-        commonPaymentDataService.updateStatusInPaymentData(paymentData, TransactionStatus.ACSP);
-        assertEquals(TransactionStatus.ACSP, paymentData.getTransactionStatus());
+        commonPaymentDataService.updateStatusInPaymentData(paymentData, transactionStatus);
+        assertEquals(transactionStatus, paymentData.getTransactionStatus());
+    }
+
+    @Test
+    public void updateStatusInPaymentData_TransactionStatusPATC() {
+        TransactionStatus transactionStatus = TransactionStatus.PATC;
+        PisCommonPaymentData paymentData = new PisCommonPaymentData();
+        assertNull(paymentData.getTransactionStatus());
+        assertFalse(paymentData.isMultilevelScaRequired());
+
+        when(pisCommonPaymentDataRepository.save(paymentData)).thenReturn(new PisCommonPaymentData());
+
+        commonPaymentDataService.updateStatusInPaymentData(paymentData, transactionStatus);
+        assertEquals(transactionStatus, paymentData.getTransactionStatus());
+        assertTrue(paymentData.isMultilevelScaRequired());
     }
 
     @Test

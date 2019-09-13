@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>3.11</version>
+    <version>5.0</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>xs2a-core</module>
@@ -442,6 +442,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-parameter-names</artifactId>
                 <version>${jackson.version}</version>
@@ -608,7 +614,7 @@
 
             <dependency>
                 <groupId>org.mapstruct</groupId>
-                <artifactId>mapstruct-jdk8</artifactId>
+                <artifactId>mapstruct</artifactId>
                 <version>${org.mapstruct.version}</version>
             </dependency>
         </dependencies>
@@ -724,10 +730,9 @@ Use it manually to generate javadocs. Don't commit it
                     </rulesets>
                     <failOnViolation>true</failOnViolation>
                     <printFailingErrors>true</printFailingErrors>
-                    <excludeRoots>
-                        <excludeRoot>../xs2a-impl/target/generated-sources/annotations/</excludeRoot>
-                        <excludeRoot>../consent-management/consent-management-lib/target/generated-sources/annotations/</excludeRoot>
-                    </excludeRoots>
+                    <excludes>
+                        <exclude>**/*MapperImpl.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -757,6 +762,25 @@ Use it manually to generate javadocs. Don't commit it
                         <phase>package</phase>
                         <goals>
                             <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
                         </goals>
                     </execution>
                 </executions>
