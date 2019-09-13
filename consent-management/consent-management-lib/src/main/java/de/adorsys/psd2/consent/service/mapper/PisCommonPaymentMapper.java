@@ -40,7 +40,7 @@ public class PisCommonPaymentMapper {
     private final TppInfoMapper tppInfoMapper;
     private final PsuDataMapper psuDataMapper;
     private final AccountReferenceMapper accountReferenceMapper;
-    private final AuthorisationMapper authorisationMapper;
+    private final CmsAuthorisationMapper cmsAuthorisationMapper;
 
     public List<PisPaymentData> mapToPisPaymentDataList(List<PisPayment> payments, PisCommonPaymentData pisCommonPayment) {
         if (CollectionUtils.isEmpty(payments)) {
@@ -133,7 +133,7 @@ public class PisCommonPaymentMapper {
                        response.setPaymentData(cmd.getPayment());
                        response.setTransactionStatus(cmd.getTransactionStatus());
                        response.setStatusChangeTimestamp(cmd.getStatusChangeTimestamp());
-                       response.setAuthorisations(authorisationMapper.mapToAuthorisations(cmd.getAuthorizations()));
+                       response.setAuthorisations(cmsAuthorisationMapper.mapToAuthorisations(cmd.getAuthorizations()));
                        return response;
                    });
     }
