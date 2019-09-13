@@ -26,8 +26,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class AuthorisationMapperTest {
-    private AuthorisationMapper authorisationMapper = new AuthorisationMapper();
+public class CmsAuthorisationMapperTest {
+    private CmsAuthorisationMapper cmsAuthorisationMapper = new CmsAuthorisationMapper();
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -38,7 +38,7 @@ public class AuthorisationMapperTest {
         Authorisation expectedAuthorisation = jsonReader.getObjectFromFile("json/service/mapper/authorisation.json", Authorisation.class);
 
         // When
-        List<Authorisation> actual = authorisationMapper.mapToAuthorisations(Collections.singletonList(pisAuthorisation));
+        List<Authorisation> actual = cmsAuthorisationMapper.mapToAuthorisations(Collections.singletonList(pisAuthorisation));
 
         // Then
         assertEquals(Collections.singletonList(expectedAuthorisation), actual);
