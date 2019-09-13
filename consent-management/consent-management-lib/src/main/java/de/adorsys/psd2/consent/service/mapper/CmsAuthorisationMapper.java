@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class AuthorisationMapper {
+public class CmsAuthorisationMapper {
     @NotNull
     List<Authorisation> mapToAuthorisations(@NotNull List<PisAuthorization> pisAuthorisations) {
         return pisAuthorisations.stream()

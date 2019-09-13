@@ -56,7 +56,7 @@ public class PisCommonPaymentMapperTest {
     @Mock
     private TppInfoMapper tppInfoMapper;
     @Mock
-    private AuthorisationMapper authorisationMapper;
+    private CmsAuthorisationMapper cmsAuthorisationMapper;
 
     @Test
     public void mapToGetPisAuthorizationResponse() {
@@ -121,7 +121,7 @@ public class PisCommonPaymentMapperTest {
 
         PisAuthorization pisAuthorisation = jsonReader.getObjectFromFile("json/service/mapper/pis-authorisation.json", PisAuthorization.class);
         Authorisation authorisation = jsonReader.getObjectFromFile("json/service/mapper/authorisation.json", Authorisation.class);
-        when(authorisationMapper.mapToAuthorisations(Collections.singletonList(pisAuthorisation)))
+        when(cmsAuthorisationMapper.mapToAuthorisations(Collections.singletonList(pisAuthorisation)))
             .thenReturn(Collections.singletonList(authorisation));
 
         PisCommonPaymentData pisCommonPaymentDataEntity = jsonReader.getObjectFromFile("json/service/mapper/pis-common-payment-data.json", PisCommonPaymentData.class);
