@@ -7,7 +7,9 @@ For upcoming versions see our [Roadmap](roadmap.md).
 ## Mainline 5.x (Development)
 
 ## Mainline 4.x (Stable. Supported minimum till 01.03.2020)
-* [Version 4.0   (release date: ?)](release_notes/Release_notes_4.0.adoc)
+* [Version 4.1   (release date: ?)](release_notes/Release_notes_4.1.adoc)
+* [Version 4.0.1   (release date: 13.09.2019)](release_notes/Release_notes_4.0.1.adoc)
+* [Version 4.0   (release date: 13.09.2019)](release_notes/Release_notes_4.0.adoc)
 
 ## Mainline 2.x (Stable. Supported minimum till 01.08.2019)
 * [Version 2.7   (release date: ?)](release_notes/Release_notes_2.7.adoc)
