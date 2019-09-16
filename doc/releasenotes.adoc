@@ -6,7 +6,9 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 4.x (Stable. Supported minimum till 01.03.2020)
 
-* xref:release_notes/Release_notes_4.0.adoc[Version 4.0  (release date: ?)]
+* xref:release_notes/Release_notes_4.1.adoc[Version 4.1  (release date: ?)]
+* xref:release_notes/Release_notes_4.0.1.adoc[Version 4.0.1  (release date: 13.09.2019)]
+* xref:release_notes/Release_notes_4.0.adoc[Version 4.0  (release date: 13.09.2019)]
 
 === Mainline 3.x (Development. Released 13.09.2019 as 4.0)
 
