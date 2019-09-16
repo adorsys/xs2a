@@ -1,0 +1,108 @@
+= Release notes v.4.0
+
+== Table of Contents
+
+* Bugfix: TPP domain validator ignores non-domain `tppName` field
+* Remove deprecated frequencyPerDay for PiisConsent
+* Bugfix: statuses of obsoleted AIS consents
+* Remove column `tpp_info_id` from `authorisation_template` table
+* Bugfix: changed link for update PSU data without password
+* Remove deprecated TppInfo from PiisConsent
+* Bugfix: changed link for update PSU data without password for payment cancellation
+* Add indexes to the CMS database
+* Bugfix: Providing incorrect request body on PIIS consent creation in CMS-ASPSP-API results in Internal Server Error
+* SupportedTransactionApplicationTypes in profile should be String
+* Extend XS2A with Austria requirements to payment products
+* Bugfix: Incorrect error code in response for ReadAccountList for consent which was revoked by PSU
+* Bugfix: Incorrect TransactionId in read transaction details leads to internal server error
+* Only Pending transactions should be available in getTransactionList response when query param set to "pending"
+
+== Bugfix: TPP domain validator ignores non-domain `tppName` field
+
+From now on, if `tppName` is not a proper domain name, it will be ignored by XS2A in TPP domain validation.
+Before, java `IllegalArgumentException` was thrown by the validator.
+
+== Remove deprecated frequencyPerDay for PiisConsent
+
+From now on, the deprecated field `frequencyPerDay` has been removed from `CreatePiisConsentRequest`,
+`PiisConsentEntity`, and `PiisConsent`.
+The field has also been removed from the `piis_consent` table.
+
+== Bugfix: statuses of obsoleted AIS consents
+
+Some changes were made in AIS consents statuses switching: obsoleted consents that were not confirmed with authorisation now get status `REJECTED` (before it was `EXPIRED`).
+When new AIS consent for account for one TPP and one PSU is created with reccuringIndicator=true, old authorised consents get status `TERMINATED_BY_TPP`, but old unauthorised consents get status `REJECTED`.
+The same works for consents with `multilevelSca`
+set to `true`: if old consents have `PARTIALLY_AUTHORISED` status - they obtain `REJECTED` status.
+
+== Remove column `tpp_info_id` from `authorisation_template` table
+
+From now on, `tpp_info_id` column has been removed from `authorisation_template` table.
+
+== Bugfix: changed link for update PSU data without password
+
+From now on, after sending the update PSU data request (PUT `/v1/consents/{consentId}/authorisations/{authorisationId}`)
+with `PSU-ID` header but with no body, the response contains `updatePsuAuthentication` link. This works if you start the
+authorisation in EMBEDDED approach explicitly.
+
+== Remove deprecated TppInfo from PiisConsent
+
+From now on, the deprecated field `tppInfo` is removed from `PiisConsentEntity`, `PiisConsent`, and
+`CreatePiisConsentRequest`.
+Also, all data has been migrated from `tppInfo` column to `tppAuthorisationNumber` column in
+`piis_consent` table.
+
+== Bugfix: changed link for update PSU data without password for payment cancellation
+
+From now on, after sending the update PSU data request for payment cancellation (PUT `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}`)
+with `PSU-ID` header but with no body, the response contains `updatePsuAuthentication` link. This works if you start the
+authorisation for payment cancellation in EMBEDDED approach.
+
+== Add indexes to the CMS database
+
+Several indexes were added to the CMS database to increase performance:
+
+- index on `external_id` in `ais_consent` table
+- index on `payment_id` in `pis_common_payment` table
+- index on `payment_id` in `pis_payment_data` table
+- index on `tpp_info_id` in `tpp_info_role` table
+
+== Bugfix: Providing incorrect request body on PIIS consent creation in CMS-ASPSP-API results in Internal Server Error
+
+From now on, when you try to create PIIS consent `POST /aspsp-api/v1/piis/consents` with incorrect
+request body, you'll get status `400 Bad request` and message `Http message is not readable`.
+
+== SupportedTransactionApplicationTypes in profile should be String
+
+From now on, the field `supportedTransactionApplicationTypes` is a String. Also, the endpoint
+`GET /v1/accounts/{account-id}/balances` now responds with `401 Unauthorized - CONSENT_INVALID`, if providing an empty
+`account-id`.
+
+== Extend XS2A with Austria requirements to payment products
+
+Payment validation was extended for supporting different countries. Technically all rules for payment have been transferred to `application.properties` in the format `validation.payment.<field>.<rule>`.
+Available rules for field:
+
+* `use` - required, optional <default>, skip, none.
+* `maxLength` - max fields length (0 by default)
+
+From now on, new configuration properties for payment validation should be added in `application.properties` and provided bean realization into spring context (`PaymentValidationConfig`).
+To extend configuration for another country create new `application-<country>.properties` and override proper properties.
+To apply new file add `<country>` to active profiles for application.
+
+By default, configuration is for Germany and configuration for Austria was added as well.
+
+== Bugfix: Incorrect error code in response for ReadAccountList for consent which was revoked by PSU
+
+From now on, when you try to get Account List for consent which was revoked by PSU with request `GET /v1/accounts`
+you will get response code `401 'CONSENT_INVALID'` with text `Consent was revoked by PSU`
+
+== Incorrect TransactionId in read transaction details leads to internal server error
+
+From now on, if TPP provides incorrect transaction ID in read transaction details `GET /v1/accounts/{account-id}/transactions/{resourceId}` it will receive 403 response code with `RESOURCE_UNKNOWN` message.
+
+== Only Pending transactions should be available in getTransactionList response when query param set to "pending"
+
+From now on, the query parameter `bookingStatus` in `GET /v1/accounts/{account-id}/transactions`
+is capable of filtering. The endpoint returns only those types of transactions, whose `bookingStatus` equals
+the parameters value.
