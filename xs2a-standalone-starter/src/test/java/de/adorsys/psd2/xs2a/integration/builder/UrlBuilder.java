@@ -80,4 +80,22 @@ public class UrlBuilder {
                    .buildAndExpand(paymentType, paymentProduct, encrPaymentId)
                    .toUriString();
     }
+
+    public static String buildPaymentUpdateAuthorisationUrl(String paymentType, String paymentProduct, String encrPaymentId, String authorisationId) {
+        return UriComponentsBuilder.fromPath(UrlHolder.PIS_AUTHORISATION_LINK_URL)
+                   .buildAndExpand(paymentType, paymentProduct, encrPaymentId, authorisationId)
+                   .toUriString();
+    }
+
+    public static String buildPaymentCancellationUpdateAuthorisationUrl(String paymentType, String paymentProduct, String encrPaymentId, String authorisationId) {
+        return UriComponentsBuilder.fromPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL)
+                   .buildAndExpand(paymentType, paymentProduct, encrPaymentId, authorisationId)
+                   .toUriString();
+    }
+
+    public static String buildConsentUpdateAuthorisationUrl(String consentId, String authorisationId) {
+        return UriComponentsBuilder.fromPath(UrlHolder.AIS_AUTHORISATION_URL)
+                   .buildAndExpand(consentId, authorisationId)
+                   .toUriString();
+    }
 }

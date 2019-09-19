@@ -897,7 +897,7 @@ public class ConsentServiceTest {
         ResponseObject<UpdateConsentPsuDataResponse> actualResponse = consentService.updateConsentPsuData(updateConsentPsuDataReq);
 
         // Then
-        verify(updateConsentPsuDataValidator).validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation));
+        verify(updateConsentPsuDataValidator).validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation, PSU_ID_DATA));
         assertValidationErrorIsPresent(actualResponse);
     }
 
@@ -1134,6 +1134,7 @@ public class ConsentServiceTest {
         UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
         request.setConsentId(consentId);
         request.setAuthorizationId(authorisationId);
+        request.setPsuData(PSU_ID_DATA);
         return request;
     }
 

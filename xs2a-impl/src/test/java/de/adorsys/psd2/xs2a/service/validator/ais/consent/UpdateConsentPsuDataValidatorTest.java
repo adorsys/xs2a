@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -23,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.validator.PsuDataUpdateAuthorisationChecker;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisConsentTppInfoValidator;
@@ -47,6 +49,7 @@ public class UpdateConsentPsuDataValidatorTest {
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final ScaStatus INVALID_SCA_STATUS = ScaStatus.FAILED;
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu-id", null, null, null);
 
     private static final MessageError TPP_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
@@ -57,6 +60,8 @@ public class UpdateConsentPsuDataValidatorTest {
     private AisConsentTppInfoValidator aisConsentTppInfoValidator;
     @Mock
     private AisAuthorisationStatusValidator aisAuthorisationStatusValidator;
+    @Mock
+    private PsuDataUpdateAuthorisationChecker psuDataUpdateAuthorisationChecker;
 
     @InjectMocks
     private UpdateConsentPsuDataValidator updateConsentPsuDataValidator;
@@ -70,6 +75,8 @@ public class UpdateConsentPsuDataValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(aisConsentTppInfoValidator.validateTpp(INVALID_TPP_INFO))
             .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
+        when(psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(PSU_ID_DATA, null))
+            .thenReturn(true);
     }
 
     @Test
@@ -80,7 +87,7 @@ public class UpdateConsentPsuDataValidatorTest {
         AccountConsentAuthorization authorisation = buildAccountConsentAuthorization(SCA_STATUS);
 
         // When
-        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation));
+        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation, PSU_ID_DATA));
 
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -97,7 +104,7 @@ public class UpdateConsentPsuDataValidatorTest {
         AccountConsentAuthorization authorisation = buildAccountConsentAuthorization(SCA_STATUS);
 
         // When
-        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation));
+        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation, PSU_ID_DATA));
 
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -116,7 +123,7 @@ public class UpdateConsentPsuDataValidatorTest {
             .thenReturn(ValidationResult.invalid(STATUS_VALIDATION_ERROR));
 
         // When
-        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation));
+        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, authorisation, PSU_ID_DATA));
 
         // Then
         assertNotNull(validationResult);

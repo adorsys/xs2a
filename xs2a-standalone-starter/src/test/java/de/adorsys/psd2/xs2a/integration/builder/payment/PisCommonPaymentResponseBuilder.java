@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.integration.builder.payment;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -27,6 +28,7 @@ import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Currency;
+import java.util.List;
 
 public class PisCommonPaymentResponseBuilder {
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
@@ -42,6 +44,12 @@ public class PisCommonPaymentResponseBuilder {
         commonPaymentResponse.setPaymentProduct(PAYMENT_PRODUCT);
         commonPaymentResponse.setTppInfo(TppInfoBuilder.buildTppInfo());
         commonPaymentResponse.setPsuData(Collections.singletonList(PsuIdDataBuilder.buildPsuIdData()));
+        return commonPaymentResponse;
+    }
+
+    public static PisCommonPaymentResponse buildPisCommonPaymentResponse(List<Authorisation> authorisationList) {
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
+        commonPaymentResponse.setAuthorisations(authorisationList);
         return commonPaymentResponse;
     }
 

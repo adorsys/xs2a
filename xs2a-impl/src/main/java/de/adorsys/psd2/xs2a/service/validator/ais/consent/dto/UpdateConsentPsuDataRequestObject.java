@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent.dto;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
@@ -29,6 +30,8 @@ public class UpdateConsentPsuDataRequestObject implements TppInfoProvider {
     private AccountConsent accountConsent;
     @NotNull
     private AccountConsentAuthorization authorisation;
+    @NotNull
+    private PsuIdData psuIdData;
 
     @Override
     public TppInfo getTppInfo() {
