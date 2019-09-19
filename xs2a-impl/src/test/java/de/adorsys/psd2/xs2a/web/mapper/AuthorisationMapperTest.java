@@ -15,12 +15,14 @@
  */
 package de.adorsys.psd2.xs2a.web.mapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
@@ -35,11 +37,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -81,23 +83,22 @@ public class AuthorisationMapperTest {
     @Test
     public void mapToAuthorisations_equals_success() {
         // given
-        Authorisations expectedAuthorisations = jsonReader.getObjectFromFile("json/service/mapper/AuthorisationMapper-Authorisations.json", Authorisations.class);
-        Xs2aAuthorisationSubResources xs2AAuthorisationSubResources = jsonReader.getObjectFromFile("json/service/mapper/AuthorisationMapper-Xs2aAutorisationSubResources.json", Xs2aAuthorisationSubResources.class);
+        Authorisations expectedAuthorisations = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-Authorisations.json", Authorisations.class);
+        Xs2aAuthorisationSubResources xs2AAuthorisationSubResources = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-Xs2aAutorisationSubResources.json", Xs2aAuthorisationSubResources.class);
 
         // when
         Authorisations actualAuthorisations = mapper.mapToAuthorisations(xs2AAuthorisationSubResources);
 
         // then
-        // TODO change yaml-generator to correct Authorisations.AuthorisationsList equals https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/871#
-        assertArrayEquals(expectedAuthorisations.getAuthorisationIds().toArray(), actualAuthorisations.getAuthorisationIds().toArray());
+        assertEquals(expectedAuthorisations, actualAuthorisations);
     }
 
     @Test
     public void mapToPisCreateOrUpdateAuthorisationResponse_for_Xs2aCreatePisAuthorisationResponse() {
         // given
-        StartScaprocessResponse expectedStartScaProcessResponse = jsonReader.getObjectFromFile("json/service/mapper/AuthorisationMapper-StartScaProcessResponse-expected.json", StartScaprocessResponse.class);
+        StartScaprocessResponse expectedStartScaProcessResponse = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-StartScaProcessResponse-expected.json", StartScaprocessResponse.class);
 
-        Xs2aCreatePisAuthorisationResponse xs2aCreatePisAuthorisationResponse = jsonReader.getObjectFromFile("json/service/mapper/AuthorisationMapper-StartScaProcessResponse-ResponseObject.json", Xs2aCreatePisAuthorisationResponse.class);
+        Xs2aCreatePisAuthorisationResponse xs2aCreatePisAuthorisationResponse = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-StartScaProcessResponse-ResponseObject.json", Xs2aCreatePisAuthorisationResponse.class);
         ResponseObject<Xs2aCreatePisAuthorisationResponse> responseObject = ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
                                                                                 .body(xs2aCreatePisAuthorisationResponse)
                                                                                 .build();
@@ -116,19 +117,22 @@ public class AuthorisationMapperTest {
     public void mapToPisCreateOrUpdateAuthorisationResponse_for_Xs2aUpdatePisCommonPaymentPsuDataResponse() {
         // given
         UpdatePsuAuthenticationResponse expectedUpdatePsuAuthenticationResponse =
-            jsonReader.getObjectFromFile("json/service/mapper/AuthorisationMapper-UpdatePsuAuthenticationResponse-expected.json", UpdatePsuAuthenticationResponse.class);
+            jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-UpdatePsuAuthenticationResponse-expected.json", UpdatePsuAuthenticationResponse.class);
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse xs2aUpdatePisCommonPaymentPsuDataResponse =
-            jsonReader.getObjectFromFile("json/service/mapper/AuthorisationMapper-UpdatePsuAuthenticationResponse-ResponseObject.json", Xs2aUpdatePisCommonPaymentPsuDataResponse.class);
+            jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-UpdatePsuAuthenticationResponse-ResponseObject.json", Xs2aUpdatePisCommonPaymentPsuDataResponse.class);
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                                                                                        .body(xs2aUpdatePisCommonPaymentPsuDataResponse)
                                                                                        .build();
-        ScaMethods methods = new ScaMethods();
-        methods.add(new AuthenticationObject());
-        when(scaMethodsMapper.mapToScaMethods(anyList())).thenReturn(methods);
 
-        ChallengeData challengeData = new ChallengeData();
-        when(coreObjectsMapper.mapToChallengeData(any(de.adorsys.psd2.xs2a.core.sca.ChallengeData.class))).thenReturn(challengeData);
+        List<Xs2aAuthenticationObject> xs2aScaMethods = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-scaMethods.json", new TypeReference<List<Xs2aAuthenticationObject>>() {
+        });
+        ScaMethods scaMethods = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-scaMethods.json", ScaMethods.class);
+        when(scaMethodsMapper.mapToScaMethods(xs2aScaMethods)).thenReturn(scaMethods);
+
+        ChallengeData challengeData = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-challengeData.json", ChallengeData.class);
+        de.adorsys.psd2.xs2a.core.sca.ChallengeData xs2aChallengeData = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-challengeData.json", de.adorsys.psd2.xs2a.core.sca.ChallengeData.class);
+        when(coreObjectsMapper.mapToChallengeData(xs2aChallengeData)).thenReturn(challengeData);
 
         // when
         UpdatePsuAuthenticationResponse actualUpdatePsuAuthenticationResponse =
@@ -140,9 +144,7 @@ public class AuthorisationMapperTest {
 
         assertFalse(actualUpdatePsuAuthenticationResponse.getScaMethods().isEmpty());
 
-        // TODO change yaml-generator to correct ChosenScaMethod equals https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/871#
-        assertThatChosenScaMethodsEquals(expectedUpdatePsuAuthenticationResponse.getChosenScaMethod(), actualUpdatePsuAuthenticationResponse.getChosenScaMethod());
-
+        assertEquals(expectedUpdatePsuAuthenticationResponse.getChosenScaMethod(), actualUpdatePsuAuthenticationResponse.getChosenScaMethod());
         assertEquals(expectedUpdatePsuAuthenticationResponse.getPsuMessage(), actualUpdatePsuAuthenticationResponse.getPsuMessage());
         assertEquals(expectedUpdatePsuAuthenticationResponse.getAuthorisationId(), actualUpdatePsuAuthenticationResponse.getAuthorisationId());
         assertNotNull(actualUpdatePsuAuthenticationResponse.getChallengeData());
@@ -153,9 +155,9 @@ public class AuthorisationMapperTest {
     public void mapToAisCreateOrUpdateAuthorisationResponse_for_CreateConsentAuthorizationResponse() {
         // Given
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse =
-            jsonReader.getObjectFromFile("json/service/mapper/AuthorisationMapper-CreateConsentAuthorisationResponse.json", CreateConsentAuthorizationResponse.class);
+            jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-CreateConsentAuthorisationResponse.json", CreateConsentAuthorizationResponse.class);
         StartScaprocessResponse expected =
-            jsonReader.getObjectFromFile("json/service/mapper/AuthorisationMapper-start-scaprocess-response-expected.json", StartScaprocessResponse.class);
+            jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-start-scaprocess-response-expected.json", StartScaprocessResponse.class);
 
         when(authorisationModelMapper.mapToStartScaProcessResponse(createConsentAuthorizationResponse))
             .thenReturn(expected);
@@ -170,14 +172,6 @@ public class AuthorisationMapperTest {
         // Then
         assertEquals(expected, actualStartScaProcessResponse);
         verify(authorisationModelMapper).mapToStartScaProcessResponse(createConsentAuthorizationResponse);
-    }
-
-    private void assertThatChosenScaMethodsEquals(ChosenScaMethod expectedChosenScaMethod, ChosenScaMethod actualChosenScaMethod) {
-        assertEquals(expectedChosenScaMethod.getAuthenticationMethodId(), actualChosenScaMethod.getAuthenticationMethodId());
-        assertEquals(expectedChosenScaMethod.getAuthenticationType(), actualChosenScaMethod.getAuthenticationType());
-        assertEquals(expectedChosenScaMethod.getName(), actualChosenScaMethod.getName());
-        assertEquals(expectedChosenScaMethod.getExplanation(), actualChosenScaMethod.getExplanation());
-        assertEquals(expectedChosenScaMethod.getAuthenticationVersion(), actualChosenScaMethod.getAuthenticationVersion());
     }
 
     private Map<String, HrefType> buildLinks() {
