@@ -16,8 +16,8 @@
           "iban": "DE67100100101306118605"
         },
         "transactionAmount": {
-          "currency": "EUR",
-          "amount": "256.67"
+          "currency": "USD",
+          "amount": "100"
         },
         "bookingDate": "2017-10-25",
         "valueDate": "2017-10-26",
@@ -30,8 +30,8 @@
           "iban": "NL76RABO0359400371"
         },
         "transactionAmount": {
-          "currency": "EUR",
-          "amount": "343.01"
+          "currency": "USD",
+          "amount": "100"
         },
         "bookingDate": "2017-10-25",
         "valueDate": "2017-10-26",
@@ -46,8 +46,8 @@
           "iban": "FR7612345987650123456789014"
         },
         "transactionAmount": {
-          "currency": "EUR",
-          "amount": "-100.03"
+          "currency": "USD",
+          "amount": "100"
         },
         "valueDate": "2017-10-26",
         "remittanceInformationUnstructured": "Example 3"
@@ -128,8 +128,8 @@
   "balances": [
     {
       "balanceAmount": {
-        "currency": "EUR",
-        "amount": "1.06"
+        "currency": "USD",
+        "amount": "100"
       },
       "balanceType": "authorised",
       "lastChangeDateTime": "2018-03-31T15:16:16.37Z",

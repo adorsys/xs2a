@@ -12,32 +12,47 @@
   "accountReport": {
     "booked": [
       {
-        "transactionId": "some transaction id",
-        "amount": {
-          "currency": "EUR",
-          "amount": "20"
-        },
-        "debtorAccount": {
-          "iban": "DE89370400440532013000"
-        },
+        "transactionId": "1234567",
+        "creditorName": "John Miles",
         "creditorAccount": {
-          "iban": "DE89370400440532013000"
-        }
+          "iban": "DE67100100101306118605"
+        },
+        "amount": {
+          "currency": "USD",
+          "amount": "100"
+        },
+        "bookingDate": "2017-10-25",
+        "valueDate": "2017-10-26",
+        "remittanceInformationUnstructured": "Example 1"
+      },
+      {
+        "transactionId": "1234568",
+        "debtorName": "Paul Simpson",
+        "debtorAccount": {
+          "iban": "NL76RABO0359400371"
+        },
+        "amount": {
+          "currency": "USD",
+          "amount": "100"
+        },
+        "bookingDate": "2017-10-25",
+        "valueDate": "2017-10-26",
+        "remittanceInformationUnstructured": "Example 2"
       }
     ],
     "pending": [
       {
-        "transactionId": "some transaction id",
-        "amount": {
-          "currency": "EUR",
-          "amount": "20"
-        },
-        "debtorAccount": {
-          "iban": "DE89370400440532013000"
-        },
+        "transactionId": "1234569",
+        "creditorName": "Claude Renault",
         "creditorAccount": {
-          "iban": "DE89370400440532013000"
-        }
+          "iban": "FR7612345987650123456789014"
+        },
+        "amount": {
+          "currency": "USD",
+          "amount": "100"
+        },
+        "valueDate": "2017-10-26",
+        "remittanceInformationUnstructured": "Example 3"
       }
     ],
     "transactionsRaw": "000000000000000="
@@ -46,8 +61,8 @@
   "balances": [
     {
       "balanceAmount": {
-        "currency": "EUR",
-        "amount": "1.06"
+        "currency": "USD",
+        "amount": "100"
       },
       "balanceType": "AUTHORISED",
       "lastChangeDateTime": "2018-03-31T15:16:16.374",

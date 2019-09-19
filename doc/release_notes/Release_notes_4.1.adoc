@@ -1,3 +1,9 @@
 = Release notes v.4.1
 
 == Table of Contents
+
+* Change yaml-generator to correct model Objects equals
+
+== Change yaml-generator to correct model Objects equals
+
+From now on, instances of generated models in `xs2a-server-api` module will correctly compare superclass properties in `equals` method.
