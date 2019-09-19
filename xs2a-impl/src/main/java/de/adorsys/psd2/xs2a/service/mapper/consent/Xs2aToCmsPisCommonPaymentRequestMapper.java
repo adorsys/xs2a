@@ -174,6 +174,6 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
                        cmsAddress.setPostalCode(adr.getPostCode());
                        cmsAddress.setCountry(Optional.ofNullable(adr.getCountry()).map(Xs2aCountryCode::getCode).orElse(null));
                        return cmsAddress;
-                   }).orElseGet(CmsAddress::new);
+                   }).orElse(null);
     }
 }
