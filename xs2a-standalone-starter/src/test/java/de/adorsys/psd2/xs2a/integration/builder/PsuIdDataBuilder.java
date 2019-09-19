@@ -28,6 +28,10 @@ public class PsuIdDataBuilder {
         return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
     }
 
+    public static PsuIdData buildPsuIdData(String psuId) {
+        return new PsuIdData(psuId, null, null, null);
+    }
+
     public static PsuIdData buildEmptyPsuIdData() {
         return new PsuIdData(null, null, null, null);
     }

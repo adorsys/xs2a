@@ -104,7 +104,7 @@ public class PaymentAuthorisationServiceTest {
 
         when(createPisAuthorisationValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());
-        when(updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(buildPisCommonPaymentResponse(), AUTHORISATION_ID)))
+        when(updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(buildPisCommonPaymentResponse(), AUTHORISATION_ID, PSU_ID_DATA)))
             .thenReturn(ValidationResult.valid());
         when(getPaymentInitiationAuthorisationsValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());
@@ -194,7 +194,7 @@ public class PaymentAuthorisationServiceTest {
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> actualResponse = paymentAuthorisationService.updatePisCommonPaymentPsuData(request);
 
         // Then
-        verify(updatePisCommonPaymentPsuDataValidator).validate(new UpdatePisCommonPaymentPsuDataPO(invalidPisCommonPaymentResponse, request.getAuthorisationId()));
+        verify(updatePisCommonPaymentPsuDataValidator).validate(buildUpdatePisCommonPaymentPsuDataPO(invalidPisCommonPaymentResponse, request.getAuthorisationId(), PSU_ID_DATA));
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
@@ -319,6 +319,7 @@ public class PaymentAuthorisationServiceTest {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         request.setAuthorisationId(AUTHORISATION_ID);
         request.setPaymentId(PAYMENT_ID);
+        request.setPsuData(PSU_ID_DATA);
         return request;
     }
 
@@ -332,5 +333,9 @@ public class PaymentAuthorisationServiceTest {
         PisCommonPaymentResponse response = new PisCommonPaymentResponse();
         response.setTppInfo(new TppInfo());
         return response;
+    }
+
+    private UpdatePisCommonPaymentPsuDataPO buildUpdatePisCommonPaymentPsuDataPO(PisCommonPaymentResponse invalidPisCommonPaymentResponse, String authorisationId, PsuIdData psuIdData) {
+        return new UpdatePisCommonPaymentPsuDataPO(invalidPisCommonPaymentResponse, authorisationId, psuIdData);
     }
 }

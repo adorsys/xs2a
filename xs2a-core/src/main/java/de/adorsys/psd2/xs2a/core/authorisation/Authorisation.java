@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.core.authorisation;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -32,4 +33,7 @@ public class Authorisation {
     @NotNull
     @ApiModelProperty(value = "Status of the authorisation", required = true)
     private ScaStatus scaStatus;
+
+    @ApiModelProperty(value = "Corresponding PSU")
+    private PsuIdData psuData;
 }

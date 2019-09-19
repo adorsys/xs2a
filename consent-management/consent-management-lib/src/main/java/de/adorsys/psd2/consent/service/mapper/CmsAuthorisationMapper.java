@@ -18,6 +18,8 @@ package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +27,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class CmsAuthorisationMapper {
+    private final PsuDataMapper psuDataMapper;
+
     @NotNull
     List<Authorisation> mapToAuthorisations(@NotNull List<PisAuthorization> pisAuthorisations) {
         return pisAuthorisations.stream()
@@ -35,6 +40,7 @@ public class CmsAuthorisationMapper {
 
     @NotNull
     private Authorisation mapToAuthorisation(@NotNull PisAuthorization pisAuthorisation) {
-        return new Authorisation(pisAuthorisation.getExternalId(), pisAuthorisation.getScaStatus());
+        PsuIdData psuIdData = psuDataMapper.mapToPsuIdData(pisAuthorisation.getPsuData());
+        return new Authorisation(pisAuthorisation.getExternalId(), pisAuthorisation.getScaStatus(), psuIdData);
     }
 }

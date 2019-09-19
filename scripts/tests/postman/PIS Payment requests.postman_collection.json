@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "de38d4b1-5c07-4688-b2e0-55acf5175304",
+		"_postman_id": "59bba8cd-aeb1-4cea-9464-aa6322ede573",
 		"name": "PIS Payment requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -282,7 +282,7 @@
 											},
 											{
 												"key": "PSU-ID",
-												"value": "{{psu_id_single}}"
+												"value": "{{psu_id_none}}"
 											},
 											{
 												"key": "X-Request-ID",
@@ -2302,7 +2302,7 @@
 											},
 											{
 												"key": "PSU-ID",
-												"value": "{{psu_id_single}}"
+												"value": "{{psu_id_none}}"
 											},
 											{
 												"key": "X-Request-ID",
@@ -10897,7 +10897,7 @@
 											},
 											{
 												"key": "PSU-ID",
-												"value": "{{psu_id_single}}"
+												"value": "{{psu_id_none}}"
 											},
 											{
 												"key": "X-Request-ID",

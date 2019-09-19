@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.integration.builder.ais;
 
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 
 public class AisConsentAuthorizationResponseBuilder {
@@ -30,6 +31,12 @@ public class AisConsentAuthorizationResponseBuilder {
         aisConsentAuthorizationResponse.setConsentId(ENCRYPT_CONSENT_ID);
         aisConsentAuthorizationResponse.setScaStatus(ScaStatus.RECEIVED);
         aisConsentAuthorizationResponse.setChosenScaApproach(scaApproach);
+        return aisConsentAuthorizationResponse;
+    }
+
+    public static AisConsentAuthorizationResponse buildAisConsentAuthorizationResponse(ScaApproach scaApproach, PsuIdData psuIdData) {
+        AisConsentAuthorizationResponse aisConsentAuthorizationResponse = buildAisConsentAuthorizationResponse(scaApproach);
+        aisConsentAuthorizationResponse.setPsuIdData(psuIdData);
         return aisConsentAuthorizationResponse;
     }
 }

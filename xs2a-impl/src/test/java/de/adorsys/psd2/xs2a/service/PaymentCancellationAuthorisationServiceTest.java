@@ -120,7 +120,7 @@ public class PaymentCancellationAuthorisationServiceTest {
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(NOT_EXISTING_PAYMENT_ID))
             .thenReturn(Optional.empty());
 
-        when(updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(buildPisCommonPaymentResponse(), CANCELLATION_AUTHORISATION_ID)))
+        when(updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(buildPisCommonPaymentResponse(), CANCELLATION_AUTHORISATION_ID, PSU_ID_DATA)))
             .thenReturn(ValidationResult.valid());
         when(getPaymentCancellationAuthorisationsValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());
@@ -297,7 +297,7 @@ public class PaymentCancellationAuthorisationServiceTest {
     public void updatePisCancellationPsuData_withInvalidPayment_shouldReturnValidationError() {
         // Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest invalidUpdatePisPsuDataRequest = buildInvalidXs2aUpdatePisPsuDataRequest();
-        when(updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(INVALID_PIS_COMMON_PAYMENT_RESPONSE, INVALID_AUTHORISATION_ID)))
+        when(updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(INVALID_PIS_COMMON_PAYMENT_RESPONSE, INVALID_AUTHORISATION_ID, PSU_ID_DATA)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
@@ -305,7 +305,7 @@ public class PaymentCancellationAuthorisationServiceTest {
             paymentCancellationAuthorisationService.updatePisCancellationPsuData(invalidUpdatePisPsuDataRequest);
 
         // Then
-        verify(updatePisCancellationPsuDataValidator).validate(new UpdatePisCancellationPsuDataPO(INVALID_PIS_COMMON_PAYMENT_RESPONSE, INVALID_AUTHORISATION_ID));
+        verify(updatePisCancellationPsuDataValidator).validate(new UpdatePisCancellationPsuDataPO(INVALID_PIS_COMMON_PAYMENT_RESPONSE, INVALID_AUTHORISATION_ID, PSU_ID_DATA));
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
@@ -427,6 +427,7 @@ public class PaymentCancellationAuthorisationServiceTest {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         request.setAuthorisationId(CANCELLATION_AUTHORISATION_ID);
         request.setPaymentId(PAYMENT_ID);
+        request.setPsuData(PSU_ID_DATA);
         return request;
     }
 
@@ -434,6 +435,7 @@ public class PaymentCancellationAuthorisationServiceTest {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         request.setAuthorisationId(INVALID_AUTHORISATION_ID);
         request.setPaymentId(WRONG_PAYMENT_ID);
+        request.setPsuData(PSU_ID_DATA);
         return request;
     }
 }
