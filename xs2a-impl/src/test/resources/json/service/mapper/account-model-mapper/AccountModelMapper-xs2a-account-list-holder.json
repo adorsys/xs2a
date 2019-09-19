@@ -1,28 +1,31 @@
 {
-  "accounts": [
+  "accountDetails": [
     {
+      "aspspAccountId": "1234567890",
       "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
       "currency": "EUR",
       "iban": "DE52500105173911841934",
       "bban": "Test BBAN",
+      "maskedPan": "23456xxxxxx1234",
       "msisdn": "0172/1111111",
+      "pan": "1111",
       "name": "Main Account",
       "product": "Girokonto",
       "cashAccountType": "CASH",
-      "status": "enabled",
+      "accountStatus": "enabled",
       "bic": "EDEKDEHHXXX",
       "linkedAccounts": "Linked Accounts",
-      "usage": "PRIV",
+      "usageType": "PRIV",
       "details": "Details",
       "balances": [
         {
           "balanceAmount": {
-            "currency": "EUR",
-            "amount": "1.06"
+            "currency": "USD",
+            "amount": "100"
           },
-          "balanceType": "authorised",
+          "balanceType": "AUTHORISED",
+          "lastChangeDateTime": "2018-03-31T15:16:16.374",
           "referenceDate": "2019-03-21",
-          "lastChangeDateTime": "2018-03-31T15:16:16.374+03:00",
           "lastCommittedTransaction": "lastCommittedTransaction"
         }
       ],

@@ -1,0 +1,25 @@
+[
+  {
+    "authenticationType": "SMS_OTP",
+    "authenticationVersion": "1",
+    "authenticationMethodId": "sms",
+    "name": "sms_name",
+    "explanation": "sms explanation"
+  },
+  {
+    "authenticationType": "PUSH_OTP",
+    "authenticationVersion": "1",
+    "authenticationMethodId": "push",
+    "name": "mobile",
+    "explanation": "push explanation"
+  },
+  {
+    "authenticationType": "FLASH",
+    "authenticationVersion": "1",
+    "authenticationMethodId": "card",
+    "name": "flash-card",
+    "explanation": "flash-card explanation"
+  },
+  {
+  }
+]

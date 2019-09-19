@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import java.util.Objects;
@@ -13,11 +29,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * A list of hyperlinks to be recognised by the TPP.  Links of type \&quot;account\&quot; and/or \&quot;cardAccount\&quot;, depending on the nature of the consent. 
+ * A list of hyperlinks to be recognised by the TPP.  Links of type \&quot;account\&quot; and/or \&quot;cardAccount\&quot;, depending on the nature of the consent.
  */
 @ApiModel(description = "A list of hyperlinks to be recognised by the TPP.  Links of type \"account\" and/or \"cardAccount\", depending on the nature of the consent. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-16T11:06:46.430+02:00[Europe/Berlin]")
 
 public class LinksGetConsent extends HashMap<String, HrefType>  {
   @JsonProperty("account")
@@ -74,17 +90,19 @@ public class LinksGetConsent extends HashMap<String, HrefType>  {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
+    if (!super.equals(o)) {
+      return false;
+    }
     LinksGetConsent _linksGetConsent = (LinksGetConsent) o;
     return Objects.equals(this.account, _linksGetConsent.account) &&
-        Objects.equals(this.cardAccount, _linksGetConsent.cardAccount) &&
-        super.equals(o);
+        Objects.equals(this.cardAccount, _linksGetConsent.cardAccount);
   }
 
   @Override
@@ -107,7 +125,7 @@ public class LinksGetConsent extends HashMap<String, HrefType>  {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }
