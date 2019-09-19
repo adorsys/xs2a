@@ -33,7 +33,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
@@ -79,7 +79,7 @@ public class PisCancellationDecoupledScaReceivedAuthorisationStage extends PisSc
         SpiPsuData spiPsuData = xs2aToSpiPsuDataMapper.mapToSpiPsuData(psuData);
         SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(psuData);
 
-        SpiResponse<SpiAuthorisationStatus> authPsuResponse = paymentCancellationSpi.authorisePsu(contextData, spiPsuData, request.getPassword(), payment, spiAspspConsentDataProvider);
+        SpiResponse<SpiPsuAuthorisationResponse> authPsuResponse = paymentCancellationSpi.authorisePsu(contextData, spiPsuData, request.getPassword(), payment, spiAspspConsentDataProvider);
 
         if (authPsuResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(authPsuResponse, ServiceType.PIS);

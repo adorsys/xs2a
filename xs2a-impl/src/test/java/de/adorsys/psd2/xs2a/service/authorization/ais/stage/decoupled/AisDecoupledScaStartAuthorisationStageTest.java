@@ -42,6 +42,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
@@ -143,7 +144,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
         when(accountConsent.isOneAccessType())
             .thenReturn(true);
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)));
         //When
         UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
         //Then
@@ -159,7 +160,8 @@ public class AisDecoupledScaStartAuthorisationStageTest {
         when(accountConsent.isOneAccessType())
             .thenReturn(true);
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)))
+        ;
         when(commonDecoupledAisService.proceedDecoupledApproach(eq(request), eq(spiAccountConsent), any(PsuIdData.class)))
             .thenReturn(buildUpdateConsentPsuDataResponse());
         //When
@@ -173,7 +175,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     @Test
     public void apply_Failure_AuthorisationStatusSpiResponseFailed() {
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildErrorSpiResponse(SpiAuthorisationStatus.FAILURE));
+            .thenReturn(buildErrorSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.FAILURE, false)));
 
         UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
@@ -185,7 +187,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     @Test
     public void apply_Failure_PayloadIsEmpty_AuthorisationStatusSpiResponseFailed() {
         // Given
-        SpiResponse<SpiAuthorisationStatus> response = buildErrorSpiResponse(null);
+        SpiResponse<SpiPsuAuthorisationResponse> response = buildErrorSpiResponse(null);
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(response);
 
@@ -206,7 +208,8 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     @Test
     public void apply_Success() {
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)))
+        ;
 
         when(commonDecoupledAisService.proceedDecoupledApproach(eq(request), eq(spiAccountConsent), any(PsuIdData.class)))
             .thenReturn(buildUpdateConsentPsuDataResponse());

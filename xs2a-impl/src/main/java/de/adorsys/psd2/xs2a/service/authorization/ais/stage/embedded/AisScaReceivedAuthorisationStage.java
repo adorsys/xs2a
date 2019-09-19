@@ -45,6 +45,7 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.extern.slf4j.Slf4j;
@@ -123,10 +124,11 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
         AccountConsent accountConsent = accountConsentOptional.get();
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
 
-        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(spiContextDataProvider.provideWithPsuIdData(psuData), psuDataMapper.mapToSpiPsuData(psuData), request.getPassword(), spiAccountConsent, aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
+        SpiResponse<SpiPsuAuthorisationResponse> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(spiContextDataProvider.provideWithPsuIdData(psuData), psuDataMapper.mapToSpiPsuData(psuData), request.getPassword(), spiAccountConsent, aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
 
         if (authorisationStatusSpiResponse.hasError()) {
-            if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
+            if (authorisationStatusSpiResponse.getPayload() != null &&
+                    authorisationStatusSpiResponse.getPayload().getSpiAuthorisationStatus() == SpiAuthorisationStatus.FAILURE) {
                 log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_RECEIVED stage. Authorise PSU when apply authorisation has failed. PSU credentials invalid.",
                          requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, psuId);
                 MessageError messageError = new MessageError(AIS_401, of(PSU_CREDENTIALS_INVALID));

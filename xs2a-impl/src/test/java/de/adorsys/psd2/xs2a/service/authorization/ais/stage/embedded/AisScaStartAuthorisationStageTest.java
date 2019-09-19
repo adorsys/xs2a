@@ -48,6 +48,7 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
@@ -167,7 +168,7 @@ public class AisScaStartAuthorisationStageTest {
         when(accountConsent.isOneAccessType())
             .thenReturn(true);
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)));
         //When
         UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
         //Then
@@ -183,7 +184,7 @@ public class AisScaStartAuthorisationStageTest {
         when(accountConsent.isOneAccessType())
             .thenReturn(true);
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)));
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(ONE_SPI_SCA_METHOD));
         when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
@@ -208,7 +209,7 @@ public class AisScaStartAuthorisationStageTest {
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.AIS)))
             .thenReturn(errorHolder);
 
-        SpiResponse<SpiAuthorisationStatus> spiResponse = SpiResponse.<SpiAuthorisationStatus>builder()
+        SpiResponse<SpiPsuAuthorisationResponse> spiResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
                                                               .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
                                                               .build();
 
@@ -225,8 +226,8 @@ public class AisScaStartAuthorisationStageTest {
 
     @Test
     public void apply_Failure_AuthorisationStatusSpiResponseFailedWithBody() {
-        SpiResponse<SpiAuthorisationStatus> spiResponse = SpiResponse.<SpiAuthorisationStatus>builder()
-                                                              .payload(SpiAuthorisationStatus.FAILURE)
+        SpiResponse<SpiPsuAuthorisationResponse> spiResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
+                                                              .payload(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.FAILURE, false))
                                                               .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
                                                               .build();
 
@@ -247,7 +248,7 @@ public class AisScaStartAuthorisationStageTest {
     @Test
     public void apply_MultipleAvailableScaMethods_Success() {
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)));
 
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(MULTIPLE_SPI_SCA_METHODS));
@@ -265,7 +266,7 @@ public class AisScaStartAuthorisationStageTest {
             .thenReturn(PSU_ID_DATA);
 
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)));
 
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(ONE_SPI_SCA_METHOD));
@@ -288,7 +289,7 @@ public class AisScaStartAuthorisationStageTest {
             .thenReturn(PSU_ID_DATA);
 
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)));
 
         List<SpiAuthenticationObject> availableScaMethods = Collections.singletonList(buildDecoupledAuthenticationObject(DECOUPLED_AUTHENTICATION_METHOD_ID));
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
@@ -311,7 +312,7 @@ public class AisScaStartAuthorisationStageTest {
             .thenReturn(PSU_ID_DATA);
 
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)));
         List<SpiAuthenticationObject> availableScaMethods = Collections.singletonList(buildDecoupledAuthenticationObject(DECOUPLED_AUTHENTICATION_METHOD_ID));
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(availableScaMethods));
@@ -324,7 +325,7 @@ public class AisScaStartAuthorisationStageTest {
     @Test
     public void apply_OneAvailableScaMethod_Failure_ResponseWithError() {
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)));
 
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(ONE_SPI_SCA_METHOD));
@@ -350,7 +351,7 @@ public class AisScaStartAuthorisationStageTest {
             .thenReturn(PSU_ID_DATA);
 
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)));
 
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(NONE_SPI_SCA_METHOD));

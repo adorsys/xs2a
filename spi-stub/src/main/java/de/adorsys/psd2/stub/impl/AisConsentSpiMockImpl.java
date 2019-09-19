@@ -46,7 +46,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     private static final String DECOUPLED_PSU_MESSAGE = "Please use your BankApp for transaction Authorisation";
 
     @Override
-    public SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsent(@NotNull SpiContextData contextData, SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider)  {
+    public SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsent(@NotNull SpiContextData contextData, SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("AccountSpi#requestAccountList: contextData {}, accountConsent-id {}", contextData, accountConsent.getId());
         SpiAccountAccess access = new SpiAccountAccess();
         SpiAccountReference accountReference = new SpiAccountReference("11111-11118", "10023-999999999", "DE52500105173911841934",
@@ -80,11 +80,11 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     }
 
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuLoginData, String password, SpiAccountConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    public SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuLoginData, String password, SpiAccountConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("AisConsentSpi#authorisePsu: contextData {}, psuLoginData {}, businessObject-id {}", contextData, psuLoginData, businessObject.getId());
 
-        return SpiResponse.<SpiAuthorisationStatus>builder()
-                   .payload(SpiAuthorisationStatus.SUCCESS)
+        return SpiResponse.<SpiPsuAuthorisationResponse>builder()
+                   .payload(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false))
                    .build();
     }
 

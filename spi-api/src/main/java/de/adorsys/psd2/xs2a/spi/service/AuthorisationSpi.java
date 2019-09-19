@@ -20,10 +20,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
@@ -47,9 +44,9 @@ interface AuthorisationSpi<T> {
      * @param password                 Psu's password
      * @param businessObject           generic consent/payment object
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
-     * @return success or failure authorization status
+     * @return Returns an object, containing the status of the authorisation and an indicator whether the SCA should be exempted
      */
-    SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuLoginData, String password, T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+    SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuLoginData, String password, T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Returns a list of SCA methods for PSU by its login. Used only with embedded SCA Approach.
@@ -68,6 +65,7 @@ interface AuthorisationSpi<T> {
      * @param authenticationMethodId   Id of a chosen sca method
      * @param businessObject           generic consent/payment object
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
+     * @return Returns an object, containing selected SCA method and challenge data
      */
     @NotNull
     SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiContextData contextData, @NotNull String authenticationMethodId, @NotNull T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
@@ -80,7 +78,7 @@ interface AuthorisationSpi<T> {
      * @param authenticationMethodId   Id of a chosen sca method(for a decoupled SCA method within embedded approach)
      * @param businessObject           generic consent/payment object
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
-     * @return Return a response object, containing a message from ASPSP to PSU, giving him instructions regarding decoupled SCA starting.
+     * @return Returns a response object, containing a message from ASPSP to PSU, giving him instructions regarding decoupled SCA starting.
      */
     @NotNull
     default SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @Nullable String authenticationMethodId, @NotNull T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {

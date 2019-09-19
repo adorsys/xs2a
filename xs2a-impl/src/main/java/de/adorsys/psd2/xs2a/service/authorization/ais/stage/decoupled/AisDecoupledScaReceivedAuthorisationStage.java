@@ -42,6 +42,7 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
@@ -107,14 +108,16 @@ public class AisDecoupledScaReceivedAuthorisationStage extends AisScaStage<Updat
 
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuData);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
-        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(spiContextData,
-                                                                                                        spiPsuData,
-                                                                                                        updateConsentPsuDataReq.getPassword(),
-                                                                                                        spiAccountConsent,
-                                                                                                        aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
+        SpiResponse<SpiPsuAuthorisationResponse> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(spiContextData,
+                                                                                                             spiPsuData,
+                                                                                                             updateConsentPsuDataReq.getPassword(),
+                                                                                                             spiAccountConsent,
+                                                                                                             aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
 
         if (authorisationStatusSpiResponse.hasError()) {
-            if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
+
+            if (authorisationStatusSpiResponse.getPayload() != null &&
+                    authorisationStatusSpiResponse.getPayload().getSpiAuthorisationStatus() == SpiAuthorisationStatus.FAILURE) {
                 log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_DECOUPLED_RECEIVED stage. Authorise PSU when apply authorisation with update consent PSU data has failed. PSU credentials invalid.",
                          requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, updateConsentPsuDataReq.getAuthorizationId(), spiPsuData.getPsuId());
                 MessageError messageError = new MessageError(ErrorType.AIS_401, TppMessageInformation.of(PSU_CREDENTIALS_INVALID));
