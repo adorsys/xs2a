@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import java.util.Objects;
@@ -13,11 +29,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in  the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.   **Remark:** This method can be applied before or after PSU identification.  This leads to many possible hyperlink responses. Type of links admitted in this response, (further links might be added for ASPSP defined  extensions):  - &#39;scaRedirect&#39;:   In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to    redirect the PSU browser. - &#39;scaOAuth&#39;:   In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the    configuration of the Authorisation Server can be retrieved.    The configuration follows the OAuth 2.0 Authorisation Server Metadata specification. - &#39;updatePsuIdentification&#39;:   The link to the authorisation or cancellation authorisation sub-resource,    where PSU identification data needs to be uploaded. - &#39;updatePsuAuthentication&#39;:   The link to the authorisation or cancellation authorisation sub-resource,    where PSU authentication data needs to be uploaded.   - &#39;updateEncryptedPsuAuthentication&#39;:   The link to the authorisation or cancellation authorisation sub-resource,   where PSU authentication encrypted data needs to be uploaded. - &#39;updateAdditionalPsuAuthentication&#39;:     The link to the payment initiation or account information resource,     which needs to be updated by an additional PSU password. - &#39;updateAdditionalEncryptedPsuAuthentication&#39;:     The link to the payment initiation or account information resource,     which needs to be updated by an additional encrypted PSU password. - &#39;authoriseTransaction&#39;:   The link to the authorisation or cancellation authorisation sub-resource,    where the authorisation data has to be uploaded, e.g. the TOP received by SMS.  - &#39;scaStatus&#39;:   The link to retrieve the scaStatus of the corresponding authorisation sub-resource. 
+ * A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  **Remark:** This method can be applied before or after PSU identification. This leads to many possible hyperlink responses. Type of links admitted in this response, (further links might be added for ASPSP defined extensions):  - &#39;scaRedirect&#39;:   In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to   redirect the PSU browser. - &#39;scaOAuth&#39;:   In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the   configuration of the Authorisation Server can be retrieved.   The configuration follows the OAuth 2.0 Authorisation Server Metadata specification. - &#39;updatePsuIdentification&#39;:   The link to the authorisation or cancellation authorisation sub-resource,   where PSU identification data needs to be uploaded. - &#39;updatePsuAuthentication&#39;:   The link to the authorisation or cancellation authorisation sub-resource,   where PSU authentication data needs to be uploaded.   - &#39;updateEncryptedPsuAuthentication&#39;:   The link to the authorisation or cancellation authorisation sub-resource,   where PSU authentication encrypted data needs to be uploaded. - &#39;updateAdditionalPsuAuthentication&#39;:     The link to the payment initiation or account information resource,     which needs to be updated by an additional PSU password. - &#39;updateAdditionalEncryptedPsuAuthentication&#39;:     The link to the payment initiation or account information resource,     which needs to be updated by an additional encrypted PSU password. - &#39;authoriseTransaction&#39;:   The link to the authorisation or cancellation authorisation sub-resource,   where the authorisation data has to be uploaded, e.g. the TOP received by SMS. - &#39;scaStatus&#39;:   The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
  */
-@ApiModel(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in  the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.   **Remark:** This method can be applied before or after PSU identification.  This leads to many possible hyperlink responses. Type of links admitted in this response, (further links might be added for ASPSP defined  extensions):  - 'scaRedirect':   In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to    redirect the PSU browser. - 'scaOAuth':   In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the    configuration of the Authorisation Server can be retrieved.    The configuration follows the OAuth 2.0 Authorisation Server Metadata specification. - 'updatePsuIdentification':   The link to the authorisation or cancellation authorisation sub-resource,    where PSU identification data needs to be uploaded. - 'updatePsuAuthentication':   The link to the authorisation or cancellation authorisation sub-resource,    where PSU authentication data needs to be uploaded.   - 'updateEncryptedPsuAuthentication':   The link to the authorisation or cancellation authorisation sub-resource,   where PSU authentication encrypted data needs to be uploaded. - 'updateAdditionalPsuAuthentication':     The link to the payment initiation or account information resource,     which needs to be updated by an additional PSU password. - 'updateAdditionalEncryptedPsuAuthentication':     The link to the payment initiation or account information resource,     which needs to be updated by an additional encrypted PSU password. - 'authoriseTransaction':   The link to the authorisation or cancellation authorisation sub-resource,    where the authorisation data has to be uploaded, e.g. the TOP received by SMS.  - 'scaStatus':   The link to retrieve the scaStatus of the corresponding authorisation sub-resource. ")
+@ApiModel(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  **Remark:** This method can be applied before or after PSU identification. This leads to many possible hyperlink responses. Type of links admitted in this response, (further links might be added for ASPSP defined extensions):  - 'scaRedirect':   In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to   redirect the PSU browser. - 'scaOAuth':   In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the   configuration of the Authorisation Server can be retrieved.   The configuration follows the OAuth 2.0 Authorisation Server Metadata specification. - 'updatePsuIdentification':   The link to the authorisation or cancellation authorisation sub-resource,   where PSU identification data needs to be uploaded. - 'updatePsuAuthentication':   The link to the authorisation or cancellation authorisation sub-resource,   where PSU authentication data needs to be uploaded.   - 'updateEncryptedPsuAuthentication':   The link to the authorisation or cancellation authorisation sub-resource,   where PSU authentication encrypted data needs to be uploaded. - 'updateAdditionalPsuAuthentication':     The link to the payment initiation or account information resource,     which needs to be updated by an additional PSU password. - 'updateAdditionalEncryptedPsuAuthentication':     The link to the payment initiation or account information resource,     which needs to be updated by an additional encrypted PSU password. - 'authoriseTransaction':   The link to the authorisation or cancellation authorisation sub-resource,   where the authorisation data has to be uploaded, e.g. the TOP received by SMS. - 'scaStatus':   The link to retrieve the scaStatus of the corresponding authorisation sub-resource. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-16T11:06:46.430+02:00[Europe/Berlin]")
 
 public class LinksSelectPsuAuthenticationMethod extends HashMap<String, HrefType>  {
   @JsonProperty("scaRedirect")
@@ -230,11 +246,14 @@ public class LinksSelectPsuAuthenticationMethod extends HashMap<String, HrefType
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
       return false;
     }
     LinksSelectPsuAuthenticationMethod _linksSelectPsuAuthenticationMethod = (LinksSelectPsuAuthenticationMethod) o;
@@ -245,8 +264,7 @@ public class LinksSelectPsuAuthenticationMethod extends HashMap<String, HrefType
         Objects.equals(this.updateAdditionalPsuAuthentication, _linksSelectPsuAuthenticationMethod.updateAdditionalPsuAuthentication) &&
         Objects.equals(this.updateAdditionalEncryptedPsuAuthentication, _linksSelectPsuAuthenticationMethod.updateAdditionalEncryptedPsuAuthentication) &&
         Objects.equals(this.authoriseTransaction, _linksSelectPsuAuthenticationMethod.authoriseTransaction) &&
-        Objects.equals(this.scaStatus, _linksSelectPsuAuthenticationMethod.scaStatus) &&
-        super.equals(o);
+        Objects.equals(this.scaStatus, _linksSelectPsuAuthenticationMethod.scaStatus);
   }
 
   @Override
@@ -275,7 +293,7 @@ public class LinksSelectPsuAuthenticationMethod extends HashMap<String, HrefType
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

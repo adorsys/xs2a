@@ -39,8 +39,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -52,10 +58,10 @@ public class AccountModelMapperTest {
 
     private static final OffsetDateTime OFFSET_DATE_TIME = OffsetDateTime.now();
     private static final String BYTE_ARRAY_IN_STRING = "000000000000000=";
-    private static final String XS2A_LINKS_JSON_PATH = "json/service/mapper/AccountModelMapper-xs2a-links.json";
-    private static final String LINKS_JSON_PATH = "json/service/mapper/AccountModelMapper-links.json";
-    private static final String XS2A_AMOUNT_JSON_PATH = "json/service/mapper/AccountModelMapper-xs2a-amount.json";
-    private static final String AMOUNT_JSON_PATH = "json/service/mapper/AccountModelMapper-amount.json";
+    private static final String XS2A_LINKS_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-links.json";
+    private static final String LINKS_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-links.json";
+    private static final String XS2A_AMOUNT_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-amount.json";
+    private static final String AMOUNT_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-amount.json";
 
     @Autowired
     private AccountModelMapper mapper;
@@ -78,18 +84,28 @@ public class AccountModelMapperTest {
 
     @Test
     public void mapToAccountList() {
+        // Given
         Map<String, HrefType> links = jsonReader.getObjectFromFile(LINKS_JSON_PATH, new TypeReference<Map<String, HrefType>>() {
         });
         Links xs2aLinks = jsonReader.getObjectFromFile(XS2A_LINKS_JSON_PATH, Links.class);
         when(mockedHrefLinkMapper.mapToLinksMap(xs2aLinks)).thenReturn(links);
 
-        Xs2aAccountListHolder xs2aAccountListHolder = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-xs2a-account-list-holder.json", Xs2aAccountListHolder.class);
+        Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
+        Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
+        when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
+
+        Xs2aAccountListHolder xs2aAccountListHolder = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-account-list-holder.json", Xs2aAccountListHolder.class);
+
+        // When
         AccountList actualAccountList = mapper.mapToAccountList(xs2aAccountListHolder);
+
+
         actualAccountList.getAccounts().get(0).getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
 
-        AccountList expectedAccountList = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-account-list-expected.json", AccountList.class);
+        AccountList expectedAccountList = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-account-list-expected.json", AccountList.class);
         expectedAccountList.getAccounts().get(0).getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
 
+        // Then
         assertLinks(expectedAccountList.getAccounts().get(0).getLinks(), actualAccountList.getAccounts().get(0).getLinks());
 
         expectedAccountList.getAccounts().get(0).setLinks(actualAccountList.getAccounts().get(0).getLinks());
@@ -103,10 +119,10 @@ public class AccountModelMapperTest {
         Links xs2aLinks = jsonReader.getObjectFromFile(XS2A_LINKS_JSON_PATH, Links.class);
         when(mockedHrefLinkMapper.mapToLinksMap(xs2aLinks)).thenReturn(links);
 
-        Xs2aAccountDetailsHolder xs2aAccountDetailsHolder = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-xs2a-account-details-holder.json", Xs2aAccountDetailsHolder.class);
+        Xs2aAccountDetailsHolder xs2aAccountDetailsHolder = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-account-details-holder.json", Xs2aAccountDetailsHolder.class);
         InlineResponse200 actualInlineResponse200 = mapper.mapToInlineResponse200(xs2aAccountDetailsHolder);
 
-        AccountDetails expectedAccountDetails = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-account-details-expected.json", AccountDetails.class);
+        AccountDetails expectedAccountDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-account-details-expected.json", AccountDetails.class);
 
         assertLinks(expectedAccountDetails.getLinks(), actualInlineResponse200.getAccount().getLinks());
 
@@ -116,10 +132,10 @@ public class AccountModelMapperTest {
 
     @Test
     public void mapToAccountReference_success() {
-        AccountReference accountReference = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-account-reference.json", AccountReference.class);
+        AccountReference accountReference = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-account-reference.json", AccountReference.class);
         de.adorsys.psd2.model.AccountReference actualAccountReference = mapper.mapToAccountReference(accountReference);
 
-        de.adorsys.psd2.model.AccountReference expectedAccountReference = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-account-reference-expected.json",
+        de.adorsys.psd2.model.AccountReference expectedAccountReference = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-account-reference-expected.json",
                                                                                                        de.adorsys.psd2.model.AccountReference.class);
         assertEquals(expectedAccountReference, actualAccountReference);
     }
@@ -132,10 +148,10 @@ public class AccountModelMapperTest {
 
     @Test
     public void mapToAccountReferences() {
-        AccountReference accountReference = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-account-reference.json", AccountReference.class);
+        AccountReference accountReference = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-account-reference.json", AccountReference.class);
         List<de.adorsys.psd2.model.AccountReference> actualAccountReferences = mapper.mapToAccountReferences(Collections.singletonList(accountReference));
 
-        de.adorsys.psd2.model.AccountReference expectedAccountReference = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-account-reference-expected.json",
+        de.adorsys.psd2.model.AccountReference expectedAccountReference = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-account-reference-expected.json",
                                                                                                        de.adorsys.psd2.model.AccountReference.class);
 
         assertEquals(1, actualAccountReferences.size());
@@ -144,19 +160,37 @@ public class AccountModelMapperTest {
 
     @Test
     public void mapToBalance_ReadAccountBalanceResponse200() {
-        Xs2aBalancesReport xs2aBalancesReport = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-xs2a-balances-report.json", Xs2aBalancesReport.class);
+        // Given
+        Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
+        Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
+        when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
+        Xs2aBalancesReport xs2aBalancesReport = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-balances-report.json", Xs2aBalancesReport.class);
+
+        LocalDateTime lastChangeDateTime = LocalDateTime.parse("2018-03-31T15:16:16.374");
+        ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset(lastChangeDateTime);
+        OffsetDateTime expectedLastChangeDateTime = lastChangeDateTime.atOffset(zoneOffset);
+
+        // When
         ReadAccountBalanceResponse200 actualReadAccountBalanceResponse200 = mapper.mapToBalance(xs2aBalancesReport);
 
-        ReadAccountBalanceResponse200 expectedReadAccountBalanceResponse200 = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-read-account-balance-expected.json", ReadAccountBalanceResponse200.class);
+        ReadAccountBalanceResponse200 expectedReadAccountBalanceResponse200 = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-read-account-balance-expected.json", ReadAccountBalanceResponse200.class);
+
+        // Then
+        Balance actualBalance = actualReadAccountBalanceResponse200.getBalances().get(0);
+        assertEquals(expectedLastChangeDateTime, actualBalance.getLastChangeDateTime());
+
+        actualBalance.setLastChangeDateTime(OFFSET_DATE_TIME);
+        expectedReadAccountBalanceResponse200.getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
+
         assertEquals(expectedReadAccountBalanceResponse200, actualReadAccountBalanceResponse200);
     }
 
     @Test
     public void mapToReportExchangeRate_success() {
-        Xs2aExchangeRate xs2aExchangeRate = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-xs2a-exchange-rate.json", Xs2aExchangeRate.class);
+        Xs2aExchangeRate xs2aExchangeRate = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-exchange-rate.json", Xs2aExchangeRate.class);
         ReportExchangeRate reportExchangeRate = mapper.mapToReportExchangeRate(xs2aExchangeRate);
 
-        ReportExchangeRate expectedReportExchangeRate = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-report-exchange-rate-expected.json",
+        ReportExchangeRate expectedReportExchangeRate = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-report-exchange-rate-expected.json",
                                                                                      ReportExchangeRate.class);
         assertEquals(expectedReportExchangeRate, reportExchangeRate);
 
@@ -175,10 +209,10 @@ public class AccountModelMapperTest {
         when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
         when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.model.PurposeCode.BKDF);
 
-        Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-transactions.json", Transactions.class);
+        Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transactions.json", Transactions.class);
         TransactionDetails actualTransactionDetails = mapper.mapToTransaction(transactions);
 
-        TransactionDetails expectedReportTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-transaction-details-expected.json",
+        TransactionDetails expectedReportTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transaction-details-expected.json",
                                                                                            TransactionDetails.class);
         assertEquals(expectedReportTransactionDetails, actualTransactionDetails);
 
@@ -191,11 +225,11 @@ public class AccountModelMapperTest {
         when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
         when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.model.PurposeCode.BKDF);
 
-        Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-transactions.json", Transactions.class);
+        Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transactions.json", Transactions.class);
 
         InlineResponse2001 actualInlineResponse2001 = mapper.mapToTransactionDetails(transactions);
 
-        TransactionDetails expectedTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-transaction-details-expected.json",
+        TransactionDetails expectedTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transaction-details-expected.json",
                                                                                      TransactionDetails.class);
 
         assertNotNull(actualInlineResponse2001);
@@ -204,7 +238,7 @@ public class AccountModelMapperTest {
 
     @Test
     public void mapToTransactionsResponseRaw_success() {
-        Xs2aTransactionsReport xs2aTransactionsReport = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-xs2a-transactions-report.json", Xs2aTransactionsReport.class);
+        Xs2aTransactionsReport xs2aTransactionsReport = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-transactions-report.json", Xs2aTransactionsReport.class);
 
         byte[] actualByteArray = mapper.mapToTransactionsResponseRaw(xs2aTransactionsReport);
 
@@ -213,20 +247,27 @@ public class AccountModelMapperTest {
 
     @Test
     public void mapToTransactionsResponse200Json_success() {
+        // Given
         Map<String, HrefType> links = jsonReader.getObjectFromFile(LINKS_JSON_PATH, new TypeReference<Map<String, HrefType>>() {
         });
         Links xs2aLinks = jsonReader.getObjectFromFile(XS2A_LINKS_JSON_PATH, Links.class);
         when(mockedHrefLinkMapper.mapToLinksMap(xs2aLinks)).thenReturn(links);
+        Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
+        Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
+        when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
 
-        Xs2aTransactionsReport xs2aTransactionsReport = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-xs2a-transactions-report.json", Xs2aTransactionsReport.class);
+        Xs2aTransactionsReport xs2aTransactionsReport = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-transactions-report.json", Xs2aTransactionsReport.class);
 
+        // When
         TransactionsResponse200Json actual = mapper.mapToTransactionsResponse200Json(xs2aTransactionsReport);
+
         actual.getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
 
-        TransactionsResponse200Json expected = jsonReader.getObjectFromFile("json/service/mapper/AccountModelMapper-transactionsResponse200.json",
+        TransactionsResponse200Json expected = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transactionsResponse200.json",
                                                                             TransactionsResponse200Json.class);
         expected.getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
 
+        // Then
         assertLinks(expected.getLinks(), actual.getLinks());
         expected.getTransactions().setLinks(null);
         actual.getTransactions().setLinks(null);
