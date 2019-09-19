@@ -59,7 +59,7 @@ public class UpdatePisCancellationPsuDataValidator extends AbstractPisTppValidat
             return ValidationResult.invalid(ErrorType.PIS_403, TppMessageInformation.of(SERVICE_BLOCKED));
         }
 
-        ValidationResult authorisationValidationResult = pisAuthorisationValidator.validate(authorisationId, paymentObject.getPisCommonPaymentResponse());
+        ValidationResult authorisationValidationResult = pisAuthorisationValidator.validate(authorisationId, paymentObject.getPisCommonPaymentResponse(), paymentObject.getPsuIdData());
         if (authorisationValidationResult.isNotValid()) {
             return authorisationValidationResult;
         }
