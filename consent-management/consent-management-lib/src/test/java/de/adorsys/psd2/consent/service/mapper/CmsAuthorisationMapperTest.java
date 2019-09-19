@@ -27,7 +27,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class CmsAuthorisationMapperTest {
-    private CmsAuthorisationMapper cmsAuthorisationMapper = new CmsAuthorisationMapper();
+    private CmsAuthorisationMapper cmsAuthorisationMapper = new CmsAuthorisationMapper(new PsuDataMapper());
 
     private JsonReader jsonReader = new JsonReader();
 

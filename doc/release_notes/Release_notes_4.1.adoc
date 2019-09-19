@@ -3,7 +3,17 @@
 == Table of Contents
 
 * Change yaml-generator to correct model Objects equals
+* Bugfix: Wrong PSU-ID can authorise endpoints
 
 == Change yaml-generator to correct model Objects equals
 
 From now on, instances of generated models in `xs2a-server-api` module will correctly compare superclass properties in `equals` method.
+
+== Wrong PSU-ID can authorise endpoints
+
+From now on, PSU that is different from the PSU in authorisation can not update data on the authorisation resource.
+This applies to the following endpoints:
+
+* consent `PUT /v1/consents/{consentId}/authorisations/{authorisationId}`,
+* payment `PUT /v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}`,
+* payment cancellation `PUT /v1/{payment-service}/{payment-product}/{payment-id}/cancellation-authorisations/{cancellation-id}`.

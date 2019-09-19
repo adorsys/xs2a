@@ -238,7 +238,6 @@ public class PaymentStartAuthorisationIT {
     }
 
     private Authorisation buildAuthorisation() {
-        Authorisation result = new Authorisation(AUTHORISATION_ID, ScaStatus.RECEIVED);
-        return result;
+        return new Authorisation(AUTHORISATION_ID, ScaStatus.RECEIVED, null);
     }
 }

@@ -71,7 +71,7 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValida
             return ValidationResult.invalid(PIS_403, TppMessageInformation.of(RESOURCE_EXPIRED_403));
         }
 
-        ValidationResult authorisationValidationResult = pisAuthorisationValidator.validate(authorisationId, pisCommonPaymentResponse);
+        ValidationResult authorisationValidationResult = pisAuthorisationValidator.validate(authorisationId, pisCommonPaymentResponse, paymentObject.getPsuIdData());
         if (authorisationValidationResult.isNotValid()) {
             return authorisationValidationResult;
         }

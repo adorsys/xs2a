@@ -465,7 +465,7 @@ public class ConsentService {
         }
 
         AccountConsentAuthorization authorisation = authorisationOptional.get();
-        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent.get(), authorisation));
+        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent.get(), authorisation, updatePsuData.getPsuData()));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, validationResult.getMessageError());
