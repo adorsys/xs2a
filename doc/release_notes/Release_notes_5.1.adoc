@@ -4,6 +4,7 @@
 * Change yaml-generator to correct model Objects equals
 * SCA exemption is supported
 * Bugfix: Wrong PSU-ID can authorise endpoints
+* Bugfix: Don't provide `creditorAddress` field in get payment response if it was absent in initiate payment request
 
 == Change yaml-generator to correct model Objects equals
 
@@ -26,3 +27,8 @@ This applies to the following endpoints:
 * consent `PUT /v1/consents/{consentId}/authorisations/{authorisationId}`,
 * payment `PUT /v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}`,
 * payment cancellation `PUT /v1/{payment-service}/{payment-product}/{payment-id}/cancellation-authorisations/{cancellation-id}`.
+
+== Bugfix: Don't provide `creditorAddress` field in get payment response if it was absent in initiate payment request
+
+From now on, `creditorAddress` field is absent in get payment response `GET /v1/{payment-service}/{payment-product}/{paymentId}`
+if it was not provided in initiate payment request `POST /v1/{payment-service}/{payment-product}`

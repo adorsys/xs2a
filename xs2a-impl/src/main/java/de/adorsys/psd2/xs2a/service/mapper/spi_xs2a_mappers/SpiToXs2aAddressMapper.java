@@ -21,12 +21,10 @@ import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.NullValueMappingStrategy;
 
 import javax.validation.constraints.NotNull;
 
-@Mapper(componentModel = "spring", imports = {Xs2aCountryCode.class},
-    nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+@Mapper(componentModel = "spring", imports = {Xs2aCountryCode.class})
 public interface SpiToXs2aAddressMapper {
 
     @Mapping(target = "country", source = "address", qualifiedByName = "mapToXs2aCountryCode")

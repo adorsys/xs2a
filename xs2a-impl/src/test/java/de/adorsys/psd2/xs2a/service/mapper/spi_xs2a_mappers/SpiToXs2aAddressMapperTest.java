@@ -48,6 +48,6 @@ public class SpiToXs2aAddressMapperTest {
     @Test
     public void mapToAddress_nullValue() {
         Xs2aAddress xs2aAddress = mapper.mapToAddress(null);
-        assertNotNull(xs2aAddress);
+        assertNull(xs2aAddress);
     }
 }
