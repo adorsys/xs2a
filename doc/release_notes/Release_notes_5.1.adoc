@@ -1,9 +1,18 @@
 = Release notes v.5.1
 
 == Table of Contents
-
 * Change yaml-generator to correct model Objects equals
+* SCA exemption is supported
 
 == Change yaml-generator to correct model Objects equals
 
 From now on, instances of generated models in `xs2a-server-api` module will correctly compare superclass properties in `equals` method.
+
+== SCA exemption is supported
+
+From now on, SCA exemption is possible for bulk and single payment initiation. To support this, return type of
+`AuthorisationSpi#authorisePsu` method was changed from `SpiAuthorisationStatus` to `SpiPsuAuthorisationResponse`.
+`SpiPsuAuthorisationResponse` is a new domain class, which contains authorisation status as well as boolean `scaExempted`
+field, which is taken into account by XS2A for performing SCA exemption. If the psu authorisation spi response for
+bulk or single will be successful and `scaExempted` is `true` - SCA will not be performed, 'PaymentSpi#executePaymentWithoutSca'
+will be invoked and authorisation status will be set to `EXEMPTED`. SCA exemption is supported for multilevel SCA too.

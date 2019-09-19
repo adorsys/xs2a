@@ -74,11 +74,11 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
     }
 
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuLoginData, String password, SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    public SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuLoginData, String password, SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("PaymentCancellationSpi#authorisePsu: contextData {}, psuLoginData {}, password {}, businessObject {}, aspspConsentData ()", contextData, psuLoginData, password, businessObject, aspspConsentDataProvider.loadAspspConsentData());
 
-        return SpiResponse.<SpiAuthorisationStatus>builder()
-                   .payload(SpiAuthorisationStatus.SUCCESS)
+        return SpiResponse.<SpiPsuAuthorisationResponse>builder()
+                   .payload(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false))
                    .build();
     }
 

@@ -41,6 +41,7 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -150,7 +151,7 @@ public class PisDecoupledScaStartAuthorisationStageTest {
 
     @Test
     public void apply_Failure_spiResponseHasError() {
-        SpiResponse<SpiAuthorisationStatus> expectedResponse = buildErrorSpiResponse();
+        SpiResponse<SpiPsuAuthorisationResponse> expectedResponse = buildErrorSpiResponse();
 
         when(paymentAuthorisationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
             .thenReturn(expectedResponse);
@@ -170,7 +171,7 @@ public class PisDecoupledScaStartAuthorisationStageTest {
 
     @Test
     public void apply_Success() {
-        SpiResponse<SpiAuthorisationStatus> expectedResponse = buildSuccessSpiResponse();
+        SpiResponse<SpiPsuAuthorisationResponse> expectedResponse = buildSuccessSpiResponse();
 
         when(paymentAuthorisationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
             .thenReturn(expectedResponse);
@@ -191,7 +192,7 @@ public class PisDecoupledScaStartAuthorisationStageTest {
         request.setAuthorisationId(AUTHORISATION_ID);
         request.setPassword(PASSWORD);
 
-        SpiResponse<SpiAuthorisationStatus> expectedResponse = buildSuccessSpiResponse();
+        SpiResponse<SpiPsuAuthorisationResponse> expectedResponse = buildSuccessSpiResponse();
 
         when(paymentAuthorisationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
             .thenReturn(expectedResponse);
@@ -237,9 +238,9 @@ public class PisDecoupledScaStartAuthorisationStageTest {
     }
 
     // Needed because SpiResponse is final, so it's impossible to mock it
-    private SpiResponse<SpiAuthorisationStatus> buildSuccessSpiResponse() {
-        return SpiResponse.<SpiAuthorisationStatus>builder()
-                   .payload(SUCCESS_SPI_AUTHORISATION_STATUS)
+    private SpiResponse<SpiPsuAuthorisationResponse> buildSuccessSpiResponse() {
+        return SpiResponse.<SpiPsuAuthorisationResponse>builder()
+                   .payload(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false))
                    .build();
     }
 
