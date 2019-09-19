@@ -1,0 +1,34 @@
+{
+  "paymentId": "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI",
+  "paymentProduct": "sepa-credit-transfers",
+  "creditorAccount": {
+    "aspspAccountId": "1234567890",
+    "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+    "currency": "EUR",
+    "iban": "DE52500105173911841934",
+    "bban": "Test BBAN",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "pan": "1111"
+  },
+  "creditorAgent": "BCENECEQ",
+  "creditorId": "27ad-46db-8491-71e629d82baa",
+  "creditorName": "Telekom",
+  "debtorAccount": {
+    "aspspAccountId": "1234567890",
+    "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+    "currency": "EUR",
+    "iban": "DE52500105173911841934",
+    "bban": "Test BBAN",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "pan": "1111"
+  },
+  "endToEndIdentification": "RI-123456789",
+  "instructedAmount": {
+    "amount": "1000.00",
+    "currency": "EUR"
+  },
+  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+  "transactionStatus": "ACCP"
+}

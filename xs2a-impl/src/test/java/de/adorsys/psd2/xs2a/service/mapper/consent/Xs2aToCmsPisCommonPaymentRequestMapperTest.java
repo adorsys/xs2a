@@ -77,6 +77,19 @@ public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
     }
 
     @Test
+    public void mapToCmsSinglePisCommonPaymentRequestWithoutCreditorAddress() {
+        // Given
+        SinglePayment singlePayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-single-payment-without-creditor-address.json", SinglePayment.class);
+        PisCommonPaymentRequest expected = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/pis-common-payment-request-without-creditor-address.json", PisCommonPaymentRequest.class);
+
+        // When
+        PisCommonPaymentRequest actual = xs2aToCmsPisCommonPaymentRequestMapper.mapToCmsSinglePisCommonPaymentRequest(singlePayment, PAYMENT_PRODUCT);
+
+        // Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void mapToCmsPeriodicPisCommonPaymentRequest() {
         // Given
         PeriodicPayment periodicPayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-periodic-payment.json", PeriodicPayment.class);
