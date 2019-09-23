@@ -56,7 +56,6 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 
 @Slf4j
 @Service
-@Validated
 @AllArgsConstructor
 public class AccountListService {
     private final AccountSpi accountSpi;

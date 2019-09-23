@@ -39,7 +39,6 @@ import java.util.List;
 
 @Slf4j
 @Service
-@Validated
 @AllArgsConstructor
 public class AccountHelperService {
 
