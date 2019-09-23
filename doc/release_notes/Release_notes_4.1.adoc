@@ -5,6 +5,7 @@
 * Change yaml-generator to correct model Objects equals
 * Bugfix: Wrong PSU-ID can authorise endpoints
 * Bugfix: Don't provide `creditorAddress` field in get payment response if it was absent in initiate payment request
+* Bugfix: Wrong `authorisation_id` can authorise
 
 == Change yaml-generator to correct model Objects equals
 
@@ -23,3 +24,11 @@ This applies to the following endpoints:
 
 From now on, `creditorAddress` field is absent in get payment response `GET /v1/{payment-service}/{payment-product}/{paymentId}`
 if it was not provided in initiate payment request `POST /v1/{payment-service}/{payment-product}`
+
+== Bugfix: Wrong `authorisationId` can authorise
+
+Fixed bug with updating authorisation by wrong `authorization_id`. From now on, endpoints below return `403 RESOURCE_UNKNOWN`:
+
+* `PUT /v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}`
+* `PUT /v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}`
+* `PUT /v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}`

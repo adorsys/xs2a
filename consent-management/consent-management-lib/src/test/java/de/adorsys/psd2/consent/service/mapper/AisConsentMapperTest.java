@@ -103,6 +103,7 @@ public class AisConsentMapperTest {
 
         assertEquals(expectedAccess, result.getAccess());
         assertEquals(aisConsent.getStatusChangeTimestamp(), result.getStatusChangeTimestamp());
+        assertEquals(EXTERNAL_ID, result.getAccountConsentAuthorizations().get(0).getId());
     }
 
     @Test
@@ -191,6 +192,7 @@ public class AisConsentMapperTest {
 
     private AisConsentAuthorization buildAisConsentAuthorization() {
         AisConsentAuthorization authorization = new AisConsentAuthorization();
+        authorization.setExternalId(EXTERNAL_ID);
         authorization.setPsuData(PSU_DATA);
         authorization.setScaStatus(ScaStatus.RECEIVED);
         return authorization;

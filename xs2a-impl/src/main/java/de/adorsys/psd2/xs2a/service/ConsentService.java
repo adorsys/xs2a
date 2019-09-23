@@ -42,6 +42,7 @@ import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.AisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.ais.AisAuthorisationValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.*;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
@@ -92,6 +93,7 @@ public class ConsentService {
     private final CreateConsentAuthorisationValidator createConsentAuthorisationValidator;
     private final UpdateConsentPsuDataValidator updateConsentPsuDataValidator;
     private final GetConsentAuthorisationsValidator getConsentAuthorisationsValidator;
+    private final AisAuthorisationValidator authorisationValidator;
     private final GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
     private final AisScaAuthorisationService aisScaAuthorisationService;
     private final RequestProviderService requestProviderService;
@@ -451,6 +453,13 @@ public class ConsentService {
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
+        }
+
+        ValidationResult authorisationValidationResult = authorisationValidator.validate(authorisationId, accountConsent.get());
+        if (authorisationValidationResult.isNotValid()) {
+            return ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                       .fail(authorisationValidationResult.getMessageError())
+                       .build();
         }
 
         Optional<AccountConsentAuthorization> authorisationOptional = aisScaAuthorisationServiceResolver.getServiceInitiation(updatePsuData.getAuthorizationId())

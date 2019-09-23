@@ -22,6 +22,7 @@ import lombok.Value;
 
 @Value
 public class AisAccountConsentAuthorisation {
+    private String id;
     private PsuIdData psuIdData;
     private ScaStatus scaStatus;
 }

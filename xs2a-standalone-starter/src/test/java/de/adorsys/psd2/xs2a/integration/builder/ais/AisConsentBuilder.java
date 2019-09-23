@@ -40,6 +40,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS;
 import static org.apache.commons.io.IOUtils.resourceToString;
@@ -48,6 +49,7 @@ public class AisConsentBuilder {
     private final static TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private final static AuthorisationTemplate AUTHORISATION_TEMPLATE = AuthorisationTemplateBuilder.buildAuthorisationTemplate();
     private final static PsuIdData PSU_DATA = PsuIdDataBuilder.buildPsuIdData();
+    private final static String AUTHORISATION_ID = UUID.randomUUID().toString();
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
     public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, ObjectMapper mapper) throws Exception {
@@ -76,7 +78,7 @@ public class AisConsentBuilder {
                             TPP_INFO,
                             AUTHORISATION_TEMPLATE,
                             false,
-                            Collections.singletonList(new AisAccountConsentAuthorisation(PSU_DATA, ScaStatus.RECEIVED)),
+                            Collections.singletonList(new AisAccountConsentAuthorisation(AUTHORISATION_ID, PSU_DATA, ScaStatus.RECEIVED)),
                             Collections.emptyMap(),
                             OffsetDateTime.now(),
                             OffsetDateTime.now()
