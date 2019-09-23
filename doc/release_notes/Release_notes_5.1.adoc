@@ -8,6 +8,7 @@
 * Bugfix: Don't provide `creditorAddress` field in get payment response if it was absent in initiate payment request
 * Bugfix: Wrong `authorisation_id` can authorise
 
+* Relative links are supported
 
 == Change yaml-generator to correct model Objects equals
 
@@ -43,3 +44,10 @@ Fixed bug with updating authorisation by wrong `authorization_id`. From now on, 
 * `PUT /v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}`
 * `PUT /v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}`
 * `PUT /v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}`
+
+== Relative links are supported
+
+Before, ASPSP could set up in ASPSP profile the way, how the links are built by the XS2A (all links except `scaRedirect`).
+This mechanism allowed the usage of only absolute links (`xs2aBaseLinksUrl` property in APSPS profile). From now on, the
+relative links are supported as well. To have result links as relative ones, set in ASPSP profile `forceXs2aBaseLinksUrl`
+as `true` and `xs2aBaseLinksUrl` with a value, starting with `/` (for example `/`, `/myhost`, etc.).
