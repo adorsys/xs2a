@@ -20,9 +20,11 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
+import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
 class AbstractLinks extends Links {
 
@@ -33,7 +35,9 @@ class AbstractLinks extends Links {
     }
 
     HrefType buildPath(String path, Object... params) {
-        UriComponentsBuilder uriComponentsBuilder = fromHttpUrl(httpUrl);
+        UriComponentsBuilder uriComponentsBuilder = StringUtils.startsWith(httpUrl, "/")
+                                                        ? fromPath(httpUrl)
+                                                        : fromHttpUrl(httpUrl);
         return new HrefType(uriComponentsBuilder
                                 .path(path)
                                 .buildAndExpand(params)
