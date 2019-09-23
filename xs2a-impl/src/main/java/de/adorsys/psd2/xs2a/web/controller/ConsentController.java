@@ -150,8 +150,7 @@ public class ConsentController implements ConsentApi {
         ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuDataResponse = consentService.updateConsentPsuData(updatePsuDataRequest);
 
         if (updateConsentPsuDataResponse.hasError()) {
-            return responseErrorMapper.generateErrorResponse(updateConsentPsuDataResponse.getError(),
-                                                             consentHeadersBuilder.buildErrorUpdateConsentsPsuDataHeaders(authorisationId));
+            return responseErrorMapper.generateErrorResponse(updateConsentPsuDataResponse.getError());
         }
 
         ResponseHeaders responseHeaders = consentHeadersBuilder.buildUpdateConsentsPsuDataHeaders(authorisationId);
