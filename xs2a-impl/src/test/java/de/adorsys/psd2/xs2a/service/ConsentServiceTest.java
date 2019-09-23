@@ -52,6 +52,7 @@ import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.AisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.ais.AisAuthorisationValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.*;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
@@ -170,6 +171,8 @@ public class ConsentServiceTest {
     private InitialSpiAspspConsentDataProvider initialSpiAspspConsentDataProvider;
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
+    @Mock
+    private AisAuthorisationValidator aisAuthorisationValidator;
 
     private AccountConsent accountConsent;
 
@@ -837,6 +840,7 @@ public class ConsentServiceTest {
     @Test
     public void updateConsentPsuData_Success_ShouldRecordEvent() {
         // Given
+        when(aisAuthorisationValidator.validate(eq(AUTHORISATION_ID), any(AccountConsent.class))).thenReturn(ValidationResult.valid());
         when(aisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(Optional.of(new AccountConsentAuthorization()));
@@ -884,6 +888,7 @@ public class ConsentServiceTest {
 
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(true);
+        when(aisAuthorisationValidator.validate(eq(AUTHORISATION_ID), any(AccountConsent.class))).thenReturn(ValidationResult.valid());
 
         when(aisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
 
@@ -925,6 +930,8 @@ public class ConsentServiceTest {
 
         when(endpointAccessCheckerService.isEndpointAccessible(authorisationId, CONSENT_ID))
             .thenReturn(true);
+        when(aisAuthorisationValidator.validate(eq(authorisationId), any(AccountConsent.class))).thenReturn(ValidationResult.valid());
+
 
         when(aisScaAuthorisationServiceResolver.getServiceInitiation(authorisationId)).thenReturn(redirectAisAuthorizationService);
 

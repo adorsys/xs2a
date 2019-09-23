@@ -19,11 +19,13 @@ package de.adorsys.psd2.consent.api;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 @ApiModel(description = "Account information", value = "AccountInfo")
 public class AccountInfo {
 
