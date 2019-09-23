@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+
 @Component
 @RequiredArgsConstructor
 public class Xs2aAisConsentMapper {
@@ -139,17 +141,9 @@ public class Xs2aAisConsentMapper {
 
     public AisAccountAccessInfo mapToAisAccountAccessInfo(Xs2aAccountAccess access) {
         AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
-        accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
-                                   .map(this::mapToListAccountInfo)
-                                   .orElseGet(Collections::emptyList));
-
-        accessInfo.setBalances(Optional.ofNullable(access.getBalances())
-                                   .map(this::mapToListAccountInfo)
-                                   .orElseGet(Collections::emptyList));
-
-        accessInfo.setTransactions(Optional.ofNullable(access.getTransactions())
-                                       .map(this::mapToListAccountInfo)
-                                       .orElseGet(Collections::emptyList));
+        accessInfo.setAccounts(mapToListAccountInfo(access.getAccounts()));
+        accessInfo.setBalances(mapToListAccountInfo(access.getBalances()));
+        accessInfo.setTransactions(mapToListAccountInfo(access.getTransactions()));
 
         accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
                                             .map(accessType -> AccountAccessType.valueOf(accessType.name()))
@@ -167,7 +161,7 @@ public class Xs2aAisConsentMapper {
     }
 
     private List<AccountInfo> mapToListAccountInfo(List<AccountReference> refs) {
-        return refs.stream()
+        return emptyIfNull(refs).stream()
                    .map(this::mapToAccountInfo)
                    .collect(Collectors.toList());
     }
@@ -242,6 +236,7 @@ public class Xs2aAisConsentMapper {
         return Optional.ofNullable(aisAccountConsentAuthorisation)
             .map(auth -> {
                 AccountConsentAuthorization accountConsentAuthorisation = new AccountConsentAuthorization();
+                accountConsentAuthorisation.setId(auth.getId());
                 accountConsentAuthorisation.setPsuIdData(auth.getPsuIdData());
                 accountConsentAuthorisation.setScaStatus(auth.getScaStatus());
                 return accountConsentAuthorisation;
