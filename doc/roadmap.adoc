@@ -4,12 +4,12 @@ Starting 1st of September 2019 XS2A Team is providing development within two bra
 
 *Stable branch 4.x*
 
-Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.4
+Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.4. Will be supported till 01.03.2020
 
 *Development branch 5.x*
 
 Development branch is oriented on implementation of new features and optional endpoints.
-No backward compatibility with 4.x is guaranteed.
+No backward compatibility with 4.x is guaranteed. Will be released as Stable version 6.x on 13.03.2020
 
 
 [cols="3*.<"]
@@ -32,6 +32,8 @@ a|* ScaApproachResolver cleanup
 
 * Bugfix: Wrong PSU-ID can authorise endpoints
 
+* Bugfix: Empty array "account" in Read Balances and Read Transaction List responses
+
 * Describe "Work with ASPSP-Consent-Data object" at SPI Developer Guide
 
 
@@ -48,17 +50,23 @@ a|* All fixes from v.4.1
 
 a|
 
-a|* Bugfix: Wrong scaStatus after consent authorisation with zero sca methods for Embedded approach
+a|* Add Internal Request-ID (InR-Id) as additional parameter in scaRedirekt URI
+
+* Add integration test for embedded modes for XS2A
+
+* Remove redundant request to retrieve the consent from the database on consent creation
+
+* Remove redundant request to delete ASPSP consent data on consent creation
+
+* Bugfix: lastActionDate in PIIS consent is not set on creation or implicit revocation
+
+* Bugfix: Wrong SCAStatus after consent authorisation with zero SCA methods for Embedded approach
 
 * Bugfix: Check incoming requests to have required information
 
-* Bugfix: Error on initiating payment with custom payment product and JSON body
-
-* Bugfix: Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow
-
-* Bugfix: When bank returns PATC status for payment, multilevel flag in CMS should be set to true
-
 * Remove TppRedirectUri from TppInfo
+
+* XS2A-Swagger. Typos and small errors fixes
 
 a|* All fixes from v.4.2
 
@@ -66,15 +74,25 @@ a|* All fixes from v.4.2
 
 * Create Component for scheduled batch processing
 
+|25.10.2019|4.3|5.3
+
+a|
+
+a|* Bugfix: Error on initiating payment with custom payment product and JSON body
+
+* Bugfix: Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow
+
+* Bugfix: When bank returns PATC status for payment, multilevel flag in CMS should be set to true
+
+a|* All fixes from v.4.3
+
 |Further development| |
 
 a|
 
 a|
 
-a|* Bugfix: Empty array "account" in Read Balances and Read Transaction List responses
-
-* Implementation of delta access for transaction list request
+a|* Implementation of delta access for transaction list request
 
 * Implement support of Multicurrency Accounts
 
@@ -88,11 +106,11 @@ a|* Bugfix: Empty array "account" in Read Balances and Read Transaction List res
 
 - Implement Cancellation of Signing Baskets
 
-- Support Signing Basket in Embedded approach with multilevel sca
+- Support Signing Basket in Embedded approach with multilevel SCA
 
-- Support Signing Basket in Decoupled approach with multilevel sca
+- Support Signing Basket in Decoupled approach with multilevel SCA
 
-- Support Signing Basket in Redirect approach with multilevel sca
+- Support Signing Basket in Redirect approach with multilevel SCA
 
 - Implement Get Authorisation Sub-resources for Signing Baskets
 
@@ -126,15 +144,15 @@ a|* Bugfix: Empty array "account" in Read Balances and Read Transaction List res
 
 - Revoke FundsConfirmationConsent
 
-- FundsConfirmationConsent in Redirect approach with multilevel sca
+- FundsConfirmationConsent in Redirect approach with multilevel SCA
 
-- FundsConfirmationConsent in Embedded approach with multilevel sca
+- FundsConfirmationConsent in Embedded approach with multilevel SCA
 
-- FundsConfirmationConsent in Decoupled approach with multilevel sca
+- FundsConfirmationConsent in Decoupled approach with multilevel SCA
 
 - Get Authorisation Sub-resource request for FundsConfirmationConsent
 
-- Get Sca Status request for FundsConfirmationConsent
+- Get SCA Status request for FundsConfirmationConsent
 
 - Create interface in cms-aspsp-api to get FundsConfirmationConsent
 
