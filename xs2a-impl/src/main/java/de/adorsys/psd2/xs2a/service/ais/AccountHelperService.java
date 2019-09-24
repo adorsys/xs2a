@@ -33,13 +33,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Slf4j
 @Service
-@Validated
 @AllArgsConstructor
 public class AccountHelperService {
 
