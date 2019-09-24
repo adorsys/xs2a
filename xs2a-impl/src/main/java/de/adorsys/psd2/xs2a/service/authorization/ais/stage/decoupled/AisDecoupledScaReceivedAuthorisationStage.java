@@ -58,7 +58,6 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_I
 @Service("AIS_DECOUPLED_RECEIVED")
 public class AisDecoupledScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
     private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
-    private static final String CREDEINTIALS_INVALID = "The PSU-ID cannot be matched by the addressed ASPSP or is blocked, or a password resp. OTP was not correct. Additional information might be added";
 
     private final RequestProviderService requestProviderService;
     private final SpiContextDataProvider spiContextDataProvider;
@@ -115,17 +114,17 @@ public class AisDecoupledScaReceivedAuthorisationStage extends AisScaStage<Updat
                                                                                                         aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
 
         if (authorisationStatusSpiResponse.hasError()) {
+            if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
+                log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_DECOUPLED_RECEIVED stage. Authorise PSU when apply authorisation with update consent PSU data has failed. PSU credentials invalid.",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, updateConsentPsuDataReq.getAuthorizationId(), spiPsuData.getPsuId());
+                MessageError messageError = new MessageError(ErrorType.AIS_401, TppMessageInformation.of(PSU_CREDENTIALS_INVALID));
+                return createFailedResponse(messageError, authorisationStatusSpiResponse.getErrors(), updateConsentPsuDataReq);
+            }
+
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(authorisationStatusSpiResponse, ServiceType.AIS));
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_DECOUPLED_RECEIVED stage. Authorise PSU when apply authorisation with update consent PSU data has failed. Error msg: [{}].",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, updateConsentPsuDataReq.getAuthorizationId(), spiPsuData.getPsuId(), messageError);
             return createFailedResponse(messageError, authorisationStatusSpiResponse.getErrors(), updateConsentPsuDataReq);
-        }
-
-        if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_DECOUPLED_RECEIVED stage. Authorise PSU when apply authorisation with update consent PSU data has failed. PSU credentials invalid.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, updateConsentPsuDataReq.getAuthorizationId(), spiPsuData.getPsuId());
-            MessageError messageError = new MessageError(ErrorType.AIS_401, TppMessageInformation.of(PSU_CREDENTIALS_INVALID));
-            return createFailedResponse(messageError, Collections.singletonList(new TppMessage(PSU_CREDENTIALS_INVALID, CREDEINTIALS_INVALID)), updateConsentPsuDataReq);
         }
 
         if (aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent.isConsentForAllAvailableAccounts(), accountConsent.isOneAccessType())) {
