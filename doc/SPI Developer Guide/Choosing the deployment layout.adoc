@@ -19,7 +19,7 @@ component can be started as a Spring Boot application and is written in Java 1.8
 All of these can be deployed separately (using the network for communication) or as monolith in one server.
 This setup depends on the current bank network configuration, data security and available hardware. More details can be
 found at
-xref:GETTING_STARTED.adoc[Getting started]
+xref:../GETTING_STARTED.adoc[Getting started]
 page.
 
 These 3 services are basic configuration and to integrate them into whole ASPSP system one should use SPI implementation
