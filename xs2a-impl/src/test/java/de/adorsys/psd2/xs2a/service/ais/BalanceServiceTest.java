@@ -138,7 +138,7 @@ public class BalanceServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
 
-        when(accountHelperService.findAccountReference(any(), any(), any())).thenReturn(spiAccountReference);
+        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
         when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
         when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
     }
