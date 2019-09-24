@@ -136,13 +136,10 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_AllAvailableAccounts_Success() {
+    public void apply_WithOneFactorAuthorisation_Success() {
         //Given
-        when(aisScaAuthorisationService.isOneFactorAuthorisation(true, true)).thenReturn(true);
+        when(aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent)).thenReturn(true);
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
-        when(accountConsent.isConsentForAllAvailableAccounts()).thenReturn(true);
-        when(accountConsent.isOneAccessType())
-            .thenReturn(true);
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)));
         //When
@@ -155,13 +152,10 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_AllAvailableAccounts_SuccessScaRequiredTrue() {
+    public void apply_WithMultiFactorAuthorisation_Success() {
         //Given
-        when(accountConsent.isOneAccessType())
-            .thenReturn(true);
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)))
-        ;
+            .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false)));
         when(commonDecoupledAisService.proceedDecoupledApproach(eq(request), eq(spiAccountConsent), any(PsuIdData.class)))
             .thenReturn(buildUpdateConsentPsuDataResponse());
         //When

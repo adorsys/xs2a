@@ -29,4 +29,9 @@ public class OneTimeConsentScaBankSetting {
      * Indicates whether an ASPSP requires usage of SCA to validate a one-time available accounts consent
      */
     private boolean scaByOneTimeAvailableAccountsConsentRequired;
+
+    /**
+     * Indicates whether an ASPSP requires usage of SCA to validate a one-time global consent
+     */
+    private boolean scaByOneTimeGlobalConsentRequired;
 }

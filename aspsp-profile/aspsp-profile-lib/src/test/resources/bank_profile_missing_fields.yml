@@ -21,6 +21,7 @@ setting:
       deltaListSupported: FALSE
     scaRequirementsForOneTimeConsents:
       scaByOneTimeAvailableAccountsConsentRequired: TRUE
+      scaByOneTimeGlobalConsentRequired: TRUE
   pis:
     supportedPaymentTypeAndProductMatrix:
       SINGLE:

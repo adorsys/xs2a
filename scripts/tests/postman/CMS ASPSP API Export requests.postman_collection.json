@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7c293c1f-283b-41a0-861d-e16430085761",
+		"_postman_id": "0f6b0c37-56f9-4551-a5f7-0697df8a5da8",
 		"name": "CMS ASPSP API Export requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -538,7 +538,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "PIS",
@@ -1057,7 +1058,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "PIIS",
@@ -1410,7 +1412,9 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }

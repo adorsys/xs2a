@@ -21,4 +21,5 @@ import lombok.Value;
 @Value
 public class OneTimeConsentScaSetting {
     private boolean scaByOneTimeAvailableAccountsConsentRequired;
+    private boolean scaByOneTimeGlobalConsentRequired;
 }

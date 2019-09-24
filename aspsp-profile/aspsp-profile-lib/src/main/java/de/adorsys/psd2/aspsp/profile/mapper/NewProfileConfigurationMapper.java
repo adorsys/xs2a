@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class NewProfileConfigurationMapper {
+    private static final boolean DEFAULT_SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED = true;
+
     public NewProfileConfiguration mapToNewProfileConfiguration(OldProfileConfiguration oldProfileConfiguration) {
         OldBankProfileSetting setting = oldProfileConfiguration.getSetting();
 
@@ -45,7 +47,7 @@ public class NewProfileConfigurationMapper {
                                                                                         Optional.ofNullable(setting.getSupportedTransactionApplicationTypes()).map(l -> l.get(0)).orElse(null));
         DeltaReportBankSetting deltaReportSettings = new DeltaReportBankSetting(setting.isEntryReferenceFromSupported(),
                                                                                 setting.isDeltaListSupported());
-        OneTimeConsentScaBankSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaBankSetting(setting.isScaByOneTimeAvailableAccountsConsentRequired());
+        OneTimeConsentScaBankSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaBankSetting(setting.isScaByOneTimeAvailableAccountsConsentRequired(), DEFAULT_SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED);
         AisAspspProfileBankSetting ais = new AisAspspProfileBankSetting(consentTypes, aisRedirectLinkToOnlineBanking, transactionParameters, deltaReportSettings, scaRequirementsForOneTimeConsents);
         PisRedirectLinkBankSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkBankSetting(setting.getPisRedirectUrlToAspsp(),
                                                                                                    setting.getPisPaymentCancellationRedirectUrlToAspsp(),

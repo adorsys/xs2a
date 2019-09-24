@@ -145,7 +145,7 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
             return createFailedResponse(messageError, authorisationStatusSpiResponse.getErrors(), request);
         }
 
-        if (aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent.isConsentForAllAvailableAccounts(), accountConsent.isOneAccessType())) {
+        if (aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent)) {
             aisConsentService.updateConsentStatus(consentId, ConsentStatus.VALID);
 
             UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, consentId, authorisationId);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,13 +74,14 @@ public class AspspProfileServiceTest {
     private static final long PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final boolean AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED = true;
     private static final boolean SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED = true;
+    private static final boolean SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED = true;
     private static final boolean PSU_IN_INITIAL_REQUEST_MANDATED = false;
     private static final boolean FORCE_XS2A_BASE_LINKS_URL = false;
     private static final String XS2A_BASE_LINKS_URL = "http://myhost.com/";
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
     private static final String SUPPORTED_TRANSACTION_APPLICATION_TYPES = "JSON";
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
-    public static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
+    private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
 
 
     @InjectMocks
@@ -214,7 +215,7 @@ public class AspspProfileServiceTest {
                                                                                         SUPPORTED_TRANSACTION_APPLICATION_TYPES);
         DeltaReportBankSetting deltaReportSettings = new DeltaReportBankSetting(ENTRY_REFERENCE_FROM_SUPPORTED,
                                                                                 DELTA_LIST_SUPPORTED);
-        OneTimeConsentScaBankSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaBankSetting(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED);
+        OneTimeConsentScaBankSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaBankSetting(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED);
         AisAspspProfileBankSetting ais = new AisAspspProfileBankSetting(consentTypes, aisRedirectLinkToOnlineBanking, transactionParameters, deltaReportSettings, scaRequirementsForOneTimeConsents);
         PisRedirectLinkBankSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkBankSetting(PIS_REDIRECT_LINK,
                                                                                                    PIS_CANCELLATION_REDIRECT_LINK,

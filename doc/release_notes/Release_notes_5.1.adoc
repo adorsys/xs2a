@@ -7,8 +7,8 @@
 * Bugfix: Wrong PSU-ID can authorise endpoints
 * Bugfix: Don't provide `creditorAddress` field in get payment response if it was absent in initiate payment request
 * Bugfix: Wrong `authorisation_id` can authorise
-
 * Relative links are supported
+* Optional SCA for Global Consent
 
 == Change yaml-generator to correct model Objects equals
 
@@ -51,3 +51,8 @@ Before, ASPSP could set up in ASPSP profile the way, how the links are built by 
 This mechanism allowed the usage of only absolute links (`xs2aBaseLinksUrl` property in APSPS profile). From now on, the
 relative links are supported as well. To have result links as relative ones, set in ASPSP profile `forceXs2aBaseLinksUrl`
 as `true` and `xs2aBaseLinksUrl` with a value, starting with `/` (for example `/`, `/myhost`, etc.).
+
+== Optional SCA for Global Consent
+
+New option `scaByOneTimeGlobalConsentRequired` has been added to the profile, indicating whether SCA has be performed to validate one-time global consent.
+If `scaByOneTimeGlobalConsentRequired` is set to `false`, then SCA for one-time global consent is not needed, meaning that authorisation resource for such consent will become finalised after providing PSU password in Update PSU Data request.
