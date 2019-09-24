@@ -187,7 +187,7 @@ public class TransactionServiceTest {
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
-        when(accountHelperService.findAccountReference(any(), any(), any())).thenReturn(spiAccountReference);
+        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
         when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
     }
 
@@ -315,7 +315,7 @@ public class TransactionServiceTest {
     public void getTransactionsReportByPeriod_WhenConsentIsGlobal_Success() {
         // Given
         Xs2aAccountAccess xs2aAccountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access-global.json", Xs2aAccountAccess.class);
-        when(accountHelperService.findAccountReference(any(), any(), any())).thenReturn(SPI_ACCOUNT_REFERENCE_GLOBAL);
+        when(accountHelperService.findAccountReference(any(), any())).thenReturn(SPI_ACCOUNT_REFERENCE_GLOBAL);
 
         AccountConsent accountConsent = createConsent(xs2aAccountAccess);
 
