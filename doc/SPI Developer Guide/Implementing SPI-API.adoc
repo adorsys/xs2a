@@ -8,44 +8,89 @@ toc::[]
 
 === General requirements
 
-SPI-API is used for connection between XS2A interface and ASPSP system, that's why this system is also called `connector`
+*SPI* means Service Provider Interface that is an API intended to be implemented or extended by a third party.
+SPI-API is used for connection between XS2A interface and ASPSP system, that's why this system is also called *connector*
 and this word will be used in all chapters below.
-XS2A provides interfaces in java (`de.adorsys.psd2.xs2a.spi.service` package), that should be implemented in the connector's code.
+XS2A provides interfaces in java (*de.adorsys.psd2.xs2a.spi.service* package), that should be implemented in the connector's code.
+
 Basic responsibilities of the connector:
 
-- Receive the input data from XS2A
-- Provide this data to the ASPSP system (and/or add some business logic, if necessary)
-- Retrieve the response from ASPSP system
-- Provide the ASPSP system's response back to XS2A using `SpiResponse` class
+* receive the input data from XS2A;
+* provide this data to the ASPSP system (and/or add some business logic, if necessary);
+* retrieve the response from ASPSP system;
+* provide the ASPSP system's response back to XS2A using *SpiResponse* class.
+
+==== SPI methods common parameters
 
 Input data for the connector is provided from TPP through XS2A and some parameters in the interfaces' signatures
-are the same for all of them:
+are common for all of them:
 
-- `SpiContextData` - the information about PSU and TPP
-- `SpiAspspConsentDataProvider` - this service is used for providing ASPSP consent data to connector and ASPSP system
+* *spiContextData* - the information about PSU and TPP;
+* *spiAspspConsentDataProvider* - this service is used for providing ASPSP consent data to connector and ASPSP system.
 
-The response from the connector to XS2A is described in the next chapter.
+Other method-specific parameters are described in the chapters below.
+
+Speaking about *SpiContextData* - first, it contains the *psuData* object. It stores data about PSU known in scope of the request:
+
+|===
+| Attribute | Type | Condition | Description
+
+| psuId | String | Conditional | Client ID of the PSU in the ASPSP client interface
+| psuIdType | String | Conditional | Type of the psuId, needed in scenarios where PSUs have several psuIds as access possibility
+| psuCorporateId | String | Conditional | Identification of a corporate in the online Channels. Might be mandated in the ASPSP’s documentation. Only used in a corporate context
+| psuCorporateIdType| String | Conditional | This is describing the type of the identification needed by the ASPSP to identify the psuCorporateId
+|===
+
+Another parameter in *SpiContextData* is the *tppInfo*. It contains information about the TPP's certificate:
+
+** "Registration number": example = "1234_registrationNumber";
+** "TPP name": example = "Tpp company";
+** "National competent authority": example = "Bafin";
+
+The response from the connector to XS2A and the ASPSP consent data provider are described in the next chapters.
 
 === SpiResponse
 
 This class acts as the container for all responses from the connector to XS2A. It is a generic class and it uses builder
 pattern to create the response. Main fields of the class:
 
-- `T payload`
-- `List<TppMessage> errors`
+* *T payload*;
+* *List<TppMessage> errors*.
 
-`payload` should be used to create successful response to XS2A. It should contain the entity which current SPI method deals with.
-`errors` should be used in case the response fails. The list should contain at least one error element inside the `TppMessage`
-container. It is possible to provide several errors, if necessary. Both `payload` and `errors` fields should use `build()`
-method after them while creating the response. Typical usage of builder pattern for happy-path response:
+*payload* should be used to create successful response to XS2A. It should contain the object which current SPI method deals with.
+*errors* should be used in case the response fails. The list should contain at least one error element inside the *TppMessage*
+container. It is possible to provide several errors, if necessary. *build()* method should be used to create SpiResponse
+after setting payload or errors. Typical usage of builder pattern for happy-path response:
 
-`return SpiResponse.<SpiAuthorisationStatus>builder()
+*return SpiResponse.<SpiAuthorisationStatus>builder()
                    .payload(SpiAuthorisationStatus.SUCCESS)
-                   .build();`
+                   .build();*
 
-In this example the `SpiAuthorisationStatus` enumerator value is returned.
+In this example the *SpiAuthorisationStatus* enumerator value is returned.
 
-=== Work with ASPSP-Consent-Data object
+=== Working with ASPSP-Consent-Data object
+
+ASPSP consent data is a container that allows to handle any information about the consent or payment in scope of SPI level calls.
+More detailed clarification about this object can be found
+xref:../architecture/09_design_decisions.adoc[here].
+XS2A provides a special interface for working with the ASPSP consent data - *de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider*.
+This interface has 3 methods:
+
+* *loadAspspConsentData* to retrieve the ASPSP consent data;
+* *updateAspspConsentData* to update this data;
+* *clearAspspConsentData* to erase the ASPSP consent data.
+
+This interface has the implementation: *SpiAspspConsentDataProviderImpl*. It should be used while working with
+the existing entity of AIS consent or payment (by providing its ID) in the connector.
+One should understand that it is SPI developer responsibility to update (or not) the ASPSP consent data on the connector side.
+XS2A just provides a possibility to make these changes by passing the *SpiAspspConsentDataProvider* object to every SPI method.
+Please note, that XS2A just stores this data in CMS as a byte array field and does not use it. Definite ASPSP consent data is
+tied to the definite AIS consent or payment and stored in aspsp_consent_data CMS table.
+
+From the connector side typical code for working with the ASPSP consent data during any SPI implementation method is the following:
+
+* *byte[] initialAspspConsentData = aspspConsentDataProvider.loadAspspConsentData();* - to retrieve the data;
+* *aspspConsentDataProvider.updateAspspConsentData("Some text data to be stored".getBytes());* - to update the data with the new one.
 
 === Implementation of AccountSpi
 
@@ -58,14 +103,77 @@ The Interface is used for AIS consent accounts SPI implementation. The following
 * *requestBalancesForAccount*;
 * *requestTransactionsByDownloadLink*.
 
-The Method *requestTransactionsForAccount* provides a possibility to retrieve the list of bank transactions filtered by the period, AIS consent account ID and status.
-It also provides the transaction list download ID, which can be used to download a file with the list of bank transactions.
+The method *requestAccountList* provides a possibility to retrieve the list of account details by given AIS consent ID and boolean flag *withBalance*.
+Parameters of the method are:
 
-The Method *requestTransactionsByDownloadLink* allows to download a list of bank transactions directly to the file.
-It returns *SpiTransactionsDownloadResponse* object with the InputStream which contains the transaction list, filename (can be null) and the size of the payload in bytes (can be null also).
+* *spiContextData*;
+* *withBalance* - this flag specifies if the balances would be present in the response or not;
+* *spiAccountConsent*;
+* *spiAspspConsentDataProvider*.
 
+Response is a list containing the *SpiAccountDetails* entities.
+
+The method *requestAccountDetailForAccount* provides a possibility to retrieve the data for the definite account by given consent ID,
+account ID (obtained from the previous method) and boolean flag *withBalance*. Flag's operation is the same as above. Parameters are:
+
+* *spiContextData*;
+* *withBalance* - this flag specifies if the balances would be present in the response or not;
+* *spiAccountReference* - holder for account ID;
+* *spiAccountConsent*;
+* *spiAspspConsentDataProvider*.
+
+Response is the *SpiAccountDetails* object.
+
+The method *requestTransactionsForAccount* provides a possibility to retrieve the list of bank transactions filtered by the period,
+AIS consent account ID and status. Parameters are:
+
+* *spiContextData*;
+* *acceptMediaType* - media type that should be used in the response (e.g. JSON, XML etc);
+* *withBalance* - this flag specifies if the balances would be present in the response or not;
+* *dateFrom* - start period for transactions filtering;
+* *dateTo* - end period for transactions filtering;
+* *bookingStatus* - status for filtering the transactions;
+* *spiAccountReference* - holder for account ID;
+* *spiAccountConsent*;
+* *spiAspspConsentDataProvider*.
+
+The response is *SpiTransactionReport* object. It also provides the transaction list download ID, which can be used to
+download a file with the list of bank transactions.
+
+The method *requestTransactionForAccountByTransactionId* provides a possibility to retrieve the data about the bank transaction
+by the given transaction ID (can be obtained from the previous method). Parameters:
+
+* *spiContextData*;
+* *transactionId* - ID of bank transaction;
+* *spiAccountReference* - holder for account ID;
+* *spiAccountConsent*;
+* *spiAspspConsentDataProvider*.
+
+Response is *SpiTransaction* object.
+
+The method *requestBalancesForAccount* provides a possibility to retrieve the list of balances for the given account by its ID.
+Parameters are:
+
+* *spiContextData*;
+* *spiAccountReference* - holder for account ID;
+* *spiAccountConsent*;
+* *spiAspspConsentDataProvider*.
+
+Response is a list with *SpiAccountBalance* objects.
+
+The method *requestTransactionsByDownloadLink* allows to download a list of bank transactions directly to the file. Its
+parameters are:
+
+* *spiContextData*;
+* *spiAccountConsent*;
+* *downloadId* - identifier for downloading the file (can be retrieved from the *requestTransactionsForAccount* SPI method call);
+* *spiAspspConsentDataProvider*.
+
+It returns *SpiTransactionsDownloadResponse* object with the InputStream which contains the transaction list, filename (can be null)
+and the size of the payload in bytes (can be null also).
 From the TPP side the download can be initiated by accessing new endpoint in account controller - *GET /v1/accounts/{account-id}/transactions/download/{download-id}*.
-TPP should provide the AIS consent account ID and the download ID. As a response for accessing this endpoint, the TPP receives the stream with transaction list.
+TPP should provide the AIS consent account ID and the download ID. As a response for accessing this endpoint, the TPP
+receives the stream with transaction list.
 
 === Implementation of AisConsentSpi
 
@@ -75,110 +183,98 @@ TPP should provide the AIS consent account ID and the download ID. As a response
 
 === Implementation of PaymentSpi(s)
 
-*SPI* means Service Provider Interface that is an API intended to be implemented or extended by a third party.
-
-We distinguish between following Interfaces: *SinglePaymentSpi*, *BulkPaymentSpi*, *PeriodicPaymentSpi*, *PaymentAuthorisationSpi*, *PaymentCancellationSpi*.
+We distinguish between following interfaces: *SinglePaymentSpi*, *BulkPaymentSpi*, *PeriodicPaymentSpi*, *PaymentAuthorisationSpi*, *PaymentCancellationSpi*.
 
 ==== SinglePaymentSpi
+
 The Interface is used for the single payment SPI implementation. The following Methods should be implemented:
 
 * *initiatePayment*: aims to initiate a payment;
-* *getPaymentById*: aims to read the payment by id;
-* *getPaymentStatusById*: aims to read the payment status by id.
+* *getPaymentById*: aims to read the payment by ID;
+* *getPaymentStatusById*: aims to read the payment status by ID.
 
-The method *initiatePayment* returns a positive or negative payment initiation response as a part of SpiResponse and contains the following:
+The method *initiatePayment* returns a positive or negative payment initiation response (*SpiSinglePaymentInitiationResponse*
+object) as a part of SpiResponse. Method signature contains the following (description of basic fields *SpiContextData* and
+*SpiAspspConsentDataProvider* is provided above):
 
-* *contextData*: holder of call's context data (e.g. about psuData and tppInfo):
+* *spiContextData*;
+* *spiSinglePayment*: payment, that extends SpiPayment (Single Payment) and has fields required for business logic;
+* *spiAspspConsentDataProvider*.
 
+Response by the method *getPaymentById* returns payment as a part of SpiResponse (*SpiSinglePayment* object) and contains
+ the following data:
 
-*psuData* contains data about PSU known in scope of the request:
-
-|===
-| Attribute | Type | Condition | Description
-
-| psuId | String | Conditional | Client ID of the PSU in the ASPSP client interface
-| psuIdType | String | Conditional | Type of the psuId, needed in scenarios where PSUs have several psuIds as access possibility
-| psuCorporateId | String | Conditional | Identification of a corporate in the online Channels. Might be mandated in the ASPSP’s documentation. Only used in a corporate context
-| psuCorporateIdType| String | Conditional | This is describing the type of the identification needed by the ASPSP to identify the psuCorporateId
-|===
-
-* *tppInfo*: contains information about the Tpp's certificate:
-** "Registration number": example = "1234_registrationNumber";
-** "Tpp name": example = "Tpp company";
-** "National competent authority": example = "Bafin";
-** "Redirect URI": URI of TPP, where the transaction flow shall be redirected to after a Redirect. Mandated for the *Redirect SCA Approach* (including OAuth2 SCA approach), specially when TPP-Redirect-preferred equals "true". It is recommended to always use this header field;
-** "Nok redirect URI": if this URI is contained, the TPP is asking to redirect the transaction flow to this address instead of the TPP-Redirect-URI in case of a negative result of the redirect ScaMethod. This might be ignored by the ASPSP;
-** *payment*: payment, that extends SpiPayment (Single Payment);
-** *initialAspspConsentData*: Encrypted data is stored in the consent management system.
-
-Response by the method *getPaymentById* returns payment as a part of SpiResponse and contains the following data:
-
-* *contextData*;
+* *spiContextData*;
 * *payment*: Single Payment;
-* *aspspConsentData*: Used on SPI level as a container of some binary data. Spi developers may save here necessary information, it is stored and encrypted in the consent. *This shall not use without consentId*.
-Encrypted data is linked to a request. It may be null if consent does not contain such data, or request is not done from a workflow with a consent.
+* *spiAspspConsentDataProvider*.
 
-Response by the method *getPaymentStatusById* returns an object (with the transaction status) and contains the following:
+Response by the method *getPaymentStatusById* returns the *SpiGetPaymentStatusResponse* object (with the transaction status)
+and contains the following:
 
-* *contextData*;
-* *payment*;
-* *aspspConsentData*.
+* *spiContextData*;
+* *payment*: Single Payment;
+* *spiAspspConsentDataProvider*.
 
 ==== PeriodicPaymentSpi
-The Interface is used for periodic payment for SPI implementation. The following Methods should be implemented:
+
+The Interface is used for periodic payments for SPI implementation. The following methods should be implemented:
 
 * *initiatePayment*;
 * *getPaymentById*;
 * *getPaymentStatusById*.
 
-The method *initiatePayment* returns a positive or negative payment initiation response as a part of SpiResponse and contains the following:
+The method *initiatePayment* returns a positive or negative payment initiation response (*SpiPeriodicPaymentInitiationResponse*)
+as a part of SpiResponse and contains the following:
 
-* *contextData*: holder of call's context data (e.g. about psuData and tppInfo);
+* *spiContextData*;
 * *payment*: Periodic Payment;
-* *initialAspspConsentData*: Encrypted data is stored in the consent management system.
+* *spiAspspConsentDataProvider*.
 
-Response by the method *getPaymentById* returns payment as a part of SpiResponse and contains the following data:
+Response by the method *getPaymentById* returns payment as a part of SpiResponse (*SpiPeriodicPayment*) and contains the following data:
 
-* *contextData*;
+* *spiContextData*;
 * *payment*: Periodic Payment;
-* *aspspConsentData*: Used on SPI level as a container of some binary data. Spi developers may save here necessary information, it is stored and encrypted in consent. *This shall not use without consentId*.
- Encrypted data is linked to a request. It may be null if consent does not contain such data, or request is not done from a workflow with a consent.
+* *spiAspspConsentDataProvider*.
 
-Response by the method *getPaymentStatusById* returns an object (with the transaction status) and contains the following:
+Response by the method *getPaymentStatusById* returns the *SpiGetPaymentStatusResponse* (with the transaction status) and
+contains the following:
 
-* *contextData*;
-* *payment*;
-* *aspspConsentData*.
+* *spiContextData*;
+* *payment*: Periodic Payment;
+* *spiAspspConsentDataProvider*.
 
 ==== BulkPaymentSpi
-The Interface is used for bulk payment for SPI implementation. The following Methods should be implemented:
+
+The Interface is used for bulk payments for SPI implementation. The following methods should be implemented:
 
 * *initiatePayment*;
 * *getPaymentById*;
 * *getPaymentStatusById*.
 
-The method *initiatePayment* returns a positive or negative payment initiation response as a part of SpiResponse and contains the following:
+The method *initiatePayment* returns a positive or negative payment initiation response (*SpiBulkPaymentInitiationResponse*)
+as a part of SpiResponse and contains the following:
 
-* *contextData*: holder of call's context data (e.g. about psuData and tppInfo);
+* *spiContextData*;
 * *payment*: Bulk Payment;
-* *initialAspspConsentData*: Encrypted data to be stored in the consent management system.
-*
+* *spiAspspConsentDataProvider*.
 
-Response by the methods *getPaymentById* returns payment as a part of SpiResponse and will contain the following data:
+Response by the method *getPaymentById* returns payment as a part of SpiResponse (*SpiBulkPayment*) and contains the
+following data:
 
-* *contextData*;
+* *spiContextData*;
 * *payment*: Bulk Payment;
-* *aspspConsentData*: Used on SPI level as a container of some binary data. Spi developers may save here necessary information, it is stored and encrypted in consent. *This shall not use without consentId*.
-Encrypted data is linked to a request. It may be null if consent does not contain such data, or request is not done from a workflow with a consent.
+* *spiAspspConsentDataProvider*.
 
-Response by the methods *getPaymentStatusById* returns an object (with the transaction status) and contains the following:
+Response by the methods *getPaymentStatusById* returns the *SpiGetPaymentStatusResponse* object (with the transaction status)
+and contains the following:
 
-* *contextData*;
-* *payment*;
-* *aspspConsentData*.
+* *spiContextData*;
+* *payment*: Bulk Payment;
+* *spiAspspConsentDataProvider*.
 
 ==== PaymentAuthorisationSpi
-The Interface is used while implementing payment authorisation flow on SPI level. This Interface is implemented by extending the *AuthorisationSPi*. The following Methods should be implemented:
+
+The Interface is used while implementing payment authorisation flow on SPI level. This Interface is implemented by extending the *AuthorisationSpi*. The following Methods should be implemented:
 
 * *authorisePsu*;
 * *requestAvailableScaMethods*;
@@ -186,36 +282,38 @@ The Interface is used while implementing payment authorisation flow on SPI level
 
 The Method *authorisePsu* authorises psu and returns current (success or failure) authorisation status. *Should be used only with Embedded SCA Approach*. It contains following Data:
 
-* *contextData*;
-* *psuLoginData*: ASPSP identifier(s) of the psu, provided by TPP within this request;
-* *password*: Psu's password;
+* *spiContextData*;
+* *psuLoginData*: ASPSP identifier(s) of the PSU, provided by TPP within this request;
+* *password*: PSU's password;
 * *businessObject*: payment object;
-* *aspspConsentData*.
+* *spiAspspConsentDataProvider*.
 
-The Method *requestAvailableScaMethods* returns a list of SCA methods for the psu by its login. *Should be used only with the Embedded SCA Approach*. It contains following Data:
+The Method *requestAvailableScaMethods* returns a list of SCA methods for the PSU by its login. *Should be used only with the Embedded SCA Approach*. It contains following Data:
 
-* *contextData*;
+* *spiContextData*;
 * *businessObject*;
-* *aspspConsentData*.
+* *spiAspspConsentDataProvider*.
 
-The Mothod *requestAuthorisationCode* performs SCA depending on selected SCA method. *Should be used only with Embedded Approach*. Method returns a positive or negative response as a part of SpiResponse.
-If the authentication method is unknow, then empty *SpiAuthorizationCoderesult* should be returned. It contains following Data:
+The Method *requestAuthorisationCode* performs SCA depending on selected SCA method. *Should be used only with Embedded Approach*. Method returns a positive or negative response as a part of SpiResponse.
+If the authentication method is unknown, then empty *SpiAuthorizationCodeResult* should be returned. It contains following data:
 
-* *contextData*;
+* *spiContextData*;
 * *businessObject*;
-* *aspspConsentData*;
-* *authenticationMethodId*: Id of a chosen SCA method.
+* *spiAspspConsentDataProvider*.
+* *authenticationMethodId*: ID of a chosen SCA method.
 
-In case of *Decoupled SCA Approach*, the method *startScaDecoupled* have to be implemented: method notifies a decoupled app about starting SCA. AuthorisationId is provided
-to allow the app to access CMS. It returns a response object, contains a message from ASPSP to PSU, gives him instrctions regarding decoupled SCA starting. It contains the following data:
+In case of *Decoupled SCA Approach*, the method *startScaDecoupled* has to be implemented: method notifies a decoupled application
+about starting SCA. AuthorisationId is provided to allow the app to access CMS. It returns a response object, contains a
+message from ASPSP to PSU, gives him instructions regarding decoupled SCA starting. It contains the following data:
 
-* *contextData*;
+* *spiContextData*;
 * *businessObject*;
-* *aspspConsentData*;
+* *spiAspspConsentDataProvider*.
 * *authenticationMethodId*: for a decoupled SCA method within embedded approach;
 * *authorisationId*: a unique identifier of authorisation process.
 
 ==== PaymentCancellationSpi
+
 The Interface is used to cancel a payment. The following Methods should be implemented:
 
 * *initiatePaymentCancellation*;
@@ -224,25 +322,26 @@ The Interface is used to cancel a payment. The following Methods should be imple
 
 The Method *initiatePaymentCancellation* returns the payment cancellation response with information about transaction status and whether authorisation of the request is required. It contains the following data:
 
-* *contextData*;
-* *Payment*: payment to be cancelled;
-* *aspspConsentData*.
+* *spiContextData*;
+* *payment*: payment to be cancelled;
+* *spiAspspConsentDataProvider*.
 
 The Method *cancelPaymentWithoutSca* is used by cancelling payment without performing SCA. Method returns a positive or negative payment cancellation response as part of spiResponse. It contains the following data:
 
-* *contextData*;
-* *Payment*: payment to be cancelled;
-* *aspspConsentData*.
+* *spiContextData*;
+* *payment*: payment to be cancelled;
+* *spiAspspConsentDataProvider*.
 
 The Method *verifyScaAuthorisationAndCancelPayment* sends authorisation confirmation information (secure code or such) to ASPSP and, in case of successful validation, cancels payment at ASPSP.
 It returns a positive or negative response as part of spiResponse. It contains the following data:
 
-* *contextData*;
-* *Payment* payment to be cancelled;
-* *aspspConsentData*;
+* *spiContextData*;
+* *payment* payment to be cancelled;
+* *spiAspspConsentDataProvider*.
 * *spiScaConfirmation*: payment cancellation confirmation information.
 
 === Strong Customer Authentication (SCA)
+
 The Payment initiation depends heavily on the *Strong Customer Authentication (SCA)* approach implemented by the ASPSP. For now there are three Approaches implemented (REDIRECT, DECOUPLED and EMBEDDED).
 
 ==== SCA Approach DECOUPLED
@@ -250,10 +349,11 @@ The Payment initiation depends heavily on the *Strong Customer Authentication (S
 ==== SCA Approach EMBEDDED
 
 ==== SCA Approach REDIRECT
+
 Prerequisites in case of *consent for payment initiation*:
 
 * PSU initiated a payment by using TPP;
-* PSU is authenticated via two factors: for example psuId and password;
+* PSU is authenticated via two factors: for example PSU ID and password;
 * Each Payment initiation needs its consent.
 
 When the Payment was initiated, it should be authorised by the PSU. In case of redirect approach the authorisation can be explicit or implicit.
@@ -261,7 +361,7 @@ When the Payment was initiated, it should be authorised by the PSU. In case of r
 *The explicit Start of the authorisation* process means that Payment initiation Request is followed by an explicit Request of the TPP to start the authorisation. It is followed by a redirection to the ASPSP SCA authorisation site.
 A status request might be requested by the TPP after the session is redirected to the TPP's system. Redirect SCA Approach is used in case of *tppExplicitAuthorisationPreferred = true* and *signingBasketSupported = true* or in case of multilevel SCA.
 
-* *tppExplicitAuthorisationPreferred*: value of tpp'choice of authorisation method;
+* *tppExplicitAuthorisationPreferred*: value of TPP's choice of authorisation method;
 * *signingBasketSupported*: indicates if signing basket is supported on the ASPSP profile. It returns _true_ if ASPSP supports signing basket, _false_ if doesn't.
 
 In case of *implicit Start of the Authorisation process* the ASPSP needs no additional data from TPP. In this case, the redirection of the PSU browser session happens directly after the Payment Initiation Response.
@@ -303,7 +403,7 @@ For the Redirect Approach this method is applicable for the selection of authent
 |updatePsuidentification | href Type           | The link to the payment initiation, which needs to be updated by the PSU identification if not delivered yet
 |===
 
-The Method *getAuthorisationSubResources* with the *paymentId* returns authorisation sub resources (e.g. list of authorisation ids).
+The Method *getAuthorisationSubResources* with the *paymentId* returns authorisation sub resources (e.g. list of authorisation IDs).
 
 The Method *getAuthorisationScaStatus* with *paymentId* (ASPSP identifier of the payment, associated with the authorisation) and *authorisationId* (authorisation identifier), returns SCA status.
 
