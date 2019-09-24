@@ -74,9 +74,14 @@ If parameter = FALSE then XS2A sends the response with HTTP code 400 PARAMETER_N
 |*scaRequirementsForOneTimeConsents:* | | |
 |scaByOneTimeAvailableAccountsConsentRequired |This field indicates if ASPSP requires usage of SCA to validate a one-time available accounts consent.
 
-If parameter = FALSE  and sub-attribute within the "access" attribute with the value "allAccounts" then one-factor authorisation (PSU-ID and password) should be done to set consent status to Valid.
+If parameter = FALSE and "availableAccounts" or "availableAccountsWithBalance" sub-attribute within the "access" attribute has the value "allAccounts" then one-factor authorisation (PSU-ID and password) should be done to set consent status to Valid.
 
-If parameter = TRUE and  sub-attribute within the "access" attribute with the value "allAccounts", then two-factor authorisation(PSU-ID and password + TAN) should be done.|TRUE |TRUE, FALSE
+If parameter = TRUE and "availableAccounts" or "availableAccountsWithBalance" sub-attribute within the "access" attribute has the value "allAccounts", then two-factor authorisation(PSU-ID and password + TAN) should be done.|TRUE |TRUE, FALSE
+|scaByOneTimeGlobalConsentRequired |This field indicates if ASPSP requires usage of SCA to validate a one-time global consent.
+
+If parameter = FALSE and "allPsd2" sub-attribute within the "access" attribute has the value "allAccounts" then one-factor authorisation (PSU-ID and password) should be done to set consent status to Valid.
+
+If parameter = TRUE and "allPsd2" sub-attribute within the "access" attribute has the value "allAccounts", then two-factor authorisation(PSU-ID and password + TAN) should be done.|TRUE |TRUE, FALSE
 |*PIS:* | | |
 |supportedPaymentTypeAndProductMatrix |This field defines possible combination of payment-product/payment-type that ASPSP supports. Other payment products can be added for every payment type.
 

@@ -81,6 +81,7 @@ public class AspspProfileUpdateServiceImplTest {
     private static final long PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final boolean AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED = true;
     private static final boolean SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED = true;
+    private static final boolean SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED = true;
     private static final boolean PSU_IN_INITIAL_REQUEST_MANDATED = true;
     private static final boolean FORCE_XS2A_BASE_LINKS_URL = true;
     private static final String XS2A_BASE_LINKS_URL = "http://myhost.com/";
@@ -167,7 +168,7 @@ public class AspspProfileUpdateServiceImplTest {
                                                                                 SUPPORTED_TRANSACTION_APPLICATION_TYPES);
         DeltaReportSetting deltaReportSettings = new DeltaReportSetting(ENTRY_REFERENCE_FROM_SUPPORTED,
                                                                         DELTA_LIST_SUPPORTED);
-        OneTimeConsentScaSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaSetting(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED);
+        OneTimeConsentScaSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaSetting(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED);
         AisAspspProfileSetting ais = new AisAspspProfileSetting(consentTypes, aisRedirectLinkToOnlineBanking, transactionParameters, deltaReportSettings, scaRequirementsForOneTimeConsents);
         PisRedirectLinkSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkSetting(PIS_REDIRECT_LINK,
                                                                                            PIS_CANCELLATION_REDIRECT_LINK,

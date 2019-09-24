@@ -109,7 +109,7 @@ public class ConsentService {
      * @param explicitPreferred is TPP explicit authorisation preferred
      * @return CreateConsentResponse representing the complete response to create consent request
      */
-    public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred) { // NOPMD // TODO we need to refactor this method and class. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/749
+    public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred) { // NOPMD // TODO we need to refactor this method and class. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
         xs2aEventService.recordTppRequest(EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, request);
 
         ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(request, psuData));
@@ -135,7 +135,7 @@ public class ConsentService {
         }
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getInitialAccountConsentById(consentId);
-        // TODO we need to refactor this method and class. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/749
+        // TODO we need to refactor this method and class. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
         if (!accountConsentOptional.isPresent()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Create account consent  with response failed: Actual consent not found by id",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
@@ -148,7 +148,8 @@ public class ConsentService {
         InitialSpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider();
         aspspConsentDataProvider.saveWith(consentId);
 
-        SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(contextData, aisConsentMapper.mapToSpiAccountConsent(accountConsentOptional.get()), aspspConsentDataProvider);
+        AccountConsent accountConsent = accountConsentOptional.get();
+        SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(contextData, aisConsentMapper.mapToSpiAccountConsent(accountConsent), aspspConsentDataProvider);
 
         if (initiateAisConsentSpiResponse.hasError()) {
             aisConsentService.updateConsentStatus(consentId, ConsentStatus.REJECTED);
@@ -162,7 +163,7 @@ public class ConsentService {
 
         SpiInitiateAisConsentResponse spiResponsePayload = initiateAisConsentSpiResponse.getPayload();
         boolean multilevelScaRequired = spiResponsePayload.isMultilevelScaRequired()
-                                            && !aisScaAuthorisationService.isOneFactorAuthorisation(request.isConsentForAllAvailableAccounts(), request.isOneAccessType());
+                                            && !aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent);
 
         updateMultilevelSca(consentId, multilevelScaRequired);
 

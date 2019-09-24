@@ -272,14 +272,14 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_AllAccountsSpiMultilevelTrueScaRequiredFalse() {
+    public void createAccountConsentsWithResponse_Success_withMultilevelScaAndOneFactorAuthorisation() {
         // Given
         ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
         );
 
-        when(aisScaAuthorisationService.isOneFactorAuthorisation(true, true)).thenReturn(true);
+        when(aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent)).thenReturn(true);
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(true, null));
 
@@ -298,14 +298,14 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_AllAccountsSpiMultilevelTrueScaRequiredTrue() {
+    public void createAccountConsentsWithResponse_Success_withMultilevelSca() {
         // Given
         ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
         );
 
-        when(aisScaAuthorisationService.isOneFactorAuthorisation(true, true)).thenReturn(false);
+        when(aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent)).thenReturn(false);
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(true, null));
 
@@ -1148,7 +1148,6 @@ public class ConsentServiceTest {
     private TppInfo buildTppInfo() {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber(TPP_ID);
-        tppInfo.setTppRedirectUri(TPP_REDIRECT_URI);
         return tppInfo;
     }
 

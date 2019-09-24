@@ -17,7 +17,8 @@
         "aisRedirectUrlToAspsp": "http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}"
       },
       "scaRequirementsForOneTimeConsents": {
-        "scaByOneTimeAvailableAccountsConsentRequired": true
+        "scaByOneTimeAvailableAccountsConsentRequired": true,
+        "scaByOneTimeGlobalConsentRequired": true
       },
       "transactionParameters": {
         "availableBookingStatuses": [

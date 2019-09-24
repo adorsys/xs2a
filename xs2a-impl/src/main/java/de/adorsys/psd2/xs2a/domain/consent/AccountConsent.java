@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,7 +69,7 @@ public class AccountConsent {
     private final OffsetDateTime statusChangeTimestamp;
 
     @JsonIgnore
-    private Map<String, Integer> usageCounterMap = new HashMap<>();
+    private Map<String, Integer> usageCounterMap;
 
     @JsonIgnore
     public boolean isExpired() {
@@ -80,6 +79,11 @@ public class AccountConsent {
     @JsonIgnore
     public boolean isOneAccessType() {
         return !recurringIndicator;
+    }
+
+    @JsonIgnore
+    public boolean isGlobalConsent() {
+        return getAisConsentRequestType() == AisConsentRequestType.GLOBAL;
     }
 
     @JsonIgnore

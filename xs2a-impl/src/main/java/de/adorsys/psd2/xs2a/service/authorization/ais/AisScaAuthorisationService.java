@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,25 @@ import org.springframework.stereotype.Service;
 public class AisScaAuthorisationService {
     private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
-    public boolean isOneFactorAuthorisation(boolean isAllAvailableAccounts, boolean isOneAccessType) {
-        return isAllAvailableAccounts
-                   && isOneAccessType
-                   && !aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired();
+    /**
+     * Checks whether authorisation resource of this consent can be authenticated using only single factor
+     *
+     * @param accountConsent consent which is being authorised
+     * @return whether single-factor authentication is enough for this consent
+     */
+    public boolean isOneFactorAuthorisation(AccountConsent accountConsent) {
+        if (!accountConsent.isOneAccessType()) {
+            return false;
+        }
+
+        if (accountConsent.isConsentForAllAvailableAccounts()) {
+            return !aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired();
+        }
+
+        if (accountConsent.isGlobalConsent()) {
+            return !aspspProfileServiceWrapper.isScaByOneTimeGlobalConsentRequired();
+        }
+
+        return false;
     }
 }
