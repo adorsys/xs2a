@@ -227,6 +227,7 @@ public class AisScaStartAuthorisationStageTest {
     public void apply_Failure_AuthorisationStatusSpiResponseFailedWithBody() {
         SpiResponse<SpiAuthorisationStatus> spiResponse = SpiResponse.<SpiAuthorisationStatus>builder()
                                                               .payload(SpiAuthorisationStatus.FAILURE)
+                                                              .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
                                                               .build();
 
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))

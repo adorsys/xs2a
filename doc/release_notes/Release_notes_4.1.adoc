@@ -6,7 +6,6 @@
 * Bugfix: Wrong PSU-ID can authorise endpoints
 * Bugfix: Don't provide `creditorAddress` field in get payment response if it was absent in initiate payment request
 * Bugfix: Wrong `authorisation_id` can authorise
-* Bugfix: Don't check the authorisation result of `AuthorisationSpi#authorisePsu`
 
 == Change yaml-generator to correct model Objects equals
 
@@ -33,8 +32,3 @@ Fixed bug with updating authorisation by wrong `authorization_id`. From now on, 
 * `PUT /v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}`
 * `PUT /v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}`
 * `PUT /v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}`
-
-== Bugfix: Don't check the authorisation result of `AuthorisationSpi#authorisePsu`
-
-From now on, XS2A will check the authorisation result of `AuthorisationSpi#authorisePsu` and respond with 401
-`PSU_CREDENTIALS_INVALID` error code.
