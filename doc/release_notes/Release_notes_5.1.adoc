@@ -9,6 +9,7 @@
 * Bugfix: Wrong `authorisation_id` can authorise
 * Relative links are supported
 * Optional SCA for Global Consent
+* Bugfix: Array "account" in Read Balances and Read Transaction List responses is empty for Global consent
 
 == Change yaml-generator to correct model Objects equals
 
@@ -56,3 +57,8 @@ as `true` and `xs2aBaseLinksUrl` with a value, starting with `/` (for example `/
 
 New option `scaByOneTimeGlobalConsentRequired` has been added to the profile, indicating whether SCA has be performed to validate one-time global consent.
 If `scaByOneTimeGlobalConsentRequired` is set to `false`, then SCA for one-time global consent is not needed, meaning that authorisation resource for such consent will become finalised after providing PSU password in Update PSU Data request.
+
+== Bugfix: Array "account" in Read Balances and Read Transaction List responses is empty for Global consent
+
+From now on, array "account" in read balances `GET /v1/accounts/{account-id}/balances` and read transactions
+`GET /v1/accounts/{account-id}/transactions` is not empty for global consent, and contains account references.

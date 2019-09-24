@@ -280,7 +280,7 @@ public class TransactionService {
 
     private SpiAccountReference getRequestedAccountReference(AccountConsent accountConsent, String accountId) {
         Xs2aAccountAccess access = accountConsent.getAccess();
-        return accountHelperService.findAccountReference(access.getAllPsd2(), access.getTransactions(), accountId);
+        return accountHelperService.findAccountReference(access.getTransactions(), accountId);
     }
 
     private ResponseObject<Xs2aTransactionsReport> checkSpiResponseForTransactionsReport(Xs2aTransactionsReportByPeriodRequest request,
