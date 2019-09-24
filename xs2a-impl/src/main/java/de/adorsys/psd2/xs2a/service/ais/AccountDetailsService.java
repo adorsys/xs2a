@@ -44,7 +44,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -55,7 +54,6 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 
 @Slf4j
 @Service
-@Validated
 @AllArgsConstructor
 public class AccountDetailsService {
     private final AccountSpi accountSpi;
@@ -122,7 +120,7 @@ public class AccountDetailsService {
     }
 
     private ValidationResult getValidationResultForCommonAccountRequest(String accountId, boolean withBalance, String requestUri, AccountConsent accountConsent) {
-        CommonAccountRequestObject validatorObject =  new CommonAccountRequestObject(accountConsent, accountId, withBalance, requestUri);
+        CommonAccountRequestObject validatorObject = new CommonAccountRequestObject(accountConsent, accountId, withBalance, requestUri);
         return getAccountDetailsValidator.validate(validatorObject);
     }
 
