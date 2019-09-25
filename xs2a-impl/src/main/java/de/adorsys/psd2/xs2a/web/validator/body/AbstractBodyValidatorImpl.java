@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator.body;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.config.ValidationObject;
@@ -27,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Optional;
+
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 /**
  * Class with common functionality (AIS and PIS) for bodies validating.
@@ -57,12 +60,10 @@ public class AbstractBodyValidatorImpl implements BodyValidator {
 
     protected void checkFieldForMaxLength(String fieldToCheck, String fieldName, ValidationObject validationObject, MessageError messageError) {
         if (validationObject.isNone() && StringUtils.isNotBlank(fieldToCheck)) {
-            String text = String.format("The field '%s' is not expected in the request.", fieldName);
-            errorBuildingService.enrichMessageError(messageError, text);
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EXTRA_FIELD, fieldName));
         } else if (validationObject.isRequired()) {
             if (StringUtils.isBlank(fieldToCheck)) {
-                String text = String.format("Value '%s' cannot be empty", fieldName);
-                errorBuildingService.enrichMessageError(messageError, text);
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EMPTY_FIELD, fieldName));
             } else {
                 checkFieldForMaxLength(fieldToCheck, fieldName, validationObject.getMaxLength(), messageError);
             }
@@ -73,8 +74,7 @@ public class AbstractBodyValidatorImpl implements BodyValidator {
 
     private void checkFieldForMaxLength(@NotNull String fieldToCheck, String fieldName, int maxLength, MessageError messageError) {
         if (fieldToCheck.length() > maxLength) {
-            String text = String.format("Value '%s' should not be more than %s symbols", fieldName, maxLength);
-            errorBuildingService.enrichMessageError(messageError, text);
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_OVERSIZE_FIELD, fieldName, maxLength));
         }
     }
 
@@ -82,9 +82,13 @@ public class AbstractBodyValidatorImpl implements BodyValidator {
         try {
             return Optional.of(objectMapper.readValue(request.getInputStream(), clazz));
         } catch (IOException e) {
-            errorBuildingService.enrichMessageError(messageError, "Cannot deserialize the request body");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
         }
 
         return Optional.empty();
+    }
+
+    protected String extractErrorField(String message) {
+        return message.split("\"")[1];
     }
 }

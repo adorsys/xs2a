@@ -76,8 +76,7 @@ public class OptionalFieldMaxLengthValidatorTest {
         //Then
         assertFalse(messageError.getTppMessages().isEmpty());
         assertEquals(MessageCategory.ERROR, messageError.getTppMessage().getCategory());
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "PAN", 7),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"PAN", 7}, messageError.getTppMessage().getTextParameters());
     }
 }

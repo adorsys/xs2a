@@ -46,8 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -56,10 +55,9 @@ public class ConsentBodyFieldsValidatorImplTest {
     private static final String VALID_UNTIL_FIELD_NAME = "validUntil";
     private static final String CORRECT_FORMAT_DATE = "2021-10-10";
     private static final String WRONG_FORMAT_DATE = "07/01/2019 00:00:00";
-    private static final String DESERIALIZATION_ERROR = "Cannot deserialize the request body";
 
     private static final MessageError VALID_UNTIL_DATE_WRONG_VALUE_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Wrong format for 'validUntil': value should be ISO_DATE 'YYYY-MM-DD' format."));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_DATE_FIELD, "validUntil", "ISO_DATE", "YYYY-MM-DD"));
 
     private HttpServletRequest request;
     private ConsentBodyFieldsValidatorImpl validator;
@@ -187,8 +185,8 @@ public class ConsentBodyFieldsValidatorImplTest {
         consents.setRecurringIndicator(null);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'recurringIndicator' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new String[] {"recurringIndicator"}, messageError.getTppMessage().getTextParameters());
         verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
@@ -197,8 +195,8 @@ public class ConsentBodyFieldsValidatorImplTest {
         consents.setValidUntil(null);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'validUntil' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new String[] {"validUntil"}, messageError.getTppMessage().getTextParameters());
         verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
@@ -208,8 +206,8 @@ public class ConsentBodyFieldsValidatorImplTest {
         doNothing().when(tppRedirectUriBodyValidator).validate(request, messageError);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'validUntil' should not be in the past", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_DATE_IN_THE_PAST, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new String[] {"validUntil"}, messageError.getTppMessage().getTextParameters());
         verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
@@ -218,8 +216,8 @@ public class ConsentBodyFieldsValidatorImplTest {
         consents.setFrequencyPerDay(null);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'frequencyPerDay' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new String[] {"frequencyPerDay"}, messageError.getTppMessage().getTextParameters());
         verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
@@ -228,8 +226,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         consents.setFrequencyPerDay(0);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'frequencyPerDay' should not be lower than 1", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_INVALID_FREQUENCY, messageError.getTppMessage().getMessageErrorCode());
         verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
@@ -238,8 +235,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         consents.setFrequencyPerDay(-1);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'frequencyPerDay' should not be lower than 1", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_INVALID_FREQUENCY, messageError.getTppMessage().getMessageErrorCode());
         verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
@@ -259,8 +255,8 @@ public class ConsentBodyFieldsValidatorImplTest {
         validator.validate(request, messageError);
 
         // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Wrong value for availableAccounts", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new String[] {"availableAccounts"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -280,8 +276,8 @@ public class ConsentBodyFieldsValidatorImplTest {
         validator.validate(request, messageError);
 
         // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Wrong value for availableAccounts", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new String[] {"availableAccounts"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -301,8 +297,8 @@ public class ConsentBodyFieldsValidatorImplTest {
         validator.validate(request, messageError);
 
         // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Wrong value for allPsd2", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new String[] {"allPsd2"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -322,8 +318,8 @@ public class ConsentBodyFieldsValidatorImplTest {
         validator.validate(request, messageError);
 
         // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Wrong value for allPsd2", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new String[] {"allPsd2"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -342,8 +338,8 @@ public class ConsentBodyFieldsValidatorImplTest {
         validator.validate(request, messageError);
 
         // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Wrong value for availableAccountsWithBalance", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new String[] {"availableAccountsWithBalance"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -363,8 +359,8 @@ public class ConsentBodyFieldsValidatorImplTest {
         validator.validate(request, messageError);
 
         // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Wrong value for availableAccountsWithBalance", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new String[] {"availableAccountsWithBalance"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -378,8 +374,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         validator.validate(malformedRequest, messageError);
 
         // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(DESERIALIZATION_ERROR, messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_DESERIALIZATION_FAIL, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test

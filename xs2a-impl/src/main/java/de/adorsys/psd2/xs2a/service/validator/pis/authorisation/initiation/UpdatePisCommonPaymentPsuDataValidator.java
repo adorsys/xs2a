@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -60,7 +59,7 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValida
         if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, PaymentAuthorisationType.CREATED)) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data  has failed: endpoint is not accessible for authorisation",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
-            return ValidationResult.invalid(PIS_403, TppMessageInformation.of(SERVICE_BLOCKED));
+            return ValidationResult.invalid(PIS_403, SERVICE_BLOCKED);
         }
 
         PisCommonPaymentResponse pisCommonPaymentResponse = paymentObject.getPisCommonPaymentResponse();
@@ -68,7 +67,7 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValida
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: payment has been rejected",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
-            return ValidationResult.invalid(PIS_403, TppMessageInformation.of(RESOURCE_EXPIRED_403));
+            return ValidationResult.invalid(PIS_403, RESOURCE_EXPIRED_403);
         }
 
         ValidationResult authorisationValidationResult = pisAuthorisationValidator.validate(authorisationId, pisCommonPaymentResponse, paymentObject.getPsuIdData());

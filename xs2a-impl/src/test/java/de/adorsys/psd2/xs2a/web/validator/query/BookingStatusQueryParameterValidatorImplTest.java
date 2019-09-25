@@ -39,12 +39,13 @@ import static org.mockito.Mockito.*;
 public class BookingStatusQueryParameterValidatorImplTest {
     private static final String BOOKING_STATUS_PARAMETER_NAME = "bookingStatus";
     private static final MessageError MISSING_VALUE_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Query parameter 'bookingStatus' is missing in request"));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_ABSENT_PARAMETER, BOOKING_STATUS_PARAMETER_NAME));
     private static final MessageError BLANK_VALUE_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Query parameter 'bookingStatus' should not be blank"));
-    private static final String INVALID_VALUE_ERROR_TEXT = "Query parameter 'bookingStatus' has invalid value";
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_BLANK_PARAMETER, BOOKING_STATUS_PARAMETER_NAME));
+    private static final TppMessageInformation TPP_MESSAGE_INFORMATION =
+    TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_INVALID_PARAMETER_VALUE, BOOKING_STATUS_PARAMETER_NAME);
     private static final MessageError INVALID_VALUE_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, INVALID_VALUE_ERROR_TEXT));
+        new MessageError(ErrorType.AIS_400, TPP_MESSAGE_INFORMATION);
 
     @InjectMocks
     private BookingStatusQueryParameterParamsValidatorImpl bookingStatusValidator;
@@ -73,7 +74,6 @@ public class BookingStatusQueryParameterValidatorImplTest {
         verify(errorBuildingService, never()).buildErrorType();
         verify(errorBuildingService, never()).enrichMessageError(eq(messageError), any(TppMessageInformation.class));
         verify(errorBuildingService, never()).enrichMessageError(eq(messageError), any(MessageError.class));
-        verify(errorBuildingService, never()).enrichMessageError(eq(messageError), any(String.class));
     }
 
     @Test
@@ -88,7 +88,6 @@ public class BookingStatusQueryParameterValidatorImplTest {
         verify(errorBuildingService).buildErrorType();
         verify(errorBuildingService, never()).enrichMessageError(eq(messageError), any(TppMessageInformation.class));
         verify(errorBuildingService).enrichMessageError(eq(messageError), messageErrorCaptor.capture());
-        verify(errorBuildingService, never()).enrichMessageError(eq(messageError), any(String.class));
 
         assertEquals(MISSING_VALUE_ERROR, messageErrorCaptor.getValue());
     }
@@ -106,7 +105,6 @@ public class BookingStatusQueryParameterValidatorImplTest {
         verify(errorBuildingService).buildErrorType();
         verify(errorBuildingService, never()).enrichMessageError(eq(messageError), any(TppMessageInformation.class));
         verify(errorBuildingService).enrichMessageError(eq(messageError), messageErrorCaptor.capture());
-        verify(errorBuildingService, never()).enrichMessageError(eq(messageError), any(String.class));
 
         assertEquals(BLANK_VALUE_ERROR, messageErrorCaptor.getValue());
     }
@@ -115,18 +113,18 @@ public class BookingStatusQueryParameterValidatorImplTest {
     public void validate_withInvalidValue_shouldEnrichError() {
         // Given
         queryParams.put(BOOKING_STATUS_PARAMETER_NAME, Collections.singletonList("invalid value"));
-        ArgumentCaptor<String> errorTextCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<TppMessageInformation> errorTextCaptor = ArgumentCaptor.forClass(TppMessageInformation.class);
 
         // When
         bookingStatusValidator.validate(queryParams, messageError);
 
         // Then
         verify(errorBuildingService, never()).buildErrorType();
-        verify(errorBuildingService, never()).enrichMessageError(eq(messageError), any(TppMessageInformation.class));
+        verify(errorBuildingService, times(1)).enrichMessageError(eq(messageError), any(TppMessageInformation.class));
         verify(errorBuildingService, never()).enrichMessageError(eq(messageError), any(MessageError.class));
         verify(errorBuildingService).enrichMessageError(eq(messageError), errorTextCaptor.capture());
 
-        assertEquals(INVALID_VALUE_ERROR_TEXT, errorTextCaptor.getValue());
+        assertEquals(TPP_MESSAGE_INFORMATION, errorTextCaptor.getValue());
     }
 
     @Test
@@ -142,7 +140,6 @@ public class BookingStatusQueryParameterValidatorImplTest {
         verify(errorBuildingService).buildErrorType();
         verify(errorBuildingService, never()).enrichMessageError(eq(messageError), any(TppMessageInformation.class));
         verify(errorBuildingService).enrichMessageError(eq(messageError), messageErrorCaptor.capture());
-        verify(errorBuildingService, never()).enrichMessageError(eq(messageError), any(String.class));
 
         assertEquals(INVALID_VALUE_ERROR, messageErrorCaptor.getValue());
     }

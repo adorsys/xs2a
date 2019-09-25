@@ -59,6 +59,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Optional;
 import java.util.UUID;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -69,7 +70,6 @@ public class AisScaMethodSelectedStageTest {
     private static final String AUTHORISATION_ID = "Test authorisation id";
     private static final String TEST_AUTHENTICATION_METHOD_ID = "sms";
     private static final ScaStatus METHOD_SELECTED_SCA_STATUS = ScaStatus.SCAMETHODSELECTED;
-    private static final MessageErrorCode ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final PsuIdData PSU_DATA = new PsuIdData("some psuId", null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
@@ -188,7 +188,7 @@ public class AisScaMethodSelectedStageTest {
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(), ServiceType.AIS))
             .thenReturn(ErrorHolder
                             .builder(ErrorType.AIS_400)
-                            .tppMessages(TppMessageInformation.of(ERROR_CODE, ""))
+                            .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
                             .build());
 
         UpdateConsentPsuDataResponse actualResponse = scaMethodSelectedStage.apply(request);
@@ -236,7 +236,7 @@ public class AisScaMethodSelectedStageTest {
     // Needed because SpiResponse is final, so it's impossible to mock it
     private SpiResponse<SpiAuthorizationCodeResult> buildErrorSpiResponse() {
         return SpiResponse.<SpiAuthorizationCodeResult>builder()
-                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                   .error(new TppMessage(FORMAT_ERROR))
                    .build();
     }
 

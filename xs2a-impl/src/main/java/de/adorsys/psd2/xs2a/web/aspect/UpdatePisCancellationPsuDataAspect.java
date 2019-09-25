@@ -20,7 +20,6 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import de.adorsys.psd2.xs2a.web.link.UpdatePisCancellationPsuDataLinks;
@@ -33,8 +32,8 @@ import org.springframework.stereotype.Component;
 public class UpdatePisCancellationPsuDataAspect extends AbstractLinkAspect<PaymentController> {
     private ScaApproachResolver scaApproachResolver;
 
-    public UpdatePisCancellationPsuDataAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, AspspProfileServiceWrapper aspspProfileServiceWrapper) {
-        super(messageService, aspspProfileServiceWrapper);
+    public UpdatePisCancellationPsuDataAspect(ScaApproachResolver scaApproachResolver, AspspProfileServiceWrapper aspspProfileServiceWrapper) {
+        super(aspspProfileServiceWrapper);
         this.scaApproachResolver = scaApproachResolver;
     }
 
@@ -44,10 +43,8 @@ public class UpdatePisCancellationPsuDataAspect extends AbstractLinkAspect<Payme
             Xs2aUpdatePisCommonPaymentPsuDataResponse body = result.getBody();
             body.setLinks(new UpdatePisCancellationPsuDataLinks(getHttpUrl(), scaApproachResolver, request,
                                                                 body.getScaStatus(), body.getChosenScaMethod()));
-            return result;
         }
 
-        return enrichErrorTextMessage(result);
+        return result;
     }
-
 }

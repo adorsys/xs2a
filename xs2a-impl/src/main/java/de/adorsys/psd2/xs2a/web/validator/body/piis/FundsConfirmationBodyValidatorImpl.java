@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.validator.body.piis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.Amount;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
@@ -29,6 +30,8 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
+
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_NULL_VALUE;
 
 @Component
 public class FundsConfirmationBodyValidatorImpl extends AbstractBodyValidatorImpl implements FundsConfirmationBodyValidator {
@@ -56,13 +59,13 @@ public class FundsConfirmationBodyValidatorImpl extends AbstractBodyValidatorImp
         ConfirmationOfFunds confirmationOfFunds = confirmationOfFundsOptional.get();
 
         if (confirmationOfFunds.getAccount() == null) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'access' should not be null");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "access"));
         } else {
             accountReferenceValidator.validate(confirmationOfFunds.getAccount(), messageError);
         }
 
         if (confirmationOfFunds.getInstructedAmount() == null) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'instructedAmount' should not be null");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "instructedAmount"));
         } else {
             validateAmount(confirmationOfFunds.getInstructedAmount(), messageError);
         }

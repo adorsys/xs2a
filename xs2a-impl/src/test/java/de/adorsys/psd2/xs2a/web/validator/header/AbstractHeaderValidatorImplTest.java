@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.header;
 
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import org.junit.Before;
@@ -27,7 +28,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.HashMap;
 import java.util.Map;
 
-import static de.adorsys.psd2.xs2a.web.validator.header.AbstractHeaderValidatorImpl.ERROR_TEXT_BOOLEAN_FORMAT;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_BOOLEAN_VALUE;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -50,7 +51,7 @@ public class AbstractHeaderValidatorImplTest {
     public void checkBooleanFormat_headerIsNotPresented() {
         validator.checkBooleanFormat(headers, messageError);
 
-        verify(errorBuildingService, never()).enrichMessageError(any(MessageError.class), any(String.class));
+        verify(errorBuildingService, never()).enrichMessageError(any(MessageError.class), any(TppMessageInformation.class));
     }
 
     @Test
@@ -58,14 +59,14 @@ public class AbstractHeaderValidatorImplTest {
         headers.put(validator.getHeaderName(), "true");
         validator.checkBooleanFormat(headers, messageError);
 
-        verify(errorBuildingService, never()).enrichMessageError(any(MessageError.class), any(String.class));
+        verify(errorBuildingService, never()).enrichMessageError(any(MessageError.class), any(TppMessageInformation.class));
         reset(errorBuildingService);
 
         validator = new TppRedirectPreferredHeaderValidatorImpl(errorBuildingService);
         headers.put(validator.getHeaderName(), "FaLsE");
         validator.checkBooleanFormat(headers, messageError);
 
-        verify(errorBuildingService, never()).enrichMessageError(any(MessageError.class), any(String.class));
+        verify(errorBuildingService, never()).enrichMessageError(any(MessageError.class), any(TppMessageInformation.class));
         reset(errorBuildingService);
     }
 
@@ -75,6 +76,6 @@ public class AbstractHeaderValidatorImplTest {
         validator.checkBooleanFormat(headers, messageError);
 
         verify(errorBuildingService, times(1)).enrichMessageError(eq(messageError),
-                                                                  eq(String.format(ERROR_TEXT_BOOLEAN_FORMAT, validator.getHeaderName())));
+                                                                  eq(TppMessageInformation.of(FORMAT_ERROR_BOOLEAN_VALUE, validator.getHeaderName())));
     }
 }

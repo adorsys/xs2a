@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.header;
 
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +25,13 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Set;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_OVERSIZE_HEADER;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.HEADERS_MAX_LENGTHS;
 
 
 @Component
 public class HeadersLengthValidatorImpl extends AbstractHeaderValidatorImpl
     implements ConsentHeaderValidator, PaymentHeaderValidator {
-
-    private static final String HEADER_LENGTH_ERROR_TEXT = "Header '%s' should not be more than %s symbols";
 
     @Autowired
     public HeadersLengthValidatorImpl(ErrorBuildingService errorBuildingService) {
@@ -47,8 +47,7 @@ public class HeadersLengthValidatorImpl extends AbstractHeaderValidatorImpl
     public void validate(Map<String, String> inputHeaders, MessageError messageError) {
         for (Map.Entry<String, String> header : inputHeaders.entrySet()) {
             if (isHeaderExceedsLength(header)) {
-                String resultingMessage = prepareErrorMessage(header.getKey());
-                errorBuildingService.enrichMessageError(messageError, resultingMessage);
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_OVERSIZE_HEADER, header.getKey(), HEADERS_MAX_LENGTHS.get(header.getKey())));
             }
         }
     }
@@ -63,9 +62,5 @@ public class HeadersLengthValidatorImpl extends AbstractHeaderValidatorImpl
         Set<String> headersToValidate = HEADERS_MAX_LENGTHS.keySet();
         return headersToValidate.contains(headerNameLowerCase)
                         && headerValue.length() > HEADERS_MAX_LENGTHS.get(headerNameLowerCase);
-    }
-
-    private String prepareErrorMessage(String headerNameLowerCase) {
-        return String.format(HEADER_LENGTH_ERROR_TEXT, headerNameLowerCase, HEADERS_MAX_LENGTHS.get(headerNameLowerCase));
     }
 }

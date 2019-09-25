@@ -36,7 +36,7 @@ public class MessageService {
         } catch (NoSuchMessageException e) {
             log.info("Can't get message: {}", e.getMessage());
         }
-        return null;
+        return code;
     }
 }
 

@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetailsHolder;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountListHolder;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.AccountDetailsLinks;
@@ -39,7 +38,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_4
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountAspectTest {
@@ -47,12 +46,9 @@ public class AccountAspectTest {
     private static final String CONSENT_ID = "some consent id";
     private static final String ACCOUNT_ID = "some account id";
     private static final String REQUEST_URI = "/v1/accounts";
-    private static final String ERROR_TEXT = "Error occurred while processing";
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    @Mock
-    private MessageService messageService;
 
     private Xs2aAccountDetails accountDetails;
     private AccountConsent accountConsent;
@@ -63,7 +59,7 @@ public class AccountAspectTest {
 
     @Before
     public void setUp() {
-        aspect = new AccountAspect(messageService, aspspProfileServiceWrapper);
+        aspect = new AccountAspect(aspspProfileServiceWrapper);
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
         when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
         when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
@@ -85,15 +81,12 @@ public class AccountAspectTest {
 
     @Test
     public void getAccountDetailsAspect_withError_shouldAddTextErrorMessage() {
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
-
         responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                              .build();
         ResponseObject actualResponse = aspect.getAccountDetailsAspect(responseObject, CONSENT_ID, ACCOUNT_ID, true, REQUEST_URI);
 
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 
     @Test
@@ -110,14 +103,11 @@ public class AccountAspectTest {
 
     @Test
     public void getAccountDetailsListAspect_withError_shouldAddTextErrorMessage() {
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
-
         responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                              .build();
         ResponseObject actualResponse = aspect.getAccountDetailsListAspect(responseObject, CONSENT_ID, true, REQUEST_URI);
 
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 }

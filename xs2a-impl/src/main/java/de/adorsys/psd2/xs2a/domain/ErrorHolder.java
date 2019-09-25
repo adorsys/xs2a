@@ -71,7 +71,7 @@ public class ErrorHolder {
                          .map(ErrorType::name)
                          .orElse("")
                    : tppMessageInformationList.stream()
-                         .map(TppMessageInformation::getText)
+                         .map(t -> t.getMessageErrorCode().getName())
                          .collect(Collectors.joining(", "));
     }
 }

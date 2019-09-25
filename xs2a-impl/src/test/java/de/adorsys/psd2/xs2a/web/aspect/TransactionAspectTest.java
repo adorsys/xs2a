@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsDownloadResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
@@ -39,7 +38,6 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_4
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -50,13 +48,10 @@ public class TransactionAspectTest {
     private static final String RESOURCE_ID = "some resource id";
     private static final String DOWNLOAD_ID = "1234asdfqw==";
     private static final String REQUEST_URI = "/v1/accounts";
-    private static final String ERROR_TEXT = "Error occurred while processing";
     private Xs2aTransactionsReportByPeriodRequest xs2aTransactionsReportByPeriodRequest;
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    @Mock
-    private MessageService messageService;
     @Mock
     private Xs2aTransactionsReport transactionsReport;
 
@@ -67,7 +62,7 @@ public class TransactionAspectTest {
 
     @Before
     public void setUp() {
-        aspect = new TransactionAspect(messageService, aspspProfileServiceWrapper);
+        aspect = new TransactionAspect(aspspProfileServiceWrapper);
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
         when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
         when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
@@ -90,7 +85,6 @@ public class TransactionAspectTest {
     @Test
     public void getTransactionsReportByPeriod_withError_shouldAddTextErrorMessage() {
         xs2aTransactionsReportByPeriodRequest = jsonReader.getObjectFromFile("json/Xs2aTransactionsReportByPeriodRequest.json", Xs2aTransactionsReportByPeriodRequest.class);
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
         responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
@@ -100,7 +94,6 @@ public class TransactionAspectTest {
         ResponseObject actualResponse = aspect.getTransactionsReportByPeriod(responseObject, xs2aTransactionsReportByPeriodRequest);
 
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 
     @Test
@@ -117,15 +110,12 @@ public class TransactionAspectTest {
 
     @Test
     public void getTransactionDetailsAspect_withError_shouldAddTextErrorMessage() {
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
-
         responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                              .build();
         ResponseObject actualResponse = aspect.getTransactionDetailsAspect(responseObject, CONSENT_ID, ACCOUNT_ID, RESOURCE_ID, REQUEST_URI);
 
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 
     @Test
@@ -142,14 +132,11 @@ public class TransactionAspectTest {
 
     @Test
     public void downloadTransactionsAspect_withError_shouldAddTextErrorMessage() {
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
-
         responseObject = ResponseObject.<Xs2aTransactionsDownloadResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                              .build();
         ResponseObject actualResponse = aspect.downloadTransactions(responseObject, CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
 
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 }

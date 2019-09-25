@@ -21,7 +21,6 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.UpdatePisPsuDataLinks;
@@ -35,18 +34,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdatePisPsuDataAspectTest {
-    private static final String ERROR_TEXT = "Error occurred while processing";
 
     @InjectMocks
     private UpdatePisPsuDataAspect aspect;
 
-    @Mock
-    private MessageService messageService;
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
     @Mock
@@ -81,8 +78,6 @@ public class UpdatePisPsuDataAspectTest {
 
     @Test
     public void updatePisCancellationAuthorizationAspect_withError_shouldAddTextErrorMessage() {
-        // Given
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
         // When
         responseObject = ResponseObject.builder()
@@ -92,6 +87,5 @@ public class UpdatePisPsuDataAspectTest {
 
         // Then
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 }

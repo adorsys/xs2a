@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.CreateConsentLinks;
@@ -44,7 +43,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentAspectTest {
     private static final String CONSENT_ID = "some consent id";
-    private static final String ERROR_TEXT = "Error occurred while processing";
 
     @InjectMocks
     private ConsentAspect aspect;
@@ -55,8 +53,6 @@ public class ConsentAspectTest {
     private ScaApproachResolver scaApproachResolver;
     @Mock
     private AuthorisationMethodDecider authorisationMethodDecider;
-    @Mock
-    private MessageService messageService;
     @Mock
     private CreateConsentResponse createConsentResponse;
     @Mock
@@ -91,7 +87,6 @@ public class ConsentAspectTest {
 
     @Test
     public void invokeCreateAccountConsentAspect_withError_shouldAddTextErrorMessage() {
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
         ResponseObject<CreateConsentResponse> responseObject = ResponseObject.<CreateConsentResponse>builder()
                                                                    .fail(AIS_400, of(CONSENT_UNKNOWN_400))
@@ -99,7 +94,7 @@ public class ConsentAspectTest {
         ResponseObject actualResponse = aspect.invokeCreateAccountConsentAspect(responseObject, new CreateConsentReq(), null, true);
 
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
+        assertEquals(CONSENT_UNKNOWN_400, responseObject.getError().getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -130,7 +125,6 @@ public class ConsentAspectTest {
 
     @Test
     public void invokeCreateConsentPsuDataAspect_wrongResponseType() {
-
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .body(createConsentAuthorisationResponse)
                                                                    .build();
@@ -142,15 +136,13 @@ public class ConsentAspectTest {
 
     @Test
     public void invokeCreateConsentPsuDataAspect_withError_shouldAddTextErrorMessage() {
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
-
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                    .build();
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
+        assertEquals(CONSENT_UNKNOWN_400, responseObject.getError().getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -181,15 +173,13 @@ public class ConsentAspectTest {
 
     @Test
     public void invokeUpdateConsentPsuDataAspect_withError_shouldAddTextErrorMessage() {
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
-
         ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                                                           .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                           .build();
         ResponseObject actualResponse = aspect.invokeUpdateConsentPsuDataAspect(responseObject, new UpdateConsentPsuDataReq());
 
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
+        assertEquals(CONSENT_UNKNOWN_400, responseObject.getError().getTppMessage().getMessageErrorCode());
     }
 
 }

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -59,6 +60,8 @@ public class QwacCertificateFilterTest {
     private FilterChain chain;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private TppErrorMessageBuilder tppErrorMessageBuilder;
 
     @Test
     public void doFilterInternal_success() throws IOException, ServletException {
@@ -80,7 +83,7 @@ public class QwacCertificateFilterTest {
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);
         when(response.getWriter()).thenReturn(printWriter);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-
+        when(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, CERTIFICATE_EXPIRED)).thenReturn(TPP_ERROR_MESSAGE_EXPIRED);
 
         //When
         qwacCertificateFilter.doFilterInternal(request, response, chain);

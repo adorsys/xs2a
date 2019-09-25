@@ -55,7 +55,7 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     private static final String INVALID_AUTHORISATION_ID = "invalid authorisation id";
 
     private static final MessageError TPP_VALIDATION_ERROR =
-        new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED, "Invalid TPP"));
+        new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final MessageError BLOCKED_ENDPOINT_ERROR = new MessageError(PIS_403, of(SERVICE_BLOCKED));
     private static final MessageError INVALID_AUTHORISATION_ERROR = new MessageError(PIS_403, of(RESOURCE_UNKNOWN_403));
 

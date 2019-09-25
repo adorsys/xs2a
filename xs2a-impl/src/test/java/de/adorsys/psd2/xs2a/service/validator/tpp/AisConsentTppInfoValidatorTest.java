@@ -76,7 +76,7 @@ public class AisConsentTppInfoValidatorTest {
     public void validateTpp_withDifferentTppInConsent_shouldReturnError() {
         // Given
         MessageError expectedError = new MessageError(ErrorType.AIS_403,
-                                                      TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_403, "TPP certificate doesn’t match the initial request"));
+                                                      TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_403_INCORRECT_CERTIFICATE));
 
         // When
         ValidationResult validationResult = aisConsentTppInfoValidator.validateTpp(DIFFERENT_TPP_INFO);

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator.body;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
@@ -30,14 +31,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_REDIRECT_URI;
 
 @Component
 @RequiredArgsConstructor
 public class TppRedirectUriBodyValidatorImpl implements BodyValidator {
-    static final String ERROR_TEXT_ABSENT_HEADER = "Header '%s' is missing in request";
-    static final String ERROR_TEXT_NULL_HEADER = "Header '%s' should not be null";
-    static final String ERROR_TEXT_BLANK_HEADER = "Header '%s' should not be blank";
 
     private final ScaApproachResolver scaApproachResolver;
     private final ErrorBuildingService errorBuildingService;
@@ -51,11 +50,11 @@ public class TppRedirectUriBodyValidatorImpl implements BodyValidator {
                                               .collect(Collectors.toMap(String::toLowerCase, request::getHeader));
 
             if (!headers.containsKey(TPP_REDIRECT_URI)) {
-                errorBuildingService.enrichMessageError(messageError, String.format(ERROR_TEXT_ABSENT_HEADER, TPP_REDIRECT_URI));
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_ABSENT_HEADER, TPP_REDIRECT_URI));
             } else if (Objects.isNull(tppRedirectUriHeader)) {
-                errorBuildingService.enrichMessageError(messageError, String.format(ERROR_TEXT_NULL_HEADER, TPP_REDIRECT_URI));
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_HEADER, TPP_REDIRECT_URI));
             } else if (StringUtils.isBlank(tppRedirectUriHeader)) {
-                errorBuildingService.enrichMessageError(messageError, String.format(ERROR_TEXT_BLANK_HEADER, TPP_REDIRECT_URI));
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_BLANK_HEADER, TPP_REDIRECT_URI));
             }
         }
     }

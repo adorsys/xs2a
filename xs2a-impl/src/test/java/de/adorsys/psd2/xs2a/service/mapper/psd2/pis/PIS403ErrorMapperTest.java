@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.function.Function;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PRODUCT_INVALID;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,13 +41,11 @@ import static org.mockito.Mockito.when;
 public class PIS403ErrorMapperTest {
     private static final String ERROR_JSON_PATH = "json/service/mapper/psd2/pis/Error403NGPIS.json";
     private static final String ERROR_CUSTOM_TEXT_JSON_PATH = "json/service/mapper/psd2/pis/Error403NGPIS-custom-text.json";
-    private static final MessageErrorCode ERROR_CODE = MessageErrorCode.PRODUCT_INVALID;
-    private static final String ERROR_TEXT = "Some text";
     private static final String CUSTOM_ERROR_TEXT = "Custom text";
     private static final MessageError MESSAGE_ERROR = new MessageError(ErrorType.PIS_403,
-                                                                       TppMessageInformation.of(ERROR_CODE, ERROR_TEXT));
+                                                                       TppMessageInformation.of(PRODUCT_INVALID, "payment"));
     private static final MessageError MESSAGE_ERROR_WITHOUT_TEXT = new MessageError(ErrorType.PIS_403,
-                                                                                    TppMessageInformation.of(ERROR_CODE));
+                                                                                    TppMessageInformation.of(PRODUCT_INVALID));
 
     private JsonReader jsonReader = new JsonReader();
     @Mock
@@ -67,6 +66,7 @@ public class PIS403ErrorMapperTest {
     public void getMapper_shouldReturnCorrectErrorMapper() {
         // Given
         Error403NGPIS expectedError = jsonReader.getObjectFromFile(ERROR_JSON_PATH, Error403NGPIS.class);
+        when(messageService.getMessage(PRODUCT_INVALID.getName())).thenReturn("The addressed %s product is not available for the PSU");
 
         // When
         Function<MessageError, Error403NGPIS> mapper = pis403ErrorMapper.getMapper();
@@ -78,7 +78,7 @@ public class PIS403ErrorMapperTest {
 
     @Test
     public void getMapper_withNoTextInTppMessage_shouldGetTextFromMessageService() {
-        when(messageService.getMessage(ERROR_CODE.name()))
+        when(messageService.getMessage(PRODUCT_INVALID.name()))
             .thenReturn(CUSTOM_ERROR_TEXT);
 
         // Given
@@ -90,6 +90,6 @@ public class PIS403ErrorMapperTest {
 
         // Then
         assertEquals(expectedError, actualError);
-        verify(messageService).getMessage(ERROR_CODE.name());
+        verify(messageService).getMessage(PRODUCT_INVALID.name());
     }
 }

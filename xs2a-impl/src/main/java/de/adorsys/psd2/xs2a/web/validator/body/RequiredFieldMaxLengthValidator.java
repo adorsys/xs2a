@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body;
 
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.ObjectValidator;
@@ -23,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_EMPTY_FIELD;
 
 @Component
 @RequiredArgsConstructor
@@ -34,8 +37,7 @@ public class RequiredFieldMaxLengthValidator implements ObjectValidator<StringMa
     @Override
     public void validate(@NotNull StringMaxLengthValidator.MaxLengthRequirement object, @NotNull MessageError messageError) {
         if (StringUtils.isBlank(object.getField())) {
-            String text = String.format("Value '%s' cannot be empty", object.getFieldName());
-            errorBuildingService.enrichMessageError(messageError, text);
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EMPTY_FIELD, object.getFieldName()));
         } else {
             stringMaxLengthValidator.validate(object, messageError);
         }

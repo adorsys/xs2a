@@ -84,7 +84,7 @@ public class PisTppInfoValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
 
-        MessageError expectedError = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(MessageErrorCode.CERTIFICATE_INVALID, "Invalid TPP"));
+        MessageError expectedError = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(MessageErrorCode.CERTIFICATE_INVALID_TPP));
         assertEquals(expectedError.getErrorType(), validationResult.getMessageError().getErrorType());
         assertEquals(expectedError.getTppMessage().getMessageErrorCode(), validationResult.getMessageError().getTppMessage().getMessageErrorCode());
     }

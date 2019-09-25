@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,7 +83,7 @@ public class HeadersLengthValidatorImplTest {
         assertFalse(messageError.getTppMessages().isEmpty());
         assertEquals(headers.size(), messageError.getTppMessages().size());
         messageError.getTppMessages().forEach(message -> assertEquals(MessageCategory.ERROR, message.getCategory()));
-        messageError.getTppMessages().forEach(message -> assertEquals(MessageErrorCode.FORMAT_ERROR, message.getMessageErrorCode()));
+        messageError.getTppMessages().forEach(message -> assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_HEADER, message.getMessageErrorCode()));
     }
 
     @Test

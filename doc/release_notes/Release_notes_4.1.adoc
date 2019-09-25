@@ -7,6 +7,7 @@
 * Bugfix: Don't provide `creditorAddress` field in get payment response if it was absent in initiate payment request
 * Bugfix: Wrong `authorisation_id` can authorise
 * Bugfix: Array "account" in Read Balances and Read Transaction List responses is empty for Global consent
+* Refactor: Aggregate all messages sent to TPP to message bundle
 
 == Change yaml-generator to correct model Objects equals
 
@@ -38,3 +39,9 @@ Fixed bug with updating authorisation by wrong `authorization_id`. From now on, 
 
 From now on, array "account" in read balances `GET /v1/accounts/{account-id}/balances` and read transactions
 `GET /v1/accounts/{account-id}/transactions` is not empty for global consent, and contains account references.
+
+== Refactor: Aggregate all messages sent to TPP to message bundle
+
+From now on all text messages for TPP are aggregated in `error_message.properties` file. These messages are executed by
+`Psd2ErrorMapper`. Also from now on class `TppMessageInformation` has new array field `textParameters` for keeping
+values, which should be inserted into message text placeholders for TPP from `error_message.properties`.

@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
@@ -38,7 +37,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 
 @Slf4j
@@ -51,7 +50,7 @@ public class PiisConsentValidation {
     public PiisConsentValidationResult validatePiisConsentData(List<PiisConsent> piisConsents) {
         if (CollectionUtils.isEmpty(piisConsents)) {
             return new PiisConsentValidationResult(ErrorHolder.builder(PIIS_400)
-                                                       .tppMessages(TppMessageInformation.of(MessageErrorCode.NO_PIIS_ACTIVATION, ""))
+                                                       .tppMessages(TppMessageInformation.of(NO_PIIS_ACTIVATION))
                                                        .build());
         }
         Optional<PiisConsent> filteredPiisConsent = piisConsents.stream()
@@ -64,7 +63,7 @@ public class PiisConsentValidation {
 
         ValidationResult validationResult = filteredPiisConsent
                                                 .map(this::isTppValid)
-                                                .orElseGet(() -> ValidationResult.invalid(PIIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400)));
+                                                .orElseGet(() -> ValidationResult.invalid(PIIS_400, CONSENT_UNKNOWN_400));
 
         if (validationResult.isNotValid()) {
             return new PiisConsentValidationResult(buildErrorHolderFromMessageError(validationResult.getMessageError()));
@@ -83,7 +82,8 @@ public class PiisConsentValidation {
 
             log.error("InR-ID: [{}], X-Request-ID: [{}]. Unknown TPP access type: {}",
                       requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), accessType);
-            return ValidationResult.invalid(PIIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400, String.format("Unknown TPP access type: %s", accessType)));
+            return accessType == null ? ValidationResult.invalid(PIIS_400, CONSENT_UNKNOWN_400_NULL_ACCESS_TYPE):
+                       ValidationResult.invalid(PIIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400_UNKNOWN_ACCESS_TYPE, accessType));
         }
     }
 

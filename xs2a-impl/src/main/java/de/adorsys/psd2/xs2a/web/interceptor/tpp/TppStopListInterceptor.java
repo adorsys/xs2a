@@ -76,6 +76,6 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
     }
 
     private TppMessageInformation buildErrorTppMessages() {
-        return of(CERTIFICATE_BLOCKED, STOP_LIST_ERROR_MESSAGE);
+        return of(CERTIFICATE_BLOCKED);
     }
 }

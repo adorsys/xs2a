@@ -26,7 +26,6 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.PisAuthorisationCancellationLinks;
@@ -41,7 +40,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -49,7 +49,6 @@ public class CreatePisAuthorisationCancellationAspectTest {
 
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
-    private static final String ERROR_TEXT = "Error occurred while processing";
     private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
     private static final Xs2aCreatePisAuthorisationRequest REQUEST =
         new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, EMPTY_PSU_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), null);
@@ -59,8 +58,6 @@ public class CreatePisAuthorisationCancellationAspectTest {
 
     @Mock
     private ScaApproachResolver scaApproachResolver;
-    @Mock
-    private MessageService messageService;
     @Mock
     private Xs2aCreatePisCancellationAuthorisationResponse createResponse;
     @Mock
@@ -110,9 +107,6 @@ public class CreatePisAuthorisationCancellationAspectTest {
 
     @Test
     public void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
-        // Given
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
-
         // When
         responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
@@ -122,7 +116,6 @@ public class CreatePisAuthorisationCancellationAspectTest {
 
         // Then
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 
 }

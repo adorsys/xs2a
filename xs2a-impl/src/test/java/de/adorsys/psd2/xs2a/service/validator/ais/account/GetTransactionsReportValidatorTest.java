@@ -42,6 +42,7 @@ import org.springframework.http.MediaType;
 
 import java.util.Collections;
 
+import static de.adorsys.psd2.xs2a.core.ais.BookingStatus.PENDING;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -56,7 +57,6 @@ public class GetTransactionsReportValidatorTest {
     private static final String ENTRY_REFERENCE_FROM = "";
     private static final Boolean DELTA_LIST = Boolean.FALSE;
     private static final BookingStatus BOOKING_STATUS = BookingStatus.BOOKED;
-    private static final BookingStatus NOT_SUPPORTED_BOOKING_STATUS = BookingStatus.PENDING;
 
     private static final MessageError TPP_VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(UNAUTHORIZED));
@@ -64,22 +64,17 @@ public class GetTransactionsReportValidatorTest {
     private static final MessageError PERMITTED_ACCOUNT_REFERENCE_VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
 
-    private static final String ENTRY_REFERENCE_FROM_NOT_SUPPORTED_ERROR_TEXT = "Parameter 'entryReferenceFrom' is not supported by ASPSP";
     private static final MessageError ENTRY_REFERENCE_FROM_PARAMETER_NOT_SUPPORTED_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED, ENTRY_REFERENCE_FROM_NOT_SUPPORTED_ERROR_TEXT));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_ENTRY_REFERENCE_FROM));
 
-    private static final String DELTA_LIST_NOT_SUPPORTED_ERROR_TEXT = "Parameter 'deltaList' is not supported by ASPSP";
     private static final MessageError DELTA_LIST_PARAMETER_NOT_SUPPORTED_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED, DELTA_LIST_NOT_SUPPORTED_ERROR_TEXT));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_DELTA_LIST));
 
-    private static final String ONE_DELTA_REPORT_CAN_BE_PRESENT_ERROR_TEXT = "Only one delta report query parameter can be present in request";
     private static final MessageError ONE_DELTA_REPORT_PARAMETER_CAN_BE_PRESENT_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, ONE_DELTA_REPORT_CAN_BE_PRESENT_ERROR_TEXT));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR_MULTIPLE_DELTA_REPORT));
 
-    private static final String BOOKING_STATUS_NOT_SUPPORTED_TEXT =
-        String.format("bookingStatus '%s' is not supported by ASPSP", NOT_SUPPORTED_BOOKING_STATUS.getValue());
     private static final MessageError BOOKING_STATUS_VALIDATION_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED, BOOKING_STATUS_NOT_SUPPORTED_TEXT));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_BOOKING_STATUS, PENDING.getValue()));
 
     private static final MessageError REQUESTED_FORMATS_INVALID_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(REQUESTED_FORMATS_INVALID));
@@ -190,7 +185,7 @@ public class GetTransactionsReportValidatorTest {
 
         when(transactionReportAcceptHeaderValidator.validate(MediaType.APPLICATION_JSON_VALUE)).thenReturn(ValidationResult.valid());
         when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID))
-            .thenReturn(ValidationResult.invalid(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID)));
+            .thenReturn(ValidationResult.invalid(ErrorType.AIS_401, CONSENT_INVALID));
 
         // When
         ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS));
@@ -308,7 +303,7 @@ public class GetTransactionsReportValidatorTest {
             .thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, NOT_SUPPORTED_BOOKING_STATUS));
+        ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, PENDING));
 
         // Then
         verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
