@@ -29,4 +29,8 @@ public class TppMessage {
         this.messageText = messageText;
         this.messageTextArgs = messageTextArgs;
     }
+
+    public TppMessage(MessageErrorCode errorCode, Object... messageTextArgs) {
+        this(errorCode, "", messageTextArgs);
+    }
 }

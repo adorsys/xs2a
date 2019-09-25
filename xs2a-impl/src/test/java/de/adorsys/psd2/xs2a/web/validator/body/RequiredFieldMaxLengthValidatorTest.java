@@ -64,9 +64,8 @@ public class RequiredFieldMaxLengthValidatorTest {
         //Then
         assertFalse(messageError.getTppMessages().isEmpty());
         assertEquals(MessageCategory.ERROR, messageError.getTppMessage().getCategory());
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' cannot be empty", "PAN"),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_EMPTY_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new String[] {"PAN"}, messageError.getTppMessage().getTextParameters());
     }
 
 
@@ -81,8 +80,7 @@ public class RequiredFieldMaxLengthValidatorTest {
         //Then
         assertFalse(messageError.getTppMessages().isEmpty());
         assertEquals(MessageCategory.ERROR, messageError.getTppMessage().getCategory());
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "PAN", 9),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"PAN", 9}, messageError.getTppMessage().getTextParameters());
     }
 }

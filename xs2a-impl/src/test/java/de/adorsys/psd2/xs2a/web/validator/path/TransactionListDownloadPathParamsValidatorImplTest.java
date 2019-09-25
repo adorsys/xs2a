@@ -26,6 +26,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_PATH_PARAMETER_INVALID;
 import static org.junit.Assert.*;
 
 public class TransactionListDownloadPathParamsValidatorImplTest {
@@ -68,6 +69,6 @@ public class TransactionListDownloadPathParamsValidatorImplTest {
 
         // Then
         assertFalse(messageError.getTppMessages().isEmpty());
-        assertEquals(messageError.getTppMessage().getText(), "Path parameter 'download-id' has to be represented in Base64");
+        assertEquals(FORMAT_ERROR_PATH_PARAMETER_INVALID, messageError.getTppMessage().getMessageErrorCode());
     }
 }

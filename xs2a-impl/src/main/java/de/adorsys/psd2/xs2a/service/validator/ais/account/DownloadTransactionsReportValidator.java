@@ -29,7 +29,6 @@ import java.time.LocalDate;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_EXPIRED;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 
 @Component
@@ -42,7 +41,7 @@ public class DownloadTransactionsReportValidator extends AbstractAccountTppValid
         AccountConsent accountConsent = consentObject.getAccountConsent();
 
         if (LocalDate.now().compareTo(accountConsent.getValidUntil()) > 0) {
-            return ValidationResult.invalid(AIS_401, of(CONSENT_EXPIRED));
+            return ValidationResult.invalid(AIS_401, CONSENT_EXPIRED);
         }
 
         ConsentStatus consentStatus = accountConsent.getConsentStatus();
@@ -50,7 +49,7 @@ public class DownloadTransactionsReportValidator extends AbstractAccountTppValid
             MessageErrorCode messageErrorCode = consentStatus == ConsentStatus.RECEIVED
                                                     ? CONSENT_INVALID
                                                     : CONSENT_EXPIRED;
-            return ValidationResult.invalid(AIS_401, of(messageErrorCode));
+            return ValidationResult.invalid(AIS_401, messageErrorCode);
         }
 
         return ValidationResult.valid();

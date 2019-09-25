@@ -3,7 +3,7 @@
     {
       "category": "ERROR",
       "code": "PRODUCT_INVALID",
-      "text": "Some text"
+      "text": "The addressed payment product is not available for the PSU"
     }
   ]
 }

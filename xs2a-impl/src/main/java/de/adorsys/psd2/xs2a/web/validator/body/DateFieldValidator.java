@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body;
 
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
@@ -32,14 +31,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.format.DateTimeParseException;
 import java.util.EnumSet;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_DAY_OF_EXECUTION;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_DATE_FIELD;
 
 @Component
 @RequiredArgsConstructor
 public class DateFieldValidator {
     private static final String DAY_OF_EXECUTION_FIELD_NAME = "dayOfExecution";
     private static final String DAY_OF_MONTH_REGEX = "(0?[1-9]|[12]\\d|3[01])";
-    private static final String DAY_OF_EXECUTION_WRONG_VALUE_ERROR = "Value 'dayOfExecution' should be a number of day in month";
-    private static final String ERROR_TEXT_ISO_DATE_FORMAT = "Wrong format for '%s': value should be %s '%s' format.";
 
     private final ErrorBuildingService errorBuildingService;
     private final LocalDateConverter localDateConverter;
@@ -65,13 +64,13 @@ public class DateFieldValidator {
         try {
             localDateConverter.convert(value, formatter.getFormatter());
         } catch (DateTimeParseException ex) {
-            errorBuildingService.enrichMessageError(messageError, String.format(ERROR_TEXT_ISO_DATE_FORMAT, key, formatter.name(), formatter.getPattern()));
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_DATE_FIELD, key, formatter.name(), formatter.getPattern()));
         }
     }
 
     private void validateDayOfExecutionValue(String value, MessageError messageError) {
         if (!isNumberADayOfMonth(value)) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, DAY_OF_EXECUTION_WRONG_VALUE_ERROR));
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_DAY_OF_EXECUTION));
         }
     }
 

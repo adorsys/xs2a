@@ -29,7 +29,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PARAMETER_NOT_SUPPORTED;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PARAMETER_NOT_SUPPORTED_WRONG_PAYMENT_TYPE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -70,7 +70,7 @@ public class PaymentProductAndTypeValidatorTest {
         //Then:
         assertTrue(actual.isNotValid());
         assertEquals(1, actual.getMessageError().getTppMessages().size());
-        assertEquals(MessageErrorCode.PRODUCT_UNKNOWN, actual.getMessageError().getTppMessage().getMessageErrorCode());
+        assertEquals(MessageErrorCode.PRODUCT_UNKNOWN_WRONG_PAYMENT_PRODUCT, actual.getMessageError().getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class PaymentProductAndTypeValidatorTest {
         //Then:
         assertTrue(actual.isNotValid());
         assertEquals(1, actual.getMessageError().getTppMessages().size());
-        assertEquals(PARAMETER_NOT_SUPPORTED, actual.getMessageError().getTppMessage().getMessageErrorCode());
+        assertEquals(PARAMETER_NOT_SUPPORTED_WRONG_PAYMENT_TYPE, actual.getMessageError().getTppMessage().getMessageErrorCode());
     }
 
     private Map<PaymentType, Set<String>> getSupportedPaymentTypeAndProductMatrix() {

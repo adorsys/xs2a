@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE;
 import static de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType.ALL_TPP;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 import static org.junit.Assert.*;
@@ -64,7 +65,7 @@ public class PiisConsentValidationTest {
     @Before
     public void setUp() {
         when(piisTppInfoValidator.validateTpp(DIFFERENT_AUTHORISATION_NUMBER))
-            .thenReturn(ValidationResult.invalid(PIIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400, "TPP certificate doesn’t match the initial request")));
+            .thenReturn(ValidationResult.invalid(PIIS_400, CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE));
 
         when(piisTppInfoValidator.validateTpp(AUTHORISATION_NUMBER)).thenReturn(ValidationResult.valid());
         when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
@@ -104,7 +105,7 @@ public class PiisConsentValidationTest {
         PiisConsentValidationResult validationResult = piisConsentValidation.validatePiisConsentData(piisConsents);
 
         // Then
-        assertThatErrorIs(validationResult, MessageErrorCode.CONSENT_UNKNOWN_400);
+        assertThatErrorIs(validationResult, CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE);
     }
 
     @Test
@@ -138,7 +139,7 @@ public class PiisConsentValidationTest {
         PiisConsentValidationResult validationResult = piisConsentValidation.validatePiisConsentData(piisConsents);
 
         // Then
-        assertThatErrorIs(validationResult, MessageErrorCode.CONSENT_UNKNOWN_400);
+        assertThatErrorIs(validationResult, MessageErrorCode.CONSENT_UNKNOWN_400_NULL_ACCESS_TYPE);
     }
 
     @Test
@@ -153,7 +154,7 @@ public class PiisConsentValidationTest {
         PiisConsentValidationResult validationResult = piisConsentValidation.validatePiisConsentData(piisConsents);
 
         // Then
-        assertThatErrorIs(validationResult, MessageErrorCode.CONSENT_UNKNOWN_400);
+        assertThatErrorIs(validationResult, MessageErrorCode.CONSENT_UNKNOWN_400_NULL_ACCESS_TYPE);
     }
 
     @Test

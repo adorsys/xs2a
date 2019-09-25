@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2.sb;
 
 import de.adorsys.psd2.model.Error403NGSBS;
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -32,6 +31,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.function.Function;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_403;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,13 +40,11 @@ import static org.mockito.Mockito.when;
 public class SB403ErrorMapperTest {
     private static final String ERROR_JSON_PATH = "json/service/mapper/psd2/sb/Error403NGSBS.json";
     private static final String ERROR_CUSTOM_TEXT_JSON_PATH = "json/service/mapper/psd2/sb/Error403NGSBS-custom-text.json";
-    private static final MessageErrorCode ERROR_CODE = MessageErrorCode.CONSENT_UNKNOWN_403;
-    private static final String ERROR_TEXT = "Some text";
     private static final String CUSTOM_ERROR_TEXT = "Custom text";
     private static final MessageError MESSAGE_ERROR = new MessageError(ErrorType.SB_403,
-                                                                       TppMessageInformation.of(ERROR_CODE, ERROR_TEXT));
+                                                                       TppMessageInformation.of(CONSENT_UNKNOWN_403, "text"));
     private static final MessageError MESSAGE_ERROR_WITHOUT_TEXT = new MessageError(ErrorType.SB_403,
-                                                                                    TppMessageInformation.of(ERROR_CODE));
+                                                                                    TppMessageInformation.of(CONSENT_UNKNOWN_403));
 
     private JsonReader jsonReader = new JsonReader();
     @Mock
@@ -65,6 +63,9 @@ public class SB403ErrorMapperTest {
 
     @Test
     public void getMapper_shouldReturnCorrectErrorMapper() {
+        when(messageService.getMessage(CONSENT_UNKNOWN_403.name()))
+            .thenReturn("Some %s");
+
         // Given
         Error403NGSBS expectedError = jsonReader.getObjectFromFile(ERROR_JSON_PATH, Error403NGSBS.class);
 
@@ -78,7 +79,7 @@ public class SB403ErrorMapperTest {
 
     @Test
     public void getMapper_withNoTextInTppMessage_shouldGetTextFromMessageService() {
-        when(messageService.getMessage(ERROR_CODE.name()))
+        when(messageService.getMessage(CONSENT_UNKNOWN_403.name()))
             .thenReturn(CUSTOM_ERROR_TEXT);
 
         // Given
@@ -90,6 +91,6 @@ public class SB403ErrorMapperTest {
 
         // Then
         assertEquals(expectedError, actualError);
-        verify(messageService).getMessage(ERROR_CODE.name());
+        verify(messageService).getMessage(CONSENT_UNKNOWN_403.name());
     }
 }

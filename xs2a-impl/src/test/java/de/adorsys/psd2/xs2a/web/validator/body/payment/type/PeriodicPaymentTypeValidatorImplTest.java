@@ -41,8 +41,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class PeriodicPaymentTypeValidatorImplTest {
 
@@ -97,9 +96,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setEndToEndIdentification(VALUE_36_LENGHT);
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "endToEndIdentification", 35),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"endToEndIdentification", 35}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -107,8 +105,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setDebtorAccount(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'debtorAccount' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"debtorAccount"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -116,8 +114,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setInstructedAmount(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'instructedAmount' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"instructedAmount"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -126,8 +124,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         instructedAmount.setCurrency(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'currency' has wrong format", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"currency"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -136,8 +134,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         instructedAmount.setAmount(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'amount' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"amount"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -146,8 +144,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         instructedAmount.setAmount(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'amount' has wrong format", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"amount"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -155,8 +153,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setCreditorAccount(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'creditorAccount' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"creditorAccount"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -164,8 +162,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setCreditorName(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'creditorName' cannot be empty", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_EMPTY_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"creditorName"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -173,9 +171,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setCreditorName(VALUE_71_LENGHT);
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "creditorName", 70),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"creditorName", 70}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -183,8 +180,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setRequestedExecutionDate(LocalDate.now().minusDays(1));
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.EXECUTION_DATE_INVALID, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'requestedExecutionDate' should not be in the past", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.EXECUTION_DATE_INVALID_IN_THE_PAST, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -198,8 +194,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         accountReference.setIban("123");
 
         validator.validateAccount(accountReference, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Invalid IBAN format", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_INVALID_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"IBAN"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -207,8 +203,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         accountReference.setBban("123");
 
         validator.validateAccount(accountReference, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Invalid BBAN format", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_INVALID_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"BBAN"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -216,9 +212,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         accountReference.setPan(VALUE_36_LENGHT);
 
         validator.validateAccount(accountReference, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "PAN", 35),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"PAN", 35}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -226,9 +221,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         accountReference.setMaskedPan(VALUE_36_LENGHT);
 
         validator.validateAccount(accountReference, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "Masked PAN", 35),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"Masked PAN", 35}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -236,9 +230,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         accountReference.setMsisdn(VALUE_36_LENGHT);
 
         validator.validateAccount(accountReference, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "MSISDN", 35),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"MSISDN", 35}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -252,9 +245,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         address.setStreetName(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "streetName", 100),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"streetName", 100}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -262,9 +254,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         address.setBuildingNumber(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "buildingNumber", 20),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"buildingNumber", 20}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -272,9 +263,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         address.setTownName(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "townName", 100),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"townName", 100}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -282,9 +272,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         address.setPostCode(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "postCode", 5),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"postCode", 5}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -292,8 +281,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         address.setCountry(null);
 
         validator.validateAddress(address, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'address.country' is required", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_VALUE_REQUIRED, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"address.country"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -301,8 +290,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         address.getCountry().setCode("");
 
         validator.validateAddress(address, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'address.country' is required", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_VALUE_REQUIRED, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"address.country"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -310,8 +299,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
         address.getCountry().setCode("zz");
 
         validator.validateAddress(address, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'address.country' should be ISO 3166 ALPHA2 country code", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_ADDRESS_COUNTRY_INCORRECT, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -319,8 +307,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setStartDate(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'startDate' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"startDate"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -328,8 +316,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setStartDate(LocalDate.now().minusDays(1));
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'startDate' should not be in the past", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_DATE_IN_THE_PAST, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"startDate"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -337,8 +325,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setFrequency(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'frequency' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"frequency"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -347,8 +335,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setEndDate(LocalDate.now().plusDays(1));
 
         validator.doPeriodicValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.PERIOD_INVALID, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Date values has wrong order", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.PERIOD_INVALID_WRONG_ORDER, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -356,9 +343,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setUltimateDebtor(VALUE_71_LENGHT);
 
         validator.doSingleValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "ultimateDebtor", 70),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"ultimateDebtor", 70}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -366,9 +352,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setUltimateCreditor(VALUE_71_LENGHT);
 
         validator.doSingleValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "ultimateCreditor", 70),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"ultimateCreditor", 70}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -378,9 +363,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setRemittanceInformationStructured(remittance);
 
         validator.doSingleValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' cannot be empty", "reference"),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_EMPTY_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"reference"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -390,9 +374,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setRemittanceInformationStructured(remittance);
 
         validator.doSingleValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "reference", 35),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"reference", 35}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -403,9 +386,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setRemittanceInformationStructured(remittance);
 
         validator.doSingleValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "referenceType", 35),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"referenceType", 35}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -416,8 +398,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
         periodicPayment.setRemittanceInformationStructured(remittance);
 
         validator.doSingleValidation(periodicPayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "referenceIssuer", 35),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"referenceIssuer", 35}, messageError.getTppMessage().getTextParameters());
     }
 }

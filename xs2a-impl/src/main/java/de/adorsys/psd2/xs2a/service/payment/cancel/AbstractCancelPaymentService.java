@@ -29,13 +29,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
 
 @RequiredArgsConstructor
 public abstract class AbstractCancelPaymentService implements CancelPaymentService {
-    private static final String PAYMENT_NOT_FOUND_MESSAGE = "Payment not found"; //TODO: move to bundle https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/791
 
     private final de.adorsys.psd2.xs2a.service.payment.CancelPaymentService cancelPaymentService;
 
@@ -44,14 +43,14 @@ public abstract class AbstractCancelPaymentService implements CancelPaymentServi
         List<PisPayment> pisPayments = getPisPayments(commonPaymentData);
         if (!isCommonPayment() && CollectionUtils.isEmpty(pisPayments)) {
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
         }
 
         Optional<? extends SpiPayment> spiPaymentOptional = createSpiPayment(pisPayments, commonPaymentData);
         if (!spiPaymentOptional.isPresent()) {
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
         }
 

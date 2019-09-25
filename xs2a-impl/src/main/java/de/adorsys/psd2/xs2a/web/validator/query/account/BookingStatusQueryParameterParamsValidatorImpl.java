@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator.query.account;
 
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
@@ -27,11 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_PARAMETER_VALUE;
+
 @Component
 public class BookingStatusQueryParameterParamsValidatorImpl extends AbstractQueryParameterValidatorImpl
     implements TransactionListQueryParamsValidator {
     private static final String BOOKING_STATUS_PARAMETER_NAME = "bookingStatus";
-    private static final String ERROR_TEXT_INVALID_VALUE = "Query parameter '%s' has invalid value";
 
     public BookingStatusQueryParameterParamsValidatorImpl(ErrorBuildingService errorBuildingService) {
         super(errorBuildingService);
@@ -53,7 +55,7 @@ public class BookingStatusQueryParameterParamsValidatorImpl extends AbstractQuer
         String bookingStatusValue = getQueryParameterValue(queryParameterMap);
         Optional<BookingStatus> bookingStatusOptional = BookingStatus.getByValue(bookingStatusValue);
         if (!bookingStatusOptional.isPresent()) {
-            errorBuildingService.enrichMessageError(messageError, String.format(ERROR_TEXT_INVALID_VALUE, getQueryParameterName()));
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_PARAMETER_VALUE, getQueryParameterName()));
         }
     }
 }

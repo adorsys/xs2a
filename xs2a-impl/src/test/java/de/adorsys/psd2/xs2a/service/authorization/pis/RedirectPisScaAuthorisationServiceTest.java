@@ -54,7 +54,6 @@ public class RedirectPisScaAuthorisationServiceTest {
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final String CANCELLATION_AUTHORISATION_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
     private static final String WRONG_CANCELLATION_AUTHORISATION_ID = "wrong cancellation authorisation id";
-    private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final List<String> STRING_LIST = Collections.singletonList(PAYMENT_ID);
     private static final Xs2aAuthorisationSubResources XS2A_AUTHORISATION_SUB_RESOURCES = new Xs2aAuthorisationSubResources(STRING_LIST);
@@ -293,7 +292,7 @@ public class RedirectPisScaAuthorisationServiceTest {
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse buildErrorXs2aUpdatePisCommonPaymentPsuDataResponse(){
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)
-                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, MESSAGE_ERROR_NO_PSU))
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_NO_PSU))
                                       .build();
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA);
 

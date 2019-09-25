@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public abstract class TppInfoValidator {
-    static final String TPP_ERROR_MESSAGE = "TPP certificate doesn’t match the initial request";
 
     private final TppInfoCheckerService tppInfoCheckerService;
     private final RequestProviderService requestProviderService;

@@ -25,7 +25,6 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static de.adorsys.psd2.xs2a.web.validator.header.AbstractHeaderValidatorImpl.ERROR_TEXT_BOOLEAN_FORMAT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -61,7 +60,6 @@ public class TppRejectionNoFundsPreferredHeaderValidationImplTest {
         headers.put(validator.getHeaderName(), "wrong_format");
         validator.validate(headers, messageError);
 
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(ERROR_TEXT_BOOLEAN_FORMAT, validator.getHeaderName()), messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_BOOLEAN_VALUE, messageError.getTppMessage().getMessageErrorCode());
     }
 }

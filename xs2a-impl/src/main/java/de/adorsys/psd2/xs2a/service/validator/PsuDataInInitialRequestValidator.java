@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.validator;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -29,7 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 /**
  * Validator to be used for validating PSU Data in initial requests to XS2A(e. g. initiate payment or create consent)
@@ -38,9 +37,6 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 @Component
 @RequiredArgsConstructor
 public class PsuDataInInitialRequestValidator implements BusinessValidator<PsuIdData> {
-    // TODO move messages to the message bundle https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/791
-    private static final String MESSAGE_ERROR_PSU_ID_BLANK = "PSU-ID should not be blank";
-    private static final String MESSAGE_ERROR_NO_PSU_ID = "PSU-ID is missing in request";
 
     private final AspspProfileServiceWrapper aspspProfileService;
     private final RequestProviderService requestProviderService;
@@ -62,12 +58,12 @@ public class PsuDataInInitialRequestValidator implements BusinessValidator<PsuId
             if (psuId == null) {
                 log.info("InR-ID: [{}], X-Request-ID: [{}]. PSU Data validation has failed: mandated PSU ID is null",
                          requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
-                return ValidationResult.invalid(errorType, TppMessageInformation.of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU_ID));
+                return ValidationResult.invalid(errorType, FORMAT_ERROR_NO_PSU_ID);
             }
 
             log.info("InR-ID: [{}], X-Request-ID: [{}]. PSU Data validation has failed: mandated PSU ID is blank",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
-            return ValidationResult.invalid(errorType, TppMessageInformation.of(FORMAT_ERROR, MESSAGE_ERROR_PSU_ID_BLANK));
+            return ValidationResult.invalid(errorType, FORMAT_ERROR_PSU_ID_BLANK);
         }
 
         return ValidationResult.valid();

@@ -22,6 +22,8 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -48,6 +50,13 @@ public class SpiErrorMapper {
     }
 
     private TppMessageInformation mapToMessageError(TppMessage tppMessage) {
-        return TppMessageInformation.of(tppMessage.getErrorCode(), tppMessage.getMessageText());
+        if (StringUtils.isBlank(tppMessage.getMessageText())) {
+            if (ArrayUtils.isNotEmpty(tppMessage.getMessageTextArgs())) {
+                return TppMessageInformation.of(tppMessage.getErrorCode(), tppMessage.getMessageTextArgs());
+            } else {
+                return TppMessageInformation.of(tppMessage.getErrorCode());
+            }
+        }
+        return TppMessageInformation.buildWithCustomError(tppMessage.getErrorCode(), tppMessage.getMessageText());
     }
 }

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "59bba8cd-aeb1-4cea-9464-aa6322ede573",
+		"_postman_id": "7ed3e4f9-7ada-4181-9cdf-5b8597baa7a1",
 		"name": "PIS Payment requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -10622,7 +10622,7 @@
 													"       ",
 													"    pm.expect(error.category).to.eql('ERROR');",
 													"    pm.expect(error.code).to.eql('STATUS_INVALID');",
-													"    pm.expect(error.text).to.eql('The addressed resource does not allow additional authorisation.');",
+													"    pm.expect(error.text).to.eql('The addressed resource does not allow additional authorisation');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -11309,7 +11309,7 @@
 													"       ",
 													"    pm.expect(error.category).to.eql('ERROR');",
 													"    pm.expect(error.code).to.eql('STATUS_INVALID');",
-													"    pm.expect(error.text).to.eql('The addressed resource does not allow additional authorisation.');",
+													"    pm.expect(error.text).to.eql('The addressed resource does not allow additional authorisation');",
 													"});"
 												],
 												"type": "text/javascript"

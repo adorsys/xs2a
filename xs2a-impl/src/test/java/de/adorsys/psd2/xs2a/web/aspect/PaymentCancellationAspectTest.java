@@ -52,7 +52,6 @@ public class PaymentCancellationAspectTest {
     private static final String HTTP_URL = "http://base.url";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
-    private static final String ERROR_TEXT = "Error occurred while processing";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
     private CancelPaymentResponse response;
@@ -60,8 +59,6 @@ public class PaymentCancellationAspectTest {
     @InjectMocks
     private PaymentCancellationAspect aspect;
 
-    @Mock
-    private MessageService messageService;
     @Mock
     private AspspProfileService aspspProfileService;
     @Mock
@@ -136,9 +133,6 @@ public class PaymentCancellationAspectTest {
 
     @Test
     public void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
-        // Given
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
-
         // When
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
@@ -147,6 +141,5 @@ public class PaymentCancellationAspectTest {
 
         // Then
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 }

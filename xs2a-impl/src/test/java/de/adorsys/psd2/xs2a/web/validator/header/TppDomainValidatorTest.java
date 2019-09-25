@@ -33,7 +33,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.List;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_DOMAIN;
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -52,7 +52,7 @@ public class TppDomainValidatorTest {
     private static final String TPP_NAME_NON_DOMAIN = "Some bank name";
     private static final String TPP_DNS_DOMAIN = "www.example-TPP.de";
     private static final String TPP_WILDCARD_DOMAIN = "*.example-TPP.de";
-    private static final TppMessageInformation TPP_MESSAGE_INFORMATION = TppMessageInformation.of(FORMAT_ERROR, TppDomainValidator.ERROR_TEXT);
+    private static final TppMessageInformation TPP_MESSAGE_INFORMATION = TppMessageInformation.of(FORMAT_ERROR_INVALID_DOMAIN);
 
     @InjectMocks
     private TppDomainValidator tppDomainValidator;

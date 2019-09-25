@@ -21,8 +21,6 @@ import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.Size;
-
 import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 
 @Data
@@ -31,33 +29,37 @@ public class TppMessageInformation {
     private MessageCategory category;
     private MessageErrorCode messageErrorCode;
     private String path;
-    @Size(max = 512)
+    private Object[] textParameters;
     private String text;
+
+    public static TppMessageInformation buildWithCustomError(MessageErrorCode messageErrorCode, String text) {
+        return new TppMessageInformation(ERROR, messageErrorCode, null, text, null);
+    }
 
     public static TppMessageInformation of(MessageErrorCode messageErrorCode) { //NOPMD
         return of(ERROR, messageErrorCode, null);
     }
 
-    public static TppMessageInformation of(MessageErrorCode messageErrorCode, String text) { //NOPMD
-        return of(ERROR, messageErrorCode, text);
+    public static TppMessageInformation of(MessageErrorCode messageErrorCode, Object... textParameters) { //NOPMD
+        return of(ERROR, messageErrorCode, textParameters);
     }
 
     public static TppMessageInformation of(MessageCategory category, MessageErrorCode messageErrorCode) { //NOPMD
         return of(category, messageErrorCode, null, null);
     }
 
-    public static TppMessageInformation of(MessageCategory category, MessageErrorCode messageErrorCode, String text) { //NOPMD
-        return of(category, messageErrorCode, text, null);
+    public static TppMessageInformation of(MessageCategory category, MessageErrorCode messageErrorCode, Object... textParameters) { //NOPMD
+        return of(category, messageErrorCode, null, textParameters);
+    }
+    public static TppMessageInformation of(MessageCategory category, MessageErrorCode messageErrorCode, String path, Object... textParameters) { //NOPMD
+        return new TppMessageInformation(category, messageErrorCode, path, null, textParameters);
     }
 
-    public static TppMessageInformation of(MessageCategory category, MessageErrorCode messageErrorCode, String text, String path) { //NOPMD
-        return new TppMessageInformation(category, messageErrorCode, text, path);
-    }
-
-    private TppMessageInformation(MessageCategory category, MessageErrorCode messageErrorCode, String text, String path) {
+    private TppMessageInformation(MessageCategory category, MessageErrorCode messageErrorCode, String path, String text, Object... textParameters) {
         this.category = category;
         this.messageErrorCode = messageErrorCode;
-        this.text = text;
         this.path = path;
+        this.text = text;
+        this.textParameters = textParameters;
     }
 }

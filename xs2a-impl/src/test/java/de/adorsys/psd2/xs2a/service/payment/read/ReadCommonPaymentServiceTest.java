@@ -64,7 +64,6 @@ public class ReadCommonPaymentServiceTest {
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final CommonPayment PIS_PAYMENT_INFO = getCommonPayment();
     private static final String SOME_ENCRYPTED_PAYMENT_ID = "Encrypted Payment Id";
-    private static final String PAYMENT_NOT_FOUND = "Payment not found";
 
     @InjectMocks
     private ReadCommonPaymentService readCommonPaymentService;
@@ -114,10 +113,10 @@ public class ReadCommonPaymentServiceTest {
     public void getPayment_failed() {
         // Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
-                                        .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND))
+                                        .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                         .build();
         SpiResponse<SpiPaymentInfo> failSpiResponse = SpiResponse.<SpiPaymentInfo>builder()
-                                                          .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                                                          .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                           .build();
 
         when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, spiAspspConsentDataProvider)).thenReturn(failSpiResponse);

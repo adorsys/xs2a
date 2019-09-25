@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
 import org.junit.Test;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static org.junit.Assert.*;
 
 public class AmountValidatorTest {
@@ -53,48 +54,48 @@ public class AmountValidatorTest {
     @Test
     public void doValidation_wrong_1() {
         validator.validateAmount(WRONG_AMOUNT_1, messageError);
-        assertThatErrorIs("Value 'amount' has wrong format");
+        assertThatErrorIs(FORMAT_ERROR_WRONG_FORMAT_VALUE, "amount");
     }
 
     @Test
     public void doValidation_wrong_2() {
         validator.validateAmount(WRONG_AMOUNT_2, messageError);
-        assertThatErrorIs("Value 'amount' has wrong format");
+        assertThatErrorIs(FORMAT_ERROR_WRONG_FORMAT_VALUE, "amount");
     }
 
     @Test
     public void doValidation_wrong_3() {
         validator.validateAmount(WRONG_AMOUNT_3, messageError);
-        assertThatErrorIs("Value 'amount' has wrong format");
+        assertThatErrorIs(FORMAT_ERROR_WRONG_FORMAT_VALUE, "amount");
     }
 
     @Test
     public void doValidation_wrong_4() {
         validator.validateAmount(WRONG_AMOUNT_4, messageError);
-        assertThatErrorIs("Value 'amount' has wrong format");
+        assertThatErrorIs(FORMAT_ERROR_WRONG_FORMAT_VALUE, "amount");
     }
 
     @Test
     public void doValidation_wrong_5() {
         validator.validateAmount(WRONG_AMOUNT_5, messageError);
-        assertThatErrorIs("Value 'amount' has wrong format");
+        assertThatErrorIs(FORMAT_ERROR_WRONG_FORMAT_VALUE, "amount");
     }
 
     @Test
     public void doValidation_empty() {
         validator.validateAmount("", messageError);
-        assertThatErrorIs("Value 'amount' should not be empty");
+        assertThatErrorIs(FORMAT_ERROR_EMPTY_FIELD, "amount");
     }
 
     @Test
     public void doValidation_null() {
         validator.validateAmount(null, messageError);
-        assertThatErrorIs("Value 'amount' should not be null");
+        assertThatErrorIs(FORMAT_ERROR_NULL_VALUE, "amount");
     }
 
-    private void assertThatErrorIs(String errorText) {
+    private void assertThatErrorIs(MessageErrorCode messageErrorCode, String... textParameters) {
         assertFalse(messageError.getTppMessages().isEmpty());
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(errorText, messageError.getTppMessage().getText());
+        assertEquals(messageErrorCode, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(textParameters, messageError.getTppMessage().getTextParameters());
     }
 }

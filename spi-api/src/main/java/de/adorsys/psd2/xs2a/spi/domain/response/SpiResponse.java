@@ -89,7 +89,7 @@ public class SpiResponse<T> {
         public SpiResponse<T> build() {
 
             if (payload == null && CollectionUtils.isEmpty(errors)) {
-                this.error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, ""));
+                this.error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR));
             }
 
             return new SpiResponse<>(this);

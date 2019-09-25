@@ -40,8 +40,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class BulkPaymentTypeValidatorImplTest {
 
@@ -93,9 +92,9 @@ public class BulkPaymentTypeValidatorImplTest {
         singlePayment.setEndToEndIdentification(VALUE_36_LENGHT);
 
         validator.doSingleValidation(singlePayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "endToEndIdentification", 35),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"endToEndIdentification", 35}, messageError.getTppMessage().getTextParameters());
+
     }
 
     @Test
@@ -103,8 +102,8 @@ public class BulkPaymentTypeValidatorImplTest {
         singlePayment.setDebtorAccount(null);
 
         validator.doSingleValidation(singlePayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'debtorAccount' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"debtorAccount"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -112,8 +111,8 @@ public class BulkPaymentTypeValidatorImplTest {
         singlePayment.setInstructedAmount(null);
 
         validator.doSingleValidation(singlePayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'instructedAmount' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"instructedAmount"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -122,8 +121,8 @@ public class BulkPaymentTypeValidatorImplTest {
         instructedAmount.setCurrency(null);
 
         validator.doSingleValidation(singlePayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'currency' has wrong format", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"currency"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -132,8 +131,8 @@ public class BulkPaymentTypeValidatorImplTest {
         instructedAmount.setAmount(null);
 
         validator.doSingleValidation(singlePayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'amount' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"amount"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -142,8 +141,8 @@ public class BulkPaymentTypeValidatorImplTest {
         instructedAmount.setAmount(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.doSingleValidation(singlePayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'amount' has wrong format", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"amount"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -151,8 +150,8 @@ public class BulkPaymentTypeValidatorImplTest {
         singlePayment.setCreditorAccount(null);
 
         validator.doSingleValidation(singlePayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'creditorAccount' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"creditorAccount"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -160,8 +159,8 @@ public class BulkPaymentTypeValidatorImplTest {
         singlePayment.setCreditorName(null);
 
         validator.doSingleValidation(singlePayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'creditorName' cannot be empty", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_EMPTY_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"creditorName"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -169,9 +168,8 @@ public class BulkPaymentTypeValidatorImplTest {
         singlePayment.setCreditorName(VALUE_71_LENGHT);
 
         validator.doSingleValidation(singlePayment, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "creditorName", 70),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[] {"creditorName", 70}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -179,7 +177,6 @@ public class BulkPaymentTypeValidatorImplTest {
         singlePayment.setRequestedExecutionDate(LocalDate.now().minusDays(1));
 
         validator.doSingleValidation(singlePayment, messageError);
-        assertEquals(MessageErrorCode.EXECUTION_DATE_INVALID, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'requestedExecutionDate' should not be in the past", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.EXECUTION_DATE_INVALID_IN_THE_PAST, messageError.getTppMessage().getMessageErrorCode());
     }
 }

@@ -26,14 +26,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Map;
 import java.util.Objects;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 public abstract class AbstractHeaderValidatorImpl {
-
-    static final String ERROR_TEXT_ABSENT_HEADER = "Header '%s' is missing in request";
-    static final String ERROR_TEXT_NULL_HEADER = "Header '%s' should not be null";
-    static final String ERROR_TEXT_BLANK_HEADER = "Header '%s' should not be blank";
-    static final String ERROR_TEXT_BOOLEAN_FORMAT = "Wrong format for '%s': value should be a boolean";
 
     protected ErrorBuildingService errorBuildingService;
 
@@ -62,21 +57,18 @@ public abstract class AbstractHeaderValidatorImpl {
     protected ValidationResult checkIfHeaderIsPresented(Map<String, String> headers) {
         if (!headers.containsKey(getHeaderName())) {
             return ValidationResult.invalid(
-                errorBuildingService.buildErrorType(), TppMessageInformation.of(FORMAT_ERROR,
-                                                                                String.format(ERROR_TEXT_ABSENT_HEADER, getHeaderName())));
+                errorBuildingService.buildErrorType(), TppMessageInformation.of(FORMAT_ERROR_ABSENT_HEADER, getHeaderName()));
         }
 
         String header = headers.get(getHeaderName());
         if (Objects.isNull(header)) {
             return ValidationResult.invalid(
-                errorBuildingService.buildErrorType(), TppMessageInformation.of(FORMAT_ERROR,
-                                                                                String.format(ERROR_TEXT_NULL_HEADER, getHeaderName())));
+                errorBuildingService.buildErrorType(), TppMessageInformation.of(FORMAT_ERROR_NULL_HEADER, getHeaderName()));
         }
 
         if (StringUtils.isBlank(header)) {
             return ValidationResult.invalid(
-                errorBuildingService.buildErrorType(), TppMessageInformation.of(FORMAT_ERROR,
-                                                                                String.format(ERROR_TEXT_BLANK_HEADER, getHeaderName())));
+                errorBuildingService.buildErrorType(), TppMessageInformation.of(FORMAT_ERROR_BLANK_HEADER, getHeaderName()));
         }
         return checkHeaderContent(headers);
     }
@@ -86,8 +78,7 @@ public abstract class AbstractHeaderValidatorImpl {
         if (Objects.nonNull(header)) {
             Boolean checker = BooleanUtils.toBooleanObject(header);
             if (checker == null) {
-                errorBuildingService.enrichMessageError(messageError,
-                                                        String.format(ERROR_TEXT_BOOLEAN_FORMAT, getHeaderName()));
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_BOOLEAN_VALUE, getHeaderName()));
             }
         }
     }

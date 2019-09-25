@@ -21,6 +21,7 @@ import de.adorsys.psd2.model.AccountAccess;
 import de.adorsys.psd2.model.AccountReference;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -37,6 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS;
 
 @Component
@@ -66,7 +68,7 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
         Consents consents = consentsOptional.get();
 
         if (Objects.isNull(consents.getAccess())) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'access' should not be null");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "access"));
         } else {
             validateAccountAccess(consents, messageError);
         }
@@ -94,7 +96,7 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
 
             // This object is checked for null on the level above
             if (areFlagsAndAccountsInvalid(createConsent)) { //NOSONAR
-                errorBuildingService.enrichMessageError(messageError, "Consent object can not contain both list of accounts and the flag allPsd2 or availableAccounts");
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_CONSENT_INCORRECT));
             }
         }
     }
@@ -166,7 +168,7 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
             return objectMapper.convertValue(reference, de.adorsys.psd2.xs2a.core.profile.AccountReference.class);
         } catch (IllegalArgumentException e) {
             // Happens only during Currency field processing, as other fields are of String type.
-            errorBuildingService.enrichMessageError(messageError, "Invalid currency code format");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, "currency"));
             return null;
         }
     }

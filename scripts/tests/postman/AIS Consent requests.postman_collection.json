@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c3b03903-f402-47c5-8261-afd763236979",
+		"_postman_id": "c60fc43d-21a2-45bc-97fd-1f65b5c6a117",
 		"name": "AIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -13324,7 +13324,7 @@
 											"       ",
 											"    pm.expect(error.category).to.eql('ERROR');",
 											"    pm.expect(error.code).to.eql('STATUS_INVALID');",
-											"    pm.expect(error.text).to.eql('The addressed resource does not allow additional authorisation.');",
+											"    pm.expect(error.text).to.eql('The addressed resource does not allow additional authorisation');",
 											"});"
 										],
 										"type": "text/javascript"

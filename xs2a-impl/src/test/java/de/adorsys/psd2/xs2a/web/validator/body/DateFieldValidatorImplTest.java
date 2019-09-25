@@ -55,11 +55,11 @@ public class DateFieldValidatorImplTest {
     private static final String WRONG_DAY_OF_MONTH = "666";
 
     private static final MessageError DAY_OF_EXECUTION_WRONG_VALUE_ERROR =
-        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Value 'dayOfExecution' should be a number of day in month"));
+        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_INVALID_DAY_OF_EXECUTION));
     private static final MessageError REQUESTED_EXECUTION_DATE_WRONG_VALUE_ERROR =
-        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Wrong format for 'requestedExecutionDate': value should be ISO_DATE 'YYYY-MM-DD' format."));
+        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_DATE_FIELD, "requestedExecutionDate", "ISO_DATE", "YYYY-MM-DD"));
     private static final MessageError REQUESTED_EXECUTION_TIME_WRONG_VALUE_ERROR =
-        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Wrong format for 'requestedExecutionTime': value should be ISO_DATE_TIME 'YYYY-MM-DD'T'HH:mm:ssZ' format."));
+        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_DATE_FIELD, "requestedExecutionTime", "ISO_DATE_TIME", "YYYY-MM-DD'T'HH:mm:ssZ"));
 
     private DateFieldValidator validator;
     private MessageError messageError;

@@ -35,9 +35,10 @@ public abstract class Psd2ErrorMapper<T, R> {
     public abstract HttpStatus getErrorStatus();
 
     protected String getErrorText(TppMessageInformation tppMessageInformation) {
-        String messageInformationText = tppMessageInformation.getText();
-        return StringUtils.isBlank(messageInformationText)
-                   ? messageService.getMessage(tppMessageInformation.getMessageErrorCode().name())
-                   : messageInformationText;
+        if (StringUtils.isNotBlank(tppMessageInformation.getText())) {
+            return tppMessageInformation.getText();
+        }
+        String textFromProperties = messageService.getMessage(tppMessageInformation.getMessageErrorCode().name());
+        return String.format(textFromProperties, tppMessageInformation.getTextParameters());
     }
 }

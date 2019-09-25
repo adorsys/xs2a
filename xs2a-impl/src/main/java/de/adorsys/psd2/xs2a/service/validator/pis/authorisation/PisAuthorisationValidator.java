@@ -39,7 +39,6 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_401;
 @Component
 @RequiredArgsConstructor
 public class PisAuthorisationValidator {
-    private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
     private final RequestProviderService requestProviderService;
     private final PisAuthorisationStatusValidator pisAuthorisationStatusValidator;
     private final PsuDataUpdateAuthorisationChecker psuDataUpdateAuthorisationChecker;
@@ -57,7 +56,7 @@ public class PisAuthorisationValidator {
         if (psuDataUpdateAuthorisationChecker.areBothPsusAbsent(psuIdData, authorisation.getPsuData())) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: PSU from authorisation and PSU from request are absent",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), commonPaymentResponse.getExternalId(), authorisationId);
-            return ValidationResult.invalid(new MessageError(ErrorType.PIS_400, of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU)));
+            return ValidationResult.invalid(new MessageError(ErrorType.PIS_400, of(FORMAT_ERROR_NO_PSU)));
         }
 
         if (!psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(psuIdData, authorisation.getPsuData())) {

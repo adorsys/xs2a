@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.validator.body.raw;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_DESERIALIZATION_FAIL;
+
 @Component
 @RequiredArgsConstructor
 public class FieldExtractor {
-    private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
 
     private final ErrorBuildingService errorBuildingService;
     private final JsonConverter jsonConverter;
@@ -43,7 +45,7 @@ public class FieldExtractor {
             fieldOptional = jsonConverter.toJsonField(request.getInputStream(), fieldName, new TypeReference<String>() {
             });
         } catch (IOException e) {
-            errorBuildingService.enrichMessageError(messageError, BODY_DESERIALIZATION_ERROR);
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
         }
 
         return fieldOptional;

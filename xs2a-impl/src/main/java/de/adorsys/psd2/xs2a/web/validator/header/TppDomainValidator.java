@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.web.validator.header;
 import com.google.common.net.InternetDomainName;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.TppService;
@@ -38,13 +37,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_DOMAIN;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 public class TppDomainValidator {
-    public static final String ERROR_TEXT = "URIs don't comply with domain from certificate";
     private static final String PATTERN_FOR_NORMALIZE_DOMAIN = ".*\\.(?=.*\\.)";
     private final ErrorBuildingService errorBuildingService;
     private final ScaApproachResolver scaApproachResolver;
@@ -121,7 +119,7 @@ public class TppDomainValidator {
 
     private ValidationResult buildInvalidResult() {
         return ValidationResult.invalid(
-            errorBuildingService.buildErrorType(), TppMessageInformation.of(FORMAT_ERROR, ERROR_TEXT));
+            errorBuildingService.buildErrorType(), FORMAT_ERROR_INVALID_DOMAIN);
     }
 
     private String getTopDomain(String host) {

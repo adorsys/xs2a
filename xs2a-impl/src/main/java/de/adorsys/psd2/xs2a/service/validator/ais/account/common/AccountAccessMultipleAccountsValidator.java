@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -36,7 +35,7 @@ public class AccountAccessMultipleAccountsValidator {
         if (withBalance && accountConsent.isConsentForDedicatedAccounts()) {
             Xs2aAccountAccess access = accountConsent.getAccess();
             return validateAccountReferenceSize(access.getAccounts(), access.getBalances())
-                       ? ValidationResult.invalid(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID))
+                       ? ValidationResult.invalid(ErrorType.AIS_401, CONSENT_INVALID)
                        : ValidationResult.valid();
         }
 

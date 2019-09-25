@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body;
 
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.ObjectValidator;
@@ -23,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD;
 
 @Component
 @RequiredArgsConstructor
@@ -33,8 +36,7 @@ public class StringMaxLengthValidator implements ObjectValidator<StringMaxLength
     @Override
     public void validate(@NotNull MaxLengthRequirement object, @NotNull MessageError messageError) {
         if (object.getField() != null && object.getField().length() > object.getMaxLength()) {
-            String text = String.format("Value '%s' should not be more than %s symbols", object.getFieldName(), object.getMaxLength());
-            errorBuildingService.enrichMessageError(messageError, text);
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_OVERSIZE_FIELD,  object.getFieldName(), object.getMaxLength()));
         }
     }
 

@@ -62,7 +62,7 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     private static final String WRONG_PAYMENT_PRODUCT = "sepa-credit-transfers111";
 
     private static final MessageError TPP_VALIDATION_ERROR =
-        new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED, "Invalid TPP"));
+        new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final MessageError EXPIRED_PAYMENT_ERROR = new MessageError(PIS_403, of(RESOURCE_EXPIRED_403));
     private static final MessageError BLOCKED_ENDPOINT_ERROR = new MessageError(PIS_403, of(SERVICE_BLOCKED));
     private static final MessageError PAYMENT_PRODUCT_VALIDATION_ERROR =

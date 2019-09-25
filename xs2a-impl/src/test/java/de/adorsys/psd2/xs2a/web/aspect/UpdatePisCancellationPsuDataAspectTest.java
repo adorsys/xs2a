@@ -40,13 +40,10 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdatePisCancellationPsuDataAspectTest {
-    private static final String ERROR_TEXT = "Error occurred while processing";
 
     @InjectMocks
     private UpdatePisCancellationPsuDataAspect aspect;
 
-    @Mock
-    private MessageService messageService;
     @Mock
     private AspspProfileService aspspProfileService;
     @Mock
@@ -81,9 +78,6 @@ public class UpdatePisCancellationPsuDataAspectTest {
 
     @Test
     public void updatePisCancellationAuthorizationAspect_withError_shouldAddTextErrorMessage() {
-        // Given
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
-
         // When
         responseObject = ResponseObject.builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
@@ -92,6 +86,5 @@ public class UpdatePisCancellationPsuDataAspectTest {
 
         // Then
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 }
