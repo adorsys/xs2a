@@ -108,7 +108,7 @@ public class PaymentAuthorisationServiceTest {
             .thenReturn(ValidationResult.valid());
         when(getPaymentInitiationAuthorisationsValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());
-        when(getPaymentInitiationAuthorisationScaStatusValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse())))
+        when(getPaymentInitiationAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(buildPisCommonPaymentResponse(), AUTHORISATION_ID)))
             .thenReturn(ValidationResult.valid());
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
@@ -301,7 +301,7 @@ public class PaymentAuthorisationServiceTest {
         PisCommonPaymentResponse invalidPisCommonPaymentResponse = buildInvalidPisCommonPaymentResponse();
         when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(invalidPisCommonPaymentResponse));
-        when(getPaymentInitiationAuthorisationScaStatusValidator.validate(any(CommonPaymentObject.class)))
+        when(getPaymentInitiationAuthorisationScaStatusValidator.validate(any(GetPaymentInitiationAuthorisationScaStatusPO.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
@@ -309,7 +309,7 @@ public class PaymentAuthorisationServiceTest {
                                                                                                                           AUTHORISATION_ID);
 
         // Then
-        verify(getPaymentInitiationAuthorisationScaStatusValidator).validate(new CommonPaymentObject(invalidPisCommonPaymentResponse));
+        verify(getPaymentInitiationAuthorisationScaStatusValidator).validate(new GetPaymentInitiationAuthorisationScaStatusPO(invalidPisCommonPaymentResponse, AUTHORISATION_ID));
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);

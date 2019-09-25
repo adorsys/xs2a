@@ -70,19 +70,19 @@ public class Xs2aAisConsentMapper {
     public SpiAccountConsent mapToSpiAccountConsent(AccountConsent accountConsent) {
         return Optional.ofNullable(accountConsent)
                    .map(ac -> new SpiAccountConsent(
-                           ac.getId(),
-                           xs2aToSpiAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
-                           ac.isRecurringIndicator(),
-                           ac.getValidUntil(),
-                           ac.getFrequencyPerDay(),
-                           ac.getLastActionDate(),
-                           ac.getConsentStatus(),
-                           ac.isWithBalance(),
-                           ac.isTppRedirectPreferred(),
-                           xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(ac.getPsuIdDataList()),
-                           ac.getTppInfo(), ac.getAisConsentRequestType(),
-                           ac.getStatusChangeTimestamp()
-                       )
+                            ac.getId(),
+                            xs2aToSpiAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
+                            ac.isRecurringIndicator(),
+                            ac.getValidUntil(),
+                            ac.getFrequencyPerDay(),
+                            ac.getLastActionDate(),
+                            ac.getConsentStatus(),
+                            ac.isWithBalance(),
+                            ac.isTppRedirectPreferred(),
+                            xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(ac.getPsuIdDataList()),
+                            ac.getTppInfo(), ac.getAisConsentRequestType(),
+                            ac.getStatusChangeTimestamp()
+                        )
                    )
                    .orElse(null);
     }
@@ -133,8 +133,8 @@ public class Xs2aAisConsentMapper {
                                   .orElse(null));
 
         accessInfo.setAvailableAccountsWithBalance(Optional.ofNullable(access.getAvailableAccountsWithBalance())
-                                            .map(accessType -> AccountAccessType.valueOf(accessType.name()))
-                                            .orElse(null));
+                                                       .map(accessType -> AccountAccessType.valueOf(accessType.name()))
+                                                       .orElse(null));
 
         return accessInfo;
     }
@@ -213,14 +213,14 @@ public class Xs2aAisConsentMapper {
 
     private AccountConsentAuthorization mapToAccountConsentAuthorisation(AisAccountConsentAuthorisation aisAccountConsentAuthorisation) {
         return Optional.ofNullable(aisAccountConsentAuthorisation)
-            .map(auth -> {
-                AccountConsentAuthorization accountConsentAuthorisation = new AccountConsentAuthorization();
-                accountConsentAuthorisation.setId(auth.getId());
-                accountConsentAuthorisation.setPsuIdData(auth.getPsuIdData());
-                accountConsentAuthorisation.setScaStatus(auth.getScaStatus());
-                return accountConsentAuthorisation;
-            })
-            .orElse(null);
+                   .map(auth -> {
+                       AccountConsentAuthorization accountConsentAuthorisation = new AccountConsentAuthorization();
+                       accountConsentAuthorisation.setId(auth.getId());
+                       accountConsentAuthorisation.setPsuIdData(auth.getPsuIdData());
+                       accountConsentAuthorisation.setScaStatus(auth.getScaStatus());
+                       return accountConsentAuthorisation;
+                   })
+                   .orElse(null);
     }
 
     private Xs2aAccountAccess mapToXs2aAccountAccess(AisAccountAccess ais) {
@@ -235,8 +235,8 @@ public class Xs2aAisConsentMapper {
 
     private AccountAccessType getAccessType(String type) {
         return Optional.ofNullable(type)
-            .map(a -> AccountAccessType.valueOf(type))
-            .orElse(null);
+                   .map(a -> AccountAccessType.valueOf(type))
+                   .orElse(null);
     }
 
 }

@@ -310,8 +310,6 @@ public class AisScaStartAuthorisationStageTest {
             .thenReturn(buildSuccessSpiResponse(availableScaMethods));
 
         scaReceivedAuthorisationStage.apply(request);
-
-        verify(scaApproachResolver).forceDecoupledScaApproach();
     }
 
     @Test

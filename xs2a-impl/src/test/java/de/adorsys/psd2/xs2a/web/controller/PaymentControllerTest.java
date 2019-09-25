@@ -611,10 +611,7 @@ public class PaymentControllerTest {
         when(xs2aPaymentService.createPayment(PAYMENT_OBJECT, paymentInitiationParameters))
             .thenReturn(buildFailResponseObject());
 
-        when(paymentInitiationHeadersBuilder.buildErrorInitiatePaymentHeaders())
-            .thenReturn(RESPONSE_HEADERS);
-
-        when(responseErrorMapper.generateErrorResponse(PIS_400_MESSAGE_ERROR, RESPONSE_HEADERS))
+        when(responseErrorMapper.generateErrorResponse(PIS_400_MESSAGE_ERROR))
             .thenReturn(new ResponseEntity<>(BAD_REQUEST));
 
         Object jsonRequestObject = new Object();
@@ -691,10 +688,7 @@ public class PaymentControllerTest {
         when(xs2aPaymentService.createPayment(PAYMENT_OBJECT, paymentInitiationParameters))
             .thenReturn(buildFailResponseObject());
 
-        when(paymentInitiationHeadersBuilder.buildErrorInitiatePaymentHeaders())
-            .thenReturn(RESPONSE_HEADERS);
-
-        when(responseErrorMapper.generateErrorResponse(PIS_400_MESSAGE_ERROR, RESPONSE_HEADERS))
+        when(responseErrorMapper.generateErrorResponse(PIS_400_MESSAGE_ERROR))
             .thenReturn(new ResponseEntity<>(BAD_REQUEST));
 
         // When
@@ -800,7 +794,6 @@ public class PaymentControllerTest {
         verify(responseMapper).created(eq(serviceResponse), any(), eq(RESPONSE_HEADERS));
         verify(paymentCancellationHeadersBuilder).buildStartPaymentCancellationAuthorisationHeaders(CANCELLATION_AUTHORISATION_ID);
 
-        verify(paymentCancellationHeadersBuilder, never()).buildErrorStartPaymentCancellationAuthorisationHeaders();
         verify(responseErrorMapper, never()).generateErrorResponse(any(), any());
     }
 
@@ -810,7 +803,6 @@ public class PaymentControllerTest {
         String password = "some password";
 
         MessageError serviceError = new MessageError(PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
-        ResponseHeaders errorHeaders = ResponseHeaders.builder().build();
 
         Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
         });
@@ -826,9 +818,8 @@ public class PaymentControllerTest {
             .thenReturn(serviceResponse);
 
         Object errorResponse = new Object();
-        when(responseErrorMapper.generateErrorResponse(eq(serviceError), eq(errorHeaders)))
+        when(responseErrorMapper.generateErrorResponse(eq(serviceError)))
             .thenReturn(new ResponseEntity<>(errorResponse, NOT_FOUND));
-        when(paymentCancellationHeadersBuilder.buildErrorStartPaymentCancellationAuthorisationHeaders()).thenReturn(errorHeaders);
 
         // When
         ResponseEntity actual = paymentController.startPaymentInitiationCancellationAuthorisation(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT,
@@ -842,8 +833,7 @@ public class PaymentControllerTest {
         assertEquals(NOT_FOUND, actual.getStatusCode());
         assertEquals(errorResponse, actual.getBody());
 
-        verify(paymentCancellationHeadersBuilder).buildErrorStartPaymentCancellationAuthorisationHeaders();
-        verify(responseErrorMapper).generateErrorResponse(serviceError, errorHeaders);
+        verify(responseErrorMapper).generateErrorResponse(serviceError);
 
         verify(paymentCancellationHeadersBuilder, never()).buildStartPaymentCancellationAuthorisationHeaders(anyString());
         verify(responseMapper, never()).created(any(), any(), any());

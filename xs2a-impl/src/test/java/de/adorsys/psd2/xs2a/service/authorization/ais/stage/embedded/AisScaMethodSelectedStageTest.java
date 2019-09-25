@@ -176,8 +176,6 @@ public class AisScaMethodSelectedStageTest {
         when(aisConsentService.isAuthenticationMethodDecoupled(anyString(), anyString())).thenReturn(true);
 
         scaMethodSelectedStage.apply(request);
-
-        verify(scaApproachResolver, times(1)).forceDecoupledScaApproach();
     }
 
     @Test

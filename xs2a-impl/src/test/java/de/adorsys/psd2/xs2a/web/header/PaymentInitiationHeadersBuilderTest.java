@@ -78,25 +78,6 @@ public class PaymentInitiationHeadersBuilderTest {
     }
 
     @Test
-    public void buildErrorInitiatePaymentHeaders_shouldReturnResolvedScaApproach() {
-        // Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(SCA_APPROACH);
-
-        HttpHeaders expectedHttpHeaders = new HttpHeaders();
-        expectedHttpHeaders.add(ASPSP_SCA_APPROACH_HEADER, SCA_APPROACH.name());
-
-        // When
-        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildErrorInitiatePaymentHeaders();
-
-        // Then
-        verify(scaApproachResolver, never()).getInitiationScaApproach(any());
-
-        HttpHeaders actualHttpHeaders = responseHeaders.getHttpHeaders();
-        assertEquals(expectedHttpHeaders, actualHttpHeaders);
-    }
-
-    @Test
     public void buildStartPaymentAuthorisationHeaders_shouldReturnScaApproachFromAuthorisation() {
         // Given
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
@@ -110,25 +91,6 @@ public class PaymentInitiationHeadersBuilderTest {
 
         // Then
         verify(scaApproachResolver, never()).resolveScaApproach();
-
-        HttpHeaders actualHttpHeaders = responseHeaders.getHttpHeaders();
-        assertEquals(expectedHttpHeaders, actualHttpHeaders);
-    }
-
-    @Test
-    public void buildErrorStartPaymentAuthorisationHeaders_shouldReturnResolvedScaApproach() {
-        // Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(SCA_APPROACH);
-
-        HttpHeaders expectedHttpHeaders = new HttpHeaders();
-        expectedHttpHeaders.add(ASPSP_SCA_APPROACH_HEADER, SCA_APPROACH.name());
-
-        // When
-        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildErrorStartPaymentAuthorisationHeaders();
-
-        // Then
-        verify(scaApproachResolver, never()).getInitiationScaApproach(any());
 
         HttpHeaders actualHttpHeaders = responseHeaders.getHttpHeaders();
         assertEquals(expectedHttpHeaders, actualHttpHeaders);

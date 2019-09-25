@@ -16,19 +16,19 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import de.adorsys.psd2.xs2a.service.validator.PsuDataUpdateAuthorisationChecker;
+import de.adorsys.psd2.xs2a.service.validator.AisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
+import java.util.Optional;
+
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_403;
 
 /**
  * Validator to be used for validating update consent psu data request according to some business rules
@@ -36,8 +36,9 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 @Component
 @RequiredArgsConstructor
 public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<UpdateConsentPsuDataRequestObject> {
+    private final AisAuthorisationValidator aisAuthorisationValidator;
     private final AisAuthorisationStatusValidator aisAuthorisationStatusValidator;
-    private final PsuDataUpdateAuthorisationChecker psuDataUpdateAuthorisationChecker;
+    private final AisPsuDataUpdateAuthorisationCheckerValidator aisPsuDataUpdateAuthorisationCheckerValidator;
 
     /**
      * Validates update consent psu data request
@@ -48,19 +49,31 @@ public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<U
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(UpdateConsentPsuDataRequestObject requestObject) {
-        AccountConsentAuthorization authorisation = requestObject.getAuthorisation();
+        AccountConsent consent = requestObject.getAccountConsent();
+        String authorisationId = requestObject.getAuthorisationId();
 
-        if (psuDataUpdateAuthorisationChecker.areBothPsusAbsent(requestObject.getPsuIdData(), authorisation.getPsuIdData())) {
-            return ValidationResult.invalid(new MessageError(ErrorType.AIS_400, of(FORMAT_ERROR_NO_PSU)));
-        }
-
-        if (!psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(requestObject.getPsuIdData(), authorisation.getPsuIdData())) {
-            return ValidationResult.invalid(new MessageError(AIS_401, of(PSU_CREDENTIALS_INVALID)));
-        }
-
-        ValidationResult authorisationValidationResult = aisAuthorisationStatusValidator.validate(authorisation.getScaStatus());
+        ValidationResult authorisationValidationResult = aisAuthorisationValidator.validate(authorisationId, consent);
         if (authorisationValidationResult.isNotValid()) {
             return authorisationValidationResult;
+        }
+
+        Optional<AccountConsentAuthorization> authorisationOptional = consent.findAuthorisationInConsent(authorisationId);
+
+        if (!authorisationOptional.isPresent()) {
+            return ValidationResult.invalid(ErrorType.AIS_403, RESOURCE_UNKNOWN_403);
+        }
+
+        AccountConsentAuthorization authorisation = authorisationOptional.get();
+
+        ValidationResult validationResult = aisPsuDataUpdateAuthorisationCheckerValidator.validate(requestObject.getPsuIdData(), authorisation.getPsuIdData());
+
+        if (validationResult.isNotValid()) {
+            return validationResult;
+        }
+
+        ValidationResult authorisationStatusValidationResult = aisAuthorisationStatusValidator.validate(authorisation.getScaStatus());
+        if (authorisationStatusValidationResult.isNotValid()) {
+            return authorisationStatusValidationResult;
         }
 
         return ValidationResult.valid();

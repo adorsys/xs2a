@@ -38,15 +38,6 @@ public class PaymentCancellationHeadersBuilder {
     }
 
     /**
-     * Builds response headers for start payment cancellation authorisation request that resulted in some error
-     *
-     * @return response headers
-     */
-    public ResponseHeaders buildErrorStartPaymentCancellationAuthorisationHeaders() {
-        return buildScaApproachHeader(scaApproachResolver.resolveScaApproach());
-    }
-
-    /**
      * Builds response headers for successful update payment cancellation PSU Data request
      *
      * @param authorisationId id of the cancellation authorisation, used in the request
