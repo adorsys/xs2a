@@ -366,16 +366,12 @@ public class PisScaStartAuthorisationStageTest {
         when(xs2aPisCommonPaymentService.saveAuthenticationMethods(any(), eq(Collections.emptyList())))
             .thenReturn(true);
 
-        doNothing()
-            .when(scaApproachResolver).forceDecoupledScaApproach();
-
         when(pisCommonDecoupledService.proceedDecoupledInitiation(eq(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID)), any(), eq(AUTHENTICATION_METHOD_ID)))
             .thenReturn(mockedExpectedResponse);
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
         assertThat(actualResponse).isNotNull();
-        verify(scaApproachResolver).forceDecoupledScaApproach();
         verify(pisCommonDecoupledService).proceedDecoupledInitiation(eq(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID)), any(), eq(AUTHENTICATION_METHOD_ID));
     }
 

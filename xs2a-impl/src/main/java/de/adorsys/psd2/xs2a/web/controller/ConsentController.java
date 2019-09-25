@@ -76,8 +76,7 @@ public class ConsentController implements ConsentApi {
             consentService.createAccountConsentsWithResponse(createConsent, psuData, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred));
 
         if (createResponse.hasError()) {
-            return responseErrorMapper.generateErrorResponse(createResponse.getError(),
-                                                             consentHeadersBuilder.buildErrorCreateConsentHeaders());
+            return responseErrorMapper.generateErrorResponse(createResponse.getError());
         }
 
         CreateConsentResponse createConsentResponse = createResponse.getBody();
@@ -120,8 +119,7 @@ public class ConsentController implements ConsentApi {
         ResponseObject<AuthorisationResponse> createResponse = consentService.createAisAuthorisation(psuData, consentId, password);
 
         if (createResponse.hasError()) {
-            return responseErrorMapper.generateErrorResponse(createResponse.getError(),
-                                                             consentHeadersBuilder.buildErrorStartConsentAuthorisationHeaders());
+            return responseErrorMapper.generateErrorResponse(createResponse.getError());
         }
 
         AuthorisationResponse authorisationResponse = createResponse.getBody();

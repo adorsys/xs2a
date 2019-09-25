@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.AisAuthorisationValidator;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +30,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AisAuthorisationValidatorTest {
@@ -43,6 +45,7 @@ public class AisAuthorisationValidatorTest {
 
     @Mock
     private RequestProviderService requestProviderService;
+
     private JsonReader jsonReader = new JsonReader();
 
     @Before
@@ -62,7 +65,7 @@ public class AisAuthorisationValidatorTest {
         ValidationResult validationResult = validator.validate(WRONG_AUTHORISATION_ID, accountConsent);
 
         assertTrue(validationResult.isNotValid());
-        assertEquals(ErrorType.PIS_403, validationResult.getMessageError().getErrorType());
+        assertEquals(ErrorType.AIS_403, validationResult.getMessageError().getErrorType());
         assertEquals(RESOURCE_UNKNOWN_403, validationResult.getMessageError().getTppMessage().getMessageErrorCode());
     }
 }

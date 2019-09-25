@@ -200,7 +200,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                        .build();
         }
 
-        ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
+        ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(pisCommonPaymentResponse.get(), authorisationId));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get SCA status payment initiation authorisation - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());

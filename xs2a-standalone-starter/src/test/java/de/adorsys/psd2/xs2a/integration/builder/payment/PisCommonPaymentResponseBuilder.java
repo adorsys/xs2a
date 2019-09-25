@@ -37,6 +37,12 @@ public class PisCommonPaymentResponseBuilder {
     private static final String PAYMENT_CURRENCY_CODE = "EUR";
     private static final BigDecimal PAYMENT_AMOUNT = BigDecimal.TEN;
 
+    public static PisCommonPaymentResponse buildPisCommonPaymentResponseWithAuthorisation(Authorisation authorisation) {
+        PisCommonPaymentResponse response = buildPisCommonPaymentResponse();
+        response.setAuthorisations(Collections.singletonList(authorisation));
+        return response;
+    }
+
     public static PisCommonPaymentResponse buildPisCommonPaymentResponse() {
         PisCommonPaymentResponse commonPaymentResponse = new PisCommonPaymentResponse();
         commonPaymentResponse.setTransactionStatus(TRANSACTION_STATUS);

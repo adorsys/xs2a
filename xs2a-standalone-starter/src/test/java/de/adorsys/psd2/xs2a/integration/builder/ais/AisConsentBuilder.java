@@ -52,16 +52,20 @@ public class AisConsentBuilder {
     private final static String AUTHORISATION_ID = UUID.randomUUID().toString();
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
-    public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, ObjectMapper mapper) throws Exception {
+    public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, ObjectMapper mapper, AisAccountConsentAuthorisation consentAuthorisation) throws Exception {
         CreateConsentReq consentReq = mapper.readValue(
             resourceToString(jsonPath, UTF_8),
             new TypeReference<CreateConsentReq>() {
             });
 
-        return buildAisConsent(consentReq, encryptConsentId, scaApproach);
+        return buildAisConsent(consentReq, encryptConsentId, scaApproach, consentAuthorisation);
     }
 
-    private static AisAccountConsent buildAisConsent(CreateConsentReq consentReq, String consentId, ScaApproach scaApproach) {
+    public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, ObjectMapper mapper) throws Exception {
+        return buildAisAccountConsent(jsonPath, scaApproach, encryptConsentId, mapper, null);
+    }
+
+    private static AisAccountConsent buildAisConsent(CreateConsentReq consentReq, String consentId, ScaApproach scaApproach, AisAccountConsentAuthorisation consentAuthorisation) {
         return Optional.ofNullable(consentReq)
                    .map(cr -> new AisAccountConsent(
                             consentId,
@@ -78,7 +82,7 @@ public class AisConsentBuilder {
                             TPP_INFO,
                             AUTHORISATION_TEMPLATE,
                             false,
-                            Collections.singletonList(new AisAccountConsentAuthorisation(AUTHORISATION_ID, PSU_DATA, ScaStatus.RECEIVED)),
+                            Collections.singletonList(consentAuthorisation != null ? consentAuthorisation : new AisAccountConsentAuthorisation(AUTHORISATION_ID, PSU_DATA, ScaStatus.RECEIVED)),
                             Collections.emptyMap(),
                             OffsetDateTime.now(),
                             OffsetDateTime.now()

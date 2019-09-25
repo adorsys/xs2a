@@ -193,7 +193,7 @@ public class UpdatePsuDataForConsentIT {
                                                          Collections.emptyList(),
                                                          Collections.emptyList(),
                                                          null, null, null));
-        PsuIdData psuIdData = new PsuIdData(PSU_ID, "", "", "");
+        PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null);
         aisAccountConsent.setAccountConsentAuthorizations(Collections.singletonList(
             new AisAccountConsentAuthorisation(AUTHORISATION_ID, psuIdData, ScaStatus.PSUIDENTIFIED)));
         aisAccountConsent.setTppInfo(TPP_INFO);

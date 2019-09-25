@@ -8,6 +8,7 @@
 * Bugfix: Wrong `authorisation_id` can authorise
 * Bugfix: Array "account" in Read Balances and Read Transaction List responses is empty for Global consent
 * Refactor: Aggregate all messages sent to TPP to message bundle
+* ScaApproachResolver cleanup
 
 == Change yaml-generator to correct model Objects equals
 
@@ -29,7 +30,8 @@ if it was not provided in initiate payment request `POST /v1/{payment-service}/{
 
 == Bugfix: Wrong `authorisationId` can authorise
 
-Fixed bug with updating authorisation by wrong `authorization_id`. From now on, endpoints below return `403 RESOURCE_UNKNOWN`:
+Fixed bug with updating authorisation by wrong `authorization_id`.
+From now on, endpoints below return `403 RESOURCE_UNKNOWN`:
 
 * `PUT /v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}`
 * `PUT /v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}`
@@ -45,3 +47,9 @@ From now on, array "account" in read balances `GET /v1/accounts/{account-id}/bal
 From now on all text messages for TPP are aggregated in `error_message.properties` file. These messages are executed by
 `Psd2ErrorMapper`. Also from now on class `TppMessageInformation` has new array field `textParameters` for keeping
 values, which should be inserted into message text placeholders for TPP from `error_message.properties`.
+
+== ScaApproachResolver cleanup
+
+From now on, `ScaApproachResolver` fetches, if possible, information out of an authorisation object instead of resolving it directly.
+Furthermore, the header `Aspsp-Sca-Approach` isn't returned, if consent creation fails.
+Appropriate changes have been made to remove `ScaApproachResolver` 's reliance to an existing authorisation by a given id.

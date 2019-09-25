@@ -16,26 +16,40 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
+import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
-import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
  * Validator to be used for validating get payment initiation authorisation SCA status request according to some
  * business rules
  */
+@Slf4j
 @Component
-public class GetPaymentInitiationAuthorisationScaStatusValidator extends AbstractPisTppValidator<CommonPaymentObject> {
-
+@RequiredArgsConstructor
+public class GetPaymentInitiationAuthorisationScaStatusValidator extends AbstractPisTppValidator<GetPaymentInitiationAuthorisationScaStatusPO> {
+    private final PisAuthorisationValidator pisAuthorisationValidator;
     /**
      * Validates get payment initiation authorisation SCA status request
      *
      * @param paymentObject payment information object
+     *
      * @return valid result if the payment is valid, invalid result with appropriate error otherwise
      */
     @Override
-    protected ValidationResult executeBusinessValidation(CommonPaymentObject paymentObject) {
+    protected ValidationResult executeBusinessValidation(GetPaymentInitiationAuthorisationScaStatusPO paymentObject) {
+        PisCommonPaymentResponse response = paymentObject.getPisCommonPaymentResponse();
+        String authorisationId = paymentObject.getAuthorisationId();
+
+        ValidationResult authorisationValidationResult = pisAuthorisationValidator.validate(authorisationId, response);
+        if (authorisationValidationResult.isNotValid()) {
+            return authorisationValidationResult;
+        }
+
         return ValidationResult.valid();
     }
 }
