@@ -33,6 +33,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_EXTRA_FIELD;
+
 @Component
 public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl {
 
@@ -52,7 +55,11 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
         try {
             doBulkValidation(paymentMapper.getBulkPayment(body), messageError);
         } catch (IllegalArgumentException e) {
-            errorBuildingService.enrichMessageError(messageError, e.getMessage());
+            if (e.getMessage().startsWith("Unrecognized field")) {
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EXTRA_FIELD, extractErrorField(e.getMessage())));
+            } else {
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR));
+            }
         }
     }
 
@@ -68,7 +75,7 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
 
         if (isDateInThePast(bulkPayment.getRequestedExecutionDate())) {
             errorBuildingService.enrichMessageError(
-                messageError, TppMessageInformation.of(MessageErrorCode.EXECUTION_DATE_INVALID, "Value 'requestedExecutionDate' should not be in the past"));
+                messageError, TppMessageInformation.of(MessageErrorCode.EXECUTION_DATE_INVALID_IN_THE_PAST));
         }
     }
 }

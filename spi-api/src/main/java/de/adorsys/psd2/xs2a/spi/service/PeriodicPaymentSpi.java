@@ -35,7 +35,7 @@ public interface PeriodicPaymentSpi extends PaymentSpi<SpiPeriodicPayment, SpiPe
     @NotNull
     default SpiResponse<SpiPeriodicPaymentInitiationResponse> initiatePayment(@NotNull SpiContextData contextData, @NotNull SpiPeriodicPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
-                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED, "Service is not supported"))
+                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
     }
 
@@ -43,7 +43,7 @@ public interface PeriodicPaymentSpi extends PaymentSpi<SpiPeriodicPayment, SpiPe
     @NotNull
     default SpiResponse<SpiPeriodicPayment> getPaymentById(@NotNull SpiContextData contextData, @NotNull SpiPeriodicPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiPeriodicPayment>builder()
-                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED, "Service is not supported"))
+                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
     }
 
@@ -51,7 +51,7 @@ public interface PeriodicPaymentSpi extends PaymentSpi<SpiPeriodicPayment, SpiPe
     @NotNull
     default SpiResponse<SpiGetPaymentStatusResponse> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull SpiPeriodicPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiGetPaymentStatusResponse>builder()
-                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED, "Service is not supported"))
+                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
     }
 }

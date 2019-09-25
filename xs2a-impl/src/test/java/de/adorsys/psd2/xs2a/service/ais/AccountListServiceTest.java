@@ -179,7 +179,7 @@ public class AccountListServiceTest {
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(), ServiceType.AIS))
             .thenReturn(ErrorHolder
                             .builder(ErrorType.AIS_400)
-                            .tppMessages(TppMessageInformation.of(FORMAT_ERROR, ""))
+                            .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
                             .build());
 
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -414,7 +414,7 @@ public class AccountListServiceTest {
     private <T> SpiResponse<T> buildErrorSpiResponse() {
         return SpiResponse.<T>builder()
                    .payload((T) AccountListServiceTest.EMPTY_ACCOUNT_DETAILS_LIST)
-                   .error(new TppMessage(FORMAT_ERROR, "Format error"))
+                   .error(new TppMessage(FORMAT_ERROR))
                    .build();
     }
 

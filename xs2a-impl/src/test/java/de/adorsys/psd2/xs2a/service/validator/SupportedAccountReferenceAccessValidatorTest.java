@@ -39,7 +39,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Currency;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
@@ -47,16 +47,12 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SupportedAccountReferenceAccessValidatorTest {
-    private static final String ATTRIBUTE_NOT_SUPPORTED_MESSAGE = "Attribute %s is not supported by the ASPSP";
-    private static final String ONLY_ONE_ATTRIBUTE_ALLOWED_MESSAGE = "Only one account reference parameter is allowed";
-    private static final String IBAN_NOT_SUPPORTED_MESSAGE = String.format(ATTRIBUTE_NOT_SUPPORTED_MESSAGE, "IBAN");
-    private static final String BBAN_NOT_SUPPORTED_MESSAGE = String.format(ATTRIBUTE_NOT_SUPPORTED_MESSAGE, "BBAN");
     private static final MessageError IBAN_NOT_SUPPORTED_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, IBAN_NOT_SUPPORTED_MESSAGE));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR_ATTRIBUTE_NOT_SUPPORTED, "IBAN"));
     private static final MessageError BBAN_NOT_SUPPORTED_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, BBAN_NOT_SUPPORTED_MESSAGE));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR_ATTRIBUTE_NOT_SUPPORTED, "BBAN"));
     private static final MessageError ONLY_ONE_ATTRIBUTE_ALLOWED_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, ONLY_ONE_ATTRIBUTE_ALLOWED_MESSAGE));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR_MULTIPLE_ACCOUNT_REFERENCES));
     private static final ServiceType SERVICE_TYPE = ServiceType.AIS;
     private static final AccountReference ACCOUNT_REFERENCE_IBAN =
         new AccountReference(AccountReferenceType.IBAN, "iban value", Currency.getInstance("EUR"));

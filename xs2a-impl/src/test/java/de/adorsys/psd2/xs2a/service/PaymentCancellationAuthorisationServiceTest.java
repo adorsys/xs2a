@@ -57,8 +57,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -80,7 +79,7 @@ public class PaymentCancellationAuthorisationServiceTest {
 
     private static final MessageError VALIDATION_ERROR = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final MessageError AUTHORISATION_SERVICE_ERROR = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
-    private static final MessageError UNKNOWN_PAYMENT_ERROR = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404, "Payment not found"));
+    private static final MessageError UNKNOWN_PAYMENT_ERROR = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404_NO_PAYMENT));
 
     @InjectMocks
     private PaymentCancellationAuthorisationServiceImpl paymentCancellationAuthorisationService;

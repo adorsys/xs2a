@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2.pis;
 
 import de.adorsys.psd2.model.Error400NGPIS;
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -32,6 +31,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.function.Function;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.EXECUTION_DATE_INVALID;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,13 +40,11 @@ import static org.mockito.Mockito.when;
 public class PIS400ErrorMapperTest {
     private static final String ERROR_JSON_PATH = "json/service/mapper/psd2/pis/Error400NGPIS.json";
     private static final String ERROR_CUSTOM_TEXT_JSON_PATH = "json/service/mapper/psd2/pis/Error400NGPIS-custom-text.json";
-    private static final MessageErrorCode ERROR_CODE = MessageErrorCode.EXECUTION_DATE_INVALID;
-    private static final String ERROR_TEXT = "Some text";
     private static final String CUSTOM_ERROR_TEXT = "Custom text";
     private static final MessageError MESSAGE_ERROR = new MessageError(ErrorType.AIS_400,
-                                                                       TppMessageInformation.of(ERROR_CODE, ERROR_TEXT));
+                                                                       TppMessageInformation.of(EXECUTION_DATE_INVALID, "text"));
     private static final MessageError MESSAGE_ERROR_WITHOUT_TEXT = new MessageError(ErrorType.AIS_400,
-                                                                                    TppMessageInformation.of(ERROR_CODE));
+                                                                                    TppMessageInformation.of(EXECUTION_DATE_INVALID));
 
     private JsonReader jsonReader = new JsonReader();
     @Mock
@@ -65,6 +63,9 @@ public class PIS400ErrorMapperTest {
 
     @Test
     public void getMapper_shouldReturnCorrectErrorMapper() {
+        when(messageService.getMessage(EXECUTION_DATE_INVALID.name()))
+            .thenReturn("Some %s");
+
         // Given
         Error400NGPIS expectedError = jsonReader.getObjectFromFile(ERROR_JSON_PATH, Error400NGPIS.class);
 
@@ -78,7 +79,7 @@ public class PIS400ErrorMapperTest {
 
     @Test
     public void getMapper_withNoTextInTppMessage_shouldGetTextFromMessageService() {
-        when(messageService.getMessage(ERROR_CODE.name()))
+        when(messageService.getMessage(EXECUTION_DATE_INVALID.name()))
             .thenReturn(CUSTOM_ERROR_TEXT);
 
         // Given
@@ -90,6 +91,6 @@ public class PIS400ErrorMapperTest {
 
         // Then
         assertEquals(expectedError, actualError);
-        verify(messageService).getMessage(ERROR_CODE.name());
+        verify(messageService).getMessage(EXECUTION_DATE_INVALID.name());
     }
 }

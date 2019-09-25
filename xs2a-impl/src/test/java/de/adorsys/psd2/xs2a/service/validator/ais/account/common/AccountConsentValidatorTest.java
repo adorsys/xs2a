@@ -42,7 +42,6 @@ import static org.mockito.Mockito.when;
 public class AccountConsentValidatorTest {
     private static final String AUTHORISATION_NUMBER = "authorisation number";
     private static final String REQUEST_URI = "/accounts";
-    private static final String REVOKED_BY_PSU = "Consent was revoked by PSU";
 
     private static final MessageError AIS_CONSENT_EXPIRED_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_EXPIRED));
@@ -51,7 +50,7 @@ public class AccountConsentValidatorTest {
     private static final MessageError AIS_CONSENT_ACCESS_EXCEEDED_ERROR =
         new MessageError(ErrorType.AIS_429, TppMessageInformation.of(ACCESS_EXCEEDED));
     private static final MessageError AIS_CONSENT_INVALID_REVOKED_BY_PSU =
-        new MessageError((ErrorType.AIS_401), TppMessageInformation.of(CONSENT_INVALID, REVOKED_BY_PSU));
+        new MessageError((ErrorType.AIS_401), TppMessageInformation.of(CONSENT_INVALID_REVOKED));
 
     @InjectMocks
     private AccountConsentValidator accountConsentValidator;

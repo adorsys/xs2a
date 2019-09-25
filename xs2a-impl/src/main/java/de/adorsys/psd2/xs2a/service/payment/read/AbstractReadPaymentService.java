@@ -53,8 +53,6 @@ import java.util.UUID;
 @Slf4j
 public abstract class AbstractReadPaymentService implements ReadPaymentService {
 
-    private static final String PAYMENT_NOT_FOUND_MESSAGE = "Payment not found"; //TODO: move to bundle https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/791
-
     protected SpiContextDataProvider spiContextDataProvider;
     protected SpiPaymentFactory spiPaymentFactory;
 
@@ -80,7 +78,7 @@ public abstract class AbstractReadPaymentService implements ReadPaymentService {
         if (CollectionUtils.isEmpty(pisPayments)) {
             return new PaymentInformationResponse<>(
                 ErrorHolder.builder(ErrorType.PIS_400)
-                    .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, PAYMENT_NOT_FOUND_MESSAGE))
+                    .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_PAYMENT_NOT_FOUND))
                     .build());
         }
 
@@ -88,7 +86,7 @@ public abstract class AbstractReadPaymentService implements ReadPaymentService {
         if (!spiPaymentOptional.isPresent()) {
             return new PaymentInformationResponse<>(
                 ErrorHolder.builder(ErrorType.PIS_404)
-                    .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
+                    .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                     .build());
         }
 

@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.web.validator.body.payment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.FrequencyCode;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -40,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.PAYMENT_DATE_FIELDS;
 
 @Slf4j
@@ -47,13 +47,9 @@ import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFi
 public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implements PaymentBodyValidator {
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
-    private static final String PURPOSE_CODE_FIELD_NAME = "purposeCode";
-    private static final String FREQUENCY_FIELD_NAME = "frequency";
-    private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
     private static final String PERIODIC_PAYMENT_PATH_VAR = "periodic-payments";
-    static final String PURPOSE_CODE_ERROR_FORMAT = "Field 'purposeCode' has wrong value";
-    static final String NO_FREQUENCY_ERROR_FORMAT = "Field 'frequency' should not be null";
-    static final String WRONG_FREQUENCY_FORMAT = "Wrong format for field 'frequency'";
+    static final String PURPOSE_CODE_FIELD_NAME = "purposeCode";
+    static final String FREQUENCY_FIELD_NAME = "frequency";
 
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
     private DateFieldValidator dateFieldValidator;
@@ -117,9 +113,9 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         boolean isPeriodicPayment = getPathParameters(request).get(PAYMENT_SERVICE_PATH_VAR).equals(PERIODIC_PAYMENT_PATH_VAR);
         if (isPeriodicPayment) {
             if (!frequencyOptional.isPresent()) {
-                errorBuildingService.enrichMessageError(messageError, NO_FREQUENCY_ERROR_FORMAT);
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, FREQUENCY_FIELD_NAME));
             } else if (FrequencyCode.fromValue(frequencyOptional.get()) == null) {
-                errorBuildingService.enrichMessageError(messageError, WRONG_FREQUENCY_FORMAT);
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, FREQUENCY_FIELD_NAME));
             }
         }
     }
@@ -146,12 +142,8 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
                                              .anyMatch(Objects::isNull);
 
         if (isPurposeCodeInvalid) {
-            enrichFormatMessageError(PURPOSE_CODE_ERROR_FORMAT, messageError);
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, PURPOSE_CODE_FIELD_NAME));
         }
-    }
-
-    private void enrichFormatMessageError(String message, MessageError messageError) {
-        errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, message));
     }
 
     private List<String> extractPurposeCodes(HttpServletRequest request, MessageError messageError) {
@@ -159,7 +151,7 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         try {
             purposeCodes.addAll(jsonConverter.toJsonGetValuesForField(request.getInputStream(), PURPOSE_CODE_FIELD_NAME));
         } catch (IOException e) {
-            errorBuildingService.enrichMessageError(messageError, BODY_DESERIALIZATION_ERROR);
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
         }
         return purposeCodes;
     }

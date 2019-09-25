@@ -102,7 +102,7 @@ public class GetTransactionDetailsValidatorTest {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getBalances(), ACCOUNT_ID))
-            .thenReturn(ValidationResult.invalid(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID)));
+            .thenReturn(ValidationResult.invalid(ErrorType.AIS_401, CONSENT_INVALID));
 
         // When
         ValidationResult validationResult = getTransactionDetailsValidator.validate(new CommonAccountTransactionsRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI));

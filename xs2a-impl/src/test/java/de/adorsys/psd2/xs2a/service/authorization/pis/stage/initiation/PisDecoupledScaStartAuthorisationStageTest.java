@@ -158,7 +158,7 @@ public class PisDecoupledScaStartAuthorisationStageTest {
         when(spiErrorMapper.mapToErrorHolder(expectedResponse, PIS_SERVICE_TYPE))
             .thenReturn(ErrorHolder
                             .builder(PIS_400_ERROR_TYPE)
-                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, ""))
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                             .build());
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisDecoupledScaStartAuthorisationStage.apply(request, response);
@@ -246,7 +246,7 @@ public class PisDecoupledScaStartAuthorisationStageTest {
     // Needed because SpiResponse is final, so it's impossible to mock it
     private <T> SpiResponse<T> buildErrorSpiResponse() {
         return SpiResponse.<T>builder()
-                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                    .build();
     }
 }

@@ -21,7 +21,7 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.springframework.stereotype.Component;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_403;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_403_INCORRECT_CERTIFICATE;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_403;
 
 @Component
@@ -37,6 +37,6 @@ public class AisConsentTppInfoValidator extends TppInfoValidator {
 
     @Override
     TppMessageInformation getTppMessageInformation() {
-        return TppMessageInformation.of(CONSENT_UNKNOWN_403, TPP_ERROR_MESSAGE);
+        return TppMessageInformation.of(CONSENT_UNKNOWN_403_INCORRECT_CERTIFICATE);
     }
 }

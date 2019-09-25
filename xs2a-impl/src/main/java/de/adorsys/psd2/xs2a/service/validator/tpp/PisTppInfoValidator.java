@@ -21,7 +21,7 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.springframework.stereotype.Component;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_INVALID_TPP;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_401;
 
 @Component
@@ -37,6 +37,6 @@ public class PisTppInfoValidator extends TppInfoValidator {
 
     @Override
     TppMessageInformation getTppMessageInformation() {
-        return TppMessageInformation.of(CERTIFICATE_INVALID, TPP_ERROR_MESSAGE);
+        return TppMessageInformation.of(CERTIFICATE_INVALID_TPP);
     }
 }

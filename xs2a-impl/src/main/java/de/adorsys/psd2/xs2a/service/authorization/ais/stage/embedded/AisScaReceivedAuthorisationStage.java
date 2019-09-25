@@ -68,8 +68,6 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
     private final AisScaAuthorisationService aisScaAuthorisationService;
     private final RequestProviderService requestProviderService;
 
-    private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
-
     public AisScaReceivedAuthorisationStage(Xs2aAisConsentService aisConsentService,
                                             SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
                                             AisConsentSpi aisConsentSpi,
@@ -183,8 +181,8 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
         if (!isPsuExist(request.getPsuData())) {
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}]. AIS_RECEIVED stage. Apply identification when update consent PSU data has failed. No PSU data available in request.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId());
-            MessageError messageError = new MessageError(ErrorType.AIS_400, of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU));
-            return createFailedResponse(messageError, Collections.singletonList(new TppMessage(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU)), request);
+            MessageError messageError = new MessageError(ErrorType.AIS_400, of(FORMAT_ERROR_NO_PSU));
+            return createFailedResponse(messageError, Collections.singletonList(new TppMessage(FORMAT_ERROR_NO_PSU)), request);
         }
 
         return new UpdateConsentPsuDataResponse(ScaStatus.PSUIDENTIFIED, request.getConsentId(), request.getAuthorizationId());

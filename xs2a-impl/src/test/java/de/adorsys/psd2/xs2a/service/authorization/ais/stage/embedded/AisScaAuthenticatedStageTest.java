@@ -54,6 +54,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Optional;
 import java.util.UUID;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -67,7 +68,6 @@ public class AisScaAuthenticatedStageTest {
     private static final ConsentStatus PARTIALLY_AUTHORISED_CONSENT_STATUS = ConsentStatus.PARTIALLY_AUTHORISED;
     private static final ScaStatus FAILED_SCA_STATUS = ScaStatus.FAILED;
     private static final ScaStatus FINALIZED_SCA_STATUS = ScaStatus.FINALISED;
-    private static final MessageErrorCode ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
@@ -158,7 +158,7 @@ public class AisScaAuthenticatedStageTest {
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(), ServiceType.AIS))
             .thenReturn(ErrorHolder
                             .builder(ErrorType.AIS_400)
-                            .tppMessages(TppMessageInformation.of(ERROR_CODE, ""))
+                            .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
                             .build());
 
         UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
@@ -287,7 +287,7 @@ public class AisScaAuthenticatedStageTest {
     // Needed because SpiResponse is final, so it's impossible to mock it
     private SpiResponse<SpiVerifyScaAuthorisationResponse> buildErrorSpiResponse() {
         return SpiResponse.<SpiVerifyScaAuthorisationResponse>builder()
-                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                   .error(new TppMessage(FORMAT_ERROR))
                    .build();
     }
 }

@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -43,7 +42,7 @@ public class AccountAccessValidator {
             }
 
             if (CollectionUtils.isEmpty(accountAccess.getBalances())) {
-                return ValidationResult.invalid(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
+                return ValidationResult.invalid(ErrorType.AIS_401, CONSENT_INVALID);
             }
         }
 

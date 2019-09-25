@@ -38,6 +38,8 @@ import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
+import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +65,10 @@ import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_EXPIRED;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 import static junit.framework.TestCase.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -113,6 +118,8 @@ public class AccountControllerTest {
     private PrintWriter printWriter;
     @Mock
     private ResponseErrorMapper responseErrorMapper;
+    @Mock
+    private TppErrorMessageBuilder tppErrorMessageBuilder;
 
     @Before
     public void setUp() {
@@ -364,8 +371,11 @@ public class AccountControllerTest {
     @Test
     public void downloadTransactions_spiError() throws IOException {
         // Given
+        TppErrorMessage tppErrorMessage = new TppErrorMessage(ERROR, CERTIFICATE_EXPIRED, "Certificate is expired");
+
         when(transactionService.downloadTransactions(CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID)).thenReturn(buildTransactionDownloadResponseError());
         when(response.getWriter()).thenReturn(printWriter);
+        when(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, FORMAT_ERROR)).thenReturn(tppErrorMessage);
 
         // When
         accountController.downloadTransactions(UUID.randomUUID(), CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
@@ -510,7 +520,7 @@ public class AccountControllerTest {
 
     private ResponseObject<Xs2aTransactionsDownloadResponse> buildTransactionDownloadResponseError() {
         return ResponseObject.<Xs2aTransactionsDownloadResponse>builder()
-                   .fail(new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR)))
+                   .fail(new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR)))
                    .build();
     }
 

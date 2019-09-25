@@ -55,7 +55,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisCancellationScaMethodSelectedStageTest {
-    private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
     private static final String PAYMENT_ID = "123456789";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
@@ -87,7 +86,7 @@ public class PisCancellationScaMethodSelectedStageTest {
     @Before
     public void setUp() {
         ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
-                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "message 1, message 2, message 3"))
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                                       .build();
 
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIS)))
@@ -100,9 +99,8 @@ public class PisCancellationScaMethodSelectedStageTest {
 
     @Test
     public void apply_paymentCancellationSpi_verifyScaAuthorisationAndCancelPayment_fail() {
-        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         SpiResponse<SpiResponse.VoidResponse> spiErrorMessage = SpiResponse.<SpiResponse.VoidResponse>builder()
-                                                                    .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                                                                    .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                                     .build();
 
         // generate an error
@@ -115,7 +113,6 @@ public class PisCancellationScaMethodSelectedStageTest {
         // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
-        assertThat(actualResponse.getErrorHolder().getTppMessageInformationList().iterator().next().getText()).isEqualTo(errorMessagesString);
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataRequest buildXs2aUpdatePisPsuDataRequest() {

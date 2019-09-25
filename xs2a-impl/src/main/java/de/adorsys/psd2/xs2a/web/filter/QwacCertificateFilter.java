@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
@@ -42,7 +43,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_EXPIRED;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_INVALID_NO_ACCESS;
 import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 
 /**
@@ -59,6 +60,7 @@ import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 public class QwacCertificateFilter extends AbstractXs2aFilter {
     private final TppInfoHolder tppInfoHolder;
     private final RequestProviderService requestProviderService;
+    private final TppErrorMessageBuilder tppErrorMessageBuilder;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -73,7 +75,7 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                              requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
 
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().print(new TppErrorMessage(ERROR, CERTIFICATE_EXPIRED, "Certificate is expired"));
+                    response.getWriter().print(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, CERTIFICATE_EXPIRED));
                     return;
                 }
 
@@ -100,7 +102,7 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                 log.info("InR-ID: [{}], X-Request-ID: [{}], TPP unauthorised because CertificateValidationException: {}",
                          requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), e.getMessage());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().print(new TppErrorMessage(ERROR, CERTIFICATE_INVALID, "You don't have access to this resource"));
+                response.getWriter().print(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, CERTIFICATE_INVALID_NO_ACCESS));
                 return;
             }
         }

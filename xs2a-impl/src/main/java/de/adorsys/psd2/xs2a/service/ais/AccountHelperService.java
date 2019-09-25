@@ -24,7 +24,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.consent.ErrorToActionStatusMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountReferenceMapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
@@ -40,7 +40,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AccountHelperService {
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
-    private final Xs2aAisConsentMapper consentMapper;
+    private final ErrorToActionStatusMapper errorToActionStatusMapper;
     private final SpiContextDataProvider spiContextDataProvider;
     private final RequestProviderService requestProviderService;
 
@@ -60,7 +60,7 @@ public class AccountHelperService {
 
     ActionStatus createActionStatus(boolean withBalance, TypeAccess access, ResponseObject response) {
         return response.hasError()
-                   ? consentMapper.mapActionStatusError(response.getError().getTppMessage().getMessageErrorCode(),
+                   ? errorToActionStatusMapper.mapActionStatusError(response.getError().getTppMessage().getMessageErrorCode(),
                                                         withBalance, access)
                    : ActionStatus.SUCCESS;
     }

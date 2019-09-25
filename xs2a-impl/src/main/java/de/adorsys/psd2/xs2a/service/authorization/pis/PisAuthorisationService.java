@@ -89,7 +89,7 @@ public class PisAuthorisationService {
         Optional<GetPisAuthorisationResponse> pisAuthorisationOptional = pisCommonPaymentServiceEncrypted.getPisAuthorisationById(authorisationId);
         if (!pisAuthorisationOptional.isPresent()) {
             ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_404)
-                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404, "PIS authorisation is not found"))
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_AUTHORISATION))
                                           .build();
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed: authorisation is not found by id.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId());
@@ -128,7 +128,7 @@ public class PisAuthorisationService {
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId());
 
             ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_404)
-                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404, "PIS cancellation authorisation is not found"))
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_CANC_AUTHORISATION))
                                           .build();
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, request.getPaymentId(), authorisationId, request.getPsuData());
         }

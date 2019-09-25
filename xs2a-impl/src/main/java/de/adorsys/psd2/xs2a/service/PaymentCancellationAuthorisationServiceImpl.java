@@ -53,7 +53,6 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 @Service
 @RequiredArgsConstructor
 public class PaymentCancellationAuthorisationServiceImpl implements PaymentCancellationAuthorisationService {
-    private static final String PAYMENT_NOT_FOUND_MESSAGE = "Payment not found";
 
     private final PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
     private final Xs2aEventService xs2aEventService;
@@ -116,7 +115,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Update PIS Cancellation PSU Data has failed. Payment not found by id.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
         }
 
@@ -157,7 +156,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get information PIS Cancellation Authorisation has failed. Payment not found by id.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
         }
 
@@ -198,7 +197,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get SCA status PIS Cancellation Authorisation has failed. Payment not found by id.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<ScaStatus>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
         }
 
@@ -233,7 +232,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS Cancellation Authorization has failed. Payment not found by id.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
         }
 

@@ -137,7 +137,7 @@ public class CommonDecoupledAisServiceTest {
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_ERROR_MESSAGE)), ServiceType.AIS))
             .thenReturn(ErrorHolder
                             .builder(ErrorType.AIS_400)
-                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, ""))
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                             .build());
 
         // When
@@ -175,7 +175,7 @@ public class CommonDecoupledAisServiceTest {
     private <T> SpiResponse<T> buildErrorSpiResponse(T payload) {
         return SpiResponse.<T>builder()
                    .payload(payload)
-                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                    .build();
     }
 

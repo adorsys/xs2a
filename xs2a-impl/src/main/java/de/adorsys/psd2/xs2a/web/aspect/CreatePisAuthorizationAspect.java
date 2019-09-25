@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import de.adorsys.psd2.xs2a.web.link.CreatePisAuthorisationLinks;
@@ -42,10 +41,10 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
     private final RedirectLinkBuilder redirectLinkBuilder;
     private final RedirectIdService redirectIdService;
 
-    public CreatePisAuthorizationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService,
+    public CreatePisAuthorizationAspect(ScaApproachResolver scaApproachResolver,
                                         AspspProfileService aspspProfileService, RedirectLinkBuilder redirectLinkBuilder,
                                         RedirectIdService redirectIdService) {
-        super(messageService, aspspProfileService);
+        super(aspspProfileService);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.redirectIdService = redirectIdService;
@@ -62,10 +61,8 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
                 Xs2aUpdatePisCommonPaymentPsuDataResponse response = (Xs2aUpdatePisCommonPaymentPsuDataResponse) result.getBody();
                 response.setLinks(new UpdatePisAuthorisationLinks(getHttpUrl(), scaApproachResolver, response, createRequest));
             }
-
-            return result;
         }
-        return enrichErrorTextMessage(result);
+        return result;
     }
 
 }

@@ -65,7 +65,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisScaMethodSelectedStageTest {
-    private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
     private static final String AUTHENTICATION_METHOD_ID = "sms";
     private static final String PAYMENT_ID = "123456789";
     private static final String PSU_ID = "id";
@@ -104,7 +103,7 @@ public class PisScaMethodSelectedStageTest {
     @Before
     public void setUp() {
         ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
-                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "message 1, message 2, message 3"))
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                                       .build();
 
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIS)))
@@ -120,9 +119,8 @@ public class PisScaMethodSelectedStageTest {
 
     @Test
     public void apply_paymentSpi_verifyScaAuthorisationAndExecutePayment_fail() {
-        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         SpiResponse<SpiPaymentExecutionResponse> spiErrorMessage = SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                       .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                                                                       .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                                        .build();
         when(pisAspspDataService.getInternalPaymentIdByEncryptedString(PAYMENT_ID)).thenReturn(any());
         when(applicationContext.getBean(SinglePaymentSpi.class))
@@ -138,7 +136,6 @@ public class PisScaMethodSelectedStageTest {
         // Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder().getErrorType().getErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR.getCode());
-        assertThat(actualResponse.getErrorHolder().getTppMessageInformationList().iterator().next().getText()).isEqualTo(errorMessagesString);
     }
 
     @Test

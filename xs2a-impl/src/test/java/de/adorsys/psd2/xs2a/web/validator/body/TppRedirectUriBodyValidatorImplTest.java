@@ -83,9 +83,7 @@ public class TppRedirectUriBodyValidatorImplTest {
         verify(scaApproachResolver, times(1)).resolveScaApproach();
         assertFalse(messageError.getTppMessages().isEmpty());
         assertEquals(MessageCategory.ERROR, messageError.getTppMessage().getCategory());
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(TppRedirectUriBodyValidatorImpl.ERROR_TEXT_ABSENT_HEADER, TPP_REDIRECT_URI),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_ABSENT_HEADER, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -98,8 +96,6 @@ public class TppRedirectUriBodyValidatorImplTest {
         verify(scaApproachResolver, times(1)).resolveScaApproach();
         assertFalse(messageError.getTppMessages().isEmpty());
         assertEquals(MessageCategory.ERROR, messageError.getTppMessage().getCategory());
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(TppRedirectUriBodyValidatorImpl.ERROR_TEXT_BLANK_HEADER, TPP_REDIRECT_URI),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_BLANK_HEADER, messageError.getTppMessage().getMessageErrorCode());
     }
 }

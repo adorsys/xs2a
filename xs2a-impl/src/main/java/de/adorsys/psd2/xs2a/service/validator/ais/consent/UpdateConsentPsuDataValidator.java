@@ -26,8 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 
@@ -37,7 +36,6 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 @Component
 @RequiredArgsConstructor
 public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<UpdateConsentPsuDataRequestObject> {
-    private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
     private final AisAuthorisationStatusValidator aisAuthorisationStatusValidator;
     private final PsuDataUpdateAuthorisationChecker psuDataUpdateAuthorisationChecker;
 
@@ -53,7 +51,7 @@ public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<U
         AccountConsentAuthorization authorisation = requestObject.getAuthorisation();
 
         if (psuDataUpdateAuthorisationChecker.areBothPsusAbsent(requestObject.getPsuIdData(), authorisation.getPsuIdData())) {
-            return ValidationResult.invalid(new MessageError(ErrorType.AIS_400, of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU)));
+            return ValidationResult.invalid(new MessageError(ErrorType.AIS_400, of(FORMAT_ERROR_NO_PSU)));
         }
 
         if (!psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(requestObject.getPsuIdData(), authorisation.getPsuIdData())) {

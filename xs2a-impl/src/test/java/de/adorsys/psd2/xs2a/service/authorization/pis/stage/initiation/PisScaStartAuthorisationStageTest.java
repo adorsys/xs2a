@@ -77,7 +77,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisScaStartAuthorisationStageTest {
-    private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
     private static final String AUTHENTICATION_METHOD_ID = "sms";
     private static final String PAYMENT_ID = "123456789";
     private static final String PSU_ID = "Test psuId";
@@ -142,7 +141,7 @@ public class PisScaStartAuthorisationStageTest {
     @Before
     public void setUp() {
         ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
-                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "message 1, message 2, message 3"))
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                                       .build();
 
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIS)))
@@ -180,9 +179,8 @@ public class PisScaStartAuthorisationStageTest {
 
     @Test
     public void apply_paymentAuthorisationSpi_authorisePsu_fail() {
-        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         SpiResponse<SpiAuthorisationStatus> spiErrorMessage = SpiResponse.<SpiAuthorisationStatus>builder()
-                                                                  .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                                                                  .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                                   .build();
 
         // generate an error
@@ -193,18 +191,16 @@ public class PisScaStartAuthorisationStageTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
         // Then
-        assertFormatError(errorMessagesString, actualResponse);
+        assertFormatError(actualResponse);
     }
 
-    private void assertFormatError(String errorMessagesString, Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse) {
+    private void assertFormatError(Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse) {
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder().getErrorType().getErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR.getCode());
-        assertThat(actualResponse.getErrorHolder().getTppMessageInformationList().iterator().next().getText()).isEqualTo(errorMessagesString);
     }
 
     @Test
     public void apply_paymentAuthorisationSpi_requestAvailableScaMethods_fail() {
-        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
                                                             .build();
@@ -214,7 +210,7 @@ public class PisScaStartAuthorisationStageTest {
 
         // generate an error
         SpiResponse<List<SpiAuthenticationObject>> spiErrorMessage = SpiResponse.<List<SpiAuthenticationObject>>builder()
-                                                                         .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                         .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR))
                                                                          .build();
 
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any()))
@@ -224,12 +220,11 @@ public class PisScaStartAuthorisationStageTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
         // Then
 
-        assertFormatError(errorMessagesString, actualResponse);
+        assertFormatError(actualResponse);
     }
 
     @Test
     public void apply_paymentAuthorisationSpi_requestAuthorisationCode_fail() {
-        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
                                                             .build();
@@ -252,7 +247,7 @@ public class PisScaStartAuthorisationStageTest {
 
         // generate an error
         SpiResponse<SpiAuthorizationCodeResult> spiErrorMessage = SpiResponse.<SpiAuthorizationCodeResult>builder()
-                                                                      .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                      .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR))
                                                                       .build();
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any()))
             .thenReturn(spiErrorMessage);
@@ -261,13 +256,12 @@ public class PisScaStartAuthorisationStageTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
         // Then
 
-        assertFormatError(errorMessagesString, actualResponse);
+        assertFormatError(actualResponse);
     }
 
 
     @Test
     public void apply_singlePaymentSpi_executePaymentWithoutSca_fail() {
-        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
                                                             .build();
@@ -292,7 +286,7 @@ public class PisScaStartAuthorisationStageTest {
 
         // generate an error
         SpiResponse<SpiPaymentExecutionResponse> spiErrorMessage = SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                       .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                       .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR))
                                                                        .build();
 
         when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any()))
@@ -302,7 +296,7 @@ public class PisScaStartAuthorisationStageTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
         // Then
-        assertFormatError(errorMessagesString, actualResponse);
+        assertFormatError(actualResponse);
     }
 
     @Test

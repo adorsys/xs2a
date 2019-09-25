@@ -34,9 +34,6 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 public abstract class AbstractQueryParameterValidatorImpl implements QueryParameterValidator {
-    private static final String ERROR_TEXT_ABSENT_PARAMETER = "Query parameter '%s' is missing in request";
-    private static final String ERROR_TEXT_BLANK_HEADER = "Query parameter '%s' should not be blank";
-    private static final String ERROR_TEXT_INVALID_VALUE = "Query parameter '%s' has invalid value";
     protected final ErrorBuildingService errorBuildingService;
 
     /**
@@ -56,16 +53,16 @@ public abstract class AbstractQueryParameterValidatorImpl implements QueryParame
         String queryParameterName = getQueryParameterName();
 
         if (queryParameterValues.isEmpty()) {
-            return ValidationResult.invalid(errorBuildingService.buildErrorType(), TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, String.format(ERROR_TEXT_ABSENT_PARAMETER, queryParameterName)));
+            return ValidationResult.invalid(errorBuildingService.buildErrorType(), TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_ABSENT_PARAMETER, queryParameterName));
         }
 
         if (hasMultipleValues(queryParameterValues)) {
-            return ValidationResult.invalid(errorBuildingService.buildErrorType(), TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, String.format(ERROR_TEXT_INVALID_VALUE, queryParameterName)));
+            return ValidationResult.invalid(errorBuildingService.buildErrorType(), TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_INVALID_PARAMETER_VALUE, queryParameterName));
         }
 
         String queryParameterValue = getQueryParameterValue(queryParameterMap);
         if (StringUtils.isBlank(queryParameterValue)) {
-            return ValidationResult.invalid(errorBuildingService.buildErrorType(), TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, String.format(ERROR_TEXT_BLANK_HEADER, queryParameterName)));
+            return ValidationResult.invalid(errorBuildingService.buildErrorType(), TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_BLANK_PARAMETER, queryParameterName));
         }
 
         return ValidationResult.valid();

@@ -25,8 +25,6 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static de.adorsys.psd2.xs2a.web.validator.header.AbstractHeaderValidatorImpl.*;
-import static de.adorsys.psd2.xs2a.web.validator.header.PsuIPAddressHeaderValidatorImpl.ERROR_TEXT_WRONG_IP_ADDRESS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -36,6 +34,8 @@ public class PsuIPAddressHeaderValidatorImplTest {
     private static final String CORRECT_V6_IP_ADDRESS = "2001:0db8:85a3:0000:0000:8a2e:0370:7334";
     private static final String WRONG_IP_ADDRESS = "683.168.11.56";
     private static final String WRONG_V6_IP_ADDRESS = "2001:0db8:85a3:0000:0n0k:8a2e:0370:7334";
+
+    private static final String[] PSU_IP_ADDRESS_HEADER_NAME = {"psu-ip-address"};
 
     private PsuIPAddressHeaderValidatorImpl validator;
     private MessageError messageError;
@@ -66,8 +66,8 @@ public class PsuIPAddressHeaderValidatorImplTest {
     public void validate_absentHeader_error() {
         validator.validate(headers, messageError);
 
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(ERROR_TEXT_ABSENT_HEADER, validator.getHeaderName()), messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_ABSENT_HEADER, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(PSU_IP_ADDRESS_HEADER_NAME, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -75,8 +75,8 @@ public class PsuIPAddressHeaderValidatorImplTest {
         headers.put(validator.getHeaderName(), null);
         validator.validate(headers, messageError);
 
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(ERROR_TEXT_NULL_HEADER, validator.getHeaderName()), messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_HEADER, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(PSU_IP_ADDRESS_HEADER_NAME, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -84,8 +84,8 @@ public class PsuIPAddressHeaderValidatorImplTest {
         headers.put(validator.getHeaderName(), "");
         validator.validate(headers, messageError);
 
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(ERROR_TEXT_BLANK_HEADER, validator.getHeaderName()), messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_BLANK_HEADER, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(PSU_IP_ADDRESS_HEADER_NAME, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -93,8 +93,7 @@ public class PsuIPAddressHeaderValidatorImplTest {
         headers.put(validator.getHeaderName(), WRONG_IP_ADDRESS);
         validator.validate(headers, messageError);
 
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(ERROR_TEXT_WRONG_IP_ADDRESS, validator.getHeaderName()), messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_IP_ADDRESS, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -102,7 +101,6 @@ public class PsuIPAddressHeaderValidatorImplTest {
         headers.put(validator.getHeaderName(), WRONG_V6_IP_ADDRESS);
         validator.validate(headers, messageError);
 
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(ERROR_TEXT_WRONG_IP_ADDRESS, validator.getHeaderName()), messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_IP_ADDRESS, messageError.getTppMessage().getMessageErrorCode());
     }
 }

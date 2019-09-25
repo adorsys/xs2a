@@ -28,8 +28,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Set;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PARAMETER_NOT_SUPPORTED;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PRODUCT_UNKNOWN;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 @Component
 @RequiredArgsConstructor
@@ -53,10 +52,10 @@ public class PaymentTypeAndProductValidator {
             }
 
             // Case when URL contains something like "/sepa-credit-transfers111/". Bad product.
-            return ValidationResult.invalid(ErrorType.PIS_404, TppMessageInformation.of(PRODUCT_UNKNOWN, "Wrong payment product: " + paymentProduct));
+            return ValidationResult.invalid(ErrorType.PIS_404, TppMessageInformation.of(PRODUCT_UNKNOWN_WRONG_PAYMENT_PRODUCT, paymentProduct));
         }
 
         // Case when URL contains correct type "/v1/payments/", but it is not supported by ASPSP. Bad type.
-        return ValidationResult.invalid(ErrorType.PIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED, "Wrong payment type: " + paymentType));
+        return ValidationResult.invalid(ErrorType.PIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_WRONG_PAYMENT_TYPE, paymentType));
     }
 }

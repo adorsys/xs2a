@@ -1067,7 +1067,7 @@ public class PaymentControllerTest {
 
     private ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationResponseWithError() {
         return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
-                   .fail(new MessageError(ErrorHolder.builder(PIS_403).tppMessages(TppMessageInformation.of(PAYMENT_FAILED, "")).build()))
+                   .fail(new MessageError(ErrorHolder.builder(PIS_403).tppMessages(TppMessageInformation.of(PAYMENT_FAILED)).build()))
                    .build();
     }
 

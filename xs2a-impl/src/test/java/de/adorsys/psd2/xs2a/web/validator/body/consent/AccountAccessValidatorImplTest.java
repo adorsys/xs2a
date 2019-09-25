@@ -56,7 +56,7 @@ public class AccountAccessValidatorImplTest {
     private static final String WRONG_FORMAT_DATE = "07/01/2019 00:00:00";
 
     private static final MessageError VALID_UNTIL_DATE_WRONG_VALUE_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Wrong format for 'validUntil': value should be ISO_DATE 'YYYY-MM-DD' format."));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_DATE_FIELD, "validUntil", "ISO_DATE", "YYYY-MM-DD"));
 
     private HttpServletRequest request;
     private AccountAccessValidatorImpl validator;
@@ -98,8 +98,7 @@ public class AccountAccessValidatorImplTest {
         consents.setAccess(null);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'access' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -111,8 +110,7 @@ public class AccountAccessValidatorImplTest {
         validator.validate(request, messageError);
 
         // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Invalid IBAN format", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_INVALID_FIELD, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -120,8 +118,7 @@ public class AccountAccessValidatorImplTest {
         consents.getAccess().getBalances().get(0).setBban("123");
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Invalid BBAN format", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_INVALID_FIELD, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -129,9 +126,7 @@ public class AccountAccessValidatorImplTest {
         consents.getAccess().getBalances().get(0).setPan(VALUE_36_LENGHT);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "PAN", 35),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -139,9 +134,7 @@ public class AccountAccessValidatorImplTest {
         consents.getAccess().getAccounts().get(0).setMaskedPan(VALUE_36_LENGHT);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "Masked PAN", 35),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -149,9 +142,7 @@ public class AccountAccessValidatorImplTest {
         consents.getAccess().getTransactions().get(0).setMsisdn(VALUE_36_LENGHT);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format("Value '%s' should not be more than %s symbols", "MSISDN", 35),
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -159,8 +150,7 @@ public class AccountAccessValidatorImplTest {
         consents.getAccess().getBalances().get(0).setCurrency("");
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'currency' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_EMPTY_FIELD, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -168,8 +158,7 @@ public class AccountAccessValidatorImplTest {
         consents.getAccess().getBalances().get(0).setCurrency("zzz");
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Invalid currency code format", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -178,9 +167,7 @@ public class AccountAccessValidatorImplTest {
         validator = createValidator(consents);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Consent object can not contain both list of accounts and the flag allPsd2 or availableAccounts",
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_CONSENT_INCORRECT, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -189,9 +176,7 @@ public class AccountAccessValidatorImplTest {
         validator = createValidator(consents);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Consent object can not contain both list of accounts and the flag allPsd2 or availableAccounts",
-                     messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_CONSENT_INCORRECT, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test

@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.validator;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import lombok.RequiredArgsConstructor;
@@ -54,19 +53,19 @@ public class GetCommonPaymentByIdResponseValidator {
         if (pisCommonPayment == null) {
             log.info("InR-ID: [{}], X-Request-ID: [{}]. Payment validation has failed: payment was not found",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
-            return ValidationResult.invalid(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404, "Payment not found"));
+            return ValidationResult.invalid(ErrorType.PIS_404, RESOURCE_UNKNOWN_404_NO_PAYMENT);
         }
 
         if (isPaymentTypeIncorrect(paymentType, pisCommonPayment)) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Payment validation has failed: payment type [{}] is incorrect",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), pisCommonPayment.getExternalId(), paymentType);
-            return ValidationResult.invalid(ErrorType.PIS_405, TppMessageInformation.of(SERVICE_INVALID_405, "Service invalid for addressed payment"));
+            return ValidationResult.invalid(ErrorType.PIS_405, SERVICE_INVALID_400_FOR_PAYMENT);
         }
 
         if (isPaymentProductIncorrect(paymentProduct, pisCommonPayment)) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Payment validation has failed: payment product [{}] is incorrect",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), pisCommonPayment.getExternalId(), paymentProduct);
-            return ValidationResult.invalid(ErrorType.PIS_403, TppMessageInformation.of(PRODUCT_INVALID, "Payment product invalid for addressed payment"));
+            return ValidationResult.invalid(ErrorType.PIS_403, PRODUCT_INVALID_FOR_PAYMENT);
         }
 
         return ValidationResult.valid();
