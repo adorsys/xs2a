@@ -27,9 +27,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
-import static de.adorsys.psd2.xs2a.service.validator.tpp.PiisTppInfoValidator.TPP_ERROR_MESSAGE;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -72,7 +71,6 @@ public class PiisTppInfoValidatorTest {
 
         assertFalse(actual.isValid());
         assertEquals(PIIS_400, actual.getMessageError().getErrorType());
-        assertEquals(CONSENT_UNKNOWN_400, actual.getMessageError().getTppMessage().getMessageErrorCode());
-        assertEquals(TPP_ERROR_MESSAGE, actual.getMessageError().getTppMessage().getText());
+        assertEquals(CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE, actual.getMessageError().getTppMessage().getMessageErrorCode());
     }
 }

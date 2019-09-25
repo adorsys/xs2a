@@ -17,12 +17,10 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.UpdatePisCancellationPsuDataLinks;
@@ -36,18 +34,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdatePisCancellationPsuDataAspectTest {
-    private static final String ERROR_TEXT = "Error occurred while processing";
 
     @InjectMocks
     private UpdatePisCancellationPsuDataAspect aspect;
 
-    @Mock
-    private MessageService messageService;
     @Mock
     private Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisCommonPaymentPsuDataResponse;
     @Mock
@@ -81,9 +77,6 @@ public class UpdatePisCancellationPsuDataAspectTest {
 
     @Test
     public void updatePisCancellationAuthorizationAspect_withError_shouldAddTextErrorMessage() {
-        // Given
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
-
         // When
         responseObject = ResponseObject.builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
@@ -92,6 +85,5 @@ public class UpdatePisCancellationPsuDataAspectTest {
 
         // Then
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 }

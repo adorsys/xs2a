@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.service.ais.TransactionService;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
@@ -71,6 +72,7 @@ public class AccountController implements AccountApi {
     private final ResponseMapper responseMapper;
     private final AccountModelMapper accountModelMapper;
     private final ResponseErrorMapper responseErrorMapper;
+    private final TppErrorMessageBuilder tppErrorMessageBuilder;
 
     @Override
     public ResponseEntity getAccountList(UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
@@ -122,7 +124,7 @@ public class AccountController implements AccountApi {
             TppMessageInformation tppMessage = error.getTppMessage();
             response.setStatus(error.getErrorType().getErrorCode());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            flushResponseError(new TppErrorMessage(tppMessage.getCategory(), tppMessage.getMessageErrorCode(), tppMessage.getText()));
+            flushResponseError(tppErrorMessageBuilder.buildTppErrorMessage(tppMessage.getCategory(), tppMessage.getMessageErrorCode()));
             return;
         }
 
@@ -142,7 +144,7 @@ public class AccountController implements AccountApi {
             log.info("X-Request-ID: [{}], Consent-ID: [{}], Account-ID: [{}]. Download-ID [{}]. Download transactions failed: IOException occurred in downloadTransactions controller.",
                      xRequestId, consentId, accountId, downloadId);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            flushResponseError(new TppErrorMessage(MessageCategory.ERROR, MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal Server Error"));
+            flushResponseError(tppErrorMessageBuilder.buildTppErrorMessage(MessageCategory.ERROR, MessageErrorCode.INTERNAL_SERVER_ERROR));
         }
     }
 

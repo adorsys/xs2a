@@ -16,13 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.consent;
 
-import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -150,20 +147,6 @@ public class Xs2aAisConsentMapperTest {
     public void mapToSpiUpdateConsentPsuDataReq_nullValue() {
         UpdateConsentPsuDataReq updateConsentPsuDataReq = mapper.mapToSpiUpdateConsentPsuDataReq(null, new UpdateConsentPsuDataReq());
         assertNull(updateConsentPsuDataReq);
-    }
-
-    @Test
-    public void mapActionStatusError() {
-        assertEquals(ActionStatus.CONSENT_LIMIT_EXCEEDED, mapper.mapActionStatusError(MessageErrorCode.ACCESS_EXCEEDED, false, null));
-        assertEquals(ActionStatus.CONSENT_INVALID_STATUS, mapper.mapActionStatusError(MessageErrorCode.CONSENT_EXPIRED, false, null));
-        assertEquals(ActionStatus.CONSENT_NOT_FOUND, mapper.mapActionStatusError(MessageErrorCode.CONSENT_UNKNOWN_400, false, null));
-
-        assertEquals(ActionStatus.FAILURE_TRANSACTION, mapper.mapActionStatusError(MessageErrorCode.CONSENT_INVALID, false, TypeAccess.TRANSACTION));
-        assertEquals(ActionStatus.FAILURE_TRANSACTION, mapper.mapActionStatusError(MessageErrorCode.CONSENT_INVALID, true, TypeAccess.TRANSACTION));
-
-        assertEquals(ActionStatus.FAILURE_BALANCE, mapper.mapActionStatusError(MessageErrorCode.CONSENT_INVALID, true, TypeAccess.BALANCE));
-        assertEquals(ActionStatus.FAILURE_BALANCE, mapper.mapActionStatusError(MessageErrorCode.CONSENT_INVALID, false, TypeAccess.BALANCE));
-        assertEquals(ActionStatus.FAILURE_BALANCE, mapper.mapActionStatusError(MessageErrorCode.CONSENT_INVALID, true, null));
     }
 
     @Test

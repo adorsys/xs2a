@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2.ais;
 
 import de.adorsys.psd2.model.Error404NGAIS;
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -32,6 +31,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.function.Function;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,13 +40,11 @@ import static org.mockito.Mockito.when;
 public class AIS404ErrorMapperTest {
     private static final String ERROR_JSON_PATH = "json/service/mapper/psd2/ais/Error404NGAIS.json";
     private static final String ERROR_CUSTOM_TEXT_JSON_PATH = "json/service/mapper/psd2/ais/Error404NGAIS-custom-text.json";
-    private static final MessageErrorCode ERROR_CODE = MessageErrorCode.RESOURCE_UNKNOWN_404;
-    private static final String ERROR_TEXT = "Some text";
     private static final String CUSTOM_ERROR_TEXT = "Custom text";
     private static final MessageError MESSAGE_ERROR = new MessageError(ErrorType.AIS_404,
-                                                                       TppMessageInformation.of(ERROR_CODE, ERROR_TEXT));
+                                                                       TppMessageInformation.of(RESOURCE_UNKNOWN_404, "text"));
     private static final MessageError MESSAGE_ERROR_WITHOUT_TEXT = new MessageError(ErrorType.AIS_404,
-                                                                                    TppMessageInformation.of(ERROR_CODE));
+                                                                                    TppMessageInformation.of(RESOURCE_UNKNOWN_404));
 
     private JsonReader jsonReader = new JsonReader();
     @Mock
@@ -65,6 +63,9 @@ public class AIS404ErrorMapperTest {
 
     @Test
     public void getMapper_shouldReturnCorrectErrorMapper() {
+        when(messageService.getMessage(RESOURCE_UNKNOWN_404.name()))
+            .thenReturn("Some %s");
+
         // Given
         Error404NGAIS expectedError = jsonReader.getObjectFromFile(ERROR_JSON_PATH, Error404NGAIS.class);
 
@@ -78,7 +79,7 @@ public class AIS404ErrorMapperTest {
 
     @Test
     public void getMapper_withNoTextInTppMessage_shouldGetTextFromMessageService() {
-        when(messageService.getMessage(ERROR_CODE.name()))
+        when(messageService.getMessage(RESOURCE_UNKNOWN_404.name()))
             .thenReturn(CUSTOM_ERROR_TEXT);
 
         // Given
@@ -90,6 +91,6 @@ public class AIS404ErrorMapperTest {
 
         // Then
         assertEquals(expectedError, actualError);
-        verify(messageService).getMessage(ERROR_CODE.name());
+        verify(messageService).getMessage(RESOURCE_UNKNOWN_404.name());
     }
 }

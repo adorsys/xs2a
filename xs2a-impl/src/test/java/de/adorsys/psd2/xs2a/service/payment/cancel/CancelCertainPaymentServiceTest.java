@@ -102,8 +102,7 @@ public class CancelCertainPaymentServiceTest {
 
         assertTrue(actualResponse.hasError());
         assertEquals(ErrorType.PIS_404, actualResponse.getError().getErrorType());
-        assertEquals(MessageErrorCode.RESOURCE_UNKNOWN_404, actualResponse.getError().getTppMessage().getMessageErrorCode());
-        assertEquals("Payment not found", actualResponse.getError().getTppMessage().getText());
+        assertEquals(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT, actualResponse.getError().getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -117,8 +116,7 @@ public class CancelCertainPaymentServiceTest {
 
         assertTrue(actualResponse.hasError());
         assertEquals(ErrorType.PIS_404, actualResponse.getError().getErrorType());
-        assertEquals(MessageErrorCode.RESOURCE_UNKNOWN_404, actualResponse.getError().getTppMessage().getMessageErrorCode());
-        assertEquals("Payment not found", actualResponse.getError().getTppMessage().getText());
+        assertEquals(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT, actualResponse.getError().getTppMessage().getMessageErrorCode());
     }
 
     @Test

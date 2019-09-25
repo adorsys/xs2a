@@ -79,7 +79,6 @@ public class ReadSinglePaymentServiceTest {
     private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
     private static final SinglePayment SINGLE_PAYMENT = buildSinglePayment();
     private static final String SOME_ENCRYPTED_PAYMENT_ID = "Encrypted Payment Id";
-    private static final String PAYMENT_NOT_FOUND = "Payment not found";
 
     @InjectMocks
     private ReadSinglePaymentService readSinglePaymentService;
@@ -150,11 +149,11 @@ public class ReadSinglePaymentServiceTest {
     public void getPayment_singlePaymentSpi_getPaymentById_failed() {
         // Given
         SpiResponse<SpiSinglePayment> spiResponseError = SpiResponse.<SpiSinglePayment>builder()
-                                                             .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                                                             .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                              .build();
 
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_400)
-                                        .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Payment is finalised already, so its status cannot be changed"))
+                                        .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                                         .build();
 
         when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider)).thenReturn(spiResponseError);
@@ -174,7 +173,7 @@ public class ReadSinglePaymentServiceTest {
     public void getPayment_spiPaymentFactory_pisPaymentsListIsEmpty_failed() {
         // Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_400)
-                                        .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, PAYMENT_NOT_FOUND))
+                                        .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_PAYMENT_NOT_FOUND))
                                         .build();
         pisCommonPaymentResponse.setPayments(Collections.emptyList());
 
@@ -193,7 +192,7 @@ public class ReadSinglePaymentServiceTest {
     public void getPayment_spiPaymentFactory_createSpiSinglePayment_failed() {
         // Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
-            .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND))
+            .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
             .build();
 
         when(spiPaymentFactory.createSpiSinglePayment(PIS_PAYMENTS.get(0), PRODUCT)).thenReturn(Optional.empty());

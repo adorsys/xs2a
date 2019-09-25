@@ -74,7 +74,6 @@ public class CreateSinglePaymentServiceTest {
     private static final PaymentInitiationParameters PARAM = buildPaymentInitiationParameters();
     private static final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID);
     private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
-    private static final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
     private final Xs2aPisCommonPayment PIS_COMMON_PAYMENT_FAIL = new Xs2aPisCommonPayment(null, PSU_DATA);
     private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null, null);
     private SinglePaymentInitiationResponse singlePaymentInitiationResponse;
@@ -126,7 +125,6 @@ public class CreateSinglePaymentServiceTest {
     @Test
     public void createPayment_wrongPsuData_fail() {
         // Given
-        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
         PaymentInitiationParameters param = buildPaymentInitiationParameters();
         param.setPsuData(WRONG_PSU_DATA);
 
@@ -136,7 +134,6 @@ public class CreateSinglePaymentServiceTest {
         //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
-        assertThat(actualResponse.getError().getTppMessage().getText()).isEqualTo(errorMessagesString);
     }
 
     @Test
@@ -244,7 +241,7 @@ public class CreateSinglePaymentServiceTest {
 
     private static SinglePaymentInitiationResponse buildSpiErrorForSinglePayment() {
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)
-                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "message 1, message 2, message 3"))
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                                       .build();
 
         return new SinglePaymentInitiationResponse(errorHolder);

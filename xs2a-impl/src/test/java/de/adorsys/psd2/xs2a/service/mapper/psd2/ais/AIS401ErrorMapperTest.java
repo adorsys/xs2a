@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2.ais;
 
 import de.adorsys.psd2.model.Error401NGAIS;
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -32,6 +31,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.function.Function;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,13 +40,11 @@ import static org.mockito.Mockito.when;
 public class AIS401ErrorMapperTest {
     private static final String ERROR_JSON_PATH = "json/service/mapper/psd2/ais/Error401NGAIS.json";
     private static final String ERROR_CUSTOM_TEXT_JSON_PATH = "json/service/mapper/psd2/ais/Error401NGAIS-custom-text.json";
-    private static final MessageErrorCode ERROR_CODE = MessageErrorCode.CONSENT_INVALID;
-    private static final String ERROR_TEXT = "Some text";
     private static final String CUSTOM_ERROR_TEXT = "Custom text";
     private static final MessageError MESSAGE_ERROR = new MessageError(ErrorType.AIS_401,
-                                                                       TppMessageInformation.of(ERROR_CODE, ERROR_TEXT));
+                                                                       TppMessageInformation.of(CONSENT_INVALID, "consent"));
     private static final MessageError MESSAGE_ERROR_WITHOUT_TEXT = new MessageError(ErrorType.AIS_401,
-                                                                                    TppMessageInformation.of(ERROR_CODE));
+                                                                                    TppMessageInformation.of(CONSENT_INVALID));
 
     private JsonReader jsonReader = new JsonReader();
     @Mock
@@ -67,6 +65,7 @@ public class AIS401ErrorMapperTest {
     public void getMapper_shouldReturnCorrectErrorMapper() {
         // Given
         Error401NGAIS expectedError = jsonReader.getObjectFromFile(ERROR_JSON_PATH, Error401NGAIS.class);
+        when(messageService.getMessage(CONSENT_INVALID.getName())).thenReturn("The %s was created by this TPP but is not valid for the addressed service/resource");
 
         // When
         Function<MessageError, Error401NGAIS> mapper = ais401ErrorMapper.getMapper();
@@ -78,7 +77,7 @@ public class AIS401ErrorMapperTest {
 
     @Test
     public void getMapper_withNoTextInTppMessage_shouldGetTextFromMessageService() {
-        when(messageService.getMessage(ERROR_CODE.name()))
+        when(messageService.getMessage(CONSENT_INVALID.name()))
             .thenReturn(CUSTOM_ERROR_TEXT);
 
         // Given
@@ -90,6 +89,6 @@ public class AIS401ErrorMapperTest {
 
         // Then
         assertEquals(expectedError, actualError);
-        verify(messageService).getMessage(ERROR_CODE.name());
+        verify(messageService).getMessage(CONSENT_INVALID.name());
     }
 }

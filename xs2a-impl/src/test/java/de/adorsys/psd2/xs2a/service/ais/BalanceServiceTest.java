@@ -181,7 +181,7 @@ public class BalanceServiceTest {
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(Collections.EMPTY_LIST), ServiceType.AIS))
             .thenReturn(ErrorHolder
                             .builder(ErrorType.AIS_400)
-                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, ""))
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                             .build());
 
         // When
@@ -287,7 +287,7 @@ public class BalanceServiceTest {
     private <T> SpiResponse<T> buildErrorSpiResponse(T payload) {
         return SpiResponse.<T>builder()
                    .payload(payload)
-                   .error(new TppMessage(FORMAT_ERROR, "Format error"))
+                   .error(new TppMessage(FORMAT_ERROR))
                    .build();
     }
 

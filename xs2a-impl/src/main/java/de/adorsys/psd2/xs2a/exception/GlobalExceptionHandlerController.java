@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -82,16 +81,14 @@ public class GlobalExceptionHandlerController {
                                                          HandlerMethod handlerMethod) {
         log.warn("Media type unsupported exception: {}, message: {}",
             handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        return responseErrorMapper.generateErrorResponse(createMessageError(UNSUPPORTED_MEDIA_TYPE,
-            HttpStatus.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase()));
+        return responseErrorMapper.generateErrorResponse(createMessageError(UNSUPPORTED_MEDIA_TYPE));
     }
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity exception(Exception ex, HandlerMethod handlerMethod) {
         log.warn("Uncatched exception handled in Controller: {}, message: {}, stackTrace: {}",
             handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage(), ex);
-        return responseErrorMapper.generateErrorResponse(createMessageError(INTERNAL_SERVER_ERROR,
-            HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()));
+        return responseErrorMapper.generateErrorResponse(createMessageError(INTERNAL_SERVER_ERROR));
     }
 
     @ExceptionHandler(value = RestException.class)
@@ -99,7 +96,7 @@ public class GlobalExceptionHandlerController {
         log.warn("RestException handled in service: {}, message: {}",
             handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         log.debug("Stacktrace: {}", ex);
-        return responseErrorMapper.generateErrorResponse(createMessageError(ex.getMessageErrorCode(), ex.getMessage()));
+        return responseErrorMapper.generateErrorResponse(createMessageError(ex.getMessageErrorCode()));
     }
 
     @ExceptionHandler(value = AspspProfileRestException.class)
@@ -139,13 +136,6 @@ public class GlobalExceptionHandlerController {
         return new MessageError(
             errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), messageErrorCode.getCode()),
             of(messageErrorCode)
-        );
-    }
-
-    private MessageError createMessageError(MessageErrorCode messageErrorCode, String message) {
-        return new MessageError(
-            errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), messageErrorCode.getCode()),
-            of(messageErrorCode, message)
         );
     }
 }

@@ -36,15 +36,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class SupportedAccountReferenceValidator implements BusinessValidator<Collection<AccountReference>> {
-    // TODO move messages to the message bundle https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/791
-    private static final String MESSAGE_ERROR_ATTRIBUTE_NOT_SUPPORTED = "Attribute %s is not supported by the ASPSP";
-    private static final String MESSAGE_ERROR_ONLY_ONE_ATTRIBUTE_ALLOWED = "Only one account reference parameter is allowed";
 
     private final AspspProfileServiceWrapper aspspProfileService;
     private final RequestProviderService requestProviderService;
@@ -64,8 +61,7 @@ public class SupportedAccountReferenceValidator implements BusinessValidator<Col
         if (accountWithSeveralUsedTypes.isPresent()) {
             ErrorType errorType = errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(),
                                                                  FORMAT_ERROR.getCode());
-            return ValidationResult.invalid(errorType, TppMessageInformation.of(FORMAT_ERROR,
-                                                                                MESSAGE_ERROR_ONLY_ONE_ATTRIBUTE_ALLOWED));
+            return ValidationResult.invalid(errorType, FORMAT_ERROR_MULTIPLE_ACCOUNT_REFERENCES);
         }
 
         return validateAccountReference(accountReferences);
@@ -92,7 +88,7 @@ public class SupportedAccountReferenceValidator implements BusinessValidator<Col
             ErrorType errorType = errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(),
                                                                  FORMAT_ERROR.getCode());
             return ValidationResult.invalid(errorType, TppMessageInformation.of(
-                FORMAT_ERROR, String.format(MESSAGE_ERROR_ATTRIBUTE_NOT_SUPPORTED, wrongReferenceNames)));
+                FORMAT_ERROR_ATTRIBUTE_NOT_SUPPORTED, wrongReferenceNames));
         }
     }
 }

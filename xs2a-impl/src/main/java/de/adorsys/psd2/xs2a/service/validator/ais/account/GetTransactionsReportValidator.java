@@ -35,8 +35,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PARAMETER_NOT_SUPPORTED;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 
 /**
@@ -45,10 +44,6 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 @Component
 @RequiredArgsConstructor
 public class GetTransactionsReportValidator extends AbstractAccountTppValidator<TransactionsReportByPeriodObject> {
-    private static final String ENTRY_REFERENCE_FROM_NOT_SUPPORTED_ERROR_TEXT = "Parameter 'entryReferenceFrom' is not supported by ASPSP";
-    private static final String DELTA_LIST_NOT_SUPPORTED_ERROR_TEXT = "Parameter 'deltaList' is not supported by ASPSP";
-    private static final String ONE_DELTA_REPORT_CAN_BE_PRESENT_ERROR_TEXT = "Only one delta report query parameter can be present in request";
-    private static final String BOOKING_STATUS_NOT_SUPPORTED_ERROR_TEXT = "bookingStatus '%s' is not supported by ASPSP";
 
     private final PermittedAccountReferenceValidator permittedAccountReferenceValidator;
     private final AccountConsentValidator accountConsentValidator;
@@ -92,8 +87,7 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
 
         BookingStatus bookingStatus = requestObject.getBookingStatus();
         if (isNotSupportedBookingStatus(bookingStatus)) {
-            return ValidationResult.invalid(AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED,
-                                                                              String.format(BOOKING_STATUS_NOT_SUPPORTED_ERROR_TEXT, bookingStatus.getValue())));
+            return ValidationResult.invalid(AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_BOOKING_STATUS, bookingStatus.getValue()));
         }
 
         return accountConsentValidator.validate(accountConsent, requestObject.getRequestUri());
@@ -105,13 +99,13 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
         boolean isEntryReferenceFromPresentInRequest = StringUtils.isNotBlank(entryReferenceFrom);
 
         if (isEntryReferenceFromPresentInRequest && !isEntryReferenceFromSupported) {
-            tppMessageInformationList.add(TppMessageInformation.of(PARAMETER_NOT_SUPPORTED, ENTRY_REFERENCE_FROM_NOT_SUPPORTED_ERROR_TEXT));
+            tppMessageInformationList.add(TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_ENTRY_REFERENCE_FROM));
         }
         boolean isDeltaListSupported = aspspProfileService.isDeltaListSupported();
         boolean isDeltaListPresentInRequest = BooleanUtils.isTrue(deltaList);
 
         if (isDeltaListPresentInRequest && !isDeltaListSupported) {
-            tppMessageInformationList.add(TppMessageInformation.of(PARAMETER_NOT_SUPPORTED, DELTA_LIST_NOT_SUPPORTED_ERROR_TEXT));
+            tppMessageInformationList.add(TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_DELTA_LIST));
         }
 
         boolean isAllParametersPresentAndSupported = isDeltaListSupported
@@ -119,7 +113,7 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
                                                          && isEntryReferenceFromPresentInRequest
                                                          && isDeltaListPresentInRequest;
         if (isAllParametersPresentAndSupported) {
-            tppMessageInformationList.add(TppMessageInformation.of(FORMAT_ERROR, ONE_DELTA_REPORT_CAN_BE_PRESENT_ERROR_TEXT));
+            tppMessageInformationList.add(TppMessageInformation.of(FORMAT_ERROR_MULTIPLE_DELTA_REPORT));
         }
 
         return tppMessageInformationList.isEmpty()

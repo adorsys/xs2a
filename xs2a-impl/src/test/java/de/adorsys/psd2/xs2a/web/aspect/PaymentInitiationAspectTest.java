@@ -17,13 +17,11 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.PaymentInitiationLinks;
@@ -42,13 +40,10 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentInitiationAspectTest {
-    private static final String ERROR_TEXT = "Error occurred while processing";
 
     @InjectMocks
     private PaymentInitiationAspect aspect;
 
-    @Mock
-    private MessageService messageService;
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
     @Mock
@@ -88,8 +83,6 @@ public class PaymentInitiationAspectTest {
 
     @Test
     public void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
-        // Given
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
         // When
         responseObject = ResponseObject.builder()
@@ -99,6 +92,6 @@ public class PaymentInitiationAspectTest {
 
         // Then
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
+        assertEquals(CONSENT_UNKNOWN_400, actualResponse.getError().getTppMessage().getMessageErrorCode());
     }
 }

@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
 import de.adorsys.psd2.xs2a.core.ais.AccountResponseType;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -43,7 +42,7 @@ public class TransactionReportAcceptHeaderValidator {
             String supportedTransactionApplicationTypes = aspspProfileServiceWrapper.getSupportedTransactionApplicationType();
 
             if (!isAcceptHeaderSupported(supportedTransactionApplicationTypes, acceptHeader)) {
-                return ValidationResult.invalid(ErrorType.AIS_406, TppMessageInformation.of(REQUESTED_FORMATS_INVALID));
+                return ValidationResult.invalid(ErrorType.AIS_406, REQUESTED_FORMATS_INVALID);
             }
         }
 

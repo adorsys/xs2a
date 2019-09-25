@@ -37,8 +37,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_405;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 
 @Slf4j
@@ -75,7 +74,7 @@ public class Xs2aRestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private TppMessageInformation buildErrorTppMessages(String methodName) {
-        return of(SERVICE_INVALID_405, String.format("HTTP method '%s' is not supported", methodName));
+        return of(SERVICE_INVALID_405_METHOD_NOT_SUPPORTED, methodName);
     }
 
     @Override

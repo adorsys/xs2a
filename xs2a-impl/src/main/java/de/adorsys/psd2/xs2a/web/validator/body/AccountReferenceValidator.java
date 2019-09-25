@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator.body;
 
 import de.adorsys.psd2.model.AccountReference;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.ObjectValidator;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_FIELD;
 import static de.adorsys.psd2.xs2a.web.validator.body.StringMaxLengthValidator.MaxLengthRequirement;
 
 @Component
@@ -41,10 +43,10 @@ public class AccountReferenceValidator implements ObjectValidator<AccountReferen
     @Override
     public void validate(@NotNull AccountReference accountReference, @NotNull MessageError messageError) {
         if (StringUtils.isNotBlank(accountReference.getIban()) && !isValidIban(accountReference.getIban())) {
-            errorBuildingService.enrichMessageError(messageError, "Invalid IBAN format");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_FIELD, "IBAN"));
         }
         if (StringUtils.isNotBlank(accountReference.getBban()) && !isValidBban(accountReference.getBban())) {
-            errorBuildingService.enrichMessageError(messageError, "Invalid BBAN format");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_FIELD, "BBAN"));
         }
         optionalFieldMaxLengthValidator.validate(new MaxLengthRequirement(accountReference.getPan(),
                                                                           "PAN", 35), messageError);

@@ -83,7 +83,7 @@ interface AuthorisationSpi<T> {
     @NotNull
     default SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @Nullable String authenticationMethodId, @NotNull T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
-                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED, "Service is not supported"))
+                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
     }
 }

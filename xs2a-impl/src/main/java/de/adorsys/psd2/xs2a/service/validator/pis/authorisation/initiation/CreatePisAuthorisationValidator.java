@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_EXPIRED_403;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
 
 /**
@@ -55,7 +54,7 @@ public class CreatePisAuthorisationValidator extends AbstractPisTppValidator<Com
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Creation of PIS authorisation has failed: payment has been rejected",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), pisCommonPaymentResponse.getExternalId());
-            return ValidationResult.invalid(PIS_403, of(RESOURCE_EXPIRED_403));
+            return ValidationResult.invalid(PIS_403, RESOURCE_EXPIRED_403);
         }
 
         return ValidationResult.valid();

@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.AccountAccess;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
@@ -39,6 +40,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS;
 
 @Component
@@ -47,10 +49,6 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
     private static final String ALL_PSD2_FIELD_NAME = "allPsd2";
     private static final String AVAILABLE_ACCOUNTS_FIELD_NAME = "availableAccounts";
     private static final String AVAILABLE_ACCOUNTS_WITH_BALANCES_FIELD_NAME = "availableAccountsWithBalance";
-    private static final String ALL_PSD2_WRONG_VALUE_ERROR = "Wrong value for allPsd2";
-    private static final String AVAILABLE_ACCOUNTS_WRONG_VALUE_ERROR = "Wrong value for availableAccounts";
-    private static final String AVAILABLE_ACCOUNTS_WITH_BALANCES_WRONG_VALUE_ERROR = "Wrong value for availableAccountsWithBalance";
-    private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
 
     private final JsonConverter jsonConverter;
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
@@ -83,17 +81,17 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
         Consents consents = consentsOptional.get();
 
         if (Objects.isNull(consents.getRecurringIndicator())) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'recurringIndicator' should not be null");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "recurringIndicator"));
         }
 
         if (Objects.isNull(consents.getValidUntil())) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'validUntil' should not be null");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "validUntil"));
         } else {
             validateValidUntil(consents.getValidUntil(), messageError);
         }
 
         if (Objects.isNull(consents.getFrequencyPerDay())) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'frequencyPerDay' should not be null");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "frequencyPerDay"));
         } else {
             validateFrequencyPerDay(consents.getFrequencyPerDay(), messageError);
         }
@@ -107,13 +105,13 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
 
     private void validateValidUntil(LocalDate validUntil, MessageError messageError) {
         if (validUntil.isBefore(LocalDate.now())) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'validUntil' should not be in the past");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DATE_IN_THE_PAST, "validUntil"));
         }
     }
 
     private void validateFrequencyPerDay(Integer frequencyPerDay, MessageError messageError) {
         if (frequencyPerDay < 1) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'frequencyPerDay' should not be lower than 1");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_FREQUENCY));
         }
     }
 
@@ -122,24 +120,24 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
 
         Object allPsd2 = access.get(ALL_PSD2_FIELD_NAME);
         validateEnumValue(allPsd2, AccountAccess.AllPsd2Enum::fromValue,
-                          messageError, ALL_PSD2_WRONG_VALUE_ERROR);
+                          messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, ALL_PSD2_FIELD_NAME));
 
         Object availableAccounts = access.get(AVAILABLE_ACCOUNTS_FIELD_NAME);
         validateEnumValue(availableAccounts, AccountAccess.AvailableAccountsEnum::fromValue,
-                          messageError, AVAILABLE_ACCOUNTS_WRONG_VALUE_ERROR);
+                          messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, AVAILABLE_ACCOUNTS_FIELD_NAME));
 
         Object availableAccountsWithBalance = access.get(AVAILABLE_ACCOUNTS_WITH_BALANCES_FIELD_NAME);
         validateEnumValue(availableAccountsWithBalance, AccountAccess.AvailableAccountsWithBalanceEnum::fromValue,
-                          messageError, AVAILABLE_ACCOUNTS_WITH_BALANCES_WRONG_VALUE_ERROR);
+                          messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, AVAILABLE_ACCOUNTS_WITH_BALANCES_FIELD_NAME));
     }
 
     private void validateEnumValue(Object value, Function<String, Enum> mapperToEnum,
-                                   MessageError messageError, String errorText) {
+                                   MessageError messageError, TppMessageInformation tppMessageInformation) {
         if (value == null || isValidEnumValue(value, mapperToEnum)) {
             return;
         }
 
-        errorBuildingService.enrichMessageError(messageError, errorText);
+        errorBuildingService.enrichMessageError(messageError, tppMessageInformation);
     }
 
     private boolean isValidEnumValue(@NotNull Object value, Function<String, Enum> mapperToEnum) {
@@ -153,7 +151,7 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
             access = jsonConverter.toJsonField(request.getInputStream(), ACCESS_FIELD_NAME, new TypeReference<Map<String, Object>>() {
             });
         } catch (IOException e) {
-            errorBuildingService.enrichMessageError(messageError, BODY_DESERIALIZATION_ERROR);
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
         }
 
         return access.orElseGet(Collections::emptyMap);

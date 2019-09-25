@@ -47,7 +47,7 @@ public class CancelPaymentValidatorTest {
     private static final MessageError TPP_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final MessageError GET_COMMON_PAYMENT_VALIDATION_ERROR =
-        new MessageError(ErrorType.PIS_405, TppMessageInformation.of(SERVICE_INVALID_405));
+        new MessageError(ErrorType.PIS_405, TppMessageInformation.of(SERVICE_INVALID_400));
     private static final MessageError PAYMENT_PRODUCT_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_404, TppMessageInformation.of(PRODUCT_UNKNOWN));
 

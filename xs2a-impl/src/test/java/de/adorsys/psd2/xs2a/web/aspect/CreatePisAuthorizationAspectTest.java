@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.link.CreatePisAuthorisationLinks;
@@ -37,7 +36,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -45,16 +45,12 @@ public class CreatePisAuthorizationAspectTest {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
     private static final String PAYMENT_SERVICE = "payments";
-    private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
-    private static final String ERROR_TEXT = "Error occurred while processing";
 
     @InjectMocks
     private CreatePisAuthorizationAspect aspect;
 
     @Mock
     private ScaApproachResolver scaApproachResolver;
-    @Mock
-    private MessageService messageService;
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
     @Mock
@@ -90,7 +86,6 @@ public class CreatePisAuthorizationAspectTest {
 
     @Test
     public void updatePisAuthorizationAspect_successOnUpdateAuthorization() {
-
         responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                              .body(updatePisCommonPaymentPsuDataResponse)
                              .build();
@@ -103,9 +98,6 @@ public class CreatePisAuthorizationAspectTest {
 
     @Test
     public void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
-        // Given
-        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
-
         // When
         responseObject = ResponseObject.builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
@@ -114,6 +106,5 @@ public class CreatePisAuthorizationAspectTest {
 
         // Then
         assertTrue(actualResponse.hasError());
-        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 }

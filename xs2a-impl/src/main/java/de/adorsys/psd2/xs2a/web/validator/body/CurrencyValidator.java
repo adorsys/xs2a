@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body;
 
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +25,20 @@ import org.springframework.stereotype.Component;
 
 import java.util.Currency;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+
 @Component
 @RequiredArgsConstructor
 public class CurrencyValidator {
 
+    private static final String CURRENCY_STRING =  "currency";
     private final ErrorBuildingService errorBuildingService;
 
     public void validateCurrency(String currency, MessageError messageError) {
         if (StringUtils.isEmpty(currency)) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'currency' should not be null");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EMPTY_FIELD, CURRENCY_STRING));
         } else if (!isValidCurrency(currency)) {
-            errorBuildingService.enrichMessageError(messageError, "Invalid currency code format");
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, CURRENCY_STRING));
         }
     }
 

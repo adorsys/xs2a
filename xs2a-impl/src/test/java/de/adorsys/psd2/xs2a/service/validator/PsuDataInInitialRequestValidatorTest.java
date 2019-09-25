@@ -32,7 +32,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
@@ -43,9 +43,9 @@ public class PsuDataInInitialRequestValidatorTest {
     private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
     private static final PsuIdData PSU_DATA = new PsuIdData("some psu id", null, null, null);
     private static final MessageError BLANK_PSU_ID_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, "PSU-ID should not be blank"));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR_PSU_ID_BLANK));
     private static final MessageError NULL_PSU_ID_ERROR =
-        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, "PSU-ID is missing in request"));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR_NO_PSU_ID));
     private static final ServiceType SERVICE_TYPE = ServiceType.AIS;
 
     @Mock

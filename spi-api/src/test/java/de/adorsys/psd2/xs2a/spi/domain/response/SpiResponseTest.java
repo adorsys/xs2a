@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 
 public class SpiResponseTest {
 
-    private final TppMessage FORMAT_ERROR = new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error");
+    private final TppMessage FORMAT_ERROR = new TppMessage(MessageErrorCode.FORMAT_ERROR);
 
     @Test
     public void builder_should_pass_on_failure_without_payload() {
@@ -67,7 +67,7 @@ public class SpiResponseTest {
     @Test
     public void builder_build_should_generate_message_on_error() {
         // Given
-        TppMessage errorMessage = new TppMessage(MessageErrorCode.CONSENT_UNKNOWN_400, "");
+        TppMessage errorMessage = new TppMessage(MessageErrorCode.CONSENT_UNKNOWN_400);
 
         // When
         SpiResponse<String> response = SpiResponse.<String>builder().error(errorMessage).build();
@@ -80,7 +80,7 @@ public class SpiResponseTest {
     @Test
     public void builder_build_with_null_payload_should_generate_error_message() {
         // Given
-        TppMessage errorMessage = new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "");
+        TppMessage errorMessage = new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR);
 
         // When
         SpiResponse<String> response = SpiResponse.<String>builder().payload(null).build();
@@ -93,7 +93,7 @@ public class SpiResponseTest {
     @Test
     public void builder_build_without_payload_should_generate_error_message() {
         // Given
-        TppMessage errorMessage = new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "");
+        TppMessage errorMessage = new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR);
 
         // When
         SpiResponse<String> response = SpiResponse.<String>builder().build();

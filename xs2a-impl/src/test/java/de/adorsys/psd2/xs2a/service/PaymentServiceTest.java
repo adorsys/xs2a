@@ -536,7 +536,7 @@ public class PaymentServiceTest {
     private void assertThatPaymentHasWrongId(ResponseObject actualResult) {
         assertThat(actualResult.hasError()).isTrue();
         assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_404);
-        assertThat(actualResult.getError().getTppMessages().contains(of(RESOURCE_UNKNOWN_404, WRONG_PAYMENT_ID_TEXT))).isTrue();
+        assertThat(actualResult.getError().getTppMessages().contains(of(RESOURCE_UNKNOWN_404_NO_PAYMENT))).isTrue();
     }
 
     private BulkPaymentInitiationResponse getBulkResponses() {

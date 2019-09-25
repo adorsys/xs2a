@@ -3,7 +3,7 @@
     {
       "category": "ERROR",
       "code": "RESOURCE_UNKNOWN",
-      "text": "The addressed resource is unknown relative to the TPP."
+      "text": "The addressed resource is unknown relative to the TPP"
     }
   ]
 }

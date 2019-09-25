@@ -102,7 +102,7 @@ public class GetBalancesReportValidatorTest {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getBalances(), ACCOUNT_ID))
-            .thenReturn(ValidationResult.invalid(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID)));
+            .thenReturn(ValidationResult.invalid(ErrorType.AIS_401, CONSENT_INVALID));
 
         // When
         ValidationResult validationResult = getBalancesReportValidator.validate(new CommonAccountBalanceRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI));

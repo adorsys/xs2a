@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
@@ -42,13 +41,13 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final RedirectIdService redirectIdService;
 
-    public PaymentCancellationAspect(MessageService messageService, PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider,
+    public PaymentCancellationAspect(PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider,
                                      AspspProfileServiceWrapper aspspProfileServiceWrapper,
                                      ScaApproachResolver scaApproachResolver,
                                      RedirectLinkBuilder redirectLinkBuilder,
                                      AuthorisationMethodDecider authorisationMethodDecider,
                                      RedirectIdService redirectIdService) {
-        super(messageService, aspspProfileServiceWrapper);
+        super(aspspProfileServiceWrapper);
         this.cancellationScaNeededDecider = cancellationScaNeededDecider;
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
@@ -70,9 +69,8 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
                                                                redirectIdService, response, isExplicitMethod));
             }
 
-            return result;
         }
-        return enrichErrorTextMessage(result);
+        return result;
     }
 
     private boolean isStartAuthorisationLinksNeeded(boolean isScaRequired, TransactionStatus transactionStatus) {

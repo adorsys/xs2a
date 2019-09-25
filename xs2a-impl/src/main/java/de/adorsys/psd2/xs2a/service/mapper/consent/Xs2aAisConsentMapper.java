@@ -17,12 +17,9 @@
 package de.adorsys.psd2.xs2a.service.mapper.consent;
 
 import de.adorsys.psd2.consent.api.AccountInfo;
-import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -88,24 +85,6 @@ public class Xs2aAisConsentMapper {
                        )
                    )
                    .orElse(null);
-    }
-
-    public ActionStatus mapActionStatusError(MessageErrorCode error, boolean withBalance, TypeAccess access) {
-        ActionStatus actionStatus = ActionStatus.FAILURE_ACCOUNT;
-        if (error == MessageErrorCode.ACCESS_EXCEEDED) {
-            actionStatus = ActionStatus.CONSENT_LIMIT_EXCEEDED;
-        } else if (error == MessageErrorCode.CONSENT_EXPIRED) {
-            actionStatus = ActionStatus.CONSENT_INVALID_STATUS;
-        } else if (error == MessageErrorCode.CONSENT_UNKNOWN_400) {
-            actionStatus = ActionStatus.CONSENT_NOT_FOUND;
-        } else if (error == MessageErrorCode.CONSENT_INVALID) {
-            if (access == TypeAccess.TRANSACTION) {
-                actionStatus = ActionStatus.FAILURE_TRANSACTION;
-            } else if (access == TypeAccess.BALANCE || withBalance) {
-                actionStatus = ActionStatus.FAILURE_BALANCE;
-            }
-        }
-        return actionStatus;
     }
 
     public UpdateConsentPsuDataReq mapToSpiUpdateConsentPsuDataReq(UpdateConsentPsuDataResponse updatePsuDataResponse,

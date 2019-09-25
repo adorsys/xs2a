@@ -30,6 +30,7 @@ public class CurrencyValidatorTest {
 
     private static final String CORRECT_CURRECNY = "UAH";
     private static final String WRONG_CURRENCY = "UZD";
+    private static final String[] PARAMETER_TEXT = {"currency"};
     private CurrencyValidator validator;
     private MessageError messageError = new MessageError();
 
@@ -49,15 +50,15 @@ public class CurrencyValidatorTest {
     public void doValidation_wrong() {
         validator.validateCurrency(WRONG_CURRENCY, messageError);
         assertFalse(messageError.getTppMessages().isEmpty());
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Invalid currency code format", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(PARAMETER_TEXT, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
     public void doValidation_empty() {
         validator.validateCurrency(null, messageError);
         assertFalse(messageError.getTppMessages().isEmpty());
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'currency' should not be null", messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_EMPTY_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(PARAMETER_TEXT, messageError.getTppMessage().getTextParameters());
     }
 }

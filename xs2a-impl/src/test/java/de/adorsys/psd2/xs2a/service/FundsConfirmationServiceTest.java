@@ -48,8 +48,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
@@ -60,7 +58,6 @@ import static org.mockito.Mockito.*;
 public class FundsConfirmationServiceTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
-    private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
@@ -114,11 +111,10 @@ public class FundsConfirmationServiceTest {
     @Test
     public void fundsConfirmation_fundsConfirmationSpi_performFundsSufficientCheck_fail() {
         // Given
-        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
 
         ErrorHolder errorHolder = ErrorHolder
                                       .builder(PIIS_400)
-                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "message 1, message 2, message 3"))
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                                       .build();
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIIS)))
             .thenReturn(errorHolder);
@@ -127,7 +123,7 @@ public class FundsConfirmationServiceTest {
         when(aspspProfileServiceWrapper.isPiisConsentSupported()).thenReturn(false);
         when(fundsConfirmationSpi.performFundsSufficientCheck(any(), any(), any(), any()))
             .thenReturn(SpiResponse.<SpiFundsConfirmationResponse>builder()
-                            .error(new TppMessage(MessageErrorCode.FORMAT_ERROR, "Format error"))
+                            .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                             .build());
 
         // When
@@ -137,7 +133,6 @@ public class FundsConfirmationServiceTest {
         assertThat(response.hasError()).isTrue();
         assertThat(response.getBody()).isNull();
         assertThat(response.getError().getErrorType()).isEqualTo(ErrorType.PIIS_400);
-        assertThat(response.getError().getTppMessage().getText()).isEqualTo(errorMessagesString);
         assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
     }
 

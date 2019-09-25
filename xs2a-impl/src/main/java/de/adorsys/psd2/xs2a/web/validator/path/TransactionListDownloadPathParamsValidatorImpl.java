@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.path;
 
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import org.springframework.stereotype.Component;
@@ -23,14 +24,13 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_PATH_PARAMETER_INVALID;
+
 @Component
 public class TransactionListDownloadPathParamsValidatorImpl implements TransactionListDownloadPathParamsValidator {
 
     private static final String BASE64_REGEX = "^(?:[A-Za-z0-9-_]{4})*(?:[A-Za-z0-9-_]{2}==|[A-Za-z0-9-_]{3}=)?$";
     private static final Pattern PATTERN = Pattern.compile(BASE64_REGEX);
-    private static final String DOWNLOAD_ID_PATH_PARAMETER_NAME = "download-id";
-
-    private static final String ERROR_TEXT_WRONG_PATH_PARAMETER = String.format("Path parameter '%s' has to be represented in Base64", DOWNLOAD_ID_PATH_PARAMETER_NAME);
 
     private final ErrorBuildingService errorBuildingService;
 
@@ -40,10 +40,10 @@ public class TransactionListDownloadPathParamsValidatorImpl implements Transacti
 
     @Override
     public void validate(Map<String, String> queryParameterMap, MessageError messageError) {
-        String downloadId = queryParameterMap.get(DOWNLOAD_ID_PATH_PARAMETER_NAME);
+        String downloadId = queryParameterMap.get("download-id");
 
         if (isNonValid(downloadId)) {
-            errorBuildingService.enrichMessageError(messageError, ERROR_TEXT_WRONG_PATH_PARAMETER);
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_PATH_PARAMETER_INVALID));
         }
     }
 

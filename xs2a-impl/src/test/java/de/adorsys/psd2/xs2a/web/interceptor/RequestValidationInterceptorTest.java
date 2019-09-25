@@ -48,7 +48,6 @@ import static org.mockito.Mockito.*;
 public class RequestValidationInterceptorTest {
 
     private static final String METHOD_NAME = "publicMethod";
-    private static final String ERROR_MESSAGE = "error_message";
 
     @InjectMocks
     private RequestValidationInterceptor interceptor;
@@ -80,7 +79,7 @@ public class RequestValidationInterceptorTest {
 
             @Override
             public void validate(HttpServletRequest request, MessageError messageError) {
-                messageError.addTppMessage(TppMessageInformation.of(FORMAT_ERROR, ERROR_MESSAGE));
+                messageError.addTppMessage(TppMessageInformation.of(FORMAT_ERROR));
             }
         };
     }
@@ -119,6 +118,5 @@ public class RequestValidationInterceptorTest {
 
         verify(errorBuildingService, times(1)).buildErrorResponse(eq(response), messageErrorCaptor.capture());
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageErrorCaptor.getValue().getTppMessage().getMessageErrorCode());
-        assertEquals(ERROR_MESSAGE, messageErrorCaptor.getValue().getTppMessage().getText());
     }
 }

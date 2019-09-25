@@ -26,12 +26,11 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static de.adorsys.psd2.xs2a.web.validator.header.AbstractHeaderValidatorImpl.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ContentTypeHeaderValidatorImplTest {
 
+    private static final String[] CONTENT_TYPE_HEADER_NAME = {"content-type"};
     private ContentTypeHeaderValidatorImpl validator;
     private MessageError messageError;
     private Map<String, String> headers;
@@ -54,8 +53,8 @@ public class ContentTypeHeaderValidatorImplTest {
     public void validate_absentHeaderError() {
         validator.validate(headers, messageError);
 
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(ERROR_TEXT_ABSENT_HEADER, validator.getHeaderName()), messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_ABSENT_HEADER, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(CONTENT_TYPE_HEADER_NAME, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -63,8 +62,8 @@ public class ContentTypeHeaderValidatorImplTest {
         headers.put(validator.getHeaderName(), null);
         validator.validate(headers, messageError);
 
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(ERROR_TEXT_NULL_HEADER, validator.getHeaderName()), messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_HEADER, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(CONTENT_TYPE_HEADER_NAME, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
@@ -72,7 +71,7 @@ public class ContentTypeHeaderValidatorImplTest {
         headers.put(validator.getHeaderName(), "");
         validator.validate(headers, messageError);
 
-        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(ERROR_TEXT_BLANK_HEADER, validator.getHeaderName()), messageError.getTppMessage().getText());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_BLANK_HEADER, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(CONTENT_TYPE_HEADER_NAME, messageError.getTppMessage().getTextParameters());
     }
 }
