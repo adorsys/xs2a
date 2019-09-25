@@ -18,11 +18,8 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import de.adorsys.psd2.xs2a.service.validator.PsuDataUpdateAuthorisationChecker;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,51 +28,23 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_401;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_403;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class PisAuthorisationValidator {
     private final RequestProviderService requestProviderService;
-    private final PisAuthorisationStatusValidator pisAuthorisationStatusValidator;
-    private final PsuDataUpdateAuthorisationChecker psuDataUpdateAuthorisationChecker;
 
     @NotNull
-    public ValidationResult validate(@NotNull String authorisationId, @NotNull PisCommonPaymentResponse commonPaymentResponse, @NotNull PsuIdData psuIdData) {
-        Optional<Authorisation> authorisationOptional = findAuthorisationInPayment(authorisationId, commonPaymentResponse);
+    public ValidationResult validate(@NotNull String authorisationId, @NotNull PisCommonPaymentResponse commonPaymentResponse) {
+        Optional<Authorisation> authorisationOptional = commonPaymentResponse.findAuthorisationInPayment(authorisationId);
+
         if (!authorisationOptional.isPresent()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: couldn't find authorisation with given authorisationId for payment",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), commonPaymentResponse.getExternalId(), authorisationId);
             return ValidationResult.invalid(ErrorType.PIS_403, RESOURCE_UNKNOWN_403);
         }
-
-        Authorisation authorisation = authorisationOptional.get();
-        if (psuDataUpdateAuthorisationChecker.areBothPsusAbsent(psuIdData, authorisation.getPsuData())) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: PSU from authorisation and PSU from request are absent",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), commonPaymentResponse.getExternalId(), authorisationId);
-            return ValidationResult.invalid(new MessageError(ErrorType.PIS_400, of(FORMAT_ERROR_NO_PSU)));
-        }
-
-        if (!psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(psuIdData, authorisation.getPsuData())) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: PSU from authorisation and PSU from request are different",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), commonPaymentResponse.getExternalId(), authorisationId);
-            return ValidationResult.invalid(new MessageError(PIS_401, of(PSU_CREDENTIALS_INVALID)));
-        }
-
-        ValidationResult authorisationValidationResult = pisAuthorisationStatusValidator.validate(authorisation.getScaStatus());
-        if (authorisationValidationResult.isNotValid()) {
-            return authorisationValidationResult;
-        }
-
         return ValidationResult.valid();
-    }
-
-    private Optional<Authorisation> findAuthorisationInPayment(String authorisationId, PisCommonPaymentResponse paymentResponse) {
-        return paymentResponse.getAuthorisations().stream()
-                   .filter(auth -> auth.getId().equals(authorisationId))
-                   .findFirst();
     }
 }

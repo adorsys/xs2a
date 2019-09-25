@@ -16,17 +16,23 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
+import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
-import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
  * Validator to be used for validating get payment cancellation authorisation SCA status request according to some
  * business rules
  */
+@Slf4j
 @Component
-public class GetPaymentCancellationAuthorisationScaStatusValidator extends AbstractPisTppValidator<CommonPaymentObject> {
+@RequiredArgsConstructor
+public class GetPaymentCancellationAuthorisationScaStatusValidator extends AbstractPisTppValidator<GetPaymentCancellationAuthorisationScaStatusPO> {
+    private final PisAuthorisationValidator pisAuthorisationValidator;
 
     /**
      * Validates get payment cancellation authorisation SCA status request
@@ -35,7 +41,15 @@ public class GetPaymentCancellationAuthorisationScaStatusValidator extends Abstr
      * @return valid result if the payment is valid, invalid result with appropriate error otherwise
      */
     @Override
-    protected ValidationResult executeBusinessValidation(CommonPaymentObject paymentObject) {
+    protected ValidationResult executeBusinessValidation(GetPaymentCancellationAuthorisationScaStatusPO paymentObject) {
+        PisCommonPaymentResponse response = paymentObject.getPisCommonPaymentResponse();
+        String authorisationId = paymentObject.getAuthorisationId();
+
+        ValidationResult authorisationValidationResult = pisAuthorisationValidator.validate(authorisationId, response);
+        if (authorisationValidationResult.isNotValid()) {
+            return authorisationValidationResult;
+        }
+
         return ValidationResult.valid();
     }
 }

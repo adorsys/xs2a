@@ -50,15 +50,6 @@ public class PaymentInitiationHeadersBuilder {
     }
 
     /**
-     * Builds response headers for initiate payment request that resulted in some error
-     *
-     * @return response headers
-     */
-    public ResponseHeaders buildErrorInitiatePaymentHeaders() {
-        return buildScaApproachHeader(scaApproachResolver.resolveScaApproach());
-    }
-
-    /**
      * Builds response headers for successful start payment authorisation request
      *
      * @param authorisationId id of the created authorisation
@@ -66,15 +57,6 @@ public class PaymentInitiationHeadersBuilder {
      */
     public ResponseHeaders buildStartPaymentAuthorisationHeaders(@NotNull String authorisationId) {
         return buildHeadersForExistingAuthorisation(authorisationId);
-    }
-
-    /**
-     * Builds response headers for start payment authorisation request that resulted in some error
-     *
-     * @return response headers
-     */
-    public ResponseHeaders buildErrorStartPaymentAuthorisationHeaders() {
-        return buildScaApproachHeader(scaApproachResolver.resolveScaApproach());
     }
 
     /**

@@ -24,9 +24,7 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import de.adorsys.psd2.xs2a.service.validator.PsuDataUpdateAuthorisationChecker;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -36,50 +34,30 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.STATUS_INVALID;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisAuthorisationValidatorTest {
     private static final String AUTHORISATION_ID = "62561aa4-5d69-4bac-9483-09376188eb78";
     private static final String UNKNOWN_AUTHORISATION_ID = "unknown id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
-    private static final ScaStatus INVALID_SCA_STATUS = ScaStatus.FAILED;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu-id", null, null, null);
 
     private static final MessageError UNKNOWN_AUTHORISATION_ERROR =
         new MessageError(ErrorType.PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403));
-    private static final MessageError STATUS_VALIDATION_ERROR =
-        new MessageError(ErrorType.PIS_409, TppMessageInformation.of(STATUS_INVALID));
 
     @Mock
     private RequestProviderService requestProviderService;
 
-    @Mock
-    private PisAuthorisationStatusValidator pisAuthorisationStatusValidator;
-    @Mock
-    private PsuDataUpdateAuthorisationChecker psuDataUpdateAuthorisationChecker;
-
     @InjectMocks
     private PisAuthorisationValidator pisAuthorisationValidator;
 
-    @Before
-    public void setUp() {
-        when(psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(PSU_ID_DATA, PSU_ID_DATA))
-            .thenReturn(true);
-    }
-
     @Test
     public void validate_withValidAuthorisation_shouldReturnValid() {
-        // Given
-        when(pisAuthorisationStatusValidator.validate(ScaStatus.RECEIVED))
-            .thenReturn(ValidationResult.valid());
-
         PisCommonPaymentResponse paymentResponse = buildPisCommonPaymentResponse(new Authorisation(AUTHORISATION_ID, SCA_STATUS, PSU_ID_DATA));
 
         // When
-        ValidationResult validationResult = pisAuthorisationValidator.validate(AUTHORISATION_ID, paymentResponse, PSU_ID_DATA);
+        ValidationResult validationResult = pisAuthorisationValidator.validate(AUTHORISATION_ID, paymentResponse);
 
         // Then
         assertNotNull(validationResult);
@@ -93,29 +71,12 @@ public class PisAuthorisationValidatorTest {
         PisCommonPaymentResponse paymentResponse = buildPisCommonPaymentResponse(new Authorisation(AUTHORISATION_ID, SCA_STATUS, PSU_ID_DATA));
 
         // When
-        ValidationResult validationResult = pisAuthorisationValidator.validate(UNKNOWN_AUTHORISATION_ID, paymentResponse, PSU_ID_DATA);
+        ValidationResult validationResult = pisAuthorisationValidator.validate(UNKNOWN_AUTHORISATION_ID, paymentResponse);
 
         // Then
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(UNKNOWN_AUTHORISATION_ERROR, validationResult.getMessageError());
-    }
-
-    @Test
-    public void validate_withInvalidAuthorisationStatus_shouldReturnStatusValidationError() {
-        // Given
-        when(pisAuthorisationStatusValidator.validate(INVALID_SCA_STATUS))
-            .thenReturn(ValidationResult.invalid(STATUS_VALIDATION_ERROR));
-
-        PisCommonPaymentResponse paymentResponse = buildPisCommonPaymentResponse(new Authorisation(AUTHORISATION_ID, INVALID_SCA_STATUS, PSU_ID_DATA));
-
-        // When
-        ValidationResult validationResult = pisAuthorisationValidator.validate(AUTHORISATION_ID, paymentResponse, PSU_ID_DATA);
-
-        // Then
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(STATUS_VALIDATION_ERROR, validationResult.getMessageError());
     }
 
     private PisCommonPaymentResponse buildPisCommonPaymentResponse(Authorisation authorisation) {

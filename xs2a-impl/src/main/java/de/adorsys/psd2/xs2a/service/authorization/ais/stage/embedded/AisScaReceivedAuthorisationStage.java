@@ -27,7 +27,6 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
@@ -63,7 +62,6 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 @Service("AIS_RECEIVED")
 public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
     private final SpiContextDataProvider spiContextDataProvider;
-    private final ScaApproachResolver scaApproachResolver;
     private final CommonDecoupledAisService commonDecoupledAisService;
     private final AisScaAuthorisationService aisScaAuthorisationService;
     private final RequestProviderService requestProviderService;
@@ -76,13 +74,11 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
                                             SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
                                             SpiContextDataProvider spiContextDataProvider,
                                             SpiErrorMapper spiErrorMapper,
-                                            ScaApproachResolver scaApproachResolver,
                                             CommonDecoupledAisService commonDecoupledAisService,
                                             AisScaAuthorisationService aisScaAuthorisationService,
                                             RequestProviderService requestProviderService) {
         super(aisConsentService, aspspConsentDataProviderFactory, aisConsentSpi, aisConsentMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper, spiErrorMapper);
         this.spiContextDataProvider = spiContextDataProvider;
-        this.scaApproachResolver = scaApproachResolver;
         this.commonDecoupledAisService = commonDecoupledAisService;
         this.aisScaAuthorisationService = aisScaAuthorisationService;
         this.requestProviderService = requestProviderService;
@@ -196,7 +192,6 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
 
     private UpdateConsentPsuDataResponse createResponseForOneAvailableMethod(UpdateConsentPsuDataReq request, SpiAccountConsent spiAccountConsent, SpiAuthenticationObject scaMethod, PsuIdData psuData) {
         if (scaMethod.isDecoupled()) {
-            scaApproachResolver.forceDecoupledScaApproach();
             aisConsentService.updateScaApproach(request.getAuthorizationId(), ScaApproach.DECOUPLED);
             return commonDecoupledAisService.proceedDecoupledApproach(request, spiAccountConsent, scaMethod.getAuthenticationMethodId(), psuData);
         }

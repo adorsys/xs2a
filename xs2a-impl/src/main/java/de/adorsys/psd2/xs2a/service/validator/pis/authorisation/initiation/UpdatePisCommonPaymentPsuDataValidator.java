@@ -17,20 +17,24 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
+import de.adorsys.psd2.xs2a.service.validator.PisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationStatusValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_EXPIRED_403;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_BLOCKED;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
+import java.util.Optional;
+
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 /**
  * Validator to be used for validating update PSU Data in payment authorisation request according to some business rules
@@ -42,6 +46,8 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValida
     private final PisEndpointAccessCheckerService pisEndpointAccessCheckerService;
     private final RequestProviderService requestProviderService;
     private final PisAuthorisationValidator pisAuthorisationValidator;
+    private final PisAuthorisationStatusValidator pisAuthorisationStatusValidator;
+    private final PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator;
 
     /**
      * Validates update PSU Data in payment authorisation request by checking whether:
@@ -59,7 +65,7 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValida
         if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, PaymentAuthorisationType.CREATED)) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data  has failed: endpoint is not accessible for authorisation",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
-            return ValidationResult.invalid(PIS_403, SERVICE_BLOCKED);
+            return ValidationResult.invalid(ErrorType.PIS_403, SERVICE_BLOCKED);
         }
 
         PisCommonPaymentResponse pisCommonPaymentResponse = paymentObject.getPisCommonPaymentResponse();
@@ -67,12 +73,33 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValida
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: payment has been rejected",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
-            return ValidationResult.invalid(PIS_403, RESOURCE_EXPIRED_403);
+
+            return ValidationResult.invalid(ErrorType.PIS_403, RESOURCE_EXPIRED_403);
         }
 
-        ValidationResult authorisationValidationResult = pisAuthorisationValidator.validate(authorisationId, pisCommonPaymentResponse, paymentObject.getPsuIdData());
+        ValidationResult authorisationValidationResult = pisAuthorisationValidator.validate(authorisationId, pisCommonPaymentResponse);
         if (authorisationValidationResult.isNotValid()) {
             return authorisationValidationResult;
+        }
+
+        Optional<Authorisation> authorisationOptional = pisCommonPaymentResponse.findAuthorisationInPayment(authorisationId);
+
+        if (!authorisationOptional.isPresent()) {
+            return ValidationResult.invalid(ErrorType.PIS_403, RESOURCE_UNKNOWN_403);
+        }
+
+        Authorisation authorisation = authorisationOptional.get();
+
+        ValidationResult validationResult = pisPsuDataUpdateAuthorisationCheckerValidator
+                                                .validate(paymentObject.getPsuIdData(), authorisation.getPsuData());
+
+        if (validationResult.isNotValid()) {
+            return validationResult;
+        }
+
+        ValidationResult authorisationStatusValidationResult = pisAuthorisationStatusValidator.validate(authorisation.getScaStatus());
+        if (authorisationStatusValidationResult.isNotValid()) {
+            return authorisationStatusValidationResult;
         }
 
         return ValidationResult.valid();

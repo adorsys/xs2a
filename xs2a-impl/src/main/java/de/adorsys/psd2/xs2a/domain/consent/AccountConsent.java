@@ -29,6 +29,7 @@ import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Data
 @AllArgsConstructor
@@ -90,5 +91,11 @@ public class AccountConsent {
     @JsonIgnore
     public boolean isConsentForDedicatedAccounts() {
         return getAisConsentRequestType() == AisConsentRequestType.DEDICATED_ACCOUNTS;
+    }
+
+    public Optional<AccountConsentAuthorization> findAuthorisationInConsent(String authorisationId) {
+        return authorisations.stream()
+                   .filter(auth -> auth.getId().equals(authorisationId))
+                   .findFirst();
     }
 }

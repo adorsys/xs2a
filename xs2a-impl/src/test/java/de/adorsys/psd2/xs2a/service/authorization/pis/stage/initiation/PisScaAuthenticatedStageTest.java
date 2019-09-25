@@ -154,16 +154,12 @@ public class PisScaAuthenticatedStageTest {
         when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(true);
 
-        doNothing()
-            .when(scaApproachResolver).forceDecoupledScaApproach();
-
         when(pisCommonDecoupledService.proceedDecoupledInitiation(request, SPI_PAYMENT_INFO, AUTHENTICATION_METHOD_ID))
             .thenReturn(mockedExpectedResponse);
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaAuthenticatedStage.apply(request, response);
 
         assertThat(actualResponse).isNotNull();
-        verify(scaApproachResolver).forceDecoupledScaApproach();
         verify(pisCommonDecoupledService).proceedDecoupledInitiation(request, SPI_PAYMENT_INFO, AUTHENTICATION_METHOD_ID);
     }
 

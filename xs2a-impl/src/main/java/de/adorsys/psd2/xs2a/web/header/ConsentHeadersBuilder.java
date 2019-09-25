@@ -50,15 +50,6 @@ public class ConsentHeadersBuilder {
     }
 
     /**
-     * Builds response headers for create consent request that resulted in some error
-     *
-     * @return response headers
-     */
-    public ResponseHeaders buildErrorCreateConsentHeaders() {
-        return buildScaApproachHeader(scaApproachResolver.resolveScaApproach());
-    }
-
-    /**
      * Builds response headers for successful start consent authorisation request
      *
      * @param authorisationId id of the created authorisation
@@ -69,31 +60,12 @@ public class ConsentHeadersBuilder {
     }
 
     /**
-     * Builds response headers for start consent authorisation request that resulted in some error
-     *
-     * @return response headers
-     */
-    public ResponseHeaders buildErrorStartConsentAuthorisationHeaders() {
-        return buildScaApproachHeader(scaApproachResolver.resolveScaApproach());
-    }
-
-    /**
      * Builds response headers for successful update consents PSU Data request
      *
      * @param authorisationId id of the authorisation, used in the request
      * @return response headers
      */
     public ResponseHeaders buildUpdateConsentsPsuDataHeaders(@NotNull String authorisationId) {
-        return buildHeadersForExistingAuthorisation(authorisationId);
-    }
-
-    /**
-     * Builds response headers for start consent authorisation request that resulted in some error
-     *
-     * @param authorisationId id of the authorisation, used in the request
-     * @return response headers
-     */
-    public ResponseHeaders buildErrorUpdateConsentsPsuDataHeaders(@NotNull String authorisationId) {
         return buildHeadersForExistingAuthorisation(authorisationId);
     }
 

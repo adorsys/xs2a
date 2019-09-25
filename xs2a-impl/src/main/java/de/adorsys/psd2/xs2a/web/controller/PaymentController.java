@@ -145,8 +145,7 @@ public class PaymentController implements PaymentApi {
             xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aPayment(body, paymentInitiationParameters), paymentInitiationParameters);
 
         if (serviceResponse.hasError()) {
-            return responseErrorMapper.generateErrorResponse(serviceResponse.getError(),
-                                                             paymentInitiationHeadersBuilder.buildErrorInitiatePaymentHeaders());
+            return responseErrorMapper.generateErrorResponse(serviceResponse.getError());
         }
 
         PaymentInitiationResponse serviceResponseBody = serviceResponse.getBody();
@@ -187,8 +186,7 @@ public class PaymentController implements PaymentApi {
             xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, xmlSct, jsonStandingorderType), paymentInitiationParameters);
 
         if (serviceResponse.hasError()) {
-            return responseErrorMapper.generateErrorResponse(serviceResponse.getError(),
-                                                             paymentInitiationHeadersBuilder.buildErrorInitiatePaymentHeaders());
+            return responseErrorMapper.generateErrorResponse(serviceResponse.getError());
         }
 
         PaymentInitiationResponse serviceResponseBody = serviceResponse.getBody();
@@ -228,8 +226,7 @@ public class PaymentController implements PaymentApi {
             xs2aPaymentService.createPayment(body.getBytes(), paymentInitiationParameters);
 
         if (serviceResponse.hasError()) {
-            return responseErrorMapper.generateErrorResponse(serviceResponse.getError(),
-                                                             paymentInitiationHeadersBuilder.buildErrorInitiatePaymentHeaders());
+            return responseErrorMapper.generateErrorResponse(serviceResponse.getError());
         }
 
         PaymentInitiationResponse serviceResponseBody = serviceResponse.getBody();
@@ -337,8 +334,7 @@ public class PaymentController implements PaymentApi {
         ResponseObject<AuthorisationResponse> createAuthResponse = paymentAuthorisationService.createPisAuthorisation(createRequest);
 
         if (createAuthResponse.hasError()) {
-            return responseErrorMapper.generateErrorResponse(createAuthResponse.getError(),
-                                                             paymentInitiationHeadersBuilder.buildErrorStartPaymentAuthorisationHeaders());
+            return responseErrorMapper.generateErrorResponse(createAuthResponse.getError());
         }
 
         AuthorisationResponse authResponse = createAuthResponse.getBody();
@@ -369,8 +365,7 @@ public class PaymentController implements PaymentApi {
         ResponseObject<CancellationAuthorisationResponse> serviceResponse = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(createRequest);
 
         if (serviceResponse.hasError()) {
-            return responseErrorMapper.generateErrorResponse(serviceResponse.getError(),
-                                                             paymentCancellationHeadersBuilder.buildErrorStartPaymentCancellationAuthorisationHeaders());
+            return responseErrorMapper.generateErrorResponse(serviceResponse.getError());
         }
 
         CancellationAuthorisationResponse serviceResponseBody = serviceResponse.getBody();
