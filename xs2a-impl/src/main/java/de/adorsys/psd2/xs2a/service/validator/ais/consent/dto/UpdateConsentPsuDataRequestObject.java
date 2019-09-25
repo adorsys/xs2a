@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.validator.ais.consent.dto;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
@@ -28,8 +27,10 @@ import org.jetbrains.annotations.NotNull;
 public class UpdateConsentPsuDataRequestObject implements TppInfoProvider {
     @NotNull
     private AccountConsent accountConsent;
+
     @NotNull
-    private AccountConsentAuthorization authorisation;
+    private String authorisationId;
+
     @NotNull
     private PsuIdData psuIdData;
 

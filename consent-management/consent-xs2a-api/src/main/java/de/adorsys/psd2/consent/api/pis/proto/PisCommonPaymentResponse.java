@@ -30,6 +30,7 @@ import lombok.Data;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @ApiModel(description = "Pis payment initialisation common payment response", value = "PisCommonPaymentResponse")
@@ -63,4 +64,10 @@ public class PisCommonPaymentResponse implements CommonPaymentData {
 
     @ApiModelProperty(value = "List of corresponding PSU", required = true)
     private List<Authorisation> authorisations = new ArrayList<>();
+
+    public Optional<Authorisation> findAuthorisationInPayment(String authorisationId) {
+        return authorisations.stream()
+                   .filter(auth -> auth.getId().equals(authorisationId))
+                   .findFirst();
+    }
 }

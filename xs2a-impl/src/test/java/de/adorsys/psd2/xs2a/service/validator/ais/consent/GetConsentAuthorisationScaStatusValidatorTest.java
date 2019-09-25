@@ -42,9 +42,13 @@ import static org.mockito.Mockito.when;
 public class GetConsentAuthorisationScaStatusValidatorTest {
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
+    private static final String AUTHORISATION_ID = "random";
 
     private static final MessageError TPP_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
+
+    @Mock
+    private AisAuthorisationValidator aisAuthorisationValidator;
 
     @Mock
     private AisConsentTppInfoValidator aisConsentTppInfoValidator;
@@ -67,9 +71,10 @@ public class GetConsentAuthorisationScaStatusValidatorTest {
     public void validate_withValidConsentObject_shouldReturnValid() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        when(aisAuthorisationValidator.validate(AUTHORISATION_ID, accountConsent)).thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new CommonConsentObject(accountConsent));
+        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(accountConsent,AUTHORISATION_ID));
 
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -85,7 +90,7 @@ public class GetConsentAuthorisationScaStatusValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
 
         // When
-        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new CommonConsentObject(accountConsent));
+        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(accountConsent,AUTHORISATION_ID));
 
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());

@@ -26,7 +26,6 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -55,7 +54,6 @@ import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 @Service("AIS_PSUAUTHENTICATED")
 public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
     private final SpiContextDataProvider spiContextDataProvider;
-    private final ScaApproachResolver scaApproachResolver;
     private final CommonDecoupledAisService commonDecoupledAisService;
     private final RequestProviderService requestProviderService;
 
@@ -67,12 +65,10 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
                                      SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
                                      SpiContextDataProvider spiContextDataProvider,
                                      SpiErrorMapper spiErrorMapper,
-                                     ScaApproachResolver scaApproachResolver,
                                      CommonDecoupledAisService commonDecoupledAisService,
                                      RequestProviderService requestProviderService) {
         super(aisConsentService, aspspConsentDataProviderFactory, aisConsentSpi, aisConsentMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper, spiErrorMapper);
         this.spiContextDataProvider = spiContextDataProvider;
-        this.scaApproachResolver = scaApproachResolver;
         this.commonDecoupledAisService = commonDecoupledAisService;
         this.requestProviderService = requestProviderService;
     }
@@ -103,7 +99,6 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
 
         String authenticationMethodId = request.getAuthenticationMethodId();
         if (isDecoupledApproach(request.getAuthorizationId(), authenticationMethodId)) {
-            scaApproachResolver.forceDecoupledScaApproach();
             aisConsentService.updateScaApproach(request.getAuthorizationId(), ScaApproach.DECOUPLED);
             return commonDecoupledAisService.proceedDecoupledApproach(request, spiAccountConsent, authenticationMethodId, psuData);
         }

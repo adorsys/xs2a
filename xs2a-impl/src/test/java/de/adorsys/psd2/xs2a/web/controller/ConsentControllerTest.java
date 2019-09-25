@@ -151,8 +151,7 @@ public class ConsentControllerTest {
     @Test
     public void createAccountConsent_Failure() {
         //Given:
-        when(consentHeadersBuilder.buildErrorCreateConsentHeaders()).thenReturn(RESPONSE_HEADERS);
-        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404, RESPONSE_HEADERS))
+        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404))
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         Consents consents = getConsents();
         //When:
@@ -227,8 +226,7 @@ public class ConsentControllerTest {
             .thenReturn(ResponseObject.<AuthorisationResponse>builder()
                             .fail(MESSAGE_ERROR_AIS_400)
                             .build());
-        when(consentHeadersBuilder.buildErrorStartConsentAuthorisationHeaders()).thenReturn(RESPONSE_HEADERS);
-        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_400, RESPONSE_HEADERS))
+        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_400))
             .thenReturn(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
 
         // When

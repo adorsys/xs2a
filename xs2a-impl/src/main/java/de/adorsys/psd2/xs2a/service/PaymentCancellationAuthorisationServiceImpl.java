@@ -35,10 +35,7 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
-import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.GetPaymentCancellationAuthorisationScaStatusValidator;
-import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.GetPaymentCancellationAuthorisationsValidator;
-import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.UpdatePisCancellationPsuDataPO;
-import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.UpdatePisCancellationPsuDataValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -201,7 +198,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                        .build();
         }
 
-        ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
+        ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(pisCommonPaymentResponse.get(),authorisationId));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get SCA status PIS cancellation authorisation - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());

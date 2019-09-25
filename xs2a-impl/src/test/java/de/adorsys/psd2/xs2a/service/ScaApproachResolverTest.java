@@ -18,10 +18,10 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
@@ -29,7 +29,6 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -354,37 +353,11 @@ public class ScaApproachResolverTest {
         assertThat(actualResult).isEqualTo(DECOUPLED);
     }
 
-    @Test
-    public void resolveScaApproach_withForcedApproach_shouldReturnForced() {
-        // Given
-        when(scaApproachHolder.getScaApproach()).thenReturn(DECOUPLED);
-        when(scaApproachHolder.isNotEmpty()).thenReturn(true);
-
-        // When
-        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
-
-        // Then
-        assertThat(actualResult).isEqualTo(DECOUPLED);
-
-    }
-
-    @Test
-    public void forceDecoupledScaApproach_shouldSetDecoupled() {
-        // Given
-        ArgumentCaptor<ScaApproach> scaApproachArgumentCaptor = ArgumentCaptor.forClass(ScaApproach.class);
-
-        // When
-        scaApproachResolver.forceDecoupledScaApproach();
-
-        // Then
-        verify(scaApproachHolder, times(1)).setScaApproach(scaApproachArgumentCaptor.capture());
-        assertThat(scaApproachArgumentCaptor.getValue()).isEqualTo(DECOUPLED);
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void resolveScaApproach_scaApproachResponseIsEmpty() {
         scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID);
     }
+
 
     @Test
     public void getCancellationScaApproach() {

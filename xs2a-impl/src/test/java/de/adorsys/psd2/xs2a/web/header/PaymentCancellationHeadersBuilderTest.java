@@ -59,25 +59,6 @@ public class PaymentCancellationHeadersBuilderTest {
     }
 
     @Test
-    public void buildErrorStartPaymentCancellationAuthorisationHeaders_shouldReturnResolvedScaApproach() {
-        // Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(SCA_APPROACH);
-
-        HttpHeaders expectedHttpHeaders = new HttpHeaders();
-        expectedHttpHeaders.add(ASPSP_SCA_APPROACH_HEADER, SCA_APPROACH.name());
-
-        // When
-        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildErrorStartPaymentCancellationAuthorisationHeaders();
-
-        // Then
-        verify(scaApproachResolver, never()).getCancellationScaApproach(any());
-
-        HttpHeaders actualHttpHeaders = responseHeaders.getHttpHeaders();
-        assertEquals(expectedHttpHeaders, actualHttpHeaders);
-    }
-
-    @Test
     public void buildUpdatePaymentCancellationPsuDataHeaders_shouldReturnScaApproachFromAuthorisation() {
         // Given
         when(scaApproachResolver.getCancellationScaApproach(AUTHORISATION_ID))
