@@ -19,7 +19,7 @@ From now on, instances of generated models in `xs2a-server-api` module will corr
 
 == SCA exemption is supported
 
-From now on, SCA exemption is possible for bulk and single payment initiation. To support this, return type of
+From now on, SCA exemption is possible for bulk and single payment initiation in embedded approach. To support this, return type of
 `AuthorisationSpi#authorisePsu` method was changed from `SpiAuthorisationStatus` to `SpiPsuAuthorisationResponse`.
 `SpiPsuAuthorisationResponse` is a new domain class, which contains authorisation status as well as boolean `scaExempted`
 field, which is taken into account by XS2A for performing SCA exemption. If the psu authorisation spi response for
