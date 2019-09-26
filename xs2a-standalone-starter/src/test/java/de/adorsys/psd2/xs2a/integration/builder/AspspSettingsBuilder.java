@@ -61,7 +61,7 @@ public class AspspSettingsBuilder {
     private static final String XS2A_BASEURL = "http://myhost.com/";
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
-    private static final String SUPPORTED_TRANSACTION_APPLICATION_TYPES = "JSON";
+    private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("application/json", "application/xml");
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
 
     public static AspspSettings buildAspspSettings() {
