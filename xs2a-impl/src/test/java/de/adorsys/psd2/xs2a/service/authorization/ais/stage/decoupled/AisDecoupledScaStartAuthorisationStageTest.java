@@ -168,8 +168,12 @@ public class AisDecoupledScaStartAuthorisationStageTest {
 
     @Test
     public void apply_Failure_AuthorisationStatusSpiResponseFailed() {
+        SpiResponse<SpiPsuAuthorisationResponse> spiResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
+                                                                   .payload(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.FAILURE, false))
+                                                                   .build();
+
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildErrorSpiResponse(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.FAILURE, false)));
+            .thenReturn(spiResponse);
 
         UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
