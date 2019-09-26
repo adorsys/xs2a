@@ -59,14 +59,14 @@ variables:
     - jabba use ${JAVA_VERSION}
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -DskipTests clean install
+    - mvn -ntp -DskipTests -DskipITs clean install
 
 .java_tests: &java_tests
   script:
     - jabba use $JAVA_VERSION
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn --fail-at-end clean install
+    - mvn -ntp -DskipITs --fail-at-end clean install
 
 # Build docker images and push them to Dockerhub (depending on ${DOCKER_TAG})
 .build_dockerhub_image: &build_dockerhub_image
@@ -106,7 +106,9 @@ Compile Java8:
   <<: *build_java
   artifacts:
     paths:
-      - "xs2a-impl/target/aspsp-xs2a.jar"
+      - "**/target/*"
+      - "**/**/target/*"
+      - ".m2/repository/de/adorsys/psd2/*/*"
     name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}"
     expire_in: "10 day"
 
@@ -121,8 +123,39 @@ Compile Java11:
       - "xs2a-standalone-starter/target/xs2a-standalone-starter-exec.jar"
       - "consent-management/cms-standalone-service/target/consent-management*jar"
       - "aspsp-profile/aspsp-profile-server/target/aspsp-profile*jar"
+      - "**/target/*"
+      - "**/**/target/*"
+      - ".m2/repository/de/adorsys/psd2/*/*"
     name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}"
     expire_in: "1 day"
+
+#-------------------
+# Integration tests (IT)
+#-------------------
+IT Java8:
+  stage: "Test"
+  dependencies:
+    - "Compile Java8"
+  script:
+    - jabba use ${JAVA_VERSION}
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
+    - mvn -ntp failsafe:integration-test
+  variables:
+    JAVA_VERSION: "system@1.8"
+
+IT Java11:
+  stage: "Test"
+  dependencies:
+    - "Compile Java11"
+  script:
+    - jabba use ${JAVA_VERSION}
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
+    - mvn -ntp failsafe:integration-test
+  variables:
+    JAVA_VERSION: "system@1.11"
+    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
 PMD Report:
   stage: "Compile"
