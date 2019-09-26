@@ -118,6 +118,15 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, psuData);
         }
 
+        if (authPsuResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
+            ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_401)
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID))
+                                          .build();
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_RECEIVED stage. PSU authorisation failed due to incorrect credentials. Error msg: [{}].",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authenticationId, psuData.getPsuId(), errorHolder);
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, psuData);
+        }
+
         SpiResponse<List<SpiAuthenticationObject>> availableScaMethodsResponse = paymentAuthorisationSpi.requestAvailableScaMethods(contextData, payment, aspspConsentDataProvider);
 
         if (availableScaMethodsResponse.hasError()) {
