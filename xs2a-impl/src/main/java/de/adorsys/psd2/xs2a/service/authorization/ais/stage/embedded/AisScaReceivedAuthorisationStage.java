@@ -120,21 +120,21 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
         SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(spiContextDataProvider.provideWithPsuIdData(psuData), psuDataMapper.mapToSpiPsuData(psuData), request.getPassword(), spiAccountConsent, aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
 
         if (authorisationStatusSpiResponse.hasError()) {
-            if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
-                log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_RECEIVED stage. Authorise PSU when apply authorisation has failed. PSU credentials invalid.",
-                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, psuId);
-                MessageError messageError = new MessageError(AIS_401, of(PSU_CREDENTIALS_INVALID));
-                UpdateConsentPsuDataResponse failedResponse = createFailedResponse(messageError, authorisationStatusSpiResponse.getErrors(), request);
-
-                aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(failedResponse, request));
-
-                return failedResponse;
-            }
-
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(authorisationStatusSpiResponse, ServiceType.AIS));
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_RECEIVED stage. Authorise PSU when apply authorisation has failed. Error msg: [{}]",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, psuId, messageError);
             return createFailedResponse(messageError, authorisationStatusSpiResponse.getErrors(), request);
+        }
+
+        if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_RECEIVED stage. Authorise PSU when apply authorisation has failed. PSU credentials invalid.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, psuId);
+            MessageError messageError = new MessageError(AIS_401, of(PSU_CREDENTIALS_INVALID));
+            UpdateConsentPsuDataResponse failedResponse = createFailedResponse(messageError, Collections.singletonList(new TppMessage(PSU_CREDENTIALS_INVALID)), request);
+
+            aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(failedResponse, request));
+
+            return failedResponse;
         }
 
         if (aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent.isConsentForAllAvailableAccounts(), accountConsent.isOneAccessType())) {
