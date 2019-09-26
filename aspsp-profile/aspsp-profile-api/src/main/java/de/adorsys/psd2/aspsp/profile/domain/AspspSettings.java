@@ -61,6 +61,6 @@ public class AspspSettings {
     private ScaRedirectFlow scaRedirectFlow;
     private boolean deltaListSupported;
     private boolean entryReferenceFromSupported;
-    private String supportedTransactionApplicationTypes;
+    private List<String> supportedTransactionApplicationTypes;
     private StartAuthorisationMode startAuthorisationMode;
 }

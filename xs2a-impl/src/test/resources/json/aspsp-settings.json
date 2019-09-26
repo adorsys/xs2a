@@ -1,3 +1,5 @@
 {
-  "supportedTransactionApplicationTypes": "JSON"
+  "supportedTransactionApplicationTypes": [
+    "application/json"
+  ]
 }

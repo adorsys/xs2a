@@ -10,6 +10,7 @@
 * Refactor: Aggregate all messages sent to TPP to message bundle
 * ScaApproachResolver cleanup
 * Bugfix: Don't check the authorisation result of `AuthorisationSpi#authorisePsu`
+* Bugfix: Supported application types for getting transactions list are represented as an array
 
 == Change yaml-generator to correct model Objects equals
 
@@ -59,3 +60,8 @@ Appropriate changes have been made to remove `ScaApproachResolver` 's reliance t
 
 From now on, XS2A will check the authorisation result of `AuthorisationSpi#authorisePsu` and respond with 401
 `PSU_CREDENTIALS_INVALID` error code.
+
+== Bugfix: Supported application types for getting transactions list are represented as an array
+
+From now on, the ASPSP profile supports list of strings as supported application media types for `GET /v1/accounts/{account-id}/transactions`
+request. E.g. `application/json`, `application/xml`.

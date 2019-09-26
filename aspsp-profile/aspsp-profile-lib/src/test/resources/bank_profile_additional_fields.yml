@@ -49,5 +49,5 @@ setting:
  scaRedirectFlow: REDIRECT
  additionalField: 1
  supportedTransactionApplicationTypes:
-   - JSON
+   - application/json
  startAuthorisationMode: auto
