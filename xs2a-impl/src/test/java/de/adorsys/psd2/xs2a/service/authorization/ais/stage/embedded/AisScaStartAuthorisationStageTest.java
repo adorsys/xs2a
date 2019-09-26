@@ -203,8 +203,8 @@ public class AisScaStartAuthorisationStageTest {
             .thenReturn(errorHolder);
 
         SpiResponse<SpiPsuAuthorisationResponse> spiResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                              .error(new TppMessage(FORMAT_ERROR))
-                                                              .build();
+                                                                   .error(new TppMessage(FORMAT_ERROR))
+                                                                   .build();
 
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);
@@ -219,9 +219,8 @@ public class AisScaStartAuthorisationStageTest {
     @Test
     public void apply_Failure_AuthorisationStatusSpiResponseFailedWithBody() {
         SpiResponse<SpiPsuAuthorisationResponse> spiResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                              .payload(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.FAILURE, false))
-                                                              .error(new TppMessage(FORMAT_ERROR))
-                                                              .build();
+                                                                   .payload(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.FAILURE, false))
+                                                                   .build();
 
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);

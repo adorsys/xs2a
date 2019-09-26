@@ -11,6 +11,7 @@
 * Optional SCA for Global Consent
 * Bugfix: Array "account" in Read Balances and Read Transaction List responses is empty for Global consent
 * ScaApproachResolver cleanup
+* Bugfix: Don't check the authorisation result of `AuthorisationSpi#authorisePsu`
 
 == Change yaml-generator to correct model Objects equals
 
@@ -69,3 +70,8 @@ From now on, array "account" in read balances `GET /v1/accounts/{account-id}/bal
 From now on, `ScaApproachResolver` fetches, if possible, information out of an authorisation object instead of resolving it directly.
 Furthermore, the header `Aspsp-Sca-Approach` isn't returned, if consent creation fails.
 Appropriate changes have been made to remove `ScaApproachResolver` 's reliance to an existing authorisation by a given id.
+
+== Bugfix: Don't check the authorisation result of `AuthorisationSpi#authorisePsu`
+
+From now on, XS2A will check the authorisation result of `AuthorisationSpi#authorisePsu` and respond with 401
+`PSU_CREDENTIALS_INVALID` error code.
