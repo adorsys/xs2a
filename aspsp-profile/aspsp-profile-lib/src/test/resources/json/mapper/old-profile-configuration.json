@@ -56,7 +56,7 @@
     "deltaListSupported": false,
     "entryReferenceFromSupported": false,
     "supportedTransactionApplicationTypes": [
-      "JSON"
+      "application/json"
     ],
     "startAuthorisationMode": "auto"
   }

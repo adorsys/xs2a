@@ -52,9 +52,9 @@ public class TransactionReportAcceptHeaderValidatorTest {
     @Before
     public void setUp() {
         AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.getSupportedTransactionApplicationType()).thenReturn(aspspSettings.getAis()
+        when(aspspProfileServiceWrapper.getSupportedTransactionApplicationTypes()).thenReturn(aspspSettings.getAis()
                                                                                                   .getTransactionParameters()
-                                                                                                  .getSupportedTransactionApplicationType());
+                                                                                                  .getSupportedTransactionApplicationTypes());
     }
 
     @Test

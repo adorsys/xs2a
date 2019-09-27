@@ -1,7 +1,9 @@
 {
   "ais": {
     "transactionParameters": {
-      "supportedTransactionApplicationType": "JSON"
+      "supportedTransactionApplicationTypes": [
+        "application/json"
+      ]
     }
   }
 }

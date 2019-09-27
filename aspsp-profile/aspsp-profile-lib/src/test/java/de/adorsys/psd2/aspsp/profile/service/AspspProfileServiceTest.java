@@ -79,7 +79,7 @@ public class AspspProfileServiceTest {
     private static final boolean FORCE_XS2A_BASE_LINKS_URL = false;
     private static final String XS2A_BASE_LINKS_URL = "http://myhost.com/";
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
-    private static final String SUPPORTED_TRANSACTION_APPLICATION_TYPES = "JSON";
+    private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("application/json", "application/xml");
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
 
@@ -189,7 +189,7 @@ public class AspspProfileServiceTest {
 
     @Test
     public void supportedTransactionApplicationTypes_success() {
-        Assertions.assertThat(actualResponse.getAis().getTransactionParameters().getSupportedTransactionApplicationType()).isEqualTo(SUPPORTED_TRANSACTION_APPLICATION_TYPES);
+        Assertions.assertThat(actualResponse.getAis().getTransactionParameters().getSupportedTransactionApplicationTypes()).isEqualTo(SUPPORTED_TRANSACTION_APPLICATION_TYPES);
     }
 
     @Test

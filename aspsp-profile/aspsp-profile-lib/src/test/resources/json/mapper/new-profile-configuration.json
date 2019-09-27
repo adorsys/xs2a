@@ -25,7 +25,9 @@
           "BOOKED",
           "PENDING"
         ],
-        "supportedTransactionApplicationType": "JSON",
+        "supportedTransactionApplicationTypes": [
+          "application/json"
+        ],
         "transactionsWithoutBalancesSupported": true
       }
     },

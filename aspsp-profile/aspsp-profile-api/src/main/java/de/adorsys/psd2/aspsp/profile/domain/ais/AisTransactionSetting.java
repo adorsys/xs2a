@@ -32,5 +32,5 @@ import java.util.List;
 public class AisTransactionSetting {
     private List<BookingStatus> availableBookingStatuses = new ArrayList<>();
     private boolean transactionsWithoutBalancesSupported;
-    private String supportedTransactionApplicationType;
+    private List<String> supportedTransactionApplicationTypes;
 }

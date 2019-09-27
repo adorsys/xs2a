@@ -87,7 +87,7 @@ public class AspspProfileUpdateServiceImplTest {
     private static final String XS2A_BASE_LINKS_URL = "http://myhost.com/";
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
-    private static final String SUPPORTED_TRANSACTION_APPLICATION_TYPES = "JSON";
+    private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("application/json", "application/xml");
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
 
     @InjectMocks
@@ -129,7 +129,7 @@ public class AspspProfileUpdateServiceImplTest {
         Assertions.assertThat(setting.getAis().getRedirectLinkToOnlineBanking().getAisRedirectUrlToAspsp()).isEqualTo(AIS_REDIRECT_LINK);
         Assertions.assertThat(setting.getAis().getTransactionParameters().getAvailableBookingStatuses()).isEqualTo(AVAILABLE_BOOKING_STATUSES);
         Assertions.assertThat(setting.getAis().getTransactionParameters().isTransactionsWithoutBalancesSupported()).isEqualTo(TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED);
-        Assertions.assertThat(setting.getAis().getTransactionParameters().getSupportedTransactionApplicationType()).isEqualTo(SUPPORTED_TRANSACTION_APPLICATION_TYPES);
+        Assertions.assertThat(setting.getAis().getTransactionParameters().getSupportedTransactionApplicationTypes()).isEqualTo(SUPPORTED_TRANSACTION_APPLICATION_TYPES);
         Assertions.assertThat(setting.getAis().getDeltaReportSettings().isDeltaListSupported()).isEqualTo(DELTA_LIST_SUPPORTED);
         Assertions.assertThat(setting.getAis().getDeltaReportSettings().isEntryReferenceFromSupported()).isEqualTo(ENTRY_REFERENCE_FROM_SUPPORTED);
         Assertions.assertThat(setting.getAis().getScaRequirementsForOneTimeConsents().isScaByOneTimeAvailableAccountsConsentRequired()).isEqualTo(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED);
