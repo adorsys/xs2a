@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,7 @@ public class NewProfileConfigurationMapper {
         AisRedirectLinkBankSetting aisRedirectLinkToOnlineBanking = new AisRedirectLinkBankSetting(setting.getAisRedirectUrlToAspsp());
         AisTransactionBankSetting transactionParameters = new AisTransactionBankSetting(setting.getAvailableBookingStatuses(),
                                                                                         setting.isTransactionsWithoutBalancesSupported(),
-                                                                                        Optional.ofNullable(setting.getSupportedTransactionApplicationTypes()).map(l -> l.get(0)).orElse(null));
+                                                                                        Optional.ofNullable(setting.getSupportedTransactionApplicationTypes()).orElse(Collections.emptyList()));
         DeltaReportBankSetting deltaReportSettings = new DeltaReportBankSetting(setting.isEntryReferenceFromSupported(),
                                                                                 setting.isDeltaListSupported());
         OneTimeConsentScaBankSetting scaRequirementsForOneTimeConsents = new OneTimeConsentScaBankSetting(setting.isScaByOneTimeAvailableAccountsConsentRequired(), DEFAULT_SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED);

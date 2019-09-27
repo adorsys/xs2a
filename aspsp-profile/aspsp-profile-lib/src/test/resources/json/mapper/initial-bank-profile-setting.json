@@ -17,7 +17,9 @@
         "PENDING"
       ],
       "transactionsWithoutBalancesSupported": false,
-      "supportedTransactionApplicationType": "JSON"
+      "supportedTransactionApplicationTypes": [
+        "application/json"
+      ]
     },
     "deltaReportSettings": {
       "entryReferenceFromSupported": false,

@@ -17,7 +17,9 @@
         "pending"
       ],
       "transactionsWithoutBalancesSupported": true,
-      "supportedTransactionApplicationType": "XML"
+      "supportedTransactionApplicationTypes": [
+        "application/xml"
+      ]
     },
     "deltaReportSettings": {
       "entryReferenceFromSupported": false,
