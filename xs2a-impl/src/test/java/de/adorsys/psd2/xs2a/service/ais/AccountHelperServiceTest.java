@@ -98,17 +98,25 @@ public class AccountHelperServiceTest {
     private RequestProviderService requestProviderService;
 
     @Test
-    public void findAccountReference() {
+    public void findAccountReference_WithAccountAccessType() {
         // When
-        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE)).thenReturn(SPI_ACCOUNT_REFERENCE);
-        // When
-        SpiAccountReference actual = accountHelperService.findAccountReference(REFERENCES, ACCOUNT_ID);
+        SpiAccountReference actual = accountHelperService.findAccountReference(ACCOUNT_ACCESS_TYPE, REFERENCES, ACCOUNT_ID);
         // Then
         assertEquals(SPI_ACCOUNT_REFERENCE, actual);
     }
 
     private static SpiAccountReference buildSpiAccountReference() {
         return new SpiAccountReference(ACCOUNT_ID, null, null, null, null, null, null);
+    }
+
+    @Test
+    public void findAccountReference_WithNullAccountAccessType() {
+        // Given
+        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE)).thenReturn(SPI_ACCOUNT_REFERENCE);
+        // When
+        SpiAccountReference actual = accountHelperService.findAccountReference(null, REFERENCES, ACCOUNT_ID);
+        // Then
+        assertEquals(SPI_ACCOUNT_REFERENCE, actual);
     }
 
     private static AccountReference buildXs2aAccountReference() {
