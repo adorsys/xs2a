@@ -16,20 +16,17 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Value
-@EqualsAndHashCode(callSuper = true)
-public class SpiPsuAuthorisationResponse extends SpiWithExemptionResponse {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public abstract class SpiWithExemptionResponse {
 
     /**
-     * Indicates whether the PSU was authorised (SUCCESS, FAILURE)
+     * Indicates whether the SCA should be exempted (possible for single and bulk payment initiation)
      */
-    private final SpiAuthorisationStatus spiAuthorisationStatus;
-
-    public SpiPsuAuthorisationResponse(boolean scaExempted, SpiAuthorisationStatus spiAuthorisationStatus) {
-        super(scaExempted);
-        this.spiAuthorisationStatus = spiAuthorisationStatus;
-    }
+    protected boolean scaExempted;
 }

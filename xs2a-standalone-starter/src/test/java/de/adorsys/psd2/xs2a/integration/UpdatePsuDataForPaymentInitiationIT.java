@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
@@ -43,10 +44,7 @@ import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
@@ -70,7 +68,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -147,11 +144,11 @@ public class UpdatePsuDataForPaymentInitiationIT {
 
         given(paymentAuthorisationSpi.authorisePsu(any(SpiContextData.class), any(SpiPsuData.class), eq(PSU_PASS), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                            .payload(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false))
+                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
                             .build());
         given(paymentAuthorisationSpi.requestAvailableScaMethods(any(SpiContextData.class), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
-            .willReturn(SpiResponse.<List<SpiAuthenticationObject>>builder()
-                            .payload(Collections.singletonList(new SpiAuthenticationObject()))
+            .willReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
+                            .payload(new SpiAvailableScaMethodsResponse(Collections.singletonList(new SpiAuthenticationObject())))
                             .build());
         given(pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(eq(AUTHORISATION_ID), any())).willReturn(true);
         given(paymentAuthorisationSpi.requestAuthorisationCode(any(SpiContextData.class), isNull(), any(), any(SpiAspspConsentDataProvider.class)))

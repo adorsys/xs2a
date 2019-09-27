@@ -43,10 +43,7 @@ import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -65,6 +62,7 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 
 @Slf4j
 @Service("PIS_EMBEDDED_RECEIVED")
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
 public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisCommonPaymentPsuDataRequest, GetPisAuthorisationResponse, Xs2aUpdatePisCommonPaymentPsuDataResponse> {
     private final PaymentAuthorisationSpi paymentAuthorisationSpi;
     private final Xs2aUpdatePaymentAfterSpiService updatePaymentAfterSpiService;
@@ -120,7 +118,9 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, psuData);
         }
 
-        if (authPsuResponse.getPayload().getSpiAuthorisationStatus() == SpiAuthorisationStatus.FAILURE) {
+        SpiPsuAuthorisationResponse psuAuthorisationResponse = authPsuResponse.getPayload();
+
+        if (psuAuthorisationResponse.getSpiAuthorisationStatus() == SpiAuthorisationStatus.FAILURE) {
             ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_401)
                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID))
                                           .build();
@@ -129,15 +129,13 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, psuData);
         }
 
-        SpiPsuAuthorisationResponse psuAuthorisationResponse = authPsuResponse.getPayload();
-
         if (psuAuthorisationResponse.isScaExempted() && paymentType != PaymentType.PERIODIC) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. SCA was exempted for the payment.",
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_RECEIVED stage. SCA was exempted for the payment after AuthorisationSpi#authorisePsu.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authenticationId, psuData.getPsuId());
             return executePaymentWithoutSca(request, pisAuthorisationResponse, psuData, paymentType, payment, contextData, EXEMPTED);
         }
 
-        SpiResponse<List<SpiAuthenticationObject>> availableScaMethodsResponse = paymentAuthorisationSpi.requestAvailableScaMethods(contextData, payment, aspspConsentDataProvider);
+        SpiResponse<SpiAvailableScaMethodsResponse> availableScaMethodsResponse = paymentAuthorisationSpi.requestAvailableScaMethods(contextData, payment, aspspConsentDataProvider);
 
         if (availableScaMethodsResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(availableScaMethodsResponse, ServiceType.PIS);
@@ -146,7 +144,15 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, psuData);
         }
 
-        List<SpiAuthenticationObject> spiScaMethods = availableScaMethodsResponse.getPayload();
+        SpiAvailableScaMethodsResponse availableScaMethods = availableScaMethodsResponse.getPayload();
+
+        if (availableScaMethods.isScaExempted() && paymentType != PaymentType.PERIODIC) {
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_RECEIVED stage. SCA was exempted for the payment after AuthorisationSpi#requestAvailableScaMethods.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authenticationId, psuData.getPsuId());
+            return executePaymentWithoutSca(request, pisAuthorisationResponse, psuData, paymentType, payment, contextData, EXEMPTED);
+        }
+
+        List<SpiAuthenticationObject> spiScaMethods = availableScaMethods.getAvailableScaMethods();
 
         if (CollectionUtils.isEmpty(spiScaMethods)) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_RECEIVED stage. Available SCA methods is empty.",
@@ -154,7 +160,7 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
             return executePaymentWithoutSca(request, pisAuthorisationResponse, psuData, paymentType, payment, contextData, FINALISED);
         } else if (isSingleScaMethod(spiScaMethods)) {
 
-            return buildUpdateResponseWhenScaMethodIsSingle(request, psuData, payment, aspspConsentDataProvider, contextData, spiScaMethods);
+            return buildUpdateResponseWhenScaMethodIsSingle(request, psuData, payment, aspspConsentDataProvider, contextData, spiScaMethods, pisAuthorisationResponse);
         } else if (isMultipleScaMethods(spiScaMethods)) {
 
             return buildUpdateResponseWhenScaMethodsAreMultiple(request, psuData, spiScaMethods);
@@ -175,7 +181,7 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
     }
 
     @NotNull
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdateResponseWhenScaMethodIsSingle(Xs2aUpdatePisCommonPaymentPsuDataRequest request, PsuIdData psuData, SpiPayment payment, SpiAspspConsentDataProvider aspspConsentDataProvider, SpiContextData contextData, List<SpiAuthenticationObject> spiScaMethods) {
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdateResponseWhenScaMethodIsSingle(Xs2aUpdatePisCommonPaymentPsuDataRequest request, PsuIdData psuData, SpiPayment payment, SpiAspspConsentDataProvider aspspConsentDataProvider, SpiContextData contextData, List<SpiAuthenticationObject> spiScaMethods, GetPisAuthorisationResponse pisAuthorisationResponse) {
         xs2aPisCommonPaymentService.saveAuthenticationMethods(request.getAuthorisationId(), spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(spiScaMethods));
         SpiAuthenticationObject chosenMethod = spiScaMethods.get(0);
 
@@ -184,7 +190,7 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
             return pisCommonDecoupledService.proceedDecoupledInitiation(request, payment, chosenMethod.getAuthenticationMethodId());
         }
 
-        return proceedSingleScaEmbeddedApproach(payment, chosenMethod, contextData, aspspConsentDataProvider, request, psuData);
+        return proceedSingleScaEmbeddedApproach(payment, chosenMethod, contextData, aspspConsentDataProvider, request, psuData, pisAuthorisationResponse);
     }
 
     @NotNull
@@ -211,7 +217,7 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
     }
 
     @NotNull
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedSingleScaEmbeddedApproach(SpiPayment payment, SpiAuthenticationObject chosenMethod, SpiContextData contextData, SpiAspspConsentDataProvider aspspConsentDataProvider, Xs2aUpdatePisCommonPaymentPsuDataRequest request, PsuIdData psuData) {
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedSingleScaEmbeddedApproach(SpiPayment payment, SpiAuthenticationObject chosenMethod, SpiContextData contextData, SpiAspspConsentDataProvider aspspConsentDataProvider, Xs2aUpdatePisCommonPaymentPsuDataRequest request, PsuIdData psuData, GetPisAuthorisationResponse pisAuthorisationResponse) {
         String authorisationId = request.getAuthorisationId();
         String paymentId = request.getPaymentId();
 
@@ -222,6 +228,14 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_RECEIVED stage. Proceed single SCA embedded approach when performs authorisation has failed. Error msg: [{}]",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authorisationId, psuData.getPsuId(), errorHolder);
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
+        }
+
+        SpiAuthorizationCodeResult authorizationCodeResult = authCodeResponse.getPayload();
+
+        if (authorizationCodeResult.isScaExempted() && payment.getPaymentType() != PaymentType.PERIODIC) {
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. PIS_EMBEDDED_RECEIVED stage. SCA was exempted for the payment after AuthorisationSpi#requestAuthorisationCode.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authorisationId, psuData.getPsuId());
+            return executePaymentWithoutSca(request, pisAuthorisationResponse, psuData, payment.getPaymentType(), payment, contextData, EXEMPTED);
         }
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED, paymentId, authorisationId, psuData);

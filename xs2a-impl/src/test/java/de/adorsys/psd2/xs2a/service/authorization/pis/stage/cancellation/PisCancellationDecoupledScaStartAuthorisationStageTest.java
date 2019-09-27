@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.service.authorization.pis.stage.cancellation;
 
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
@@ -59,6 +60,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
+import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.EXEMPTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -73,9 +75,11 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
     private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
     private static final ServiceType PIS_SERVICE_TYPE = ServiceType.PIS;
     private static final ErrorType PIS_400_ERROR_TYPE = ErrorType.PIS_400;
+    private static final ErrorType PIS_401_ERROR_TYPE = ErrorType.PIS_401;
     private static final ScaStatus FAILED_SCA_STATUS = ScaStatus.FAILED;
     private static final TransactionStatus ACCP_TRANSACTION_STATUS = TransactionStatus.ACCP;
     private static final SpiAuthorisationStatus SUCCESS_SPI_AUTHORISATION_STATUS = SpiAuthorisationStatus.SUCCESS;
+    private static final SpiAuthorisationStatus FAILURE_SPI_AUTHORISATION_STATUS = SpiAuthorisationStatus.FAILURE;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
@@ -172,6 +176,20 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
     }
 
     @Test
+    public void apply_Authorisation_Failure() {
+        SpiResponse<SpiPsuAuthorisationResponse> expectedResponse = buildFailureSpiResponse();
+
+        when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
+            .thenReturn(expectedResponse);
+
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationDecoupledScaReceivedAuthorisationStage.apply(request, response);
+
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
+        assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(PIS_401_ERROR_TYPE);
+    }
+
+    @Test
     public void apply_Success() {
         SpiResponse<SpiPsuAuthorisationResponse> expectedResponse = buildSuccessSpiResponse();
 
@@ -242,7 +260,19 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
     // Needed because SpiResponse is final, so it's impossible to mock it
     private SpiResponse<SpiPsuAuthorisationResponse> buildSuccessSpiResponse() {
         return SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                   .payload(new SpiPsuAuthorisationResponse(SUCCESS_SPI_AUTHORISATION_STATUS, false))
+                   .payload(new SpiPsuAuthorisationResponse(false, SUCCESS_SPI_AUTHORISATION_STATUS))
+                   .build();
+    }
+
+    private SpiResponse<SpiPsuAuthorisationResponse> buildSuccessExemptionSpiResponse() {
+        return SpiResponse.<SpiPsuAuthorisationResponse>builder()
+                   .payload(new SpiPsuAuthorisationResponse(true, SUCCESS_SPI_AUTHORISATION_STATUS))
+                   .build();
+    }
+
+    private SpiResponse<SpiPsuAuthorisationResponse> buildFailureSpiResponse() {
+        return SpiResponse.<SpiPsuAuthorisationResponse>builder()
+                   .payload(new SpiPsuAuthorisationResponse(false, FAILURE_SPI_AUTHORISATION_STATUS))
                    .build();
     }
 

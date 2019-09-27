@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.service.authorization.pis.stage.initiation;
 
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
@@ -240,7 +241,7 @@ public class PisDecoupledScaStartAuthorisationStageTest {
     // Needed because SpiResponse is final, so it's impossible to mock it
     private SpiResponse<SpiPsuAuthorisationResponse> buildSuccessSpiResponse() {
         return SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                   .payload(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false))
+                   .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
                    .build();
     }
 
