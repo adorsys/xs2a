@@ -44,12 +44,12 @@ public class PaymentAuthorisationSpiMockImpl implements PaymentAuthorisationSpi 
         log.info("PaymentAuthorisationSpi#authorisePsu: contextData {}, psuLoginData {}, password {}, businessObject {}", contextData, psuLoginData, password, businessObject);
 
         return SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                   .payload(new SpiPsuAuthorisationResponse(SpiAuthorisationStatus.SUCCESS, false))
+                   .payload(new SpiPsuAuthorisationResponse( false, SpiAuthorisationStatus.SUCCESS))
                    .build();
     }
 
     @Override
-    public SpiResponse<List<SpiAuthenticationObject>> requestAvailableScaMethods(@NotNull SpiContextData contextData, SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    public SpiResponse<SpiAvailableScaMethodsResponse> requestAvailableScaMethods(@NotNull SpiContextData contextData, SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("PaymentAuthorisationSpi#requestAvailableScaMethods: contextData {}, businessObject {}", contextData, businessObject);
         List<SpiAuthenticationObject> spiScaMethods = new ArrayList<>();
         SpiAuthenticationObject sms = new SpiAuthenticationObject();
@@ -62,8 +62,8 @@ public class PaymentAuthorisationSpiMockImpl implements PaymentAuthorisationSpi 
         push.setDecoupled(true);
         spiScaMethods.add(push);
 
-        return SpiResponse.<List<SpiAuthenticationObject>>builder()
-                   .payload(spiScaMethods)
+        return SpiResponse.<SpiAvailableScaMethodsResponse>builder()
+                   .payload(new SpiAvailableScaMethodsResponse(false, spiScaMethods))
                    .build();
     }
 

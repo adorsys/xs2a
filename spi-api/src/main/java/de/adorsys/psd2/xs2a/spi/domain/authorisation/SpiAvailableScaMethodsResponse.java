@@ -16,20 +16,22 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Value
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class SpiPsuAuthorisationResponse extends SpiWithExemptionResponse {
+public class SpiAvailableScaMethodsResponse extends SpiWithExemptionResponse {
 
-    /**
-     * Indicates whether the PSU was authorised (SUCCESS, FAILURE)
-     */
-    private final SpiAuthorisationStatus spiAuthorisationStatus;
+    private List<SpiAuthenticationObject> availableScaMethods;
 
-    public SpiPsuAuthorisationResponse(boolean scaExempted, SpiAuthorisationStatus spiAuthorisationStatus) {
+    public SpiAvailableScaMethodsResponse(boolean scaExempted, List<SpiAuthenticationObject> availableScaMethods) {
         super(scaExempted);
-        this.spiAuthorisationStatus = spiAuthorisationStatus;
+        this.availableScaMethods = new ArrayList<>(availableScaMethods);
     }
 }
