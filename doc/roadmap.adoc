@@ -11,40 +11,9 @@ Stable branch will contain bugfixing and possibly necessary changes to support m
 Development branch is oriented on implementation of new features and optional endpoints.
 No backward compatibility with 4.x is guaranteed. Will be released as Stable version 6.x on 13.03.2020
 
-
 [cols="3*.<"]
 |===
 |release date|version 4.x|version 5.x
-
-|27.09.2019|4.1|5.1
-
-a|
-
-a|* ScaApproachResolver cleanup
-
-* Change yaml-generator to correct model Objects equals
-
-* Aggregate all messages sent to TPP to message bundle
-
-* Bugfix: Don't provide "creditorAddress" field in Get payment response if it was absent in "initiatePayment" request
-
-* Bugfix: Wrong authorisationId can 'authorise' actions 
-
-* Bugfix: Wrong PSU-ID can authorise endpoints 
-
-* Bugfix: Empty array "account" in Read Balances and Read Transaction List responses
-
-* Describe "Work with ASPSP-Consent-Data object" at SPI Developer Guide
-
-
-a|* All fixes from v.4.1
-
-* Support of SCA exemption
-
-* Support of relative links
-
-* Optional SCA for Global Consent 
-
 
 |11.10.2019|4.2|5.2
 
@@ -52,21 +21,25 @@ a|
 
 a|* Add Internal Request-ID (InR-Id) as additional parameter in scaRedirekt URI
 
+* Remove PSU Data from update consent status requests in cms-psu-api
+
 * Add integration test for embedded modes for XS2A
 
-* Remove redundant request to retrieve the consent from the database on consent creation
-
-* Remove redundant request to delete ASPSP consent data on consent creation
-
 * Bugfix: lastActionDate in PIIS consent is not set on creation or implicit revocation
+
+* Bugfix: Array "account" in Read Balances and Read Transaction List responses is empty for Global consent
 
 * Bugfix: Wrong SCAStatus after consent authorisation with zero SCA methods for Embedded approach
 
 * Bugfix: Check incoming requests to have required information
 
+* Bugfix: Error on initiating payment with custom payment product and JSON body 
+
 * Remove TppRedirectUri from TppInfo
 
-* XS2A-Swagger. Typos and small errors fixes
+* Create common class for Jackson functionality
+
+* Describe "Implementation of AisConsentSpi" at SPI Developer Guide
 
 a|* All fixes from v.4.2
 
@@ -78,17 +51,87 @@ a|* All fixes from v.4.2
 
 * Create Component for scheduled batch processing
 
+* Remove redundant request to retrieve the consent from the database on consent creation
+
+* Remove redundant request to delete ASPSP consent data on consent creation
+
 |25.10.2019|4.3|5.3
 
 a|
 
-a|* Bugfix: Error on initiating payment with custom payment product and JSON body 
+a|
 
 * Bugfix: Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow 
 
 * Bugfix: When bank returns PATC status for payment, multilevel flag in CMS should be set to true 
 
+* Bugfix: PIIS consent status is being changed on implicit revocation
+
+* XS2A-Swagger. Typos and small errors fixes
+
+* Fix syntax errors in internal CMS API
+
 a|* All fixes from v.4.3
+
+* Validate access of TPP based on role's header
+
+* Extend CMS to store sca method and TAN for Redirect approach
+
+* Save payment transaction status given by ASPSP
+
+* Provide creation date and time in SPIrequest
+
+|08.11.2019|4.4|5.4
+
+a|
+
+a|* Create an opportunity to disable IBAN validation
+
+* Add statuses to logs
+
+* Remove MockContentCachingWrappingFilter and properly enable XS2A filters for integration tests
+
+a|* All fixes from v.4.4
+
+* Authorisation stage classes refactoring
+
+* Support Get Transaction Status Response with raw format
+
+* Implement support of Multicurrency Accounts
+
+* Close all consents when account is closed
+
+* Update to Java 11
+
+|22.11.2019|4.5|5.5
+
+a|
+
+a|* Improve payment type validation
+
+* Refactor request validation chain
+
+a|* All fixes from v.4.5
+
+* Implementation of delta access for transaction list request 
+
+* Recoverability of xs2a remote components
+
+* Validation of authorisation sub-resources
+
+* Digital signature support
+
+|06.12.2019|4.6|5.6
+
+a|
+
+a|* Use PaymentType enum instead of string values in Xs2aCreatePisAuthorisationRequest and Xs2aUpdatePisCommonPaymentPsuDataRequest
+
+a|* All fixes from v.4.6
+
+* Prevent modification of an established consent
+
+* Add a new optional header TPP-Rejection-NoFunds-Preferred
 
 |Further development| |
 
@@ -96,11 +139,7 @@ a|
 
 a|
 
-a|* Implementation of delta access for transaction list request 
-
-* Implement support of Multicurrency Accounts
-
-* Validation of authorisation sub-resources
+a|* _Lean Push Service_
 
 * _Support of Signing Basket:_
 
