@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
     }
 
     /**
-     * Returns specification for PiisConsentEntity for filtering consents by aspsp account id in Account, creation date and instance ID.
+     * Returns specification for PiisConsentEntity for filtering consents by ASPSP account ID in Account, creation date and instance ID.
      *
      * @param aspspAccountId mandatory bank specific account identifier
      * @param createDateFrom optional creation date that limits resulting data to consents created after this date(inclusive)
@@ -153,7 +153,7 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
 
 
     /**
-     * Returns specification for PiisConsentEntity for filtering data by aspsp account id.
+     * Returns specification for PiisConsentEntity for filtering data by ASPSP account ID.
      *
      * <p>
      * If optional parameter is not provided, this specification will not affect resulting data.
