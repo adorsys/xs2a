@@ -31,6 +31,7 @@
         <module>consent-management</module>
         <module>psd2-validator</module>
         <module>xs2a-standalone-starter</module>
+        <module>xs2a-embedded-starter</module>
         <module>event-service</module>
         <module>spi-stub</module>
         <module>json-reader</module>
