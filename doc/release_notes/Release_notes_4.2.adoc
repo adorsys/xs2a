@@ -3,7 +3,13 @@
 == Table of Contents
 
 * Add integration test for embedded mode for XS2A
+* Bugfix: the field `lastActionDate` was not updated in piis_consent DB table
 
 == Add integration test for embedded mode for XS2A
 
 Integration test has been added for XS2A to ensure that application correctly starts with embedded CMS and ASPSP Profile.
+
+== Bugfix: the field `lastActionDate` was not updated in piis_consent DB table
+
+From now on, initial value is set to the field `lastActionDate` in case of PIIS consent creation. Also, new value is
+set if the consent was revoked.

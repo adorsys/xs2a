@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ public interface CmsAspspPiisService {
      *
      * @param psuIdData              PSU credentials data
      * @param request                Request with all information for creating PIIS consent.
-     * @return Consent id if the consent was created
+     * @return Consent ID if the consent was created
      */
     Optional<String> createConsent(@NotNull PsuIdData psuIdData, @NotNull CreatePiisConsentRequest request);
 
@@ -37,7 +37,7 @@ public interface CmsAspspPiisService {
      * Terminates PIIS Consent object by its ID. Consent gets status "Terminated by ASPSP".
      *
      * @param consentId  ID of Consent
-     * @param instanceId Id of the particular service instance
+     * @param instanceId ID of the particular service instance
      * @return <code>true</code> if consent was found and terminated. <code>false</code> otherwise.
      */
     boolean terminateConsent(@NotNull String consentId, @NotNull String instanceId);
@@ -47,7 +47,7 @@ public interface CmsAspspPiisService {
      * Returns a list of PIIS Consent objects by PSU ID
      *
      * @param psuIdData  PSU credentials data
-     * @param instanceId Id of the particular service instance
+     * @param instanceId ID of the particular service instance
      * @return List of PIIS Consent objects corresponding to the given PSU
      */
     @NotNull

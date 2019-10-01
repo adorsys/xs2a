@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.REVOKED_BY_PSU;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.TERMINATED_BY_ASPSP;
 
 @Slf4j
@@ -62,10 +63,10 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         closePreviousPiisConsents(psuIdData, request);
 
         PiisConsentEntity consent = piisConsentMapper.mapToPiisConsentEntity(psuIdData, request);
-        PiisConsentEntity saved = piisConsentRepository.save(consent);
+        PiisConsentEntity savedConsent = piisConsentRepository.save(consent);
 
-        if (saved.getId() != null) {
-            return Optional.ofNullable(saved.getExternalId());
+        if (savedConsent.getId() != null) {
+            return Optional.ofNullable(savedConsent.getExternalId());
         } else {
             log.info("External Consent ID: [{}]. PIIS consent cannot be created, because when saving to DB got null ID",
                      consent.getExternalId());
@@ -91,14 +92,14 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         Optional<PiisConsentEntity> entityOptional = piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId));
 
         if (!entityOptional.isPresent()) {
-            log.info("Consent ID: [{}], Instance ID: [{}]. Consent cannot be terminated, because not found by consentId and instanceId",
+            log.info("Consent ID: [{}], Instance ID: [{}]. PIIS consent cannot be terminated, because it was not found by consentId and instanceId",
                      consentId, instanceId);
             return false;
         }
 
         PiisConsentEntity entity = entityOptional.get();
-        entity.setLastActionDate(LocalDate.now());
-        entity.setConsentStatus(TERMINATED_BY_ASPSP);
+        changeStatusAndLastActionDate(entity, TERMINATED_BY_ASPSP);
+
         piisConsentRepository.save(entity);
 
         return true;
@@ -109,8 +110,14 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         Specification<PiisConsentEntity> specification = piisConsentEntitySpecification.byPsuIdDataAndAuthorisationNumberAndAccountReference(psuIdData, request.getTppAuthorisationNumber(), accountReference);
 
         List<PiisConsentEntity> piisConsentEntities = piisConsentRepository.findAll(specification);
-        piisConsentEntities.forEach(con -> con.setConsentStatus(ConsentStatus.REVOKED_BY_PSU));
+        piisConsentEntities.forEach(entity -> changeStatusAndLastActionDate(entity, REVOKED_BY_PSU));
+
         piisConsentRepository.saveAll(piisConsentEntities);
+    }
+
+    private void changeStatusAndLastActionDate(PiisConsentEntity piisConsentEntity, ConsentStatus consentStatus) {
+        piisConsentEntity.setLastActionDate(LocalDate.now());
+        piisConsentEntity.setConsentStatus(consentStatus);
     }
 
     private boolean isInvalidConsentCreationRequest(@NotNull PsuIdData psuIdData, CreatePiisConsentRequest request) {
