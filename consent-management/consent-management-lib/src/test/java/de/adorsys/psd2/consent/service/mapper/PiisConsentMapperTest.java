@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class PiisConsentMapperTest {
         PiisConsentEntity expectedPiisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
         expectedPiisConsentEntity.setId(null);
         expectedPiisConsentEntity.setRecurringIndicator(false);
-        expectedPiisConsentEntity.setLastActionDate(null);
+        expectedPiisConsentEntity.setLastActionDate(LocalDate.now());
         expectedPiisConsentEntity.setStatusChangeTimestamp(null);
         expectedPiisConsentEntity.setExternalId(actualPiisConsentEntity.getExternalId());
         expectedPiisConsentEntity.setRequestDateTime(actualPiisConsentEntity.getRequestDateTime());
@@ -93,7 +94,7 @@ public class PiisConsentMapperTest {
         PiisConsentEntity expectedPiisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
         expectedPiisConsentEntity.setId(null);
         expectedPiisConsentEntity.setRecurringIndicator(false);
-        expectedPiisConsentEntity.setLastActionDate(null);
+        expectedPiisConsentEntity.setLastActionDate(LocalDate.now());
         expectedPiisConsentEntity.setStatusChangeTimestamp(null);
         expectedPiisConsentEntity.setExternalId(actualPiisConsentEntity.getExternalId());
         expectedPiisConsentEntity.setRequestDateTime(actualPiisConsentEntity.getRequestDateTime());
