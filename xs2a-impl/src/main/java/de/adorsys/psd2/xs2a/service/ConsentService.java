@@ -145,10 +145,10 @@ public class ConsentService {
 
         SpiContextData contextData = spiContextDataProvider.provide(psuData, tppInfo);
         InitialSpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider();
-        aspspConsentDataProvider.saveWith(consentId);
-
         AccountConsent accountConsent = accountConsentOptional.get();
+
         SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(contextData, aisConsentMapper.mapToSpiAccountConsent(accountConsent), aspspConsentDataProvider);
+        aspspConsentDataProvider.saveWith(consentId);
 
         if (initiateAisConsentSpiResponse.hasError()) {
             aisConsentService.updateConsentStatus(consentId, ConsentStatus.REJECTED);

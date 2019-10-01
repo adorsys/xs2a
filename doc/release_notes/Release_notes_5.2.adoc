@@ -4,6 +4,7 @@
 
 * Add integration test for embedded mode for XS2A
 * Bugfix: the field `lastActionDate` was not updated in piis_consent DB table
+* Remove redundant request to delete ASPSP consent data on consent creation
 
 == Add integration test for embedded mode for XS2A
 
@@ -13,3 +14,7 @@ Integration test has been added for XS2A to ensure that application correctly st
 
 From now on, initial value is set to the field `lastActionDate` in case of PIIS consent creation.
 Also, new value is set if the consent was revoked.
+
+== Remove redundant request to delete ASPSP consent data on consent creation
+
+From now on, XS2A won't try to delete ASPSP consent data in CMS for newly created AIS consent before the consent was passed to SPI.
