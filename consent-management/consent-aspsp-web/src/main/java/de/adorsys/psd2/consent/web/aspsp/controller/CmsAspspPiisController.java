@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-api/v1/piis/consents")
-@Api(value = "aspsp-api/v1/piis/consents", tags = "ASPSP PIIS, Consents", description = "Controller for cms-aspsp-api providing access to PIIS consents")
+@Api(value = "aspsp-api/v1/piis/consents", tags = "ASPSP PIIS, Consents", description = "Controller for CMS-ASPSP-API providing access to PIIS consents")
 public class CmsAspspPiisController {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
