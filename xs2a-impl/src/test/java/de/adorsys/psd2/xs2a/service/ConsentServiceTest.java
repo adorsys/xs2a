@@ -70,6 +70,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -80,6 +81,7 @@ import java.util.*;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -486,6 +488,32 @@ public class ConsentServiceTest {
 
         // Then
         assertResponseIsCorrect(response);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_shouldSaveAspspConsentDataAfterSpiCall() {
+        // Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
+        );
+
+        when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
+            .thenReturn(createValidationResult(true, null));
+        when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
+            .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .build());
+
+        // When
+        ResponseObject<CreateConsentResponse> response = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+
+        // Then
+        assertResponseIsCorrect(response.getBody());
+
+        InOrder inOrder = inOrder(aspspConsentDataProviderFactory, initialSpiAspspConsentDataProvider, aisConsentSpi);
+        inOrder.verify(aisConsentSpi).initiateAisConsent(any(), eq(SPI_ACCOUNT_CONSENT), eq(initialSpiAspspConsentDataProvider));
+        inOrder.verify(initialSpiAspspConsentDataProvider).saveWith(CONSENT_ID);
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
