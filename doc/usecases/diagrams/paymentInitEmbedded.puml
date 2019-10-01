@@ -46,11 +46,11 @@ activate Core_banking
 Core_banking-->SPI: AuthorisedPsu Response
 deactivate Core_banking
 |||
-SPI-->XS2A: SpiAuthorisationStatus
+SPI-->XS2A: SpiPsuAuthorisationResponse\nStatus with scaExempted (TRUE or FALSE)
 |||
 XS2A->SPI: Java Call PaymentAuthorisationSpi
 |||
-SPI-->XS2A: List "SpiAuthenticationObject"
+SPI-->XS2A: List "SpiAvailableScaMethodsResponse"\nwith scaExempted (TRUE or FALSE)
 deactivate SPI
 |||
 XS2A->CMS: REST Call UpdatePisAuthorisation
@@ -81,7 +81,7 @@ Core_banking-->PSU: ScaAuthenticationData
 Core_banking-->SPI: SelectScaMethod Respons
 deactivate Core_banking
 |||
-SPI-->XS2A: SpiAuthorisationCodeResult
+SPI-->XS2A: SpiAuthorisationCodeResult\nwith scaExempted (TRUE or FALSE)
 deactivate SPI
 |||
 XS2A->CMS: REST Call UpdatePisAuthorisation
