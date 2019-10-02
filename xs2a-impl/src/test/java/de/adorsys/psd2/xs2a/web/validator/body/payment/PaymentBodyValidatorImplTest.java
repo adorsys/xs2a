@@ -16,9 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -26,6 +24,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
+import de.adorsys.psd2.xs2a.web.validator.body.CurrencyValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
@@ -47,12 +46,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_NULL_VALUE;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE;
-import static de.adorsys.psd2.xs2a.web.validator.body.payment.PaymentBodyValidatorImpl.FREQUENCY_FIELD_NAME;
-import static de.adorsys.psd2.xs2a.web.validator.body.payment.PaymentBodyValidatorImpl.PURPOSE_CODE_FIELD_NAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.web.validator.body.payment.PaymentBodyValidatorImpl.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -73,8 +69,10 @@ public class PaymentBodyValidatorImplTest {
     private static final String CORRECT_FORMAT_TIME = "2019-01-01T12:00:00+01:00";
     private static final String WRONG_FORMAT_DATE = "07/01/2019";
     private static final String WRONG_FORMAT_TIME = "07/01/2019 00:00:00";
+    private static final String WRONG_FREQUENCY_STRING ="wrong frequency";
+    private static final String WRONG_BATCH_BOOKING_PREFERRED_STRING = "not boolean string";
 
-    private static final MessageError DESERIALISATION_ERROR =
+    private static final MessageError DESERIALIZATION_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_DESERIALIZATION_FAIL));
     private static final MessageError DAY_OF_EXECUTION_WRONG_VALUE_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_INVALID_DAY_OF_EXECUTION));
@@ -87,6 +85,12 @@ public class PaymentBodyValidatorImplTest {
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, PURPOSE_CODE_FIELD_NAME));
     private static final MessageError NO_FREQUENCY =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, FREQUENCY_FIELD_NAME));
+    private static final MessageError WRONG_FREQUENCY =
+        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, FREQUENCY_FIELD_NAME));
+    private static final MessageError WRONG_BATCH_BOOKING_PREFERRED =
+        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR_BOOLEAN_VALUE, BATCH_BOOKING_PREFERRED_FIELD_NAME));
+    private static final MessageError WRONG_CURRENCY_FORMAT =
+        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, CURRENCY_STRING));
 
     private PaymentBodyValidatorImpl validator;
     private MessageError messageError;
@@ -100,10 +104,9 @@ public class PaymentBodyValidatorImplTest {
     @Mock
     private PaymentTypeValidator paymentTypeValidator;
     @Mock
-    private JsonConverter jsonConverter;
-    @Mock
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
     private MockHttpServletRequest mockRequest;
+    @Mock
     private FieldExtractor fieldExtractor;
 
     @Before
@@ -111,9 +114,11 @@ public class PaymentBodyValidatorImplTest {
         mockRequest = new MockHttpServletRequest();
         messageError = new MessageError(ErrorType.PIS_400);
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.PIS_400);
-        fieldExtractor = new FieldExtractor(errorService, jsonConverter);
+        CurrencyValidator currencyValidator = new CurrencyValidator(errorService);
+        DateFieldValidator dateFieldValidator =  new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor);
         validator = new PaymentBodyValidatorImpl(errorService, objectMapper, paymentTypeValidatorContext,
-                                                 standardPaymentProductsResolver, jsonConverter, tppRedirectUriBodyValidator, new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor), fieldExtractor);
+                                                 standardPaymentProductsResolver, tppRedirectUriBodyValidator,
+                                                 dateFieldValidator, fieldExtractor, currencyValidator);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(PAIN_PAYMENT_PRODUCT)))
             .thenReturn(true);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(JSON_PAYMENT_PRODUCT)))
@@ -158,7 +163,7 @@ public class PaymentBodyValidatorImplTest {
 
         // Then
         verify(tppRedirectUriBodyValidator, times(1)).validate(mockRequest, messageError);
-        assertEquals(DESERIALISATION_ERROR, messageError);
+        assertEquals(DESERIALIZATION_ERROR, messageError);
     }
 
     @Test
@@ -168,7 +173,7 @@ public class PaymentBodyValidatorImplTest {
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(DAY_OF_EXECUTION_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_DAY_OF_MONTH));
+        when(fieldExtractor.extractField(mockRequest, DAY_OF_EXECUTION_FIELD_NAME, messageError)).thenReturn(Optional.of(WRONG_DAY_OF_MONTH));
 
         // When
         validator.validate(mockRequest, messageError);
@@ -184,8 +189,8 @@ public class PaymentBodyValidatorImplTest {
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(DAY_OF_EXECUTION_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_DATE_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_DATE));
+        when(fieldExtractor.extractField(mockRequest, DAY_OF_EXECUTION_FIELD_NAME, messageError)).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
+        when(fieldExtractor.extractField(mockRequest, REQUESTED_EXECUTION_DATE_FIELD_NAME, messageError)).thenReturn(Optional.of(WRONG_FORMAT_DATE));
 
         // When
         validator.validate(mockRequest, messageError);
@@ -205,8 +210,8 @@ public class PaymentBodyValidatorImplTest {
         when(objectMapper.readValue(mockRequest.getInputStream(), Object.class))
             .thenReturn(paymentBody);
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(DAY_OF_EXECUTION_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_DATE_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_DATE));
+        when(fieldExtractor.extractField(mockRequest, DAY_OF_EXECUTION_FIELD_NAME, messageError)).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
+        when(fieldExtractor.extractField(mockRequest, REQUESTED_EXECUTION_DATE_FIELD_NAME, messageError)).thenReturn(Optional.of(CORRECT_FORMAT_DATE));
 
         when(paymentTypeValidatorContext.getValidator(PAYMENT_SERVICE))
             .thenReturn(Optional.of(paymentTypeValidator));
@@ -226,8 +231,8 @@ public class PaymentBodyValidatorImplTest {
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(DAY_OF_EXECUTION_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_TIME_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_TIME));
+        when(fieldExtractor.extractField(mockRequest, DAY_OF_EXECUTION_FIELD_NAME, messageError)).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
+        when(fieldExtractor.extractField(mockRequest, REQUESTED_EXECUTION_TIME_FIELD_NAME, messageError)).thenReturn(Optional.of(WRONG_FORMAT_TIME));
 
         // When
         validator.validate(mockRequest, messageError);
@@ -247,8 +252,8 @@ public class PaymentBodyValidatorImplTest {
         when(objectMapper.readValue(mockRequest.getInputStream(), Object.class))
             .thenReturn(paymentBody);
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(DAY_OF_EXECUTION_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_TIME_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_TIME));
+        when(fieldExtractor.extractField(mockRequest, DAY_OF_EXECUTION_FIELD_NAME, messageError)).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
+        when(fieldExtractor.extractField(mockRequest, REQUESTED_EXECUTION_TIME_FIELD_NAME, messageError)).thenReturn(Optional.of(CORRECT_FORMAT_TIME));
 
         when(paymentTypeValidatorContext.getValidator(PAYMENT_SERVICE))
             .thenReturn(Optional.of(paymentTypeValidator));
@@ -258,6 +263,50 @@ public class PaymentBodyValidatorImplTest {
 
         // Then
         assertTrue(messageError.getTppMessages().isEmpty());
+    }
+
+    @Test
+    public void validate_Currency_success() throws IOException {
+        // Given
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
+        mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
+
+        Object paymentBody = new Object();
+        when(objectMapper.readValue(mockRequest.getInputStream(), Object.class))
+            .thenReturn(paymentBody);
+
+        when(fieldExtractor.extractField(mockRequest, DAY_OF_EXECUTION_FIELD_NAME, messageError)).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
+        when(fieldExtractor.extractField(mockRequest, REQUESTED_EXECUTION_TIME_FIELD_NAME, messageError)).thenReturn(Optional.of(CORRECT_FORMAT_TIME));
+        when(fieldExtractor.extractOptionalList(mockRequest, CURRENCY_STRING)).thenReturn(Collections.singletonList("EUR"));
+
+        when(paymentTypeValidatorContext.getValidator(PAYMENT_SERVICE))
+            .thenReturn(Optional.of(paymentTypeValidator));
+
+        // When
+        validator.validate(mockRequest, messageError);
+
+        // Then
+        assertTrue(messageError.getTppMessages().isEmpty());
+    }
+
+    @Test
+    public void validate_Currency_WrongFormat() {
+        // Given
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
+        mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
+
+        when(fieldExtractor.extractField(mockRequest, DAY_OF_EXECUTION_FIELD_NAME, messageError)).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
+        when(fieldExtractor.extractField(mockRequest, REQUESTED_EXECUTION_TIME_FIELD_NAME, messageError)).thenReturn(Optional.of(CORRECT_FORMAT_TIME));
+        when(fieldExtractor.extractOptionalList(mockRequest, CURRENCY_STRING)).thenReturn(Collections.singletonList("EURf"));
+
+        // When
+        validator.validate(mockRequest, messageError);
+
+        // Then
+        assertEquals(WRONG_CURRENCY_FORMAT, messageError);
+        assertArrayEquals(new Object[] {CURRENCY_STRING}, messageError.getTppMessage().getTextParameters());
     }
 
 
@@ -304,8 +353,7 @@ public class PaymentBodyValidatorImplTest {
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
-        when(jsonConverter.toJsonGetValuesForField(any(InputStream.class), anyString()))
-            .thenReturn(Collections.singletonList(purposeCode));
+        when(fieldExtractor.extractList(mockRequest, PURPOSE_CODE_FIELD_NAME, messageError)).thenReturn(Collections.singletonList(purposeCode));
 
         // When
         validator.validate(mockRequest, messageError);
@@ -315,10 +363,10 @@ public class PaymentBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_frequency_shouldReturnError() {
+    public void validate_NullFrequency_shouldReturnError() {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, "periodic-payments");
+        Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PERIODIC_PAYMENT_PATH_VAR);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
         // When
@@ -326,6 +374,38 @@ public class PaymentBodyValidatorImplTest {
 
         // Then
         assertEquals(NO_FREQUENCY, messageError);
+    }
+
+    @Test
+    public void validate_WrongFormatFrequency_shouldReturnError() {
+        // Given
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PERIODIC_PAYMENT_PATH_VAR);
+        mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
+
+        when(fieldExtractor.extractField(mockRequest, FREQUENCY_FIELD_NAME, messageError)).thenReturn(Optional.of(WRONG_FREQUENCY_STRING));
+
+        // When
+        validator.validate(mockRequest, messageError);
+
+        // Then
+        assertEquals(WRONG_FREQUENCY, messageError);
+    }
+
+    @Test
+    public void validate_WrongBatchBookingPreferredForBulk_shouldReturnError() {
+        // Given
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, BULK_PAYMENT_PATH_VAR);
+        mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
+
+        when(fieldExtractor.extractOptionalField(mockRequest, BATCH_BOOKING_PREFERRED_FIELD_NAME)).thenReturn(Optional.of(WRONG_BATCH_BOOKING_PREFERRED_STRING));
+
+        // When
+        validator.validate(mockRequest, messageError);
+
+        // Then
+        assertEquals(WRONG_BATCH_BOOKING_PREFERRED, messageError);
     }
 
     private Map<String, String> buildTemplateVariables(String paymentProduct, String paymentService) {

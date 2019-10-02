@@ -18,26 +18,29 @@ package de.adorsys.psd2.xs2a.web.validator.body.payment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.FrequencyCode;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.CurrencyValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidatorContext;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.PAYMENT_DATE_FIELDS;
@@ -47,14 +50,17 @@ import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFi
 public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implements PaymentBodyValidator {
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
-    private static final String PERIODIC_PAYMENT_PATH_VAR = "periodic-payments";
+    static final String PERIODIC_PAYMENT_PATH_VAR = "periodic-payments";
+    static final String BULK_PAYMENT_PATH_VAR = "bulk-payments";
     static final String PURPOSE_CODE_FIELD_NAME = "purposeCode";
     static final String FREQUENCY_FIELD_NAME = "frequency";
+    static final String BATCH_BOOKING_PREFERRED_FIELD_NAME = "batchBookingPreferred";
+    static final String CURRENCY_STRING =  "currency";
 
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
     private DateFieldValidator dateFieldValidator;
+    private CurrencyValidator currencyValidator;
 
-    private final JsonConverter jsonConverter;
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final FieldExtractor fieldExtractor;
@@ -63,16 +69,17 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
                                     PaymentTypeValidatorContext paymentTypeValidatorContext,
                                     StandardPaymentProductsResolver standardPaymentProductsResolver,
-                                    JsonConverter jsonConverter, TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
+                                    TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
                                     DateFieldValidator dateFieldValidator,
-                                    FieldExtractor fieldExtractor) {
+                                    FieldExtractor fieldExtractor,
+                                    CurrencyValidator currencyValidator) {
         super(errorBuildingService, objectMapper);
         this.paymentTypeValidatorContext = paymentTypeValidatorContext;
         this.standardPaymentProductsResolver = standardPaymentProductsResolver;
         this.dateFieldValidator = dateFieldValidator;
-        this.jsonConverter = jsonConverter;
         this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
         this.fieldExtractor = fieldExtractor;
+        this.currencyValidator = currencyValidator;
     }
 
     @Override
@@ -104,8 +111,39 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         dateFieldValidator.validateDayOfExecution(request, messageError);
         dateFieldValidator.validateDateFormat(request, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
 
+        validateCurrency(request, messageError);
+        validateBulkPaymentFields(request, messageError);
         validateFrequencyForPeriodicPayment(request, messageError);
         validatePurposeCodes(request, messageError);
+    }
+
+    private void validateCurrency(HttpServletRequest request, MessageError messageError) {
+        List<String> currencyList = getCurrencyOptionalString(request);
+        if (!currencyList.isEmpty()) {
+            currencyList.forEach(c -> currencyValidator.validateCurrency(c, messageError));
+        }
+    }
+
+    private List<String> getCurrencyOptionalString(HttpServletRequest request) {
+        return fieldExtractor.extractOptionalList(request, CURRENCY_STRING);
+    }
+
+    private void validateBulkPaymentFields(HttpServletRequest request, MessageError messageError) {
+        boolean isBulkPayment = getPathParameters(request).get(PAYMENT_SERVICE_PATH_VAR).equals(BULK_PAYMENT_PATH_VAR);
+        if (isBulkPayment) {
+            validateBatchBookingPreferredField(request, messageError);
+        }
+    }
+
+    private void validateBatchBookingPreferredField(HttpServletRequest request, MessageError messageError) {
+        Optional<String> fieldValue = fieldExtractor.extractOptionalField(request, BATCH_BOOKING_PREFERRED_FIELD_NAME);
+        if (fieldValue.isPresent()) {
+            try {
+                BooleanUtils.toBoolean(fieldValue.get(), "true", "false");
+            } catch (IllegalArgumentException e) {
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_BOOLEAN_VALUE, BATCH_BOOKING_PREFERRED_FIELD_NAME));
+            }
+        }
     }
 
     private void validateFrequencyForPeriodicPayment(HttpServletRequest request, MessageError messageError) {
@@ -136,7 +174,7 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     }
 
     private void validatePurposeCodes(HttpServletRequest request, MessageError messageError) {
-        List<String> purposeCodes = extractPurposeCodes(request, messageError);
+        List<String> purposeCodes = fieldExtractor.extractList(request, PURPOSE_CODE_FIELD_NAME, messageError);
         boolean isPurposeCodeInvalid = purposeCodes.stream()
                                              .map(PurposeCode::fromValue)
                                              .anyMatch(Objects::isNull);
@@ -144,16 +182,6 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         if (isPurposeCodeInvalid) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, PURPOSE_CODE_FIELD_NAME));
         }
-    }
-
-    private List<String> extractPurposeCodes(HttpServletRequest request, MessageError messageError) {
-        List<String> purposeCodes = new ArrayList<>();
-        try {
-            purposeCodes.addAll(jsonConverter.toJsonGetValuesForField(request.getInputStream(), PURPOSE_CODE_FIELD_NAME));
-        } catch (IOException e) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
-        }
-        return purposeCodes;
     }
 
     private Map<String, String> getPathParameters(HttpServletRequest request) {

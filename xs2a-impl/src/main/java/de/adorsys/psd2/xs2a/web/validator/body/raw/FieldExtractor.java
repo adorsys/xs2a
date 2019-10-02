@@ -26,6 +26,9 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_DESERIALIZATION_FAIL;
@@ -42,12 +45,40 @@ public class FieldExtractor {
         try {
             // TODO: create common class with Jackson's functionality instead of two: JsonConverter and ObjectMapper.
             //  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/870
-            fieldOptional = jsonConverter.toJsonField(request.getInputStream(), fieldName, new TypeReference<String>() {
-            });
+            TypeReference<String> typeReference = new TypeReference<String>() {};
+            fieldOptional = jsonConverter.toJsonField(request.getInputStream(), fieldName, typeReference);
         } catch (IOException e) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
         }
 
         return fieldOptional;
+    }
+
+    public Optional<String> extractOptionalField(HttpServletRequest request, String fieldName) {
+        try {
+            return jsonConverter.toJsonField(request.getInputStream(), fieldName, new TypeReference<String>() {
+            });
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
+    public List<String> extractList(HttpServletRequest request, String fieldName, MessageError messageError) {
+        List<String> fieldList = new ArrayList<>();
+        try {
+            fieldList.addAll(jsonConverter.toJsonGetValuesForField(request.getInputStream(), fieldName));
+        } catch (IOException e) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
+        }
+        return fieldList;
+    }
+
+    public List<String> extractOptionalList(HttpServletRequest request, String fieldName) {
+        try {
+            return jsonConverter.toJsonGetValuesForField(request.getInputStream(), fieldName);
+
+        } catch (IOException e) {
+            return Collections.emptyList();
+        }
     }
 }
