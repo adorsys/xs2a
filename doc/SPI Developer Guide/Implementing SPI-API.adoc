@@ -177,7 +177,90 @@ receives the stream with transaction list.
 
 === Implementation of AisConsentSpi
 
+The Interface is used for AIS consent SPI implementation. The following methods should be implemented:
+
+* *initiateAisConsent*;
+* *getConsentStatus*;
+* *revokeAisConsent*;
+* *verifyScaAuthorisation*.
+
+The method *initiateAisConsent* provides a possibility to create a new AIS consent from the provided data. Parameters of the method are:
+
+* *spiContextData*;
+* *spiAccountConsent* - provided data about the AIS consent from CMS;
+* *spiAspspConsentDataProvider*.
+
+Response is a *SpiInitiateAisConsentResponse* object.
+
+The method *getConsentStatus* provides a possibility to retrieve the consent status. Parameters of the method are:
+
+* *spiContextData*;
+* *spiAccountConsent* - provided data about the AIS consent from CMS;
+* *spiAspspConsentDataProvider*.
+
+Response is a *SpiAisConsentStatusResponse* object.
+
+The method *revokeAisConsent* provides a possibility to revoke the given AIS consent (change its status to `REJECTED` or
+`TERMINATED_BY_TPP`). Parameters of the method are:
+
+* *spiContextData*;
+* *spiAccountConsent* - provided data about the AIS consent from CMS;
+* *spiAspspConsentDataProvider*.
+
+Response is empty (`VoidResponse` object).
+
+The method *verifyScaAuthorisation* provides a possibility to send information about the authorisation confirmation (e.g. transaction
+authorisation number or some other security code) to ASPSP. This method is used only with embedded SCA Approach. Parameters of the method are:
+
+* *spiContextData*;
+* *SpiScaConfirmation* - the information about the definite consent (its ID), corresponding PSU data and security code.
+* *spiAccountConsent* - provided data about the AIS consent from CMS;
+* *spiAspspConsentDataProvider*.
+
+Response is a *SpiVerifyScaAuthorisationResponse* object that stores the status of operation.
+
+Among the methods that were described above, this interface extends *AuthorisationSpi*, its methods are described below in the
+*PaymentAuthorisationSpi* chapter.
+
 === Providing account resources to consent
+
+Speaking about the AIS consent SPI implementation, please note that TPP can create the consent with provided account reference
+data (such consent is called `dedicated consent`) or without one (`global` or `bank offered` consent). If the consent was
+created without account reference data there is a possibility to fill it through the CMS-PSU-API after. The CMS endpoint
+`/psu-api/v1/ais/consent/{internal_consent_id}/save-access` provides such functionality. Path parameter `internal_consent_id` should
+be the internal CMS consent identifier. The body of this request should contain the JSON representation of account reference,
+for example:
+
+[source,json]
+----
+{
+    "accountAccess": {
+        "accounts": [
+            {
+                "iban": "DE80760700240271232400",
+                "currency": "EUR"
+            }
+        ],
+        "balances": [
+            {
+                "iban": "DE80760700240271232400",
+                "currency": "EUR"
+            }
+        ],
+        "transactions": [
+            {
+                "iban": "DE80760700240271232400",
+                "currency": "EUR"
+            }
+        ]
+    },
+    "frequencyPerDay": 100,
+    "validUntil": "2019-12-31"
+}
+----
+
+After this operation the given consent's account reference data will be updated in CMS and the consent may be confirmed as usual.
+
 
 === Implementation of FundsConfirmationSpi
 

@@ -28,7 +28,7 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Spi interface to be used for AIS consent initiating and revoking, and authorising process through AuthorisationSpi interface.
+ * SPI interface to be used for AIS consent initiating and revoking, and authorising process through AuthorisationSpi interface.
  */
 public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
 
@@ -63,7 +63,7 @@ public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
      * @param contextData      holder of call's context data (e.g. about PSU and TPP)
      * @param accountConsent   Account consent
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
-     * @return Return a positive or negative response as part of SpiResponse
+     * @return void response
      */
     SpiResponse<VoidResponse> revokeAisConsent(@NotNull SpiContextData contextData, SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
