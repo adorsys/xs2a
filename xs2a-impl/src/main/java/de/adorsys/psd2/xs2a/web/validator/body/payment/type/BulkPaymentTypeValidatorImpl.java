@@ -29,12 +29,11 @@ import de.adorsys.psd2.xs2a.web.validator.body.payment.config.PaymentValidationC
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_EXTRA_FIELD;
 
 @Component
 public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl {
@@ -56,22 +55,28 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
             doBulkValidation(paymentMapper.getBulkPayment(body), messageError);
         } catch (IllegalArgumentException e) {
             if (e.getMessage().startsWith("Unrecognized field")) {
-                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EXTRA_FIELD, extractErrorField(e.getMessage())));
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_EXTRA_FIELD, extractErrorField(e.getMessage())));
             } else {
-                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR));
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR));
             }
         }
     }
 
     void doBulkValidation(BulkPayment bulkPayment, MessageError messageError) {
 
-        if (Objects.nonNull(bulkPayment.getDebtorAccount())) {
+        if (Objects.isNull(bulkPayment.getDebtorAccount())) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, "debtorAccount"));
+        } else {
             validateAccount(bulkPayment.getDebtorAccount(), messageError);
         }
 
         List<SinglePayment> payments = bulkPayment.getPayments();
 
-        payments.forEach(singlePayment -> super.doSingleValidation(singlePayment, messageError));
+        if (CollectionUtils.isEmpty(payments)) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_BULK));
+        } else {
+            payments.forEach(singlePayment -> super.doSingleValidation(singlePayment, messageError));
+        }
 
         if (isDateInThePast(bulkPayment.getRequestedExecutionDate())) {
             errorBuildingService.enrichMessageError(

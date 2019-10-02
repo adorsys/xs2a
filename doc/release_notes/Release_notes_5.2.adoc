@@ -5,6 +5,7 @@
 * Add integration test for embedded mode for XS2A
 * Bugfix: the field `lastActionDate` was not updated in piis_consent DB table
 * Remove redundant request to delete ASPSP consent data on consent creation
+* Create Bulk Payment validators
 
 == Add integration test for embedded mode for XS2A
 
@@ -18,3 +19,7 @@ Also, new value is set if the consent was revoked.
 == Remove redundant request to delete ASPSP consent data on consent creation
 
 From now on, XS2A won't try to delete ASPSP consent data in CMS for newly created AIS consent before the consent was passed to SPI.
+
+== Create Bulk Payment validators
+
+From now on all fields of bulk payments are validated according to specification.

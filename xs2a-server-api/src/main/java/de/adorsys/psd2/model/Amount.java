@@ -1,13 +1,12 @@
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.util.Objects;
 
 /**
  * Amount
@@ -34,7 +33,7 @@ public class Amount   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-@Pattern(regexp="[A-Z]{3}") 
+@Pattern(regexp="[A-Z]{3}")
 
   @JsonProperty("currency")
   public String getCurrency() {
@@ -57,7 +56,7 @@ public class Amount   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-@Pattern(regexp="-?[0-9]{1,14}(\\.[0-9]{1,3})?") 
+@Pattern(regexp="-?[0-9]{1,14}(\\.[0-9]{1,3})?")
 
   @JsonProperty("amount")
   public String getAmount() {
@@ -91,7 +90,7 @@ public class Amount   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Amount {\n");
-    
+
     sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
     sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
     sb.append("}");

@@ -264,7 +264,7 @@ public enum MessageErrorCode {
             return FORMAT_ERROR_NAME;
         }
     },
-    // Wrong format for '%s': value should be a boolean
+    // Wrong format for '%s': value should be boolean format
     FORMAT_ERROR_BOOLEAN_VALUE(400) {
         @Override
         public String getName() {
@@ -322,6 +322,13 @@ public enum MessageErrorCode {
     },
     // Unknown response type
     FORMAT_ERROR_RESPONSE_TYPE(400) {
+        @Override
+        public String getName() {
+            return FORMAT_ERROR_NAME;
+        }
+    },
+    // Invalid Bulk Entry format
+    FORMAT_ERROR_BULK(400) {
         @Override
         public String getName() {
             return FORMAT_ERROR_NAME;
