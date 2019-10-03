@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,6 +85,9 @@ public class ConsentModelMapperTest {
 
     @Mock
     private ObjectMapper objectMapper;
+
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileService;
 
     private CreateConsentResponse createConsentResponseWithScaMethods;
     private CreateConsentResponse createConsentResponseWithoutScaMethods;
@@ -147,6 +151,67 @@ public class ConsentModelMapperTest {
         when(objectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAvailableAccountsWithBalances.json", Consents.class);
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAvailableAccountsWithBalances.json", CreateConsentReq.class);
+        //When
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"));
+        //Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void mapToCreateConsentReq_AdditionalAccountInformation() {
+        //Given
+        when(aspspProfileService.isAccountOwnerInformationSupported())
+            .thenReturn(true);
+        when(objectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
+        when(objectMapper.convertValue(buildAdditionalInformationAccountReference(), AccountReference.class)).thenReturn(buildAdditionalInformationXs2aAccountReference());
+        Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
+        CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAdditionalAccountInformation.json", CreateConsentReq.class);
+        //When
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"));
+        //Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void mapToCreateConsentReq_AdditionalAccountInformationNotSupported() {
+        //Given
+        when(aspspProfileService.isAccountOwnerInformationSupported())
+            .thenReturn(false);
+        when(objectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
+        Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
+        CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqNoAdditionalAccountInformation.json", CreateConsentReq.class);
+        //When
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"));
+        //Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void mapToCreateConsentReq_AdditionalAccountInformationNoOwnerName() {
+        //Given
+        when(aspspProfileService.isAccountOwnerInformationSupported())
+            .thenReturn(true);
+        when(objectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
+        when(objectMapper.convertValue(buildAdditionalInformationAccountReference(), AccountReference.class)).thenReturn(buildAdditionalInformationXs2aAccountReference());
+        Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
+        consent.getAccess().getAdditionalAccountInformation().setOwnerName(null);
+        CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAdditionalAccountInformationNoOwnerName.json", CreateConsentReq.class);
+        //When
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"));
+        //Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void mapToCreateConsentReq_AdditionalAccountInformationOwnerNameEmpty() {
+        //Given
+        when(aspspProfileService.isAccountOwnerInformationSupported())
+            .thenReturn(true);
+        when(objectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
+        when(objectMapper.convertValue(buildAdditionalInformationAccountReference(), AccountReference.class)).thenReturn(buildAdditionalInformationXs2aAccountReference());
+        Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
+        consent.getAccess().getAdditionalAccountInformation().setOwnerName(Collections.emptyList());
+        CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAdditionalAccountInformationOwnerNameEmpty.json", CreateConsentReq.class);
         //When
         CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"));
         //Then
@@ -309,6 +374,13 @@ public class ConsentModelMapperTest {
         return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
     }
 
+    private static AccountReference buildAdditionalInformationXs2aAccountReference() {
+        AccountReference accountReference = new AccountReference();
+        accountReference.setIban(IBAN);
+        return accountReference;
+
+    }
+
     private static de.adorsys.psd2.model.AccountReference buildAccountReferenceWithoutIds() {
         de.adorsys.psd2.model.AccountReference accountReference = new de.adorsys.psd2.model.AccountReference();
         accountReference.setIban(IBAN);
@@ -320,8 +392,14 @@ public class ConsentModelMapperTest {
         return accountReference;
     }
 
+    private static de.adorsys.psd2.model.AccountReference buildAdditionalInformationAccountReference() {
+        de.adorsys.psd2.model.AccountReference accountReference = new de.adorsys.psd2.model.AccountReference();
+        accountReference.setIban(IBAN);
+        return accountReference;
+    }
+
     private static Xs2aAccountAccess createAccountAccess() {
         AccountReference accountReference = buildXs2aAccountReference();
-        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), null, null, null);
+        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), null, null, null, null);
     }
 }

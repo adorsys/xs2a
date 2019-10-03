@@ -153,6 +153,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
         <!-- spring dependencies -->
         <dependency>
             <groupId>org.springframework.hateoas</groupId>

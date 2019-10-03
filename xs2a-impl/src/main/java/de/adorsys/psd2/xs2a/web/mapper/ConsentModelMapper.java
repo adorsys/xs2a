@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
@@ -40,6 +41,7 @@ public class ConsentModelMapper {
     public final AccountModelMapper accountModelMapper;
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
+    private final AspspProfileServiceWrapper aspspProfileService;
 
     public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri) {
         return Optional.ofNullable(consent)
@@ -98,8 +100,17 @@ public class ConsentModelMapper {
                                 mapToXs2aAccountReferences(acs.getTransactions()),
                                 mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
                                 mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2()),
-                                mapToAccountAccessTypeFromAvailableAccountsWithBalance(acs.getAvailableAccountsWithBalance())
+                                mapToAccountAccessTypeFromAvailableAccountsWithBalance(acs.getAvailableAccountsWithBalance()),
+                                mapToAdditionalInformationAccess(acs.getAdditionalAccountInformation())
                             ))
+                   .orElse(null);
+    }
+
+    private de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess mapToAdditionalInformationAccess(AdditionalInformationAccess additionalInformationAccess) {
+        return Optional.ofNullable(additionalInformationAccess)
+                   .filter(info -> aspspProfileService.isAccountOwnerInformationSupported())
+                   .map(info -> new de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess(mapToXs2aAccountReferencesOrDefault(info.getOwnerName(), null),
+                                                                                                  mapToXs2aAccountReferencesOrDefault(info.getOwnerAddress(), null)))
                    .orElse(null);
     }
 
@@ -132,9 +143,25 @@ public class ConsentModelMapper {
                                 )
                             );
 
+                            mappedAccountAccess.setAdditionalAccountInformation(mapToAdditionalInformationAccess(access.getAdditionalInformationAccess()));
+
                             return mappedAccountAccess;
                         }
                    )
+                   .orElse(null);
+    }
+
+    private AdditionalInformationAccess mapToAdditionalInformationAccess(de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess additionalInformationAccess) {
+        return Optional.ofNullable(additionalInformationAccess)
+                   .map(info -> {
+                       if (info.noAdditionalInformationAccess()) {
+                           return null;
+                       }
+                       AdditionalInformationAccess informationAccess = new AdditionalInformationAccess();
+                       informationAccess.setOwnerName(accountModelMapper.mapToAccountReferences(info.getOwnerName()));
+                       informationAccess.setOwnerAddress(accountModelMapper.mapToAccountReferences(info.getOwnerAddress()));
+                       return informationAccess;
+                   })
                    .orElse(null);
     }
 
@@ -157,11 +184,15 @@ public class ConsentModelMapper {
     }
 
     private List<AccountReference> mapToXs2aAccountReferences(List<de.adorsys.psd2.model.AccountReference> references) {
+        return mapToXs2aAccountReferencesOrDefault(references, Collections.emptyList());
+    }
+
+    private List<AccountReference> mapToXs2aAccountReferencesOrDefault(List<de.adorsys.psd2.model.AccountReference> references, List<AccountReference> defaultValue) {
         return Optional.ofNullable(references)
                    .map(ref -> ref.stream()
                                    .map(this::mapToAccountReference)
                                    .collect(Collectors.toList()))
-                   .orElseGet(Collections::emptyList);
+                   .orElse(defaultValue);
     }
 
     private AccountReference mapToAccountReference(Object reference) {

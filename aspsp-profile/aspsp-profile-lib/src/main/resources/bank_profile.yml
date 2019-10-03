@@ -8,6 +8,7 @@ setting:
       accountAccessFrequencyPerDay: 4
       notConfirmedConsentExpirationTimeMs: 86400000
       maxConsentValidityDays: 0
+      accountOwnerInformationSupported: false
     redirectLinkToOnlineBanking:
       aisRedirectUrlToAspsp: http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}
     transactionParameters:

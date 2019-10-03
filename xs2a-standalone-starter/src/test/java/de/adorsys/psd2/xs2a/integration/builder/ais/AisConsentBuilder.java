@@ -101,7 +101,7 @@ public class AisConsentBuilder {
                                 aa.getTransactions(),
                                 availableAccounts != null ? availableAccounts.name() : null,
                                 access.getAllPsd2() != null ? access.getAllPsd2().name() : null,
-                                access.getAvailableAccountsWithBalance() != null ? access.getAvailableAccountsWithBalance().name() : null
+                                access.getAvailableAccountsWithBalance() != null ? access.getAvailableAccountsWithBalance().name() : null, null
                             )
                    )
                    .orElse(null);

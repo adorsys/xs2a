@@ -48,7 +48,7 @@ public class AccountSpiMockImpl implements AccountSpi {
         SpiAccountDetails details = new SpiAccountDetails("11111-11118", "10023-999999999", "DE52500105173911841934",
                                                           "52500105173911841934", "AEYPM5403H", "PM5403H****", null, Currency.getInstance("EUR"), "Müller",
                                                           "SCT", null, null, "DEUTDE8EXXX", null,
-                                                          null, null, Collections.singletonList(buildSpiAccountBalance()));
+                                                          null, null, Collections.singletonList(buildSpiAccountBalance()), null, null);
 
         return SpiResponse.<List<SpiAccountDetails>>builder()
                    .payload(Collections.singletonList(details))
@@ -61,7 +61,7 @@ public class AccountSpiMockImpl implements AccountSpi {
         SpiAccountDetails accountDetails = new SpiAccountDetails("11111-11118", "10023-999999999", "DE52500105173911841934",
                                                                  null, null, null, null, Currency.getInstance("EUR"), "Müller",
                                                                  "SCT", null, null, "DEUTDE8EXXX", null,
-                                                                 null, null, Collections.singletonList(buildSpiAccountBalance()));
+                                                                 null, null, Collections.singletonList(buildSpiAccountBalance()), null, null);
 
         return SpiResponse.<SpiAccountDetails>builder()
                    .payload(accountDetails)

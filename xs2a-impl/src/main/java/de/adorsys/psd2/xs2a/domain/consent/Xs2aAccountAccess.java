@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.domain.consent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import lombok.Value;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -32,6 +33,7 @@ public class Xs2aAccountAccess {
     private AccountAccessType availableAccounts;
     private AccountAccessType allPsd2;
     private AccountAccessType availableAccountsWithBalance;
+    private AdditionalInformationAccess additionalInformationAccess;
 
     @JsonIgnore
     public boolean isNotEmpty() {

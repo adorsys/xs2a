@@ -1069,11 +1069,11 @@ public class ConsentServiceTest {
     }
 
     private SpiAccountAccess getSpiAccountAccess() {
-        return new SpiAccountAccess(Collections.singletonList(new SpiAccountReference(null, CORRECT_IBAN, null, null, null, null, CURRENCY)), null, null, null, null, null);
+        return new SpiAccountAccess(Collections.singletonList(new SpiAccountReference(null, CORRECT_IBAN, null, null, null, null, CURRENCY)), null, null, null, null, null, null);
     }
 
     private Xs2aAccountAccess getXs2aAccountAccess(List<AccountReference> accounts) {
-        return new Xs2aAccountAccess(accounts, null, null, null, null, null);
+        return new Xs2aAccountAccess(accounts, null, null, null, null, null, null);
     }
 
     private AccountConsent getAccountConsent() {
@@ -1097,7 +1097,7 @@ public class ConsentServiceTest {
     }
 
     private Xs2aAccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
-        return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null, null);
+        return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null, null, null);
     }
 
     private List<AccountReference> getReferenceList() {

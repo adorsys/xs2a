@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.api.ConsentType;
+import de.adorsys.psd2.consent.api.ais.AdditionalAccountInformationType;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 
 @Data
@@ -159,6 +161,14 @@ public class AisConsent extends InstanceDependableEntity {
     @Column(name = "status_change_timestamp")
     private OffsetDateTime statusChangeTimestamp;
 
+    @Column(name = "owner_name_type")
+    @Enumerated(value = EnumType.STRING)
+    private AdditionalAccountInformationType ownerNameType = AdditionalAccountInformationType.NONE;
+
+    @Column(name = "owner_address_type")
+    @Enumerated(value = EnumType.STRING)
+    private AdditionalAccountInformationType ownerAddressType = AdditionalAccountInformationType.NONE;
+
     @Transient
     private ConsentStatus previousConsentStatus;
 
@@ -239,5 +249,9 @@ public class AisConsent extends InstanceDependableEntity {
     public boolean isNonReccuringAlreadyUsed() {
         return !recurringIndicator && usages.stream()
                                           .anyMatch(u -> u.getUsageDate().isBefore(LocalDate.now()));
+    }
+
+    public boolean checkNoneAdditionalAccountInformation() {
+        return Stream.of(getOwnerNameType(), getOwnerAddressType()).allMatch(type -> type.equals(AdditionalAccountInformationType.NONE));
     }
 }

@@ -54,4 +54,9 @@ public class ConsentTypeBankSetting {
      * The limit of a maximum lifetime of consent set in days. When this value equals to 0 or empty, then the maximum lifetime of consent is infinity
      */
     private int maxConsentValidityDays;
+
+    /**
+     * Indicates whether an ASPSP supports account owner information in consent
+     */
+    private boolean accountOwnerInformationSupported;
 }

@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SpiToXs2aAccountDetailsMapper {
     private final SpiToXs2aBalanceMapper balanceMapper;
+    private final SpiToXs2aAddressMapper spiToXs2aAddressMapper;
 
     public Xs2aAccountDetails mapToXs2aAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
@@ -57,7 +58,9 @@ public class SpiToXs2aAccountDetailsMapper {
                             ad.getLinkedAccounts(),
                             mapToXs2aUsageType(ad.getUsageType()),
                             ad.getDetails(),
-                            balanceMapper.mapToXs2aBalanceList(ad.getBalances())
+                            balanceMapper.mapToXs2aBalanceList(ad.getBalances()),
+                            accountDetails.getOwnerName(),
+                            Optional.ofNullable(accountDetails.getOwnerAddress()).map(spiToXs2aAddressMapper::mapToAddress).orElse(null)
                         )
                    )
                    .orElse(null);

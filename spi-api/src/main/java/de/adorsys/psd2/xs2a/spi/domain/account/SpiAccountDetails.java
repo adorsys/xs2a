@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -76,6 +77,9 @@ public class SpiAccountDetails {
     private String details;
 
     private List<SpiAccountBalance> balances;
+
+    private String ownerName;
+    private SpiAddress ownerAddress;
 
     public void emptyBalances() {
         balances = null;

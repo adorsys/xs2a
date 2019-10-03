@@ -214,6 +214,6 @@ public class GetAccountListValidatorTest {
                                               ? accountReferences
                                               : Collections.emptyList();
 
-        return new Xs2aAccountAccess(accountReferences, balances, accountReferences, null, null, null);
+        return new Xs2aAccountAccess(accountReferences, balances, accountReferences, null, null, null, null);
     }
 }

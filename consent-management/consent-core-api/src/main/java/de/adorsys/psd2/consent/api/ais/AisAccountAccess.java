@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.api.ais;
 
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import lombok.Value;
 
 import java.util.List;
@@ -31,5 +32,6 @@ public class AisAccountAccess {
     private String availableAccounts;
     private String allPsd2;
     private String availableAccountsWithBalance;
+    private AdditionalInformationAccess accountAdditionalInformationAccess;
 
 }

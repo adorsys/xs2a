@@ -19,5 +19,7 @@ package de.adorsys.psd2.consent.api;
 public enum TypeAccess {
     ACCOUNT,
     BALANCE,
-    TRANSACTION
+    TRANSACTION,
+    OWNER_NAME,
+    OWNER_ADDRESS
 }

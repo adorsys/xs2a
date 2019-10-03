@@ -4476,6 +4476,31 @@ components:
           type: string
           enum:
             - "allAccounts"
+        additionalAccountInformation:
+          description: |
+            Is asking for additional information as added within
+            this structured object
+          $ref: "#/components/schemas/additionalInformationAccess"
+
+    additionalInformationAccess:
+      description: |
+        Additional account information
+      type: object
+      properties:
+        ownerName:
+          description: |
+            Is asking for account owner name of the accounts
+            referenced within.
+          type: array
+          items:
+            $ref: "#/components/schemas/accountReference"
+        ownerAddress:
+          description: |
+            Is asking for account owner address related to the
+            accounts referenced within
+          type: array
+          items:
+            $ref: "#/components/schemas/accountReference"
 
     cashAccountType:
       description: |
@@ -4559,6 +4584,12 @@ components:
           $ref: "#/components/schemas/balanceList"
         _links:
           $ref: "#/components/schemas/_linksAccountDetails"
+        ownerName:
+          description: Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.
+          type: string
+          maxLength: 70
+        ownerAddress:
+          $ref: "#/components/schemas/address"
 
 
     cardAccountDetails:

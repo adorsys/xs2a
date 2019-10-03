@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.consent.api.ais.AccountAdditionalInformationAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import lombok.Getter;
 
@@ -39,6 +40,11 @@ public abstract class AccountAccessHolder<T extends AccountAccess> {
         doFillAccess(accountAccessInfo.getAccounts(), ACCOUNT);
         doFillAccess(accountAccessInfo.getBalances(), BALANCE);
         doFillAccess(accountAccessInfo.getTransactions(), TRANSACTION);
+        AccountAdditionalInformationAccess accountAdditionalInformationAccess = accountAccessInfo.getAccountAdditionalInformationAccess();
+        if (accountAdditionalInformationAccess != null) {
+            doFillAccess(accountAdditionalInformationAccess.getOwnerName(), OWNER_NAME);
+            doFillAccess(accountAdditionalInformationAccess.getOwnerAddress(), OWNER_ADDRESS);
+        }
     }
 
     protected abstract void doFillAccess(List<AccountInfo> info, TypeAccess typeAccess);

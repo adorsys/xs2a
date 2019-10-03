@@ -306,7 +306,7 @@ public class AccountControllerIT {
     private Xs2aAccountDetails buildXs2aAccountDetails() {
         return new Xs2aAccountDetails("accountDetail", "y1", "y2", "y3", "y4",
                                       "y5", "y6", Currency.getInstance("EUR"), "y8", "y9", CashAccountType.CACC,
-                                      AccountStatus.ENABLED, "y11", "linked3", Xs2aUsageType.PRIV, "details3", new ArrayList<>());
+                                      AccountStatus.ENABLED, "y11", "linked3", Xs2aUsageType.PRIV, "details3", new ArrayList<>(), null, null);
     }
 
     private SpiResponse<List<SpiAccountDetails>> buildListSpiResponse() {
@@ -322,14 +322,14 @@ public class AccountControllerIT {
     }
 
     private AccountConsent buildAccountConsent(Map<String, Integer> usageCounter) {
-        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null);
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
         return new AccountConsent(null, xs2aAccountAccess, true, LocalDate.now().plusDays(1), 10,
                                   null, ConsentStatus.VALID, false, false,
                                   null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter);
     }
 
     private AccountConsent buildOneOffAccountConsent(Map<String, Integer> usageCounter) {
-        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null);
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
         return new AccountConsent(null, xs2aAccountAccess, false, LocalDate.now().plusDays(1), 10,
                                   null, ConsentStatus.VALID, false, false,
                                   null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter);

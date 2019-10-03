@@ -17,10 +17,7 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
@@ -29,11 +26,13 @@ import de.adorsys.psd2.consent.service.AisConsentUsageService;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @Component
@@ -132,6 +131,16 @@ public class AisConsentMapper {
         accesses.addAll(getAspspAccountAccesses(TypeAccess.ACCOUNT, aisAccountAccess.getAccounts()));
         accesses.addAll(getAspspAccountAccesses(TypeAccess.BALANCE, aisAccountAccess.getBalances()));
         accesses.addAll(getAspspAccountAccesses(TypeAccess.TRANSACTION, aisAccountAccess.getTransactions()));
+        AdditionalInformationAccess info = aisAccountAccess.getAccountAdditionalInformationAccess();
+        if (info != null) {
+            BiConsumer<List<AccountReference>, TypeAccess> updateAccesses = (list, type) -> {
+                if (CollectionUtils.isNotEmpty(list)) {
+                    accesses.addAll(getAspspAccountAccesses(type, list));
+                }
+            };
+            updateAccesses.accept(info.getOwnerName(), TypeAccess.OWNER_NAME);
+            updateAccesses.accept(info.getOwnerAddress(), TypeAccess.OWNER_ADDRESS);
+        }
         return accesses;
     }
 
@@ -142,7 +151,9 @@ public class AisConsentMapper {
                                     mapToInitialAccountReferences(accesses, TypeAccess.TRANSACTION),
                                     getAccessType(consent.getAvailableAccounts()),
                                     getAccessType(consent.getAllPsd2()),
-                                    getAccessType(consent.getAvailableAccountsWithBalance()));
+                                    getAccessType(consent.getAvailableAccountsWithBalance()),
+                                    mapToInitialAdditionalInformationAccess(accesses, consent)
+        );
     }
 
     private List<AccountReference> mapToInitialAccountReferences(List<TppAccountAccess> aisAccounts, TypeAccess typeAccess) {
@@ -159,7 +170,35 @@ public class AisConsentMapper {
                                     mapToAccountReferences(accesses, TypeAccess.TRANSACTION),
                                     getAccessType(consent.getAvailableAccounts()),
                                     getAccessType(consent.getAllPsd2()),
-                                    getAccessType(consent.getAvailableAccountsWithBalance()));
+                                    getAccessType(consent.getAvailableAccountsWithBalance()),
+                                    mapToAspspAdditionalInformationAccess(accesses, consent)
+        );
+    }
+
+    private AdditionalInformationAccess mapToInitialAdditionalInformationAccess(List<TppAccountAccess> accesses, AisConsent consent) {
+        return consent.checkNoneAdditionalAccountInformation()
+                   ? null
+                   : new AdditionalInformationAccess(mapToAdditionalInformationInitialAccountReferences(consent.getOwnerNameType(), TypeAccess.OWNER_NAME, accesses),
+                                                     mapToAdditionalInformationInitialAccountReferences(consent.getOwnerAddressType(), TypeAccess.OWNER_ADDRESS, accesses));
+    }
+
+    private List<AccountReference> mapToAdditionalInformationInitialAccountReferences(AdditionalAccountInformationType type, TypeAccess typeAccess, List<TppAccountAccess> accesses) {
+        return type == AdditionalAccountInformationType.DEDICATED_ACCOUNTS
+                   ? mapToInitialAccountReferences(accesses, typeAccess)
+                   : type == AdditionalAccountInformationType.ALL_AVAILABLE_ACCOUNTS ? Collections.emptyList() : null;
+    }
+
+    private AdditionalInformationAccess mapToAspspAdditionalInformationAccess(List<AspspAccountAccess> accesses, AisConsent consent) {
+        return consent.checkNoneAdditionalAccountInformation()
+                   ? null
+                   : new AdditionalInformationAccess(mapToAdditionalInformationAspspAccountReferences(consent.getOwnerNameType(), TypeAccess.OWNER_NAME, accesses),
+                                                     mapToAdditionalInformationAspspAccountReferences(consent.getOwnerAddressType(), TypeAccess.OWNER_ADDRESS, accesses));
+    }
+
+    private List<AccountReference> mapToAdditionalInformationAspspAccountReferences(AdditionalAccountInformationType type, TypeAccess typeAccess, List<AspspAccountAccess> accesses) {
+        return type == AdditionalAccountInformationType.DEDICATED_ACCOUNTS
+                   ? mapToAccountReferences(accesses, typeAccess)
+                   : type == AdditionalAccountInformationType.ALL_AVAILABLE_ACCOUNTS ? Collections.emptyList() : null;
     }
 
     private List<AccountReference> mapToAccountReferences(List<AspspAccountAccess> aisAccounts, TypeAccess typeAccess) {

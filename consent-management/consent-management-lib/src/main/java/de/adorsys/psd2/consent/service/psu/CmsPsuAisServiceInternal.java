@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service.psu;
 
 
+import de.adorsys.psd2.consent.api.ais.AdditionalAccountInformationType;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
@@ -45,6 +46,7 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
@@ -255,15 +257,27 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             .ifPresent(consent::setCombinedServiceIndicator);
 
         Set<AspspAccountAccess> aspspAccountAccesses = consentMapper.mapAspspAccountAccesses(accountAccess);
+        setAdditionalInformationTypes(consent, accountAccess.getAccountAdditionalInformationAccess());
+
         consent.addAspspAccountAccess(aspspAccountAccesses);
         AisConsentRequestType aisConsentRequestType = aisConsentRequestTypeService.getRequestTypeFromConsent(consent);
         consent.setAisConsentRequestType(aisConsentRequestType);
-        
+
         consent.setExpireDate(request.getValidUntil());
         consent.setAllowedFrequencyPerDay(request.getFrequencyPerDay());
         aisConsentUsageService.resetUsage(consent);
         aisConsentRepository.save(consent);
         return true;
+    }
+
+    private void setAdditionalInformationTypes(AisConsent consent, AdditionalInformationAccess info) {
+        if (info == null) {
+            consent.setOwnerNameType(AdditionalAccountInformationType.NONE);
+            consent.setOwnerAddressType(AdditionalAccountInformationType.NONE);
+        } else {
+            consent.setOwnerNameType(AdditionalAccountInformationType.findTypeByList(info.getOwnerName()));
+            consent.setOwnerAddressType(AdditionalAccountInformationType.findTypeByList(info.getOwnerAddress()));
+        }
     }
 
     private boolean changeConsentStatus(String consentId, ConsentStatus status, String instanceId) {
