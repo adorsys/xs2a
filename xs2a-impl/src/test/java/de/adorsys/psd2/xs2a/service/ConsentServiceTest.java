@@ -1112,7 +1112,6 @@ public class ConsentServiceTest {
     private TppInfo buildTppInfo() {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber(TPP_ID);
-        tppInfo.setTppRedirectUri(TPP_REDIRECT_URI);
         return tppInfo;
     }
 

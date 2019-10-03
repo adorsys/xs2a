@@ -39,7 +39,6 @@ public class TppInfoTest {
         tppInfoFirst.setOrganisationUnit("some country unit");
         tppInfoFirst.setCity("some city");
         tppInfoFirst.setState("some state");
-        tppInfoFirst.setTppRedirectUri(new TppRedirectUri("some uri", "some nok uri"));
         tppInfoFirst.setIssuerCN("some issuer CN");
 
         TppInfo tppInfoSecond = buildTppInfo(AUTHORISATION_NUMBER);
@@ -52,7 +51,6 @@ public class TppInfoTest {
         tppInfoSecond.setOrganisationUnit("some other country unit");
         tppInfoSecond.setCity("some other city");
         tppInfoSecond.setState("some other state");
-        tppInfoSecond.setTppRedirectUri(new TppRedirectUri("some other uri", "some other nok uri"));
         tppInfoSecond.setIssuerCN("some other issuer CN");
 
         assertEquals(tppInfoFirst, tppInfoSecond);

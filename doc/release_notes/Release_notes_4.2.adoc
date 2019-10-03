@@ -4,6 +4,7 @@
 
 * Add integration test for embedded mode for XS2A
 * Bugfix: the field `lastActionDate` was not updated in piis_consent DB table
+* Remove TppRedirectUri from TppInfo
 
 == Add integration test for embedded mode for XS2A
 
@@ -13,3 +14,9 @@ Integration test has been added for XS2A to ensure that application correctly st
 
 From now on, initial value is set to the field `lastActionDate` in case of PIIS consent creation. Also, new value is
 set if the consent was revoked.
+
+== Remove TppRedirectUri from TppInfo
+
+From now on deprecated field `tppRedirectUri` is removed from `TppInfo`. And  fields `redirectUri`, `nokRedirectUri`,
+`cancelRedirectUri`, `cancelNokRedirectUri` are removed from `TppInfoEntity`. Columns `redirect_uri`, `nok_redirect_uri`,
+`cancel_redirect_uri`, `cancel_nok_redirect_uri` from `tpp_info table` will be removed in v.4.5.
