@@ -40,15 +40,7 @@
     "organisation": "Organisation",
     "organisationUnit": "Organisation unit",
     "city": "Nuremberg",
-    "state": "Bayern",
-    "tppRedirectUri": {
-      "uri": "TPP-Redirect-URI",
-      "nokUri": "TPP-Nok-Redirect-URI"
-    },
-    "cancelTppRedirectUri": {
-      "uri": "TPP-Redirect-URI-Cancel",
-      "nokUri": "TPP-Nok-Redirect-URI-Cancel"
-    }
+    "state": "Bayern"
   },
   "externalId": "329d04d9-cb42-4fb5-8265-de58fa00366d",
   "psuData": [

@@ -31,12 +31,7 @@ public class TppInfoBuilder {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber(authorisationNumber);
         tppInfo.setAuthorityId(AUTHORITY_ID);
-        tppInfo.setTppRedirectUri(buildTppRedirectUri());
         return tppInfo;
-    }
-
-    private static TppRedirectUri buildTppRedirectUri() {
-        return new TppRedirectUri("redirectUri", "nokRedirectUri");
     }
 
     public static String getTppInfo() {

@@ -216,12 +216,7 @@ public class AisConsentIT {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber(TPP_ID);
         tppInfo.setAuthorityId(AUTHORITY_ID);
-        tppInfo.setTppRedirectUri(buildTppRedirectUri());
         return tppInfo;
-    }
-
-    private TppRedirectUri buildTppRedirectUri() {
-        return new TppRedirectUri("redirectUri", "nokRedirectUri");
     }
 
     /**

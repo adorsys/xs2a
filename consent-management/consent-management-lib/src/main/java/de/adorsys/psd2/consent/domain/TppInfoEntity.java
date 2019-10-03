@@ -67,20 +67,4 @@ public class TppInfoEntity extends InstanceDependableEntity {
 
     @Column(name = "state")
     private String state;
-
-    @Deprecated // TODO: Remove the columns in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1017
-    @Column(name = "redirect_uri")
-    private String redirectUri;
-
-    @Deprecated // TODO: Remove the columns in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1017
-    @Column(name = "nok_redirect_uri")
-    private String nokRedirectUri;
-
-    @Deprecated // TODO: Remove the columns in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1017
-    @Column(name = "cancel_redirect_uri")
-    private String cancelRedirectUri;
-
-    @Deprecated // TODO: Remove the columns in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1017
-    @Column(name = "cancel_nok_redirect_uri")
-    private String cancelNokRedirectUri;
 }

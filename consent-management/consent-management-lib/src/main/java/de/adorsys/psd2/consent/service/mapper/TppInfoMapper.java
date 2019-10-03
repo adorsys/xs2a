@@ -29,14 +29,8 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface TppInfoMapper {
 
-    @Mapping(target = "redirectUri", source = "tppRedirectUri.uri")
-    @Mapping(target = "nokRedirectUri", source = "tppRedirectUri.nokUri")
-    @Mapping(target = "cancelRedirectUri", source = "cancelTppRedirectUri.uri")
-    @Mapping(target = "cancelNokRedirectUri", source = "cancelTppRedirectUri.nokUri")
     TppInfoEntity mapToTppInfoEntity(TppInfo tppInfo);
 
-    @Mapping(target = "tppRedirectUri", expression = "java(createTppRedirectUri(tppInfoEntity.getRedirectUri(), tppInfoEntity.getNokRedirectUri()))")
-    @Mapping(target = "cancelTppRedirectUri", expression = "java(createTppRedirectUri(tppInfoEntity.getCancelRedirectUri(), tppInfoEntity.getCancelNokRedirectUri()))")
     TppInfo mapToTppInfo(TppInfoEntity tppInfoEntity);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
