@@ -289,8 +289,6 @@ public class CmsPsuPisMapperTest {
         tppInfoEntity.setAuthorisationNumber(TPP_AUTHORISATION_NUMBER);
         tppInfoEntity.setAuthorityId(TPP_AUTHORITY_ID);
         tppInfoEntity.setTppRoles(TPP_ROLES);
-        tppInfoEntity.setRedirectUri(REDIRECT_URI);
-        tppInfoEntity.setNokRedirectUri(NOK_REDIRECT_URI);
         return tppInfoEntity;
     }
 
@@ -299,7 +297,6 @@ public class CmsPsuPisMapperTest {
         tppInfo.setAuthorisationNumber(TPP_AUTHORISATION_NUMBER);
         tppInfo.setAuthorityId(TPP_AUTHORITY_ID);
         tppInfo.setTppRoles(TPP_ROLES);
-        tppInfo.setTppRedirectUri(buildTppRedirectUri());
         return tppInfo;
     }
 
@@ -345,10 +342,6 @@ public class CmsPsuPisMapperTest {
 
     private static List<TppRole> buildTppRoles() {
         return Arrays.asList(TppRole.AISP, TppRole.ASPSP, TppRole.PIISP, TppRole.PISP);
-    }
-
-    private static TppRedirectUri buildTppRedirectUri() {
-        return new TppRedirectUri(REDIRECT_URI, NOK_REDIRECT_URI);
     }
 
     private static AccountReferenceEntity buildAccountReferenceEntity() {
