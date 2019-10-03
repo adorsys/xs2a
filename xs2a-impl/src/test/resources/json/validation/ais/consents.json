@@ -17,7 +17,19 @@
         "currency": "EUR",
         "iban": "DE80760700240271232400"
       }
-    ]
+    ],
+    "additionalAccountInformation": {
+      "ownerName": [
+        {
+          "iban": "DE80760700240271232400"
+        }
+      ],
+      "ownerAddress": [
+        {
+          "iban": "DE80760700240271232400"
+        }
+      ]
+    }
   },
   "combinedServiceIndicator": false,
   "frequencyPerDay": 100,

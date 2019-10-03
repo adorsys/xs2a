@@ -1,0 +1,29 @@
+{
+  "access": {
+    "accounts": [
+      {
+        "iban": "Test IBAN",
+        "bban": "Test BBAN",
+        "pan": "Test PAN",
+        "maskedPan": "Test MASKED_PAN",
+        "msisdn": "Test MSISDN",
+        "currency": "EUR"
+      }
+    ],
+    "additionalAccountInformation": {
+      "ownerName": [
+        {
+          "iban": "Test IBAN"
+        }
+      ],
+      "ownerAddress": [
+        {
+          "iban": "Test IBAN"
+        }
+      ]
+    }
+  },
+  "frequencyPerDay": "1",
+  "recurringIndicator": "false",
+  "validUntil": "2017-08-06"
+}

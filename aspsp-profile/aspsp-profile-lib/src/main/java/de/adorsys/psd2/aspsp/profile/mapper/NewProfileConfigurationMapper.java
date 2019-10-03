@@ -41,7 +41,8 @@ public class NewProfileConfigurationMapper {
                                                                          setting.isAvailableAccountsConsentSupported(),
                                                                          setting.getFrequencyPerDay(),
                                                                          setting.getNotConfirmedConsentExpirationPeriodMs(),
-                                                                         setting.getConsentLifetime());
+                                                                         setting.getConsentLifetime(),
+                                                                         false);
         AisRedirectLinkBankSetting aisRedirectLinkToOnlineBanking = new AisRedirectLinkBankSetting(setting.getAisRedirectUrlToAspsp());
         AisTransactionBankSetting transactionParameters = new AisTransactionBankSetting(setting.getAvailableBookingStatuses(),
                                                                                         setting.isTransactionsWithoutBalancesSupported(),

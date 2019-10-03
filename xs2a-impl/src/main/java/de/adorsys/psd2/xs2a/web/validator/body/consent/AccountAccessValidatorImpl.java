@@ -21,6 +21,7 @@ import de.adorsys.psd2.model.AccountAccess;
 import de.adorsys.psd2.model.AccountReference;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
@@ -88,7 +89,14 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
                                                          .filter(Objects::nonNull)
                                                          .flatMap(Collection::stream);
 
-            allReferences.distinct()
+            Stream<AccountReference> additionalReferences = Optional.ofNullable(accountAccess.getAdditionalAccountInformation())
+                                                                .map(info -> Stream.of(info.getOwnerName(), info.getOwnerAddress())
+                                                                                 .filter(Objects::nonNull)
+                                                                                 .flatMap(Collection::stream))
+                                                                .orElseGet(Stream::empty);
+
+            Stream.concat(allReferences, additionalReferences)
+                .distinct()
                 .filter(Objects::nonNull)
                 .forEach(ar -> accountReferenceValidator.validate(ar, messageError));
 
@@ -132,9 +140,20 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
                                 mapToXs2aAccountReferences(acs.getTransactions(), messageError),
                                 mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
                                 mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2()),
-                                mapToAccountAccessTypeFromAvailableAccountsWithBalance(acs.getAvailableAccountsWithBalance())
+                                mapToAccountAccessTypeFromAvailableAccountsWithBalance(acs.getAvailableAccountsWithBalance()),
+                                mapToAdditionalInformationAccess(acs.getAdditionalAccountInformation(), messageError)
                             ))
                    .orElse(null);
+    }
+
+    private AdditionalInformationAccess mapToAdditionalInformationAccess(de.adorsys.psd2.model.AdditionalInformationAccess additionalInformationAccess, MessageError messageError) {
+        if (additionalInformationAccess == null) {
+            return null;
+        }
+
+        return new AdditionalInformationAccess(
+            mapToXs2aAccountReferences(additionalInformationAccess.getOwnerName(), messageError),
+            mapToXs2aAccountReferences(additionalInformationAccess.getOwnerAddress(), messageError));
     }
 
     private List<de.adorsys.psd2.xs2a.core.profile.AccountReference> mapToXs2aAccountReferences(List<de.adorsys.psd2.model.AccountReference> references, MessageError messageError) { // NOPMD

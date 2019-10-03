@@ -327,6 +327,6 @@ public class GetTransactionsReportValidatorTest {
     }
 
     private Xs2aAccountAccess buildXs2aAccountAccess() {
-        return new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.singletonList(accountReference), null, null, null);
+        return new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.singletonList(accountReference), null, null, null, null);
     }
 }

@@ -26,4 +26,5 @@ public class ConsentTypeSetting {
     private int accountAccessFrequencyPerDay;
     private long notConfirmedConsentExpirationTimeMs;
     private int maxConsentValidityDays;
+    private boolean accountOwnerInformationSupported;
 }

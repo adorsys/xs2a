@@ -16,7 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -37,9 +39,19 @@ public class Xs2aToSpiAccountAccessMapper {
                                 xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aa.getTransactions()),
                                 aa.getAvailableAccounts(),
                                 aa.getAllPsd2(),
-                                aa.getAvailableAccountsWithBalance()
+                                aa.getAvailableAccountsWithBalance(),
+                                mapToSpiAdditionalInformationAccess(aa.getAdditionalInformationAccess())
                             )
                    )
+                   .orElse(null);
+    }
+
+    private SpiAdditionalInformationAccess mapToSpiAdditionalInformationAccess(AdditionalInformationAccess additionalInformationAccess) {
+        return Optional.ofNullable(additionalInformationAccess)
+                   .map(info -> new SpiAdditionalInformationAccess(
+                       xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferencesOrDefault(info.getOwnerName(), null),
+                       xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferencesOrDefault(info.getOwnerAddress(), null)
+                   ))
                    .orElse(null);
     }
 }

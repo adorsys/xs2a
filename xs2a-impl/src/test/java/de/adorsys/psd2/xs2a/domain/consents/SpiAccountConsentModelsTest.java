@@ -126,7 +126,7 @@ public class SpiAccountConsentModelsTest {
 
     private CreateConsentReq getAicNoDedicatedAccountRequest() {
 
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null);
+        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
 
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
@@ -158,7 +158,7 @@ public class SpiAccountConsentModelsTest {
         List<AccountReference> balances = Arrays.asList(iban1, iban2, iban3);
         List<AccountReference> transactions = Arrays.asList(iban4, maskedPan);
 
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), balances, transactions, null, null, null);
+        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), balances, transactions, null, null, null, null);
 
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);

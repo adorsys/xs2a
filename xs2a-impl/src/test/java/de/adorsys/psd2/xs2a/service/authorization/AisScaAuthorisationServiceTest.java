@@ -184,22 +184,22 @@ public class AisScaAuthorisationServiceTest {
     }
 
     private AccountConsent buildAvailableAccountConsent(boolean oneAccessType) {
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null, null);
+        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null, null, null);
         return buildConsent(accountAccess, oneAccessType, AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS);
     }
 
     private AccountConsent buildGlobalConsent(boolean oneAccessType) {
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, AccountAccessType.ALL_ACCOUNTS, null);
+        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, AccountAccessType.ALL_ACCOUNTS, null, null);
         return buildConsent(accountAccess, oneAccessType, AisConsentRequestType.GLOBAL);
     }
 
     private AccountConsent buildBankOfferedConsent(boolean oneAccessType) {
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null);
+        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
         return buildConsent(accountAccess, oneAccessType, AisConsentRequestType.BANK_OFFERED);
     }
 
     private AccountConsent buildDedicatedConsent(boolean oneAccessType) {
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.singletonList(new AccountReference(AccountReferenceType.IBAN, "DE86500105176716126648", Currency.getInstance("EUR"))), Collections.emptyList(), Collections.emptyList(), null, null, null);
+        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.singletonList(new AccountReference(AccountReferenceType.IBAN, "DE86500105176716126648", Currency.getInstance("EUR"))), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
         return buildConsent(accountAccess, oneAccessType, AisConsentRequestType.DEDICATED_ACCOUNTS);
     }
 

@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.domain.CashAccountType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
+import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -101,6 +102,12 @@ public class Xs2aAccountDetails {
     @ApiModelProperty(value = "links: inks to the account, which can be directly used for retrieving account information from the dedicated account")
     @JsonProperty("_links")
     private Links links = new Links();
+
+    @ApiModelProperty(value = "Owner name")
+    private final String ownerName;
+
+    @ApiModelProperty(value = "Owner address")
+    private final Xs2aAddress ownerAddress;
 
     @JsonIgnore
     public String getAccountReferenceValue() {

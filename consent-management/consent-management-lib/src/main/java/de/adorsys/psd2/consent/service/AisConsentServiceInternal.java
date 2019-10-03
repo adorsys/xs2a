@@ -18,10 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -319,7 +316,18 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setAllPsd2(request.getAccess().getAllPsd2());
         consent.setAvailableAccountsWithBalance(request.getAccess().getAvailableAccountsWithBalance());
         consent.setLastActionDate(LocalDate.now());
+        setAdditionalInformationTypes(consent, request.getAccess().getAccountAdditionalInformationAccess());
         return consent;
+    }
+
+    private void setAdditionalInformationTypes(AisConsent consent, AccountAdditionalInformationAccess info) {
+        if (info == null) {
+            consent.setOwnerNameType(AdditionalAccountInformationType.NONE);
+            consent.setOwnerAddressType(AdditionalAccountInformationType.NONE);
+        } else {
+            consent.setOwnerNameType(AdditionalAccountInformationType.findTypeByList(info.getOwnerName()));
+            consent.setOwnerAddressType(AdditionalAccountInformationType.findTypeByList(info.getOwnerAddress()));
+        }
     }
 
     private LocalDate adjustExpireDate(LocalDate validUntil) {

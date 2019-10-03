@@ -1,0 +1,25 @@
+{
+  "access": {
+    "accounts": [
+      {
+        "aspspAccountId": "3278921mxl-n2131-13nw",
+        "resourceId": "accountId",
+        "iban": "Test IBAN",
+        "bban": "Test BBAN",
+        "pan": "Test PAN",
+        "maskedPan": "Test MASKED_PAN",
+        "msisdn": "Test MSISDN",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [],
+    "transactions": []
+  },
+  "frequencyPerDay": "1",
+  "recurringIndicator": "false",
+  "validUntil": "2017-08-06",
+  "tppRedirectUri": {
+    "uri": "ok.url",
+    "nokUri": "nok.url"
+  }
+}

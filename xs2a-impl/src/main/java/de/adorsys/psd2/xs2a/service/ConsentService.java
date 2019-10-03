@@ -18,6 +18,8 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -59,9 +61,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.UnaryOperator;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
@@ -588,8 +589,19 @@ public class ConsentService {
             new ArrayList<>(),
             request.getAccess().getAvailableAccounts(),
             request.getAccess().getAllPsd2(),
-            request.getAccess().getAvailableAccountsWithBalance()
+            request.getAccess().getAvailableAccountsWithBalance(),
+            modifyAdditionalInformationAccessOnGlobalOrAllAvailableAccountsConsent(request.getAccess().getAdditionalInformationAccess())
         );
+    }
+
+    private AdditionalInformationAccess modifyAdditionalInformationAccessOnGlobalOrAllAvailableAccountsConsent(AdditionalInformationAccess info) {
+        if (info == null || info.noAdditionalInformationAccess()) {
+            return null;
+        }
+
+        UnaryOperator<List<AccountReference>> modifier = list -> list == null ? null : Collections.emptyList();
+
+        return new AdditionalInformationAccess(modifier.apply(info.getOwnerName()), modifier.apply(info.getOwnerAddress()));
     }
 
     private void proceedImplicitCaseForCreateConsent(CreateConsentResponse response, PsuIdData psuData, String consentId) {

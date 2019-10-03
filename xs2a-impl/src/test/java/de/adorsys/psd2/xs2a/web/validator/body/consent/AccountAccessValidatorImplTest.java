@@ -203,6 +203,30 @@ public class AccountAccessValidatorImplTest {
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
+    @Test
+    public void validate_account_additionalInformation_ownerName_wrongIban_error() {
+        // Given
+        consents.getAccess().getAdditionalAccountInformation().getOwnerName().get(0).setIban("123");
+
+        // When
+        validator.validate(request, messageError);
+
+        // Then
+        assertEquals(MessageErrorCode.FORMAT_ERROR_INVALID_FIELD, messageError.getTppMessage().getMessageErrorCode());
+    }
+
+    @Test
+    public void validate_account_additionalInformation_ownerAddress_wrongIban_error() {
+        // Given
+        consents.getAccess().getAdditionalAccountInformation().getOwnerAddress().get(0).setIban("123");
+
+        // When
+        validator.validate(request, messageError);
+
+        // Then
+        assertEquals(MessageErrorCode.FORMAT_ERROR_INVALID_FIELD, messageError.getTppMessage().getMessageErrorCode());
+    }
+
     private AccountAccessValidatorImpl createValidator(Consents consents) {
         return new AccountAccessValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), new ObjectMapper(), accountReferenceValidator, dateFieldValidator) {
             @SuppressWarnings("unchecked")

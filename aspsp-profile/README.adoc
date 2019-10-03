@@ -54,6 +54,9 @@ Attribute frequencyPerDay is mandatory for Account Information Consent request. 
 
 Not confirmed during this period of time AIS consents will be considered obsolete. The default value is set to 24 hours. |86 400 000 |milliseconds (1, 2,...)
 |maxConsentValidityDays |This field defines consent lifetime - maximum validity days of consent. When this value equals to 0 or empty, then the maximum lifetime of Consent is infinity. |0 |days (0, 1, ...)
+|accountOwnerInformationSupported |This field indicates if ASPSP supports account owner information in consent.
+
+|FALSE |TRUE, FALSE
 |*redirectLinkToOnlineBanking:* | | |
 |aisRedirectUrlToAspsp |Link to online-banking to authorise consent with Redirect approach. Attribute is available to be configured with custom url pattern and redirectId parameter. |http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id} |String
 |*transactionParameters:* | | |

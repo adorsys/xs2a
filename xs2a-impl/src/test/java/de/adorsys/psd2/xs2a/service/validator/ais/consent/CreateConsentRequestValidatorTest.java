@@ -104,7 +104,7 @@ public class CreateConsentRequestValidatorTest {
             .thenReturn(ValidationResult.invalid(SUPPORTED_ACCOUNT_REFERENCE_VALIDATION_ERROR));
 
         AccountReference accountReference = new AccountReference(AccountReferenceType.IBAN, "some iban", Currency.getInstance("EUR"));
-        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null, null);
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
         CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(xs2aAccountAccess);
 
         //When
@@ -239,14 +239,14 @@ public class CreateConsentRequestValidatorTest {
         createConsentReq.setValidUntil(validUntil);
         createConsentReq.setRecurringIndicator(recurringIndicator);
         createConsentReq.setFrequencyPerDay(frequencyPerDay);
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null, null);
+        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null, null, null);
         createConsentReq.setAccess(accountAccess);
         return createConsentReq;
     }
 
     private CreateConsentReq buildCreateConsentReqWithoutFlagsAndAccesses(boolean recurringIndicator, int frequencyPerDay) {
         CreateConsentReq createConsentReq = buildCreateConsentReq(recurringIndicator, frequencyPerDay);
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null);
+        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
         createConsentReq.setAccess(accountAccess);
         return createConsentReq;
     }

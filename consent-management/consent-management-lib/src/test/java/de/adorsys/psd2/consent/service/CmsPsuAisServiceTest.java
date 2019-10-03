@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.consent.api.ais.AdditionalAccountInformationType;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
@@ -43,6 +44,7 @@ import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
@@ -58,6 +60,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
@@ -500,6 +503,93 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
+    public void updateAccountAccessInConsent_NoAdditionalAccountInformation_Success() {
+        // Given
+        AccountReference accountReference = getAccountReference("DE67597874259856475273", Currency.getInstance("EUR"));
+        AisAccountAccess aisAccountAccess = getAisAccountAccess(accountReference);
+        Set<AspspAccountAccess> aspspAccountAccesses = getAspspAccountAccesses(aisAccountAccess);
+
+        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(aisAccountAccess, LocalDate.now(), 777, Boolean.TRUE, Boolean.TRUE);
+        ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
+        when(aisConsentMapper.mapAspspAccountAccesses(aisAccountAccess)).thenReturn(aspspAccountAccesses);
+        // When
+        boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, DEFAULT_SERVICE_INSTANCE_ID);
+        // Then
+        verify(aisConsentRepository).save(argument.capture());
+        AisConsent aisConsent = argument.getValue();
+        List<AspspAccountAccess> aspspAccountAccessesChecked = aisConsent.getAspspAccountAccesses();
+
+        Function<TypeAccess, Long> countAccessesByType = typeAccess -> aspspAccountAccessesChecked.stream()
+                                                             .map(AspspAccountAccess::getTypeAccess)
+                                                             .filter(type -> type.equals(typeAccess))
+                                                             .count();
+
+        assertEquals(0, countAccessesByType.apply(TypeAccess.OWNER_NAME).longValue());
+        assertEquals(0, countAccessesByType.apply(TypeAccess.OWNER_ADDRESS).longValue());
+        assertEquals(aisConsent.getOwnerNameType(), AdditionalAccountInformationType.NONE);
+        assertEquals(aisConsent.getOwnerAddressType(), AdditionalAccountInformationType.NONE);
+        assertTrue(saved);
+    }
+
+    @Test
+    public void updateAccountAccessInConsent_AdditionalAccountInformation_Success() {
+        // Given
+        AccountReference accountReference = getAccountReference("DE67597874259856475273", Currency.getInstance("EUR"));
+        AisAccountAccess aisAccountAccess = getAisAccountAccessWithAdditionalAccountInformation(accountReference);
+        Set<AspspAccountAccess> aspspAccountAccesses = getAspspAccountAccesses(aisAccountAccess);
+
+        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(aisAccountAccess, LocalDate.now(), 777, Boolean.TRUE, Boolean.TRUE);
+        ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
+        when(aisConsentMapper.mapAspspAccountAccesses(aisAccountAccess)).thenReturn(aspspAccountAccesses);
+        // When
+        boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, DEFAULT_SERVICE_INSTANCE_ID);
+        // Then
+        verify(aisConsentRepository).save(argument.capture());
+        AisConsent aisConsent = argument.getValue();
+        List<AspspAccountAccess> aspspAccountAccessesChecked = aisConsent.getAspspAccountAccesses();
+
+        Function<TypeAccess, Long> countAccessesByType = typeAccess -> aspspAccountAccessesChecked.stream()
+                                                             .map(AspspAccountAccess::getTypeAccess)
+                                                             .filter(type -> type.equals(typeAccess))
+                                                             .count();
+
+        assertEquals(1L, countAccessesByType.apply(TypeAccess.OWNER_NAME).longValue());
+        assertEquals(1L, countAccessesByType.apply(TypeAccess.OWNER_ADDRESS).longValue());
+        assertEquals(aisConsent.getOwnerNameType(), AdditionalAccountInformationType.DEDICATED_ACCOUNTS);
+        assertEquals(aisConsent.getOwnerAddressType(), AdditionalAccountInformationType.DEDICATED_ACCOUNTS);
+        assertTrue(saved);
+    }
+
+    @Test
+    public void updateAccountAccessInConsent_AdditionalAccountInformation_AllAvailableAccounts_Success() {
+        // Given
+        AccountReference accountReference = getAccountReference("DE67597874259856475273", Currency.getInstance("EUR"));
+        AisAccountAccess aisAccountAccess = getAisAccountAccessWithAdditionalAccountInformationAllAvailableAccounts(accountReference);
+        Set<AspspAccountAccess> aspspAccountAccesses = getAspspAccountAccesses(aisAccountAccess);
+
+        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(aisAccountAccess, LocalDate.now(), 777, Boolean.TRUE, Boolean.TRUE);
+        ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
+        when(aisConsentMapper.mapAspspAccountAccesses(aisAccountAccess)).thenReturn(aspspAccountAccesses);
+        // When
+        boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, DEFAULT_SERVICE_INSTANCE_ID);
+        // Then
+        verify(aisConsentRepository).save(argument.capture());
+        AisConsent aisConsent = argument.getValue();
+        List<AspspAccountAccess> aspspAccountAccessesChecked = aisConsent.getAspspAccountAccesses();
+
+        Function<TypeAccess, Long> count = typeAccess -> aspspAccountAccessesChecked.stream()
+                                                             .map(AspspAccountAccess::getTypeAccess)
+                                                             .filter(type -> type.equals(typeAccess))
+                                                             .count();
+
+        assertEquals(0, count.apply(TypeAccess.OWNER_NAME).longValue());
+        assertEquals(0, count.apply(TypeAccess.OWNER_ADDRESS).longValue());
+        assertEquals(aisConsent.getOwnerNameType(), AdditionalAccountInformationType.ALL_AVAILABLE_ACCOUNTS);
+        assertEquals(aisConsent.getOwnerAddressType(), AdditionalAccountInformationType.ALL_AVAILABLE_ACCOUNTS);
+        assertTrue(saved);
+    }
+
+    @Test
     public void getPsuDataAuthorisations_Success() {
         // Given
         AisConsent consent = buildAisConsentWithFinalisedAuthorisation();
@@ -584,6 +674,17 @@ public class CmsPsuAisServiceTest {
         aspspAccountAccesses.add(mapToAccountInfo(aisAccountAccess.getAccounts().get(0), TypeAccess.ACCOUNT));
         aspspAccountAccesses.add(mapToAccountInfo(aisAccountAccess.getBalances().get(0), TypeAccess.BALANCE));
         aspspAccountAccesses.add(mapToAccountInfo(aisAccountAccess.getTransactions().get(0), TypeAccess.TRANSACTION));
+        AdditionalInformationAccess info = aisAccountAccess.getAccountAdditionalInformationAccess();
+        if (info != null) {
+            List<AccountReference> ownerName = info.getOwnerName();
+            if (!ownerName.isEmpty()) {
+                aspspAccountAccesses.add(mapToAccountInfo(ownerName.get(0), TypeAccess.OWNER_NAME));
+            }
+            List<AccountReference> ownerAddress = info.getOwnerAddress();
+            if (!ownerAddress.isEmpty()) {
+                aspspAccountAccesses.add(mapToAccountInfo(ownerAddress.get(0), TypeAccess.OWNER_ADDRESS));
+            }
+        }
         return aspspAccountAccesses;
     }
 
@@ -683,7 +784,29 @@ public class CmsPsuAisServiceTest {
             Collections.singletonList(accountReference),
             null,
             null,
-            null);
+            null, null);
+    }
+
+    private AisAccountAccess getAisAccountAccessWithAdditionalAccountInformation(AccountReference accountReference) {
+        return new AisAccountAccess(
+            Collections.singletonList(accountReference),
+            Collections.singletonList(accountReference),
+            Collections.singletonList(accountReference),
+            null,
+            null,
+            null,
+            new AdditionalInformationAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference)));
+    }
+
+    private AisAccountAccess getAisAccountAccessWithAdditionalAccountInformationAllAvailableAccounts(AccountReference accountReference) {
+        return new AisAccountAccess(
+            Collections.singletonList(accountReference),
+            Collections.singletonList(accountReference),
+            Collections.singletonList(accountReference),
+            null,
+            null,
+            null,
+            new AdditionalInformationAccess(Collections.emptyList(), Collections.emptyList()));
     }
 
     private AccountReference getAccountReference(String iban, Currency currency) {

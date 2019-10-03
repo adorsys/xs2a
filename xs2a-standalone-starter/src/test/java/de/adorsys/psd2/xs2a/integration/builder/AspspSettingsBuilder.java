@@ -69,6 +69,7 @@ public class AspspSettingsBuilder {
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
     private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("application/json", "application/xml");
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
+    private static final boolean ACCOUNT_OWNER_INFORMATION_SUPPORTED = true;
 
     public static AspspSettings buildAspspSettings() {
         return buildCustomAspspSettings(null, null, null, null);
@@ -100,7 +101,8 @@ public class AspspSettingsBuilder {
                                                                  AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED,
                                                                  ACCOUNT_ACCESS_FREQUENCY_PER_DAY,
                                                                  NOT_CONFIRMED_CONSENT_EXPIRATION_TIME_MS,
-                                                                 MAX_CONSENT_VALIDITY_DAYS);
+                                                                 MAX_CONSENT_VALIDITY_DAYS,
+                                                                 ACCOUNT_OWNER_INFORMATION_SUPPORTED);
         AisRedirectLinkSetting aisRedirectLinkToOnlineBanking = new AisRedirectLinkSetting(AIS_REDIRECT_LINK);
         AisTransactionSetting transactionParameters = new AisTransactionSetting(AVAILABLE_BOOKING_STATUSES,
                                                                                 TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,

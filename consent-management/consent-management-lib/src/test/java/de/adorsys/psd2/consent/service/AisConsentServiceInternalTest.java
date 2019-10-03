@@ -638,7 +638,7 @@ public class AisConsentServiceInternalTest {
 
     @NotNull
     private AspspSettings getAspspSettings(int maxConsentValidityDays) {
-        return new AspspSettings(new AisAspspProfileSetting(new ConsentTypeSetting(false, false, false, 0, 0, maxConsentValidityDays), null, null, null, null), null, null, null);
+        return new AspspSettings(new AisAspspProfileSetting(new ConsentTypeSetting(false, false, false, 0, 0, maxConsentValidityDays, false), null, null, null, null), null, null, null);
     }
 
     private AisConsent buildConsent(String externalId) {

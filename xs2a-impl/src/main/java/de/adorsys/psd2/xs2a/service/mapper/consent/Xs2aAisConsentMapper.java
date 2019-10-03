@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.*;
@@ -136,13 +137,29 @@ public class Xs2aAisConsentMapper {
                                                        .map(accessType -> AccountAccessType.valueOf(accessType.name()))
                                                        .orElse(null));
 
+        accessInfo.setAccountAdditionalInformationAccess(Optional.ofNullable(access.getAdditionalInformationAccess())
+                                                             .map(this::mapToAccountAdditionalInformationAccess)
+                                                             .orElse(null));
+
         return accessInfo;
+    }
+
+    private AccountAdditionalInformationAccess mapToAccountAdditionalInformationAccess(AdditionalInformationAccess info) {
+        return new AccountAdditionalInformationAccess(
+            mapToListAccountInfoOrDefault(info.getOwnerName(), null),
+            mapToListAccountInfoOrDefault(info.getOwnerAddress(), null));
     }
 
     private List<AccountInfo> mapToListAccountInfo(List<AccountReference> refs) {
         return emptyIfNull(refs).stream()
                    .map(this::mapToAccountInfo)
                    .collect(Collectors.toList());
+    }
+
+    private List<AccountInfo> mapToListAccountInfoOrDefault(List<AccountReference> refs, List<AccountInfo> defaultValue) {
+        return Optional.ofNullable(refs)
+                   .map(this::mapToListAccountInfo)
+                   .orElse(defaultValue);
     }
 
     private AccountInfo mapToAccountInfo(AccountReference ref) {
@@ -230,7 +247,14 @@ public class Xs2aAisConsentMapper {
             ais.getTransactions(),
             getAccessType(ais.getAvailableAccounts()),
             getAccessType(ais.getAllPsd2()),
-            getAccessType(ais.getAvailableAccountsWithBalance()));
+            getAccessType(ais.getAvailableAccountsWithBalance()),
+            mapToAdditionalInformationAccess(ais.getAccountAdditionalInformationAccess()));
+    }
+
+    private AdditionalInformationAccess mapToAdditionalInformationAccess(AdditionalInformationAccess accountAdditionalInformationAccess) {
+        return  Optional.ofNullable(accountAdditionalInformationAccess)
+                       .map(info -> new AdditionalInformationAccess(info.getOwnerName(), info.getOwnerAddress()))
+                       .orElse(null);
     }
 
     private AccountAccessType getAccessType(String type) {

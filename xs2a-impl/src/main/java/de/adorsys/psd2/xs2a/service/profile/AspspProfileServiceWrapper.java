@@ -311,6 +311,15 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().getAis().getTransactionParameters().getSupportedTransactionApplicationTypes();
     }
 
+    /**
+     * Reads if 'accountOwnerInformationSupported' parameter is supported from ASPSP profile service
+     *
+     * @return true if ASPSP supports 'entryReferenceFromSupported' parameter in transaction report
+     */
+    public boolean isAccountOwnerInformationSupported() {
+        return readAspspSettings().getAis().getConsentTypes().isAccountOwnerInformationSupported();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }

@@ -74,7 +74,8 @@ public class AccountReferenceInConsentUpdaterTest {
 
         Xs2aAccountAccess xs2aAccountAccess = buildXs2aAccountAccess(Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)),
                                                                      Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)),
-                                                                     Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)));
+                                                                     Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)),
+                                                                     null);
         Xs2aAccountDetails xs2aAccountDetails = buildXs2aAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, IBAN_1);
 
         // When
@@ -116,7 +117,8 @@ public class AccountReferenceInConsentUpdaterTest {
         Xs2aAccountAccess xs2aAccountAccess = buildXs2aAccountAccess(Arrays.asList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1),
                                                                                    buildAccountReference(ASPSP_ACCOUNT_ID_2, IBAN_2)),
                                                                      Collections.emptyList(),
-                                                                     Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)));
+                                                                     Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)),
+                                                                     null);
         Xs2aAccountDetails xs2aAccountDetails = buildXs2aAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, IBAN_1);
         Xs2aAccountDetails xs2aAccountDetails2 = buildXs2aAccountDetails(ASPSP_ACCOUNT_ID_2, RESOURCE_ID_2, IBAN_2);
 
@@ -158,7 +160,8 @@ public class AccountReferenceInConsentUpdaterTest {
         // Given
         Xs2aAccountAccess xs2aAccountAccess = buildXs2aAccountAccess(Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)),
                                                                      Collections.emptyList(),
-                                                                     Collections.emptyList());
+                                                                     Collections.emptyList(),
+                                                                     AccountAccessType.ALL_ACCOUNTS);
         Xs2aAccountDetails xs2aAccountDetails = buildXs2aAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, IBAN_1);
 
         // When
@@ -186,15 +189,16 @@ public class AccountReferenceInConsentUpdaterTest {
 
     private Xs2aAccountAccess buildXs2aAccountAccess(List<AccountReference> accounts,
                                                      List<AccountReference> balances,
-                                                     List<AccountReference> transactions) {
-        return new Xs2aAccountAccess(accounts, balances, transactions, AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS);
+                                                     List<AccountReference> transactions,
+                                                     AccountAccessType type) {
+        return new Xs2aAccountAccess(accounts, balances, transactions, type, type, type, null);
     }
 
     private Xs2aAccountDetails buildXs2aAccountDetails(String aspspAccountId, String resourceId, String iban) {
         return new Xs2aAccountDetails(aspspAccountId, resourceId, iban, null, null, null, null,
                                       CURRENCY, null, null, null,
                                       null, null, null, null,
-                                      null, Collections.emptyList());
+                                      null, Collections.emptyList(), null, null);
     }
 
     private AccountReference buildAccountReference(String aspspAccountId, String iban) {

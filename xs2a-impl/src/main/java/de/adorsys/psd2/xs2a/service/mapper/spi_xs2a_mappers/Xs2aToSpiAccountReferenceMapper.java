@@ -41,6 +41,14 @@ public class Xs2aToSpiAccountReferenceMapper {
                    .collect(Collectors.toList());
     }
 
+    public List<SpiAccountReference> mapToSpiAccountReferencesOrDefault(List<AccountReference> references, List<SpiAccountReference> defaultValue) {
+        if (references == null) {
+            return defaultValue;
+        }
+
+        return mapToSpiAccountReferences(references);
+    }
+
     public SpiAccountReference mapToSpiAccountReference(AccountReference account) {
         return new SpiAccountReference(
             account.getResourceId(),

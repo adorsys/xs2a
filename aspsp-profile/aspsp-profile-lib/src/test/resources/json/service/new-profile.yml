@@ -3,6 +3,7 @@ setting:
   ais:
     consentTypes:
       accountAccessFrequencyPerDay: 5
+      accountOwnerInformationSupported: false
       availableAccountsConsentSupported: true
       bankOfferedConsentSupported: true
       globalConsentSupported: true
