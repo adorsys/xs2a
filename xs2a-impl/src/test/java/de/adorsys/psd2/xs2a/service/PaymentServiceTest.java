@@ -558,7 +558,6 @@ public class PaymentServiceTest {
         tppInfo.setOrganisationUnit("organisationUnit");
         tppInfo.setCity("city");
         tppInfo.setState("state");
-        tppInfo.setTppRedirectUri(new TppRedirectUri("redirectUri", "nokRedirectUri"));
         return tppInfo;
     }
 

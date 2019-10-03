@@ -10,9 +10,5 @@
   "organisation": "Organisation",
   "organisationUnit": "Organisation unit",
   "city": "Nuremberg",
-  "state": "Bayern",
-  "redirectUri": "TPP-Redirect-URI",
-  "nokRedirectUri": "TPP-Nok-Redirect-URI",
-  "cancelRedirectUri": "TPP-Redirect-URI-Cancel",
-  "cancelNokRedirectUri": "TPP-Nok-Redirect-URI-Cancel"
+  "state": "Bayern"
 }

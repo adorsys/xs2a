@@ -56,23 +56,17 @@ public class TppInfoMapperTest {
     @Test
     public void mapToTppInfoEntity_withNullTppRedirectUri_shouldNotMapTppRedirectUris() {
         TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
-        tppInfo.setTppRedirectUri(null);
         tppInfo.setCancelTppRedirectUri(null);
 
         TppInfoEntity actualTppInfoEntity = mapper.mapToTppInfoEntity(tppInfo);
 
         TppInfoEntity expectedTppInfoEntity = jsonReader.getObjectFromFile("json/service/mapper/tpp-info-entity.json", TppInfoEntity.class);
-        expectedTppInfoEntity.setRedirectUri(null);
-        expectedTppInfoEntity.setNokRedirectUri(null);
-        expectedTppInfoEntity.setCancelRedirectUri(null);
-        expectedTppInfoEntity.setCancelNokRedirectUri(null);
         assertEquals(expectedTppInfoEntity, actualTppInfoEntity);
     }
 
     @Test
     public void mapToTppInfoEntity_withNullTppRoles_shouldMapRolesToEmptyList() {
         TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
-        tppInfo.setTppRedirectUri(null);
         tppInfo.setCancelTppRedirectUri(null);
 
         TppInfoEntity actualTppInfoEntity = mapper.mapToTppInfoEntity(new TppInfo());
@@ -95,15 +89,10 @@ public class TppInfoMapperTest {
     @Test
     public void mapToTppInfo_withoutLinks_shouldNotMapRedirectUri() {
         TppInfoEntity tppInfoEntity = jsonReader.getObjectFromFile("json/service/mapper/tpp-info-entity.json", TppInfoEntity.class);
-        tppInfoEntity.setRedirectUri(null);
-        tppInfoEntity.setNokRedirectUri(null);
-        tppInfoEntity.setCancelRedirectUri(null);
-        tppInfoEntity.setCancelNokRedirectUri(null);
 
         TppInfo actualTppInfo = mapper.mapToTppInfo(tppInfoEntity);
 
         TppInfo expectedTppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
-        expectedTppInfo.setTppRedirectUri(null);
         expectedTppInfo.setCancelTppRedirectUri(null);
         assertEquals(expectedTppInfo, actualTppInfo);
     }
