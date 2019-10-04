@@ -9,6 +9,7 @@
 * Remove TppRedirectUri from TppInfo
 * Remove redundant request to retrieve the consent from the database on consent creation
 * Support country specific extensions for payments in the ASPSP profile
+* Support Additional Account Information in AIS
 
 == Add integration test for embedded mode for XS2A
 
@@ -43,3 +44,10 @@ From now on, ASPSP is able to configure payment for different countries `country
 The configuration parameter takes country as ISO 3166-1 alpha-2 code (DE, AT, UA, etc). Germany (DE) is supported by default and Austria (AT) is available to choose from.
 To extend existing configuration register custom implementation in `CountryPaymentValidatorResolver` for new country based on default one `DefaultPaymentValidationConfigImpl`.
 Previous validation payment configuration in `application.properties` file has been removed.
+
+== Support Additional Account Information in AIS
+
+From now on, Additional Account Information is supported in AIS. To activate its support set property `accountOwnerInformationSupported` in APSPS profile to "TRUE".
+After that, if TPP asks for additional account information during consent creation process it will be present in `SpiAdditionalInformationAccess` field in `SpiAccountConsent` object.
+Based on this information, when TPP makes request for retrieving information about PSU account (`GET /v1/accounts` or `GET /v1/accounts/{account-id}`),
+ASPSP can provide additional information in `ownerName` and `ownerAddress` fields in `SpiAccountDetails` object.
