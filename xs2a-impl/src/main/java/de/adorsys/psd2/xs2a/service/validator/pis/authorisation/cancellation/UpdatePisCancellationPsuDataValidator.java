@@ -19,11 +19,13 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.PisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationStatusValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
@@ -35,6 +37,7 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_403;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_BLOCKED;
+import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType.PIS_CANCELLATION;
 
 /**
  * Validator to be used for validating create PIS cancellation authorisation request according to some business rules
@@ -48,6 +51,7 @@ public class UpdatePisCancellationPsuDataValidator extends AbstractPisTppValidat
     private final PisAuthorisationValidator pisAuthorisationValidator;
     private final PisAuthorisationStatusValidator pisAuthorisationStatusValidator;
     private final PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator;
+    private final AuthorisationStageCheckValidator authorisationStageCheckValidator;
 
     /**
      * Validates update PSU Data in payment authorisation request by checking whether:
@@ -60,7 +64,8 @@ public class UpdatePisCancellationPsuDataValidator extends AbstractPisTppValidat
      */
     @Override
     protected ValidationResult executeBusinessValidation(UpdatePisCancellationPsuDataPO paymentObject) {
-        String authorisationId = paymentObject.getAuthorisationId();
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = paymentObject.getUpdateRequest();
+        String authorisationId = request.getAuthorisationId();
         if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, PaymentAuthorisationType.CANCELLED)) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS cancellation authorisation PSU Data has failed: endpoint is not accessible for authorisation",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
@@ -84,7 +89,7 @@ public class UpdatePisCancellationPsuDataValidator extends AbstractPisTppValidat
         Authorisation authorisation = authorisationOptional.get();
 
         ValidationResult validationResult = pisPsuDataUpdateAuthorisationCheckerValidator
-                                                .validate(paymentObject.getPsuIdData(), authorisation.getPsuData());
+                                                .validate(request.getPsuData(), authorisation.getPsuData());
 
         if (validationResult.isNotValid()) {
             return validationResult;
@@ -93,6 +98,11 @@ public class UpdatePisCancellationPsuDataValidator extends AbstractPisTppValidat
         ValidationResult authorisationStatusValidationResult = pisAuthorisationStatusValidator.validate(authorisation.getScaStatus());
         if (authorisationStatusValidationResult.isNotValid()) {
             return authorisationStatusValidationResult;
+        }
+
+        ValidationResult authorisationStageCheckValidatorResult = authorisationStageCheckValidator.validate(request, authorisation.getScaStatus(), PIS_CANCELLATION);
+        if (authorisationStageCheckValidatorResult.isNotValid()) {
+            return authorisationStageCheckValidatorResult;
         }
 
         return ValidationResult.valid();

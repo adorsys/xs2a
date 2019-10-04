@@ -16,12 +16,15 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.AisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -39,6 +42,7 @@ public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<U
     private final AisAuthorisationValidator aisAuthorisationValidator;
     private final AisAuthorisationStatusValidator aisAuthorisationStatusValidator;
     private final AisPsuDataUpdateAuthorisationCheckerValidator aisPsuDataUpdateAuthorisationCheckerValidator;
+    private final AuthorisationStageCheckValidator authorisationStageCheckValidator;
 
     /**
      * Validates update consent psu data request
@@ -50,7 +54,8 @@ public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<U
     @Override
     protected ValidationResult executeBusinessValidation(UpdateConsentPsuDataRequestObject requestObject) {
         AccountConsent consent = requestObject.getAccountConsent();
-        String authorisationId = requestObject.getAuthorisationId();
+        UpdateConsentPsuDataReq updatePsuData = requestObject.getUpdateRequest();
+        String authorisationId = updatePsuData.getAuthorizationId();
 
         ValidationResult authorisationValidationResult = aisAuthorisationValidator.validate(authorisationId, consent);
         if (authorisationValidationResult.isNotValid()) {
@@ -65,7 +70,7 @@ public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<U
 
         AccountConsentAuthorization authorisation = authorisationOptional.get();
 
-        ValidationResult validationResult = aisPsuDataUpdateAuthorisationCheckerValidator.validate(requestObject.getPsuIdData(), authorisation.getPsuIdData());
+        ValidationResult validationResult = aisPsuDataUpdateAuthorisationCheckerValidator.validate(updatePsuData.getPsuData(), authorisation.getPsuIdData());
 
         if (validationResult.isNotValid()) {
             return validationResult;
@@ -74,6 +79,11 @@ public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<U
         ValidationResult authorisationStatusValidationResult = aisAuthorisationStatusValidator.validate(authorisation.getScaStatus());
         if (authorisationStatusValidationResult.isNotValid()) {
             return authorisationStatusValidationResult;
+        }
+
+        ValidationResult authorisationStageCheckValidatorResult = authorisationStageCheckValidator.validate(updatePsuData, authorisation.getScaStatus(), AuthorisationServiceType.AIS);
+        if (authorisationStageCheckValidatorResult.isNotValid()) {
+            return authorisationStageCheckValidatorResult;
         }
 
         return ValidationResult.valid();

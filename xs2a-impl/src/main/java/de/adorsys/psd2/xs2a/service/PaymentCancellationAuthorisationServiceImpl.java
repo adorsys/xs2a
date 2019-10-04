@@ -116,7 +116,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                        .build();
         }
 
-        ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(pisCommonPaymentResponse.get(), request.getAuthorisationId(), request.getPsuData()));
+        ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(pisCommonPaymentResponse.get(), request));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Update PIS cancellation authorisation - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, request.getAuthorisationId(), validationResult.getMessageError());
@@ -198,7 +198,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                        .build();
         }
 
-        ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(pisCommonPaymentResponse.get(),authorisationId));
+        ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(pisCommonPaymentResponse.get(), authorisationId));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get SCA status PIS cancellation authorisation - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
