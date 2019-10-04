@@ -135,7 +135,7 @@ public class ConsentAspectTest {
                                                                    .build();
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
-        verify(aspspProfileService, times(1)).getAspspSettings();
+        verify(aspspProfileService, times(2)).getAspspSettings();
 
         assertFalse(actualResponse.hasError());
         assertEquals(responseObject, actualResponse);
