@@ -82,7 +82,7 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
                 body.setLinks(buildLinksForUpdateConsentResponse(body));
             } else if (result.getBody() instanceof CreateConsentAuthorizationResponse) {
                 CreateConsentAuthorizationResponse body = (CreateConsentAuthorizationResponse) result.getBody();
-                body.setLinks(new CreateAisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder, redirectIdService));
+                body.setLinks(new CreateAisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder, redirectIdService, getScaRedirectFlow()));
             }
         }
         return result;
