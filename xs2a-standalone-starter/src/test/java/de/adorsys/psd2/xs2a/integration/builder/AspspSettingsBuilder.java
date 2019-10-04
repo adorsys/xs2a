@@ -70,6 +70,7 @@ public class AspspSettingsBuilder {
     private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("application/json", "application/xml");
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
     private static final boolean ACCOUNT_OWNER_INFORMATION_SUPPORTED = true;
+    private static final String COUNTRY_VALIDATION_SUPPORTED = "DE";
 
     public static AspspSettings buildAspspSettings() {
         return buildCustomAspspSettings(null, null, null, null);
@@ -118,7 +119,8 @@ public class AspspSettingsBuilder {
                                                                 MAX_TRANSACTION_VALIDITY_DAYS,
                                                                 NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS,
                                                                 PAYMENT_CANCELLATION_AUTHORISATION_MANDATED,
-                                                                pisRedirectLinkToOnlineBanking);
+                                                                pisRedirectLinkToOnlineBanking,
+                                                                COUNTRY_VALIDATION_SUPPORTED);
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED);
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(scaRedirectFlow == null ? SCA_REDIRECT_FLOW : scaRedirectFlow,
                                                                          startAuthorisationMode == null ? START_AUTHORISATION_MODE : startAuthorisationMode,

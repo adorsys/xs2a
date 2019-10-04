@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
-import de.adorsys.psd2.starter.config.validation.PaymentValidationConfigImpl;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import org.junit.Before;
@@ -40,8 +39,7 @@ import org.springframework.test.context.junit4.SpringRunner;
         ObjectMapperConfig.class,
         WebConfig.class,
         Xs2aEndpointPathConstant.class,
-        Xs2aInterfaceConfig.class,
-        PaymentValidationConfigImpl.class
+        Xs2aInterfaceConfig.class
     })
 public class PaymentCancellationUpdateAuthorisationIT extends PaymentUpdateAuthorisationBase {
     @Before

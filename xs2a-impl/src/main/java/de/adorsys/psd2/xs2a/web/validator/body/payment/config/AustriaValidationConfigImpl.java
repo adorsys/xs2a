@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.validator.body.payment.type;
+package de.adorsys.psd2.xs2a.web.validator.body.payment.config;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.web.validator.body.payment.config.PaymentValidationConfig;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-public interface PaymentTypeValidator {
-
-    PaymentType getPaymentType();
-
-    void validate(Object body, MessageError messageError, PaymentValidationConfig validationConfig);
+@Data
+@EqualsAndHashCode
+public class AustriaValidationConfigImpl extends DefaultPaymentValidationConfigImpl {
+    protected ValidationObject creditorId = new ValidationObject(Occurrence.OPTIONAL, 35);
 }

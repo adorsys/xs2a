@@ -48,6 +48,6 @@
     "maxLength": 70
   },
   "creditorId": {
-    "use": "SKIP"
+    "use": "NONE"
   }
 }

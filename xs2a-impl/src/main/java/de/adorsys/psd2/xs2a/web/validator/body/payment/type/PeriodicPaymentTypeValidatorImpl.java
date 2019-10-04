@@ -39,8 +39,8 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
 
     @Autowired
     public PeriodicPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
-                                            PaymentMapper paymentMapper, AmountValidator amountValidator, PaymentValidationConfig validationConfig) {
-        super(errorBuildingService, objectMapper, paymentMapper, amountValidator, validationConfig);
+                                            PaymentMapper paymentMapper, AmountValidator amountValidator) {
+        super(errorBuildingService, objectMapper, paymentMapper, amountValidator);
     }
 
     @Override
@@ -49,9 +49,9 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
     }
 
     @Override
-    public void validate(Object body, MessageError messageError) {
+    public void validate(Object body, MessageError messageError, PaymentValidationConfig validationConfig) {
         try {
-            doPeriodicValidation(paymentMapper.getPeriodicPayment(body), messageError);
+            doPeriodicValidation(paymentMapper.getPeriodicPayment(body), messageError, validationConfig);
         } catch (IllegalArgumentException e) {
             if (e.getMessage().startsWith("Unrecognized field")) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EXTRA_FIELD, extractErrorField(e.getMessage())));
@@ -61,8 +61,8 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
         }
     }
 
-    void doPeriodicValidation(PeriodicPayment periodicPayment, MessageError messageError) {
-        super.doSingleValidation(periodicPayment, messageError);
+    void doPeriodicValidation(PeriodicPayment periodicPayment, MessageError messageError, PaymentValidationConfig validationConfig) {
+        super.doSingleValidation(periodicPayment, messageError, validationConfig);
 
         if (Objects.isNull(periodicPayment.getStartDate())) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "startDate"));

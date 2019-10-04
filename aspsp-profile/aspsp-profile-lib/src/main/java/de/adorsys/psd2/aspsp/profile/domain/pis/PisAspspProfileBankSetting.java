@@ -51,7 +51,12 @@ public class PisAspspProfileBankSetting {
 
 
     /**
-     * 	A group of settings to define URL links and their lifetime for redirect approach
+     * A group of settings to define URL links and their lifetime for redirect approach
      */
     private PisRedirectLinkBankSetting redirectLinkToOnlineBanking;
+
+    /**
+     * Indicates for which country the payment will be validated
+     */
+    private String countryValidationSupported;
 }

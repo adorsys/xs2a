@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -59,7 +60,7 @@ public class AbstractBodyValidatorImpl implements BodyValidator {
     }
 
     protected void checkFieldForMaxLength(String fieldToCheck, String fieldName, ValidationObject validationObject, MessageError messageError) {
-        if (validationObject.isNone() && StringUtils.isNotBlank(fieldToCheck)) {
+        if (validationObject.isNone() && Objects.nonNull(fieldToCheck)) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EXTRA_FIELD, fieldName));
         } else if (validationObject.isRequired()) {
             if (StringUtils.isBlank(fieldToCheck)) {

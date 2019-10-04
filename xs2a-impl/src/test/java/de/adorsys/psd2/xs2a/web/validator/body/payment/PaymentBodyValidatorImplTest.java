@@ -21,12 +21,16 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.CurrencyValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.payment.config.CountryPaymentValidatorResolver;
+import de.adorsys.psd2.xs2a.web.validator.body.payment.config.DefaultPaymentValidationConfigImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.payment.config.PaymentValidationConfig;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidatorContext;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
@@ -69,7 +73,7 @@ public class PaymentBodyValidatorImplTest {
     private static final String CORRECT_FORMAT_TIME = "2019-01-01T12:00:00+01:00";
     private static final String WRONG_FORMAT_DATE = "07/01/2019";
     private static final String WRONG_FORMAT_TIME = "07/01/2019 00:00:00";
-    private static final String WRONG_FREQUENCY_STRING ="wrong frequency";
+    private static final String WRONG_FREQUENCY_STRING = "wrong frequency";
     private static final String WRONG_BATCH_BOOKING_PREFERRED_STRING = "not boolean string";
 
     private static final MessageError DESERIALIZATION_ERROR =
@@ -105,20 +109,25 @@ public class PaymentBodyValidatorImplTest {
     private PaymentTypeValidator paymentTypeValidator;
     @Mock
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
     private MockHttpServletRequest mockRequest;
     @Mock
     private FieldExtractor fieldExtractor;
+    private PaymentValidationConfig validationConfig;
 
     @Before
     public void setUp() {
         mockRequest = new MockHttpServletRequest();
         messageError = new MessageError(ErrorType.PIS_400);
+        validationConfig = new DefaultPaymentValidationConfigImpl();
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.PIS_400);
         CurrencyValidator currencyValidator = new CurrencyValidator(errorService);
-        DateFieldValidator dateFieldValidator =  new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor);
+        DateFieldValidator dateFieldValidator = new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor);
         validator = new PaymentBodyValidatorImpl(errorService, objectMapper, paymentTypeValidatorContext,
                                                  standardPaymentProductsResolver, tppRedirectUriBodyValidator,
-                                                 dateFieldValidator, fieldExtractor, currencyValidator);
+                                                 dateFieldValidator, fieldExtractor, currencyValidator,
+                                                 new CountryPaymentValidatorResolver(aspspProfileServiceWrapper));
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(PAIN_PAYMENT_PRODUCT)))
             .thenReturn(true);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(JSON_PAYMENT_PRODUCT)))
@@ -145,7 +154,7 @@ public class PaymentBodyValidatorImplTest {
 
         // Then
         verify(tppRedirectUriBodyValidator, times(1)).validate(mockRequest, messageError);
-        verify(paymentTypeValidator).validate(paymentBody, messageError);
+        verify(paymentTypeValidator).validate(paymentBody, messageError, validationConfig);
     }
 
     @Test

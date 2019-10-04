@@ -90,6 +90,7 @@ public class AspspProfileUpdateServiceImplTest {
     private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("application/json", "application/xml");
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
     private static final boolean ACCOUNT_OWNER_INFORMATION_SUPPORTED = true;
+    private static final String COUNTRY_VALIDATION_SUPPORTED = "DE";
 
     @InjectMocks
     private AspspProfileUpdateServiceImpl aspspProfileUpdateService;
@@ -141,6 +142,7 @@ public class AspspProfileUpdateServiceImplTest {
         Assertions.assertThat(setting.getPis().getRedirectLinkToOnlineBanking().getPisPaymentCancellationRedirectUrlToAspsp()).isEqualTo(PIS_CANCELLATION_REDIRECT_LINK);
         Assertions.assertThat(setting.getPis().getRedirectLinkToOnlineBanking().getPaymentCancellationRedirectUrlExpirationTimeMs()).isEqualTo(PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS);
         Assertions.assertThat(setting.getPis().getRedirectLinkToOnlineBanking().getPisRedirectUrlToAspsp()).isEqualTo(PIS_REDIRECT_LINK);
+        Assertions.assertThat(setting.getPis().getCountryValidationSupported()).isEqualTo(COUNTRY_VALIDATION_SUPPORTED);
         Assertions.assertThat(setting.getPiis().isPiisConsentSupported()).isEqualTo(PIIS_CONSENT_SUPPORTED);
         Assertions.assertThat(setting.getCommon().isPsuInInitialRequestMandated()).isEqualTo(PSU_IN_INITIAL_REQUEST_MANDATED);
         Assertions.assertThat(setting.getCommon().isForceXs2aBaseLinksUrl()).isEqualTo(FORCE_XS2A_BASE_LINKS_URL);
@@ -179,7 +181,8 @@ public class AspspProfileUpdateServiceImplTest {
                                                                 MAX_TRANSACTION_VALIDITY_DAYS,
                                                                 NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS,
                                                                 PAYMENT_CANCELLATION_AUTHORISATION_MANDATED,
-                                                                pisRedirectLinkToOnlineBanking);
+                                                                pisRedirectLinkToOnlineBanking,
+                                                                COUNTRY_VALIDATION_SUPPORTED);
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED);
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(SCA_REDIRECT_FLOW,
                                                                          START_AUTHORISATION_MODE,
@@ -209,7 +212,7 @@ public class AspspProfileUpdateServiceImplTest {
                                                                         deltaReportSettings,
                                                                         scaRequirementsForOneTimeConsents);
         PisRedirectLinkBankSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkBankSetting();
-        PisAspspProfileBankSetting pis = new PisAspspProfileBankSetting(null, 0, 0, false, pisRedirectLinkToOnlineBanking);
+        PisAspspProfileBankSetting pis = new PisAspspProfileBankSetting(null, 0, 0, false, pisRedirectLinkToOnlineBanking, COUNTRY_VALIDATION_SUPPORTED);
         PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting();
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting();
         return new BankProfileSetting(ais, pis, piis, common);

@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.CurrencyValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.payment.config.CountryPaymentValidatorResolver;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidatorContext;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
@@ -64,15 +65,16 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final FieldExtractor fieldExtractor;
+    private CountryPaymentValidatorResolver countryPaymentValidatorResolver;
 
     @Autowired
     public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
                                     PaymentTypeValidatorContext paymentTypeValidatorContext,
                                     StandardPaymentProductsResolver standardPaymentProductsResolver,
                                     TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
-                                    DateFieldValidator dateFieldValidator,
-                                    FieldExtractor fieldExtractor,
-                                    CurrencyValidator currencyValidator) {
+                                    DateFieldValidator dateFieldValidator, FieldExtractor fieldExtractor,
+                                    CurrencyValidator currencyValidator,
+                                    CountryPaymentValidatorResolver countryPaymentValidatorResolver) {
         super(errorBuildingService, objectMapper);
         this.paymentTypeValidatorContext = paymentTypeValidatorContext;
         this.standardPaymentProductsResolver = standardPaymentProductsResolver;
@@ -80,6 +82,7 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
         this.fieldExtractor = fieldExtractor;
         this.currencyValidator = currencyValidator;
+        this.countryPaymentValidatorResolver = countryPaymentValidatorResolver;
     }
 
     @Override
@@ -165,7 +168,8 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         if (!validator.isPresent()) {
             throw new IllegalArgumentException("Unsupported payment service");
         }
-        validator.get().validate(body, messageError);
+
+        validator.get().validate(body, messageError, countryPaymentValidatorResolver.getValidationConfig());
     }
 
     private boolean isRawPaymentProduct(Map<String, String> pathParametersMap) {

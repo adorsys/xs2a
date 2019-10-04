@@ -48,15 +48,13 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
 
     PaymentMapper paymentMapper;
     private AmountValidator amountValidator;
-    protected PaymentValidationConfig validationConfig;
 
     @Autowired
     public SinglePaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
-                                          PaymentMapper paymentMapper, AmountValidator amountValidator, PaymentValidationConfig validationConfig) {
+                                          PaymentMapper paymentMapper, AmountValidator amountValidator) {
         super(errorBuildingService, objectMapper);
         this.paymentMapper = paymentMapper;
         this.amountValidator = amountValidator;
-        this.validationConfig = validationConfig;
     }
 
     @Override
@@ -65,9 +63,9 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     }
 
     @Override
-    public void validate(Object body, MessageError messageError) {
+    public void validate(Object body, MessageError messageError, PaymentValidationConfig validationConfig) {
         try {
-            doSingleValidation(paymentMapper.getSinglePayment(body), messageError);
+            doSingleValidation(paymentMapper.getSinglePayment(body), messageError, validationConfig);
         } catch (IllegalArgumentException e) {
             if (e.getMessage().startsWith("Unrecognized field")) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EXTRA_FIELD, extractErrorField(e.getMessage())));
@@ -77,13 +75,13 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         }
     }
 
-    void doSingleValidation(SinglePayment singlePayment, MessageError messageError) {
+    void doSingleValidation(SinglePayment singlePayment, MessageError messageError, PaymentValidationConfig validationConfig) {
         checkFieldForMaxLength(singlePayment.getEndToEndIdentification(), "endToEndIdentification", validationConfig.getEndToEndIdentification(), messageError);
 
         if (Objects.isNull(singlePayment.getDebtorAccount())) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "debtorAccount"));
         } else {
-            validateAccount(singlePayment.getDebtorAccount(), messageError);
+            validateAccount(singlePayment.getDebtorAccount(), messageError, validationConfig);
         }
 
         if (Objects.isNull(singlePayment.getInstructedAmount())) {
@@ -95,13 +93,13 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         if (Objects.isNull(singlePayment.getCreditorAccount())) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "creditorAccount"));
         } else {
-            validateAccount(singlePayment.getCreditorAccount(), messageError);
+            validateAccount(singlePayment.getCreditorAccount(), messageError, validationConfig);
         }
 
         checkFieldForMaxLength(singlePayment.getCreditorName(), "creditorName", validationConfig.getCreditorName(), messageError);
 
         if (Objects.nonNull(singlePayment.getCreditorAddress())) {
-            validateAddress(singlePayment.getCreditorAddress(), messageError);
+            validateAddress(singlePayment.getCreditorAddress(), messageError, validationConfig);
         }
 
         if (isDateInThePast(singlePayment.getRequestedExecutionDate())) {
@@ -111,10 +109,10 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         checkFieldForMaxLength(singlePayment.getCreditorId(), "creditorId", validationConfig.getCreditorId(), messageError);
         checkFieldForMaxLength(singlePayment.getUltimateDebtor(), "ultimateDebtor", validationConfig.getUltimateDebtor(), messageError);
         checkFieldForMaxLength(singlePayment.getUltimateCreditor(), "ultimateCreditor", validationConfig.getUltimateDebtor(), messageError);
-        validateRemittanceInformationStructured(singlePayment.getRemittanceInformationStructured(), messageError);
+        validateRemittanceInformationStructured(singlePayment.getRemittanceInformationStructured(), messageError, validationConfig);
     }
 
-    void validateAddress(Xs2aAddress address, MessageError messageError) {
+    void validateAddress(Xs2aAddress address, MessageError messageError, PaymentValidationConfig validationConfig) {
         checkFieldForMaxLength(address.getStreetName(), "streetName", validationConfig.getStreetName(), messageError);
         checkFieldForMaxLength(address.getBuildingNumber(), "buildingNumber", validationConfig.getBuildingNumber(), messageError);
         checkFieldForMaxLength(address.getTownName(), "townName", validationConfig.getTownName(), messageError);
@@ -138,7 +136,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         }
     }
 
-    void validateAccount(AccountReference accountReference, MessageError messageError) {
+    void validateAccount(AccountReference accountReference, MessageError messageError, PaymentValidationConfig validationConfig) {
         if (StringUtils.isNotBlank(accountReference.getIban()) && !isValidIban(accountReference.getIban())) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_FIELD, "IBAN"));
         }
@@ -165,7 +163,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         return string.replaceAll("[^a-zA-Z0-9]", "");
     }
 
-    private void validateRemittanceInformationStructured(Remittance remittance, MessageError messageError) {
+    private void validateRemittanceInformationStructured(Remittance remittance, MessageError messageError, PaymentValidationConfig validationConfig) {
         if (remittance != null) {
             checkFieldForMaxLength(remittance.getReference(), "reference", validationConfig.getReference(), messageError);
             checkFieldForMaxLength(remittance.getReferenceType(), "referenceType", validationConfig.getReferenceType(), messageError);
