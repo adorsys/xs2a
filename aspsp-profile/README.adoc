@@ -144,7 +144,7 @@ Attribute accepts 3 values (case-insensetive):
 
 This force overrides multilevel SCA, signing baskets etc.|auto |explicit, auto, implicit
 |tppSignatureRequired |This field defines whether TPP Signature is required for the request or not. |FALSE |TRUE, FALSE
-|psuInInitialRequestMandated |This field indicates if PSU-ID is mandatory in Initial request for Payment request or Establishing Consent. |FALSE |TRUE, FALSE
+|psuInInitialRequestMandated |This field indicates if PSU-ID is mandatory in Initial request for Payment request or Establishing Consent. Should be set FALSE in case of Redirect OAuth SCA approach.|FALSE |TRUE, FALSE
 |redirectUrlExpirationTimeMs |This field contains the limit of an expiration time of redirect url for payments and consents set in milliseconds.
 
 The value for expiration time is counted with formula.
