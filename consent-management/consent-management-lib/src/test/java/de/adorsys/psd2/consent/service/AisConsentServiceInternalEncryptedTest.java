@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -63,7 +60,7 @@ public class AisConsentServiceInternalEncryptedTest {
             .thenReturn(Optional.empty());
 
         when(aisConsentService.createConsent(any()))
-            .thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+            .thenReturn(Optional.of(new CreateAisConsentResponse(DECRYPTED_CONSENT_ID, buildAisAccountConsent())));
         when(aisConsentService.getConsentStatusById(DECRYPTED_CONSENT_ID))
             .thenReturn(Optional.of(CONSENT_STATUS));
         when(aisConsentService.updateConsentStatusById(DECRYPTED_CONSENT_ID, CONSENT_STATUS))
@@ -81,14 +78,17 @@ public class AisConsentServiceInternalEncryptedTest {
     public void createConsent_success() {
         // Given
         CreateAisConsentRequest request = buildCreateAisConsentRequest();
+        CreateAisConsentResponse expected = new CreateAisConsentResponse(ENCRYPTED_CONSENT_ID, buildAisAccountConsent());
 
         // When
-        Optional<String> actual = aisConsentServiceInternalEncrypted.createConsent(request);
+        Optional<CreateAisConsentResponse> actualResponse = aisConsentServiceInternalEncrypted.createConsent(request);
 
         // Then
-        assertTrue(actual.isPresent());
-        assertEquals(ENCRYPTED_CONSENT_ID, actual.get());
-        verify(aisConsentService, times(1)).createConsent(request);
+        assertTrue(actualResponse.isPresent());
+
+        CreateAisConsentResponse actual = actualResponse.get();
+        assertEquals(expected, actual);
+        verify(aisConsentService).createConsent(request);
     }
 
     @Test
@@ -99,11 +99,11 @@ public class AisConsentServiceInternalEncryptedTest {
         CreateAisConsentRequest request = buildCreateAisConsentRequest();
 
         // When
-        Optional<String> actual = aisConsentServiceInternalEncrypted.createConsent(request);
+        Optional<CreateAisConsentResponse> actual = aisConsentServiceInternalEncrypted.createConsent(request);
 
         // Then
         assertFalse(actual.isPresent());
-        verify(aisConsentService, times(1)).createConsent(request);
+        verify(aisConsentService).createConsent(request);
     }
 
     @Test
@@ -114,11 +114,11 @@ public class AisConsentServiceInternalEncryptedTest {
         CreateAisConsentRequest request = buildCreateAisConsentRequest();
 
         // When
-        Optional<String> actual = aisConsentServiceInternalEncrypted.createConsent(request);
+        Optional<CreateAisConsentResponse> actual = aisConsentServiceInternalEncrypted.createConsent(request);
 
         // Then
         assertFalse(actual.isPresent());
-        verify(aisConsentService, times(1)).createConsent(request);
+        verify(aisConsentService).createConsent(request);
     }
 
     @Test

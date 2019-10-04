@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
@@ -191,26 +192,26 @@ public class ConsentServiceTest {
         accountConsent = getAccountConsent();
 
         //ByAccess
+        Xs2aCreateAisConsentResponse xs2aCreateAisConsentResponse = new Xs2aCreateAisConsentResponse(CONSENT_ID, getAccountConsent());
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
-            .thenReturn(CONSENT_ID);
+            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, tppInfo))
-            .thenReturn(CONSENT_ID);
+            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)), PSU_ID_DATA, tppInfo))
-            .thenReturn(CONSENT_ID);
+            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
-            .thenReturn(CONSENT_ID);
+            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), PSU_ID_DATA, tppInfo))
-            .thenReturn(CONSENT_ID);
+            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
-            .thenReturn(CONSENT_ID);
+            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
 
         //GetConsentById
-        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID_FINALISED)).thenReturn(Optional.of(getAccountConsentFinalised(getXs2aAccountAccess(Collections.singletonList(getXs2aReference())))));
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);

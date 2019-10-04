@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -126,36 +127,29 @@ public class ConsentService {
         }
 
         TppInfo tppInfo = tppService.getTppInfo();
-        String consentId = aisConsentService.createConsent(request, psuData, tppInfo);
+        Optional<Xs2aCreateAisConsentResponse> createAisConsentResponseOptional = aisConsentService.createConsent(request, psuData, tppInfo);
 
-        if (StringUtils.isBlank(consentId)) {
+        if (!createAisConsentResponseOptional.isPresent()) {
             return ResponseObject.<CreateConsentResponse>builder()
                        .fail(AIS_400, of(RESOURCE_UNKNOWN_400))
                        .build();
         }
 
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getInitialAccountConsentById(consentId);
-        // TODO we need to refactor this method and class. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
-        if (!accountConsentOptional.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Create account consent  with response failed: Actual consent not found by id",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
-            return ResponseObject.<CreateConsentResponse>builder()
-                       .fail(AIS_400, of(CONSENT_UNKNOWN_400))
-                       .build();
-        }
-
+        Xs2aCreateAisConsentResponse createAisConsentResponse = createAisConsentResponseOptional.get();
         SpiContextData contextData = spiContextDataProvider.provide(psuData, tppInfo);
         InitialSpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider();
-        AccountConsent accountConsent = accountConsentOptional.get();
+        AccountConsent accountConsent = createAisConsentResponse.getAccountConsent();
 
         SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(contextData, aisConsentMapper.mapToSpiAccountConsent(accountConsent), aspspConsentDataProvider);
-        aspspConsentDataProvider.saveWith(consentId);
+
+        String encryptedConsentId = createAisConsentResponse.getConsentId();
+        aspspConsentDataProvider.saveWith(encryptedConsentId);
 
         if (initiateAisConsentSpiResponse.hasError()) {
-            aisConsentService.updateConsentStatus(consentId, ConsentStatus.REJECTED);
+            aisConsentService.updateConsentStatus(encryptedConsentId, ConsentStatus.REJECTED);
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(initiateAisConsentSpiResponse, ServiceType.AIS);
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Create account consent  with response failed. Consent rejected. Couldn't initiate AIS consent at SPI level: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, errorHolder);
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), encryptedConsentId, errorHolder);
             return ResponseObject.<CreateConsentResponse>builder()
                        .fail(new MessageError(errorHolder))
                        .build();
@@ -165,17 +159,17 @@ public class ConsentService {
         boolean multilevelScaRequired = spiResponsePayload.isMultilevelScaRequired()
                                             && !aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent);
 
-        updateMultilevelSca(consentId, multilevelScaRequired);
+        updateMultilevelSca(encryptedConsentId, multilevelScaRequired);
 
         Optional<Xs2aAccountAccess> xs2aAccountAccess = spiToXs2aAccountAccessMapper.mapToAccountAccess(spiResponsePayload.getAccountAccess());
         xs2aAccountAccess.ifPresent(accountAccess ->
-                                        accountReferenceUpdater.rewriteAccountAccess(consentId, accountAccess));
+                                        accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess));
 
-        CreateConsentResponse createConsentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, spiResponsePayload.getPsuMessage(), multilevelScaRequired);
+        CreateConsentResponse createConsentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), encryptedConsentId, null, null, null, spiResponsePayload.getPsuMessage(), multilevelScaRequired);
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(createConsentResponse).build();
 
         if (authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {
-            proceedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuData, consentId);
+            proceedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuData, encryptedConsentId);
         }
 
         return createConsentResponseObject;

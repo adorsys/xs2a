@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -59,17 +60,22 @@ public class Xs2aAisConsentService {
      * @param request Request body storing main consent details
      * @param psuData PsuIdData container of authorisation data about PSU
      * @param tppInfo Information about particular TPP from TPP Certificate
-     * @return String representation of identifier of stored consent
+     * @return create consent response, containing consent and its encrypted ID
      */
-    public String createConsent(CreateConsentReq request, PsuIdData psuData, TppInfo tppInfo) {
+    public Optional<Xs2aCreateAisConsentResponse> createConsent(CreateConsentReq request, PsuIdData psuData, TppInfo tppInfo) {
         int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppInfo, allowedFrequencyPerDay);
-        Optional<String> consent = aisConsentService.createConsent(createAisConsentRequest);
-        return consent.orElseGet(() -> {
+        Optional<CreateAisConsentResponse> response = aisConsentService.createConsent(createAisConsentRequest);
+
+        if (!response.isPresent()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}]. Consent cannot be created, because can't save to cms DB",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
-            return null;
-        });
+            return Optional.empty();
+        }
+
+        CreateAisConsentResponse createAisConsentResponse = response.get();
+        AccountConsent accountConsent = aisConsentMapper.mapToAccountConsent(createAisConsentResponse.getAisAccountConsent());
+        return Optional.of(new Xs2aCreateAisConsentResponse(createAisConsentResponse.getConsentId(), accountConsent));
     }
 
     /**
@@ -80,17 +86,6 @@ public class Xs2aAisConsentService {
      */
     public Optional<AccountConsent> getAccountConsentById(String consentId) {
         return aisConsentService.getAisAccountConsentById(consentId)
-                   .map(aisConsentMapper::mapToAccountConsent);
-    }
-
-    /**
-     * Requests CMS to retrieve AIS consent by its identifier
-     *
-     * @param consentId String representation of identifier of stored consent
-     * @return Response containing AIS Consent
-     */
-    public Optional<AccountConsent> getInitialAccountConsentById(String consentId) {
-        return aisConsentService.getInitialAisAccountConsentById(consentId)
                    .map(aisConsentMapper::mapToAccountConsent);
     }
 

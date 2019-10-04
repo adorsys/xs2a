@@ -71,11 +71,11 @@ public class AisConsentServiceInternal implements AisConsentService {
      * Creates AIS consent.
      *
      * @param request needed parameters for creating AIS consent
-     * @return String consent id
+     * @return create consent response, containing consent and its encrypted ID
      */
     @Override
     @Transactional
-    public Optional<String> createConsent(CreateAisConsentRequest request) {
+    public Optional<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request) {
         if (request.getAllowedFrequencyPerDay() == null) {
             log.info("TPP ID: [{}]. Consent cannot be created, because request contains no allowed frequency per day",
                      request.getTppInfo().getAuthorisationNumber());
@@ -84,10 +84,10 @@ public class AisConsentServiceInternal implements AisConsentService {
         AisConsent consent = createConsentFromRequest(request);
         tppInfoRepository.findByAuthorisationNumber(request.getTppInfo().getAuthorisationNumber()).ifPresent(consent::setTppInfo);
 
-        AisConsent saved = aisConsentRepository.save(consent);
+        AisConsent savedConsent = aisConsentRepository.save(consent);
 
-        if (saved.getId() != null) {
-            return Optional.of(saved.getExternalId());
+        if (savedConsent.getId() != null) {
+            return Optional.of(new CreateAisConsentResponse(savedConsent.getExternalId(), consentMapper.mapToInitialAisAccountConsent(savedConsent)));
         } else {
             log.info("TPP ID: [{}], External Consent ID: [{}]. AIS consent cannot be created, because when saving to DB got null ID",
                      request.getTppInfo().getAuthorisationNumber(), consent.getExternalId());
@@ -147,20 +147,6 @@ public class AisConsentServiceInternal implements AisConsentService {
                    .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(consentMapper::mapToAisAccountConsent);
-    }
-
-    /**
-     * Reads full initial information of consent by ID.
-     *
-     * @param consentId ID of consent
-     * @return AisAccountConsent
-     */
-    @Override
-    @Transactional
-    public Optional<AisAccountConsent> getInitialAisAccountConsentById(String consentId) {
-        return aisConsentRepository.findByExternalId(consentId)
-                   .map(this::checkAndUpdateOnExpiration)
-                   .map(consentMapper::mapToInitialAisAccountConsent);
     }
 
     /**

@@ -17,10 +17,7 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
-import de.adorsys.psd2.consent.api.ais.AisConsentStatusResponse;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -40,6 +37,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -83,6 +82,35 @@ public class AisConsentControllerTest {
         when(aisAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(eq(AUTHORIZATION_ID), eq(CONSENT_ID))).thenReturn(Optional.of(CONSENT_AUTHORIZATION_RESPONSE));
         when(aisAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(eq(AUTHORIZATION_ID), eq(WRONG_CONSENT_ID))).thenReturn(Optional.empty());
         when(aisAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(eq(WRONG_AUTHORIZATION_ID), eq(CONSENT_ID))).thenReturn(Optional.empty());
+    }
+
+    @Test
+    public void createConsent_success() {
+        // Given
+        CreateAisConsentRequest createRequest = new CreateAisConsentRequest();
+        CreateAisConsentResponse serviceResponse = new CreateAisConsentResponse(CONSENT_ID, new AisAccountConsent());
+        when(aisConsentService.createConsent(createRequest)).thenReturn(Optional.of(serviceResponse));
+
+        // When
+        ResponseEntity<CreateAisConsentResponse> actualResponse = aisConsentController.createConsent(createRequest);
+
+        // Then
+        assertEquals(HttpStatus.CREATED, actualResponse.getStatusCode());
+        assertEquals(serviceResponse, actualResponse.getBody());
+    }
+
+    @Test
+    public void createConsent_emptyServiceResponse() {
+        // Given
+        CreateAisConsentRequest createRequest = new CreateAisConsentRequest();
+        when(aisConsentService.createConsent(createRequest)).thenReturn(Optional.empty());
+
+        // When
+        ResponseEntity<CreateAisConsentResponse> actualResponse = aisConsentController.createConsent(createRequest);
+
+        // Then
+        assertEquals(HttpStatus.NO_CONTENT, actualResponse.getStatusCode());
+        assertNull(actualResponse.getBody());
     }
 
     @Test

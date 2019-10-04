@@ -22,10 +22,7 @@ import de.adorsys.psd2.aspsp.profile.domain.ais.ConsentTypeSetting;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
@@ -146,7 +143,7 @@ public class AisConsentServiceInternalTest {
     public void getAisAccountConsentById_checkAndUpdateOnExpirationInvoked() {
         // Given
         AisConsent aisConsent = buildConsent(EXTERNAL_CONSENT_ID, Collections.singletonList(psuDataMocked), LocalDate.now().minusDays(1));
-        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(aisConsent));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(aisConsent)).thenReturn(aisConsent);
         when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(buildSpiAccountConsent());
         when(aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(aisConsent))
@@ -165,7 +162,7 @@ public class AisConsentServiceInternalTest {
     public void getAisAccountConsentById_checkAndUpdateOnExpirationNotInvoked() {
         // Given
         AisConsent aisConsent = buildConsent(EXTERNAL_CONSENT_ID, Collections.singletonList(psuDataMocked), LocalDate.now());
-        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(aisConsent));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(aisConsent)).thenReturn(aisConsent);
         when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(buildSpiAccountConsent());
 
@@ -198,17 +195,21 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void shouldReturnExternalId_WhenCreateConsentIsCalled() {
+    public void createConsent_shouldReturnCreateAisConsentResponse() {
         // Given
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
+        AisAccountConsent aisAccountConsent = buildSpiAccountConsent();
+        when(consentMapper.mapToInitialAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
+
+        CreateAisConsentResponse expected = new CreateAisConsentResponse(EXTERNAL_CONSENT_ID, aisAccountConsent);
 
         // When
-        Optional<String> externalId = aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
+        Optional<CreateAisConsentResponse> actual = aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
 
         // Then
-        assertTrue(externalId.isPresent());
-        assertThat(externalId.get(), is(equalTo(aisConsent.getExternalId())));
+        assertTrue(actual.isPresent());
+        assertEquals(expected, actual.get());
     }
 
     @Test
@@ -580,24 +581,6 @@ public class AisConsentServiceInternalTest {
 
         // Then
         assertTrue(consentStatusById.isPresent());
-        verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(consent);
-    }
-
-    @Test
-    public void getInitialAisAccountConsentById_withValidUsedNonRecurringConsent_shouldExpireConsent() {
-        // Given
-        AisConsent consent = buildUsedNonRecurringConsent();
-
-        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(consent));
-        when(aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent))
-            .thenReturn(true);
-        doNothing().when(aisConsentConfirmationExpirationService).expireConsent(consent);
-
-        // When
-        aisConsentService.getInitialAisAccountConsentById(EXTERNAL_CONSENT_ID);
-
-        // Then
         verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(consent);
     }
 
