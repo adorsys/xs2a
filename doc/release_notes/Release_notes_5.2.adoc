@@ -10,6 +10,7 @@
 * Remove redundant request to retrieve the consent from the database on consent creation
 * Support country specific extensions for payments in the ASPSP profile
 * Support Additional Account Information in AIS
+* Check incoming requests to have required information
 
 == Add integration test for embedded mode for XS2A
 
@@ -51,3 +52,7 @@ From now on, Additional Account Information is supported in AIS. To activate its
 After that, if TPP asks for additional account information during consent creation process it will be present in `SpiAdditionalInformationAccess` field in `SpiAccountConsent` object.
 Based on this information, when TPP makes request for retrieving information about PSU account (`GET /v1/accounts` or `GET /v1/accounts/{account-id}`),
 ASPSP can provide additional information in `ownerName` and `ownerAddress` fields in `SpiAccountDetails` object.
+
+== Check incoming requests to have required information
+From now on, validation for update AIS, PIS and payment cancellation authorisation requests was added. It checks whether
+the provided authorisation data matches current authorisation stage. In negative case, `SERVICE_INVALID_400` is returned.

@@ -104,7 +104,7 @@ public class PaymentAuthorisationServiceTest {
 
         when(createPisAuthorisationValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());
-        when(updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(buildPisCommonPaymentResponse(), AUTHORISATION_ID, PSU_ID_DATA)))
+        when(updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());
         when(getPaymentInitiationAuthorisationsValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());
@@ -194,7 +194,7 @@ public class PaymentAuthorisationServiceTest {
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> actualResponse = paymentAuthorisationService.updatePisCommonPaymentPsuData(request);
 
         // Then
-        verify(updatePisCommonPaymentPsuDataValidator).validate(buildUpdatePisCommonPaymentPsuDataPO(invalidPisCommonPaymentResponse, request.getAuthorisationId(), PSU_ID_DATA));
+        verify(updatePisCommonPaymentPsuDataValidator).validate(buildUpdatePisCommonPaymentPsuDataPO(invalidPisCommonPaymentResponse));
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
@@ -335,7 +335,7 @@ public class PaymentAuthorisationServiceTest {
         return response;
     }
 
-    private UpdatePisCommonPaymentPsuDataPO buildUpdatePisCommonPaymentPsuDataPO(PisCommonPaymentResponse invalidPisCommonPaymentResponse, String authorisationId, PsuIdData psuIdData) {
-        return new UpdatePisCommonPaymentPsuDataPO(invalidPisCommonPaymentResponse, authorisationId, psuIdData);
+    private UpdatePisCommonPaymentPsuDataPO buildUpdatePisCommonPaymentPsuDataPO(PisCommonPaymentResponse invalidPisCommonPaymentResponse) {
+        return new UpdatePisCommonPaymentPsuDataPO(invalidPisCommonPaymentResponse, buildXs2aUpdatePisPsuDataRequest());
     }
 }
