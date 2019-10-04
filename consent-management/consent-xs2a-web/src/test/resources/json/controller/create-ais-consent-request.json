@@ -1,0 +1,13 @@
+{
+  "psuData": {},
+  "tppInfo": {},
+  "allowedFrequencyPerDay": 2,
+  "requestedFrequencyPerDay": 2,
+  "access": {},
+  "validUntil": "2020-10-10",
+  "recurringIndicator": true,
+  "tppRedirectPreferred": true,
+  "combinedServiceIndicator": false,
+  "tppRedirectUri": {
+  }
+}

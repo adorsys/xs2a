@@ -19,7 +19,9 @@ package de.adorsys.psd2.xs2a.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
@@ -59,6 +61,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -201,12 +204,9 @@ public class ConsentCreation_notSuccessfulIT {
 
     private void makePreparations(ScaApproach scaApproach, String requestJsonPath) throws Exception {
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
+        AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, mapper);
         given(aisConsentServiceEncrypted.createConsent(any(CreateAisConsentRequest.class)))
-            .willReturn(Optional.of(ENCRYPT_CONSENT_ID));
-        given(aisConsentServiceEncrypted.getInitialAisAccountConsentById(any(String.class)))
-            .willReturn(Optional.of(AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, mapper)));
-        given(aisConsentServiceEncrypted.getAisAccountConsentById(any(String.class)))
-            .willReturn(Optional.of(AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, mapper)));
+            .willReturn(Optional.of(new CreateAisConsentResponse(ENCRYPT_CONSENT_ID, aisAccountConsent)));
         given(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(any(String.class), any(String.class)))
             .willReturn(Optional.of(AisConsentAuthorizationResponseBuilder.buildAisConsentAuthorizationResponse(scaApproach)));
         given(aspspDataService.readAspspConsentData(any(String.class)))

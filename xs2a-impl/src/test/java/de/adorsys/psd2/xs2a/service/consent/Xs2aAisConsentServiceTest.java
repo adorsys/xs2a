@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -51,6 +52,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -114,13 +116,18 @@ public class Xs2aAisConsentServiceTest {
         when(aisConsentMapper.mapToCreateAisConsentRequest(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))
             .thenReturn(CREATE_AIS_CONSENT_REQUEST);
         when(aisConsentServiceEncrypted.createConsent(CREATE_AIS_CONSENT_REQUEST))
-            .thenReturn(Optional.of(CONSENT_ID));
+            .thenReturn(Optional.of(new CreateAisConsentResponse(CONSENT_ID, AIS_ACCOUNT_CONSENT)));
+        when(aisConsentMapper.mapToAccountConsent(AIS_ACCOUNT_CONSENT))
+            .thenReturn(ACCOUNT_CONSENT);
+
+        Xs2aCreateAisConsentResponse expected = new Xs2aCreateAisConsentResponse(CONSENT_ID, ACCOUNT_CONSENT);
 
         //When
-        String actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
+        Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
         //Then
-        assertThat(actualResponse).isEqualTo(CONSENT_ID);
+        assertTrue(actualResponse.isPresent());
+        assertEquals(expected, actualResponse.get());
     }
 
     @Test
@@ -134,10 +141,10 @@ public class Xs2aAisConsentServiceTest {
             .thenReturn(Optional.empty());
 
         //When
-        String actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
+        Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
         //Then
-        assertThat(actualResponse).isNull();
+        assertFalse(actualResponse.isPresent());
     }
 
 
@@ -168,34 +175,6 @@ public class Xs2aAisConsentServiceTest {
 
         //Then
         assertThat(actualResponse.isPresent()).isFalse();
-    }
-
-    @Test
-    public void getInitialAccountConsentById_success() {
-        //Given
-        when(aisConsentServiceEncrypted.getInitialAisAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(AIS_ACCOUNT_CONSENT));
-        when(aisConsentMapper.mapToAccountConsent(AIS_ACCOUNT_CONSENT))
-            .thenReturn(ACCOUNT_CONSENT);
-
-        //When
-        Optional<AccountConsent> actualResponse = xs2aAisConsentService.getInitialAccountConsentById(CONSENT_ID);
-
-        //Then
-        assertThat(actualResponse).isEqualTo(Optional.of(ACCOUNT_CONSENT));
-    }
-
-    @Test
-    public void getInitialAccountConsentById_failed() {
-        //Given
-        when(aisConsentServiceEncrypted.getInitialAisAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.empty());
-
-        //When
-        Optional<AccountConsent> actualResponse = xs2aAisConsentService.getInitialAccountConsentById(CONSENT_ID);
-
-        //Then
-        assertThat(actualResponse).isEqualTo(Optional.empty());
     }
 
     @Test

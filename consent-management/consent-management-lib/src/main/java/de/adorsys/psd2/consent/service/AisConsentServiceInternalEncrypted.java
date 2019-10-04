@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
@@ -43,9 +40,16 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
 
     @Override
     @Transactional
-    public Optional<String> createConsent(CreateAisConsentRequest request) {
-        return aisConsentService.createConsent(request)
-                   .flatMap(securityDataService::encryptId);
+    public Optional<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request) {
+        Optional<CreateAisConsentResponse> serviceResponse = aisConsentService.createConsent(request);
+
+        if (!serviceResponse.isPresent()) {
+            return Optional.empty();
+        }
+
+        CreateAisConsentResponse createAisConsentResponse = serviceResponse.get();
+        return securityDataService.encryptId(createAisConsentResponse.getConsentId())
+                   .map(id -> new CreateAisConsentResponse(id, createAisConsentResponse.getAisAccountConsent()));
     }
 
     @Override
@@ -72,13 +76,6 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     public Optional<AisAccountConsent> getAisAccountConsentById(String encryptedConsentId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(aisConsentService::getAisAccountConsentById);
-    }
-
-    @Override
-    @Transactional
-    public Optional<AisAccountConsent> getInitialAisAccountConsentById(String encryptedConsentId) {
-        return securityDataService.decryptId(encryptedConsentId)
-                   .flatMap(aisConsentService::getInitialAisAccountConsentById);
     }
 
     @Override
@@ -120,7 +117,7 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
                    .flatMap(securityDataService::encryptId);
     }
 
-   @Override
+    @Override
     @Transactional
     public Optional<AisAccountConsent> updateAspspAccountAccessWithResponse(String encryptedConsentId, AisAccountAccessInfo request) {
         return securityDataService.decryptId(encryptedConsentId)

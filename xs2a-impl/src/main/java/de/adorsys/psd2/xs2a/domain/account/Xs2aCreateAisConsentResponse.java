@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.ais;
+package de.adorsys.psd2.xs2a.domain.account;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import lombok.Value;
 
-@Data
-@AllArgsConstructor
-public class CreateAisConsentResponse {
+@Value
+public class Xs2aCreateAisConsentResponse {
     private String consentId;
-    private AisAccountConsent aisAccountConsent;
+    private AccountConsent accountConsent;
 }
