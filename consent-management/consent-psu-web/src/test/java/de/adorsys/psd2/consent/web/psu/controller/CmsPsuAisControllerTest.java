@@ -232,14 +232,14 @@ public class CmsPsuAisControllerTest {
     @Test
     public void confirmConsent_withTrueRequest_shouldReturnOk() {
         // Given
-        when(cmsPsuAisService.confirmConsent(psuIdData, CONSENT_ID, INSTANCE_ID))
+        when(cmsPsuAisService.confirmConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(true);
 
         // When
         ResponseEntity<Boolean> actualResponse = cmsPsuAisController.confirmConsent(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
 
         // Then
-        verify(cmsPsuAisService).confirmConsent(psuIdData, CONSENT_ID, INSTANCE_ID);
+        verify(cmsPsuAisService).confirmConsent(CONSENT_ID, INSTANCE_ID);
 
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
         assertNotNull(actualResponse.getBody());
@@ -249,14 +249,14 @@ public class CmsPsuAisControllerTest {
     @Test
     public void confirmConsent_withFalseRequest_shouldReturnOk() {
         // Given
-        when(cmsPsuAisService.confirmConsent(psuIdData, CONSENT_ID, INSTANCE_ID))
+        when(cmsPsuAisService.confirmConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(false);
 
         // When
         ResponseEntity<Boolean> actualResponse = cmsPsuAisController.confirmConsent(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
 
         // Then
-        verify(cmsPsuAisService).confirmConsent(psuIdData, CONSENT_ID, INSTANCE_ID);
+        verify(cmsPsuAisService).confirmConsent(CONSENT_ID, INSTANCE_ID);
 
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
         assertNotNull(actualResponse.getBody());
@@ -266,14 +266,14 @@ public class CmsPsuAisControllerTest {
     @Test
     public void rejectConsent_withTrueRequest_shouldReturnOk() {
         // Given
-        when(cmsPsuAisService.rejectConsent(psuIdData, CONSENT_ID, INSTANCE_ID))
+        when(cmsPsuAisService.rejectConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(true);
 
         // When
         ResponseEntity<Boolean> actualResponse = cmsPsuAisController.rejectConsent(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
 
         // Then
-        verify(cmsPsuAisService).rejectConsent(psuIdData, CONSENT_ID, INSTANCE_ID);
+        verify(cmsPsuAisService).rejectConsent(CONSENT_ID, INSTANCE_ID);
 
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
         assertNotNull(actualResponse.getBody());
@@ -283,14 +283,14 @@ public class CmsPsuAisControllerTest {
     @Test
     public void rejectConsent_withFalseRequest_shouldReturnOk() {
         // Given
-        when(cmsPsuAisService.rejectConsent(psuIdData, CONSENT_ID, INSTANCE_ID))
+        when(cmsPsuAisService.rejectConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(false);
 
         // When
         ResponseEntity<Boolean> actualResponse = cmsPsuAisController.rejectConsent(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
 
         // Then
-        verify(cmsPsuAisService).rejectConsent(psuIdData, CONSENT_ID, INSTANCE_ID);
+        verify(cmsPsuAisService).rejectConsent(CONSENT_ID, INSTANCE_ID);
 
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
         assertNotNull(actualResponse.getBody());
@@ -333,14 +333,14 @@ public class CmsPsuAisControllerTest {
     @Test
     public void revokeConsent_withTrueRequest_shouldReturnOk() {
         // Given
-        when(cmsPsuAisService.revokeConsent(psuIdData, CONSENT_ID, INSTANCE_ID))
+        when(cmsPsuAisService.revokeConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(true);
 
         // When
         ResponseEntity<Boolean> actualResponse = cmsPsuAisController.revokeConsent(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
 
         // Then
-        verify(cmsPsuAisService).revokeConsent(psuIdData, CONSENT_ID, INSTANCE_ID);
+        verify(cmsPsuAisService).revokeConsent(CONSENT_ID, INSTANCE_ID);
 
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
         assertNotNull(actualResponse.getBody());
@@ -350,14 +350,14 @@ public class CmsPsuAisControllerTest {
     @Test
     public void revokeConsent_withFalseRequest_shouldReturnOk() {
         // Given
-        when(cmsPsuAisService.revokeConsent(psuIdData, CONSENT_ID, INSTANCE_ID))
+        when(cmsPsuAisService.revokeConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(false);
 
         // When
         ResponseEntity<Boolean> actualResponse = cmsPsuAisController.revokeConsent(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
 
         // Then
-        verify(cmsPsuAisService).revokeConsent(psuIdData, CONSENT_ID, INSTANCE_ID);
+        verify(cmsPsuAisService).revokeConsent(CONSENT_ID, INSTANCE_ID);
 
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
         assertNotNull(actualResponse.getBody());
