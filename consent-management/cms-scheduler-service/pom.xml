@@ -29,60 +29,53 @@
 
     <properties>
         <ruleset.basedir>../..</ruleset.basedir>
-
-        <!--
-        This property allows to put path to different files using command line:
-        mvn -DpropertyFile=liquibase.my-special.properties liquibase:update
-        -->
-        <propertyFile>liquibase.properties</propertyFile>
-
-
-        <postgresql.version>42.2.4</postgresql.version>
-        <mariadb.version>2.3.0</mariadb.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>cms-db-schema</artifactId>
+    <artifactId>cms-scheduler-service</artifactId>
+
+    <dependencies>
+        <!-- project dependencies -->
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-management-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>${postgresql.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.mariadb.jdbc</groupId>
-                        <artifactId>mariadb-java-client</artifactId>
-                        <version>${mariadb.version}</version>
-                    </dependency>
-<!--
-                    Oracle driver:
-                    1. Download it from Oracle's web-site
-                    2. Install it to your maven repo:
-					mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=18.3.0.0 -Dpackaging=jar
-					3. Uncomment the dependency below and adjust it if necessary to your version
--->
-<!--
-                    <dependency>
-                        <groupId>com.oracle</groupId>
-                        <artifactId>ojdbc8</artifactId>
-                        <version>18.3.0.0</version>
-                    </dependency>
--->
-                </dependencies>
-
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>${liquibase.version}</version>
-                <configuration>
-                    <propertyFile>${propertyFile}</propertyFile>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -100,16 +93,11 @@
                                         <exclude>de.adorsys.psd2:consent-management</exclude>
                                         <exclude>de.adorsys.psd2:cms-db-schema</exclude>
                                         <exclude>de.adorsys.psd2:cms-standalone-service</exclude>
-                                        <exclude>de.adorsys.psd2:consent-aspsp-api</exclude>
                                         <exclude>de.adorsys.psd2:consent-aspsp-web</exclude>
-                                        <exclude>de.adorsys.psd2:consent-core-api</exclude>
                                         <exclude>de.adorsys.psd2:consent-core-web</exclude>
-                                        <exclude>de.adorsys.psd2:consent-xs2a-api</exclude>
                                         <exclude>de.adorsys.psd2:consent-xs2a-web</exclude>
-                                        <exclude>de.adorsys.psd2:consent-psu-api</exclude>
                                         <exclude>de.adorsys.psd2:consent-psu-web</exclude>
                                         <exclude>de.adorsys.psd2:consent-psu-client</exclude>
-                                        <exclude>de.adorsys.psd2:consent-management-lib</exclude>
                                         <exclude>de.adorsys.psd2:consent-management-remote</exclude>
                                         <exclude>de.adorsys.psd2:consent-api</exclude>
                                         <exclude>de.adorsys.psd2:consent-management-system</exclude>

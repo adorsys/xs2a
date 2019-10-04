@@ -11,6 +11,7 @@
 * Support country specific extensions for payments in the ASPSP profile
 * Support Additional Account Information in AIS
 * Check incoming requests to have required information
+* Refactoring: Move CMS scheduler tasks into separate module
 
 == Add integration test for embedded mode for XS2A
 
@@ -56,3 +57,14 @@ ASPSP can provide additional information in `ownerName` and `ownerAddress` field
 == Check incoming requests to have required information
 From now on, validation for update AIS, PIS and payment cancellation authorisation requests was added. It checks whether
 the provided authorisation data matches current authorisation stage. In negative case, `SERVICE_INVALID_400` is returned.
+
+== Refactoring: Move CMS scheduler tasks in separate module
+
+From now on, all CMS scheduler tasks are moved into separate module `cms-scheduler-service`.
+Scheduler tasks will start automatically based on cron configuration in `application.properties` after adding dependency in standalone starter:
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>cms-scheduler-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>

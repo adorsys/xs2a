@@ -51,6 +51,9 @@
         <module>consent-psu-web</module>
         <module>consent-aspsp-web</module>
 
+        <!-- Scheduler -->
+        <module>cms-scheduler-service</module>
+
         <!-- Standalone service -->
         <module>cms-standalone-service</module>
     </modules>

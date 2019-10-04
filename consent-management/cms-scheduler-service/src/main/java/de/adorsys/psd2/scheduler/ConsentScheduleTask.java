@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service.scheduler;
+package de.adorsys.psd2.scheduler;
 
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
@@ -45,7 +45,6 @@ public class ConsentScheduleTask {
     @Transactional
     public void checkConsentStatus() {
         log.info("Consent schedule task is run!");
-
         List<AisConsent> availableConsents = Optional.ofNullable(aisConsentRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID)))
                                                  .orElse(Collections.emptyList());
         aisConsentRepository.saveAll(updateConsent(availableConsents));
@@ -53,18 +52,13 @@ public class ConsentScheduleTask {
 
     private List<AisConsent> updateConsent(List<AisConsent> availableConsents) {
         return availableConsents.stream()
+                   .filter(AisConsent::isExpiredByDate)
                    .map(this::updateConsentParameters)
                    .collect(Collectors.toList());
     }
 
     private AisConsent updateConsentParameters(AisConsent consent) {
-        consent.setConsentStatus(updateConsentStatus(consent));
+        consent.setConsentStatus(ConsentStatus.EXPIRED);
         return consent;
-    }
-
-    private ConsentStatus updateConsentStatus(AisConsent consent) {
-        return consent.isExpiredByDate()
-                   ? ConsentStatus.EXPIRED
-                   : consent.getConsentStatus();
     }
 }

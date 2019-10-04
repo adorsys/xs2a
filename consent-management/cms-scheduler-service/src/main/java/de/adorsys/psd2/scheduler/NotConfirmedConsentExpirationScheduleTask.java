@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service.scheduler;
+package de.adorsys.psd2.scheduler;
 
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
@@ -41,11 +41,10 @@ public class NotConfirmedConsentExpirationScheduleTask {
     @Transactional
     public void obsoleteNotConfirmedConsentIfExpired() {
         log.info("Not confirmed consent expiration schedule task is run!");
-
         List<AisConsent> expiredNotConfirmedConsents = aisConsentRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED))
-                                       .stream()
-                                       .filter(aisConsentConfirmationExpirationService::isConsentConfirmationExpired)
-                                       .collect(Collectors.toList());
+                                                           .stream()
+                                                           .filter(aisConsentConfirmationExpirationService::isConsentConfirmationExpired)
+                                                           .collect(Collectors.toList());
 
         if (!expiredNotConfirmedConsents.isEmpty()) {
             aisConsentConfirmationExpirationService.updateConsentListOnConfirmationExpiration(expiredNotConfirmedConsents);
