@@ -7,6 +7,7 @@
 * Remove TppRedirectUri from TppInfo
 * Remove PSU Data from update consent status requests in cms-psu-api
 * Check incoming requests to have required information
+* Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow
 
 == Add integration test for embedded mode for XS2A
 
@@ -33,3 +34,8 @@ All this deprecated parameters will be removed in version 4.5.
 == Check incoming requests to have required information
 From now on, validation for update AIS, PIS and payment cancellation authorisation requests was added. It checks whether
 the provided authorisation data matches current authorisation stage. In negative case, `SERVICE_INVALID_400` is returned.
+
+== Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow
+
+From now on, response to create consent authorisation request in Oauth SCA Redirect flow
+`/v1/consents/{consentId}/authorisations` contains `scaOAuth` link instead of `scaRedirect` link.
