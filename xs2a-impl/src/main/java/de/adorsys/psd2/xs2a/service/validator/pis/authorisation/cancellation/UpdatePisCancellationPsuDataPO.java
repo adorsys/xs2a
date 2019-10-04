@@ -18,8 +18,8 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndInfoProvider;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
@@ -32,9 +32,7 @@ public class UpdatePisCancellationPsuDataPO implements PaymentTypeAndInfoProvide
     @NotNull
     private final PisCommonPaymentResponse pisCommonPaymentResponse;
     @NotNull
-    private final String authorisationId;
-    @NotNull
-    private final PsuIdData psuIdData;
+    private final Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest;
 
     @Override
     public TppInfo getTppInfo() {

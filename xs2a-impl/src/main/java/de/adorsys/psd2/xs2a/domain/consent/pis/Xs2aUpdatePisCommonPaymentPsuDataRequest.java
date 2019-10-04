@@ -18,13 +18,14 @@ package de.adorsys.psd2.xs2a.domain.consent.pis;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Xs2aUpdatePisCommonPaymentPsuDataRequest {
+public class Xs2aUpdatePisCommonPaymentPsuDataRequest implements UpdateAuthorisationRequest {
     private String paymentId;
     private String authorisationId;
     private PsuIdData psuData;

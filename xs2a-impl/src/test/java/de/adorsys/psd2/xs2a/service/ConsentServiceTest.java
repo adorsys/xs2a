@@ -892,7 +892,7 @@ public class ConsentServiceTest {
         ResponseObject<UpdateConsentPsuDataResponse> actualResponse = consentService.updateConsentPsuData(updateConsentPsuDataReq);
 
         // Then
-        verify(updateConsentPsuDataValidator).validate(new UpdateConsentPsuDataRequestObject(accountConsent, AUTHORISATION_ID, PSU_ID_DATA));
+        verify(updateConsentPsuDataValidator).validate(new UpdateConsentPsuDataRequestObject(accountConsent, updateConsentPsuDataReq));
 
         assertValidationErrorIsPresent(actualResponse);
     }

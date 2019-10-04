@@ -20,11 +20,13 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.PisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationStatusValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
@@ -35,6 +37,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType.PIS;
 
 /**
  * Validator to be used for validating update PSU Data in payment authorisation request according to some business rules
@@ -48,6 +51,7 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValida
     private final PisAuthorisationValidator pisAuthorisationValidator;
     private final PisAuthorisationStatusValidator pisAuthorisationStatusValidator;
     private final PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator;
+    private final AuthorisationStageCheckValidator authorisationStageCheckValidator;
 
     /**
      * Validates update PSU Data in payment authorisation request by checking whether:
@@ -61,7 +65,8 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValida
      */
     @Override
     protected ValidationResult executeBusinessValidation(UpdatePisCommonPaymentPsuDataPO paymentObject) {
-        String authorisationId = paymentObject.getAuthorisationId();
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = paymentObject.getUpdateRequest();
+        String authorisationId = request.getAuthorisationId();
         if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, PaymentAuthorisationType.CREATED)) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data  has failed: endpoint is not accessible for authorisation",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
@@ -91,7 +96,7 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValida
         Authorisation authorisation = authorisationOptional.get();
 
         ValidationResult validationResult = pisPsuDataUpdateAuthorisationCheckerValidator
-                                                .validate(paymentObject.getPsuIdData(), authorisation.getPsuData());
+                                                .validate(request.getPsuData(), authorisation.getPsuData());
 
         if (validationResult.isNotValid()) {
             return validationResult;
@@ -100,6 +105,11 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValida
         ValidationResult authorisationStatusValidationResult = pisAuthorisationStatusValidator.validate(authorisation.getScaStatus());
         if (authorisationStatusValidationResult.isNotValid()) {
             return authorisationStatusValidationResult;
+        }
+
+        ValidationResult authorisationStageCheckValidatorResult = authorisationStageCheckValidator.validate(request, authorisation.getScaStatus(), PIS);
+        if (authorisationStageCheckValidatorResult.isNotValid()) {
+            return authorisationStageCheckValidatorResult;
         }
 
         return ValidationResult.valid();
