@@ -454,7 +454,7 @@ public class ConsentService {
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
 
-        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent.get(), authorisationId, updatePsuData.getPsuData()));
+        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent.get(), updatePsuData));
 
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data - validation failed: {}",

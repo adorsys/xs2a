@@ -18,10 +18,11 @@ package de.adorsys.psd2.xs2a.domain.consent;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import lombok.Data;
 
 @Data
-public class UpdateConsentPsuDataReq {
+public class UpdateConsentPsuDataReq implements UpdateAuthorisationRequest {
 
     private PsuIdData psuData;
     private String consentId;
