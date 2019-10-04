@@ -166,6 +166,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
+    @Deprecated // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
     public boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
         if (changeConsentStatus(consentId, VALID, instanceId)) {
             aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
@@ -178,7 +179,26 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
+    public boolean confirmConsent(@NotNull String consentId, @NotNull String instanceId) {
+        if (changeConsentStatus(consentId, VALID, instanceId)) {
+            aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
+            return true;
+        }
+        log.info("Consent ID [{}]. Confirmation of consent failed because consent has finalised status or not found",
+                 consentId);
+        return false;
+    }
+
+    @Override
+    @Transactional
+    @Deprecated // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
     public boolean rejectConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
+        return changeConsentStatus(consentId, REJECTED, instanceId);
+    }
+
+    @Override
+    @Transactional
+    public boolean rejectConsent(@NotNull String consentId, @NotNull String instanceId) {
         return changeConsentStatus(consentId, REJECTED, instanceId);
     }
 
@@ -195,7 +215,14 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
+    @Deprecated // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
     public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
+        return changeConsentStatus(consentId, REVOKED_BY_PSU, instanceId);
+    }
+
+    @Override
+    @Transactional
+    public boolean revokeConsent(@NotNull String consentId, @NotNull String instanceId) {
         return changeConsentStatus(consentId, REVOKED_BY_PSU, instanceId);
     }
 

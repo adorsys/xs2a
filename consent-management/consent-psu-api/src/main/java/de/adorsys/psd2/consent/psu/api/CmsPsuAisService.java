@@ -82,8 +82,20 @@ public interface CmsPsuAisService {
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
+     *
+     * @deprecated since 4.2, use {@link #confirmConsent(String, String)} instead
      */
+    @Deprecated // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
     boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
+
+    /**
+     * Puts a Status of AIS Consent object by its ID to VALID
+     *
+     * @param consentId  ID of Consent
+     * @param instanceId optional ID of particular service instance
+     * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
+     */
+    boolean confirmConsent(@NotNull String consentId, @NotNull String instanceId);
 
     /**
      * Puts a Status of AIS Consent object by its ID and PSU ID to REJECTED
@@ -92,8 +104,20 @@ public interface CmsPsuAisService {
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
+     *
+     * @deprecated since 4.2, use {@link #rejectConsent(String, String)} instead
      */
+    @Deprecated // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
     boolean rejectConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
+
+    /**
+     * Puts a Status of AIS Consent object by its ID and PSU ID to REJECTED
+     *
+     * @param consentId  ID of Consent
+     * @param instanceId optional ID of particular service instance
+     * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
+     */
+    boolean rejectConsent(@NotNull String consentId, @NotNull String instanceId);
 
     /**
      * Returns a list of AIS Consent objects by PSU ID
@@ -112,8 +136,20 @@ public interface CmsPsuAisService {
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and revoked. <code>false</code> otherwise.
+     *
+     * @deprecated since 4.2, use {@link #revokeConsent(String, String)} instead
      */
+    @Deprecated // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
     boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
+
+    /**
+     * Revokes AIS Consent object by its ID. Consent gets status "Revoked by PSU".
+     *
+     * @param consentId  ID of Consent
+     * @param instanceId optional ID of particular service instance
+     * @return <code>true</code> if consent was found and revoked. <code>false</code> otherwise.
+     */
+    boolean revokeConsent(@NotNull String consentId, @NotNull String instanceId);
 
     /**
      * Returns CMS AIS consent identifier by redirect ID if redirect ID has not expired
