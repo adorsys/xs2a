@@ -282,7 +282,7 @@ public class CmsPsuAisServiceTest {
         when(aisConsentRepository.save(aisConsentValid)).thenReturn(aisConsentValid);
 
         // When
-        boolean updateAuthorisationStatus = cmsPsuAisService.confirmConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.confirmConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(updateAuthorisationStatus);
@@ -293,7 +293,7 @@ public class CmsPsuAisServiceTest {
     @Test
     public void confirmConsentFail() {
         // When
-        boolean updateAuthorisationStatus = cmsPsuAisService.confirmConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.confirmConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(updateAuthorisationStatus);
@@ -308,7 +308,7 @@ public class CmsPsuAisServiceTest {
         when(aisConsentRepository.save(aisConsentRejected)).thenReturn(aisConsentRejected);
 
         // When
-        boolean updateAuthorisationStatus = cmsPsuAisService.rejectConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.rejectConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(updateAuthorisationStatus);
@@ -319,7 +319,7 @@ public class CmsPsuAisServiceTest {
     @Test
     public void rejectConsentFail() {
         // When
-        boolean updateAuthorisationStatus = cmsPsuAisService.rejectConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.rejectConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(updateAuthorisationStatus);
@@ -334,7 +334,7 @@ public class CmsPsuAisServiceTest {
         when(aisConsentRepository.save(aisConsentRevoked)).thenReturn(aisConsentRevoked);
 
         // When
-        boolean updateAuthorisationStatus = cmsPsuAisService.revokeConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.revokeConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(updateAuthorisationStatus);
@@ -345,7 +345,7 @@ public class CmsPsuAisServiceTest {
     @Test
     public void revokeConsentFail() {
         // When
-        boolean updateAuthorisationStatus = cmsPsuAisService.revokeConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.revokeConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(updateAuthorisationStatus);
@@ -374,7 +374,7 @@ public class CmsPsuAisServiceTest {
     @Test
     public void confirmConsent_FinalisedStatus_Fail() {
         // When
-        boolean result = cmsPsuAisService.confirmConsent(psuIdData, FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean result = cmsPsuAisService.confirmConsent(FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(result);
@@ -385,7 +385,7 @@ public class CmsPsuAisServiceTest {
     @Test
     public void rejectConsent_FinalisedStatus_Fail() {
         // When
-        boolean result = cmsPsuAisService.rejectConsent(psuIdData, FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean result = cmsPsuAisService.rejectConsent(FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(result);
@@ -396,7 +396,7 @@ public class CmsPsuAisServiceTest {
     @Test
     public void revokeConsent_FinalisedStatus_Fail() {
         // When
-        boolean result = cmsPsuAisService.revokeConsent(psuIdData, FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean result = cmsPsuAisService.revokeConsent(FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(result);
