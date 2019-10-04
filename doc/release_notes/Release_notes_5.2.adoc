@@ -8,6 +8,7 @@
 * Create Bulk Payment validators
 * Remove TppRedirectUri from TppInfo
 * Remove redundant request to retrieve the consent from the database on consent creation
+* Support country specific extensions for payments in the ASPSP profile
 
 == Add integration test for embedded mode for XS2A
 
@@ -35,3 +36,10 @@ From now on deprecated field `tppRedirectUri` is removed from `TppInfo`. And  fi
 == Remove redundant request to retrieve the consent from the database on consent creation
 
 From now on, XS2A won't retrieve AIS consent from the CMS immediately after its creation.
+
+== Support country specific extensions for payments in the ASPSP profile
+
+From now on, ASPSP is able to configure payment for different countries `countryValidationSupported` property in PIS block.
+The configuration parameter takes country as ISO 3166-1 alpha-2 code (DE, AT, UA, etc). Germany (DE) is supported by default and Austria (AT) is available to choose from.
+To extend existing configuration register custom implementation in `CountryPaymentValidatorResolver` for new country based on default one `DefaultPaymentValidationConfigImpl`.
+Previous validation payment configuration in `application.properties` file has been removed.

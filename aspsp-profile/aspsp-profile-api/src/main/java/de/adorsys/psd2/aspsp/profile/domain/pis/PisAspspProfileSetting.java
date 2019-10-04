@@ -29,4 +29,5 @@ public class PisAspspProfileSetting {
     private long notConfirmedPaymentExpirationTimeMs;
     private boolean paymentCancellationAuthorisationMandated;
     private PisRedirectLinkSetting redirectLinkToOnlineBanking;
+    private String countryValidationSupported;
 }

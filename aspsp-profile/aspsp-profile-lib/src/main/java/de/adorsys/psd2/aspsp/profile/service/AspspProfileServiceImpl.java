@@ -71,7 +71,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
                                                                 pisBankSetting.getMaxTransactionValidityDays(),
                                                                 pisBankSetting.getNotConfirmedPaymentExpirationTimeMs(),
                                                                 pisBankSetting.isPaymentCancellationAuthorisationMandated(),
-                                                                pisRedirectLinkToOnlineBanking);
+                                                                pisRedirectLinkToOnlineBanking,
+                                                                pisBankSetting.getCountryValidationSupported());
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(setting.getPiis().isPiisConsentSupported());
 
         CommonAspspProfileBankSetting commonBankSetting = setting.getCommon();

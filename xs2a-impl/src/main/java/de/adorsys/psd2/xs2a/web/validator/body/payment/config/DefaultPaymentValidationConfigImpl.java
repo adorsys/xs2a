@@ -20,27 +20,27 @@ import lombok.Data;
 
 @Data
 public class DefaultPaymentValidationConfigImpl implements PaymentValidationConfig {
-    private ValidationObject endToEndIdentification;
-    private ValidationObject ultimateDebtor;
-    private ValidationObject ultimateCreditor;
-    private ValidationObject creditorName;
+    protected ValidationObject endToEndIdentification = new ValidationObject(35);
+    protected ValidationObject ultimateDebtor = new ValidationObject(70);
+    protected ValidationObject ultimateCreditor = new ValidationObject(70);
+    protected ValidationObject creditorName = new ValidationObject(Occurrence.REQUIRED, 70);
 
     //address
-    private ValidationObject streetName;
-    private ValidationObject buildingNumber;
-    private ValidationObject townName;
-    private ValidationObject postCode;
+    protected ValidationObject streetName = new ValidationObject(100);
+    protected ValidationObject buildingNumber = new ValidationObject(20);
+    protected ValidationObject townName = new ValidationObject(100);
+    protected ValidationObject postCode = new ValidationObject(5);
 
     //account reference
-    private ValidationObject pan;
-    private ValidationObject maskedPan;
-    private ValidationObject msisdn;
+    protected ValidationObject pan = new ValidationObject(35);
+    protected ValidationObject maskedPan = new ValidationObject(35);
+    protected ValidationObject msisdn = new ValidationObject(35);
 
     //remittance
-    private ValidationObject reference;
-    private ValidationObject referenceType;
-    private ValidationObject referenceIssuer;
+    protected ValidationObject reference = new ValidationObject(Occurrence.REQUIRED, 35);
+    protected ValidationObject referenceType = new ValidationObject(35);
+    protected ValidationObject referenceIssuer = new ValidationObject(35);
 
-    private ValidationObject executionRule;
-    private ValidationObject creditorId;
+    protected ValidationObject executionRule = new ValidationObject(Occurrence.REQUIRED, 140);
+    protected ValidationObject creditorId = new ValidationObject(Occurrence.NONE, 0);
 }

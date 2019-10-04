@@ -323,4 +323,12 @@ public class AspspProfileServiceWrapper {
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }
+
+    /**
+     * For which country payment is supported
+     * @return country in ISO 3166-1 alpha-2 code (DE, AT, etc)
+     */
+    public String getSupportedPaymentCountryValidation(){
+        return readAspspSettings().getPis().getCountryValidationSupported();
+    }
 }

@@ -20,8 +20,21 @@ import lombok.Data;
 
 @Data
 public class ValidationObject {
-    private Occurrence use = Occurrence.OPTIONAL;
+    private Occurrence use;
     private int maxLength;
+
+    public ValidationObject() {
+        this(Occurrence.OPTIONAL, 0);
+    }
+
+    public ValidationObject(int maxLength) {
+        this(Occurrence.OPTIONAL, maxLength);
+    }
+
+    public ValidationObject(Occurrence use, int maxLength) {
+        this.use = use;
+        this.maxLength = maxLength;
+    }
 
     public boolean isRequired() {
         return Occurrence.REQUIRED == use;

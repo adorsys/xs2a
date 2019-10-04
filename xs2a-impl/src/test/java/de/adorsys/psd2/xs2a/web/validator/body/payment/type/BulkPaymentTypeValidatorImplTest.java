@@ -62,6 +62,7 @@ public class BulkPaymentTypeValidatorImplTest {
 
     private BulkPayment bulkPayment;
     private SinglePayment singlePayment;
+    private PaymentValidationConfig validationConfig;
 
     @Before
     public void setUp() {
@@ -77,13 +78,12 @@ public class BulkPaymentTypeValidatorImplTest {
         RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
         ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.AIS_400);
 
-        PaymentValidationConfig paymentValidationConfig = jsonReader.getObjectFromFile("json/validation/payment-validation-config.json",
-                                                               DefaultPaymentValidationConfigImpl.class);
+        validationConfig = new DefaultPaymentValidationConfigImpl();
 
         validator = new BulkPaymentTypeValidatorImpl(errorBuildingServiceMock,
                                                      objectMapper,
                                                      new PaymentMapper(objectMapper, purposeCodeMapper, remittanceMapper),
-                                                     new AmountValidator(errorBuildingServiceMock), paymentValidationConfig);
+                                                     new AmountValidator(errorBuildingServiceMock));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class BulkPaymentTypeValidatorImplTest {
 
     @Test
     public void doValidation_success() {
-        validator.validate(BULK_PAYMENT_INITIATION_JSON, messageError);
+        validator.validate(BULK_PAYMENT_INITIATION_JSON, messageError, validationConfig);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
@@ -114,21 +114,21 @@ public class BulkPaymentTypeValidatorImplTest {
     @Test
     public void doValidation_IllegalArgumentException() {
         Object body = new Object();
-        validator.validate(body, messageError);
+        validator.validate(body, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
     public void doValidation_IllegalArgumentException_extraField() {
         PeriodicPayment body = new PeriodicPayment();
-        validator.validate(body, messageError);
+        validator.validate(body, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_EXTRA_FIELD, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[] {"paymentId"}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
     public void doBulkValidation_success() {
-        validator.doBulkValidation(bulkPayment, messageError);
+        validator.doBulkValidation(bulkPayment, messageError, validationConfig);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
@@ -136,7 +136,7 @@ public class BulkPaymentTypeValidatorImplTest {
     public void doValidation_endToEndIdentification_tooLong_error() {
         singlePayment.setEndToEndIdentification(VALUE_36_LENGHT);
 
-        validator.doSingleValidation(singlePayment, messageError);
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[] {"endToEndIdentification", 35}, messageError.getTppMessage().getTextParameters());
 
@@ -146,7 +146,7 @@ public class BulkPaymentTypeValidatorImplTest {
     public void doValidation_bulkDebtorAccount_null_error() {
         bulkPayment.setDebtorAccount(null);
 
-        validator.doBulkValidation(bulkPayment, messageError);
+        validator.doBulkValidation(bulkPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[] {"debtorAccount"}, messageError.getTppMessage().getTextParameters());
     }
@@ -155,7 +155,7 @@ public class BulkPaymentTypeValidatorImplTest {
     public void doValidation_bulkPayments_null_error() {
         bulkPayment.setPayments(Collections.emptyList());
 
-        validator.doBulkValidation(bulkPayment, messageError);
+        validator.doBulkValidation(bulkPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_BULK, messageError.getTppMessage().getMessageErrorCode());
     }
 
@@ -163,7 +163,7 @@ public class BulkPaymentTypeValidatorImplTest {
     public void doValidation_bulkDateInThePast_error() {
         bulkPayment.setRequestedExecutionDate(LocalDate.MIN);
 
-        validator.doBulkValidation(bulkPayment, messageError);
+        validator.doBulkValidation(bulkPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.EXECUTION_DATE_INVALID_IN_THE_PAST, messageError.getTppMessage().getMessageErrorCode());
     }
 
@@ -171,7 +171,7 @@ public class BulkPaymentTypeValidatorImplTest {
     public void doValidation_singleDebtorAccount_null_error() {
         singlePayment.setDebtorAccount(null);
 
-        validator.doSingleValidation(singlePayment, messageError);
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[] {"debtorAccount"}, messageError.getTppMessage().getTextParameters());
     }
@@ -180,7 +180,7 @@ public class BulkPaymentTypeValidatorImplTest {
     public void doValidation_instructedAmount_null_error() {
         singlePayment.setInstructedAmount(null);
 
-        validator.doSingleValidation(singlePayment, messageError);
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[] {"instructedAmount"}, messageError.getTppMessage().getTextParameters());
     }
@@ -190,7 +190,7 @@ public class BulkPaymentTypeValidatorImplTest {
         Xs2aAmount instructedAmount = singlePayment.getInstructedAmount();
         instructedAmount.setCurrency(null);
 
-        validator.doSingleValidation(singlePayment, messageError);
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[] {"currency"}, messageError.getTppMessage().getTextParameters());
     }
@@ -200,7 +200,7 @@ public class BulkPaymentTypeValidatorImplTest {
         Xs2aAmount instructedAmount = singlePayment.getInstructedAmount();
         instructedAmount.setAmount(null);
 
-        validator.doSingleValidation(singlePayment, messageError);
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[] {"amount"}, messageError.getTppMessage().getTextParameters());
     }
@@ -210,7 +210,7 @@ public class BulkPaymentTypeValidatorImplTest {
         Xs2aAmount instructedAmount = singlePayment.getInstructedAmount();
         instructedAmount.setAmount(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
-        validator.doSingleValidation(singlePayment, messageError);
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[] {"amount"}, messageError.getTppMessage().getTextParameters());
     }
@@ -219,7 +219,7 @@ public class BulkPaymentTypeValidatorImplTest {
     public void doValidation_creditorAccount_null_error() {
         singlePayment.setCreditorAccount(null);
 
-        validator.doSingleValidation(singlePayment, messageError);
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[] {"creditorAccount"}, messageError.getTppMessage().getTextParameters());
     }
@@ -228,7 +228,7 @@ public class BulkPaymentTypeValidatorImplTest {
     public void doValidation_creditorName_null_error() {
         singlePayment.setCreditorName(null);
 
-        validator.doSingleValidation(singlePayment, messageError);
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_EMPTY_FIELD, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[] {"creditorName"}, messageError.getTppMessage().getTextParameters());
     }
@@ -237,7 +237,7 @@ public class BulkPaymentTypeValidatorImplTest {
     public void doValidation_creditorName_tooLong_error() {
         singlePayment.setCreditorName(VALUE_71_LENGHT);
 
-        validator.doSingleValidation(singlePayment, messageError);
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[] {"creditorName", 70}, messageError.getTppMessage().getTextParameters());
     }
@@ -246,7 +246,7 @@ public class BulkPaymentTypeValidatorImplTest {
     public void doValidation_requestedExecutionDate_error() {
         singlePayment.setRequestedExecutionDate(LocalDate.now().minusDays(1));
 
-        validator.doSingleValidation(singlePayment, messageError);
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.EXECUTION_DATE_INVALID_IN_THE_PAST, messageError.getTppMessage().getMessageErrorCode());
     }
 }

@@ -119,6 +119,7 @@ SINGLE:
 |paymentCancellationRedirectUrlExpirationTimeMs |This field contains the limit of expiration time of Payment cancellation redirect URL set in milliseconds.
 
 The value for expiration time is counted with formula "current time of authorisation creation + payment cancellation redirect URL expiration time (set in ASPSP-profile)".|600 000 |milliseconds (1, 2,...)
+|countryValidationSupported | The field defines for which country the payment will be validated. | DE| ISO 3166-1 alpha-2 code (DE, AT, UA, etc)
 
 |*PIIS:* | | |
 |piisConsentSupported |This field indicates whether ASPSP supports storing PIIS consent in CMS.

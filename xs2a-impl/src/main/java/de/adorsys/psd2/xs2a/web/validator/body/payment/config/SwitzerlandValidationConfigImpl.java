@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.starter.config.validation;
+package de.adorsys.psd2.xs2a.web.validator.body.payment.config;
 
-import de.adorsys.psd2.xs2a.web.validator.body.payment.config.DefaultPaymentValidationConfigImpl;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-@Configuration
-@ConfigurationProperties(prefix = "validation.payment")
-public class PaymentValidationConfigImpl extends DefaultPaymentValidationConfigImpl {
+@Data
+@EqualsAndHashCode
+public class SwitzerlandValidationConfigImpl extends DefaultPaymentValidationConfigImpl {
 }

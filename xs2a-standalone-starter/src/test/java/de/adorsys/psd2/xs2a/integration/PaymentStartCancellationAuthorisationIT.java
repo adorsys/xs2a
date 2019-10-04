@@ -27,7 +27,6 @@ import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
-import de.adorsys.psd2.starter.config.validation.PaymentValidationConfigImpl;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -82,8 +81,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     ObjectMapperConfig.class,
     WebConfig.class,
     Xs2aEndpointPathConstant.class,
-    Xs2aInterfaceConfig.class,
-    PaymentValidationConfigImpl.class
+    Xs2aInterfaceConfig.class
 })
 public class PaymentStartCancellationAuthorisationIT {
     private static final Charset UTF_8 = Charset.forName("utf-8");

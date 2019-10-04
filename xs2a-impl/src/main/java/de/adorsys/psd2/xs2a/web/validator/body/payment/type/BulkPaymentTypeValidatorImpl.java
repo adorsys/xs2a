@@ -40,8 +40,8 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
 
     @Autowired
     public BulkPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
-                                        PaymentMapper paymentMapper, AmountValidator amountValidator, PaymentValidationConfig validationConfig) {
-        super(errorBuildingService, objectMapper, paymentMapper, amountValidator, validationConfig);
+                                        PaymentMapper paymentMapper, AmountValidator amountValidator) {
+        super(errorBuildingService, objectMapper, paymentMapper, amountValidator);
     }
 
     @Override
@@ -50,9 +50,9 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
     }
 
     @Override
-    public void validate(Object body, MessageError messageError) {
+    public void validate(Object body, MessageError messageError, PaymentValidationConfig validationConfig) {
         try {
-            doBulkValidation(paymentMapper.getBulkPayment(body), messageError);
+            doBulkValidation(paymentMapper.getBulkPayment(body), messageError, validationConfig);
         } catch (IllegalArgumentException e) {
             if (e.getMessage().startsWith("Unrecognized field")) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_EXTRA_FIELD, extractErrorField(e.getMessage())));
@@ -62,12 +62,12 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
         }
     }
 
-    void doBulkValidation(BulkPayment bulkPayment, MessageError messageError) {
+    void doBulkValidation(BulkPayment bulkPayment, MessageError messageError, PaymentValidationConfig validationConfig) {
 
         if (Objects.isNull(bulkPayment.getDebtorAccount())) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, "debtorAccount"));
         } else {
-            validateAccount(bulkPayment.getDebtorAccount(), messageError);
+            validateAccount(bulkPayment.getDebtorAccount(), messageError, validationConfig);
         }
 
         List<SinglePayment> payments = bulkPayment.getPayments();
@@ -75,7 +75,7 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
         if (CollectionUtils.isEmpty(payments)) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_BULK));
         } else {
-            payments.forEach(singlePayment -> super.doSingleValidation(singlePayment, messageError));
+            payments.forEach(singlePayment -> super.doSingleValidation(singlePayment, messageError, validationConfig));
         }
 
         if (isDateInThePast(bulkPayment.getRequestedExecutionDate())) {

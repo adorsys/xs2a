@@ -83,6 +83,8 @@ public class AspspProfileServiceTest {
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
     private static final boolean ACCOUNT_OWNER_INFORMATION_SUPPORTED = true;
+    private static final String COUNTRY_VALIDATION_SUPPORTED = "DE";
+
 
     @InjectMocks
     private AspspProfileServiceImpl aspspProfileService;
@@ -225,7 +227,8 @@ public class AspspProfileServiceTest {
                                                                         MAX_TRANSACTION_VALIDITY_DAYS,
                                                                         NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS,
                                                                         PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
-                                                                        pisRedirectLinkToOnlineBanking);
+                                                                        pisRedirectLinkToOnlineBanking,
+                                                                        COUNTRY_VALIDATION_SUPPORTED);
         PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(PIIS_CONSENT_SUPPORTED);
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting(Collections.singletonList(REDIRECT_APPROACH),
                                                                                  SCA_REDIRECT_FLOW,
