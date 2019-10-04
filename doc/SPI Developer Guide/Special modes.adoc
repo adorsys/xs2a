@@ -74,6 +74,12 @@ spring.datasource.password=cms
      <artifactId>consent-aspsp-web</artifactId>
      <version>${project.version}</version>
  </dependency>
+
+ <dependency>
+      <groupId>de.adorsys.psd2</groupId>
+      <artifactId>cms-scheduler-service</artifactId>
+      <version>${project.version}</version>
+ </dependency>
 ```
 
 * Update scan annotations in *Xs2aStandaloneStarter.java*:

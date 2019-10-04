@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service.scheduler;
+package de.adorsys.psd2.scheduler;
 
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
@@ -41,7 +41,6 @@ public class NonRecurringConsentExpirationScheduleTask {
     @Transactional
     public void expireUsedNonRecurringConsent() {
         log.info("Non-recurring consent expiration task has started!");
-
         List<AisConsent> consents = aisConsentRepository.findUsedNonRecurringConsents(EnumSet.of(RECEIVED, VALID),
                                                                                       LocalDate.now())
                                         .stream()

@@ -77,6 +77,12 @@
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
+            <artifactId>cms-scheduler-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-xs2a-web</artifactId>
             <version>${project.version}</version>
         </dependency>
