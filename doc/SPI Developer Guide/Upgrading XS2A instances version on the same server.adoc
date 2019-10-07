@@ -1,0 +1,31 @@
+== Upgrading XS2A instances version on the same server
+:toc-title:
+//:imagesdir: usecases/diagrams
+:toc: left
+// horizontal line
+
+There is a possibility to launch several instances of embedded XS2A on the same server using common datasource. We provide
+backward compatibility for 2 versions to have a possibility to upgrade version of each XS2A step by step.
+Below are the steps which are required to change version of XS2A instances with common database. It is a good point to have a separate test environment with the current backend version with the test database before changing the production environment.
+
+1. Create the database backup.
+2. Create the liquibase.properties file in `/consent-management/cms-db-schema/` with your DB configuration,
+for example:  
+
+ url=jdbc:postgresql://localhost/consent?currentSchema=consent
+ username=cms
+ password=cms
+ changeLogFile=src/main/resources/master.xml
+
+3. Create the SQL upgrade script from the liquibase scripts of the new desired version by launching commands:
+
+	cd consent-management/cms-db-schema/
+	mvn liquibase:updateSQL
+
+4. Apply the SQL script to the DB.
+5. Ensure that SQL script was applied without any errors and DB has all previous data untouched.
+6. Stop the first XS2A instance.
+7. Change the image of first XS2A instance.
+8. Switch off the automatic liquibase migration in the first XS2A instance by setting the configuration parameter: `spring.liquibase.enabled=false`. This parameter is stored in the application.yml. This step is required to avoid automatic DB updating.
+9. Launch the first instance of XS2A.
+10. Repeat 6-9 for rest XS2A instances.
