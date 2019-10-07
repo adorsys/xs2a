@@ -13,6 +13,7 @@
 * Check incoming requests to have required information
 * Refactoring: Move CMS scheduler tasks into separate module
 * Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow
+* Remove PSU Data from update consent status requests in cms-psu-api
 
 == Add integration test for embedded mode for XS2A
 
@@ -74,3 +75,10 @@ Scheduler tasks will start automatically based on cron configuration in `applica
 
 From now on, response to create consent authorisation request in Oauth SCA Redirect flow
 `/v1/consents/{consentId}/authorisations` contains `scaOAuth` link instead of `scaRedirect` link.
+
+== Remove PSU Data from update consent status requests in cms-psu-api
+
+From now on, method `authorisePartiallyConsent(PsuIdData, String, String)` in `CmsPsuAisService` interface
+is deprecated, use overloaded version `authorisePartiallyConsent(String, String)` instead. Headers `psuI`, `psuIdType`,
+`psuCorporateId`, `psuCorporateIdType` from `CmsPsuAisController` `getConsentIdByRedirectId` method are deprecated too.
+It will be removed in v.5.5.

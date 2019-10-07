@@ -362,7 +362,7 @@ public class CmsPsuAisServiceTest {
             .thenReturn(aisConsent);
         ArgumentCaptor<AisConsent> argumentCaptor = ArgumentCaptor.forClass(AisConsent.class);
         // When
-        boolean updateAuthorisationStatus = cmsPsuAisService.authorisePartiallyConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.authorisePartiallyConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
         assertTrue(updateAuthorisationStatus);
         verify(aisConsentRepository).save(argumentCaptor.capture());
