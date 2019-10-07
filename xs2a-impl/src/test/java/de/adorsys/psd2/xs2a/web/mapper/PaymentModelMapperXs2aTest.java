@@ -26,12 +26,14 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -50,13 +52,16 @@ public class PaymentModelMapperXs2aTest {
     private PaymentInitiationParameters paymentInitiationParameters;
     private JsonReader jsonReader = new JsonReader();
 
+    @MockBean
+    private StandardPaymentProductsResolver standardPaymentProductsResolver;
+
     @Before
     public void setUp() {
         paymentInitiationParameters = new PaymentInitiationParameters();
         ValueValidatorService validatorService = new ValueValidatorService(requestProviderService,
             Validation.buildDefaultValidatorFactory().getValidator());
         paymentModelMapperXs2a = new PaymentModelMapperXs2a(new ObjectMapper(), validatorService,
-            null, null, paymentModelMapper);
+            null, null, paymentModelMapper, standardPaymentProductsResolver);
     }
 
     @Test
