@@ -32,6 +32,7 @@ import java.util.Collections;
 
 @Service
 public class CreateCommonPaymentService extends AbstractCreatePaymentService<CommonPayment, CommonPaymentInitiationService> {
+
     @Autowired
     public CreateCommonPaymentService(Xs2aPisCommonPaymentService pisCommonPaymentService,
                                       PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver,
