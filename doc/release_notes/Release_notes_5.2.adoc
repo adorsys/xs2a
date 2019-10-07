@@ -14,6 +14,7 @@
 * Refactoring: Move CMS scheduler tasks into separate module
 * Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow
 * Remove PSU Data from update consent status requests in cms-psu-api
+* Bugfix: error on initiating payment with custom payment product and JSON body
 
 == Add integration test for embedded mode for XS2A
 
@@ -82,3 +83,9 @@ From now on, method `authorisePartiallyConsent(PsuIdData, String, String)` in `C
 is deprecated, use overloaded version `authorisePartiallyConsent(String, String)` instead. Headers `psuI`, `psuIdType`,
 `psuCorporateId`, `psuCorporateIdType` from `CmsPsuAisController` `getConsentIdByRedirectId` method are deprecated too.
 It will be removed in v.5.5.
+
+== Bugfix: error on initiating payment with custom payment product and JSON body
+
+From now on, there is a possibility to create a custom payment product in the ASPSP profile and then initiate payments of
+such type with JSON body. As there is no common model for them - such payments will pass to SPI level with their bodies as
+byte arrays.

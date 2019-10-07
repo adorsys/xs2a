@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
@@ -26,10 +25,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
-import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
-import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.psd2.xs2a.domain.pis.Remittance;
-import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
@@ -234,10 +230,10 @@ public class PaymentModelMapperTest {
         return amount;
     }
 
-    private PisPaymentInfo buildNonStandardPayment() {
-        PisPaymentInfo paymentInfo = new PisPaymentInfo();
-        paymentInfo.setPaymentData(NON_STANDARD_PAYMENT_DATA_STRING.getBytes());
-        return paymentInfo;
+    private CommonPayment buildNonStandardPayment() {
+        CommonPayment commonPayment = new CommonPayment();
+        commonPayment.setPaymentData(NON_STANDARD_PAYMENT_DATA_STRING.getBytes());
+        return commonPayment;
     }
 
     private Xs2aAddress buildXs2aAddress() {

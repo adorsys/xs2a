@@ -23,6 +23,7 @@ import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
+import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +47,14 @@ public class PaymentModelMapperXs2a {
     private final HttpServletRequest httpServletRequest;
     private final JsonConverter jsonConverter;
     private final PaymentModelMapper paymentModelMapper;
+    private final StandardPaymentProductsResolver standardPaymentProductsResolver;
 
     public Object mapToXs2aPayment(Object payment, PaymentInitiationParameters requestParameters) {
+
+        if (standardPaymentProductsResolver.isRawPaymentProduct(requestParameters.getPaymentProduct())) {
+            return buildBinaryBodyData(httpServletRequest);
+        }
+
         if (requestParameters.getPaymentType() == SINGLE) {
             return paymentModelMapper.mapToXs2aPayment(validatePayment(payment, PaymentInitiationJson.class));
         } else if (requestParameters.getPaymentType() == PERIODIC) {

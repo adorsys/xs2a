@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
-import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
@@ -61,8 +60,7 @@ public class PaymentModelMapperPsd2 {
 
     public Object mapToGetPaymentResponse(Object payment, PaymentType type, String paymentProduct) {
         if (standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct)) {
-            PisPaymentInfo paymentInfo = (PisPaymentInfo) payment;
-            return convertResponseToRawData(paymentInfo.getPaymentData());
+            return convertResponseToRawData(((CommonPayment) payment).getPaymentData());
         }
 
         if (type == SINGLE) {
@@ -121,8 +119,8 @@ public class PaymentModelMapperPsd2 {
 
     public static PaymentInitiationStatusResponse200Json mapToStatusResponse(GetPaymentStatusResponse response) {
         return new PaymentInitiationStatusResponse200Json()
-            .transactionStatus(mapToTransactionStatus(response.getTransactionStatus()))
-            .fundsAvailable(response.getFundsAvailable());
+                   .transactionStatus(mapToTransactionStatus(response.getTransactionStatus()))
+                   .fundsAvailable(response.getFundsAvailable());
     }
 
     public static TransactionStatus mapToTransactionStatus(de.adorsys.psd2.xs2a.core.pis.TransactionStatus responseObject) {
@@ -157,7 +155,7 @@ public class PaymentModelMapperPsd2 {
 
     public PisPaymentCancellationRequest mapToPaymentCancellationRequest(String paymentProduct, String paymentService, String paymentId,
                                                                          Boolean tppExplicitAuthorisationPreferred,
-                                                                         String tpPRedirectURI, String tpPNokRedirectURI){
+                                                                         String tpPRedirectURI, String tpPNokRedirectURI) {
         return new PisPaymentCancellationRequest(
             PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")),
             Optional.ofNullable(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")),

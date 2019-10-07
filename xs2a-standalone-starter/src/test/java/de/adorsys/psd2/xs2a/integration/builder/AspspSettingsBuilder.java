@@ -152,7 +152,10 @@ public class AspspSettingsBuilder {
 
     private static Map<PaymentType, Set<String>> buildSupportedPaymentTypeAndProductMatrix() {
         Map<PaymentType, Set<String>> matrix = new HashMap<>();
-        Set<String> availablePaymentProducts = Collections.singleton("sepa-credit-transfers");
+        Set<String> availablePaymentProducts = new HashSet<>();
+        availablePaymentProducts.add("sepa-credit-transfers");
+        availablePaymentProducts.add("custom-payment");
+
         matrix.put(PaymentType.SINGLE, availablePaymentProducts);
         matrix.put(PaymentType.PERIODIC, availablePaymentProducts);
         matrix.put(PaymentType.BULK, availablePaymentProducts);
