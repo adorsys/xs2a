@@ -230,7 +230,14 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
+    @Deprecated // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
     public boolean authorisePartiallyConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
+        return changeConsentStatus(consentId, PARTIALLY_AUTHORISED, instanceId);
+    }
+
+    @Override
+    @Transactional
+    public boolean authorisePartiallyConsent(@NotNull String consentId, @NotNull String instanceId) {
         return changeConsentStatus(consentId, PARTIALLY_AUTHORISED, instanceId);
     }
 
