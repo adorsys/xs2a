@@ -65,6 +65,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -93,7 +94,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     PaymentValidationConfigImpl.class
 })
 public class PaymentControllerIT {
-    private static final Charset UTF_8 = Charset.forName("utf-8");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
