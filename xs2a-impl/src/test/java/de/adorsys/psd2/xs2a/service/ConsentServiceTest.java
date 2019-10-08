@@ -489,6 +489,41 @@ public class ConsentServiceTest {
     }
 
     @Test
+    public void createAccountConsentsWithResponse_onImplicitApproach_shouldCreateAuthorisation() {
+        // Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
+        );
+
+        when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
+            .thenReturn(ValidationResult.valid());
+
+        when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
+            .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .build());
+
+        when(authorisationMethodDecider.isImplicitMethod(true, false))
+            .thenReturn(true);
+
+        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        CreateConsentAuthorizationResponse authorisationResponse = new CreateConsentAuthorizationResponse();
+        authorisationResponse.setAuthorisationId(AUTHORISATION_ID);
+        when(redirectAisAuthorizationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID))
+            .thenReturn(Optional.of(authorisationResponse));
+
+        // When
+        ResponseObject<CreateConsentResponse> actualResponse = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+
+        // Then
+        assertFalse(actualResponse.hasError());
+
+        CreateConsentResponse responseBody = actualResponse.getBody();
+        assertEquals(CONSENT_ID, responseBody.getConsentId());
+        assertEquals(AUTHORISATION_ID, responseBody.getAuthorizationId());
+    }
+
+    @Test
     public void createAccountConsentsWithResponse_Failure() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
@@ -571,6 +606,56 @@ public class ConsentServiceTest {
         // Then
         verify(createConsentRequestValidator).validate(new CreateConsentRequestObject(req, PSU_ID_DATA));
         assertValidationErrorIsPresent(actualResponse);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_onInitialConsentNotFound_shouldReturnError() {
+        // Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
+        );
+
+        when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
+            .thenReturn(ValidationResult.valid());
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.empty());
+
+        // When
+        ResponseObject<CreateConsentResponse> actualResponse = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+
+        // Then
+        assertTrue(actualResponse.hasError());
+        assertEquals(new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400)), actualResponse.getError());
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_onSpiError_shouldReturnError() {
+        // Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
+        );
+
+        when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
+            .thenReturn(ValidationResult.valid());
+
+        SpiResponse<SpiInitiateAisConsentResponse> spiErrorResponse = SpiResponse.<SpiInitiateAisConsentResponse>builder()
+                                                                          .error(new TppMessage(MessageErrorCode.SERVICE_BLOCKED))
+                                                                          .build();
+        when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
+            .thenReturn(spiErrorResponse);
+
+        when(spiErrorMapper.mapToErrorHolder(spiErrorResponse, ServiceType.AIS))
+            .thenReturn(ErrorHolder
+                            .builder(ErrorType.AIS_403)
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.SERVICE_BLOCKED))
+                            .build());
+
+        // When
+        ResponseObject<CreateConsentResponse> actualResponse = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+
+        // Then
+        assertTrue(actualResponse.hasError());
+        assertEquals(new MessageError(ErrorType.AIS_403, TppMessageInformation.of(MessageErrorCode.SERVICE_BLOCKED)), actualResponse.getError());
     }
 
     @Test
@@ -880,7 +965,6 @@ public class ConsentServiceTest {
     public void updateConsentPsuData_withInvalidRequest_shouldReturnValidationError() {
         // Given
         UpdateConsentPsuDataReq updateConsentPsuDataReq = buildUpdateConsentPsuDataReq(CONSENT_ID);
-        AccountConsentAuthorization authorisation = new AccountConsentAuthorization();
 
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(true);

@@ -60,6 +60,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -86,7 +87,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     PaymentValidationConfigImpl.class
 })
 public class ContextPathIT {
-    private static final Charset UTF_8 = Charset.forName("utf-8");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String CREATE_CONSENT_REQUEST_JSON_PATH = "/json/account/req/DedicatedConsent.json";
     private static final String CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_CONTEXT_PATH = "/json/account/res/contextpath/CreateAisConsent_implicit_redirect_withContextPath_response.json";
     private static final String CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_FORCED_PATH = "/json/account/res/contextpath/CreateAisConsent_implicit_redirect_forcedUrl_response.json";
@@ -117,12 +118,6 @@ public class ContextPathIT {
     private AisConsentAuthorisationServiceEncrypted aisConsentAuthorisationServiceEncrypted;
     @MockBean
     private AspspDataService aspspDataService;
-    @MockBean
-    @Qualifier("aspspRestTemplate")
-    private RestTemplate aspspRestTemplate;
-    @MockBean
-    @Qualifier("consentRestTemplate")
-    private RestTemplate consentRestTemplate;
 
     @Before
     public void init() {
@@ -148,8 +143,6 @@ public class ContextPathIT {
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
-        given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
-            .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
     }
 
     @Test
@@ -184,9 +177,6 @@ public class ContextPathIT {
             .willReturn(Optional.of(AisConsentAuthorizationResponseBuilder.buildAisConsentAuthorizationResponse(SCA_APPROACH)));
         given(aspspDataService.readAspspConsentData(any(String.class)))
             .willReturn(Optional.of(new AspspConsentData(null, ENCRYPT_CONSENT_ID)));
-        // noinspection unchecked Supress warning on using generic class in Mockito's any(...) method
-        given(aspspRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(ParameterizedTypeReference.class), any(String.class)))
-            .willReturn(ResponseEntity.ok(new ArrayList<SpiAccountDetails>()));
         when(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .thenReturn(Optional.of(new AuthorisationScaApproachResponse(SCA_APPROACH)));
 
