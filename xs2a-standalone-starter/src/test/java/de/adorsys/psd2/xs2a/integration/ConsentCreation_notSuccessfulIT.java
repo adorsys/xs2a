@@ -87,7 +87,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class
 })
 public class ConsentCreation_notSuccessfulIT {
-    private static final Charset UTF_8 = Charset.forName("utf-8");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String BANK_OFFERED_CONSENT_REQUEST_JSON_PATH = "/json/account/req/BankOfferedConsent.json";
     private static final String TPP_ERROR_MESSAGE_JSON_PATH = "/json/account/res/TppErrorMessage.json";
     private static final String PSU_IP_ADDRESS_MISSING_ERROR_MESSAGE_JSON_PATH = "/json/account/res/PsuIpAddressMissingErrorMessage.json";
@@ -116,12 +116,6 @@ public class ConsentCreation_notSuccessfulIT {
     private AisConsentAuthorisationServiceEncrypted aisConsentAuthorisationServiceEncrypted;
     @MockBean
     private AspspDataService aspspDataService;
-    @MockBean
-    @Qualifier("aspspRestTemplate")
-    private RestTemplate aspspRestTemplate;
-    @MockBean
-    @Qualifier("consentRestTemplate")
-    private RestTemplate consentRestTemplate;
 
     @Before
     public void init() {
@@ -156,8 +150,6 @@ public class ConsentCreation_notSuccessfulIT {
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
-        given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
-            .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
     }
 
     // =============== IMPLICIT MODE
@@ -209,8 +201,6 @@ public class ConsentCreation_notSuccessfulIT {
             .willReturn(Optional.of(AisConsentAuthorizationResponseBuilder.buildAisConsentAuthorizationResponse(scaApproach)));
         given(aspspDataService.readAspspConsentData(any(String.class)))
             .willReturn(Optional.of(new AspspConsentData(null, ENCRYPT_CONSENT_ID)));
-        given(aspspRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(ParameterizedTypeReference.class), any(String.class)))
-            .willReturn(ResponseEntity.ok(new ArrayList<SpiAccountDetails>()));
     }
 
     private MockHttpServletRequestBuilder makeRequestBuilder(String url, HttpHeaders headers, String content) {

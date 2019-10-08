@@ -74,6 +74,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
@@ -99,7 +100,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class
 })
 public class InitiatePayments_successfulIT {
-    private static final Charset UTF_8 = Charset.forName("utf-8");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     private static final String SINGLE_PAYMENT_REQUEST_JSON_PATH = "/json/payment/req/SinglePaymentInitiate_request.json";
     private static final String PERIODIC_PAYMENT_REQUEST_JSON_PATH = "/json/payment/req/PeriodicPaymentInitiate_request.json";
@@ -570,7 +571,7 @@ public class InitiatePayments_successfulIT {
     }
 
     public boolean isSigningBasketModeActive(HttpHeaders headers) {
-        boolean tppExplicitAuthorisationPreferred = Boolean.valueOf(headers.toSingleValueMap().get("TPP-Explicit-Authorisation-Preferred"));
+        boolean tppExplicitAuthorisationPreferred = Boolean.parseBoolean(headers.toSingleValueMap().get("TPP-Explicit-Authorisation-Preferred"));
         return tppExplicitAuthorisationPreferred && aspspProfileService.getAspspSettings().getCommon().isSigningBasketSupported();
     }
 }
