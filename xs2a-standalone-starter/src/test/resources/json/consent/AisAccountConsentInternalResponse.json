@@ -1,11 +1,11 @@
 {
-  "access": {
+  "tppAccess": {},
+  "aspspAccess": {
     "accounts": [],
     "balances": [],
     "transactions": []
   },
-  "aspspAccess": {},
+  "frequencyPerDay": 10,
   "recurringIndicator": true,
-  "validUntil": "2037-08-06",
-  "frequencyPerDay": "4"
+  "validUntil": "9999-12-31"
 }

@@ -44,7 +44,7 @@ public class GetBalancesReportValidator extends AbstractAccountTppValidator<Comm
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(CommonAccountBalanceRequestObject consentObject) {
-        Xs2aAccountAccess accountAccess = consentObject.getAccountConsent().getAccess();
+        Xs2aAccountAccess accountAccess = consentObject.getAccountConsent().getAspspAccess();
         ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountAccess,
                                                                                                      accountAccess.getBalances(), consentObject.getAccountId());
         if (accountReferenceValidationResult.isNotValid()) {

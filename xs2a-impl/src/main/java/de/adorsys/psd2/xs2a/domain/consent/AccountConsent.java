@@ -38,6 +38,7 @@ public class AccountConsent {
     private final String id;
 
     private final Xs2aAccountAccess access;
+    private final Xs2aAccountAccess aspspAccess;
 
     private final boolean recurringIndicator;
 

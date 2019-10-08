@@ -138,7 +138,7 @@ public class BalanceServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
 
-        when(accountHelperService.findAccountReference(any(), any(), any())).thenReturn(spiAccountReference);
+        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
         when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
         when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
     }
@@ -296,7 +296,7 @@ public class BalanceServiceTest {
     }
 
     private static AccountConsent createConsent(Xs2aAccountAccess access) {
-        return new AccountConsent(CONSENT_ID, access, false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap());
+        return new AccountConsent(CONSENT_ID, access, access, false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap());
     }
 
     private static TppInfo createTppInfo() {

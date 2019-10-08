@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
@@ -174,15 +175,15 @@ public class AisConsentIT {
         flushAndClearPersistenceContext();
 
         //Then
-        List<AisAccountConsent> consentsAspsp = cmsPsuAisService.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsAisAccountConsent> consentsAspsp = cmsPsuAisService.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID);
         assertEquals(2, consentsAspsp.size());
         assertEquals(aspsp, consentsAspsp.get(0).getPsuIdDataList().get(0));
 
-        List<AisAccountConsent> consentsAspsp1 = cmsPsuAisService.getConsentsForPsu(aspsp1, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsAisAccountConsent> consentsAspsp1 = cmsPsuAisService.getConsentsForPsu(aspsp1, DEFAULT_SERVICE_INSTANCE_ID);
         assertEquals(1, consentsAspsp1.size());
         assertEquals(aspsp1, consentsAspsp1.get(0).getPsuIdDataList().get(0));
 
-        List<AisAccountConsent> consentsAspsp1NoCorporateId = cmsPsuAisService.getConsentsForPsu(aspsp1NoCorporateId, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsAisAccountConsent> consentsAspsp1NoCorporateId = cmsPsuAisService.getConsentsForPsu(aspsp1NoCorporateId, DEFAULT_SERVICE_INSTANCE_ID);
         assertEquals(2, consentsAspsp1NoCorporateId.size());
         assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(0).getPsuIdDataList().get(0).getPsuId());
         assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(1).getPsuIdDataList().get(0).getPsuId());

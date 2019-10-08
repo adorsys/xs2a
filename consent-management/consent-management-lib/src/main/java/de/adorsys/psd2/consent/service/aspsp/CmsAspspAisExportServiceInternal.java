@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.service.aspsp;
 
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
@@ -43,10 +43,10 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
     private final AisConsentMapper aisConsentMapper;
 
     @Override
-    public Collection<AisAccountConsent> exportConsentsByTpp(String tppAuthorisationNumber,
-                                                             @Nullable LocalDate createDateFrom,
-                                                             @Nullable LocalDate createDateTo,
-                                                             @Nullable PsuIdData psuIdData, @NotNull String instanceId) {
+    public Collection<CmsAisAccountConsent> exportConsentsByTpp(String tppAuthorisationNumber,
+                                                                @Nullable LocalDate createDateFrom,
+                                                                @Nullable LocalDate createDateTo,
+                                                                @Nullable PsuIdData psuIdData, @NotNull String instanceId) {
         if (StringUtils.isBlank(tppAuthorisationNumber) || StringUtils.isBlank(instanceId)) {
             log.info("TPP ID: [{}], InstanceId: [{}]. Export Consents by TPP: Some of these two values are empty", tppAuthorisationNumber, instanceId);
             return Collections.emptyList();
@@ -60,14 +60,14 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
             instanceId
         ))
                    .stream()
-                   .map(aisConsentMapper::mapToAisAccountConsent)
+                   .map(aisConsentMapper::mapToCmsAisAccountConsent)
                    .collect(Collectors.toList());
     }
 
     @Override
-    public Collection<AisAccountConsent> exportConsentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
-                                                             @Nullable LocalDate createDateTo,
-                                                             @NotNull String instanceId) {
+    public Collection<CmsAisAccountConsent> exportConsentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
+                                                                @Nullable LocalDate createDateTo,
+                                                                @NotNull String instanceId) {
         if (psuIdData == null || psuIdData.isEmpty() || StringUtils.isBlank(instanceId)) {
             log.info("InstanceId: [{}]. Export consents by Psu failed, psuIdData or instanceId is empty or null.",
                      instanceId);
@@ -80,15 +80,15 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                                                                               instanceId
         ))
                    .stream()
-                   .map(aisConsentMapper::mapToAisAccountConsent)
+                   .map(aisConsentMapper::mapToCmsAisAccountConsent)
                    .collect(Collectors.toList());
     }
 
     @Override
-    public Collection<AisAccountConsent> exportConsentsByAccountId(@NotNull String aspspAccountId,
-                                                                   @Nullable LocalDate createDateFrom,
-                                                                   @Nullable LocalDate createDateTo,
-                                                                   @NotNull String instanceId) {
+    public Collection<CmsAisAccountConsent> exportConsentsByAccountId(@NotNull String aspspAccountId,
+                                                                      @Nullable LocalDate createDateFrom,
+                                                                      @Nullable LocalDate createDateTo,
+                                                                      @NotNull String instanceId) {
 
         if (StringUtils.isBlank(instanceId)) {
             log.info("InstanceId: [{}], aspspAccountId: [{}]. Export consents by accountId failed, instanceId is empty or null.",
@@ -102,7 +102,7 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                                                                                    instanceId
         ))
                    .stream()
-                   .map(aisConsentMapper::mapToAisAccountConsent)
+                   .map(aisConsentMapper::mapToCmsAisAccountConsent)
                    .collect(Collectors.toList());
     }
 }

@@ -55,20 +55,6 @@ public class PermittedAccountReferenceValidatorTest {
     }
 
     @Test
-    public void validate_withBalanceIsTrue_wrongAccountId_globalConsent_success() {
-        accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent-global.json", AccountConsent.class);
-        ValidationResult validationResult = validator.validate(accountConsent, WRONG_ACCOUNT_ID, true);
-        assertTrue(validationResult.isValid());
-    }
-
-    @Test
-    public void validate_withBalanceIsFalse_wrongAccountId_globalConsent_success() {
-        accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent-global.json", AccountConsent.class);
-        ValidationResult validationResult = validator.validate(accountConsent, WRONG_ACCOUNT_ID, false);
-        assertTrue(validationResult.isValid());
-    }
-
-    @Test
     public void validate_withBalanceIsTrue_notValidByAccountId() {
         accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent.json", AccountConsent.class);
         ValidationResult validationResult = validator.validate(accountConsent, WRONG_ACCOUNT_ID, true);

@@ -122,8 +122,8 @@ public class BalanceService {
     }
 
     private SpiResponse<List<SpiAccountBalance>> getSpiResponse(AccountConsent accountConsent, String consentId, String accountId) {
-        Xs2aAccountAccess access = accountConsent.getAccess();
-        SpiAccountReference requestedAccountReference = accountHelperService.findAccountReference(access.getAllPsd2(), access.getBalances(), accountId);
+        Xs2aAccountAccess access = accountConsent.getAspspAccess();
+        SpiAccountReference requestedAccountReference = accountHelperService.findAccountReference(access.getBalances(), accountId);
 
         return accountSpi.requestBalancesForAccount(accountHelperService.getSpiContextData(),
                                                     requestedAccountReference,
@@ -148,8 +148,8 @@ public class BalanceService {
                                                                                    String consentId,
                                                                                    String requestUri,
                                                                                    List<SpiAccountBalance> payload) {
-        Xs2aAccountAccess access = accountConsent.getAccess();
-        SpiAccountReference requestedAccountReference = accountHelperService.findAccountReference(access.getAllPsd2(), access.getBalances(), accountId);
+        Xs2aAccountAccess access = accountConsent.getAspspAccess();
+        SpiAccountReference requestedAccountReference = accountHelperService.findAccountReference(access.getBalances(), accountId);
 
         Xs2aBalancesReport balancesReport = balanceReportMapper.mapToXs2aBalancesReport(requestedAccountReference, payload);
 

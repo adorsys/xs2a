@@ -163,7 +163,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     public Optional<AisAccountConsent> getInitialAisAccountConsentById(String consentId) {
         return aisConsentRepository.findByExternalId(consentId)
                    .map(this::checkAndUpdateOnExpiration)
-                   .map(consentMapper::mapToInitialAisAccountConsent);
+                   .map(consentMapper::mapToAisAccountConsent);
     }
 
     /**

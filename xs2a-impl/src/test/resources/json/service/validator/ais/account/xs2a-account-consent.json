@@ -22,6 +22,29 @@
       }
     ]
   },
+  "aspspAccess": {
+    "accounts": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ]
+  },
   "recurringIndicator": true,
   "validUntil": "2037-08-06",
   "frequencyPerDay": "4",

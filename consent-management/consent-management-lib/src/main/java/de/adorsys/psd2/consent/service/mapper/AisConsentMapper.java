@@ -17,10 +17,7 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
@@ -44,6 +41,15 @@ public class AisConsentMapper {
     private final AisConsentUsageService aisConsentUsageService;
     private final AuthorisationTemplateMapper authorisationTemplateMapper;
 
+    private AisAccountAccess getAvailableAccess(AisConsent consent) {
+        AisAccountAccess tppAccountAccess = mapToAisAccountAccess(consent);
+        AisAccountAccess aspspAccountAccess = mapToAspspAisAccountAccess(consent);
+
+        return tppAccountAccess.getAllPsd2() != null
+                   ? tppAccountAccess
+                   : aspspAccountAccess.isNotEmpty() ? aspspAccountAccess : tppAccountAccess;
+    }
+
     /**
      * Maps AisConsent to AisAccountConsent with accesses populated with account references, provided by ASPSP.
      * <p>
@@ -53,15 +59,14 @@ public class AisConsentMapper {
      * @return mapped AIS consent
      */
     public AisAccountConsent mapToAisAccountConsent(AisConsent consent) {
-        AisAccountAccess aisAccountAccess = consent.getAspspAccountAccesses().isEmpty()
-                                                ? mapToAisAccountAccess(consent)
-                                                : mapToAspspAisAccountAccess(consent);
+        AisAccountAccess chosenAccess = getAvailableAccess(consent);
 
         Map<String, Integer> usageCounterMap = aisConsentUsageService.getUsageCounterMap(consent);
 
         return new AisAccountConsent(
             consent.getExternalId(),
-            aisAccountAccess,
+            chosenAccess,
+            mapToAspspAisAccountAccess(consent),
             consent.isRecurringIndicator(),
             consent.getExpireDate(),
             consent.getAllowedFrequencyPerDay(),
@@ -80,18 +85,14 @@ public class AisConsentMapper {
             consent.getStatusChangeTimestamp());
     }
 
-    /**
-     * Maps AisConsent to AisAccountConsent with accesses populated with account references, provided by TPP.
-     *
-     * @param consent AIS consent entity
-     * @return mapped AIS consent
-     */
-    public AisAccountConsent mapToInitialAisAccountConsent(AisConsent consent) {
+    public CmsAisAccountConsent mapToCmsAisAccountConsent(AisConsent consent) {
+        AisAccountAccess chosenAccess = getAvailableAccess(consent);
+
         Map<String, Integer> usageCounterMap = aisConsentUsageService.getUsageCounterMap(consent);
 
-        return new AisAccountConsent(
+        return new CmsAisAccountConsent(
             consent.getExternalId(),
-            mapToAisAccountAccess(consent),
+            chosenAccess,
             consent.isRecurringIndicator(),
             consent.getExpireDate(),
             consent.getAllowedFrequencyPerDay(),

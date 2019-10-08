@@ -70,6 +70,7 @@ public class AisConsentBuilder {
                    .map(cr -> new AisAccountConsent(
                             consentId,
                             mapToAccountAccess(cr.getAccess()),
+                            new AisAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null),
                             cr.isRecurringIndicator(),
                             cr.getValidUntil(),
                             cr.getFrequencyPerDay(),
