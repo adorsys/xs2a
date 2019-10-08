@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import org.junit.Test;
@@ -155,6 +156,8 @@ public class TppDomainValidatorTest {
             .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
+        when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.AIS_400);
+
         //When
         ValidationResult validate = tppDomainValidator.validate(URL_HEADER_WRONG);
         //Then
@@ -171,6 +174,8 @@ public class TppDomainValidatorTest {
             .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
+        when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.AIS_400);
+
         //When
         ValidationResult validate = tppDomainValidator.validate(URL_HEADER_WRONG_DOMAIN);
         //Then
@@ -187,6 +192,8 @@ public class TppDomainValidatorTest {
             .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
+        when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.AIS_400);
+
         //When
         ValidationResult validate = tppDomainValidator.validate(URL_HEADER_WRONG_TLD);
         //Then
@@ -216,6 +223,8 @@ public class TppDomainValidatorTest {
             .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(TPP_NAME_NON_DOMAIN, TPP_DNS_DOMAIN));
+        when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.AIS_400);
+
         //When
         ValidationResult validate = tppDomainValidator.validate(URL_HEADER_WRONG_DOMAIN);
         //Then
