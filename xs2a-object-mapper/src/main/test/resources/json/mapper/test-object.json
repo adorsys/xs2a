@@ -1,0 +1,14 @@
+{
+  "someField": "some value",
+  "someOtherField": "another value",
+  "nullField": null,
+  "arrayField": [
+    "one"
+  ],
+  "nestedObject": {
+    "nestedField": "nested value 1"
+  },
+  "anotherNestedObject": {
+    "nestedField": "nested value 2"
+  }
+}

@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.interceptor.tpp;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -48,7 +48,7 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
     private final TppStopListService tppStopListService;
     private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
     private final ServiceTypeToErrorTypeMapper errorTypeMapper;
-    private final ObjectMapper objectMapper;
+    private final Xs2aObjectMapper xs2aObjectMapper;
     private final RequestProviderService requestProviderService;
 
     @Override
@@ -56,7 +56,7 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
         TppInfo tppInfo = tppService.getTppInfo();
 
         if (tppStopListService.checkIfTppBlocked(tppInfo.getAuthorisationNumber())) {
-            response.getWriter().write(objectMapper.writeValueAsString(createError()));
+            response.getWriter().write(xs2aObjectMapper.writeValueAsString(createError()));
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(CERTIFICATE_BLOCKED.getCode());
 

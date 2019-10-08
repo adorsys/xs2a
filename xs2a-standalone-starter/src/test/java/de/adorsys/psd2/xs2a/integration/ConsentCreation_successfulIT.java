@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.integration;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
@@ -29,9 +28,13 @@ import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.starter.config.validation.PaymentValidationConfigImpl;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
@@ -89,7 +92,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     classes = Xs2aStandaloneStarter.class)
 @ContextConfiguration(classes = {
     CorsConfigurationProperties.class,
-    ObjectMapperConfig.class,
     WebConfig.class,
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class,
@@ -119,7 +121,7 @@ public class ConsentCreation_successfulIT {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private ObjectMapper mapper;
+    private Xs2aObjectMapper xs2aObjectMapper;
     @MockBean
     private AspspProfileService aspspProfileService;
     @MockBean
@@ -298,10 +300,10 @@ public class ConsentCreation_successfulIT {
             .willReturn(Optional.of(ENCRYPT_CONSENT_ID));
 
         given(aisConsentServiceEncrypted.getInitialAisAccountConsentById(any(String.class)))
-            .willReturn(Optional.of(AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, mapper)));
+            .willReturn(Optional.of(AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, xs2aObjectMapper)));
 
         given(aisConsentServiceEncrypted.getAisAccountConsentById(any(String.class)))
-            .willReturn(Optional.of(AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, mapper)));
+            .willReturn(Optional.of(AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, xs2aObjectMapper)));
         given(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(any(String.class), any(String.class)))
             .willReturn(Optional.of(AisConsentAuthorizationResponseBuilder.buildAisConsentAuthorizationResponse(scaApproach)));
         given(aspspDataService.readAspspConsentData(any(String.class)))

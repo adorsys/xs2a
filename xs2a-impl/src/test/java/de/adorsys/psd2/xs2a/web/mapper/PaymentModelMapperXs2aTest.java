@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.BulkPaymentInitiationJson;
 import de.adorsys.psd2.model.PaymentInitiationJson;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
@@ -60,8 +60,9 @@ public class PaymentModelMapperXs2aTest {
         paymentInitiationParameters = new PaymentInitiationParameters();
         ValueValidatorService validatorService = new ValueValidatorService(requestProviderService,
             Validation.buildDefaultValidatorFactory().getValidator());
-        paymentModelMapperXs2a = new PaymentModelMapperXs2a(new ObjectMapper(), validatorService,
-            null, null, paymentModelMapper, standardPaymentProductsResolver);
+        paymentModelMapperXs2a = new PaymentModelMapperXs2a(validatorService,
+                                                            null, new Xs2aObjectMapper(),
+                                                            paymentModelMapper, standardPaymentProductsResolver);
     }
 
     @Test

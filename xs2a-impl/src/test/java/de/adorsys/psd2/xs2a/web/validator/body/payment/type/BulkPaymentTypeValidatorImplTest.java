@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment.type;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
@@ -62,7 +62,7 @@ public class BulkPaymentTypeValidatorImplTest {
         assertTrue(CollectionUtils.isNotEmpty(bulkPayment.getPayments()));
         singlePayment = bulkPayment.getPayments().get(0);
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
         PurposeCodeMapper purposeCodeMapper = Mappers.getMapper(PurposeCodeMapper.class);
         RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
         ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.AIS_400);
@@ -71,8 +71,8 @@ public class BulkPaymentTypeValidatorImplTest {
                                                                DefaultPaymentValidationConfigImpl.class);
 
         validator = new BulkPaymentTypeValidatorImpl(errorBuildingServiceMock,
-                                                     objectMapper,
-                                                     new PaymentMapper(objectMapper, purposeCodeMapper, remittanceMapper),
+                                                     xs2aObjectMapper,
+                                                     new PaymentMapper(xs2aObjectMapper, purposeCodeMapper, remittanceMapper),
                                                      new AmountValidator(errorBuildingServiceMock), paymentValidationConfig);
     }
 

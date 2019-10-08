@@ -16,9 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.FrequencyCode;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -54,23 +53,21 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
     private DateFieldValidator dateFieldValidator;
 
-    private final JsonConverter jsonConverter;
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final FieldExtractor fieldExtractor;
 
     @Autowired
-    public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
+    public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                     PaymentTypeValidatorContext paymentTypeValidatorContext,
                                     StandardPaymentProductsResolver standardPaymentProductsResolver,
-                                    JsonConverter jsonConverter, TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
+                                    TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
                                     DateFieldValidator dateFieldValidator,
                                     FieldExtractor fieldExtractor) {
-        super(errorBuildingService, objectMapper);
+        super(errorBuildingService, xs2aObjectMapper);
         this.paymentTypeValidatorContext = paymentTypeValidatorContext;
         this.standardPaymentProductsResolver = standardPaymentProductsResolver;
         this.dateFieldValidator = dateFieldValidator;
-        this.jsonConverter = jsonConverter;
         this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
         this.fieldExtractor = fieldExtractor;
     }
@@ -149,7 +146,7 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     private List<String> extractPurposeCodes(HttpServletRequest request, MessageError messageError) {
         List<String> purposeCodes = new ArrayList<>();
         try {
-            purposeCodes.addAll(jsonConverter.toJsonGetValuesForField(request.getInputStream(), PURPOSE_CODE_FIELD_NAME));
+            purposeCodes.addAll(xs2aObjectMapper.toJsonGetValuesForField(request.getInputStream(), PURPOSE_CODE_FIELD_NAME));
         } catch (IOException e) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
         }

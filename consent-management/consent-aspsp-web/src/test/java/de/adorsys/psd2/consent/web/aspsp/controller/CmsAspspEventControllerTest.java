@@ -72,7 +72,7 @@ public class CmsAspspEventControllerTest {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                       .standaloneSetup(new CmsAspspEventController(aspspEventService))
-                      .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapperTestConfig.getObjectMapper()))
+                      .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapperTestConfig.getXs2aObjectMapper()))
                       .build();
     }
 

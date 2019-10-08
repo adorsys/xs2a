@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class HrefLinkMapper {
-    private final ObjectMapper mapper;
+    private final Xs2aObjectMapper xs2aObjectMapper;
 
     /**
      * Maps Links to Links Map
@@ -41,7 +41,7 @@ public class HrefLinkMapper {
             return null;
         }
 
-        return mapper.convertValue(links, new TypeReference<Map<String, HrefType>>() {
+        return xs2aObjectMapper.convertValue(links, new TypeReference<Map<String, HrefType>>() {
         });
     }
 }

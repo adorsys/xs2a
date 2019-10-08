@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -83,7 +83,7 @@ public class ConsentModelMapperTest {
     private AccountModelMapper accountModelMapper;
 
     @Mock
-    private ObjectMapper objectMapper;
+    private Xs2aObjectMapper xs2aObjectMapper;
 
     private CreateConsentResponse createConsentResponseWithScaMethods;
     private CreateConsentResponse createConsentResponseWithoutScaMethods;
@@ -144,7 +144,7 @@ public class ConsentModelMapperTest {
     @Test
     public void mapToCreateConsentReq_AvailableAccountsWithBalance() {
         //Given
-        when(objectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
+        when(xs2aObjectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAvailableAccountsWithBalances.json", Consents.class);
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAvailableAccountsWithBalances.json", CreateConsentReq.class);
         //When

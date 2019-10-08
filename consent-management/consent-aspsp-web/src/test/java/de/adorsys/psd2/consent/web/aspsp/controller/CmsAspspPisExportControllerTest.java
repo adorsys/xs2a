@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.pis.CmsAmount;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
 import de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService;
+import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
@@ -32,6 +33,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -74,6 +76,8 @@ public class CmsAspspPisExportControllerTest {
 
     @Before
     public void setUp() {
+        ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
+
         psuIdData = jsonReader.getObjectFromFile("json/psu-id-data.json", PsuIdData.class);
         cmsPayment = getCmsPayment();
         cmsPayments = Collections.singletonList(cmsPayment);
@@ -84,7 +88,9 @@ public class CmsAspspPisExportControllerTest {
         httpHeaders.add("End-Date", END_DATE.toString());
         httpHeaders.add("instance-id", INSTANCE_ID);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(cmsAspspPisExportController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(cmsAspspPisExportController)
+                      .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapperTestConfig.getXs2aObjectMapper()))
+                      .build();
     }
 
     @Test

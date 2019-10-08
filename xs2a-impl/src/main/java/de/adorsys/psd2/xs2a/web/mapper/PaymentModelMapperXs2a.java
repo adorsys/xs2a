@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.BulkPaymentInitiationJson;
 import de.adorsys.psd2.model.PaymentInitiationJson;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
@@ -33,7 +33,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
@@ -42,10 +41,9 @@ import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 @Component
 @RequiredArgsConstructor
 public class PaymentModelMapperXs2a {
-    private final ObjectMapper mapper;
     private final ValueValidatorService validationService;
     private final HttpServletRequest httpServletRequest;
-    private final JsonConverter jsonConverter;
+    private final Xs2aObjectMapper xs2aObjectMapper;
     private final PaymentModelMapper paymentModelMapper;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
 
@@ -73,7 +71,7 @@ public class PaymentModelMapperXs2a {
     }
 
     private <R> R validatePayment(Object payment, Class<R> clazz) {
-        R result = mapper.convertValue(payment, clazz);
+        R result = xs2aObjectMapper.convertValue(payment, clazz);
         validationService.validate(result);
         return result;
     }
@@ -89,12 +87,17 @@ public class PaymentModelMapperXs2a {
     }
 
     private byte[] buildPeriodicBinaryBodyData(Object xmlPart, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson jsonPart) {
-        Optional<String> serialisedJsonPart = jsonConverter.toJson(jsonPart);
-        if (xmlPart == null || !serialisedJsonPart.isPresent()) {
+        String serialisedJsonPart = null;
+        try {
+            serialisedJsonPart = xs2aObjectMapper.writeValueAsString(jsonPart);
+        } catch (JsonProcessingException e) {
+            log.info("Can't convert object to json: {}", e.getMessage());
+        }
+        if (xmlPart == null || serialisedJsonPart == null) {
             throw new IllegalArgumentException("Invalid body of the multipart request!");
         }
 
-        String body = xmlPart + "\n" + serialisedJsonPart.get();
+        String body = xmlPart + "\n" + serialisedJsonPart;
         return body.getBytes(Charset.forName("UTF-8"));
     }
 }

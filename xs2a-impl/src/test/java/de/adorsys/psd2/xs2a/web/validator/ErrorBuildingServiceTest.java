@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
@@ -62,7 +62,7 @@ public class ErrorBuildingServiceTest {
     @Mock
     private ErrorMapperContainer errorMapperContainer;
     @Mock
-    private ObjectMapper objectMapper;
+    private Xs2aObjectMapper xs2aObjectMapper;
     private MockHttpServletResponse response;
 
     @Captor
@@ -74,7 +74,7 @@ public class ErrorBuildingServiceTest {
 
         when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE_PIS);
         when(errorTypeMapper.mapToErrorType(any(), any(Integer.class))).thenReturn(ERROR_PIS_400);
-        when(objectMapper.writeValueAsString(any())).thenReturn(RESPONSE_TEXT);
+        when(xs2aObjectMapper.writeValueAsString(any())).thenReturn(RESPONSE_TEXT);
         when(errorMapperContainer.getErrorBody(messageErrorCaptor.capture())).thenReturn(null);
     }
 

@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.web.converter;
 
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.DayOfExecution;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +26,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -40,21 +40,21 @@ public class PeriodicPaymentJsonPartConverterTest {
     private static final String MALFORMED_SERIALISED_BODY = "malformed body";
 
     @Mock
-    private JsonConverter jsonConverter;
+    private Xs2aObjectMapper xs2aObjectMapper;
 
     @InjectMocks
     private PeriodicPaymentJsonPartConverter periodicPaymentJsonPartConverter;
 
     @Before
-    public void setUp() {
-        when(jsonConverter.toObject(SERIALISED_BODY, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class))
-            .thenReturn(Optional.of(buildPeriodicPaymentJson()));
-        when(jsonConverter.toObject(MALFORMED_SERIALISED_BODY, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class))
-            .thenReturn(Optional.empty());
+    public void setUp() throws IOException {
+        when(xs2aObjectMapper.readValue(SERIALISED_BODY, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class))
+            .thenReturn(buildPeriodicPaymentJson());
+        when(xs2aObjectMapper.readValue(MALFORMED_SERIALISED_BODY, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class))
+            .thenReturn(null);
     }
 
     @Test
-    public void convert_withCorrectBody_shouldReturnObject() {
+    public void convert_withCorrectBody_shouldReturnObject() throws IOException {
         // Given
         PeriodicPaymentInitiationXmlPart2StandingorderTypeJson expected = buildPeriodicPaymentJson();
 
@@ -62,7 +62,7 @@ public class PeriodicPaymentJsonPartConverterTest {
         PeriodicPaymentInitiationXmlPart2StandingorderTypeJson actualResult = periodicPaymentJsonPartConverter.convert(SERIALISED_BODY);
 
         // Then
-        verify(jsonConverter).toObject(SERIALISED_BODY, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class);
+        verify(xs2aObjectMapper).readValue(SERIALISED_BODY, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class);
         assertEquals(expected, actualResult);
     }
 

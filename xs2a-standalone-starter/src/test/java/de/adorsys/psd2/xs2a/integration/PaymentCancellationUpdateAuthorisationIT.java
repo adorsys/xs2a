@@ -18,7 +18,10 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.starter.config.validation.PaymentValidationConfigImpl;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +40,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ContextConfiguration(
     classes = {
         CorsConfigurationProperties.class,
-        ObjectMapperConfig.class,
         WebConfig.class,
         Xs2aEndpointPathConstant.class,
         Xs2aInterfaceConfig.class,

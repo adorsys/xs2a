@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.piis;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.Amount;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -40,8 +40,8 @@ public class FundsConfirmationBodyValidatorImpl extends AbstractBodyValidatorImp
     private final AmountValidator amountValidator;
     private final CurrencyValidator currencyValidator;
 
-    public FundsConfirmationBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper, AccountReferenceValidator accountReferenceValidator, AmountValidator amountValidator, CurrencyValidator currencyValidator) {
-        super(errorBuildingService, objectMapper);
+    public FundsConfirmationBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper, AccountReferenceValidator accountReferenceValidator, AmountValidator amountValidator, CurrencyValidator currencyValidator) {
+        super(errorBuildingService, xs2aObjectMapper);
         this.accountReferenceValidator = accountReferenceValidator;
         this.amountValidator = amountValidator;
         this.currencyValidator = currencyValidator;

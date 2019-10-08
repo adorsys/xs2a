@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import org.junit.Before;
@@ -34,8 +34,8 @@ public class HrefLinkMapperTest {
 
     @Before
     public void setUp() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        hrefMapper = new HrefLinkMapper(objectMapper);
+        Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
+        hrefMapper = new HrefLinkMapper(xs2aObjectMapper);
     }
 
     @Test
