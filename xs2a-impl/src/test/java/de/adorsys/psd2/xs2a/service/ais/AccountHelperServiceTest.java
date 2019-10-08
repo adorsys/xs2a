@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.ais;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -68,7 +67,6 @@ public class AccountHelperServiceTest {
     private static final boolean WITH_BALANCE = true;
 
     private static final SpiAccountReference SPI_ACCOUNT_REFERENCE = buildSpiAccountReference();
-    private static final AccountAccessType ACCOUNT_ACCESS_TYPE = AccountAccessType.ALL_ACCOUNTS;
     private static final AccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
     private static final List<AccountReference> REFERENCES = Collections.singletonList(XS2A_ACCOUNT_REFERENCE);
     private static final SpiContextData SPI_CONTEXT_DATA = buildSpiContextData();
@@ -97,14 +95,6 @@ public class AccountHelperServiceTest {
     @Mock
     private RequestProviderService requestProviderService;
 
-    @Test
-    public void findAccountReference_WithAccountAccessType() {
-        // When
-        SpiAccountReference actual = accountHelperService.findAccountReference(ACCOUNT_ACCESS_TYPE, REFERENCES, ACCOUNT_ID);
-        // Then
-        assertEquals(SPI_ACCOUNT_REFERENCE, actual);
-    }
-
     private static SpiAccountReference buildSpiAccountReference() {
         return new SpiAccountReference(ACCOUNT_ID, null, null, null, null, null, null);
     }
@@ -114,7 +104,7 @@ public class AccountHelperServiceTest {
         // Given
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE)).thenReturn(SPI_ACCOUNT_REFERENCE);
         // When
-        SpiAccountReference actual = accountHelperService.findAccountReference(null, REFERENCES, ACCOUNT_ID);
+        SpiAccountReference actual = accountHelperService.findAccountReference(REFERENCES, ACCOUNT_ID);
         // Then
         assertEquals(SPI_ACCOUNT_REFERENCE, actual);
     }
@@ -179,11 +169,11 @@ public class AccountHelperServiceTest {
     }
 
     private static AccountConsent createConsent() {
-        return new AccountConsent(CONSENT_ID, ACCOUNT_ACCESS, false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap());
+        return new AccountConsent(CONSENT_ID, ACCOUNT_ACCESS, ACCOUNT_ACCESS, false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap());
     }
 
     private static AccountConsent createConsentWithFalceOneAccessType() {
-        return new AccountConsent(CONSENT_ID, ACCOUNT_ACCESS, true, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap());
+        return new AccountConsent(CONSENT_ID, ACCOUNT_ACCESS, ACCOUNT_ACCESS, true, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap());
     }
 
     private static Xs2aAccountAccess createAccountAccess() {

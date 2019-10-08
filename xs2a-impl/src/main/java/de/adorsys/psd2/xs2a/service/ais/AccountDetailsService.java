@@ -127,7 +127,7 @@ public class AccountDetailsService {
     private SpiResponse<SpiAccountDetails> getSpiResponse(AccountConsent accountConsent, String consentId,
                                                           String accountId, boolean withBalance) {
         Xs2aAccountAccess access = accountConsent.getAccess();
-        SpiAccountReference requestedAccountReference = accountHelperService.findAccountReference(access.getAllPsd2(), access.getAccounts(), accountId);
+        SpiAccountReference requestedAccountReference = accountHelperService.findAccountReference(access.getAccounts(), accountId);
 
         return accountSpi.requestAccountDetailForAccount(accountHelperService.getSpiContextData(),
                                                          withBalance, requestedAccountReference,

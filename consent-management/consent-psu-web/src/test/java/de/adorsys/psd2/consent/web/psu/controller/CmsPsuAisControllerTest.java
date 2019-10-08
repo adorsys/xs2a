@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.consent.web.psu.controller;
 
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
+import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
+import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -118,10 +118,10 @@ public class CmsPsuAisControllerTest {
     public void getConsent_withValidRequest_shouldReturnOk() {
         // Given
         when(cmsPsuAisService.getConsent(psuIdData, CONSENT_ID, INSTANCE_ID))
-            .thenReturn(Optional.of(new AisAccountConsent()));
+            .thenReturn(Optional.of(new CmsAisAccountConsent()));
 
         // When
-        ResponseEntity<AisAccountConsent> actualResponse = cmsPsuAisController.getConsentByConsentId(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity<CmsAisAccountConsent> actualResponse = cmsPsuAisController.getConsentByConsentId(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
 
         // Then
         verify(cmsPsuAisService).getConsent(psuIdData, CONSENT_ID, INSTANCE_ID);
@@ -137,7 +137,7 @@ public class CmsPsuAisControllerTest {
             .thenReturn(Optional.empty());
 
         // When
-        ResponseEntity<AisAccountConsent> actualResponse = cmsPsuAisController.getConsentByConsentId(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity<CmsAisAccountConsent> actualResponse = cmsPsuAisController.getConsentByConsentId(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
 
         // Then
         verify(cmsPsuAisService).getConsent(psuIdData, CONSENT_ID, INSTANCE_ID);
@@ -301,10 +301,10 @@ public class CmsPsuAisControllerTest {
     public void getConsentsForPsu_withTrueRequest_shouldReturnOk() {
         // Given
         when(cmsPsuAisService.getConsentsForPsu(psuIdData, INSTANCE_ID))
-            .thenReturn(Collections.singletonList(new AisAccountConsent()));
+            .thenReturn(Collections.singletonList(new CmsAisAccountConsent()));
 
         // When
-        ResponseEntity<List<AisAccountConsent>> actualResponse = cmsPsuAisController.getConsentsForPsu(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity<List<CmsAisAccountConsent>> actualResponse = cmsPsuAisController.getConsentsForPsu(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
 
         // Then
         verify(cmsPsuAisService).getConsentsForPsu(psuIdData, INSTANCE_ID);
@@ -320,7 +320,7 @@ public class CmsPsuAisControllerTest {
             .thenReturn(Collections.emptyList());
 
         // When
-        ResponseEntity<List<AisAccountConsent>> actualResponse = cmsPsuAisController.getConsentsForPsu(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity<List<CmsAisAccountConsent>> actualResponse = cmsPsuAisController.getConsentsForPsu(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
 
         // Then
         verify(cmsPsuAisService).getConsentsForPsu(psuIdData, INSTANCE_ID);
@@ -368,7 +368,7 @@ public class CmsPsuAisControllerTest {
     public void getConsentIdByRedirectId_withValidRequest_shouldReturnOk() throws RedirectUrlIsExpiredException {
         // Given
         when(cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID))
-            .thenReturn(Optional.of(new CmsAisConsentResponse(new AisAccountConsent(), null, null, null)));
+            .thenReturn(Optional.of(new CmsAisConsentResponse(new CmsAisAccountConsent(), null, null, null)));
 
         // When
         ResponseEntity actualResponse = cmsPsuAisController.getConsentIdByRedirectId(AUTHORISATION_ID, INSTANCE_ID);

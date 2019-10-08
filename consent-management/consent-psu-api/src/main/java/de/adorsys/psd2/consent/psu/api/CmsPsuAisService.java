@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.consent.psu.api;
 
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
+import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
@@ -50,13 +50,13 @@ public interface CmsPsuAisService {
      * @return Consent object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
-    Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
+    Optional<CmsAisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**
      * Returns Authorisation object by its ID
      *
-     * @param authorisationId  ID of authorisation
-     * @param instanceId optional ID of particular service instance
+     * @param authorisationId ID of authorisation
+     * @param instanceId      optional ID of particular service instance
      * @return Authorisation object if it was found
      */
     @NotNull
@@ -127,7 +127,7 @@ public interface CmsPsuAisService {
      * @return List of AIS Consent objects corresponding to the given PSU
      */
     @NotNull
-    List<AisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
+    List<CmsAisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
 
     /**
      * Revokes AIS Consent object by its ID. Consent gets status "Revoked by PSU".

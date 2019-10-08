@@ -190,7 +190,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     private static AccountConsent buildConsent(String id) {
-        return new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap());
+        return new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null, null, null), new Xs2aAccountAccess(null, null, null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap());
     }
 
     private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {

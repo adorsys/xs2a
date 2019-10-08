@@ -19,7 +19,7 @@ package de.adorsys.psd2.consent.service.psu;
 
 import de.adorsys.psd2.consent.api.ais.AdditionalAccountInformationType;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -122,10 +122,10 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
-    public @NotNull Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
+    public @NotNull Optional<CmsAisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
         return aisConsentRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId))
                    .map(this::checkAndUpdateOnExpiration)
-                   .map(consentMapper::mapToAisAccountConsent);
+                   .map(consentMapper::mapToCmsAisAccountConsent);
     }
 
     @Override
@@ -205,13 +205,13 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     @Override
-    public @NotNull List<AisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
+    public @NotNull List<CmsAisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
         if (psuIdData.isEmpty()) {
             return Collections.emptyList();
         }
 
         return aisConsentRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceId(psuIdData, instanceId)).stream()
-                   .map(consentMapper::mapToAisAccountConsent)
+                   .map(consentMapper::mapToCmsAisAccountConsent)
                    .collect(Collectors.toList());
     }
 
@@ -402,7 +402,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             return Optional.empty();
         }
 
-        AisAccountConsent aisAccountConsent = consentMapper.mapToAisAccountConsent(aisConsent);
+        CmsAisAccountConsent aisAccountConsent = consentMapper.mapToCmsAisAccountConsent(aisConsent);
         return Optional.of(new CmsAisConsentResponse(aisAccountConsent, redirectId, authorisation.getTppOkRedirectUri(),
                                                      authorisation.getTppNokRedirectUri()));
     }

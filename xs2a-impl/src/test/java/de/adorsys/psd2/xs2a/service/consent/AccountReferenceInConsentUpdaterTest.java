@@ -37,9 +37,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountReferenceInConsentUpdaterTest {
@@ -65,6 +63,47 @@ public class AccountReferenceInConsentUpdaterTest {
     public void setUp() {
         when(consentMapper.mapToAisAccountAccessInfo(any()))
             .thenReturn(AIS_ACCOUNT_ACCESS_INFO);
+    }
+
+    @Test
+    public void updateAccountReferences_withGlobalConsent_shouldSetResourceId() {
+        // Given
+        ArgumentCaptor<Xs2aAccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(Xs2aAccountAccess.class);
+
+        Xs2aAccountAccess xs2aAccountAccess = buildXs2aAccountAccess(Collections.emptyList(),
+                                                                     Collections.emptyList(),
+                                                                     Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS);
+        Xs2aAccountDetails xs2aAccountDetails = buildXs2aAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, IBAN_1);
+
+        // When
+        accountReferenceInConsentUpdater.updateAccountReferences(CONSENT_ID, xs2aAccountAccess, Collections.singletonList(xs2aAccountDetails));
+
+        // Then
+        verify(consentMapper).mapToAisAccountAccessInfo(xs2aAccountAccessArgumentCaptor.capture());
+        Xs2aAccountAccess value = xs2aAccountAccessArgumentCaptor.getValue();
+
+        List<AccountReference> accounts = value.getAccounts();
+        assertEquals(1, accounts.size());
+
+        AccountReference accountReference = accounts.get(0);
+        assertEquals(IBAN_1, accountReference.getIban());
+        assertEquals(RESOURCE_ID_1, accountReference.getResourceId());
+
+        List<AccountReference> balances = value.getBalances();
+        assertEquals(1, balances.size());
+
+        AccountReference balanceReference = balances.get(0);
+        assertEquals(IBAN_1, balanceReference.getIban());
+        assertEquals(RESOURCE_ID_1, balanceReference.getResourceId());
+
+        List<AccountReference> transactions = value.getTransactions();
+        assertEquals(1, transactions.size());
+
+        AccountReference transactionReference = transactions.get(0);
+        assertEquals(IBAN_1, transactionReference.getIban());
+        assertEquals(RESOURCE_ID_1, transactionReference.getResourceId());
+
+        verify(aisConsentService).updateAspspAccountAccess(CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO);
     }
 
     @Test
@@ -161,7 +200,7 @@ public class AccountReferenceInConsentUpdaterTest {
         Xs2aAccountAccess xs2aAccountAccess = buildXs2aAccountAccess(Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)),
                                                                      Collections.emptyList(),
                                                                      Collections.emptyList(),
-                                                                     AccountAccessType.ALL_ACCOUNTS);
+                                                                     null);
         Xs2aAccountDetails xs2aAccountDetails = buildXs2aAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, IBAN_1);
 
         // When
@@ -189,9 +228,8 @@ public class AccountReferenceInConsentUpdaterTest {
 
     private Xs2aAccountAccess buildXs2aAccountAccess(List<AccountReference> accounts,
                                                      List<AccountReference> balances,
-                                                     List<AccountReference> transactions,
-                                                     AccountAccessType type) {
-        return new Xs2aAccountAccess(accounts, balances, transactions, type, type, type, null);
+                                                     List<AccountReference> transactions, AccountAccessType accessType) {
+        return new Xs2aAccountAccess(accounts, balances, transactions, accessType, accessType, accessType, null);
     }
 
     private Xs2aAccountDetails buildXs2aAccountDetails(String aspspAccountId, String resourceId, String iban) {

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
@@ -72,10 +73,19 @@ public class AccountReferenceInConsentUpdater {
         List<AccountReference> ownerAddress = new ArrayList<>();
         AdditionalInformationAccess additionalInformationAccess = existingAccess.getAdditionalInformationAccess();
 
+        if (existingAccess.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
+            accounts.addAll(enrichAccountReferencesGlobal(accountDetails));
+            transactions.addAll(enrichAccountReferencesGlobal(accountDetails));
+            balances.addAll(enrichAccountReferencesGlobal(accountDetails));
+        } else {
+            for (Xs2aAccountDetails accountDetail : accountDetails) {
+                accounts.addAll(enrichAccountReferences(accountDetail, existingAccess.getAccounts()));
+                balances.addAll(enrichAccountReferences(accountDetail, existingAccess.getBalances()));
+                transactions.addAll(enrichAccountReferences(accountDetail, existingAccess.getTransactions()));
+            }
+        }
+
         for (Xs2aAccountDetails accountDetail : accountDetails) {
-            accounts.addAll(enrichAccountReferences(accountDetail, existingAccess.getAccounts()));
-            balances.addAll(enrichAccountReferences(accountDetail, existingAccess.getBalances()));
-            transactions.addAll(enrichAccountReferences(accountDetail, existingAccess.getTransactions()));
             if (additionalInformationAccess != null) {
                 if (additionalInformationAccess.getOwnerName() != null) {
                     ownerName.addAll(enrichAccountReferences(accountDetail, additionalInformationAccess.getOwnerName()));
@@ -85,6 +95,7 @@ public class AccountReferenceInConsentUpdater {
                 }
             }
         }
+
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(accounts, balances, transactions, existingAccess.getAvailableAccounts(),
                                                                     existingAccess.getAllPsd2(), existingAccess.getAvailableAccountsWithBalance(),
                                                                     Optional.ofNullable(additionalInformationAccess).map(info -> new AdditionalInformationAccess(ownerName, ownerAddress)).orElse(null));
@@ -114,4 +125,15 @@ public class AccountReferenceInConsentUpdater {
                                                    xs2aAccountDetails.getAspspAccountId()))
                    .collect(Collectors.toList());
     }
+
+    private List<AccountReference> enrichAccountReferencesGlobal(List<Xs2aAccountDetails> xs2aAccountDetails) {
+        return xs2aAccountDetails.stream()
+                   .map(ad -> new AccountReference(ad.getAccountSelector().getAccountReferenceType(),
+                                                   ad.getAccountSelector().getAccountValue(),
+                                                   ad.getCurrency(),
+                                                   ad.getResourceId(),
+                                                   ad.getAspspAccountId()))
+                   .collect(Collectors.toList());
+    }
+
 }
