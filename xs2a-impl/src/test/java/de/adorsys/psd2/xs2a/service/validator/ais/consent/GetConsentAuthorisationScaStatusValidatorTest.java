@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisConsentTppInfoValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,7 +73,7 @@ public class GetConsentAuthorisationScaStatusValidatorTest {
         when(aisAuthorisationValidator.validate(AUTHORISATION_ID, accountConsent)).thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(accountConsent,AUTHORISATION_ID));
+        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(accountConsent, AUTHORISATION_ID));
 
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -90,7 +89,7 @@ public class GetConsentAuthorisationScaStatusValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
 
         // When
-        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(accountConsent,AUTHORISATION_ID));
+        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(accountConsent, AUTHORISATION_ID));
 
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -107,7 +106,7 @@ public class GetConsentAuthorisationScaStatusValidatorTest {
     }
 
     private AccountConsent buildAccountConsent(TppInfo tppInfo) {
-        return new AccountConsent("id", null, false, null, 0,
+        return new AccountConsent("id", null, null, false, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), tppInfo, null, false,
                                   Collections.emptyList(), null, Collections.emptyMap());

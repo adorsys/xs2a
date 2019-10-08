@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
@@ -60,7 +61,6 @@ public class AccountReferenceInConsentUpdater {
      * @param consentId      an external ID of consent, where account access to be stored
      * @param existingAccess existing account access of the consent
      * @param accountDetails list of account details with referenceId set
-     *
      * @return Response containing AIS Consent
      */
     public Optional<AccountConsent> updateAccountReferences(@NotNull String consentId, @NotNull Xs2aAccountAccess existingAccess, @NotNull List<Xs2aAccountDetails> accountDetails) {
@@ -68,11 +68,18 @@ public class AccountReferenceInConsentUpdater {
         List<AccountReference> transactions = new ArrayList<>();
         List<AccountReference> balances = new ArrayList<>();
 
-        for (Xs2aAccountDetails accountDetail : accountDetails) {
-            accounts.addAll(enrichAccountReferences(accountDetail, existingAccess.getAccounts()));
-            balances.addAll(enrichAccountReferences(accountDetail, existingAccess.getBalances()));
-            transactions.addAll(enrichAccountReferences(accountDetail, existingAccess.getTransactions()));
+        if (existingAccess.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
+            accounts.addAll(enrichAccountReferencesGlobal(accountDetails));
+            transactions.addAll(enrichAccountReferencesGlobal(accountDetails));
+            balances.addAll(enrichAccountReferencesGlobal(accountDetails));
+        } else {
+            for (Xs2aAccountDetails accountDetail : accountDetails) {
+                accounts.addAll(enrichAccountReferences(accountDetail, existingAccess.getAccounts()));
+                balances.addAll(enrichAccountReferences(accountDetail, existingAccess.getBalances()));
+                transactions.addAll(enrichAccountReferences(accountDetail, existingAccess.getTransactions()));
+            }
         }
+
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(accounts, balances, transactions, existingAccess.getAvailableAccounts(),
                                                                     existingAccess.getAllPsd2(), existingAccess.getAvailableAccountsWithBalance());
 
@@ -101,4 +108,15 @@ public class AccountReferenceInConsentUpdater {
                                                    xs2aAccountDetails.getAspspAccountId()))
                    .collect(Collectors.toList());
     }
+
+    private List<AccountReference> enrichAccountReferencesGlobal(List<Xs2aAccountDetails> xs2aAccountDetails) {
+        return xs2aAccountDetails.stream()
+                   .map(ad -> new AccountReference(ad.getAccountSelector().getAccountReferenceType(),
+                                                   ad.getAccountSelector().getAccountValue(),
+                                                   ad.getCurrency(),
+                                                   ad.getResourceId(),
+                                                   ad.getAspspAccountId()))
+                   .collect(Collectors.toList());
+    }
+
 }

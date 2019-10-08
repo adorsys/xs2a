@@ -162,7 +162,8 @@ public class Xs2aAisConsentMapper {
         return Optional.ofNullable(ais)
                    .map(ac -> new AccountConsent(
                        ac.getId(),
-                       mapToXs2aAccountAccess(ac.getAccess()),
+                       mapToXs2aAccountAccess(ac.getTppAccess()),
+                       mapToXs2aAccountAccess(ac.getAspspAccess()),
                        ac.isRecurringIndicator(),
                        ac.getValidUntil(),
                        ac.getFrequencyPerDay(),
@@ -185,6 +186,7 @@ public class Xs2aAisConsentMapper {
                    .map(ac -> new AccountConsent(
                        ac.getId(),
                        ac.getAccess(),
+                       ac.getAspspAccess(),
                        ac.isRecurringIndicator(),
                        ac.getValidUntil(),
                        ac.getFrequencyPerDay(),

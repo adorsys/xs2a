@@ -41,11 +41,7 @@ public class TransactionsReportByPeriodObject implements TppInfoProvider {
         return accountConsent.getTppInfo();
     }
 
-    public List<AccountReference> getAccounts() {
-        return accountConsent.getAccess().getAccounts();
-    }
-
     public List<AccountReference> getTransactions() {
-        return accountConsent.getAccess().getTransactions();
+        return accountConsent.getAspspAccess().getTransactions();
     }
 }

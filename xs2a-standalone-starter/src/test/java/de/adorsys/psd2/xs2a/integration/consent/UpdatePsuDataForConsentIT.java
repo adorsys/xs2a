@@ -189,10 +189,14 @@ public class UpdatePsuDataForConsentIT {
     @NotNull
     private AisAccountConsent buildAisAccountConsent() {
         AisAccountConsent aisAccountConsent = new AisAccountConsent();
-        aisAccountConsent.setAccess(new AisAccountAccess(Collections.emptyList(),
-                                                         Collections.emptyList(),
-                                                         Collections.emptyList(),
-                                                         null, null, null));
+        aisAccountConsent.setTppAccess(new AisAccountAccess(Collections.emptyList(),
+                                                            Collections.emptyList(),
+                                                            Collections.emptyList(),
+                                                            null, null, null));
+        aisAccountConsent.setAspspAccess(new AisAccountAccess(Collections.emptyList(),
+                                                              Collections.emptyList(),
+                                                              Collections.emptyList(),
+                                                              null, null, null));
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null);
         aisAccountConsent.setAccountConsentAuthorizations(Collections.singletonList(
             new AisAccountConsentAuthorisation(AUTHORISATION_ID, psuIdData, ScaStatus.PSUIDENTIFIED)));

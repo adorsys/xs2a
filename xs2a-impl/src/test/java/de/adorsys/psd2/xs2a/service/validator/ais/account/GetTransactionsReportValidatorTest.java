@@ -171,7 +171,7 @@ public class GetTransactionsReportValidatorTest {
 
         // Then
         verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
-        verify(permittedAccountReferenceValidator, never()).validate(accountConsent,  ACCOUNT_ID, WITH_BALANCE);
+        verify(permittedAccountReferenceValidator, never()).validate(accountConsent, ACCOUNT_ID, WITH_BALANCE);
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -320,7 +320,7 @@ public class GetTransactionsReportValidatorTest {
     }
 
     private AccountConsent buildAccountConsent(TppInfo tppInfo) {
-        return new AccountConsent("id", buildXs2aAccountAccess(), false, null, 0,
+        return new AccountConsent("id", buildXs2aAccountAccess(), buildXs2aAccountAccess(), false, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), tppInfo, null, false,
                                   Collections.emptyList(), null, Collections.emptyMap());

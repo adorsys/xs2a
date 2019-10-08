@@ -73,7 +73,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 public class DeleteConsentTest {
     private static final Charset UTF_8 = Charset.forName("utf-8");
-    private static final String CONSENT_PATH = "json/consent/req/AisAccountConsent.json";
+    private static final String CONSENT_PATH = "json/consent/AisAccountConsentInternalResponse.json";
     private static final String WRONG_TPP_RESPONSE_PATH = "/json/consent/res/WrongTppResponse.json";
 
     private static final String ENCRYPTED_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";

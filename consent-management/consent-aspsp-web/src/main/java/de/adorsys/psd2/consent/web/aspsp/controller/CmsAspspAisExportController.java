@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
@@ -42,7 +42,7 @@ public class CmsAspspAisExportController {
     @ApiOperation(value = "Returns a list of AIS consent objects by given mandatory TPP ID, optional creation date, PSU ID Data and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<Collection<AisAccountConsent>> getConsentsByTpp(
+    public ResponseEntity<Collection<CmsAisAccountConsent>> getConsentsByTpp(
         @ApiParam(value = "TPP ID", example = "12345987")
         @PathVariable("tpp-id") String tppId,
         @ApiParam(value = "Creation start date", example = "2010-01-01")
@@ -63,7 +63,7 @@ public class CmsAspspAisExportController {
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        Collection<AisAccountConsent> consents = cmsAspspAisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId);
+        Collection<CmsAisAccountConsent> consents = cmsAspspAisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }
 
@@ -71,7 +71,7 @@ public class CmsAspspAisExportController {
     @ApiOperation(value = "Returns a list of AIS consent objects by given mandatory PSU ID Data, optional creation date and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<Collection<AisAccountConsent>> getConsentsByPsu(
+    public ResponseEntity<Collection<CmsAisAccountConsent>> getConsentsByPsu(
         @ApiParam(value = "Creation start date", example = "2010-01-01")
         @RequestHeader(value = "start-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
@@ -89,27 +89,27 @@ public class CmsAspspAisExportController {
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        Collection<AisAccountConsent> consents = cmsAspspAisExportService.exportConsentsByPsu(psuIdData, start, end, instanceId);
+        Collection<CmsAisAccountConsent> consents = cmsAspspAisExportService.exportConsentsByPsu(psuIdData, start, end, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }
 
 
-        @GetMapping(path = "/account/{account-id}")
-        @ApiOperation(value = "Returns a list of consents by given mandatory aspsp account id, optional creation date and instance ID")
-        @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK")})
-        public ResponseEntity<Collection<AisAccountConsent>> getConsentsByAccount(
-                    @ApiParam(value = "Bank specific account identifier.", required = true, example = "11111-99999")
-                    @PathVariable("account-id") String aspspAccountId,
-                    @ApiParam(value = "Creation start date", example = "2010-01-01")
-                    @RequestHeader(value = "start-date", required = false)
-                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-                    @ApiParam(value = "Creation end date", example = "2030-01-01")
-                    @RequestHeader(value = "end-date", required = false)
-                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-                    @ApiParam(value = "ID of the particular service instance")
-                    @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
-        Collection<AisAccountConsent> consents = cmsAspspAisExportService.exportConsentsByAccountId(aspspAccountId, start, end, instanceId);
+    @GetMapping(path = "/account/{account-id}")
+    @ApiOperation(value = "Returns a list of consents by given mandatory aspsp account id, optional creation date and instance ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK")})
+    public ResponseEntity<Collection<CmsAisAccountConsent>> getConsentsByAccount(
+        @ApiParam(value = "Bank specific account identifier.", required = true, example = "11111-99999")
+        @PathVariable("account-id") String aspspAccountId,
+        @ApiParam(value = "Creation start date", example = "2010-01-01")
+        @RequestHeader(value = "start-date", required = false)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+        @ApiParam(value = "Creation end date", example = "2030-01-01")
+        @RequestHeader(value = "end-date", required = false)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
+        @ApiParam(value = "ID of the particular service instance")
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        Collection<CmsAisAccountConsent> consents = cmsAspspAisExportService.exportConsentsByAccountId(aspspAccountId, start, end, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }
 }

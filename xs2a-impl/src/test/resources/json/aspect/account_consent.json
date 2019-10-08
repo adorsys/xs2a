@@ -38,5 +38,6 @@
     ],
     "availableAccounts": "allAccounts",
     "allPsd2": "allAccounts"
-  }
+  },
+  "aspspAccess": {}
 }

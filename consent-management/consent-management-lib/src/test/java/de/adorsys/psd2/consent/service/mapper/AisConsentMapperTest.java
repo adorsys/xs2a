@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
+import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
@@ -34,7 +35,6 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,7 +101,7 @@ public class AisConsentMapperTest {
         AisAccountAccess expectedAccess = buildAisAccountAccessAccounts();
         AisAccountConsent result = aisConsentMapper.mapToAisAccountConsent(aisConsent);
 
-        assertEquals(expectedAccess, result.getAccess());
+        assertEquals(expectedAccess, result.getTppAccess());
         assertEquals(aisConsent.getStatusChangeTimestamp(), result.getStatusChangeTimestamp());
         assertEquals(EXTERNAL_ID, result.getAccountConsentAuthorizations().get(0).getId());
     }
@@ -121,24 +121,50 @@ public class AisConsentMapperTest {
     }
 
     @Test
-    public void mapToInitialAisAccountConsent() {
+    public void mapToCmsAisAccountConsent() {
         // Given
         AisConsent aisConsent = buildAisConsent();
-        AisAccountAccess expectedAccess = buildAisAccountAccessAccounts();
+        AisAccountAccess expectedAccess = buildAisAccountAccessAccountsWithResourceId();
         when(aisConsentUsageService.getUsageCounterMap(aisConsent)).thenReturn(USAGE_COUNTER);
 
         // When
-        AisAccountConsent result = aisConsentMapper.mapToInitialAisAccountConsent(aisConsent);
+        CmsAisAccountConsent result = aisConsentMapper.mapToCmsAisAccountConsent(aisConsent);
 
         // Then
         assertConsentsEquals(expectedAccess, aisConsent, result);
+    }
+
+    private void assertConsentsEquals(AisAccountAccess expectedAccess, AisConsent aisConsent, CmsAisAccountConsent aisAccountConsent) {
+        AisConsentAuthorization aisConsentAuthorization = aisConsent.getAuthorizations().get(0);
+        AisAccountConsentAuthorisation aisAccountConsentAuthorisation = aisAccountConsent.getAccountConsentAuthorizations().get(0);
+
+        assertEquals(expectedAccess, aisAccountConsent.getAccess());
+        assertEquals(aisConsent.getExternalId(), aisAccountConsent.getId());
+        assertEquals(aisConsent.isRecurringIndicator(), aisAccountConsent.isRecurringIndicator());
+        assertEquals(aisConsent.getExpireDate(), aisAccountConsent.getValidUntil());
+        assertEquals(aisConsent.getAllowedFrequencyPerDay(), aisAccountConsent.getFrequencyPerDay());
+        assertEquals(aisConsent.getLastActionDate(), aisAccountConsent.getLastActionDate());
+        assertEquals(aisConsent.getConsentStatus(), aisAccountConsent.getConsentStatus());
+        assertEquals(aisConsent.getAccesses().stream().anyMatch(a -> a.getTypeAccess() == TypeAccess.BALANCE), aisAccountConsent.isWithBalance());
+        assertEquals(aisConsent.isTppRedirectPreferred(), aisAccountConsent.isTppRedirectPreferred());
+        assertEquals(aisConsent.getAisConsentRequestType(), aisAccountConsent.getAisConsentRequestType());
+        assertEquals(PSU_ID_DATA_LIST, aisAccountConsent.getPsuIdDataList());
+        assertEquals(TPP_INFO, aisAccountConsent.getTppInfo());
+        assertEquals(aisConsent.isMultilevelScaRequired(), aisAccountConsent.isMultilevelScaRequired());
+        assertFalse(aisAccountConsent.getAccountConsentAuthorizations().isEmpty());
+        assertEquals(aisConsent.getAuthorizations().size(), aisAccountConsent.getAccountConsentAuthorizations().size());
+        assertEquals(PSU_ID_DATA, aisAccountConsentAuthorisation.getPsuIdData());
+        assertEquals(aisConsentAuthorization.getScaStatus(), aisAccountConsentAuthorisation.getScaStatus());
+        assertEquals(USAGE_COUNTER, aisAccountConsent.getUsageCounterMap());
+        assertEquals(aisConsent.getCreationTimestamp(), aisAccountConsent.getCreationTimestamp());
+        assertEquals(aisConsent.getStatusChangeTimestamp(), aisAccountConsent.getStatusChangeTimestamp());
     }
 
     private void assertConsentsEquals(AisAccountAccess expectedAccess, AisConsent aisConsent, AisAccountConsent aisAccountConsent) {
         AisConsentAuthorization aisConsentAuthorization = aisConsent.getAuthorizations().get(0);
         AisAccountConsentAuthorisation aisAccountConsentAuthorisation = aisAccountConsent.getAccountConsentAuthorizations().get(0);
 
-        assertEquals(expectedAccess, aisAccountConsent.getAccess());
+        assertEquals(expectedAccess, aisAccountConsent.getAspspAccess());
         assertEquals(aisConsent.getExternalId(), aisAccountConsent.getId());
         assertEquals(aisConsent.isRecurringIndicator(), aisAccountConsent.isRecurringIndicator());
         assertEquals(aisConsent.getExpireDate(), aisAccountConsent.getValidUntil());
