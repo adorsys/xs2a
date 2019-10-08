@@ -24,8 +24,6 @@ import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import java.util.EnumSet;
-
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_400;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType.AIS;
@@ -37,7 +35,11 @@ import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType
 public class AuthorisationStageCheckValidator {
 
     public ValidationResult validate(@NotNull UpdateAuthorisationRequest updateRequest, @NotNull ScaStatus scaStatus, @NotNull AuthorisationServiceType authType) {
-        if (EnumSet.of(PSUIDENTIFIED, RECEIVED).contains(scaStatus) && updateRequest.getPassword() == null) {
+        if (scaStatus == RECEIVED && updateRequest.getPsuData().isEmpty()) {
+            return ValidationResult.invalid(resolveErrorType(authType), SERVICE_INVALID_400);
+        }
+
+        if (scaStatus == PSUIDENTIFIED && updateRequest.getPassword() == null) {
             return ValidationResult.invalid(resolveErrorType(authType), SERVICE_INVALID_400);
         }
 
