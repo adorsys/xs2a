@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "bc32c067-0cdc-4c85-bca1-769bf60f48c6",
+    "_postman_id": "f2c50902-e4c6-44b2-ae34-fffcb9b633a7",
 		"name": "AIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -3192,16 +3192,85 @@
 							"response": []
 						},
 						{
-							"name": "6. Update a status of AIS consent authorisation",
+              "name": "6. Authorise in ledgers",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "afa1ac8d-f175-488d-861b-9658daa25d0c",
+                    "id": "4cdb2bc7-e7a4-463d-b867-d67addf82fc1",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
-											"});"
+                      "});",
+                      "",
+                      "const jsonData = pm.response.json();",
+                      "",
+                      "pm.globals.set(\"ledgersBearerToken\", JSON.stringify(jsonData));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+                "method": "POST",
+                "header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+                  "raw": "{{protocol}}://{{url_ledgers}}/users/login?login={{psu_id_none}}&pin={{psu_id_password}}&role=CUSTOMER",
+									"protocol": "{{protocol}}",
+									"host": [
+                    "{{url_ledgers}}"
+									],
+									"path": [
+                    "users",
+                    "login"
+                  ],
+                  "query": [
+                    {
+                      "key": "login",
+                      "value": "{{psu_id_none}}"
+                    },
+                    {
+                      "key": "pin",
+                      "value": "{{psu_id_password}}"
+                    },
+                    {
+                      "key": "role",
+                      "value": "CUSTOMER"
+                    }
+									]
+								}
+							},
+							"response": []
+						},
+						{
+              "name": "7. Update ASPSP consent data for the given AIS consent in CMS-PSU-API",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "4cdb2bc7-e7a4-463d-b867-d67addf82fc1",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "a369776b-06b6-4114-8c55-7f3b2f865a1d",
+                    "exec": [
+                      "var ledgersBearerToken = pm.globals.get(\"ledgersBearerToken\");",
+                      "var utf8string = CryptoJS.enc.Utf8.parse(ledgersBearerToken);",
+                      "",
+                      "pm.globals.set(\"encodedLedgersBearerToken\", CryptoJS.enc.Base64.stringify(utf8string));"
 										],
 										"type": "text/javascript"
 									}
@@ -3211,17 +3280,18 @@
 								"method": "PUT",
 								"header": [
 									{
-										"key": "PSU-ID",
-										"value": "{{psu_id_none}}",
+                    "key": "Content-Type",
+                    "name": "Content-Type",
+                    "value": "application/json",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": ""
+                  "raw": "{\n  \"aspspConsentDataBase64\": \"{{encodedLedgersBearerToken}}\",\n  \"consentId\": \"{{consent_id}}\"\n}"
 								},
 								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/authorisation/{{authorisation_id}}/status/FINALISED",
+                  "raw": "{{protocol}}://{{url_cms}}/psu-api/v1/aspsp-consent-data/consents/{{consent_id}}",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_cms}}"
@@ -3229,20 +3299,66 @@
 									"path": [
 										"psu-api",
 										"v1",
-										"ais",
-										"consent",
-										"{{internal_consent_id}}",
-										"authorisation",
-										"{{authorisation_id}}",
-										"status",
-										"FINALISED"
+                    "aspsp-consent-data",
+                    "consents",
+                    "{{consent_id}}"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "7. Confirm AIS consent",
+              "name": "8. Update a status of AIS consent authorisation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+                    "id": "afa1ac8d-f175-488d-861b-9658daa25d0c",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+                      "});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "PSU-ID",
+                    "value": "{{psu_id_none}}",
+                    "type": "text"
+                  }
+                ],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+                  "raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/authorisation/{{authorisation_id}}/status/FINALISED",
+									"protocol": "{{protocol}}",
+									"host": [
+                    "{{url_cms}}"
+									],
+									"path": [
+                    "psu-api",
+                    "v1",
+                    "ais",
+                    "consent",
+                    "{{internal_consent_id}}",
+                    "authorisation",
+                    "{{authorisation_id}}",
+                    "status",
+                    "FINALISED"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+              "name": "9. Confirm AIS consent",
 							"event": [
 								{
 									"listen": "test",
@@ -3251,7 +3367,7 @@
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
-											"});"
+                      "});"
 										],
 										"type": "text/javascript"
 									}
@@ -3261,17 +3377,17 @@
 								"method": "PUT",
 								"header": [
 									{
-										"key": "PSU-ID",
-										"value": "{{psu_id_none}}",
+                    "key": "PSU-ID",
+                    "value": "{{psu_id_none}}",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": ""
+                  "raw": ""
 								},
 								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/confirm-consent",
+                  "raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/confirm-consent",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_cms}}"
@@ -3279,126 +3395,10 @@
 									"path": [
 										"psu-api",
 										"v1",
-										"ais",
-										"consent",
-										"{{internal_consent_id}}",
-										"confirm-consent"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "8. Authorise in ledgers",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "4cdb2bc7-e7a4-463d-b867-d67addf82fc1",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.globals.set(\"ledgersBearerToken\", JSON.stringify(jsonData));"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{protocol}}://{{url_ledgers}}/users/login?login={{psu_id_none}}&pin={{psu_id_password}}&role=CUSTOMER",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_ledgers}}"
-									],
-									"path": [
-										"users",
-										"login"
-									],
-									"query": [
-										{
-											"key": "login",
-											"value": "{{psu_id_none}}"
-										},
-										{
-											"key": "pin",
-											"value": "{{psu_id_password}}"
-										},
-										{
-											"key": "role",
-											"value": "CUSTOMER"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "9. Update ASPSP consent data for the given AIS consent in CMS-PSU-API",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "4cdb2bc7-e7a4-463d-b867-d67addf82fc1",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "a369776b-06b6-4114-8c55-7f3b2f865a1d",
-										"exec": [
-											"var ledgersBearerToken = pm.globals.get(\"ledgersBearerToken\");",
-											"var utf8string = CryptoJS.enc.Utf8.parse(ledgersBearerToken);",
-											"",
-											"pm.globals.set(\"encodedLedgersBearerToken\", CryptoJS.enc.Base64.stringify(utf8string));"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"aspspConsentDataBase64\": \"{{encodedLedgersBearerToken}}\",\n  \"consentId\": \"{{consent_id}}\"\n}"
-								},
-								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/aspsp-consent-data/consents/{{consent_id}}",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_cms}}"
-									],
-									"path": [
-										"psu-api",
-										"v1",
-										"aspsp-consent-data",
-										"consents",
-										"{{consent_id}}"
+                    "ais",
+                    "consent",
+                    "{{internal_consent_id}}",
+                    "confirm-consent"
 									]
 								}
 							},
@@ -3512,33 +3512,30 @@
 									"script": {
 										"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
 										"exec": [
-											"// const jsonData = pm.response.json();",
+                      "const jsonData = pm.response.json();",
 											"",
-											"// pm.test(\"Status code is 200\", function () {",
-											"//     pm.response.to.have.status(200);",
-											"// });",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
 											"",
-											"// pm.test(\"Data exists\", () => {",
-											"//     if (jsonData.accounts.length > 0) {",
-											"//         const firstAccount = jsonData.accounts[0];",
+                      "pm.test(\"Data exists\", () => {",
+                      "    if (jsonData.accounts.length > 0) {",
+                      "        const firstAccount = jsonData.accounts[0];",
 											"        ",
-											"//         pm.expect(firstAccount).to.have.property('_links');",
-											"//         pm.expect(firstAccount._links).to.have.property('balances');",
-											"//         pm.expect(firstAccount._links).to.have.property('transactions');",
-											"//         pm.expect(firstAccount).to.have.property('resourceId');",
+                      "        pm.expect(firstAccount).to.have.property('_links');",
+                      "        pm.expect(firstAccount._links).to.have.property('balances');",
+                      "        pm.expect(firstAccount._links).to.have.property('transactions');",
+                      "        pm.expect(firstAccount).to.have.property('resourceId');",
 											"        ",
-											"//         pm.globals.set(\"account_id\", firstAccount.resourceId);",
+                      "        pm.globals.set(\"account_id\", firstAccount.resourceId);",
 											"",
-											"//",
-											"// This test fails and is blocked by the https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/987 issue.",
-											"//",
 											"",
-											"//        if (pm.globals.get(\"with_balance\") === \"true\") {",
-											"//            pm.expect(firstAccount).to.have.property('balances');",
-											"//        }",
+                      "        if (pm.globals.get(\"with_balance\") === \"true\") {",
+                      "            pm.expect(firstAccount).to.have.property('balances');",
+                      "        }",
 											"        ",
-											"//     }",
-											"// });"
+                      "    }",
+                      "});"
 										],
 										"type": "text/javascript"
 									}
@@ -3599,21 +3596,21 @@
 									"script": {
 										"id": "fa7bf837-9bf3-46c2-9e9e-57f3f5d17d73",
 										"exec": [
-											"// const jsonData = pm.response.json();",
+                      "const jsonData = pm.response.json();",
 											"",
-											"// pm.test(\"Status code is 200\", function () {",
-											"//     pm.response.to.have.status(200);",
-											"// });",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
 											"",
-											"// pm.test(\"Data exists\", () => {",
-											"//     if (!(jsonData === null || jsonData.length === 0)) {",
-											"//         pm.expect(jsonData).to.have.property('account');",
+                      "pm.test(\"Data exists\", () => {",
+                      "    if (!(jsonData === null || jsonData.length === 0)) {",
+                      "        pm.expect(jsonData).to.have.property('account');",
 											"        ",
-											"//         if (pm.globals.get(\"with_balance\") === \"true\") {",
-											"//             pm.expect(jsonData).to.have.property('balances');",
-											"//         }",
-											"//     }",
-											"// });"
+                      "        if (pm.globals.get(\"with_balance\") === \"true\") {",
+                      "            pm.expect(jsonData).to.have.property('balances');",
+                      "        }",
+                      "    }",
+                      "});"
 										],
 										"type": "text/javascript"
 									}
@@ -3660,48 +3657,48 @@
 									"script": {
 										"id": "985b137b-f19c-4855-9b95-6223c94f5134",
 										"exec": [
-											"// const jsonData = pm.response.json();",
+                      "const jsonData = pm.response.json();",
 											"",
-											"// pm.globals.set(\"resource_id\", jsonData.transactions.booked[0].transactionId);",
-											"// pm.globals.set(\"dowload_link\", jsonData._links.download.href);",
+                      "pm.globals.set(\"resource_id\", jsonData.transactions.booked[0].transactionId);",
+                      "pm.globals.set(\"dowload_link\", jsonData._links.download.href);",
 											"",
-											"// pm.test(\"Status code is 200\", function () {",
-											"//     pm.response.to.have.status(200);",
-											"// });",
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
 											"",
-											"// pm.test(\"Data exists\", () => {",
-											"//     if (!(jsonData === null || jsonData.length === 0)) {",
-											"//         pm.expect(jsonData).to.have.property('account');",
+                      "pm.test(\"Data exists\", () => {",
+                      "    if (!(jsonData === null || jsonData.length === 0)) {",
+                      "        pm.expect(jsonData).to.have.property('account');",
 											"        ",
-											"//         if (jsonData.transactions !== undefined) {",
-											"//             const bookingStatus = pm.globals.get(\"booking_status\");",
+                      "        if (jsonData.transactions !== undefined) {",
+                      "            const bookingStatus = pm.globals.get(\"booking_status\");",
 											"            ",
-											"//             if (bookingStatus === 'booked') {",
-											"//                 if (jsonData.transactions.pending !== undefined) {",
-											"//                     pm.expect().fail();",
-											"//                 } ",
-											"//             }",
+                      "            if (bookingStatus === 'booked') {",
+                      "                if (jsonData.transactions.pending !== undefined) {",
+                      "                    pm.expect().fail();",
+                      "                } ",
+                      "            }",
 											"            ",
-											"//             if (bookingStatus === 'pending') {",
-											"//                 if (jsonData.transactions.booked !== undefined) {",
-											"//                     pm.expect().fail();",
-											"//                 } ",
-											"//             }",
-											"//         }",
+                      "            if (bookingStatus === 'pending') {",
+                      "                if (jsonData.transactions.booked !== undefined) {",
+                      "                    pm.expect().fail();",
+                      "                } ",
+                      "            }",
+                      "        }",
 											"        ",
-											"//         if (pm.globals.get(\"with_balance\") === \"true\") {",
-											"//             pm.expect(jsonData).to.have.property('balances');",
-											"//         }",
-											"//     }",
-											"// });",
+                      "        if (pm.globals.get(\"with_balance\") === \"true\") {",
+                      "            pm.expect(jsonData).to.have.property('balances');",
+                      "        }",
+                      "    }",
+                      "});",
 											"",
-											"// pm.test(\"Links exist\", function () {",
-											"//     pm.expect(jsonData).to.have.property('transactions');",
-											"//     pm.expect(jsonData.transactions).to.have.property('_links');",
+                      "pm.test(\"Links exist\", function () {",
+                      "    pm.expect(jsonData).to.have.property('transactions');",
+                      "    pm.expect(jsonData.transactions).to.have.property('_links');",
 											"",
-											"//     pm.expect(jsonData.transactions._links).to.have.property('balances');",
-											"//     pm.expect(jsonData.transactions._links).to.have.property('account');",
-											"// });",
+                      "    pm.expect(jsonData.transactions._links).to.have.property('balances');",
+                      "    pm.expect(jsonData.transactions._links).to.have.property('account');",
+                      "});",
 											""
 										],
 										"type": "text/javascript"
