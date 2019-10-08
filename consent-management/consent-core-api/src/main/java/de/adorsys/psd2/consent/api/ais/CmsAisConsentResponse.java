@@ -22,7 +22,7 @@ import lombok.Value;
 @Value
 @RequiredArgsConstructor
 public class CmsAisConsentResponse {
-    private AisAccountConsent accountConsent;
+    private CmsAisAccountConsent accountConsent;
     private String authorisationId;
     private String tppOkRedirectUri;
     private String tppNokRedirectUri;

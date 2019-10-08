@@ -72,7 +72,7 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
 
         AccountConsent accountConsent = requestObject.getAccountConsent();
 
-        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAccess(),
+        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAspspAccess(),
                                                                                                      requestObject.getTransactions(), requestObject.getAccountId());
         if (accountReferenceValidationResult.isNotValid()) {
             return accountReferenceValidationResult;

@@ -57,13 +57,6 @@ public class AccountReferenceAccessValidatorTest {
     }
 
     @Test
-    public void validate_wrongAccountId_globalConsent() {
-        accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access-global.json", Xs2aAccountAccess.class);
-        ValidationResult validationResult = validator.validate(accountAccess, new ArrayList<>(), WRONG_ACCOUNT_ID);
-        assertTrue(validationResult.isValid());
-    }
-
-    @Test
     public void validate_notValidByAccountId() {
         accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access.json", Xs2aAccountAccess.class);
         ValidationResult validationResult = validator.validate(accountAccess, Collections.singletonList(accountReference), WRONG_ACCOUNT_ID);

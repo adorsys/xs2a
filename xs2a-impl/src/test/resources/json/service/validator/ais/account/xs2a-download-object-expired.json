@@ -23,6 +23,7 @@
         }
       ]
     },
+    "aspspAccess": {},
     "recurringIndicator": true,
     "validUntil": "2018-08-06",
     "frequencyPerDay": "4",

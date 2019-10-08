@@ -16,9 +16,11 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import lombok.Value;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
@@ -34,4 +36,13 @@ public class AisAccountAccess {
     private String availableAccountsWithBalance;
     private AdditionalInformationAccess accountAdditionalInformationAccess;
 
+    @JsonIgnore
+    public boolean isNotEmpty() {
+        return !(CollectionUtils.isEmpty(accounts)
+                     && CollectionUtils.isEmpty(balances)
+                     && CollectionUtils.isEmpty(transactions)
+                     && allPsd2 == null
+                     && availableAccounts == null
+                     && availableAccountsWithBalance == null);
+    }
 }

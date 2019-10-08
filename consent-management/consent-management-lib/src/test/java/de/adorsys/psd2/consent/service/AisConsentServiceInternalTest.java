@@ -200,7 +200,7 @@ public class AisConsentServiceInternalTest {
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
         AisAccountConsent aisAccountConsent = buildSpiAccountConsent();
-        when(consentMapper.mapToInitialAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
+        when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
 
         CreateAisConsentResponse expected = new CreateAisConsentResponse(EXTERNAL_CONSENT_ID, aisAccountConsent);
 
@@ -677,7 +677,7 @@ public class AisConsentServiceInternalTest {
 
     private AisAccountConsent buildSpiAccountConsent() {
         return new AisAccountConsent(aisConsent.getId().toString(),
-                                     null, false,
+                                     null, null, false,
                                      null, 0,
                                      null, null,
                                      false, false, null, null, null, null, false, Collections.emptyList(), Collections.emptyMap(), OffsetDateTime.now(),
