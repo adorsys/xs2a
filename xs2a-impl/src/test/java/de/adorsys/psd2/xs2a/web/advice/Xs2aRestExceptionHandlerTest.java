@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.advice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -58,7 +58,7 @@ public class Xs2aRestExceptionHandlerTest {
     private WebRequest webRequest;
 
     @Mock
-    private ObjectMapper objectMapper;
+    private Xs2aObjectMapper xs2aObjectMapper;
 
     @Test
     public void handleHttpRequestMethodNotSupported() throws JsonProcessingException {
@@ -69,7 +69,7 @@ public class Xs2aRestExceptionHandlerTest {
         when(serviceTypeDiscoveryService.getServiceType()).thenReturn(ServiceType.PIS);
         when(errorTypeMapper.mapToErrorType(ServiceType.PIS, 405)).thenReturn(ErrorType.PIS_405);
         when(errorMapperContainer.getErrorBody(any())).thenReturn(new ErrorMapperContainer.ErrorBody(ERROR_TEXT, HttpStatus.METHOD_NOT_ALLOWED));
-        when(objectMapper.writeValueAsString(any())).thenReturn(ERROR_TEXT);
+        when(xs2aObjectMapper.writeValueAsString(any())).thenReturn(ERROR_TEXT);
 
         ResponseEntity response = xs2aRestExceptionHandler.handleHttpRequestMethodNotSupported(exception, headers, status, webRequest);
 

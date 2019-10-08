@@ -83,7 +83,7 @@ public class CmsAspspPiisControllerTest {
 
         mockMvc = MockMvcBuilders
                       .standaloneSetup(cmsAspspPiisController)
-                      .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapperTestConfig.getObjectMapper()))
+                      .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapperTestConfig.getXs2aObjectMapper()))
                       .build();
     }
 

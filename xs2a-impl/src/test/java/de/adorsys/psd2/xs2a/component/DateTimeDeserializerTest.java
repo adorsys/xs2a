@@ -24,7 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 
-import static de.adorsys.psd2.xs2a.web.util.ApiDateConstants.*;
+import static de.adorsys.psd2.mapper.ApiDateConstants.*;
 import static org.junit.Assert.assertEquals;
 
 public class DateTimeDeserializerTest {

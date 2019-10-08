@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
@@ -43,7 +43,10 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.context.annotation.RequestScope;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -65,7 +68,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
     private final ServiceTypeToErrorTypeMapper errorTypeMapper;
     private final ErrorMapperContainer errorMapperContainer;
-    private final ObjectMapper objectMapper;
+    private final Xs2aObjectMapper xs2aObjectMapper;
     private final RequestValidationInterceptor requestValidationInterceptor;
     private final RequestProviderService requestProviderService;
     private final RedirectIdService redirectIdService;
@@ -89,7 +92,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
         registry.addInterceptor(new RequestResponseLoggingInterceptor(requestResponseLogger, requestProviderService)).addPathPatterns(getAllXs2aEndpointPaths());
 
-        registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, objectMapper, requestProviderService))
+        registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, xs2aObjectMapper, requestProviderService))
             .addPathPatterns(getAllXs2aEndpointPaths());
 
         registry.addInterceptor(requestValidationInterceptor).addPathPatterns(getAllXs2aEndpointPaths());
@@ -150,7 +153,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(new MappingJackson2TextMessageConverter());
+        converters.add(new MappingJackson2TextMessageConverter(xs2aObjectMapper));
         super.extendMessageConverters(converters);
     }
 }

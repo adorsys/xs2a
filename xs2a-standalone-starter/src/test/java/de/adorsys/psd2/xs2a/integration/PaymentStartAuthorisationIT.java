@@ -30,7 +30,10 @@ import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.starter.config.validation.PaymentValidationConfigImpl;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
@@ -101,7 +104,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(
     classes = {
         CorsConfigurationProperties.class,
-        ObjectMapperConfig.class,
         WebConfig.class,
         Xs2aEndpointPathConstant.class,
         Xs2aInterfaceConfig.class,

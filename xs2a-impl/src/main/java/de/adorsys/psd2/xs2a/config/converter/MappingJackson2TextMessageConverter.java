@@ -19,16 +19,9 @@ package de.adorsys.psd2.xs2a.config.converter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 public class MappingJackson2TextMessageConverter extends AbstractJackson2HttpMessageConverter {
-
-    public MappingJackson2TextMessageConverter() {
-        this(Jackson2ObjectMapperBuilder.json().build());
-    }
-
     public MappingJackson2TextMessageConverter(ObjectMapper objectMapper) {
         super(objectMapper, MediaType.TEXT_PLAIN);
     }
-
 }

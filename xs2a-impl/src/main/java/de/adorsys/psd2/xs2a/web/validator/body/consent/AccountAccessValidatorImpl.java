@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.consent;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.AccountAccess;
 import de.adorsys.psd2.model.AccountReference;
 import de.adorsys.psd2.model.Consents;
@@ -49,8 +49,8 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
     private DateFieldValidator dateFieldValidator;
 
     @Autowired
-    public AccountAccessValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper, AccountReferenceValidator accountReferenceValidator, DateFieldValidator dateFieldValidator) {
-        super(errorBuildingService, objectMapper);
+    public AccountAccessValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper, AccountReferenceValidator accountReferenceValidator, DateFieldValidator dateFieldValidator) {
+        super(errorBuildingService, xs2aObjectMapper);
         this.accountReferenceValidator = accountReferenceValidator;
         this.dateFieldValidator = dateFieldValidator;
     }
@@ -165,7 +165,7 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
 
     private de.adorsys.psd2.xs2a.core.profile.AccountReference mapToAccountReference(Object reference, MessageError messageError) {
         try {
-            return objectMapper.convertValue(reference, de.adorsys.psd2.xs2a.core.profile.AccountReference.class);
+            return xs2aObjectMapper.convertValue(reference, de.adorsys.psd2.xs2a.core.profile.AccountReference.class);
         } catch (IllegalArgumentException e) {
             // Happens only during Currency field processing, as other fields are of String type.
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, "currency"));

@@ -17,9 +17,8 @@
 package de.adorsys.psd2.xs2a.web.validator.body.consent;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.Consents;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -69,7 +68,7 @@ public class AccountAccessValidatorImplTest {
     private CurrencyValidator currencyValidator;
 
     @Mock
-    private JsonConverter jsonConverter;
+    private Xs2aObjectMapper xs2aObjectMapper;
 
     @Before
     public void setUp() {
@@ -78,7 +77,7 @@ public class AccountAccessValidatorImplTest {
         messageError = new MessageError(ErrorType.AIS_400);
         request = new MockHttpServletRequest();
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
-        fieldExtractor = new FieldExtractor(errorService, jsonConverter);
+        fieldExtractor = new FieldExtractor(errorService, xs2aObjectMapper);
         dateFieldValidator = new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor);
         currencyValidator = new CurrencyValidator(errorService);
         OptionalFieldMaxLengthValidator stringValidator = new OptionalFieldMaxLengthValidator(new StringMaxLengthValidator(errorService));
@@ -182,7 +181,7 @@ public class AccountAccessValidatorImplTest {
     @Test
     public void validate_validUntilDateWrongValue_wrongFormat_error() {
         // Given
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(VALID_UNTIL_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_DATE));
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(VALID_UNTIL_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_DATE));
 
         // When
         validator.validate(request, messageError);
@@ -194,7 +193,7 @@ public class AccountAccessValidatorImplTest {
     @Test
     public void validate_requestedExecutionDateCorrectValue_success() {
         // Given
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(VALID_UNTIL_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_DATE));
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(VALID_UNTIL_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_DATE));
 
         // When
         validator.validate(request, messageError);
@@ -204,7 +203,7 @@ public class AccountAccessValidatorImplTest {
     }
 
     private AccountAccessValidatorImpl createValidator(Consents consents) {
-        return new AccountAccessValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), new ObjectMapper(), accountReferenceValidator, dateFieldValidator) {
+        return new AccountAccessValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), new Xs2aObjectMapper(), accountReferenceValidator, dateFieldValidator) {
             @SuppressWarnings("unchecked")
             @Override
             protected <T> Optional<T> mapBodyToInstance(HttpServletRequest request, MessageError messageError, Class<T> clazz) {

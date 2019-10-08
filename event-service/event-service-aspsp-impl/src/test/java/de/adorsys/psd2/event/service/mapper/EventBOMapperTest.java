@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.event.service.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.event.persist.model.ReportEvent;
 import de.adorsys.psd2.event.service.model.AspspEvent;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -33,7 +33,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {AspspEventMapperImpl.class, JsonConverterService.class, ObjectMapper.class})
+@ContextConfiguration(classes = {AspspEventMapperImpl.class, Xs2aObjectMapper.class})
 public class EventBOMapperTest {
 
     private static final String PAYLOAD = "payload";
@@ -42,12 +42,12 @@ public class EventBOMapperTest {
     private AspspEventMapper mapper;
 
     private JsonReader jsonReader = new JsonReader();
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
     private byte[] payloadAsBytes;
 
     @Before
     public void setUp() throws Exception {
-        payloadAsBytes = objectMapper.writeValueAsBytes(PAYLOAD);
+        payloadAsBytes = xs2aObjectMapper.writeValueAsBytes(PAYLOAD);
     }
 
     @Test

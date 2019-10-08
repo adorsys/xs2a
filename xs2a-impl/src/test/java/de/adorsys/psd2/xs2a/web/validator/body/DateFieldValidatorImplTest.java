@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator.body;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -66,13 +66,13 @@ public class DateFieldValidatorImplTest {
     private FieldExtractor fieldExtractor;
 
     @Mock
-    private JsonConverter jsonConverter;
+    private Xs2aObjectMapper xs2aObjectMapper;
 
     @Before
     public void setUp() {
         messageError = new MessageError(ErrorType.PIS_400);
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.PIS_400);
-        fieldExtractor = new FieldExtractor(errorService, jsonConverter);
+        fieldExtractor = new FieldExtractor(errorService, xs2aObjectMapper);
         validator = new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor);
     }
 
@@ -81,7 +81,7 @@ public class DateFieldValidatorImplTest {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_DATE_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_DATE));
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_DATE_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_DATE));
 
         // When
         validator.validateDateFormat(mockRequest, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
@@ -95,7 +95,7 @@ public class DateFieldValidatorImplTest {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_DATE_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_DATE));
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_DATE_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_DATE));
 
         // When
         validator.validateDateFormat(mockRequest, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
@@ -109,7 +109,7 @@ public class DateFieldValidatorImplTest {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_TIME_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_TIME));
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_TIME_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_TIME));
 
         // When
         validator.validateDateFormat(mockRequest, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
@@ -123,7 +123,7 @@ public class DateFieldValidatorImplTest {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_TIME_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_TIME));
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_TIME_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_TIME));
 
         // When
         validator.validateDateFormat(mockRequest, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
@@ -137,7 +137,7 @@ public class DateFieldValidatorImplTest {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(DAY_OF_EXECUTION_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_DAY_OF_MONTH));
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(DAY_OF_EXECUTION_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_DAY_OF_MONTH));
 
         // When
         validator.validateDayOfExecution(mockRequest, messageError);
@@ -151,7 +151,7 @@ public class DateFieldValidatorImplTest {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(DAY_OF_EXECUTION_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(DAY_OF_EXECUTION_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
 
         // When
         validator.validateDayOfExecution(mockRequest, messageError);

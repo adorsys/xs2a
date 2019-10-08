@@ -18,23 +18,36 @@ package de.adorsys.psd2.event.service.mapper;
 
 import de.adorsys.psd2.event.persist.model.EventPO;
 import de.adorsys.psd2.event.service.model.EventBO;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.UUID;
 
+@Slf4j
 @Mapper(componentModel = "spring")
 public abstract class Xs2aEventBOMapper {
 
     @Autowired
-    protected JsonConverterService jsonConverterService;
+    protected Xs2aObjectMapper xs2aObjectMapper;
 
     @Mapping(target = "XRequestId", source = "XRequestId", qualifiedByName = "mapToXRequestId")
     @Mapping(target = "internalRequestId", source = "internalRequestId", qualifiedByName = "mapToInternalRequestId")
-    @Mapping(target = "payload", expression = "java(jsonConverterService.toJsonBytes(eventBO.getPayload()).orElse(null))")
+    @Mapping(target = "payload", qualifiedByName = "mapToBytes")
     public abstract EventPO toEventPO(EventBO eventBO);
+
+    protected byte[] mapToBytes(Object object) {
+        try {
+            return xs2aObjectMapper.writeValueAsBytes(object);
+        } catch (IOException e) {
+            log.info("Can't convert json to object: {}", e.getMessage());
+            return null;
+        }
+    }
 
     @Named("mapToXRequestId")
     protected String mapToXRequestId(UUID xRequestId) {

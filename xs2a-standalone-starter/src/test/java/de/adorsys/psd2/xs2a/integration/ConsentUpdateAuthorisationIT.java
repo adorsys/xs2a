@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
@@ -24,8 +23,12 @@ import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypt
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
@@ -68,7 +71,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(
     classes = {
         CorsConfigurationProperties.class,
-        ObjectMapperConfig.class,
         WebConfig.class,
         Xs2aEndpointPathConstant.class,
         Xs2aInterfaceConfig.class
@@ -88,7 +90,7 @@ public class ConsentUpdateAuthorisationIT {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private ObjectMapper mapper;
+    private Xs2aObjectMapper xs2aObjectMapper;
 
     @MockBean
     private TppService tppService;
@@ -140,7 +142,7 @@ public class ConsentUpdateAuthorisationIT {
         PsuIdData psuIdDataAuthorisation = buildPsuIdDataAuthorisation(psuIdAuthorisation);
         HttpHeadersIT httpHeaders = buildHttpHeaders(psuIdHeader);
 
-        AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisAccountConsent(CONSENT_PATH, scaApproach, CONSENT_ID, mapper, new AisAccountConsentAuthorisation(AUTHORISATION_ID, psuIdDataAuthorisation, ScaStatus.RECEIVED));
+        AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisAccountConsent(CONSENT_PATH, scaApproach, CONSENT_ID, xs2aObjectMapper, new AisAccountConsentAuthorisation(AUTHORISATION_ID, psuIdDataAuthorisation, ScaStatus.RECEIVED));
 
 
         given(aisConsentService.getAisAccountConsentById(CONSENT_ID))

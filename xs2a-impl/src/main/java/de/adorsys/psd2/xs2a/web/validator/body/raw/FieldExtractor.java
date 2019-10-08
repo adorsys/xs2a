@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator.body.raw;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
@@ -35,14 +35,12 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_DESE
 public class FieldExtractor {
 
     private final ErrorBuildingService errorBuildingService;
-    private final JsonConverter jsonConverter;
+    private final Xs2aObjectMapper xs2aObjectMapper;
 
     public Optional<String> extractField(HttpServletRequest request, String fieldName, MessageError messageError) {
         Optional<String> fieldOptional = Optional.empty();
         try {
-            // TODO: create common class with Jackson's functionality instead of two: JsonConverter and ObjectMapper.
-            //  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/870
-            fieldOptional = jsonConverter.toJsonField(request.getInputStream(), fieldName, new TypeReference<String>() {
+            fieldOptional = xs2aObjectMapper.toJsonField(request.getInputStream(), fieldName, new TypeReference<String>() {
             });
         } catch (IOException e) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
