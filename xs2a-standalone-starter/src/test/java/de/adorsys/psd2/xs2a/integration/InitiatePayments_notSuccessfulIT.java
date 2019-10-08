@@ -56,6 +56,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
@@ -78,7 +79,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class
 })
 public class InitiatePayments_notSuccessfulIT {
-    private static final Charset UTF_8 = Charset.forName("utf-8");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String SINGLE_PAYMENT_REQUEST_JSON_PATH = "/json/payment/req/SinglePaymentInitiate_request.json";
     private static final String PSU_IP_ADDRESS_MISSING_ERROR_MESSAGE_JSON_PATH = "/json/account/res/PsuIpAddressMissingErrorMessage.json";
     private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
@@ -103,10 +104,6 @@ public class InitiatePayments_notSuccessfulIT {
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
     private SinglePaymentSpi singlePaymentSpi;
-
-    @MockBean
-    @Qualifier("consentRestTemplate")
-    private RestTemplate consentRestTemplate;
 
     @Before
     public void init() {
@@ -147,8 +144,6 @@ public class InitiatePayments_notSuccessfulIT {
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
         given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse(false));
-        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
-            .willReturn(ResponseEntity.ok(Void.class));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
     }

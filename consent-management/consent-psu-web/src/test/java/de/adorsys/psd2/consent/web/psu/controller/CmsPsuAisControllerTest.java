@@ -371,7 +371,7 @@ public class CmsPsuAisControllerTest {
             .thenReturn(Optional.of(new CmsAisConsentResponse(new CmsAisAccountConsent(), null, null, null)));
 
         // When
-        ResponseEntity actualResponse = cmsPsuAisController.getConsentIdByRedirectId(AUTHORISATION_ID, INSTANCE_ID);
+        ResponseEntity<CmsAisConsentResponse> actualResponse = cmsPsuAisController.getConsentIdByRedirectId(AUTHORISATION_ID, INSTANCE_ID);
 
         // Then
         verify(cmsPsuAisService).checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID);
@@ -387,7 +387,7 @@ public class CmsPsuAisControllerTest {
             .thenReturn(Optional.empty());
 
         // When
-        ResponseEntity actualResponse = cmsPsuAisController.getConsentIdByRedirectId(AUTHORISATION_ID, INSTANCE_ID);
+        ResponseEntity<CmsAisConsentResponse> actualResponse = cmsPsuAisController.getConsentIdByRedirectId(AUTHORISATION_ID, INSTANCE_ID);
 
         // Then
         verify(cmsPsuAisService).checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID);
