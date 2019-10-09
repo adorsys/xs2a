@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.advice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
@@ -47,7 +47,7 @@ public class Xs2aRestExceptionHandler extends ResponseEntityExceptionHandler {
     private final ErrorMapperContainer errorMapperContainer;
     private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
     private final ServiceTypeToErrorTypeMapper errorTypeMapper;
-    private final ObjectMapper objectMapper;
+    private final Xs2aObjectMapper xs2aObjectMapper;
 
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
@@ -57,7 +57,7 @@ public class Xs2aRestExceptionHandler extends ResponseEntityExceptionHandler {
         String responseStringWithError = StringUtils.EMPTY;
 
         try {
-            responseStringWithError = objectMapper.writeValueAsString(createError(ex.getMethod()));
+            responseStringWithError = xs2aObjectMapper.writeValueAsString(createError(ex.getMethod()));
         } catch (JsonProcessingException e) {
             log.warn("Can't convert object to json: {}", e.getMessage());
         }

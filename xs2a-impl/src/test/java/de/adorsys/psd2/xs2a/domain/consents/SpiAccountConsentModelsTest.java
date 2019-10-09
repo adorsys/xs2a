@@ -16,9 +16,8 @@
 
 package de.adorsys.psd2.xs2a.domain.consents;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
@@ -45,8 +44,7 @@ public class SpiAccountConsentModelsTest {
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
+    private Xs2aObjectMapper xs2aObjectMapper = (Xs2aObjectMapper) new Xs2aObjectMapper().registerModule(new JavaTimeModule());
 
     @Test
     public void createConsentReq_jsonTest() throws IOException {
@@ -55,7 +53,7 @@ public class SpiAccountConsentModelsTest {
         CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
 
         //When:
-        CreateConsentReq actualRequest = jsonConverter.toObject(requestStringJson, CreateConsentReq.class).get();
+        CreateConsentReq actualRequest = xs2aObjectMapper.readValue(requestStringJson, CreateConsentReq.class);
 
         //Then:
         assertThat(actualRequest).isEqualTo(expectedRequest);
@@ -66,7 +64,7 @@ public class SpiAccountConsentModelsTest {
         //Given:
         String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_WRONG_JSON_PATH, UTF_8);
 
-        CreateConsentReq actualRequest = jsonConverter.toObject(requestStringJson, CreateConsentReq.class).get();
+        CreateConsentReq actualRequest = xs2aObjectMapper.readValue(requestStringJson, CreateConsentReq.class);
 
         //When:
         Set<ConstraintViolation<CreateConsentReq>> actualViolations = validator.validate(actualRequest);
@@ -102,7 +100,7 @@ public class SpiAccountConsentModelsTest {
     public void createConsentReqValidation() throws IOException {
         //Given:
         String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
-        CreateConsentReq actualRequest = jsonConverter.toObject(requestStringJson, CreateConsentReq.class).get();
+        CreateConsentReq actualRequest = xs2aObjectMapper.readValue(requestStringJson, CreateConsentReq.class);
 
         //When:
         Set<ConstraintViolation<CreateConsentReq>> actualViolations = validator.validate(actualRequest);
@@ -118,7 +116,7 @@ public class SpiAccountConsentModelsTest {
         CreateConsentReq expectedRequest = getAicNoDedicatedAccountRequest();
 
         //When:
-        CreateConsentReq actualRequest = jsonConverter.toObject(requestStringJson, CreateConsentReq.class).get();
+        CreateConsentReq actualRequest = xs2aObjectMapper.readValue(requestStringJson, CreateConsentReq.class);
 
         //Then:
         assertThat(actualRequest).isEqualTo(expectedRequest);

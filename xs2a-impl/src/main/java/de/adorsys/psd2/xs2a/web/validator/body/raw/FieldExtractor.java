@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator.body.raw;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
@@ -38,15 +38,13 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_DESE
 public class FieldExtractor {
 
     private final ErrorBuildingService errorBuildingService;
-    private final JsonConverter jsonConverter;
+    private final Xs2aObjectMapper xs2aObjectMapper;
 
     public Optional<String> extractField(HttpServletRequest request, String fieldName, MessageError messageError) {
         Optional<String> fieldOptional = Optional.empty();
         try {
-            // TODO: create common class with Jackson's functionality instead of two: JsonConverter and ObjectMapper.
-            //  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/870
-            TypeReference<String> typeReference = new TypeReference<String>() {};
-            fieldOptional = jsonConverter.toJsonField(request.getInputStream(), fieldName, typeReference);
+            fieldOptional = xs2aObjectMapper.toJsonField(request.getInputStream(), fieldName, new TypeReference<String>() {
+            });
         } catch (IOException e) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
         }
@@ -56,7 +54,7 @@ public class FieldExtractor {
 
     public Optional<String> extractOptionalField(HttpServletRequest request, String fieldName) {
         try {
-            return jsonConverter.toJsonField(request.getInputStream(), fieldName, new TypeReference<String>() {
+            return xs2aObjectMapper.toJsonField(request.getInputStream(), fieldName, new TypeReference<String>() {
             });
         } catch (IOException e) {
             return Optional.empty();
@@ -66,7 +64,7 @@ public class FieldExtractor {
     public List<String> extractList(HttpServletRequest request, String fieldName, MessageError messageError) {
         List<String> fieldList = new ArrayList<>();
         try {
-            fieldList.addAll(jsonConverter.toJsonGetValuesForField(request.getInputStream(), fieldName));
+            fieldList.addAll(xs2aObjectMapper.toJsonGetValuesForField(request.getInputStream(), fieldName));
         } catch (IOException e) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
         }
@@ -75,7 +73,7 @@ public class FieldExtractor {
 
     public List<String> extractOptionalList(HttpServletRequest request, String fieldName) {
         try {
-            return jsonConverter.toJsonGetValuesForField(request.getInputStream(), fieldName);
+            return xs2aObjectMapper.toJsonGetValuesForField(request.getInputStream(), fieldName);
 
         } catch (IOException e) {
             return Collections.emptyList();

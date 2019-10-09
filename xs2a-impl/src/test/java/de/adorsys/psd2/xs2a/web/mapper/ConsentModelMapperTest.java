@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -84,7 +84,7 @@ public class ConsentModelMapperTest {
     private AccountModelMapper accountModelMapper;
 
     @Mock
-    private ObjectMapper objectMapper;
+    private Xs2aObjectMapper xs2aObjectMapper;
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
@@ -148,7 +148,7 @@ public class ConsentModelMapperTest {
     @Test
     public void mapToCreateConsentReq_AvailableAccountsWithBalance() {
         //Given
-        when(objectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
+        when(xs2aObjectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAvailableAccountsWithBalances.json", Consents.class);
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAvailableAccountsWithBalances.json", CreateConsentReq.class);
         //When
@@ -162,8 +162,8 @@ public class ConsentModelMapperTest {
         //Given
         when(aspspProfileService.isAccountOwnerInformationSupported())
             .thenReturn(true);
-        when(objectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
-        when(objectMapper.convertValue(buildAdditionalInformationAccountReference(), AccountReference.class)).thenReturn(buildAdditionalInformationXs2aAccountReference());
+        when(xs2aObjectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
+        when(xs2aObjectMapper.convertValue(buildAdditionalInformationAccountReference(), AccountReference.class)).thenReturn(buildAdditionalInformationXs2aAccountReference());
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAdditionalAccountInformation.json", CreateConsentReq.class);
         //When
@@ -177,7 +177,7 @@ public class ConsentModelMapperTest {
         //Given
         when(aspspProfileService.isAccountOwnerInformationSupported())
             .thenReturn(false);
-        when(objectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
+        when(xs2aObjectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqNoAdditionalAccountInformation.json", CreateConsentReq.class);
         //When
@@ -191,8 +191,8 @@ public class ConsentModelMapperTest {
         //Given
         when(aspspProfileService.isAccountOwnerInformationSupported())
             .thenReturn(true);
-        when(objectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
-        when(objectMapper.convertValue(buildAdditionalInformationAccountReference(), AccountReference.class)).thenReturn(buildAdditionalInformationXs2aAccountReference());
+        when(xs2aObjectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
+        when(xs2aObjectMapper.convertValue(buildAdditionalInformationAccountReference(), AccountReference.class)).thenReturn(buildAdditionalInformationXs2aAccountReference());
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
         consent.getAccess().getAdditionalAccountInformation().setOwnerName(null);
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAdditionalAccountInformationNoOwnerName.json", CreateConsentReq.class);
@@ -207,8 +207,8 @@ public class ConsentModelMapperTest {
         //Given
         when(aspspProfileService.isAccountOwnerInformationSupported())
             .thenReturn(true);
-        when(objectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
-        when(objectMapper.convertValue(buildAdditionalInformationAccountReference(), AccountReference.class)).thenReturn(buildAdditionalInformationXs2aAccountReference());
+        when(xs2aObjectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
+        when(xs2aObjectMapper.convertValue(buildAdditionalInformationAccountReference(), AccountReference.class)).thenReturn(buildAdditionalInformationXs2aAccountReference());
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
         consent.getAccess().getAdditionalAccountInformation().setOwnerName(Collections.emptyList());
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAdditionalAccountInformationOwnerNameEmpty.json", CreateConsentReq.class);

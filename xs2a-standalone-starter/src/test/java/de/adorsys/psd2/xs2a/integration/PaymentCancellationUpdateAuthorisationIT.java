@@ -36,7 +36,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ContextConfiguration(
     classes = {
         CorsConfigurationProperties.class,
-        ObjectMapperConfig.class,
         WebConfig.class,
         Xs2aEndpointPathConstant.class,
         Xs2aInterfaceConfig.class

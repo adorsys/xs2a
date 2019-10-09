@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.tpp.CmsAspspTppService;
+import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.tpp.TppStopListRecord;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
@@ -28,6 +29,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -63,13 +65,17 @@ public class CmsAspspStopListControllerTest {
 
     @Before
     public void setUp() {
+        ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
+
         tppStopListRecord = jsonReader.getObjectFromFile( "json/tpp-stop-list-record.json", TppStopListRecord.class);
 
         httpHeaders.add("instance-id", INSTANCE_ID);
         httpHeaders.add("tpp-authorisation-number", tppAuthorisationNumber);
         httpHeaders.add("lock-period", lockPeriod.toString());
 
-        mockMvc = MockMvcBuilders.standaloneSetup(cmsAspspStopListController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(cmsAspspStopListController)
+                      .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapperTestConfig.getXs2aObjectMapper()))
+                      .build();
     }
 
     @Test

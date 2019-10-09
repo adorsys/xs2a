@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import de.adorsys.psd2.model.PaymentInitiationWithStatusResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -42,10 +42,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDate;
 import java.util.Currency;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {CoreObjectsMapper.class, TppRedirectUriMapper.class, ObjectMapper.class,
+@ContextConfiguration(classes = {CoreObjectsMapper.class, TppRedirectUriMapper.class, Xs2aObjectMapper.class,
     HrefLinkMapper.class, StandardPaymentProductsResolver.class, ScaMethodsMapperImpl.class, Xs2aAddressMapperImpl.class,
     RemittanceMapperImpl.class, PurposeCodeMapperImpl.class})
 public class PaymentModelMapperPsd2Test {

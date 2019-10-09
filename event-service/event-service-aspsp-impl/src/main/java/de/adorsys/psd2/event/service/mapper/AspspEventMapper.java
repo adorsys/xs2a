@@ -16,32 +16,45 @@
 
 package de.adorsys.psd2.event.service.mapper;
 
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.event.persist.model.ReportEvent;
 import de.adorsys.psd2.event.persist.model.PsuIdDataPO;
 import de.adorsys.psd2.event.service.model.AspspEvent;
 import de.adorsys.psd2.event.service.model.AspspPsuIdData;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Mapper(componentModel = "spring")
 public abstract class AspspEventMapper {
 
     @Autowired
-    protected JsonConverterService jsonConverterService;
+    protected Xs2aObjectMapper xs2aObjectMapper;
 
     @Mapping(target = "xRequestId", source = "XRequestId", qualifiedByName = "mapToXRequestId")
     @Mapping(target = "internalRequestId", source = "internalRequestId", qualifiedByName = "mapToInternalRequestId")
     @Mapping(target = "psuIdData", source = "psuIdData", qualifiedByName = "mapToPduIdDataSet")
-    @Mapping(target = "payload", expression = "java(jsonConverterService.toObject(event.getPayload(), Object.class).orElse(null))")
+    @Mapping(target = "payload", qualifiedByName = "mapToPayload")
     public abstract AspspEvent toAspspEvent(ReportEvent event);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     public abstract List<AspspEvent> toAspspEventList(List<ReportEvent> events);
+
+    protected Object mapToPayload(byte[] array) {
+        try {
+            return xs2aObjectMapper.readValue(array, Object.class);
+        } catch (IOException e) {
+            log.info("Can't convert json to object: {}", e.getMessage());
+            return null;
+        }
+    }
 
     protected Set<AspspPsuIdData> mapToPduIdDataSet(Set<PsuIdDataPO> psuIdData) {
         if (psuIdData == null) {

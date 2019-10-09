@@ -17,16 +17,15 @@
 package de.adorsys.psd2.xs2a.web.validator.body.consent;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.AccountAccess;
 import de.adorsys.psd2.model.Consents;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
-import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -50,18 +49,16 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
     private static final String AVAILABLE_ACCOUNTS_FIELD_NAME = "availableAccounts";
     private static final String AVAILABLE_ACCOUNTS_WITH_BALANCES_FIELD_NAME = "availableAccountsWithBalance";
 
-    private final JsonConverter jsonConverter;
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
     private DateFieldValidator dateFieldValidator;
 
     @Autowired
     public ConsentBodyFieldsValidatorImpl(ErrorBuildingService errorBuildingService,
-                                          ObjectMapper objectMapper,
-                                          JsonConverter jsonConverter, TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
+                                          Xs2aObjectMapper xs2aObjectMapper,
+                                          TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
                                           DateFieldValidator dateFieldValidator) {
-        super(errorBuildingService, objectMapper);
+        super(errorBuildingService, xs2aObjectMapper);
         this.dateFieldValidator = dateFieldValidator;
-        this.jsonConverter = jsonConverter;
         this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
     }
 
@@ -148,7 +145,7 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
     private Map<String, Object> extractConsentAccessMap(HttpServletRequest request, MessageError messageError) {
         Optional<Map<String, Object>> access = Optional.empty();
         try {
-            access = jsonConverter.toJsonField(request.getInputStream(), ACCESS_FIELD_NAME, new TypeReference<Map<String, Object>>() {
+            access = xs2aObjectMapper.toJsonField(request.getInputStream(), ACCESS_FIELD_NAME, new TypeReference<Map<String, Object>>() {
             });
         } catch (IOException e) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));

@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment.type;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -39,9 +39,9 @@ import java.util.Objects;
 public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl {
 
     @Autowired
-    public BulkPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
+    public BulkPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                         PaymentMapper paymentMapper, AmountValidator amountValidator) {
-        super(errorBuildingService, objectMapper, paymentMapper, amountValidator);
+        super(errorBuildingService, xs2aObjectMapper, paymentMapper, amountValidator);
     }
 
     @Override

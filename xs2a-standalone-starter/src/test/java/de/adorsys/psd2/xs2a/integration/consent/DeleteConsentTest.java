@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
+import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -64,7 +65,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     classes = Xs2aStandaloneStarter.class)
 @ContextConfiguration(classes = {
     CorsConfigurationProperties.class,
-    ObjectMapperConfig.class,
     WebConfig.class,
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class

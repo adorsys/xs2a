@@ -86,7 +86,7 @@ public class CmsAspspAisExportControllerTest {
 
         mockMvc = MockMvcBuilders
                       .standaloneSetup(cmsAspspAisExportController)
-                      .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapperTestConfig.getObjectMapper()))
+                      .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapperTestConfig.getXs2aObjectMapper()))
                       .build();
     }
 

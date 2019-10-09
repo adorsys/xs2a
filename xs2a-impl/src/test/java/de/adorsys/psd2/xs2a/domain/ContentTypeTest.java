@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.junit.Test;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ContentTypeTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 
     @Test
     public void testContentTypeWithoutCharset() throws IOException {
@@ -35,7 +35,7 @@ public class ContentTypeTest {
 
         String contentTypeJson = "{ \"contentType\": \"application/json\" }";
 
-        assertEquals(expected, objectMapper.readValue(contentTypeJson, Container.class));
+        assertEquals(expected, xs2aObjectMapper.readValue(contentTypeJson, Container.class));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class ContentTypeTest {
 
         String contentTypeJson = "{ \"contentType\": \"application/xml; charset=utf-8\" }";
 
-        assertEquals(expected, objectMapper.readValue(contentTypeJson, Container.class));
+        assertEquals(expected, xs2aObjectMapper.readValue(contentTypeJson, Container.class));
     }
 }
 

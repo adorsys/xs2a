@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.component;
+package de.adorsys.psd2.mapper;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -27,22 +27,18 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 
-import static de.adorsys.psd2.xs2a.web.util.ApiDateConstants.*;
 
 @Slf4j
 public class DateTimeDeserializer extends StdDeserializer<LocalDateTime> {
     private final DateTimeFormatter formatter;
 
-    {
-        formatter = new DateTimeFormatterBuilder()
-                        .append(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN_LOCAL))
-                        .appendOptional(DateTimeFormatter.ofPattern(ZONE_PART))
-                        .appendOptional(DateTimeFormatter.ofPattern(OFFSET_PART))
-                        .toFormatter();
-    }
-
     public DateTimeDeserializer() {
         super(LocalDateTime.class);
+        formatter = new DateTimeFormatterBuilder()
+                        .append(DateTimeFormatter.ofPattern(ApiDateConstants.DATE_TIME_PATTERN_LOCAL))
+                        .appendOptional(DateTimeFormatter.ofPattern(ApiDateConstants.ZONE_PART))
+                        .appendOptional(DateTimeFormatter.ofPattern(ApiDateConstants.OFFSET_PART))
+                        .toFormatter();
     }
 
     @Override

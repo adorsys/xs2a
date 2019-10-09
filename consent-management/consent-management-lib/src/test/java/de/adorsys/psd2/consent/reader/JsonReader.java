@@ -17,8 +17,8 @@
 package de.adorsys.psd2.consent.reader;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,17 +28,17 @@ import java.util.Map;
 
 public class JsonReader {
 
-    private ObjectMapper objectMapper;
+    private Xs2aObjectMapper xs2aObjectMapper;
 
     public JsonReader() {
-        objectMapper = getObjectMapper();
+        xs2aObjectMapper = getXs2aObjectMapper();
     }
 
     public JsonReader(Map<String, Boolean> properties) {
-        objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules();
+        xs2aObjectMapper = new Xs2aObjectMapper();
+        xs2aObjectMapper.findAndRegisterModules();
         for (Map.Entry<String, Boolean> property : properties.entrySet()) {
-            objectMapper.configure(SerializationFeature.valueOf(property.getKey()), property.getValue());
+            xs2aObjectMapper.configure(SerializationFeature.valueOf(property.getKey()), property.getValue());
         }
     }
 
@@ -48,7 +48,7 @@ public class JsonReader {
     public <T> T getObjectFromFile(String fileName, Class<T> name) {
         URL resourcePath = getFileFromClasspath(fileName);
         try {
-            return objectMapper.readValue(resourcePath, name);
+            return xs2aObjectMapper.readValue(resourcePath, name);
         } catch (IOException e) {
             throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing.");
         }
@@ -60,7 +60,7 @@ public class JsonReader {
     public <T> T getObjectFromFile(String fileName, TypeReference<T> name) {
         URL resourcePath = getFileFromClasspath(fileName);
         try {
-            return objectMapper.readValue(resourcePath, name);
+            return xs2aObjectMapper.readValue(resourcePath, name);
         } catch (IOException e) {
             throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing.");
         }
@@ -71,7 +71,7 @@ public class JsonReader {
      */
     public <T> T getObjectFromString(String json, Class<T> name) {
         try {
-            return objectMapper.readValue(json, name);
+            return xs2aObjectMapper.readValue(json, name);
         } catch (IOException e) {
             throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing.");
         }
@@ -82,8 +82,8 @@ public class JsonReader {
      */
     public <T> List<T> getListFromString(String json, Class<T> name) {
         try {
-            return objectMapper.readValue(json,
-                                          objectMapper.getTypeFactory().constructCollectionType(List.class, name));
+            return xs2aObjectMapper.readValue(json,
+                                              xs2aObjectMapper.getTypeFactory().constructCollectionType(List.class, name));
         } catch (IOException e) {
             throw new ParseContentJsonReaderException("Exception during list of class \'" + name + "\' parsing.");
         }
@@ -92,8 +92,8 @@ public class JsonReader {
     public <T> List<T> getListFromFile(String fileName, Class<T> name) {
         URL resourcePath = getFileFromClasspath(fileName);
         try {
-            return objectMapper.readValue(resourcePath,
-                                          objectMapper.getTypeFactory().constructCollectionType(List.class, name));
+            return xs2aObjectMapper.readValue(resourcePath,
+                                              xs2aObjectMapper.getTypeFactory().constructCollectionType(List.class, name));
         } catch (IOException e) {
             throw new ParseContentJsonReaderException("Exception during list of class \'" + name + "\' parsing.");
         }
@@ -107,10 +107,10 @@ public class JsonReader {
         return JsonReader.class.getClassLoader().getResourceAsStream(resourcePath);
     }
 
-    private ObjectMapper getObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules();
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        return objectMapper;
+    private Xs2aObjectMapper getXs2aObjectMapper() {
+        Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
+        xs2aObjectMapper.findAndRegisterModules();
+        xs2aObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        return xs2aObjectMapper;
     }
 }

@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class ConsentModelMapper {
-    private final ObjectMapper objectMapper;
+    private final Xs2aObjectMapper xs2aObjectMapper;
     public final AccountModelMapper accountModelMapper;
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
@@ -196,7 +196,7 @@ public class ConsentModelMapper {
     }
 
     private AccountReference mapToAccountReference(Object reference) {
-        return objectMapper.convertValue(reference, AccountReference.class);
+        return xs2aObjectMapper.convertValue(reference, AccountReference.class);
     }
 
     public UpdateConsentPsuDataReq mapToUpdatePsuData(PsuIdData psuData, String consentId, String authorizationId, Map body) {

@@ -59,6 +59,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>xs2a-object-mapper</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- spring dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>
