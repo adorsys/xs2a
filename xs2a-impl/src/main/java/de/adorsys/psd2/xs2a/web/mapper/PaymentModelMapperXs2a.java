@@ -17,11 +17,11 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
-import de.adorsys.psd2.model.BulkPaymentInitiationJson;
-import de.adorsys.psd2.model.PaymentInitiationJson;
-import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
-import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
+import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.component.DayOfExecutionDeserializer;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
@@ -71,7 +71,9 @@ public class PaymentModelMapperXs2a {
     }
 
     private <R> R validatePayment(Object payment, Class<R> clazz) {
-        R result = xs2aObjectMapper.convertValue(payment, clazz);
+        ObjectMapper customMapper = xs2aObjectMapper.copy();
+        customMapper.registerModule(getDayOfExecutionDeserializerModule());
+        R result = customMapper.convertValue(payment, clazz);
         validationService.validate(result);
         return result;
     }
@@ -99,5 +101,11 @@ public class PaymentModelMapperXs2a {
 
         String body = xmlPart + "\n" + serialisedJsonPart;
         return body.getBytes(Charset.forName("UTF-8"));
+    }
+
+    private SimpleModule getDayOfExecutionDeserializerModule() {
+        SimpleModule dayOfExecutionModule = new SimpleModule();
+        dayOfExecutionModule.addDeserializer(DayOfExecution.class, new DayOfExecutionDeserializer());
+        return dayOfExecutionModule;
     }
 }
