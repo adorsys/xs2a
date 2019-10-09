@@ -42,7 +42,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-
 @Data
 @ToString(exclude = {"accesses", "authorizations", "usages"})
 @Entity(name = "ais_consent")
@@ -168,6 +167,9 @@ public class AisConsent extends InstanceDependableEntity {
     @Column(name = "owner_address_type")
     @Enumerated(value = EnumType.STRING)
     private AdditionalAccountInformationType ownerAddressType = AdditionalAccountInformationType.NONE;
+
+    @Column(name = "int_req_id")
+    private String internalRequestId;
 
     @Transient
     private ConsentStatus previousConsentStatus;

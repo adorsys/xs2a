@@ -52,6 +52,7 @@ public abstract class PaymentInitiationResponse {
     private InitialSpiAspspConsentDataProvider aspspConsentDataProvider;
     private String aspspAccountId;
     private ErrorHolder errorHolder;
+    private String internalRequestId;
 
     PaymentInitiationResponse(ErrorHolder errorHolder) {
         this.errorHolder = errorHolder;

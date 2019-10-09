@@ -40,8 +40,9 @@ import java.util.stream.Collectors;
 public class Xs2aToCmsPisCommonPaymentRequestMapper {
     private final Xs2aRemittanceMapper xs2aRemittanceMapper;
 
-    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response, byte[] paymentData) {
+    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response, byte[] paymentData, String internalRequestId) {
         PisPaymentInfo paymentInfo = mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response);
+        paymentInfo.setInternalRequestId(internalRequestId);
         paymentInfo.setPaymentData(paymentData);
         return paymentInfo;
     }

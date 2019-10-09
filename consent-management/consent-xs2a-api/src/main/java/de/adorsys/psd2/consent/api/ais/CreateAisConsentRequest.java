@@ -58,4 +58,7 @@ public class CreateAisConsentRequest {
 
     @ApiModelProperty(value = "TPP redirect URI object'")
     private TppRedirectUri tppRedirectUri;
+
+    @ApiModelProperty(value = "Internal request ID")
+    private String internalRequestId;
 }

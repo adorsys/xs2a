@@ -37,6 +37,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdatePaymentAfterSpiServiceInternalTest {
     private static final String PAYMENT_ID = "payment id";
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @InjectMocks
     private UpdatePaymentAfterSpiServiceInternal updatePaymentAfterSpiServiceInternal;
@@ -120,6 +121,19 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
 
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
         verify(commonPaymentDataService, never()).updateCancelTppRedirectURIs(any(PisCommonPaymentData.class), eq(tppRedirectUri));
+    }
+
+    @Test
+    public void updatePaymentCancellationInternalRequestId_success() {
+        pisCommonPaymentData.setTransactionStatus(TransactionStatus.ACCP);
+
+        when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));
+        when(commonPaymentDataService.updatePaymentCancellationInternalRequestId(pisCommonPaymentData, INTERNAL_REQUEST_ID)).thenReturn(true);
+
+        assertTrue(updatePaymentAfterSpiServiceInternal.updatePaymentCancellationInternalRequestId(PAYMENT_ID, INTERNAL_REQUEST_ID));
+
+        verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
+        verify(commonPaymentDataService, times(1)).updatePaymentCancellationInternalRequestId(eq(pisCommonPaymentData), eq(INTERNAL_REQUEST_ID));
     }
 
 }

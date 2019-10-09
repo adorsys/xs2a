@@ -29,4 +29,8 @@ public interface CancellationAuthorisationResponse {
 
     @NotNull
     AuthorisationResponseType getAuthorisationResponseType();
+
+    default String getInternalRequestId() {
+        return "";
+    }
 }

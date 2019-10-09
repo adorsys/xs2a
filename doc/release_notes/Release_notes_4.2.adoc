@@ -11,6 +11,7 @@
 * Bugfix: error on initiating payment with custom payment product and JSON body
 * Bugfix: Array "account" in Read Balances and Read Transaction List responses is empty for Global consent
 * Create common class for Jackson functionality
+* Add Internal Request-ID (inr-id) as additional parameter in scaRedirect URI
 
 == Add integration test for embedded mode for XS2A
 
@@ -48,6 +49,7 @@ From now on, response to create consent authorisation request in Oauth SCA Redir
 From now on, there is a possibility to create a custom payment product in the ASPSP profile and then initiate payments of
 such type with JSON body. As there is no common model for them - such payments will pass to SPI level with their bodies as
 byte arrays.
+
 == Array "account" in Read Balances and Read Transaction List responses is empty for Global consent
 
 From now on, the field `account` in read balances `GET /v1/accounts/{account-id}/balances` and read transactions
@@ -56,3 +58,10 @@ From now on, the field `account` in read balances `GET /v1/accounts/{account-id}
 == Create common class for Jackson functionality
 
 From now on Jackson functionality from ObjectMapper and JsonConverter is united into Xs2aObjectMapper class in xs2a-object-mapper module.
+
+== Add Internal Request-ID (inr-id) as additional parameter in scaRedirect URI
+
+From now on, ASPSP is able to modify redirect URLs for consent, payment and payment cancellation  with new parameter `{inr-id}`.
+This parameter will be filled with internal request ID during construction `scaRedirect` link.
+Also pay attention, if authorisation is created explicitly, value of this parameter
+will be fetched from previous request (consent creation, payment initiation or cancel payment).

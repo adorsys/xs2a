@@ -29,6 +29,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommonPaymentDataServiceTest {
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @InjectMocks
     private CommonPaymentDataService commonPaymentDataService;
@@ -112,5 +114,27 @@ public class CommonPaymentDataServiceTest {
         when(pisCommonPaymentDataRepository.save(paymentData)).thenReturn(paymentData);
 
         assertFalse(commonPaymentDataService.updateCancelTppRedirectURIs(paymentData, tppRedirectUri));
+    }
+
+    @Test
+    public void updatePaymentCancellationInternalRequestId_Success() {
+        //Given
+        String paymentId = "YK1f8zkXTBIkVeJWOiHzAE";
+        OffsetDateTime creationTimestamp = OffsetDateTime.now();
+        PisCommonPaymentData paymentData = buildPisCommonPaymentData(paymentId, creationTimestamp);
+        PisCommonPaymentData paymentDataWithCancellationInternalRequestId = buildPisCommonPaymentData(paymentId, creationTimestamp);
+        paymentDataWithCancellationInternalRequestId.setCancellationInternalRequestId(INTERNAL_REQUEST_ID);
+        when(pisCommonPaymentDataRepository.save(paymentDataWithCancellationInternalRequestId)).thenReturn(paymentDataWithCancellationInternalRequestId);
+        //When
+        boolean updatePaymentCancellationInternalRequestId = commonPaymentDataService.updatePaymentCancellationInternalRequestId(paymentData, INTERNAL_REQUEST_ID);
+        //Then
+        assertTrue(updatePaymentCancellationInternalRequestId);
+    }
+
+    private PisCommonPaymentData buildPisCommonPaymentData(String paymentId, OffsetDateTime creationTimestamp) {
+        PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
+        pisCommonPaymentData.setPaymentId(paymentId);
+        pisCommonPaymentData.setCreationTimestamp(creationTimestamp);
+        return pisCommonPaymentData;
     }
 }

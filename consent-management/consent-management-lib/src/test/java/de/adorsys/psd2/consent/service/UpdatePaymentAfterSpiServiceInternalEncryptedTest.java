@@ -40,6 +40,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
     private static final String UNDECRYPTABLE_PAYMENT_ID = "undecryptable payment id";
     private static final String DECRYPTED_PAYMENT_ID = "91cd2158-4344-44f4-bdbb-c736ededa436";
     private static final String WRONG_DECRYPTED_PAYMENT_ID = "386d670d-4323-43ba-a953-8d0c97d9deca";
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @InjectMocks
     private UpdatePaymentAfterSpiServiceInternalEncrypted updatePaymentStatusAfterSpiServiceInternalEncrypted;
@@ -122,5 +123,16 @@ public class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
 
         verify(securityDataService, times(1)).decryptId(ENCRYPTED_PAYMENT_ID);
         verify(updatePaymentStatusAfterSpiService, never()).updatePaymentCancellationTppRedirectUri(eq(DECRYPTED_PAYMENT_ID), eq(tppRedirectUri));
+    }
+
+    @Test
+    public void updatePaymentCancellationInternalRequestId_success() {
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(eq(DECRYPTED_PAYMENT_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(true);
+
+        assertTrue(updatePaymentStatusAfterSpiServiceInternalEncrypted.updatePaymentCancellationInternalRequestId(ENCRYPTED_PAYMENT_ID, INTERNAL_REQUEST_ID));
+
+        verify(securityDataService, times(1)).decryptId(ENCRYPTED_PAYMENT_ID);
+        verify(updatePaymentStatusAfterSpiService, times(1)).updatePaymentCancellationInternalRequestId(eq(DECRYPTED_PAYMENT_ID), eq(INTERNAL_REQUEST_ID));
     }
 }

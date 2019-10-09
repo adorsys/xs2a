@@ -57,7 +57,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
         expected.setPaymentData(PAYMENT_DATA);
 
         // When
-        PisPaymentInfo actual = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, PAYMENT_DATA);
+        PisPaymentInfo actual = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, PAYMENT_DATA, null);
 
         // Then
         assertEquals(expected, actual);

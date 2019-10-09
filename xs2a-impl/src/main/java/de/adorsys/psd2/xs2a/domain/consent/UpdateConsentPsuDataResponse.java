@@ -40,6 +40,7 @@ public class UpdateConsentPsuDataResponse implements AuthorisationResponse {
     private String scaAuthenticationData;
     private Links links;
     private String psuMessage;
+    private String internalRequestId;
 
     private MessageError messageError;
 

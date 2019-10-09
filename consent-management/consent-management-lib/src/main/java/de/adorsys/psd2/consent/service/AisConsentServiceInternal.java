@@ -303,6 +303,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setAvailableAccountsWithBalance(request.getAccess().getAvailableAccountsWithBalance());
         consent.setLastActionDate(LocalDate.now());
         setAdditionalInformationTypes(consent, request.getAccess().getAccountAdditionalInformationAccess());
+        consent.setInternalRequestId(request.getInternalRequestId());
         return consent;
     }
 

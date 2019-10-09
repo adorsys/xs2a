@@ -33,4 +33,6 @@ public class CreatePisAuthorisationResponse {
 
     private ScaStatus scaStatus;
 
+    private String internalRequestId;
+    private String cancellationInternalRequestId;
 }

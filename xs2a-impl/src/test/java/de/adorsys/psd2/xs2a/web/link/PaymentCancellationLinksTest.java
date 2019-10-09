@@ -34,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -54,6 +55,7 @@ public class PaymentCancellationLinksTest {
     private PaymentCancellationLinks links;
     private Links expectedLinks;
     private CancelPaymentResponse response;
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @Mock
     private ScaApproachResolver scaApproachResolver;
@@ -73,6 +75,7 @@ public class PaymentCancellationLinksTest {
         response.setPaymentType(PaymentType.SINGLE);
         response.setPsuData(PSU_DATA);
         response.setTransactionStatus(TransactionStatus.ACCP);
+        response.setInternalRequestId(INTERNAL_REQUEST_ID);
     }
 
     @Test
@@ -80,7 +83,7 @@ public class PaymentCancellationLinksTest {
         boolean isExplicitMethod = false;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
-        when(redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID))).thenReturn(REDIRECT_LINK.getHref());
+        when(redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID), anyString())).thenReturn(REDIRECT_LINK.getHref());
 
         links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod);
 

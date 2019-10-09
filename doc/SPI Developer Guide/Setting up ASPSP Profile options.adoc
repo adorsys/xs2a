@@ -22,5 +22,34 @@ To use for example "new-payment-product", open *bank-profile.yaml* and add it to
 Custom payment-products will be passed to SPI level through the interface *de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi*
 Therefore this interface should be implemented in your SPI-Connector.
 
+== Configuring SCA redirect links
+
+ASPSP is able to modify SCA redirect URLs for consent, payment and payment cancellation.
+
+Redirect link for consent is constructed with `aisRedirectUrlToAspsp` parameter and can be configured with `{redirect-id}`, `{encrypted-consent-id}`, `{inr-id}` options.
+
+Examples:
+
+* "http://localhost/ais/{redirect-id}/{encrypted-consent-id}",
+* "http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}/{inr-id}",
+* "http://localhost:4200/ais/{redirect-id}"
+
+Redirect link for payment is constructed with  `pisRedirectUrlToAspsp` parameter and can be configured with `{redirect-id}`, `{encrypted-payment-id}`, `{inr-id}` options.
+
+Examples:
+
+* "http://localhost/pis/{redirect-id}/{encrypted-payment-id}",
+* "http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}/{inr-id}",
+* "http://localhost:4200/pis/{redirect-id}"
+
+Redirect link for payment cancellation is constructed with `pisPaymentCancellationRedirectUrlToAspsp` parameter and can be configured with the same options as for payment.
+
+Examples:
+
+* "http://localhost/pis/cancellation/{redirect-id}/{encrypted-payment-id}",
+* "http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}/{inr-id}",
+* "http://localhost:4200/pis/cancellation/{redirect-id}"
+
+All parameters are optional and can be omitted.
 
 === Using debug interface

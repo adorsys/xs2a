@@ -25,4 +25,5 @@ import lombok.Data;
 public class CreateAisConsentAuthorizationResponse {
     private String authorizationId;
     private ScaStatus scaStatus;
+    private String internalRequestId;
 }

@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.payment.create;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
@@ -36,9 +37,10 @@ public class CreatePeriodicPaymentService extends AbstractCreatePaymentService<P
                                         AuthorisationMethodDecider authorisationMethodDecider,
                                         Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper,
                                         Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper,
-                                        PeriodicPaymentInitiationService paymentInitiationService) {
+                                        PeriodicPaymentInitiationService paymentInitiationService,
+                                        RequestProviderService requestProviderService) {
         super(pisCommonPaymentService, pisScaAuthorisationServiceResolver, authorisationMethodDecider,
-              xs2aPisCommonPaymentMapper, xs2aToCmsPisCommonPaymentRequestMapper, paymentInitiationService);
+              xs2aPisCommonPaymentMapper, xs2aToCmsPisCommonPaymentRequestMapper, paymentInitiationService, requestProviderService);
     }
 
     @Override

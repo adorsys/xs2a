@@ -52,7 +52,7 @@ public class CreateConsentLinks extends AbstractLinks {
                 setStartAuthorisation(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));
             } else {
                 String redirectId = redirectIdService.generateRedirectId(authorisationId);
-                setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId));
+                setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId()));
                 setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
             }
         }
