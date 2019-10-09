@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Service to be used to update payment status ONLY after getting SPI service result.
  * Should not be used for any other business logic purposes.
- *
+ * <p>
  * This is base version of the service that contains all method declarations.
  * Should not be implemented directly, consider using one of the interfaces that extends this one.
  *
@@ -37,7 +37,7 @@ interface UpdatePaymentAfterSpiServiceBase {
      *
      * @param paymentId ID of Payment
      * @param status    Status of Payment to be set
-     * @return          true if the status was updated, false otherwise
+     * @return true if the status was updated, false otherwise
      */
     boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status);
 
@@ -49,4 +49,13 @@ interface UpdatePaymentAfterSpiServiceBase {
      * @return true if the status was updated, false otherwise
      */
     boolean updatePaymentCancellationTppRedirectUri(@NotNull String paymentId, @NotNull TppRedirectUri tppRedirectUri);
+
+    /**
+     * Updates cancellation internal request ID of Payment object by its ID
+     *
+     * @param paymentId         ID of Payment
+     * @param internalRequestId Internal Request ID
+     * @return true if the internal request ID was updated, false otherwise
+     */
+    boolean updatePaymentCancellationInternalRequestId(@NotNull String paymentId, @NotNull String internalRequestId);
 }

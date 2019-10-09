@@ -33,16 +33,23 @@ public class Xs2aCreatePisCancellationAuthorisationResponse implements Cancellat
     private ScaStatus scaStatus;
     private PaymentType paymentType;
     private Links links = new Links();
+    private String internalRequestId;
 
-    public Xs2aCreatePisCancellationAuthorisationResponse(@NotNull String cancellationId, ScaStatus scaStatus, PaymentType paymentType) {
+    public Xs2aCreatePisCancellationAuthorisationResponse(@NotNull String cancellationId, ScaStatus scaStatus, PaymentType paymentType, String internalRequestId) {
         this.cancellationId = cancellationId;
         this.scaStatus = scaStatus;
         this.paymentType = paymentType;
+        this.internalRequestId = internalRequestId;
     }
 
     @NotNull
     @Override
     public AuthorisationResponseType getAuthorisationResponseType() {
         return AuthorisationResponseType.START;
+    }
+
+    @Override
+    public String getInternalRequestId() {
+        return internalRequestId;
     }
 }

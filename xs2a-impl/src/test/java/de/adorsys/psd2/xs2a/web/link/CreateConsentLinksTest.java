@@ -40,6 +40,7 @@ public class CreateConsentLinksTest {
     private static final String CONSENT_ID = "9mp1PaotpXSToNCi";
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
     private static final String REDIRECT_LINK = "built_redirect_link";
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @Mock
     private ScaApproachResolver scaApproachResolver;
@@ -57,7 +58,7 @@ public class CreateConsentLinksTest {
     public void setUp() {
         expectedLinks = new Links();
 
-        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, true);
+        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, true, INTERNAL_REQUEST_ID);
         response.setAuthorizationId(AUTHORISATION_ID);
     }
 
@@ -87,7 +88,7 @@ public class CreateConsentLinksTest {
 
     @Test
     public void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndExplicitMethodAndMultiLevelNotRequired() {
-        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, false);
+        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, false, INTERNAL_REQUEST_ID);
         response.setAuthorizationId(AUTHORISATION_ID);
 
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
@@ -102,7 +103,7 @@ public class CreateConsentLinksTest {
 
     @Test
     public void isScaStatusMethodAuthenticated_Embedded_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
-        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, false);
+        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, false, INTERNAL_REQUEST_ID);
         response.setAuthorizationId(AUTHORISATION_ID);
 
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
@@ -167,7 +168,7 @@ public class CreateConsentLinksTest {
 
     @Test
     public void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndExplicitMethodAndMultiLevelNotRequired() {
-        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, false);
+        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, false, INTERNAL_REQUEST_ID);
         response.setAuthorizationId(AUTHORISATION_ID);
 
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
@@ -182,7 +183,7 @@ public class CreateConsentLinksTest {
 
     @Test
     public void isScaStatusMethodAuthenticated_Decoupled_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
-        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, false);
+        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, false, INTERNAL_REQUEST_ID);
         response.setAuthorizationId(AUTHORISATION_ID);
 
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
@@ -238,7 +239,7 @@ public class CreateConsentLinksTest {
     public void scaApproachRedirectAndImplicitMethod() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
-        when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID))).thenReturn(REDIRECT_LINK);
+        when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
 
         links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, false, false, ScaRedirectFlow.REDIRECT);
 

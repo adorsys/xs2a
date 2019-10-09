@@ -61,4 +61,7 @@ public class PisPaymentInfo {
 
     @ApiModelProperty(value = "Tpp redirect URI object'")
     private TppRedirectUri tppRedirectUri;
+
+    @ApiModelProperty(value = "Internal request ID")
+    private String internalRequestId;
 }

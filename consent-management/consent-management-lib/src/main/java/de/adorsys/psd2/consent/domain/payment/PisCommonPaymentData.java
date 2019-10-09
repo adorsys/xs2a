@@ -93,6 +93,12 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
     @Column(name = "status_change_timestamp")
     private OffsetDateTime statusChangeTimestamp;
 
+    @Column(name = "int_req_id")
+    private String internalRequestId;
+
+    @Column(name = "canc_int_req_id")
+    private String cancellationInternalRequestId;
+
     @Transient
     private TransactionStatus previousTransactionStatus;
 

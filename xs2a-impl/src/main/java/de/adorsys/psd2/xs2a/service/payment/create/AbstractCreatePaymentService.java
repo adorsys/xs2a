@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
@@ -50,6 +51,7 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
     private final Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     private final Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
     private final S paymentInitiationService;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Initiates payment
@@ -70,7 +72,9 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
             return buildErrorResponse(response.getErrorHolder());
         }
 
-        PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, paymentRequest.getPaymentData());
+        String internalRequestId = requestProviderService.getInternalRequestIdString();
+        PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, paymentRequest.getPaymentData(), internalRequestId);
+        response.setInternalRequestId(internalRequestId);
         Xs2aPisCommonPayment pisCommonPayment = xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(pisCommonPaymentService.createCommonPayment(pisPaymentInfo), psuData);
 
         String externalPaymentId = pisCommonPayment.getPaymentId();

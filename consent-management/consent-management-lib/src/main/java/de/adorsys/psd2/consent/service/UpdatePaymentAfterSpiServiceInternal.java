@@ -59,4 +59,16 @@ public class UpdatePaymentAfterSpiServiceInternal implements UpdatePaymentAfterS
         }
         return commonPaymentDataService.updateCancelTppRedirectURIs(paymentDataOptional.get(), tppRedirectUri);
     }
+
+    @Override
+    @Transactional
+    public boolean updatePaymentCancellationInternalRequestId(@NotNull String paymentId, @NotNull String internalRequestId) {
+        Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
+        if (!paymentDataOptional.isPresent() || paymentDataOptional.get().isFinalised()) {
+            log.info("Payment ID [{}]. Update payment intrenal request id failed, because pis payment data not found or payment is finalized",
+                     paymentId);
+            return false;
+        }
+        return commonPaymentDataService.updatePaymentCancellationInternalRequestId(paymentDataOptional.get(), internalRequestId);
+    }
 }

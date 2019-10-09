@@ -58,4 +58,16 @@ public class UpdatePaymentAfterSpiServiceInternalEncrypted implements UpdatePaym
                        return false;
                    });
     }
+
+    @Override
+    @Transactional
+    public boolean updatePaymentCancellationInternalRequestId(@NotNull String encryptedPaymentId, @NotNull String internalRequestId) {
+        return securityDataService.decryptId(encryptedPaymentId)
+                   .map(id -> updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(id, internalRequestId))
+                   .orElseGet(() -> {
+                       log.info("Encrypted Payment ID [{}]. Update cancellation payment internal request ID failed, couldn't decrypt payment id",
+                                encryptedPaymentId);
+                       return false;
+                   });
+    }
 }

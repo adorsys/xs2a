@@ -46,6 +46,7 @@ import static org.junit.Assert.*;
 public class Xs2aAisConsentMapperTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @Autowired
     private Xs2aAisConsentMapper mapper;
@@ -166,7 +167,7 @@ public class Xs2aAisConsentMapperTest {
         AisAccountAccessInfo expectedAisAccountAccessInfo = jsonReader.getObjectFromFile("json/service/mapper/consent/account-access-info.json", AisAccountAccessInfo.class);
 
 
-        CreateAisConsentRequest createAisConsentRequest = mapper.mapToCreateAisConsentRequest(request, psuData, tppInfo, 34);
+        CreateAisConsentRequest createAisConsentRequest = mapper.mapToCreateAisConsentRequest(request, psuData, tppInfo, 34, INTERNAL_REQUEST_ID);
 
         assertEquals(psuData, createAisConsentRequest.getPsuData());
         assertEquals(tppInfo, createAisConsentRequest.getTppInfo());
@@ -184,7 +185,7 @@ public class Xs2aAisConsentMapperTest {
         PsuIdData psuData = new PsuIdData("1", "2", "3", "4");
         TppInfo tppInfo = new TppInfo();
 
-        CreateAisConsentRequest createAisConsentRequest = mapper.mapToCreateAisConsentRequest(null, psuData, tppInfo, 34);
+        CreateAisConsentRequest createAisConsentRequest = mapper.mapToCreateAisConsentRequest(null, psuData, tppInfo, 34, INTERNAL_REQUEST_ID);
 
         assertNull(createAisConsentRequest);
     }

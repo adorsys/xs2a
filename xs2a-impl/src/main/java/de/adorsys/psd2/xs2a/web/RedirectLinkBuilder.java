@@ -26,6 +26,7 @@ public class RedirectLinkBuilder {
     private static final String REDIRECT_URL = "{redirect-id}";
     private static final String ENCRYPTED_CONSENT_ID = "{encrypted-consent-id}";
     private static final String ENCRYPTED_PAYMENT_ID = "{encrypted-payment-id}";
+    private static final String INTERNAL_REQUEST_ID = "{inr-id}";
 
     private final AspspProfileServiceWrapper aspspProfileService;
 
@@ -35,12 +36,14 @@ public class RedirectLinkBuilder {
      *
      * @param encryptedConsentId - Encrypted Payment ID provided to TPP
      * @param redirectId         - Redirect ID
+     * @param internalRequestId  - Internal Request ID
      * @return redirect link
      */
-    public String buildConsentScaRedirectLink(String encryptedConsentId, String redirectId) {
+    public String buildConsentScaRedirectLink(String encryptedConsentId, String redirectId, String internalRequestId) {
         return aspspProfileService.getAisRedirectUrlToAspsp()
                    .replace(REDIRECT_URL, redirectId)
-                   .replace(ENCRYPTED_CONSENT_ID, encryptedConsentId);
+                   .replace(ENCRYPTED_CONSENT_ID, encryptedConsentId)
+                   .replace(INTERNAL_REQUEST_ID, internalRequestId);
     }
 
     /**
@@ -49,12 +52,14 @@ public class RedirectLinkBuilder {
      *
      * @param encryptedPaymentId - Encrypted Payment ID provided to TPP
      * @param redirectId         - Redirect ID
+     * @param internalRequestId  - Internal Request ID
      * @return redirect link
      */
-    public String buildPaymentScaRedirectLink(String encryptedPaymentId, String redirectId) {
+    public String buildPaymentScaRedirectLink(String encryptedPaymentId, String redirectId, String internalRequestId) {
         return aspspProfileService.getPisRedirectUrlToAspsp()
                    .replace(REDIRECT_URL, redirectId)
-                   .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId);
+                   .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId)
+                   .replace(INTERNAL_REQUEST_ID, internalRequestId);
     }
 
     /**
@@ -63,11 +68,13 @@ public class RedirectLinkBuilder {
      *
      * @param encryptedPaymentId - Encrypted Payment ID provided to TPP
      * @param redirectId         - Redirect ID
+     * @param internalRequestId  - Internal Request ID
      * @return redirect link
      */
-    public String buildPaymentCancellationScaRedirectLink(String encryptedPaymentId, String redirectId) {
+    public String buildPaymentCancellationScaRedirectLink(String encryptedPaymentId, String redirectId, String internalRequestId) {
         return aspspProfileService.getPisPaymentCancellationRedirectUrlToAspsp()
                    .replace(REDIRECT_URL, redirectId)
-                   .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId);
+                   .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId)
+                   .replace(INTERNAL_REQUEST_ID, internalRequestId);
     }
 }

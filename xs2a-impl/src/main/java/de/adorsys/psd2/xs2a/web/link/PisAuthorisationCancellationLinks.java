@@ -37,7 +37,7 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
     public PisAuthorisationCancellationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
                                              RedirectIdService redirectIdService,
                                              String paymentService, String paymentProduct, String paymentId,
-                                             String authorisationId, ScaRedirectFlow scaRedirectFlow) {
+                                             String authorisationId, ScaRedirectFlow scaRedirectFlow, String internalRequestId) {
         super(httpUrl);
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.scaRedirectFlow = scaRedirectFlow;
@@ -49,15 +49,15 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(cancellationScaApproach)) {
             setUpdatePsuAuthentication(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
         } else if (cancellationScaApproach == REDIRECT) {
-            addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
+            addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, internalRequestId);
         } else if (cancellationScaApproach == OAUTH) {
             setScaOAuth(new HrefType("scaOAuth")); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
     }
 
-    private void addRedirectRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorizationId) {
+    private void addRedirectRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorizationId, String internalRequestId) {
         String redirectId = redirectIdService.generateRedirectId(authorizationId);
-        setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId));
+        setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId, internalRequestId));
 
         setScaStatus(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorizationId));
     }

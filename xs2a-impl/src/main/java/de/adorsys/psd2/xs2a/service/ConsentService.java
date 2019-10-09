@@ -165,7 +165,7 @@ public class ConsentService {
         xs2aAccountAccess.ifPresent(accountAccess ->
                                         accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess));
 
-        CreateConsentResponse createConsentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), encryptedConsentId, null, null, null, spiResponsePayload.getPsuMessage(), multilevelScaRequired);
+        CreateConsentResponse createConsentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), encryptedConsentId, null, null, null, spiResponsePayload.getPsuMessage(), multilevelScaRequired, requestProviderService.getInternalRequestIdString());
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(createConsentResponse).build();
 
         if (authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {

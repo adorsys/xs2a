@@ -30,10 +30,13 @@ public class Xs2aCreatePisAuthorisationResponse implements AuthorisationResponse
     private ScaStatus scaStatus;
     private PaymentType paymentType;
     private Links links = new Links();
+    private String internalRequestId;
 
-    public Xs2aCreatePisAuthorisationResponse(String authorisationId, ScaStatus scaStatus, PaymentType paymentType) {
+    public Xs2aCreatePisAuthorisationResponse(String authorisationId, ScaStatus scaStatus, PaymentType paymentType,
+                                              String internalRequestId) {
         this.authorisationId = authorisationId;
         this.scaStatus = scaStatus;
         this.paymentType = paymentType;
+        this.internalRequestId = internalRequestId;
     }
 }
