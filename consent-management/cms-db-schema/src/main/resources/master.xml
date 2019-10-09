@@ -106,4 +106,5 @@
     <include relativeToChangelogFile="true" file="migration/0078-remove-column-tpp-info-id-from-authorisation-template-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0079-remove-foreign-key-tpp-info-id-from-piis-consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0080-add-indexes-for-external-ids.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0081-add-internal-request-ids.xml"/>
 </databaseChangeLog>

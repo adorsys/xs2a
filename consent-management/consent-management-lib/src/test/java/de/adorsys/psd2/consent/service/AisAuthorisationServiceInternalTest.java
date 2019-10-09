@@ -71,6 +71,7 @@ public class AisAuthorisationServiceInternalTest {
     private static final String TPP_REDIRECT_URI = "request/redirect_uri";
     private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
     private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     private AisConsent aisConsent;
     private AisConsentAuthorization aisConsentAuthorisation;
@@ -211,6 +212,7 @@ public class AisAuthorisationServiceInternalTest {
         assertTrue(scaStatuses.contains(ScaStatus.FAILED));
         assertEquals(TPP_REDIRECT_URIs.getUri(), aisConsentAuthorization.getTppOkRedirectUri());
         assertEquals(TPP_REDIRECT_URIs.getNokUri(), aisConsentAuthorization.getTppNokRedirectUri());
+        assertEquals(aisConsent.getInternalRequestId(), actual.get().getInternalRequestId());
     }
 
     @Test
@@ -394,6 +396,7 @@ public class AisAuthorisationServiceInternalTest {
         aisConsent.setAuthorizations(aisConsentAuthorisationList);
         aisConsent.setPsuDataList(psuDataList);
         aisConsent.setAuthorisationTemplate(new AuthorisationTemplateEntity());
+        aisConsent.setInternalRequestId(INTERNAL_REQUEST_ID);
         return aisConsent;
     }
 

@@ -79,4 +79,19 @@ public class PisPaymentController {
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
     }
+
+    @PutMapping(path = "/payment/{payment-id}/cancellation/internal-request-id/{internal-request-id}")
+    @ApiOperation(value = "Updates payment cancellation internal request ID after SPI service. Should not be used for any other purposes!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Bad Request")})
+    public ResponseEntity<Void> updatePaymentCancellationInternalRequestId(
+        @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.")
+        @PathVariable("payment-id") String paymentId,
+        @ApiParam(name = "internal-request-id", value = "Cancellation internal request ID of payment.")
+        @PathVariable("internal-request-id") String internalRequestId) {
+        return updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(paymentId, internalRequestId)
+                   ? ResponseEntity.ok().build()
+                   : ResponseEntity.badRequest().build();
+    }
 }

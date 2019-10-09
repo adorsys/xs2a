@@ -59,6 +59,8 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
     private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
     private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_DATA, ScaApproach.REDIRECT, TPP_REDIRECT_URIs);
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
+    private static final String CANCELLATION_INTERNAL_REQUEST_ID = "5b8d8b12-9363-4d9e-9b7e-2219cbcfc311";
 
     @InjectMocks
     private PisCommonPaymentServiceInternalEncrypted pisCommonPaymentServiceInternalEncrypted;
@@ -351,7 +353,7 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     private CreatePisAuthorisationResponse buildCreatePisAuthorisationResponse() {
-        return new CreatePisAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED);
+        return new CreatePisAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, CANCELLATION_INTERNAL_REQUEST_ID);
     }
 
     private UpdatePisCommonPaymentPsuDataRequest buildUpdatePisCommonPaymentPsuDataRequest() {

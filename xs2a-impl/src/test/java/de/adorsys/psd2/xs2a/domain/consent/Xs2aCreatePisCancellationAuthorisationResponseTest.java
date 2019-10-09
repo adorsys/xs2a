@@ -27,7 +27,7 @@ public class Xs2aCreatePisCancellationAuthorisationResponseTest {
     @Test
     public void getAuthorisationResponseType_shouldReturnStart() {
         // Given
-        Xs2aCreatePisCancellationAuthorisationResponse response = new Xs2aCreatePisCancellationAuthorisationResponse("some cancellation id", ScaStatus.RECEIVED, PaymentType.SINGLE);
+        Xs2aCreatePisCancellationAuthorisationResponse response = new Xs2aCreatePisCancellationAuthorisationResponse("some cancellation id", ScaStatus.RECEIVED, PaymentType.SINGLE, null);
 
         // When
         AuthorisationResponseType actual = response.getAuthorisationResponseType();

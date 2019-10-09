@@ -55,7 +55,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.UUID;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
@@ -74,6 +73,7 @@ public class CancelPaymentServiceTest {
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_DATA.getPsuId(), PSU_DATA.getPsuIdType(), PSU_DATA.getPsuCorporateId(), PSU_DATA.getPsuCorporateIdType(), null);
     private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @InjectMocks
     private CancelPaymentService cancelPaymentService;
@@ -102,6 +102,8 @@ public class CancelPaymentServiceTest {
     public void setUp() {
         when(spiContextDataProvider.provide()).thenReturn(SPI_CONTEXT_DATA);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
     }
 
     @Test
@@ -324,7 +326,7 @@ public class CancelPaymentServiceTest {
     @Test
     public void initiatePaymentCancellation_authorisationRequired_implicit_shouldReturnResponseFromSpi() {
         SpiPayment spiPayment = getSpiPayment(ACTC);
-        Xs2aCreatePisCancellationAuthorisationResponse cancellationResponse = new Xs2aCreatePisCancellationAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, spiPayment.getPaymentType());
+        Xs2aCreatePisCancellationAuthorisationResponse cancellationResponse = new Xs2aCreatePisCancellationAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, spiPayment.getPaymentType(), INTERNAL_REQUEST_ID);
         CancelPaymentResponse cancelPaymentResponseExpected = getCancelPaymentResponse(true, ACTC);
         cancelPaymentResponseExpected.setAuthorizationId(AUTHORISATION_ID);
         cancelPaymentResponseExpected.setScaStatus(ScaStatus.RECEIVED);
@@ -402,6 +404,7 @@ public class CancelPaymentServiceTest {
         if (authorisationRequired) {
             response.setPaymentId(ENCRYPTED_PAYMENT_ID);
         }
+        response.setInternalRequestId(INTERNAL_REQUEST_ID);
         return response;
     }
 

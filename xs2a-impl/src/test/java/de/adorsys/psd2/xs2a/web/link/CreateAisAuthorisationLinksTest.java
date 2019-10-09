@@ -40,6 +40,7 @@ public class CreateAisAuthorisationLinksTest {
     private static final String CONSENT_ID = "9mp1PaotpXSToNCi";
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
     private static final String REDIRECT_LINK = "built_redirect_link";
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @Mock
     private ScaApproachResolver scaApproachResolver;
@@ -62,13 +63,14 @@ public class CreateAisAuthorisationLinksTest {
         response = new CreateConsentAuthorizationResponse();
         response.setConsentId(CONSENT_ID);
         response.setAuthorisationId(AUTHORISATION_ID);
+        response.setInternalRequestId(INTERNAL_REQUEST_ID);
     }
 
     @Test
     public void isScaStatusMethodAuthenticated_redirectScaApproachOauth() {
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
-        when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID))).thenReturn(REDIRECT_LINK);
+        when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
 
         ScaRedirectFlow scaRedirectFlow = ScaRedirectFlow.OAUTH;
         links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow);
@@ -82,7 +84,7 @@ public class CreateAisAuthorisationLinksTest {
     public void isScaStatusMethodAuthenticated_redirectScaApproach() {
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
-        when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID))).thenReturn(REDIRECT_LINK);
+        when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
 
         links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow);
 

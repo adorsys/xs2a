@@ -117,7 +117,7 @@ public class PaymentAuthorisationServiceTest {
     public void createPisAuthorization_Success_ShouldRecordEvent() {
         // Given
         when(pisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PaymentType.SINGLE, PSU_ID_DATA))
-            .thenReturn(Optional.of(new Xs2aCreatePisAuthorisationResponse(null, null, null, null)));
+            .thenReturn(Optional.of(new Xs2aCreatePisAuthorisationResponse(null, null, null, null, null)));
 
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
 

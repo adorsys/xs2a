@@ -37,6 +37,7 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
@@ -75,7 +76,8 @@ public class CreatePeriodicPaymentTest {
     private static final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID);
     private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
     private final Xs2aPisCommonPayment PIS_COMMON_PAYMENT_FAIL = new Xs2aPisCommonPayment(null, PSU_ID_DATA);
-    private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null, null);
+    private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null, null, null);
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @InjectMocks
     private CreatePeriodicPaymentService createPeriodicPaymentService;
@@ -99,6 +101,8 @@ public class CreatePeriodicPaymentTest {
     private PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
+    @Mock
+    private RequestProviderService requestProviderService;
 
 
     @Before
@@ -107,10 +111,11 @@ public class CreatePeriodicPaymentTest {
         when(periodicPaymentInitiationService.initiatePayment(buildPeriodicPayment(), "sepa-credit-transfers", PSU_ID_DATA)).thenReturn(periodicPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, periodicPaymentInitiationResponse, null))
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, periodicPaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
             .thenReturn(PAYMENT_INFO);
         when(periodicPaymentInitiationService.initiatePayment(buildPeriodicPayment(), "sepa-credit-transfers", WRONG_PSU_DATA))
             .thenReturn(buildSpiErrorForPeriodicPayment());
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
     }
 
     @Test

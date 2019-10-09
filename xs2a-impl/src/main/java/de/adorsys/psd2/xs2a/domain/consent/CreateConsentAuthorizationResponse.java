@@ -28,4 +28,5 @@ public class CreateConsentAuthorizationResponse implements AuthorisationResponse
     private ScaStatus scaStatus;
     private String psuMessage;
     private Links links;
+    private String internalRequestId;
 }

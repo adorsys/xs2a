@@ -48,4 +48,5 @@ public class CancelPaymentResponse {
     @NotNull
     @JsonProperty("_links")
     private Links links;
+    private String internalRequestId;
 }

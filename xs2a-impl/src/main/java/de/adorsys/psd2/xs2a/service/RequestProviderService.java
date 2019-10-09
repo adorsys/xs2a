@@ -84,6 +84,10 @@ public class RequestProviderService {
         return internalRequestIdService.getInternalRequestId();
     }
 
+    public String getInternalRequestIdString() {
+        return getInternalRequestId().toString();
+    }
+
     public UUID getRequestId() {
         return getRequestData().getRequestId();
     }

@@ -64,7 +64,7 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
                 Xs2aCreatePisCancellationAuthorisationResponse response = (Xs2aCreatePisCancellationAuthorisationResponse) result.getBody();
                 response.setLinks(new PisAuthorisationCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
                                                                         redirectIdService,
-                                                                        request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), body.getCancellationId(), getScaRedirectFlow()));
+                                                                        request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), body.getCancellationId(), getScaRedirectFlow(), body.getInternalRequestId()));
             } else if (authorisationResponseType == AuthorisationResponseType.UPDATE) {
                 Xs2aUpdatePisCommonPaymentPsuDataResponse response = (Xs2aUpdatePisCommonPaymentPsuDataResponse) result.getBody();
                 Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildXs2aUpdatePisCommonPaymentPsuDataRequest(request.getPaymentId(),

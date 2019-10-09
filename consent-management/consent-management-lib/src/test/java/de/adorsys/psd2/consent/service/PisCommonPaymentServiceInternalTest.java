@@ -100,6 +100,7 @@ public class PisCommonPaymentServiceInternalTest {
     private static final String TPP_REDIRECT_URI = "request/redirect_uri";
     private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
     private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_ID_DATA, ScaApproach.REDIRECT, TPP_REDIRECT_URIs);
     private static final JsonReader jsonReader = new JsonReader();
@@ -349,6 +350,7 @@ public class PisCommonPaymentServiceInternalTest {
         assertSame(pisAuthorization.getScaStatus(), ScaStatus.PSUIDENTIFIED);
         assertEquals(TPP_REDIRECT_URI, pisAuthorization.getTppOkRedirectUri());
         assertEquals(TPP_NOK_REDIRECT_URI, pisAuthorization.getTppNokRedirectUri());
+        assertEquals(pisPaymentData.getPaymentData().getInternalRequestId(), actual.get().getInternalRequestId());
     }
 
     @Test
@@ -471,6 +473,7 @@ public class PisCommonPaymentServiceInternalTest {
         pisCommonPaymentData.setTransactionStatus(RCVD);
         pisCommonPaymentData.setAuthorizations(pisAuthorizationList);
         pisCommonPaymentData.setAuthorisationTemplate(authorisationTemplateEntity);
+        pisCommonPaymentData.setInternalRequestId(INTERNAL_REQUEST_ID);
         return pisCommonPaymentData;
     }
 

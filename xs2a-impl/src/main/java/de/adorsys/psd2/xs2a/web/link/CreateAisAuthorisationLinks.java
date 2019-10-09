@@ -39,7 +39,7 @@ public class CreateAisAuthorisationLinks extends AbstractLinks {
 
         if (scaApproachResolver.getInitiationScaApproach(authorisationId) == REDIRECT) {
             String redirectId = redirectIdService.generateRedirectId(authorisationId);
-            setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId));
+            setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId()));
         } else {
             setUpdatePsuAuthentication(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
         }
