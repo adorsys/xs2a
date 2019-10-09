@@ -62,6 +62,7 @@ public class PaymentInitiationLinks extends AbstractLinks {
         String paymentProduct = paymentRequestParameters.getPaymentProduct();
         String paymentId = body.getPaymentId();
         String authorisationId = body.getAuthorizationId();
+        String internalRequestId = body.getInternalRequestId();
 
         setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
         setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
@@ -72,7 +73,7 @@ public class PaymentInitiationLinks extends AbstractLinks {
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproach)) {
             addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, signingBasketModeActive);
         } else if (scaApproach == REDIRECT) {
-            addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
+            addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, internalRequestId);
         } else if (scaApproach == OAUTH) {
             setScaOAuth(new HrefType("scaOAuth")); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
@@ -94,12 +95,12 @@ public class PaymentInitiationLinks extends AbstractLinks {
         }
     }
 
-    private void addRedirectRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorisationId) {
+    private void addRedirectRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorisationId, String internalRequestId) {
         if (explicitMethod) {
             setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
         } else {
             String redirectId = redirectIdService.generateRedirectId(authorisationId);
-            setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId));
+            setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId));
             setScaStatus(
                 buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
         }

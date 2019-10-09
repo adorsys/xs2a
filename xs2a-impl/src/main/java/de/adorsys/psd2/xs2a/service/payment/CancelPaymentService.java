@@ -106,6 +106,8 @@ public class CancelPaymentService {
         }
 
         updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(encryptedPaymentId, tppRedirectUri);
+        updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(encryptedPaymentId, internalRequestId.toString());
+        cancelPaymentResponse.setInternalRequestId(internalRequestId.toString());
 
         if (resultStatus == TransactionStatus.CANC) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Payment status - CANCELED",
@@ -169,6 +171,7 @@ public class CancelPaymentService {
         updatePaymentStatusAfterSpiService.updatePaymentStatus(encryptedPaymentId, TransactionStatus.CANC);
         CancelPaymentResponse cancelPaymentResponse = new CancelPaymentResponse();
         cancelPaymentResponse.setTransactionStatus(TransactionStatus.CANC);
+        cancelPaymentResponse.setInternalRequestId(requestProviderService.getInternalRequestIdString());
 
         return ResponseObject.<CancelPaymentResponse>builder()
                    .body(cancelPaymentResponse)

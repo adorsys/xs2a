@@ -47,6 +47,7 @@ public class PaymentInitiationLinksTest {
     private static final String PAYMENT_ID = "1111111111111";
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
     private static final String REDIRECT_LINK = "built_redirect_link";
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @Mock
     private ScaApproachResolver scaApproachResolver;
@@ -71,6 +72,7 @@ public class PaymentInitiationLinksTest {
         response = new CommonPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
         response.setAuthorizationId(AUTHORISATION_ID);
+        response.setInternalRequestId(INTERNAL_REQUEST_ID);
 
         psuIdData = jsonReader.getObjectFromFile("json/link/empty.json", PsuIdData.class);
 
@@ -306,7 +308,7 @@ public class PaymentInitiationLinksTest {
             .thenReturn(ScaApproach.REDIRECT);
 
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
-        when(redirectLinkBuilder.buildPaymentScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID))).thenReturn(REDIRECT_LINK);
+        when(redirectLinkBuilder.buildPaymentScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
                                            response, false, false, ScaRedirectFlow.REDIRECT);

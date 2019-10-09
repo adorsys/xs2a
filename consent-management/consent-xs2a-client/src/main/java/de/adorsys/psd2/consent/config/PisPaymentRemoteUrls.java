@@ -36,4 +36,8 @@ public class PisPaymentRemoteUrls {
     public String updatePaymentCancellationRedirectURIs() {
         return paymentServiceBaseUrl + "/pis/payment/{payment-id}/cancellation/redirects";
     }
+
+    public String updatePaymentCancellationInternalRequestId() {
+        return paymentServiceBaseUrl + "/pis/payment/{payment-id}/cancellation/internal-request-id/{internal-request-id}";
+    }
 }

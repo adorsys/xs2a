@@ -159,6 +159,9 @@ public class AisConsent extends InstanceDependableEntity {
     @Column(name = "status_change_timestamp")
     private OffsetDateTime statusChangeTimestamp;
 
+    @Column(name = "int_req_id")
+    private String internalRequestId;
+
     @Transient
     private ConsentStatus previousConsentStatus;
 

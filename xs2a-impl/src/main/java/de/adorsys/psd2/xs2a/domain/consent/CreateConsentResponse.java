@@ -47,4 +47,7 @@ public class CreateConsentResponse {
     @JsonIgnore
     private String authorizationId;
 
+    @JsonIgnore
+    private final String internalRequestId;
+
 }

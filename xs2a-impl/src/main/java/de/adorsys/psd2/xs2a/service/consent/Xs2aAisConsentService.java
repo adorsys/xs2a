@@ -63,7 +63,7 @@ public class Xs2aAisConsentService {
      */
     public String createConsent(CreateConsentReq request, PsuIdData psuData, TppInfo tppInfo) {
         int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
-        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppInfo, allowedFrequencyPerDay);
+        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppInfo, allowedFrequencyPerDay, requestProviderService.getInternalRequestIdString());
         Optional<String> consent = aisConsentService.createConsent(createAisConsentRequest);
         return consent.orElseGet(() -> {
             log.info("InR-ID: [{}], X-Request-ID: [{}]. Consent cannot be created, because can't save to cms DB",

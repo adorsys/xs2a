@@ -39,6 +39,7 @@ public class PisPaymentControllerTest {
     private static final String PAYMENT_ID = "33333-999999999";
     private static final String TPP_OK_REDIRECT_ORI = "TPP-Redirect-URI-cancel";
     private static final String TPP_NOK_REDIRECT_ORI = "TPP-Nok-Redirect-URI-cancel";
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @Mock
     private PisCommonPaymentServiceEncrypted pisCommonPaymentService;
@@ -49,6 +50,9 @@ public class PisPaymentControllerTest {
 
     @Captor
     private ArgumentCaptor<TppRedirectUri> tppRedirectUriCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> cancellationInternalRequestIdCaptor;
 
     @Test
     public void updatePaymentCancellationTppRedirectUri() {
@@ -70,5 +74,25 @@ public class PisPaymentControllerTest {
 
         Assert.assertEquals(TPP_OK_REDIRECT_ORI, tppRedirectUriCaptor.getValue().getUri());
         Assert.assertEquals(TPP_NOK_REDIRECT_ORI, tppRedirectUriCaptor.getValue().getNokUri());
+    }
+
+    @Test
+    public void updatePaymentCancellationInternalRequestId() {
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(eq(PAYMENT_ID), cancellationInternalRequestIdCaptor.capture())).thenReturn(true);
+
+        ResponseEntity<Void> response = pisPaymentController.updatePaymentCancellationInternalRequestId(PAYMENT_ID, INTERNAL_REQUEST_ID);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        Assert.assertEquals(INTERNAL_REQUEST_ID, cancellationInternalRequestIdCaptor.getValue());
+    }
+
+    @Test
+    public void updatePaymentCancellationInternalRequestId_Fail() {
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(eq(PAYMENT_ID), cancellationInternalRequestIdCaptor.capture())).thenReturn(false);
+
+        ResponseEntity<Void> response = pisPaymentController.updatePaymentCancellationInternalRequestId(PAYMENT_ID, INTERNAL_REQUEST_ID);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        Assert.assertEquals(INTERNAL_REQUEST_ID, cancellationInternalRequestIdCaptor.getValue());
     }
 }

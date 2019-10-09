@@ -66,4 +66,15 @@ public class UpdatePaymentAfterSpiServiceRemote implements UpdatePaymentAfterSpi
             return false;
         }
     }
+
+    @Override
+    public boolean updatePaymentCancellationInternalRequestId(@NotNull String encryptedPaymentId, @NotNull String internalRequestId) {
+        try {
+            consentRestTemplate.exchange(pisPaymentRemoteUrls.updatePaymentCancellationInternalRequestId(), HttpMethod.PUT, null, Void.class, encryptedPaymentId, internalRequestId);
+            return true;
+        } catch (CmsRestException e) {
+            log.error("Payment not found, id: {}", encryptedPaymentId);
+            return false;
+        }
+    }
 }

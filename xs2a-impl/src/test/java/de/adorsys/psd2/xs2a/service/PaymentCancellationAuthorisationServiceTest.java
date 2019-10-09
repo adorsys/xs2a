@@ -129,7 +129,7 @@ public class PaymentCancellationAuthorisationServiceTest {
     @Test
     public void createPisCancellationAuthorisation_Success_ShouldRecordEvent() {
         when(pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(anyString(), any(), any()))
-            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, null, null)));
+            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, null, null, null)));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -149,7 +149,7 @@ public class PaymentCancellationAuthorisationServiceTest {
         PaymentType paymentType = PaymentType.SINGLE;
 
         when(pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(PAYMENT_ID, paymentType, PSU_ID_DATA))
-            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, scaStatus, paymentType)));
+            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, scaStatus, paymentType, null)));
 
         // When
         ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, paymentType.getValue(), null));
@@ -192,7 +192,7 @@ public class PaymentCancellationAuthorisationServiceTest {
         PaymentType paymentType = PaymentType.SINGLE;
 
         when(pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(anyString(), any(), any()))
-            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, scaStatus, paymentType)));
+            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, scaStatus, paymentType, null)));
         when(updatePisCancellationPsuDataValidator.validate(any()))
             .thenReturn(ValidationResult.valid());
 
@@ -237,7 +237,7 @@ public class PaymentCancellationAuthorisationServiceTest {
         PaymentType paymentType = PaymentType.SINGLE;
 
         when(pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(anyString(), any(), any()))
-            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, scaStatus, paymentType)));
+            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, scaStatus, paymentType, null)));
 
         // When
         ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), "123"));
@@ -267,7 +267,7 @@ public class PaymentCancellationAuthorisationServiceTest {
         PaymentType paymentType = PaymentType.SINGLE;
 
         when(pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(anyString(), any(), any()))
-            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, scaStatus, paymentType)));
+            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, scaStatus, paymentType, null)));
 
         // When
         ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), "123"));

@@ -70,6 +70,7 @@ public class PisCommonPaymentMapper {
             authorisationTemplate.setNokRedirectUri(tppRedirectUri.getNokUri());
         }
         commonPaymentData.setAuthorisationTemplate(authorisationTemplate);
+        commonPaymentData.setInternalRequestId(paymentInfo.getInternalRequestId());
         return commonPaymentData;
     }
 

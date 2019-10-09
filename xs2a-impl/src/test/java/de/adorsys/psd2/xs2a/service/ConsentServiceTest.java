@@ -114,6 +114,7 @@ public class ConsentServiceTest {
     private static final MessageError RESOURCE_UNKNOWN_ERROR =
         new MessageError(ErrorType.AIS_404, TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404));
     private static final TppRedirectUri TPP_REDIRECT_URI = new TppRedirectUri("redirectUri", "nokRedirectUri");
+    private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @InjectMocks
     private ConsentService consentService;
@@ -236,6 +237,7 @@ public class ConsentServiceTest {
         when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(spiContextData);
 
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
 
         when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
             .thenReturn(initialSpiAspspConsentDataProvider);
