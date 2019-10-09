@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -42,6 +42,12 @@
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-lib</artifactId>
             <version>5.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>xs2a-object-mapper</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

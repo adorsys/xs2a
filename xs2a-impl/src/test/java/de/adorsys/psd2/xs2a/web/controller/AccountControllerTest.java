@@ -16,13 +16,12 @@
 
 package de.adorsys.psd2.xs2a.web.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.AccountDetails;
 import de.adorsys.psd2.model.AccountList;
 import de.adorsys.psd2.model.AccountReport;
 import de.adorsys.psd2.model.ReadAccountBalanceResponse200;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -93,8 +92,7 @@ public class AccountControllerTest {
     @InjectMocks
     private AccountController accountController;
 
-    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
+    private Xs2aObjectMapper xs2aObjectMapper = (Xs2aObjectMapper) new Xs2aObjectMapper().registerModule(new JavaTimeModule());
 
     @Mock
     private BalanceService balanceService;
@@ -210,8 +208,8 @@ public class AccountControllerTest {
     @Test
     public void getBalances_ResultTest() throws IOException {
         // Given
-        ReadAccountBalanceResponse200 expectedResult = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
-                                                                              ReadAccountBalanceResponse200.class).get();
+        ReadAccountBalanceResponse200 expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
+                                                                              ReadAccountBalanceResponse200.class);
 
         doReturn(new ResponseEntity<>(createReadBalances().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -246,8 +244,8 @@ public class AccountControllerTest {
     @Test
     public void getTransactions_ResultTest() throws IOException {
         // Given
-        AccountReport expectedResult = jsonConverter.toObject(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class).get();
+        AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
+                                                              AccountReport.class);
 
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -272,8 +270,8 @@ public class AccountControllerTest {
     @Test
     public void getTransactionList_success() throws IOException {
         // Given
-        AccountReport expectedResult = jsonConverter.toObject(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class).get();
+        AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
+                                                              AccountReport.class);
 
         doReturn(new ResponseEntity<>(buildAccountReportWithError().getBody(), HttpStatus.OK))
             .when(responseErrorMapper).generateErrorResponse(MESSAGE_ERROR_AIS_404);
@@ -296,8 +294,8 @@ public class AccountControllerTest {
     @Test
     public void getTransactionList_isRespContentTypeJSON_success() throws IOException {
         // Given
-        AccountReport expectedResult = jsonConverter.toObject(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class).get();
+        AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
+                                                              AccountReport.class);
 
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -323,8 +321,8 @@ public class AccountControllerTest {
             .when(responseMapper).ok(any(), any());
 
         // Given
-        AccountReport expectedResult = jsonConverter.toObject(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class).get();
+        AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
+                                                              AccountReport.class);
 
         // When
         AccountReport result = (AccountReport) accountController.getTransactionDetails(ACCOUNT_ID, null,
@@ -342,8 +340,8 @@ public class AccountControllerTest {
         doReturn(new ResponseEntity<>(buildAccountReportWithError().getBody(), HttpStatus.OK))
             .when(responseErrorMapper).generateErrorResponse(MESSAGE_ERROR_AIS_404);
 
-        AccountReport expectedResult = jsonConverter.toObject(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class).get();
+        AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
+                                                              AccountReport.class);
 
         // When
         AccountReport result = (AccountReport) accountController.getTransactionDetails(ACCOUNT_ID, null,
@@ -396,7 +394,7 @@ public class AccountControllerTest {
     }
 
     private ResponseObject<AccountList> createAccountDetailsList() throws IOException {
-        AccountList details = jsonConverter.toObject(IOUtils.resourceToString(AccountControllerTest.ACCOUNT_DETAILS_LIST_SOURCE, UTF_8), AccountList.class).get();
+        AccountList details = xs2aObjectMapper.readValue(IOUtils.resourceToString(AccountControllerTest.ACCOUNT_DETAILS_LIST_SOURCE, UTF_8), AccountList.class);
         return ResponseObject.<AccountList>builder()
                    .body(details).build();
     }
@@ -425,16 +423,16 @@ public class AccountControllerTest {
     }
 
     private ResponseObject<AccountReport> createAccountReport() throws IOException {
-        AccountReport accountReport = jsonConverter.toObject(IOUtils.resourceToString(AccountControllerTest.ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                             AccountReport.class).get();
+        AccountReport accountReport = xs2aObjectMapper.readValue(IOUtils.resourceToString(AccountControllerTest.ACCOUNT_REPORT_SOURCE, UTF_8),
+                                                             AccountReport.class);
 
         return ResponseObject.<AccountReport>builder()
                    .body(accountReport).build();
     }
 
     private ResponseObject<AccountReport> buildAccountReportWithError() throws IOException {
-        AccountReport accountReport = jsonConverter.toObject(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                             AccountReport.class).get();
+        AccountReport accountReport = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
+                                                             AccountReport.class);
 
         return ResponseObject.<AccountReport>builder()
                    .fail(AccountControllerTest.MESSAGE_ERROR_AIS_404)
@@ -442,8 +440,8 @@ public class AccountControllerTest {
     }
 
     private ResponseObject<ReadAccountBalanceResponse200> createReadBalances() throws IOException {
-        ReadAccountBalanceResponse200 read = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
-                                                                    ReadAccountBalanceResponse200.class).get();
+        ReadAccountBalanceResponse200 read = xs2aObjectMapper.readValue(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
+                                                                    ReadAccountBalanceResponse200.class);
         return ResponseObject.<ReadAccountBalanceResponse200>builder()
                    .body(read).build();
     }

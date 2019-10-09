@@ -16,18 +16,21 @@
 
 package de.adorsys.psd2.xs2a.config.converter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MappingJackson2TextMessageConverterTest {
-
     @Test
     public void checkSupportedMediaTypes() {
-        MappingJackson2TextMessageConverter messageConverter = new MappingJackson2TextMessageConverter();
+        ObjectMapper mockedObjectMapper = Mockito.mock(ObjectMapper.class);
+        MappingJackson2TextMessageConverter messageConverter = new MappingJackson2TextMessageConverter(mockedObjectMapper);
         List<MediaType> supportedMediaTypes = messageConverter.getSupportedMediaTypes();
 
         assertEquals(1, supportedMediaTypes.size());

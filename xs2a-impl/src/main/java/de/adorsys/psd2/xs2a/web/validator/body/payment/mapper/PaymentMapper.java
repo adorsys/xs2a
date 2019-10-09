@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
@@ -43,13 +43,13 @@ import java.util.stream.Collectors;
 @Component
 public class PaymentMapper {
 
-    private ObjectMapper objectMapper;
+    private Xs2aObjectMapper xs2aObjectMapper;
     private PurposeCodeMapper purposeCodeMapper;
     private RemittanceMapper remittanceMapper;
 
     @Autowired
-    public PaymentMapper(ObjectMapper objectMapper, PurposeCodeMapper purposeCodeMapper, RemittanceMapper remittanceMapper) {
-        this.objectMapper = objectMapper;
+    public PaymentMapper(Xs2aObjectMapper xs2aObjectMapper, PurposeCodeMapper purposeCodeMapper, RemittanceMapper remittanceMapper) {
+        this.xs2aObjectMapper = xs2aObjectMapper;
         this.purposeCodeMapper = purposeCodeMapper;
         this.remittanceMapper = remittanceMapper;
     }
@@ -67,7 +67,7 @@ public class PaymentMapper {
     }
 
     private <R> R convertPayment(Object payment, Class<R> clazz) {
-        return objectMapper.convertValue(payment, clazz);
+        return xs2aObjectMapper.convertValue(payment, clazz);
     }
 
     private SinglePayment mapToXs2aSinglePayment(PaymentInitiationJson paymentRequest) {
@@ -118,7 +118,7 @@ public class PaymentMapper {
     }
 
     private de.adorsys.psd2.xs2a.core.profile.AccountReference mapToXs2aAccountReference(Object accountReference) { //NOPMD
-        return objectMapper.convertValue(accountReference, AccountReference.class);
+        return xs2aObjectMapper.convertValue(accountReference, AccountReference.class);
     }
 
     private Optional<PisExecutionRule> mapToPisExecutionRule(ExecutionRule rule) {

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
@@ -82,7 +81,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     classes = Xs2aStandaloneStarter.class)
 @ContextConfiguration(classes = {
     CorsConfigurationProperties.class,
-    ObjectMapperConfig.class,
     WebConfig.class,
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
@@ -192,7 +190,7 @@ public class UpdatePsuDataForPaymentInitiationIT {
         pisCommonPaymentResponse.setTppInfo(TPP_INFO);
         pisCommonPaymentResponse.setAuthorisations(Collections.singletonList(new Authorisation(authorisationId,
                                                                                                ScaStatus.PSUIDENTIFIED,
-                                                                                               new PsuIdData(PSU_ID, null , null, null))));
+                                                                                               new PsuIdData(PSU_ID, null, null, null))));
         return pisCommonPaymentResponse;
     }
 

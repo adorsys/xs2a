@@ -17,10 +17,10 @@
 package de.adorsys.psd2.xs2a.integration.builder.ais;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.autorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
@@ -52,7 +52,7 @@ public class AisConsentBuilder {
     private final static String AUTHORISATION_ID = UUID.randomUUID().toString();
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
-    public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, ObjectMapper mapper, AisAccountConsentAuthorisation consentAuthorisation) throws Exception {
+    public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, Xs2aObjectMapper mapper, AisAccountConsentAuthorisation consentAuthorisation) throws Exception {
         CreateConsentReq consentReq = mapper.readValue(
             resourceToString(jsonPath, UTF_8),
             new TypeReference<CreateConsentReq>() {
@@ -61,7 +61,7 @@ public class AisConsentBuilder {
         return buildAisConsent(consentReq, encryptConsentId, scaApproach, consentAuthorisation);
     }
 
-    public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, ObjectMapper mapper) throws Exception {
+    public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, Xs2aObjectMapper mapper) throws Exception {
         return buildAisAccountConsent(jsonPath, scaApproach, encryptConsentId, mapper, null);
     }
 

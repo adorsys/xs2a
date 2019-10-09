@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.integration;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
@@ -27,6 +26,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
@@ -86,7 +86,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     classes = Xs2aStandaloneStarter.class)
 @ContextConfiguration(classes = {
     CorsConfigurationProperties.class,
-    ObjectMapperConfig.class,
     WebConfig.class,
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
@@ -115,7 +114,7 @@ public class ConsentCreation_successfulIT {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private ObjectMapper mapper;
+    private Xs2aObjectMapper xs2aObjectMapper;
     @MockBean
     private AspspProfileService aspspProfileService;
     @MockBean
@@ -297,7 +296,7 @@ public class ConsentCreation_successfulIT {
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
         given(aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(any(String.class), any(AisConsentAuthorizationRequest.class)))
             .willReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
-        AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, mapper);
+        AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, xs2aObjectMapper);
         given(aisConsentServiceEncrypted.createConsent(any(CreateAisConsentRequest.class)))
             .willReturn(Optional.of(new CreateAisConsentResponse(ENCRYPT_CONSENT_ID, aisAccountConsent)));
 

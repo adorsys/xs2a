@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
@@ -38,11 +38,11 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 public class AbstractBodyValidatorImpl implements BodyValidator {
 
     protected ErrorBuildingService errorBuildingService;
-    protected ObjectMapper objectMapper;
+    protected Xs2aObjectMapper xs2aObjectMapper;
 
-    protected AbstractBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper) {
+    protected AbstractBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper) {
         this.errorBuildingService = errorBuildingService;
-        this.objectMapper = objectMapper;
+        this.xs2aObjectMapper = xs2aObjectMapper;
     }
 
     protected void validateBodyFields(HttpServletRequest request, MessageError messageError) {
@@ -81,7 +81,7 @@ public class AbstractBodyValidatorImpl implements BodyValidator {
 
     protected <T> Optional<T> mapBodyToInstance(HttpServletRequest request, MessageError messageError, Class<T> clazz) {
         try {
-            return Optional.of(objectMapper.readValue(request.getInputStream(), clazz));
+            return Optional.of(xs2aObjectMapper.readValue(request.getInputStream(), clazz));
         } catch (IOException e) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
         }

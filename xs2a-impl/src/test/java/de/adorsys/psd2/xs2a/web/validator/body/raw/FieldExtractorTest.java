@@ -16,8 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.raw;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -56,10 +55,10 @@ public class FieldExtractorTest {
 
     @Before
     public void setUp() throws IOException {
-        JsonConverter jsonConverter = new JsonConverter(new ObjectMapper());
+        Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.PIS_400);
         messageError = new MessageError(ErrorType.PIS_400);
-        fieldExtractor = new FieldExtractor(errorService, jsonConverter);
+        fieldExtractor = new FieldExtractor(errorService, xs2aObjectMapper);
         mockRequest = new MockHttpServletRequest();
         String body = jsonReader.getStringFromFile(SINGLE_PAYMENT_JSON_PATH);
         mockRequest.setContent(body.getBytes(StandardCharsets.UTF_8));

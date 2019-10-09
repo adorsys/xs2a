@@ -86,7 +86,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     classes = Xs2aStandaloneStarter.class)
 @ContextConfiguration(classes = {
     CorsConfigurationProperties.class,
-    ObjectMapperConfig.class,
     WebConfig.class,
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class

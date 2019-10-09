@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.core.ais;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.junit.Test;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 
 public class BookingStatusTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 
     @Test
     public void forValue_lowerCase() throws IOException {
@@ -36,7 +36,7 @@ public class BookingStatusTest {
         Container expectedResult = new Container(BookingStatus.BOOKED);
 
         //When
-        Container actualResult = objectMapper.readValue(bookingStatusJson, Container.class);
+        Container actualResult = xs2aObjectMapper.readValue(bookingStatusJson, Container.class);
 
         //Then
         assertEquals(expectedResult, actualResult);
@@ -49,7 +49,7 @@ public class BookingStatusTest {
         Container expectedResult = new Container(BookingStatus.BOOKED);
 
         //When
-        Container actualResult = objectMapper.readValue(bookingStatusJson, Container.class);
+        Container actualResult = xs2aObjectMapper.readValue(bookingStatusJson, Container.class);
 
         //Then
         assertEquals(expectedResult, actualResult);

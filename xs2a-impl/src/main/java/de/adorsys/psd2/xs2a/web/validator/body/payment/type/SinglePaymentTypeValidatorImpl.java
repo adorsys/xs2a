@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment.type;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -50,9 +50,9 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     private AmountValidator amountValidator;
 
     @Autowired
-    public SinglePaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
+    public SinglePaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                           PaymentMapper paymentMapper, AmountValidator amountValidator) {
-        super(errorBuildingService, objectMapper);
+        super(errorBuildingService, xs2aObjectMapper);
         this.paymentMapper = paymentMapper;
         this.amountValidator = amountValidator;
     }

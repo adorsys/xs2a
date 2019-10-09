@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
@@ -41,7 +41,7 @@ public class ErrorBuildingService {
     private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
     private final ServiceTypeToErrorTypeMapper errorTypeMapper;
     private final ErrorMapperContainer errorMapperContainer;
-    private final ObjectMapper objectMapper;
+    private final Xs2aObjectMapper xs2aObjectMapper;
 
     public void buildErrorResponse(HttpServletResponse response, MessageError messageError) throws IOException {
         response.resetBuffer();
@@ -50,7 +50,7 @@ public class ErrorBuildingService {
         Set<TppMessageInformation> tppMessages = messageError.getTppMessages();
 
         response.setStatus(tppMessages.iterator().next().getMessageErrorCode().getCode());
-        response.getWriter().write(objectMapper.writeValueAsString(createError(tppMessages)));
+        response.getWriter().write(xs2aObjectMapper.writeValueAsString(createError(tppMessages)));
 
         response.flushBuffer();
     }

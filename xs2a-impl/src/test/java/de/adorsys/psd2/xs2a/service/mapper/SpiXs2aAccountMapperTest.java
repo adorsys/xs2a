@@ -16,9 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -35,14 +34,13 @@ public class SpiXs2aAccountMapperTest {
     private static final String SPI_ACCOUNT_DETAILS_JSON_PATH = "/json/MapSpiAccountDetailsToXs2aAccountDetailsTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
-    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
+    private Xs2aObjectMapper xs2aObjectMapper = (Xs2aObjectMapper) new Xs2aObjectMapper().registerModule(new JavaTimeModule());
 
     @Test
     public void mapSpiAccountDetailsToXs2aAccountDetails() throws IOException {
         //Given:
         String spiAccountDetailsJson = IOUtils.resourceToString(SPI_ACCOUNT_DETAILS_JSON_PATH, UTF_8);
-        SpiAccountDetails donorAccountDetails = jsonConverter.toObject(spiAccountDetailsJson, SpiAccountDetails.class).get();
+        SpiAccountDetails donorAccountDetails = xs2aObjectMapper.readValue(spiAccountDetailsJson, SpiAccountDetails.class);
 
         //When:
         assertNotNull(donorAccountDetails);

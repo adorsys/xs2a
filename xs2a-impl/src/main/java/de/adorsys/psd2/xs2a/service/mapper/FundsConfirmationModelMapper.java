@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
 import de.adorsys.psd2.model.InlineResponse2003;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -30,7 +30,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class FundsConfirmationModelMapper {
-    private final ObjectMapper objectMapper;
+    private final Xs2aObjectMapper xs2aObjectMapper;
     private final AmountModelMapper amountModelMapper;
 
     public FundsConfirmationRequest mapToFundsConfirmationRequest(ConfirmationOfFunds confirmationOfFunds) {
@@ -57,6 +57,6 @@ public class FundsConfirmationModelMapper {
     }
 
     private AccountReference mapToAccountReferenceInner(Object reference) {
-        return objectMapper.convertValue(reference, AccountReference.class);
+        return xs2aObjectMapper.convertValue(reference, AccountReference.class);
     }
 }

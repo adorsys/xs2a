@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -56,7 +56,7 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     static final String PURPOSE_CODE_FIELD_NAME = "purposeCode";
     static final String FREQUENCY_FIELD_NAME = "frequency";
     static final String BATCH_BOOKING_PREFERRED_FIELD_NAME = "batchBookingPreferred";
-    static final String CURRENCY_STRING =  "currency";
+    static final String CURRENCY_STRING = "currency";
 
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
     private DateFieldValidator dateFieldValidator;
@@ -68,14 +68,14 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     private CountryPaymentValidatorResolver countryPaymentValidatorResolver;
 
     @Autowired
-    public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
+    public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                     PaymentTypeValidatorContext paymentTypeValidatorContext,
                                     StandardPaymentProductsResolver standardPaymentProductsResolver,
                                     TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
                                     DateFieldValidator dateFieldValidator, FieldExtractor fieldExtractor,
                                     CurrencyValidator currencyValidator,
                                     CountryPaymentValidatorResolver countryPaymentValidatorResolver) {
-        super(errorBuildingService, objectMapper);
+        super(errorBuildingService, xs2aObjectMapper);
         this.paymentTypeValidatorContext = paymentTypeValidatorContext;
         this.standardPaymentProductsResolver = standardPaymentProductsResolver;
         this.dateFieldValidator = dateFieldValidator;
@@ -180,8 +180,8 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     private void validatePurposeCodes(HttpServletRequest request, MessageError messageError) {
         List<String> purposeCodes = fieldExtractor.extractList(request, PURPOSE_CODE_FIELD_NAME, messageError);
         boolean isPurposeCodeInvalid = purposeCodes.stream()
-                                             .map(PurposeCode::fromValue)
-                                             .anyMatch(Objects::isNull);
+                                           .map(PurposeCode::fromValue)
+                                           .anyMatch(Objects::isNull);
 
         if (isPurposeCodeInvalid) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, PURPOSE_CODE_FIELD_NAME));

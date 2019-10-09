@@ -17,9 +17,8 @@
 package de.adorsys.psd2.xs2a.web.validator.body.consent;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.Consents;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -66,9 +65,7 @@ public class ConsentBodyFieldsValidatorImplTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Mock
-    private JsonConverter jsonConverter;
-    @Mock
-    private ObjectMapper objectMapper;
+    private Xs2aObjectMapper xs2aObjectMapper;
     @Mock
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
     private FieldExtractor fieldExtractor;
@@ -76,20 +73,20 @@ public class ConsentBodyFieldsValidatorImplTest {
     @Before
     public void setUp() throws IOException {
         // noinspection unchecked
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
             .thenReturn(Optional.empty());
 
         consents = jsonReader.getObjectFromFile("json/validation/ais/consents.json", Consents.class);
-        when(objectMapper.readValue(any(InputStream.class), eq(Consents.class)))
+        when(xs2aObjectMapper.readValue(any(InputStream.class), eq(Consents.class)))
             .thenReturn(consents);
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
-        fieldExtractor = new FieldExtractor(errorService, jsonConverter);
+        fieldExtractor = new FieldExtractor(errorService, xs2aObjectMapper);
         messageError = new MessageError(ErrorType.AIS_400);
 
         byte[] requestContent = jsonReader.getBytesFromFile("json/validation/ais/consents.json");
         this.request = buildRequestWithContent(requestContent);
 
-        validator = new ConsentBodyFieldsValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), objectMapper, jsonConverter, tppRedirectUriBodyValidator, new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor));
+        validator = new ConsentBodyFieldsValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), xs2aObjectMapper, tppRedirectUriBodyValidator, new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor));
     }
 
     @Test
@@ -100,7 +97,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         accessMap.put("allPsd2", "allAccounts");
 
         // noinspection unchecked
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
             .thenReturn(Optional.of(accessMap));
 
         // When
@@ -116,14 +113,14 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Given
         String jsonFilePath = "json/validation/ais/consents-allPsd2.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
-        when(objectMapper.readValue(any(InputStream.class), eq(Consents.class)))
+        when(xs2aObjectMapper.readValue(any(InputStream.class), eq(Consents.class)))
             .thenReturn(consents);
 
         Map<String, Object> accessMap = new HashMap<>();
         accessMap.put("allPsd2", "allAccounts");
 
         // noinspection unchecked
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
             .thenReturn(Optional.of(accessMap));
 
         // When
@@ -139,14 +136,14 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccounts.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
-        when(objectMapper.readValue(any(InputStream.class), eq(Consents.class)))
+        when(xs2aObjectMapper.readValue(any(InputStream.class), eq(Consents.class)))
             .thenReturn(consents);
 
         Map<String, Object> accessMap = new HashMap<>();
         accessMap.put("availableAccounts", "allAccounts");
 
         // noinspection unchecked
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
             .thenReturn(Optional.of(accessMap));
 
         // When
@@ -162,14 +159,14 @@ public class ConsentBodyFieldsValidatorImplTest {
         // Given
         String jsonFilePath = "json/validation/ais/consents-availableAccountsWithBalances.json";
         consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
-        when(objectMapper.readValue(any(InputStream.class), eq(Consents.class)))
+        when(xs2aObjectMapper.readValue(any(InputStream.class), eq(Consents.class)))
             .thenReturn(consents);
 
         Map<String, Object> accessMap = new HashMap<>();
         accessMap.put("availableAccountsWithBalance", "allAccounts");
 
         // noinspection unchecked
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
             .thenReturn(Optional.of(accessMap));
 
         // When
@@ -248,7 +245,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         Map<String, Object> accessMap = new HashMap<>();
         accessMap.put("availableAccounts", "Accounts");
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
             .thenReturn(Optional.of(accessMap));
 
         // When
@@ -269,7 +266,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         accessMap.put("availableAccounts", 1);
 
         // noinspection unchecked
-        when(jsonConverter.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
             .thenReturn(Optional.of(accessMap));
 
         // When
@@ -290,7 +287,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         accessMap.put("allPsd2", "AllAccounts");
 
         // noinspection unchecked
-        when(jsonConverter.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
             .thenReturn(Optional.of(accessMap));
 
         // When
@@ -311,7 +308,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         accessMap.put("allPsd2", 1);
 
         // noinspection unchecked
-        when(jsonConverter.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
             .thenReturn(Optional.of(accessMap));
 
         // When
@@ -331,7 +328,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         Map<String, Object> accessMap = new HashMap<>();
         accessMap.put("availableAccountsWithBalance", "Accounts");
 
-        when(jsonConverter.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
             .thenReturn(Optional.of(accessMap));
 
         // When
@@ -352,7 +349,7 @@ public class ConsentBodyFieldsValidatorImplTest {
         accessMap.put("availableAccountsWithBalance", 1);
 
         // noinspection unchecked
-        when(jsonConverter.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
             .thenReturn(Optional.of(accessMap));
 
         // When
@@ -380,7 +377,7 @@ public class ConsentBodyFieldsValidatorImplTest {
     @Test
     public void validate_validUntilDateWrongValue_wrongFormat_error() {
         // Given
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(VALID_UNTIL_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_DATE));
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(VALID_UNTIL_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_DATE));
 
         // When
         validator.validate(request, messageError);
@@ -392,7 +389,7 @@ public class ConsentBodyFieldsValidatorImplTest {
     @Test
     public void validate_requestedExecutionDateCorrectValue_success() {
         // Given
-        when(jsonConverter.toJsonField(any(InputStream.class), eq(VALID_UNTIL_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_DATE));
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(VALID_UNTIL_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_DATE));
 
         // When
         validator.validate(request, messageError);

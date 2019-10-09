@@ -16,21 +16,25 @@
 
 package de.adorsys.psd2.xs2a.web.converter;
 
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
-import de.adorsys.psd2.xs2a.component.JsonConverter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 /**
  * Converter, responsible for mapping incoming json_standingorderType parameter into PeriodicPaymentInitiationXmlPart2StandingorderTypeJson
  * in {@link de.adorsys.psd2.api.PaymentApi#initiatePayment} in case of multipart payment initiation
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PeriodicPaymentJsonPartConverter implements Converter<String, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson> {
-    private final JsonConverter jsonConverter;
+    private final Xs2aObjectMapper xs2aObjectMapper;
 
     @Override
     public PeriodicPaymentInitiationXmlPart2StandingorderTypeJson convert(String source) {
@@ -38,7 +42,11 @@ public class PeriodicPaymentJsonPartConverter implements Converter<String, Perio
             return null;
         }
 
-        return jsonConverter.toObject(source, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class)
-                   .orElse(null);
+        try {
+            return xs2aObjectMapper.readValue(source, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class);
+        } catch (IOException e) {
+            log.info("Can't convert json to object: {}", e.getMessage());
+            return null;
+        }
     }
 }
