@@ -12,6 +12,7 @@
 * Bugfix: Array "account" in Read Balances and Read Transaction List responses is empty for Global consent
 * Create common class for Jackson functionality
 * Add Internal Request-ID (inr-id) as additional parameter in scaRedirect URI
+* Use PaymentType enum instead of string values in Xs2aCreatePisAuthorisationRequest and Xs2aUpdatePisCommonPaymentPsuDataRequest
 
 == Add integration test for embedded mode for XS2A
 
@@ -65,3 +66,8 @@ From now on, ASPSP is able to modify redirect URLs for consent, payment and paym
 This parameter will be filled with internal request ID during construction `scaRedirect` link.
 Also pay attention, if authorisation is created explicitly, value of this parameter
 will be fetched from previous request (consent creation, payment initiation or cancel payment).
+
+== Use PaymentType enum instead of string values in Xs2aCreatePisAuthorisationRequest and Xs2aUpdatePisCommonPaymentPsuDataRequest
+
+From now on, in classes `Xs2aCreatePisAuthorisationRequest` and `Xs2aUpdatePisCommonPaymentPsuDataRequest`
+`paymentService` field is PaymentType enum instead of string.

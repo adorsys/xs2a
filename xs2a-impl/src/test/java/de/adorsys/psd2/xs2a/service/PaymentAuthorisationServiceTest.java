@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -54,6 +53,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -67,7 +67,7 @@ public class PaymentAuthorisationServiceTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final String WRONG_PAYMENT_ID = "wrong payment id";
-    private final Xs2aCreatePisAuthorisationRequest CREATE_AUTHORISATION_REQUEST = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), "");
+    private final Xs2aCreatePisAuthorisationRequest CREATE_AUTHORISATION_REQUEST = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, "");
 
     private static final MessageError VALIDATION_ERROR = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
 
@@ -116,7 +116,7 @@ public class PaymentAuthorisationServiceTest {
     @Test
     public void createPisAuthorization_Success_ShouldRecordEvent() {
         // Given
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PaymentType.SINGLE, PSU_ID_DATA))
+        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, SINGLE, PSU_ID_DATA))
             .thenReturn(Optional.of(new Xs2aCreatePisAuthorisationResponse(null, null, null, null, null)));
 
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
