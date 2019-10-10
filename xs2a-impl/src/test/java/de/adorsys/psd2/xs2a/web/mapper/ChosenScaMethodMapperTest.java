@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.web.mapper;
 import de.adorsys.psd2.model.AuthenticationObject;
 import de.adorsys.psd2.model.ChosenScaMethod;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
-import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

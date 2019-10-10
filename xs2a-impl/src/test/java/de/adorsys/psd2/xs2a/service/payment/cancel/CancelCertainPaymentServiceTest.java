@@ -20,19 +20,14 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.payment.CancelPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.SpiPaymentFactory;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
-import de.adorsys.psd2.xs2a.util.reader.JsonReader;
-import org.junit.Assert;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,8 +39,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

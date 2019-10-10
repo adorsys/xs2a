@@ -28,7 +28,7 @@ import de.adorsys.psd2.xs2a.domain.event.RequestEventPayload;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.event.mapper.EventMapper;
-import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

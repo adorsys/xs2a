@@ -25,8 +25,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsDownloadResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
-import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +38,6 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_4
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)

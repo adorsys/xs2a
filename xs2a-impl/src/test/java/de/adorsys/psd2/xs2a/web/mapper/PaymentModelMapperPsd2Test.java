@@ -31,7 +31,7 @@ import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapperImpl;
 import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
-import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

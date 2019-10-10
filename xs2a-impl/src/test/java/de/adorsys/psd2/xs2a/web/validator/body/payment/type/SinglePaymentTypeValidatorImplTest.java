@@ -26,7 +26,6 @@ import de.adorsys.psd2.xs2a.domain.pis.Remittance;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
@@ -35,6 +34,7 @@ import de.adorsys.psd2.xs2a.web.validator.body.payment.config.DefaultPaymentVali
 import de.adorsys.psd2.xs2a.web.validator.body.payment.config.PaymentValidationConfig;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.mapstruct.factory.Mappers;
