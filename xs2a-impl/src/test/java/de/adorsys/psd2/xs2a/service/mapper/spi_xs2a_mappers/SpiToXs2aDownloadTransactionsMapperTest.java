@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsDownloadResponse;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionsDownloadResponse;
-import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;

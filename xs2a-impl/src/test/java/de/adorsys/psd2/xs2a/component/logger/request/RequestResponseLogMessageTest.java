@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.component.logger.request;
 
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletRequest;
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletResponse;
-import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
