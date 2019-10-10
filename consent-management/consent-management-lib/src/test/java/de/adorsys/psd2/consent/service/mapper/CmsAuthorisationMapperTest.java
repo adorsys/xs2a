@@ -17,8 +17,8 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
-import de.adorsys.psd2.consent.reader.JsonReader;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Test;
 
 import java.util.Collections;
