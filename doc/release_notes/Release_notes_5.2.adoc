@@ -19,6 +19,7 @@
 * Create common class for Jackson functionality
 * Add Internal Request-ID (inr-id) as additional parameter in scaRedirect URI
 * Use PaymentType enum instead of string values in Xs2aCreatePisAuthorisationRequest and Xs2aUpdatePisCommonPaymentPsuDataRequest
+* Added special mapping for `dayOfExecution` in periodic payments
 
 == Add integration test for embedded mode for XS2A
 
@@ -114,3 +115,8 @@ will be fetched from previous request (consent creation, payment initiation or c
 
 From now on, in classes `Xs2aCreatePisAuthorisationRequest` and `Xs2aUpdatePisCommonPaymentPsuDataRequest`
 `paymentService` field is PaymentType enum instead of string.
+
+== Added special mapping for `dayOfExecution` in periodic payments
+
+From now on, while creating periodic payments, there is a possibility to pass the `dayOfExecution` value like `5` and
+`05`. Both these variants will be passed to the SPI level (leading zero is ignored).
