@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain.consent.pis;
 
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
@@ -32,8 +33,7 @@ public class Xs2aUpdatePisCommonPaymentPsuDataRequest implements UpdateAuthorisa
     private String password;
     private String authenticationMethodId;
     private ScaStatus scaStatus;
-    // TODO change the type from String to PaymentType https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1019
-    private String paymentService;
+    private PaymentType paymentService;
     private String scaAuthenticationData;
     private String paymentProduct;
     private boolean updatePsuIdentification;

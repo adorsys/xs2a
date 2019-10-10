@@ -32,6 +32,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 import static org.junit.Assert.assertFalse;
@@ -58,6 +59,7 @@ public class UpdatePisPsuDataAspectTest {
         JsonReader jsonReader = new JsonReader();
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
         request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        request.setPaymentService(SINGLE);
     }
 
     @Test

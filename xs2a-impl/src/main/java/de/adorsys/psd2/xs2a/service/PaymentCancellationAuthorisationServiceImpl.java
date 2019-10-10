@@ -67,11 +67,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
      */
     @Override
     public ResponseObject<CancellationAuthorisationResponse> createPisCancellationAuthorisation(Xs2aCreatePisAuthorisationRequest request) {
-        String paymentService = request.getPaymentService();
-        PaymentType paymentType = PaymentType.getByValue(paymentService)
-                                      .orElseThrow(() -> new IllegalArgumentException("Unsupported payment service: " + paymentService));
         ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> cancellationAuthorisation =
-            createCancellationAuthorisation(request.getPaymentId(), request.getPsuData(), paymentType);
+            createCancellationAuthorisation(request.getPaymentId(), request.getPsuData(), request.getPaymentService());
 
         if (cancellationAuthorisation.hasError()) {
             return ResponseObject.<CancellationAuthorisationResponse>builder().fail(cancellationAuthorisation.getError()).build();

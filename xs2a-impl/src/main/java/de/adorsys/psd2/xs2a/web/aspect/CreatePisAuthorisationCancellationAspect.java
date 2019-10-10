@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
@@ -63,8 +64,9 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
             if (authorisationResponseType == AuthorisationResponseType.START) {
                 Xs2aCreatePisCancellationAuthorisationResponse response = (Xs2aCreatePisCancellationAuthorisationResponse) result.getBody();
                 response.setLinks(new PisAuthorisationCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
-                                                                        redirectIdService,
-                                                                        request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), body.getCancellationId(), getScaRedirectFlow(), body.getInternalRequestId()));
+                                                                        redirectIdService, request.getPaymentService().getValue(),
+                                                                        request.getPaymentProduct(), request.getPaymentId(),
+                                                                        body.getCancellationId(), getScaRedirectFlow(), body.getInternalRequestId()));
             } else if (authorisationResponseType == AuthorisationResponseType.UPDATE) {
                 Xs2aUpdatePisCommonPaymentPsuDataResponse response = (Xs2aUpdatePisCommonPaymentPsuDataResponse) result.getBody();
                 Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildXs2aUpdatePisCommonPaymentPsuDataRequest(request.getPaymentId(),
@@ -86,7 +88,7 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
                                                                                                    String cancellationId,
                                                                                                    PsuIdData psuIdData,
                                                                                                    String paymentProduct,
-                                                                                                   String paymentService,
+                                                                                                   PaymentType paymentService,
                                                                                                    String password) {
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         updateRequest.setPaymentId(paymentId);

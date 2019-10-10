@@ -331,7 +331,7 @@ public class CancelPaymentServiceTest {
         cancelPaymentResponseExpected.setAuthorizationId(AUTHORISATION_ID);
         cancelPaymentResponseExpected.setScaStatus(ScaStatus.RECEIVED);
 
-        when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(ENCRYPTED_PAYMENT_ID, EMPTY_PSU_DATA, spiPayment.getPaymentProduct(), spiPayment.getPaymentType().getValue(), null)))
+        when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(ENCRYPTED_PAYMENT_ID, EMPTY_PSU_DATA, spiPayment.getPaymentProduct(), spiPayment.getPaymentType(), null)))
             .thenReturn(ResponseObject.<CancellationAuthorisationResponse>builder()
                             .body(cancellationResponse)
                             .build());
@@ -362,7 +362,7 @@ public class CancelPaymentServiceTest {
     public void initiatePaymentCancellation_authorisationRequired_implicit_hasError() {
         SpiPayment spiPayment = getSpiPayment(ACTC);
 
-        when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(ENCRYPTED_PAYMENT_ID, EMPTY_PSU_DATA, spiPayment.getPaymentProduct(), spiPayment.getPaymentType().getValue(), null)))
+        when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(ENCRYPTED_PAYMENT_ID, EMPTY_PSU_DATA, spiPayment.getPaymentProduct(), spiPayment.getPaymentType(), null)))
             .thenReturn(ResponseObject.<CancellationAuthorisationResponse>builder()
                             .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                             .build());

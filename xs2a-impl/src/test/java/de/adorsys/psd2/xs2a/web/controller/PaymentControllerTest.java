@@ -773,8 +773,8 @@ public class PaymentControllerTest {
 
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
 
-        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(CORRECT_PAYMENT_ID, psuIdData, PRODUCT, CORRECT_PAYMENT_SERVICE, password);
-        when(authorisationMapper.mapToXs2aCreatePisAuthorisationRequest(any(), anyString(), anyString(), anyString(), any()))
+        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(CORRECT_PAYMENT_ID, psuIdData, PRODUCT, SINGLE, password);
+        when(authorisationMapper.mapToXs2aCreatePisAuthorisationRequest(any(), anyString(), any(PaymentType.class), anyString(), any()))
             .thenReturn(request);
 
         ResponseObject<CancellationAuthorisationResponse> serviceResponse = ResponseObject.<CancellationAuthorisationResponse>builder()
@@ -819,8 +819,8 @@ public class PaymentControllerTest {
         });
 
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
-        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(CORRECT_PAYMENT_ID, psuIdData, PRODUCT, CORRECT_PAYMENT_SERVICE, password);
-        when(authorisationMapper.mapToXs2aCreatePisAuthorisationRequest(any(), anyString(), anyString(), anyString(), any()))
+        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(CORRECT_PAYMENT_ID, psuIdData, PRODUCT, SINGLE, password);
+        when(authorisationMapper.mapToXs2aCreatePisAuthorisationRequest(any(), anyString(), any(PaymentType.class), anyString(), any()))
             .thenReturn(request);
         ResponseObject<CancellationAuthorisationResponse> serviceResponse = ResponseObject.<CancellationAuthorisationResponse>builder()
                                                                                 .fail(serviceError)
@@ -859,7 +859,7 @@ public class PaymentControllerTest {
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
 
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
-        when(consentModelMapper.mapToPisUpdatePsuData(psuIdData, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, CORRECT_PAYMENT_SERVICE, PRODUCT, body))
+        when(consentModelMapper.mapToPisUpdatePsuData(psuIdData, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PRODUCT, body))
             .thenReturn(request);
 
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
@@ -904,7 +904,7 @@ public class PaymentControllerTest {
 
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
-        when(consentModelMapper.mapToPisUpdatePsuData(psuIdData, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, CORRECT_PAYMENT_SERVICE, PRODUCT, body))
+        when(consentModelMapper.mapToPisUpdatePsuData(psuIdData, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PRODUCT, body))
             .thenReturn(request);
 
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
@@ -945,7 +945,7 @@ public class PaymentControllerTest {
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
 
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
-        when(consentModelMapper.mapToPisUpdatePsuData(psuIdData, CORRECT_PAYMENT_ID, AUTHORISATION_ID, CORRECT_PAYMENT_SERVICE, PRODUCT, body))
+        when(consentModelMapper.mapToPisUpdatePsuData(psuIdData, CORRECT_PAYMENT_ID, AUTHORISATION_ID, SINGLE, PRODUCT, body))
             .thenReturn(request);
 
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
@@ -990,7 +990,7 @@ public class PaymentControllerTest {
 
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
-        when(consentModelMapper.mapToPisUpdatePsuData(psuIdData, CORRECT_PAYMENT_ID, AUTHORISATION_ID, CORRECT_PAYMENT_SERVICE, PRODUCT, body))
+        when(consentModelMapper.mapToPisUpdatePsuData(psuIdData, CORRECT_PAYMENT_ID, AUTHORISATION_ID, SINGLE, PRODUCT, body))
             .thenReturn(request);
 
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
