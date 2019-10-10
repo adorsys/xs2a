@@ -55,6 +55,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -135,7 +136,7 @@ public class PaymentCancellationAuthorisationServiceTest {
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), null));
+        paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, null));
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
@@ -152,7 +153,8 @@ public class PaymentCancellationAuthorisationServiceTest {
             .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, scaStatus, paymentType, null)));
 
         // When
-        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, paymentType.getValue(), null));
+        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation =
+            paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, paymentType, null));
 
         // Then
         assertThat(pisCancellationAuthorisation.hasError()).isFalse();
@@ -172,7 +174,8 @@ public class PaymentCancellationAuthorisationServiceTest {
         PaymentType paymentType = PaymentType.SINGLE;
 
         // When
-        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(NOT_EXISTING_PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, paymentType.getValue(), null));
+        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation =
+            paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(NOT_EXISTING_PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, paymentType, null));
 
         // Then
         assertThat(pisCancellationAuthorisation.hasError()).isTrue();
@@ -197,7 +200,8 @@ public class PaymentCancellationAuthorisationServiceTest {
             .thenReturn(ValidationResult.valid());
 
         // When
-        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), "123"));
+        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation =
+            paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE, "123"));
 
         // Then
         assertThat(pisCancellationAuthorisation.hasError()).isFalse();
@@ -217,7 +221,8 @@ public class PaymentCancellationAuthorisationServiceTest {
     @Test
     public void createPisCancellationAuthorisation_withUpdatePsuDataAndNotExistingPaymentId_shouldReturnError() {
         // When
-        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(NOT_EXISTING_PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), "123"));
+        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation =
+            paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(NOT_EXISTING_PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, "123"));
 
         // Then
         assertThat(pisCancellationAuthorisation.hasError()).isTrue();
@@ -240,7 +245,8 @@ public class PaymentCancellationAuthorisationServiceTest {
             .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, scaStatus, paymentType, null)));
 
         // When
-        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), "123"));
+        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation =
+            paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, "123"));
 
         // Then
         assertThat(pisCancellationAuthorisation.hasError()).isTrue();
@@ -270,7 +276,8 @@ public class PaymentCancellationAuthorisationServiceTest {
             .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, scaStatus, paymentType, null)));
 
         // When
-        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), "123"));
+        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation =
+            paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, "123"));
 
         // Then
         assertThat(pisCancellationAuthorisation.hasError()).isTrue();

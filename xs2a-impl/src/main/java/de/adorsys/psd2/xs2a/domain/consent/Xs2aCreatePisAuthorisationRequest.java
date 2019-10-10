@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain.consent;
 
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
@@ -25,8 +26,7 @@ public class Xs2aCreatePisAuthorisationRequest {
     private String paymentId;
     private PsuIdData psuData;
     private String paymentProduct;
-    // TODO change the type from String to PaymentType https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1019
-    private String paymentService;
+    private PaymentType paymentService;
     private String password;
 
     public boolean hasNoUpdateData() {

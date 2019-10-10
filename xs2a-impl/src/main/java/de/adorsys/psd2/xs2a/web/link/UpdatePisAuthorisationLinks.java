@@ -48,7 +48,7 @@ public class UpdatePisAuthorisationLinks extends AbstractLinks {
     }
 
     private HrefType buildAuthorisationLink(Xs2aUpdatePisCommonPaymentPsuDataResponse response, Xs2aCreatePisAuthorisationRequest createRequest) {
-        return buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, createRequest.getPaymentService(),
+        return buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, createRequest.getPaymentService().getValue(),
                          createRequest.getPaymentProduct(), createRequest.getPaymentId(), response.getAuthorisationId());
     }
 }
