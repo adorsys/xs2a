@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
@@ -38,6 +37,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 import static org.junit.Assert.assertFalse;
@@ -51,7 +51,7 @@ public class CreatePisAuthorisationCancellationAspectTest {
     private static final String PAYMENT_ID = "1111111111111";
     private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
     private static final Xs2aCreatePisAuthorisationRequest REQUEST =
-        new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, EMPTY_PSU_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), null);
+        new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, EMPTY_PSU_DATA, PAYMENT_PRODUCT, SINGLE, null);
 
     @InjectMocks
     private CreatePisAuthorisationCancellationAspect aspect;

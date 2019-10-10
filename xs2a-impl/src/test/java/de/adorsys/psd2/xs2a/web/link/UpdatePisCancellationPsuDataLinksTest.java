@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
@@ -37,7 +38,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdatePisCancellationPsuDataLinksTest {
     private static final String HTTP_URL = "http://url";
-    private static final String PAYMENT_SERVICE = "payments";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
@@ -57,7 +57,7 @@ public class UpdatePisCancellationPsuDataLinksTest {
 
         JsonReader jsonReader = new JsonReader();
         request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
-        request.setPaymentService(PAYMENT_SERVICE);
+        request.setPaymentService(SINGLE);
         request.setPaymentProduct(PAYMENT_PRODUCT);
         request.setPaymentId(PAYMENT_ID);
         request.setAuthorisationId(AUTHORISATION_ID);

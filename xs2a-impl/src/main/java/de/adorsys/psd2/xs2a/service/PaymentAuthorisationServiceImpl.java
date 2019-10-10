@@ -223,7 +223,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                    .build();
     }
 
-    private ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorisation(String paymentId, String paymentService, PsuIdData psuData) {
+    private ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorisation(String paymentId, PaymentType paymentService, PsuIdData psuData) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
@@ -245,8 +245,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         }
 
         PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
-        return pisScaAuthorisationService.createCommonPaymentAuthorisation(paymentId, PaymentType.getByValue(paymentService)
-                                                                                          .orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")), psuData)
+        return pisScaAuthorisationService.createCommonPaymentAuthorisation(paymentId, paymentService, psuData)
                    .map(resp -> ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
                                     .body(resp)
                                     .build())

@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
@@ -38,7 +39,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdatePisAuthorisationLinksTest {
     private static final String HTTP_URL = "http://url";
-    private static final String PAYMENT_SERVICE = "payments";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
@@ -58,7 +58,7 @@ public class UpdatePisAuthorisationLinksTest {
         expectedLinks = new Links();
 
         JsonReader jsonReader = new JsonReader();
-        request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, null, PAYMENT_PRODUCT, PAYMENT_SERVICE, "");
+        request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, null, PAYMENT_PRODUCT, SINGLE, "");
         response = new Xs2aUpdatePisCommonPaymentPsuDataResponse();
         response.setAuthorisationId(AUTHORISATION_ID);
 

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
@@ -112,7 +113,7 @@ public class AuthorisationMapper {
                    .orElse(null);
     }
 
-    public Xs2aCreatePisAuthorisationRequest mapToXs2aCreatePisAuthorisationRequest(PsuIdData psuData, String paymentId, String paymentService, String paymentProduct, Map body) {
+    public Xs2aCreatePisAuthorisationRequest mapToXs2aCreatePisAuthorisationRequest(PsuIdData psuData, String paymentId, PaymentType paymentService, String paymentProduct, Map body) {
         return new Xs2aCreatePisAuthorisationRequest(
             paymentId,
             psuData,

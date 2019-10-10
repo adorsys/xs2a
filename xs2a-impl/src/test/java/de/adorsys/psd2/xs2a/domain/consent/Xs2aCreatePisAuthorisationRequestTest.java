@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.domain.consent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Test;
 
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -27,13 +28,12 @@ public class Xs2aCreatePisAuthorisationRequestTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu id", null, null, null);
     private static final PsuIdData EMPTY_PSU_ID_DATA = new PsuIdData(null, null, null, null);
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
-    private static final String PAYMENT_SERVICE = "payments";
     private static final String PASSWORD = "some password";
 
     @Test
     public void hasNoUpdateData_withNoPsuIdData_shouldReturnTrue() {
         // Given
-        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, EMPTY_PSU_ID_DATA, PAYMENT_PRODUCT, PAYMENT_SERVICE, PASSWORD);
+        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, EMPTY_PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, PASSWORD);
 
         // When
         boolean actual = request.hasNoUpdateData();
@@ -45,7 +45,7 @@ public class Xs2aCreatePisAuthorisationRequestTest {
     @Test
     public void hasNoUpdateData_withBlankPassword_shouldReturnTrue() {
         // Given
-        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PAYMENT_SERVICE, "");
+        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, "");
 
         // When
         boolean actual = request.hasNoUpdateData();
@@ -57,7 +57,7 @@ public class Xs2aCreatePisAuthorisationRequestTest {
     @Test
     public void hasNoUpdateData_withNullPassword_shouldReturnTrue() {
         // Given
-        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PAYMENT_SERVICE, null);
+        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, null);
 
         // When
         boolean actual = request.hasNoUpdateData();
@@ -69,7 +69,7 @@ public class Xs2aCreatePisAuthorisationRequestTest {
     @Test
     public void hasNoUpdateData_withNoPsuIdDataAndNoPassword_shouldReturnTrue() {
         // Given
-        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, EMPTY_PSU_ID_DATA, PAYMENT_PRODUCT, PAYMENT_SERVICE, null);
+        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, EMPTY_PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, null);
 
         // When
         boolean actual = request.hasNoUpdateData();
@@ -81,7 +81,7 @@ public class Xs2aCreatePisAuthorisationRequestTest {
     @Test
     public void hasNoUpdateData_withPsuIdDataAndPassword_shouldReturnFalse() {
         // Given
-        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PAYMENT_SERVICE, PASSWORD);
+        Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, PASSWORD);
 
         // When
         boolean actual = request.hasNoUpdateData();

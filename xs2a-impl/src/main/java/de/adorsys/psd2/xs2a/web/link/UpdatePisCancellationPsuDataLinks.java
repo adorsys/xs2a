@@ -47,7 +47,7 @@ public class UpdatePisCancellationPsuDataLinks extends AbstractLinks {
     }
 
     private HrefType buildAuthorisationLink(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
-        return buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, request.getPaymentService(),
+        return buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, request.getPaymentService().getValue(),
                          request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId());
     }
 

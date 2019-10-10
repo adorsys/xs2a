@@ -36,7 +36,7 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
         super(httpUrl);
 
         String paymentId = createRequest.getPaymentId();
-        String paymentService = createRequest.getPaymentService();
+        String paymentService = createRequest.getPaymentService().getValue();
         String paymentProduct = createRequest.getPaymentProduct();
 
         setScaStatus(buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));

@@ -45,6 +45,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.*;
 
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -59,7 +60,6 @@ public class ConsentModelMapperTest {
     private final static String PSU_MESSAGE = "This test message is created in ASPSP and directed to PSU";
     private final static String SELF_LINK = "self";
     private final static String LOCALHOST_LINK = "http://localhost";
-    private final static String PAYMENT_SERVICE = "payments";
     private final static String PAYMENT_PRODUCT = "sepa-credit-transfers";
 
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
@@ -258,7 +258,7 @@ public class ConsentModelMapperTest {
                                                                                          Xs2aUpdatePisCommonPaymentPsuDataRequest.class);
         // When
         Xs2aUpdatePisCommonPaymentPsuDataRequest actual = consentModelMapper
-                                                              .mapToPisUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, PAYMENT_SERVICE, PAYMENT_PRODUCT, bodyMap);
+                                                              .mapToPisUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT, bodyMap);
         // Then
         assertEquals(expected, actual);
     }
@@ -270,7 +270,7 @@ public class ConsentModelMapperTest {
                                                                                          Xs2aUpdatePisCommonPaymentPsuDataRequest.class);
         // When
         Xs2aUpdatePisCommonPaymentPsuDataRequest actual = consentModelMapper
-                                                              .mapToPisUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, PAYMENT_SERVICE, PAYMENT_PRODUCT, getEmptyBodyMap());
+                                                              .mapToPisUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT, getEmptyBodyMap());
         // Then
         assertEquals(expected, actual);
     }
@@ -282,7 +282,7 @@ public class ConsentModelMapperTest {
                                                                                          Xs2aUpdatePisCommonPaymentPsuDataRequest.class);
         // When
         Xs2aUpdatePisCommonPaymentPsuDataRequest actual = consentModelMapper
-                                                              .mapToPisUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, PAYMENT_SERVICE, PAYMENT_PRODUCT, null);
+                                                              .mapToPisUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT, null);
         // Then
         assertEquals(expected, actual);
     }

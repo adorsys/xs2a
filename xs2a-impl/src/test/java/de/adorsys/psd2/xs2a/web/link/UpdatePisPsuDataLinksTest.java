@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.link;
 
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdatePisPsuDataLinksTest {
     private static final String HTTP_URL = "http://url";
-    private static final String PAYMENT_SERVICE = "payments";
+    private static final PaymentType PAYMENT_SERVICE = PaymentType.SINGLE;
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
