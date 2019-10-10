@@ -20,6 +20,7 @@
 * Add Internal Request-ID (inr-id) as additional parameter in scaRedirect URI
 * Use PaymentType enum instead of string values in Xs2aCreatePisAuthorisationRequest and Xs2aUpdatePisCommonPaymentPsuDataRequest
 * Added special mapping for `dayOfExecution` in periodic payments
+* Remove JsonReader duplicates
 
 == Add integration test for embedded mode for XS2A
 
@@ -120,3 +121,7 @@ From now on, in classes `Xs2aCreatePisAuthorisationRequest` and `Xs2aUpdatePisCo
 
 From now on, while creating periodic payments, there is a possibility to pass the `dayOfExecution` value like `5` and
 `05`. Both these variants will be passed to the SPI level (leading zero is ignored).
+
+== Remove JsonReader duplicates
+
+From now on there is only one JsonReader class located in json-reader module.
