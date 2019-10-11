@@ -15,63 +15,27 @@ No backward compatibility with 4.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 4.x|version 5.x
 
-|11.10.2019|4.2|5.2
-
-a|
-
-a|* Add Internal Request-ID (InR-Id) as additional parameter in scaRedirekt URI
-
-* Remove PSU Data from update consent status requests in cms-psu-api
-
-* Add integration test for embedded modes for XS2A
-
-* Bugfix: lastActionDate in PIIS consent is not set on creation or implicit revocation
-
-* Bugfix: Array "account" in Read Balances and Read Transaction List responses is empty for Global consent
-
-* Bugfix: Wrong SCAStatus after consent authorisation with zero SCA methods for Embedded approach
-
-* Bugfix: Check incoming requests to have required information
-
-* Bugfix: Error on initiating payment with custom payment product and JSON body 
-
-* Remove TppRedirectUri from TppInfo
-
-* Create common class for Jackson functionality
-
-* Describe "Implementation of AisConsentSpi" at SPI Developer Guide
-
-a|* All fixes from v.4.2
-
-* Support Additional Account Information in AIS
-
-* Support country specific extensions for payments in ASPSP-Profile
-
-* Create Bulk Payment validators 
-
-* Create Component for scheduled batch processing
-
-* Remove redundant request to retrieve the consent from the database on consent creation
-
-* Remove redundant request to delete ASPSP consent data on consent creation
-
 |25.10.2019|4.3|5.3
 
 a|
 
-a|
+a|* Bugfix: When bank returns PATC status for payment, multilevel flag in CMS should be set to true 
 
-* Bugfix: Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow 
+* Bugfix: Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
 
-* Bugfix: When bank returns PATC status for payment, multilevel flag in CMS should be set to true 
+* Bugfix: Incorrect response for initiate not supported payment type in xml format
 
-* Bugfix: PIIS consent status is being changed on implicit revocation
+* Bugfix: Incorrect response for Update PSU data request with incorrect PSU-ID in header
 
-* XS2A-Swagger. Typos and small errors fixes
-
-* Fix syntax errors in internal CMS API
+* Add statuses to logs
 
 a|* All fixes from v.4.3
+
+* Authorisation stage classes refactoring
+
+* Provide header Authorization in ContextData
+
+* Support OAuth Redirect for PIS, AIS, Payment Cancellation
 
 * Validate access of TPP based on role's header
 
@@ -79,21 +43,23 @@ a|* All fixes from v.4.3
 
 * Save payment transaction status given by ASPSP
 
-* Provide creation date and time in SPIrequest
-
 |08.11.2019|4.4|5.4
 
 a|
 
-a|* Create an opportunity to disable IBAN validation
+a|* Bugfix: PIIS consent status is being changed on implicit revocation
 
-* Add statuses to logs
+* Bugfix: Incorrect scaStatus for failed authorisation PIS/AIS/Payments-Cancellation
+
+* Create an opportunity to disable IBAN validation
 
 * Remove MockContentCachingWrappingFilter and properly enable XS2A filters for integration tests
 
+* Improve payment type validation
+
 a|* All fixes from v.4.4
 
-* Authorisation stage classes refactoring
+* Provide creation date and time in SPIrequest
 
 * Support Get Transaction Status Response with raw format
 
@@ -101,7 +67,9 @@ a|* All fixes from v.4.4
 
 * Close all consents when account is closed
 
-* Update to Java 11
+* XS2A-Swagger. Typos and small errors fixes
+
+* Fix syntax errors in internal CMS API
 
 |22.11.2019|4.5|5.5
 
@@ -110,6 +78,10 @@ a|
 a|* Improve payment type validation
 
 * Refactor request validation chain
+
+* Remove deprecated `PsuIdData` from `confirmConsent`, `rejectConsent`, `revokeConsent` in `CmsPsuAisService`
+
+* Remove TppRedirectUri from TppInfo 
 
 a|* All fixes from v.4.5
 
@@ -125,13 +97,31 @@ a|* All fixes from v.4.5
 
 a|
 
-a|* Use PaymentType enum instead of string values in Xs2aCreatePisAuthorisationRequest and Xs2aUpdatePisCommonPaymentPsuDataRequest
+a|
 
 a|* All fixes from v.4.6
+
+* Refactor ConsentService: split responsibilities
+
+* Refactor CMS: return ResponseObject instead of Strings, Enums, Booleans etc.
 
 * Prevent modification of an established consent
 
 * Add a new optional header TPP-Rejection-NoFunds-Preferred
+
+* Update to Java 11
+
+|20.12.2019|4.7|5.7
+
+a|
+
+a|
+
+a|* All fixes from v.4.7
+
+* Move tests for aspsp consent data to AspspConsentDataServiceTest
+
+* Move AuthenticationObject to xs2a-core
 
 |Further development| |
 
