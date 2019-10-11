@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b047795f-ed12-4b95-ba3d-29862c974401",
+		"_postman_id": "389bc476-46e7-43fe-ad92-000f48b89c6d",
 		"name": "PIS Payment requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -5515,6 +5515,608 @@
 									"listen": "test",
 									"script": {
 										"id": "12cbac68-8f29-48f2-bf2d-12ae82e663ee",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Single payment REDIRECT Internal Request ID",
+							"item": [
+								{
+									"name": "1. Set ASPSP properties",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n            \t\"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": true,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}/{inr-id}/\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}/{inr-id}/\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\"\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": true\n    }\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_aspsp_profile}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"aspsp-profile",
+												"for-debug",
+												"aspsp-settings"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "2. Set redirect SCA approach",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\",\n  \"DECOUPLED\"\n]"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_aspsp_profile}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"aspsp-profile",
+												"for-debug",
+												"sca-approaches"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "3. Payment initiation request",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 201\", function () {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"pm.test(\"Transcation status is RCVD\", () => {",
+													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+													"});",
+													"",
+													"pm.test(\"Payment ID exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('paymentId');",
+													"});",
+													"",
+													"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+													"",
+													"const scaRedirectLink = jsonData._links.scaRedirect.href;",
+													"",
+													"if (scaRedirectLink !== undefined) {",
+													"    var a = scaRedirectLink.split('/');",
+													"    a.pop();",
+													"    const internalRequestId = a.pop();",
+													"    pm.globals.set(\"internal_request_id\", internalRequestId);",
+													"}",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+												"exec": [
+													"pm.globals.unset(\"payment_id\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_none}}",
+												"type": "text"
+											},
+											{
+												"key": "PSU-IP-Address",
+												"value": "{{ip_address}}",
+												"type": "text"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Explicit-Authorisation-Preferred",
+												"value": "true",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "TPP-Redirect-URI",
+												"value": "TPP-Redirect-URI",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Nok-Redirect-URI",
+												"value": "TPP-Nok-Redirect-URI",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.00\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_none}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"{{payment_service}}",
+												"{{payment_product}}"
+											]
+										},
+										"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+									},
+									"response": []
+								},
+								{
+									"name": "4. Start authorisation for payment initiation",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+												"exec": [
+													"pm.globals.unset(\"authorisation_id\");"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+												"exec": [
+													"pm.test('Status code is 201', () => {",
+													"   pm.response.to.have.status(201);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Internal request IDs are equals\", () => {",
+													"    var a = jsonData._links.scaRedirect.href.split('/');",
+													"    a.pop();",
+													"    const internalRequestId = a.pop();",
+													"    const internalRequestIdGlobal = pm.globals.get(\"internal_request_id\");",
+													"    pm.expect(internalRequestId).to.eql(internalRequestIdGlobal);",
+													"    const authorisationId = jsonData.authorisationId;",
+													"    pm.globals.set(\"authorisation_id\", authorisationId);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_none}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"{{payment_service}}",
+												"{{payment_product}}",
+												"{{payment_id}}",
+												"authorisations"
+											]
+										},
+										"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+									},
+									"response": []
+								},
+								{
+									"name": "5. Get payment by redirect id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f5bf291c-591b-452c-9609-537cd0cb7050",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Authorisation id is correct\", () => {",
+													"    pm.expect(jsonData.authorisationId).to.eql(pm.globals.get(\"authorisation_id\"));",
+													"});",
+													"",
+													"const internalPaymentId = jsonData.payment.paymentId;",
+													"pm.globals.set(\"internal_payment_id\", internalPaymentId);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/redirect/{{authorisation_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v1",
+												"payment",
+												"redirect",
+												"{{authorisation_id}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "6. Update payment status to PATC",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+												"exec": [
+													"pm.globals.unset(\"authorisation_id\");"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+												"exec": [
+													"pm.test('Status code is 200', () => {",
+													"   pm.response.to.have.status(200);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/{{internal_payment_id}}/status/PATC",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v1",
+												"payment",
+												"{{internal_payment_id}}",
+												"status",
+												"PATC"
+											]
+										},
+										"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+									},
+									"response": []
+								},
+								{
+									"name": "7. Cancel payment",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "b891d5cb-5fba-410f-9793-cc40df8bb179",
+												"exec": [
+													"pm.test(\"Status code is 202\", function () {",
+													"    pm.response.to.have.status(202);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"const scaRedirectLink = jsonData._links.scaRedirect.href;",
+													"",
+													"if (scaRedirectLink !== undefined) {",
+													"    var a = scaRedirectLink.split('/');",
+													"    a.pop();",
+													"    const internalRequestId = a.pop();",
+													"    pm.globals.set(\"internal_request_id\", internalRequestId);",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "PSU-IP-Address",
+												"value": "{{ip_address}}",
+												"type": "text"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Explicit-Authorisation-Preferred",
+												"value": "true",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "TPP-Redirect-URI",
+												"value": "TPP-Redirect-URI",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Nok-Redirect-URI",
+												"value": "TPP-Nok-Redirect-URI",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"{{payment_service}}",
+												"{{payment_product}}",
+												"{{payment_id}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "8. Start  authorisation for payment cancellation",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "95f9c639-0d2b-4714-8dbf-ec0451dc2e05",
+												"exec": [
+													"",
+													"pm.test('Status code is 201', () => {",
+													"   pm.response.to.have.status(201);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Internal request IDs are equals\", () => {",
+													"    var a = jsonData._links.scaRedirect.href.split('/');",
+													"    a.pop();",
+													"    const internalRequestId = a.pop();",
+													"    const internalRequestIdGlobal = pm.globals.get(\"internal_request_id\");",
+													"    pm.expect(internalRequestId).to.eql(internalRequestIdGlobal);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "4e1898ce-dc16-4c98-a814-d70ce1571ddf",
+												"exec": [
+													"pm.globals.unset(\"cancellation_id\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-IP-Address",
+												"type": "text",
+												"value": "{{ip_address}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"type": "text",
+												"value": "{{x_request_id}}"
+											},
+											{
+												"key": "PSU-ID",
+												"type": "text",
+												"value": "{{psu_id_none}}",
+												"disabled": true
+											},
+											{
+												"key": "TPP-Redirect-Preferred",
+												"type": "text",
+												"value": "true",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"{{payment_service}}",
+												"{{payment_product}}",
+												"{{payment_id}}",
+												"cancellation-authorisations"
+											]
+										},
+										"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+									},
+									"response": []
+								}
+							],
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "db810b91-c970-448a-8e3d-8de445b502e5",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "674f23cf-d434-4672-9543-d2858ed509ec",
 										"type": "text/javascript",
 										"exec": [
 											""
