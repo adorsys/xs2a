@@ -65,6 +65,9 @@ public class PisCommonPaymentResponse implements CommonPaymentData {
     @ApiModelProperty(value = "List of corresponding PSU", required = true)
     private List<Authorisation> authorisations = new ArrayList<>();
 
+    @ApiModelProperty(value = "Defines whether the payment requires multilevel SCA", example = "true")
+    private boolean multilevelScaRequired;
+
     public Optional<Authorisation> findAuthorisationInPayment(String authorisationId) {
         return authorisations.stream()
                    .filter(auth -> auth.getId().equals(authorisationId))

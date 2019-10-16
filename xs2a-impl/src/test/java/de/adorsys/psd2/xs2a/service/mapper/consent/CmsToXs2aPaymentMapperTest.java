@@ -372,6 +372,7 @@ public class CmsToXs2aPaymentMapperTest {
         pisCommonPaymentResponse.setPaymentData(PAYMENT_DATA);
         pisCommonPaymentResponse.setTransactionStatus(TRANSACTION_STATUS);
         pisCommonPaymentResponse.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
+        pisCommonPaymentResponse.setMultilevelScaRequired(false);
 
         return pisCommonPaymentResponse;
     }

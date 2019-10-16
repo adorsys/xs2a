@@ -111,7 +111,6 @@ public class PaymentController implements PaymentApi {
                                              .orElseGet(ResponseObject.builder()
                                                             .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404))::build);
 
-        //TODO Don't provide "creditorAddress" field in "getPaymentInformation" response if it was absent in "initiatePayment" request https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/869
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
                    : responseMapper.ok(ResponseObject.builder()
@@ -335,6 +334,7 @@ public class PaymentController implements PaymentApi {
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType);
+
         Xs2aCreatePisAuthorisationRequest createRequest = authorisationMapper.mapToXs2aCreatePisAuthorisationRequest(psuData, paymentId, paymentType.get(), paymentProduct, (Map) body);
 
         ResponseObject<AuthorisationResponse> createAuthResponse = paymentAuthorisationService.createPisAuthorisation(createRequest);
