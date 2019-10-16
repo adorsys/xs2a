@@ -134,6 +134,7 @@ public class PisCommonPaymentMapper {
                        response.setPaymentData(cmd.getPayment());
                        response.setTransactionStatus(cmd.getTransactionStatus());
                        response.setStatusChangeTimestamp(cmd.getStatusChangeTimestamp());
+                       response.setMultilevelScaRequired(cmd.isMultilevelScaRequired());
                        response.setAuthorisations(cmsAuthorisationMapper.mapToAuthorisations(cmd.getAuthorizations()));
                        return response;
                    });

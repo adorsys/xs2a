@@ -60,7 +60,7 @@ public class PisPsuDataServiceTest {
         List<PsuIdData> actualResponse = pisPsuDataService.getPsuDataByPaymentId(WRONG_ID);
 
         //Then
-        assertThat(actualResponse).isNull();
+        assertThat(actualResponse).isEqualTo(Collections.EMPTY_LIST);
     }
 
     private static List<PsuIdData> getListPisPayment() {

@@ -101,6 +101,7 @@ public class ConsentServiceTest {
     private static final LocalDate DATE = LocalDate.now().plusDays(1);
     private static final boolean EXPLICIT_PREFERRED = true;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
+    private static final PsuIdData PSU_ID_DATA_EMPTY = new PsuIdData(null, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(CORRECT_PSU_ID, null, null, null, null);
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
@@ -111,9 +112,6 @@ public class ConsentServiceTest {
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     private static final MessageError CONSENT_UNKNOWN_403_ERROR =
         new MessageError(ErrorType.AIS_403, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_403));
-    private static final MessageError RESOURCE_UNKNOWN_ERROR =
-        new MessageError(ErrorType.AIS_404, TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404));
-    private static final TppRedirectUri TPP_REDIRECT_URI = new TppRedirectUri("redirectUri", "nokRedirectUri");
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @InjectMocks
@@ -896,6 +894,22 @@ public class ConsentServiceTest {
     }
 
     @Test
+    public void createConsentAuthorizationWithResponse_Success_WithoutPsuIdHeader() {
+        // Given
+        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        when(redirectAisAuthorizationService.createConsentAuthorization(any(), anyString()))
+            .thenReturn(Optional.of(new CreateConsentAuthorizationResponse()));
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        consentService.createAisAuthorisation(PSU_ID_DATA_EMPTY, CONSENT_ID, PASSWORD);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.START_AIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
+    }
+
+    @Test
     public void createConsentAuthorisationWithResponse_withInvalidConsent_shouldReturnValidationError() {
         // Given
         when(createConsentAuthorisationValidator.validate(any(CommonConsentObject.class)))
@@ -1137,7 +1151,7 @@ public class ConsentServiceTest {
     private AccountConsent getAccountConsent() {
         Xs2aAccountAccess access = getXs2aAccountAccess(Collections.singletonList(getXs2aReference()));
 
-        return new AccountConsent(CONSENT_ID, access, access, false, DATE, 4, null, ConsentStatus.VALID, false, false, null, tppInfo, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.MAX, Collections.singletonMap("/accounts", 0));
+        return new AccountConsent(CONSENT_ID, access, access, false, DATE, 4, null, ConsentStatus.VALID, false, false, Collections.singletonList(PSU_ID_DATA), tppInfo, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.MAX, Collections.singletonMap("/accounts", 0));
     }
 
     private AccountConsent getAccountConsentFinalised(Xs2aAccountAccess access) {
