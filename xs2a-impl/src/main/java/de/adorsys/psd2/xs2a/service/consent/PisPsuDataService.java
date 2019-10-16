@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -37,7 +38,7 @@ public class PisPsuDataService {
                    .orElseGet(() -> {
                        log.info("InR-ID: [{}], X-Request-ID [{}], Payment-ID [{}]. Can't get PsuData by payment ID because PsuData list not found by id at cms.",
                                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
-                       return null;
+                       return Collections.emptyList();
                    });
     }
 }

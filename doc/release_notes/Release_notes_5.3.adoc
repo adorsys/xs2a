@@ -1,3 +1,10 @@
 = Release notes v.5.3
 
 == Table of Contents
+
+* Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
+
+== Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
+
+From now on, if you try to start authorization process for payment or consent without PSU-ID header for  payment or
+consent which was initiated with PSU-ID header, you’ll get scaStatus psuIdentified.

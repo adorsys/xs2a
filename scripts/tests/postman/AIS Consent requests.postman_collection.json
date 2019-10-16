@@ -2638,11 +2638,6 @@
 										"type": "text"
 									},
 									{
-										"key": "PSU-ID",
-										"value": "{{psu_id_single}}",
-										"type": "text"
-									},
-									{
 										"key": "X-Request-ID",
 										"value": "{{x_request_id}}",
 										"type": "text"

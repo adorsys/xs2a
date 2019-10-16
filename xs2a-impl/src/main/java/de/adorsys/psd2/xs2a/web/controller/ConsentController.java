@@ -114,6 +114,7 @@ public class ConsentController implements ConsentApi {
                                                     String psUHttpMethod, UUID psUDeviceID,
                                                     String psUGeoLocation) {
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType);
+
         String password = authorisationMapper.mapToPasswordFromBody((Map) body);
 
         ResponseObject<AuthorisationResponse> createResponse = consentService.createAisAuthorisation(psuData, consentId, password);
