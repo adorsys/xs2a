@@ -392,7 +392,7 @@ public class ConsentService {
                    .build();
     }
 
-    private ResponseObject<CreateConsentAuthorizationResponse> createConsentAuthorizationWithResponse(PsuIdData psuData, String consentId) {
+    private ResponseObject<CreateConsentAuthorizationResponse> createConsentAuthorizationWithResponse(PsuIdData psuDataFromRequest, String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.START_AIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
 
         // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
@@ -403,6 +403,17 @@ public class ConsentService {
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
             return ResponseObject.<CreateConsentAuthorizationResponse>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
+        }
+
+        boolean isMultilevel = accountConsent.get().isMultilevelScaRequired();
+
+        PsuIdData psuIdData = psuDataFromRequest;
+
+        if (psuDataFromRequest.isEmpty() && !isMultilevel) {
+            Optional<PsuIdData> psuIdDataFromDb = accountConsent.get().getPsuIdDataList().stream().findFirst();
+            if (psuIdDataFromDb.isPresent()) {
+                psuIdData = psuIdDataFromDb.get();
+            }
         }
 
         ValidationResult validationResult = createConsentAuthorisationValidator.validate(new CommonConsentObject(accountConsent.get()));
@@ -423,7 +434,7 @@ public class ConsentService {
         }
 
         AisAuthorizationService service = aisScaAuthorisationServiceResolver.getService();
-        return service.createConsentAuthorization(psuData, consentId)
+        return service.createConsentAuthorization(psuIdData, consentId)
                    .map(resp -> ResponseObject.<CreateConsentAuthorizationResponse>builder().body(resp).build())
                    .orElseGet(ResponseObject.<CreateConsentAuthorizationResponse>builder()
                                   .fail(AIS_403, of(CONSENT_UNKNOWN_403))
