@@ -34,7 +34,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountReferenceMapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -69,7 +69,7 @@ public class AccountHelperServiceTest {
     private static final SpiAccountReference SPI_ACCOUNT_REFERENCE = buildSpiAccountReference();
     private static final AccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
     private static final List<AccountReference> REFERENCES = Collections.singletonList(XS2A_ACCOUNT_REFERENCE);
-    private static final SpiContextData SPI_CONTEXT_DATA = buildSpiContextData();
+    private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
     private static final PsuIdData PSU_ID_DATA = buildPsuIdData();
     private static final Xs2aAccountAccess ACCOUNT_ACCESS = createAccountAccess();
     private static final AccountConsent ACCOUNT_CONSENT = createConsent();
@@ -122,10 +122,6 @@ public class AccountHelperServiceTest {
         SpiContextData actual = accountHelperService.getSpiContextData();
         // Then
         assertEquals(SPI_CONTEXT_DATA, actual);
-    }
-
-    private static SpiContextData buildSpiContextData() {
-        return new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     }
 
     private static PsuIdData buildPsuIdData() {

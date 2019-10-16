@@ -48,9 +48,9 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
+import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
@@ -89,7 +89,7 @@ public class BalanceServiceTest {
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = buildSpiAccountConsent();
     private static final AccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
-    private static final SpiContextData SPI_CONTEXT_DATA = buildSpiContextData();
+    private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
     private static final MessageError VALIDATION_ERROR = buildMessageError();
 
     private SpiAccountReference spiAccountReference;
@@ -307,10 +307,6 @@ public class BalanceServiceTest {
 
     private static Xs2aAccountAccess createAccountAccess() {
         return new Xs2aAccountAccess(Collections.singletonList(XS2A_ACCOUNT_REFERENCE), Collections.singletonList(XS2A_ACCOUNT_REFERENCE), Collections.singletonList(XS2A_ACCOUNT_REFERENCE), null, null, null, null);
-    }
-
-    private static SpiContextData buildSpiContextData() {
-        return new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     }
 
     @NotNull

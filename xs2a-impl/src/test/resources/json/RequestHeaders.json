@@ -4,5 +4,6 @@
   "psu-id-type": "TYPE",
   "psu-corporate-id": "CORPORATE_ID",
   "psu-corporate-id-type": "CORPORATE_ID_TYPE",
-  "psu-ip-address": "192.168.0.26"
+  "psu-ip-address": "192.168.0.26",
+  "Authorization": "Bearer 111111"
 }

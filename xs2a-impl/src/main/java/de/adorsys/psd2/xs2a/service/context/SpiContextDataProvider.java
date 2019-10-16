@@ -45,6 +45,7 @@ public class SpiContextDataProvider {
 
     public SpiContextData provide(PsuIdData psuIdData, TppInfo tppInfo) {
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuIdData, requestProviderService.getPsuIpAddress());
-        return new SpiContextData(spiPsuData, tppInfo, requestProviderService.getRequestId(), requestProviderService.getInternalRequestId());
+        return new SpiContextData(spiPsuData, tppInfo, requestProviderService.getRequestId(),
+                                  requestProviderService.getInternalRequestId(), requestProviderService.getOAuth2Token());
     }
 }

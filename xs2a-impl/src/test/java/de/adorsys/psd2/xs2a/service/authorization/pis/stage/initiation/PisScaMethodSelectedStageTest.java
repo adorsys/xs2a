@@ -53,7 +53,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -68,7 +67,8 @@ public class PisScaMethodSelectedStageTest {
     private static final String AUTHENTICATION_METHOD_ID = "sms";
     private static final String PAYMENT_ID = "123456789";
     private static final String PSU_ID = "id";
-    private static final SpiContextData CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final String AUTHORISATION = "Bearer 1111111";
+    private static final SpiContextData CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final TransactionStatus ACCP_TRANSACTION_STATUS = TransactionStatus.ACCP;
     private static final SpiPaymentExecutionResponse SPI_PAYMENT_EXECUTION_RESPONSE = new SpiPaymentExecutionResponse(ACCP_TRANSACTION_STATUS);
@@ -169,17 +169,17 @@ public class PisScaMethodSelectedStageTest {
         GetPisAuthorisationResponse pisAuthorisationResponse = new GetPisAuthorisationResponse();
         pisAuthorisationResponse.setPaymentType(PaymentType.SINGLE);
         pisAuthorisationResponse.setPaymentProduct(PAYMENT_PRODUCT);
-        PisPaymentInfo pisPaymentInfo = buildPisPaymentInfo(PisScaMethodSelectedStageTest.PAYMENT_ID);
+        PisPaymentInfo pisPaymentInfo = buildPisPaymentInfo();
         pisAuthorisationResponse.setPaymentInfo(pisPaymentInfo);
         pisAuthorisationResponse.setPayments(getPisPayment());
         return pisAuthorisationResponse;
     }
 
-    private PisPaymentInfo buildPisPaymentInfo(String paymentId) {
+    private PisPaymentInfo buildPisPaymentInfo() {
         PisPaymentInfo pisPaymentInfo = new PisPaymentInfo();
         pisPaymentInfo.setPaymentProduct(PAYMENT_PRODUCT);
         pisPaymentInfo.setPaymentType(PaymentType.SINGLE);
-        pisPaymentInfo.setPaymentId(paymentId);
+        pisPaymentInfo.setPaymentId(PAYMENT_ID);
         return pisPaymentInfo;
     }
 

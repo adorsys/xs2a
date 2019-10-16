@@ -68,11 +68,12 @@ import static org.mockito.Mockito.when;
 public class CancelPaymentServiceTest {
     private static final String PAYMENT_ID = "12345";
     private static final String ENCRYPTED_PAYMENT_ID = "encrypted payment id";
+    private static final String AUTHORISATION = "Bearer 1111111";
     private static final String AUTHORISATION_ID = "auth id";
     private static final PsuIdData PSU_DATA = buildPsuIdData();
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_DATA.getPsuId(), PSU_DATA.getPsuIdType(), PSU_DATA.getPsuCorporateId(), PSU_DATA.getPsuCorporateIdType(), null);
     private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @InjectMocks

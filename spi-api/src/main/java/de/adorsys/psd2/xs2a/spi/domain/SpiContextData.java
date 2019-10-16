@@ -35,4 +35,5 @@ public class SpiContextData {
     private TppInfo tppInfo;
     private UUID xRequestId;
     private UUID internalRequestId;
+    private String oAuth2Token;
 }

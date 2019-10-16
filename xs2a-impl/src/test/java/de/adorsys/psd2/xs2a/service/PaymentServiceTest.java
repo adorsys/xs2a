@@ -73,11 +73,11 @@ public class PaymentServiceTest {
     private static final String PAYMENT_ID = "12345";
     private static final String WRONG_PAYMENT_ID = "777";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
-    private static final String WRONG_PAYMENT_ID_TEXT = "Payment not found";
+    private static final String AUTHORISATION = "Bearer 1111111";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null, null);
     private static final MessageError VALIDATION_ERROR = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
 
     @InjectMocks
     private PaymentService paymentService;

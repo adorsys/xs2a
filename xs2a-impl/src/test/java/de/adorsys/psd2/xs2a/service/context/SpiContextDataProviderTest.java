@@ -47,6 +47,7 @@ public class SpiContextDataProviderTest {
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", PSU_IP_ADDRESS);
     private static final SpiContextData SPI_CONTEXT_DATA = buildSpiContextData(null);
     private static final SpiContextData SPI_CONTEXT_DATA_WITH_PSU_DATA = buildSpiContextData(SPI_PSU_DATA);
+    private static final String AUTHORISATION = "Bearer 1111111";
 
     @InjectMocks
     private SpiContextDataProvider spiContextDataProvider;
@@ -62,6 +63,7 @@ public class SpiContextDataProviderTest {
     public void setUp() {
         when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
         when(requestProviderService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
+        when(requestProviderService.getOAuth2Token()).thenReturn(AUTHORISATION);
     }
 
     @Test
@@ -132,6 +134,6 @@ public class SpiContextDataProviderTest {
     }
 
     private static SpiContextData buildSpiContextData(SpiPsuData spiPsuData) {
-        return new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID, INTERNAL_REQUEST_ID);
+        return new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID, INTERNAL_REQUEST_ID, AUTHORISATION);
     }
 }
