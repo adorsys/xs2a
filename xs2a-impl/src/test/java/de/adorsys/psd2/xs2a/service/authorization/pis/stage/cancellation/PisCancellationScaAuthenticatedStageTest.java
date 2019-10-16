@@ -32,7 +32,6 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -61,12 +60,14 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisCancellationScaAuthenticatedStageTest {
     private static final String PAYMENT_PRODUCT = "Test payment product";
     private static final String PAYMENT_ID = "Test payment id";
+    private static final String AUTHORISATION = "Bearer 1111111";
     private static final String AUTHORISATION_ID = "Test authorisation id";
     private static final String AUTHENTICATION_METHOD_ID = "Test authentication method id";
     private static final String PSU_ID = "Test psuId";
@@ -79,7 +80,7 @@ public class PisCancellationScaAuthenticatedStageTest {
     private static final byte[] PAYMENT_DATA = "Test payment data".getBytes();
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null, null);
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
     private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfo();
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = buildSpiPaymentInfo();
 
@@ -94,8 +95,6 @@ public class PisCancellationScaAuthenticatedStageTest {
     private PisCommonDecoupledService pisCommonDecoupledService;
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
-    @Mock
-    private ScaApproachResolver scaApproachResolver;
     @Mock
     private SpiErrorMapper spiErrorMapper;
     @Mock

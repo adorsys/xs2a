@@ -46,6 +46,7 @@ public class RequestProviderServiceTest {
     private static final Map<String, String> HEADERS = jsonReader.getObjectFromFile("json/RequestHeaders.json", new TypeReference<Map<String, String>>() {
     });
     private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("9861d849-3302-4162-b79d-c5f8e543cdb0");
+    private static final String TOKEN = "111111";
 
     @InjectMocks
     private RequestProviderService requestProviderService;
@@ -97,6 +98,15 @@ public class RequestProviderServiceTest {
         // Then
         verify(internalRequestIdService).getInternalRequestId();
         assertEquals(INTERNAL_REQUEST_ID, actualInternalRequestId);
+    }
+
+    @Test
+    public void getOAuth2Token() {
+        // When
+        String actualAuthorisationHeader = requestProviderService.getOAuth2Token();
+
+        // Then
+        assertEquals(TOKEN, actualAuthorisationHeader);
     }
 
     private PsuIdData buildPsuIdData() {

@@ -34,7 +34,6 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -60,6 +59,8 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AisScaAuthenticatedStageTest {
+
+    private static final String AUTHORISATION = "Bearer 1111111";
     private static final String CONSENT_ID = "Test consentId";
     private static final String WRONG_CONSENT_ID = "wrong consent id";
     private static final String TEST_AUTHENTICATION_DATA = "Test authenticationData";
@@ -70,7 +71,7 @@ public class AisScaAuthenticatedStageTest {
     private static final ScaStatus FINALIZED_SCA_STATUS = ScaStatus.FINALISED;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null, null);
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
 
     @InjectMocks
     private AisScaAuthenticatedStage scaAuthenticatedStage;
@@ -81,8 +82,6 @@ public class AisScaAuthenticatedStageTest {
     private AisConsentSpi aisConsentSpi;
     @Mock
     private Xs2aAisConsentMapper aisConsentMapper;
-    @Mock
-    private Xs2aToSpiPsuDataMapper psuDataMapper;
     @Mock
     private UpdateConsentPsuDataReq request;
     @Mock

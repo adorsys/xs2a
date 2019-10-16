@@ -47,6 +47,9 @@ Another parameter in *SpiContextData* is the *tppInfo*. It contains information 
 ** "TPP name": example = "Tpp company";
 ** "National competent authority": example = "Bafin";
 
+Also, SpiContextData object stores the OAuth2 token in the *oAuth2Token* field - this is the authorisation token that should be present
+in any XS2A request during OAuth SCA approach. This header is passed to SPI level in each method.
+
 The response from the connector to XS2A and the ASPSP consent data provider are described in the next chapters.
 
 === SpiResponse

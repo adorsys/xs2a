@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
@@ -40,9 +39,9 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
+import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,7 +74,7 @@ public class ReadSinglePaymentServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final List<PisPayment> PIS_PAYMENTS = Collections.singletonList(new PisPayment());
-    private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
+    private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
     private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
     private static final SinglePayment SINGLE_PAYMENT = buildSinglePayment();
     private static final String SOME_ENCRYPTED_PAYMENT_ID = "Encrypted Payment Id";
@@ -205,15 +204,6 @@ public class ReadSinglePaymentServiceTest {
         assertThat(actualResponse.getPayment()).isNull();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
-    }
-
-    private static SpiContextData getSpiContextData() {
-        return new SpiContextData(
-            new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress"),
-            new TppInfo(),
-            UUID.randomUUID(),
-            UUID.randomUUID()
-        );
     }
 
     private static SinglePayment buildSinglePayment() {

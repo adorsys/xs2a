@@ -20,7 +20,6 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
@@ -38,9 +37,9 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
+import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +49,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -62,7 +60,7 @@ public class BulkPaymentInitiationServiceTest {
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
-    private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
+    private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
 
     private static final BulkPayment BULK_PAYMENT = buildBulkPayment();
     private static final SpiBulkPayment SPI_BULK_PAYMENT = new SpiBulkPayment();
@@ -139,15 +137,6 @@ public class BulkPaymentInitiationServiceTest {
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(EXPECTED_ERROR);
-    }
-
-    private static SpiContextData getSpiContextData() {
-        return new SpiContextData(
-            new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress"),
-            new TppInfo(),
-            UUID.randomUUID(),
-            UUID.randomUUID()
-        );
     }
 
     private static BulkPayment buildBulkPayment() {

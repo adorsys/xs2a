@@ -31,7 +31,6 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -69,6 +68,7 @@ import static org.mockito.Mockito.*;
 public class AisScaStartAuthorisationStageTest {
     private static final String CONSENT_ID = "Test consentId";
     private static final String WRONG_CONSENT_ID = "wrong consent id";
+    private static final String AUTHORISATION = "Bearer 1111111";
     private static final String AUTHORISATION_ID = "Test authorisation id";
     private static final String PASSWORD = "Test password";
     private static final String PSU_ID = "Test psuId";
@@ -82,7 +82,7 @@ public class AisScaStartAuthorisationStageTest {
     private static final List<Xs2aAuthenticationObject> MULTIPLE_CMS_SCA_METHODS = Arrays.asList(buildXs2aSmsAuthenticationObject(), buildXs2aPhotoAuthenticationObject());
     private static final List<SpiAuthenticationObject> ONE_SPI_SCA_METHOD = Collections.singletonList(buildSpiSmsAuthenticationObject());
     private static final List<SpiAuthenticationObject> NONE_SPI_SCA_METHOD = Collections.emptyList();
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
 
     private static final String PSU_SUCCESS_MESSAGE = "Test psuSuccessMessage";
     private static final String DECOUPLED_AUTHENTICATION_METHOD_ID = "decoupled method";
@@ -112,8 +112,6 @@ public class AisScaStartAuthorisationStageTest {
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private CommonDecoupledAisService commonDecoupledAisService;
-    @Mock
-    private ScaApproachResolver scaApproachResolver;
     @Mock
     private AisScaAuthorisationService aisScaAuthorisationService;
     @Mock
@@ -260,8 +258,6 @@ public class AisScaStartAuthorisationStageTest {
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(new SpiAvailableScaMethodsResponse(false, ONE_SPI_SCA_METHOD)));
 
-        SpiAuthenticationObject scaMethod = ONE_SPI_SCA_METHOD.get(0);
-
         when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(new SpiAuthorizationCodeResult()));
 
@@ -280,7 +276,7 @@ public class AisScaStartAuthorisationStageTest {
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS)));
 
-        List<SpiAuthenticationObject> availableScaMethods = Collections.singletonList(buildDecoupledAuthenticationObject(DECOUPLED_AUTHENTICATION_METHOD_ID));
+        List<SpiAuthenticationObject> availableScaMethods = Collections.singletonList(buildDecoupledAuthenticationObject());
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(new SpiAvailableScaMethodsResponse(false, availableScaMethods)));
 
@@ -302,7 +298,7 @@ public class AisScaStartAuthorisationStageTest {
 
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS)));
-        List<SpiAuthenticationObject> availableScaMethods = Collections.singletonList(buildDecoupledAuthenticationObject(DECOUPLED_AUTHENTICATION_METHOD_ID));
+        List<SpiAuthenticationObject> availableScaMethods = Collections.singletonList(buildDecoupledAuthenticationObject());
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(new SpiAvailableScaMethodsResponse(false, availableScaMethods)));
 
@@ -318,9 +314,9 @@ public class AisScaStartAuthorisationStageTest {
             .thenReturn(buildSuccessSpiResponse(new SpiAvailableScaMethodsResponse(false, ONE_SPI_SCA_METHOD)));
 
         when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildErrorSpiResponse(new SpiAuthorizationCodeResult()));
+            .thenReturn(buildErrorSpiResponse());
 
-        when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(new SpiAuthorizationCodeResult()), ServiceType.AIS))
+        when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(), ServiceType.AIS))
             .thenReturn(ErrorHolder
                             .builder(ErrorType.AIS_400)
                             .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
@@ -424,7 +420,7 @@ public class AisScaStartAuthorisationStageTest {
     }
 
     // Needed because SpiResponse is final, so it's impossible to mock it
-    private <T> SpiResponse<T> buildErrorSpiResponse(T payload) {
+    private <T> SpiResponse<T> buildErrorSpiResponse() {
         return SpiResponse.<T>builder()
                    .error(new TppMessage(FORMAT_ERROR))
                    .build();
@@ -436,9 +432,9 @@ public class AisScaStartAuthorisationStageTest {
         return response;
     }
 
-    private static SpiAuthenticationObject buildDecoupledAuthenticationObject(String methodId) {
+    private static SpiAuthenticationObject buildDecoupledAuthenticationObject() {
         SpiAuthenticationObject spiAuthenticationObject = new SpiAuthenticationObject();
-        spiAuthenticationObject.setAuthenticationMethodId(methodId);
+        spiAuthenticationObject.setAuthenticationMethodId(AisScaStartAuthorisationStageTest.DECOUPLED_AUTHENTICATION_METHOD_ID);
         spiAuthenticationObject.setDecoupled(true);
         return spiAuthenticationObject;
     }

@@ -67,13 +67,14 @@ public class PisCancellationScaStartAuthorisationStageTest {
     private static final String PAYMENT_ID = "SeviKzWmPUDncnNz4F-f5gIUdnn78_IqZdZQvWhGeVlzr95yG8yF319Fm7h0bDeW_=_bS6p6XvTWI";
     private static final String PASSWORD = "Test password";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfer";
+    private static final String AUTHORISATION = "Bearer 1111111";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final PaymentType PAYMENT_TYPE = PaymentType.SINGLE;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final PsuIdData PSU_ID_DATA_WRONG = new PsuIdData("Wrong PSU", null, null, null);
     private static final TransactionStatus PAYMENT_STATUS = TransactionStatus.RCVD;
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null, null);
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
     private static final List<SpiAuthenticationObject> MULTIPLE_SPI_SCA_METHODS = Arrays.asList(buildSpiSmsAuthenticationObject(), buildSpiPhotoAuthenticationObject());
     private static final List<SpiAuthenticationObject> ONE_SPI_SCA_METHOD = Collections.singletonList(buildSpiSmsAuthenticationObject());
     private static final List<SpiAuthenticationObject> NONE_SPI_SCA_METHOD = Collections.emptyList();

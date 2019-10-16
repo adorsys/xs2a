@@ -27,7 +27,6 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -90,6 +89,7 @@ public class ConsentServiceTest {
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String WRONG_CONSENT_ID = "wrong_consent_id";
     private static final String PASSWORD = "password";
+    private static final String AUTHORISATION = "Bearer 1111111";
     private static final String CONSENT_ID_FINALISED = "finalised_consent_id";
     private static final String TPP_ID = "Test TppId";
     private static final String CORRECT_PSU_ID = "123456789";
@@ -111,7 +111,7 @@ public class ConsentServiceTest {
     private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.MAX;
     private static final MessageError VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(MessageErrorCode.CONSENT_INVALID));
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
     private static final MessageError CONSENT_UNKNOWN_403_ERROR =
         new MessageError(ErrorType.AIS_403, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_403));
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
@@ -171,8 +171,6 @@ public class ConsentServiceTest {
     private InitialSpiAspspConsentDataProvider initialSpiAspspConsentDataProvider;
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
-    @Mock
-    private AisAuthorisationValidator aisAuthorisationValidator;
 
     private AccountConsent accountConsent;
 
@@ -231,7 +229,7 @@ public class ConsentServiceTest {
         when(getConsentAuthorisationScaStatusValidator.validate(any(GetConsentAuthorisationScaStatusPO.class)))
             .thenReturn(ValidationResult.valid());
 
-        SpiContextData spiContextData = new SpiContextData(SPI_PSU_DATA, tppInfo, UUID.randomUUID(), UUID.randomUUID());
+        SpiContextData spiContextData = new SpiContextData(SPI_PSU_DATA, tppInfo, UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
         when(spiContextDataProvider.provide()).thenReturn(spiContextData);
         when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
         when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(spiContextData);

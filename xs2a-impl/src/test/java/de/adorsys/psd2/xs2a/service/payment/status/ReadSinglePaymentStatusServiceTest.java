@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
@@ -34,9 +33,9 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
+import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +46,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,9 +56,8 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ReadSinglePaymentStatusServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
-    private static final UUID X_REQUEST_ID = UUID.randomUUID();
     private static final List<PisPayment> PIS_PAYMENTS = Collections.singletonList(new PisPayment());
-    private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
+    private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
     private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
     private static final SpiGetPaymentStatusResponse TRANSACTION_STATUS = new SpiGetPaymentStatusResponse(TransactionStatus.ACSP,null);
     private static final SpiResponse<SpiGetPaymentStatusResponse> TRANSACTION_RESPONSE = buildSpiResponseTransactionStatus();
@@ -162,15 +159,6 @@ public class ReadSinglePaymentStatusServiceTest {
         //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
-    }
-
-    private static SpiContextData getSpiContextData() {
-        return new SpiContextData(
-            new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress"),
-            new TppInfo(),
-            X_REQUEST_ID,
-            UUID.randomUUID()
-        );
     }
 
     private static SpiResponse<SpiGetPaymentStatusResponse> buildSpiResponseTransactionStatus() {

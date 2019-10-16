@@ -71,6 +71,7 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
     private static final String PAYMENT_ID = "Test payment id";
     private static final String PSU_ID = "Test psuId";
     private static final String PASSWORD = "Test password";
+    private static final String AUTHORISATION = "Bearer 1111111";
     private static final String AUTHORISATION_ID = "Test authorisation";
     private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
     private static final ServiceType PIS_SERVICE_TYPE = ServiceType.PIS;
@@ -82,7 +83,7 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
     private static final SpiAuthorisationStatus FAILURE_SPI_AUTHORISATION_STATUS = SpiAuthorisationStatus.FAILURE;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null, null);
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
     private static final byte[] PAYMENT_DATA = "Test payment data".getBytes();
     private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfo();
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = buildSpiPaymentInfo();

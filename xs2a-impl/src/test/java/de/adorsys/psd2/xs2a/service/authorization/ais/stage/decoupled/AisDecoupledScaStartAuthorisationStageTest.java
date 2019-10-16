@@ -65,6 +65,7 @@ import static org.mockito.Mockito.*;
 public class AisDecoupledScaStartAuthorisationStageTest {
     private static final String CONSENT_ID = "Test consentId";
     private static final String WRONG_CONSENT_ID = "wrong consent id";
+    private static final String AUTHORISATION = "Bearer 1111111";
     private static final String PASSWORD = "Test password";
     private static final String PSU_ID = "Test psuId";
     private static final String AUTHORISATION_ID = "Test authorisationId";
@@ -72,7 +73,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     private static final ScaStatus FAILED_SCA_STATUS = ScaStatus.FAILED;
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null, null);
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
 
     @InjectMocks
     private AisDecoupledScaReceivedAuthorisationStage scaReceivedAuthorisationStage;

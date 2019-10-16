@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.HttpHeaders;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -35,6 +36,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RequestProviderService {
+
+    private static final String AUTHORISATION_HEADER = HttpHeaders.AUTHORIZATION;
     private static final String TPP_REDIRECT_PREFERRED_HEADER = "tpp-redirect-preferred";
     private static final String X_REQUEST_ID_HEADER = "x-request-id";
     private static final String PSU_ID_HEADER = "psu-id";
@@ -114,6 +117,15 @@ public class RequestProviderService {
 
     public String getTppNokRedirectURI() {
         return getHeader(Xs2aHeaderConstant.TPP_NOK_REDIRECT_URI);
+    }
+
+    public String getOAuth2Token() {
+
+        String headerValue = getHeader(AUTHORISATION_HEADER);
+
+        return StringUtils.isEmpty(headerValue)
+                   ? null
+                   : headerValue.replace("Bearer ", "");
     }
 
     private String getHeader(String headerName) {

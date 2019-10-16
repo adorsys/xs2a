@@ -34,7 +34,6 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -78,9 +77,10 @@ import static org.mockito.Mockito.*;
 public class PisScaStartAuthorisationStageTest {
     private static final String AUTHENTICATION_METHOD_ID = "sms";
     private static final String PAYMENT_ID = "123456789";
+    private static final String AUTHORISATION = "Bearer 1111111";
     private static final String PSU_ID = "Test psuId";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
-    private static final SpiContextData CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
+    private static final SpiContextData CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null, null);
     private static final SpiAvailableScaMethodsResponse MULTIPLE_SPI_SCA_METHODS = new SpiAvailableScaMethodsResponse(Arrays.asList(buildSpiSmsAuthenticationObject(false), buildSpiPushAuthenticationObject(true)));
@@ -114,12 +114,9 @@ public class PisScaStartAuthorisationStageTest {
     @Mock
     private Xs2aUpdatePaymentAfterSpiService updatePaymentAfterSpiService;
     @Mock
-    private ScaApproachResolver scaApproachResolver;
-    @Mock
     private PisCommonDecoupledService pisCommonDecoupledService;
     @Mock
     private RequestProviderService requestProviderService;
-
     @Mock
     private Xs2aUpdatePisCommonPaymentPsuDataRequest request;
     @Mock

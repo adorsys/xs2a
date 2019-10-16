@@ -56,9 +56,9 @@ import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReport
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
+import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -108,7 +108,7 @@ public class TransactionServiceTest {
     private static final SpiAccountReference SPI_ACCOUNT_REFERENCE_GLOBAL = buildSpiAccountReferenceGlobal();
     private static final AccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
     private static final SpiTransactionReport SPI_TRANSACTION_REPORT = buildSpiTransactionReport();
-    private static final SpiContextData SPI_CONTEXT_DATA = buildSpiContextData();
+    private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
     private static final BookingStatus BOOKING_STATUS = BookingStatus.BOTH;
     private static final MessageError VALIDATION_ERROR = buildMessageError();
     private static final String ENTRY_REFERENCE_FROM = "777";
@@ -666,10 +666,6 @@ public class TransactionServiceTest {
     @NotNull
     private TransactionsReportByPeriodObject buildTransactionsReportByPeriodObject() {
         return new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS);
-    }
-
-    private static SpiContextData buildSpiContextData() {
-        return new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
     }
 
     @NotNull
