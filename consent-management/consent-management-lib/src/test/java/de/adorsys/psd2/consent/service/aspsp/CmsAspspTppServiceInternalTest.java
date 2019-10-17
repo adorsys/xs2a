@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service;
+package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.TppStopListEntity;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
+import de.adorsys.psd2.consent.service.aspsp.CmsAspspTppServiceInternal;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.mapper.TppStopListMapper;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
