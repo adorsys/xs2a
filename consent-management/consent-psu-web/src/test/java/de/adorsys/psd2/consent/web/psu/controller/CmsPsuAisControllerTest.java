@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,8 +52,11 @@ public class CmsPsuAisControllerTest {
     private static final String INSTANCE_ID = "instance id";
     private static final String SCA_STATUS_RECEIVED = "RECEIVED";
     private static final String NOK_REDIRECT_URI = "http://everything_is_bad.html";
+    private static final String METHOD_ID = "SMS";
+    private static final String AUTHENTICATION_DATA = "123456";
 
     private PsuIdData psuIdData;
+    private AuthenticationDataHolder authenticationDataHolder;
 
     @InjectMocks
     private CmsPsuAisController cmsPsuAisController;
@@ -63,6 +67,7 @@ public class CmsPsuAisControllerTest {
     @Before
     public void init() {
         psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        authenticationDataHolder = new AuthenticationDataHolder(METHOD_ID, AUTHENTICATION_DATA);
     }
 
     @Test
@@ -149,14 +154,14 @@ public class CmsPsuAisControllerTest {
     @Test
     public void updateAuthorisationStatus_withValidRequest_shouldReturnOk() throws AuthorisationIsExpiredException {
         // Given
-        when(cmsPsuAisService.updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
+        when(cmsPsuAisService.updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder))
             .thenReturn(true);
 
         // When
-        ResponseEntity actualResponse = cmsPsuAisController.updateAuthorisationStatus(CONSENT_ID, SCA_STATUS_RECEIVED, AUTHORISATION_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity actualResponse = cmsPsuAisController.updateAuthorisationStatus(CONSENT_ID, SCA_STATUS_RECEIVED, AUTHORISATION_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID, authenticationDataHolder);
 
         // Then
-        verify(cmsPsuAisService).updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID);
+        verify(cmsPsuAisService).updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder);
 
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
         assertNull(actualResponse.getBody());
@@ -165,15 +170,15 @@ public class CmsPsuAisControllerTest {
     @Test
     public void updateAuthorisationStatus_withValidRequestAndLowercaseScaStatus_shouldReturnOk() throws AuthorisationIsExpiredException {
         // Given
-        when(cmsPsuAisService.updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
+        when(cmsPsuAisService.updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder))
             .thenReturn(true);
         String lowercaseScaStatus = SCA_STATUS_RECEIVED.toLowerCase();
 
         // When
-        ResponseEntity actualResponse = cmsPsuAisController.updateAuthorisationStatus(CONSENT_ID, lowercaseScaStatus, AUTHORISATION_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity actualResponse = cmsPsuAisController.updateAuthorisationStatus(CONSENT_ID, lowercaseScaStatus, AUTHORISATION_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID, authenticationDataHolder);
 
         // Then
-        verify(cmsPsuAisService).updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID);
+        verify(cmsPsuAisService).updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder);
 
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
         assertNull(actualResponse.getBody());
@@ -182,14 +187,14 @@ public class CmsPsuAisControllerTest {
     @Test
     public void updateAuthorisationStatus_withFalseFromService_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
         // Given
-        when(cmsPsuAisService.updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
+        when(cmsPsuAisService.updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder))
             .thenReturn(false);
 
         // When
-        ResponseEntity actualResponse = cmsPsuAisController.updateAuthorisationStatus(CONSENT_ID, SCA_STATUS_RECEIVED, AUTHORISATION_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity actualResponse = cmsPsuAisController.updateAuthorisationStatus(CONSENT_ID, SCA_STATUS_RECEIVED, AUTHORISATION_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID, authenticationDataHolder);
 
         // Then
-        verify(cmsPsuAisService).updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID);
+        verify(cmsPsuAisService).updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder);
 
         assertEquals(HttpStatus.BAD_REQUEST, actualResponse.getStatusCode());
         assertNull(actualResponse.getBody());
@@ -201,10 +206,10 @@ public class CmsPsuAisControllerTest {
         String invalidScaStatus = "invalid SCA status";
 
         // When
-        ResponseEntity actualResponse = cmsPsuAisController.updateAuthorisationStatus(CONSENT_ID, invalidScaStatus, AUTHORISATION_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity actualResponse = cmsPsuAisController.updateAuthorisationStatus(CONSENT_ID, invalidScaStatus, AUTHORISATION_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID, authenticationDataHolder);
 
         // Then
-        verify(cmsPsuAisService, never()).updateAuthorisationStatus(any(), anyString(), anyString(), any(), anyString());
+        verify(cmsPsuAisService, never()).updateAuthorisationStatus(any(), anyString(), anyString(), any(), anyString(), any());
 
         assertEquals(HttpStatus.BAD_REQUEST, actualResponse.getStatusCode());
         assertNull(actualResponse.getBody());
@@ -213,14 +218,14 @@ public class CmsPsuAisControllerTest {
     @Test
     public void updateAuthorisationStatus_withExpiredAuthorisation_shouldReturnRequestTimeout() throws AuthorisationIsExpiredException {
         // Given
-        when(cmsPsuAisService.updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
+        when(cmsPsuAisService.updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder))
             .thenThrow(new AuthorisationIsExpiredException(NOK_REDIRECT_URI));
 
         // When
-        ResponseEntity<CmsAisConsentResponse> actualResponse = cmsPsuAisController.updateAuthorisationStatus(CONSENT_ID, SCA_STATUS_RECEIVED, AUTHORISATION_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity<CmsAisConsentResponse> actualResponse = cmsPsuAisController.updateAuthorisationStatus(CONSENT_ID, SCA_STATUS_RECEIVED, AUTHORISATION_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID, authenticationDataHolder);
 
         // Then
-        verify(cmsPsuAisService).updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID);
+        verify(cmsPsuAisService).updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder);
 
         assertEquals(HttpStatus.REQUEST_TIMEOUT, actualResponse.getStatusCode());
         CmsAisConsentResponse body = actualResponse.getBody();

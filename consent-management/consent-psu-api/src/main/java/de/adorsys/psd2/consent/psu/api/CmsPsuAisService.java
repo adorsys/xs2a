@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,14 +66,15 @@ public interface CmsPsuAisService {
     /**
      * Updates a Status of AIS Consent Authorisation by its ID and PSU ID
      *
-     * @param psuIdData       PSU credentials data
-     * @param consentId       ID of Consent
-     * @param authorisationId ID of Authorisation process
-     * @param status          Status of Authorisation to be set
-     * @param instanceId      optional ID of particular service instance
+     * @param psuIdData          PSU credentials data
+     * @param consentId          ID of Consent
+     * @param authorisationId    ID of Authorisation process
+     * @param status             Status of Authorisation to be set
+     * @param instanceId         optional ID of particular service instance
+     * @param authenticationDataHolder optional parameter for online-banking, chosen method ID and authentication data
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      */
-    boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId) throws AuthorisationIsExpiredException;
+    boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId, AuthenticationDataHolder authenticationDataHolder) throws AuthorisationIsExpiredException;
 
 
     /**
@@ -82,10 +84,10 @@ public interface CmsPsuAisService {
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
-     *
      * @deprecated since 4.2, use {@link #confirmConsent(String, String)} instead
      */
-    @Deprecated // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
+    @Deprecated
+    // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
     boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**
@@ -104,10 +106,10 @@ public interface CmsPsuAisService {
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
-     *
      * @deprecated since 4.2, use {@link #rejectConsent(String, String)} instead
      */
-    @Deprecated // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
+    @Deprecated
+    // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
     boolean rejectConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**
@@ -136,10 +138,10 @@ public interface CmsPsuAisService {
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and revoked. <code>false</code> otherwise.
-     *
      * @deprecated since 4.2, use {@link #revokeConsent(String, String)} instead
      */
-    @Deprecated // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
+    @Deprecated
+    // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
     boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**
@@ -187,11 +189,10 @@ public interface CmsPsuAisService {
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
-     *
      * @deprecated since 5.2, use {@link #authorisePartiallyConsent(String, String)} instead
-     *
      */
-    @Deprecated // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
+    @Deprecated
+    // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
     boolean authorisePartiallyConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**

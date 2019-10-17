@@ -45,6 +45,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
@@ -70,7 +71,7 @@ import static org.mockito.Mockito.*;
 public class CmsPsuAisServiceTest {
 
     @InjectMocks
-    CmsPsuAisServiceInternal cmsPsuAisService;
+    private CmsPsuAisServiceInternal cmsPsuAisService;
 
     @Mock
     private AisConsentRepository aisConsentRepository;
@@ -110,6 +111,8 @@ public class CmsPsuAisServiceTest {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
     private static final String CORRECT_PSU_ID = "987654321";
     private static final String WRONG_PSU_ID = "wrong";
+    private static final String METHOD_ID = "SMS";
+    private static final String AUTHENTICATION_DATA = "123456";
 
     private AisConsent aisConsent;
     private List<AisConsent> aisConsents;
@@ -119,6 +122,7 @@ public class CmsPsuAisServiceTest {
     private PsuIdData psuIdDataWrong;
     private PsuData psuData;
     private JsonReader jsonReader;
+    private AuthenticationDataHolder authenticationDataHolder;
 
     @Before
     public void setUp() {
@@ -131,6 +135,7 @@ public class CmsPsuAisServiceTest {
         aisAccountConsent = buildSpiAccountConsent();
         aisConsentAuthorization = buildAisConsentAuthorisation();
         aisConsents = buildAisConsents();
+        authenticationDataHolder = new AuthenticationDataHolder(METHOD_ID, AUTHENTICATION_DATA);
 
         when(aisConsentMapper.mapToCmsAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
         when(aisConsentAuthorisationRepository.save(aisConsentAuthorization)).thenReturn(aisConsentAuthorization);
@@ -223,7 +228,7 @@ public class CmsPsuAisServiceTest {
         when(aisConsentAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsentAuthorization));
 
         // Then
-        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID, authenticationDataHolder);
 
         // Then
         assertTrue(updateAuthorisationStatus);
@@ -231,12 +236,13 @@ public class CmsPsuAisServiceTest {
             .byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
         verify(aisConsentAuthorizationSpecification, times(1))
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        verify(aisConsentAuthorisationRepository, times(1)).save(aisConsentAuthorization);
     }
 
     @Test
     public void updateAuthorisationStatusFail() throws AuthorisationIsExpiredException {
         // When
-        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID_NOT_EXIST, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID_NOT_EXIST, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID, authenticationDataHolder);
 
         // Then
         assertFalse(updateAuthorisationStatus);
@@ -407,7 +413,7 @@ public class CmsPsuAisServiceTest {
     @Test
     public void updateAuthorisationStatus_FinalisedStatus_Fail() throws AuthorisationIsExpiredException {
         // When
-        boolean result = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, FINALISED_AUTHORISATION_ID, ScaStatus.SCAMETHODSELECTED, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean result = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, FINALISED_AUTHORISATION_ID, ScaStatus.SCAMETHODSELECTED, DEFAULT_SERVICE_INSTANCE_ID, authenticationDataHolder);
 
         // Then
         assertFalse(result);
@@ -723,6 +729,8 @@ public class CmsPsuAisServiceTest {
         aisConsentAuthorization.setScaStatus(ScaStatus.RECEIVED);
         aisConsentAuthorization.setConsent(buildConsent());
         aisConsentAuthorization.setAuthorisationExpirationTimestamp(OffsetDateTime.now().plusDays(1));
+        aisConsentAuthorization.setScaAuthenticationData(AUTHENTICATION_DATA);
+        aisConsentAuthorization.setAuthenticationMethodId(METHOD_ID);
         return aisConsentAuthorization;
     }
 

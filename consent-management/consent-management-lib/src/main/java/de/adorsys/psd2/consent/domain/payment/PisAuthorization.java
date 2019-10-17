@@ -68,8 +68,13 @@ public class PisAuthorization extends InstanceDependableEntity {
     @JoinColumn(name = "payment_id", nullable = false)
     private PisCommonPaymentData paymentData;
 
-    @Column(name = "tan")
+    // Will be removed in 5.6, please use new scaAuthenticationData field instead of this one.
+    // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1076
+    @Transient
     private String tan;
+
+    @Column(name = "sca_authentication_data")
+    private String scaAuthenticationData;
 
     @Column(name = "redirect_uri")
     private String tppOkRedirectUri;
