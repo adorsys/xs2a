@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service;
+package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
@@ -110,9 +110,12 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         Specification<PiisConsentEntity> specification = piisConsentEntitySpecification.byPsuIdDataAndAuthorisationNumberAndAccountReference(psuIdData, request.getTppAuthorisationNumber(), accountReference);
 
         List<PiisConsentEntity> piisConsentEntities = piisConsentRepository.findAll(specification);
-        piisConsentEntities.forEach(entity -> changeStatusAndLastActionDate(entity, REVOKED_BY_PSU));
+        List<PiisConsentEntity> consentsToRevoke = piisConsentEntities.stream()
+                                                       .filter(c -> !c.getConsentStatus().isFinalisedStatus())
+                                                       .collect(Collectors.toList());
+        consentsToRevoke.forEach(entity -> changeStatusAndLastActionDate(entity, REVOKED_BY_PSU));
 
-        piisConsentRepository.saveAll(piisConsentEntities);
+        piisConsentRepository.saveAll(consentsToRevoke);
     }
 
     private void changeStatusAndLastActionDate(PiisConsentEntity piisConsentEntity, ConsentStatus consentStatus) {
