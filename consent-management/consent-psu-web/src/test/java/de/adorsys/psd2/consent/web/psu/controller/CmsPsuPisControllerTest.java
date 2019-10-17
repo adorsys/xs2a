@@ -25,7 +25,9 @@ import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -45,6 +47,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmsPsuPisControllerTest {
+
     private static final String PAYMENT_ID = "payment id";
     private static final String AUTHORISATION_ID = "authorisation id";
     private static final String PSU_ID = "psu id";
@@ -56,6 +59,10 @@ public class CmsPsuPisControllerTest {
     private static final String TPP_NOK_REDIRECT_URI = "tpp nok redirect uri";
     private static final String REDIRECT_ID = "redirect_id";
     private final PsuIdData PSU_ID_DATA = buildPsuIdData();
+    private static final String METHOD_ID = "SMS";
+    private static final String AUTHENTICATION_DATA = "123456";
+
+    private AuthenticationDataHolder authenticationDataHolder;
 
     @InjectMocks
     private CmsPsuPisController cmsPsuPisController;
@@ -63,18 +70,23 @@ public class CmsPsuPisControllerTest {
     @Mock
     private CmsPsuPisService cmsPsuPisService;
 
+    @Before
+    public void init() {
+        authenticationDataHolder = new AuthenticationDataHolder(METHOD_ID, AUTHENTICATION_DATA);
+    }
+
     @Test
     public void updateAuthorisationStatus_withValidRequest_shouldReturnOk() throws AuthorisationIsExpiredException {
         // Given
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
-        when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
+        when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder))
             .thenReturn(true);
 
         // When
-        ResponseEntity<Void> actualResponse = cmsPsuPisController.updateAuthorisationStatus(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PAYMENT_ID, AUTHORISATION_ID, SCA_STATUS_RECEIVED, INSTANCE_ID);
+        ResponseEntity<Void> actualResponse = cmsPsuPisController.updateAuthorisationStatus(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PAYMENT_ID, AUTHORISATION_ID, SCA_STATUS_RECEIVED, INSTANCE_ID, authenticationDataHolder);
 
         // Then
-        verify(cmsPsuPisService).updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID);
+        verify(cmsPsuPisService).updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder);
 
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
     }
@@ -83,15 +95,15 @@ public class CmsPsuPisControllerTest {
     public void updateAuthorisationStatus_withValidRequestAndLowercaseScaStatus_shouldReturnOk() throws AuthorisationIsExpiredException {
         // Given
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
-        when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
+        when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder))
             .thenReturn(true);
         String lowercaseScaStatus = SCA_STATUS_RECEIVED.toLowerCase();
 
         // When
-        ResponseEntity<Void> actualResponse = cmsPsuPisController.updateAuthorisationStatus(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PAYMENT_ID, AUTHORISATION_ID, lowercaseScaStatus, INSTANCE_ID);
+        ResponseEntity<Void> actualResponse = cmsPsuPisController.updateAuthorisationStatus(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PAYMENT_ID, AUTHORISATION_ID, lowercaseScaStatus, INSTANCE_ID, authenticationDataHolder);
 
         // Then
-        verify(cmsPsuPisService).updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID);
+        verify(cmsPsuPisService).updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder);
 
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
     }
@@ -100,14 +112,14 @@ public class CmsPsuPisControllerTest {
     public void updateAuthorisationStatus_withFalseFromService_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
         // Given
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
-        when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
+        when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder))
             .thenReturn(false);
 
         // When
-        ResponseEntity<Void> actualResponse = cmsPsuPisController.updateAuthorisationStatus(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PAYMENT_ID, AUTHORISATION_ID, SCA_STATUS_RECEIVED, INSTANCE_ID);
+        ResponseEntity<Void> actualResponse = cmsPsuPisController.updateAuthorisationStatus(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PAYMENT_ID, AUTHORISATION_ID, SCA_STATUS_RECEIVED, INSTANCE_ID, authenticationDataHolder);
 
         // Then
-        verify(cmsPsuPisService).updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID);
+        verify(cmsPsuPisService).updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder);
 
         assertEquals(HttpStatus.BAD_REQUEST, actualResponse.getStatusCode());
     }
@@ -116,14 +128,14 @@ public class CmsPsuPisControllerTest {
     public void updateAuthorisationStatus_AuthorisationIsExpired_requestTimeout() throws AuthorisationIsExpiredException {
         // Given
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
-        when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
+        when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder))
             .thenThrow(new AuthorisationIsExpiredException(TPP_NOK_REDIRECT_URI));
 
         // When
-        ResponseEntity<CmsPaymentResponse> actualResponse = cmsPsuPisController.updateAuthorisationStatus(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PAYMENT_ID, AUTHORISATION_ID, SCA_STATUS_RECEIVED, INSTANCE_ID);
+        ResponseEntity<CmsPaymentResponse> actualResponse = cmsPsuPisController.updateAuthorisationStatus(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PAYMENT_ID, AUTHORISATION_ID, SCA_STATUS_RECEIVED, INSTANCE_ID, authenticationDataHolder);
 
         // Then
-        verify(cmsPsuPisService, times(1)).updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID);
+        verify(cmsPsuPisService, times(1)).updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder);
         assertEquals(HttpStatus.REQUEST_TIMEOUT, actualResponse.getStatusCode());
         assertEquals(TPP_NOK_REDIRECT_URI, actualResponse.getBody().getTppNokRedirectUri());
     }
@@ -134,10 +146,10 @@ public class CmsPsuPisControllerTest {
         String invalidScaStatus = "invalid SCA status";
 
         // When
-        ResponseEntity<Void> actualResponse = cmsPsuPisController.updateAuthorisationStatus(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PAYMENT_ID, AUTHORISATION_ID, invalidScaStatus, INSTANCE_ID);
+        ResponseEntity<Void> actualResponse = cmsPsuPisController.updateAuthorisationStatus(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PAYMENT_ID, AUTHORISATION_ID, invalidScaStatus, INSTANCE_ID, authenticationDataHolder);
 
         // Then
-        verify(cmsPsuPisService, never()).updateAuthorisationStatus(any(), anyString(), anyString(), any(), anyString());
+        verify(cmsPsuPisService, never()).updateAuthorisationStatus(any(), anyString(), anyString(), any(), anyString(), any());
 
         assertEquals(HttpStatus.BAD_REQUEST, actualResponse.getStatusCode());
         assertNull(actualResponse.getBody());

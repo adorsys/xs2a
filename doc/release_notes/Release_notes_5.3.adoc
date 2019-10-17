@@ -4,6 +4,7 @@
 
 * Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
 * Provide header Authorization in ContextData
+* Feature: Extend CMS to store SCA method and TAN for Redirect approach
 
 == Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
 
@@ -14,3 +15,19 @@ consent which was initiated with PSU-ID header, you’ll get scaStatus psuIdenti
 
 From now on, there is a possibility to use header `Authorization` in XS2A requests, which stores the OAuth2 bearer token.
 This token passes the SPI level inside the SpiContextData object.
+
+== Feature: Extend CMS to store SCA method and TAN for Redirect approach
+
+From now on, there is a possibility for online banking to send optional SCA method and optional authentication data (e.g. TAN) in CMS-PSU-API update authorisation status request (`PUT /psu-api/v1/payment/{payment-id}/authorisation/{authorisation-id}/status/{status}`
+for payments and `PUT /psu-api/v1/ais/consent/{consent-id}/authorisation/{authorisation-id}/status/{status}` for AIS consents).
+Data should be sent in JSON format:
+
+[source,json]
+----
+{
+	"authenticationMethodId": "SMS",
+	"authenticationData": "123456"
+}
+----
+
+Both fields are stored in CMS in 'ais_consent_authorization' and `pis_consent_authorization` tables.
