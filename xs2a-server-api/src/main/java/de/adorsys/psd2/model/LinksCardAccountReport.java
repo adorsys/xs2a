@@ -16,23 +16,20 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.HrefType;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * LinksCardAccountReport
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-16T11:06:46.430+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class LinksCardAccountReport extends HashMap<String, HrefType>  {
   @JsonProperty("cardAccount")
@@ -175,15 +172,13 @@ public class LinksCardAccountReport extends HashMap<String, HrefType>  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
     LinksCardAccountReport _linksCardAccountReport = (LinksCardAccountReport) o;
     return Objects.equals(this.cardAccount, _linksCardAccountReport.cardAccount) &&
         Objects.equals(this.first, _linksCardAccountReport.first) &&
         Objects.equals(this.next, _linksCardAccountReport.next) &&
         Objects.equals(this.previous, _linksCardAccountReport.previous) &&
-        Objects.equals(this.last, _linksCardAccountReport.last);
+        Objects.equals(this.last, _linksCardAccountReport.last) &&
+        super.equals(o);
   }
 
   @Override

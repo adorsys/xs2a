@@ -29,9 +29,9 @@ import java.util.Objects;
  * TppMessage406PIS
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
-public class TppMessage406PIS {
+public class TppMessage406PIS   {
   @JsonProperty("category")
   private TppMessageCategory category = null;
 
@@ -68,7 +68,7 @@ public class TppMessage406PIS {
     this.category = category;
   }
 
-    public TppMessage406PIS code(String code) {
+  public TppMessage406PIS code(String code) {
     this.code = code;
     return this;
   }
@@ -87,7 +87,7 @@ public class TppMessage406PIS {
     return code;
   }
 
-    public void setCode(String code) {
+  public void setCode(String code) {
     this.code = code;
   }
 

@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-19T17:12:36.986777+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class PaymentInitiationWithStatusResponse   {
   @JsonProperty("endToEndIdentification")

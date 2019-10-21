@@ -29,11 +29,11 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Requested access services for a consent. 
+ * Requested access services for a consent.
  */
 @ApiModel(description = "Requested access services for a consent. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-19T11:57:34.922302+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class AccountAccess   {
   @JsonProperty("accounts")
@@ -49,7 +49,7 @@ public class AccountAccess   {
   private List<AccountReference> transactions = null;
 
   /**
-   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
+   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted.
    */
   public enum AvailableAccountsEnum {
     ALLACCOUNTS("allAccounts");
@@ -81,7 +81,7 @@ public class AccountAccess   {
   private AvailableAccountsEnum availableAccounts = null;
 
   /**
-   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
+   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted.
    */
   public enum AvailableAccountsWithBalanceEnum {
     ALLACCOUNTS("allAccounts");
@@ -113,7 +113,7 @@ public class AccountAccess   {
   private AvailableAccountsWithBalanceEnum availableAccountsWithBalance = null;
 
   /**
-   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
+   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted.
    */
   public enum AllPsd2Enum {
     ALLACCOUNTS("allAccounts");
@@ -161,7 +161,7 @@ public class AccountAccess   {
   }
 
   /**
-   * Is asking for detailed account information.  If the array is empty, the TPP is asking for an accessible account list. This may be restricted in a PSU/ASPSP authorization dialogue. If the array is empty, also the arrays for balances or transactions shall be empty, if used. 
+   * Is asking for detailed account information.  If the array is empty, the TPP is asking for an accessible account list. This may be restricted in a PSU/ASPSP authorization dialogue. If the array is empty, also the arrays for balances or transactions shall be empty, if used.
    * @return accounts
   **/
   @ApiModelProperty(value = "Is asking for detailed account information.  If the array is empty, the TPP is asking for an accessible account list. This may be restricted in a PSU/ASPSP authorization dialogue. If the array is empty, also the arrays for balances or transactions shall be empty, if used. ")
@@ -192,7 +192,7 @@ public class AccountAccess   {
   }
 
   /**
-   * Is asking for balances of the addressed accounts.  If the array is empty, the TPP is asking for the balances of all accessible account lists. This may be restricted in a PSU/ASPSP authorization dialogue. If the array is empty, also the arrays for accounts or transactions shall be empty, if used. 
+   * Is asking for balances of the addressed accounts.  If the array is empty, the TPP is asking for the balances of all accessible account lists. This may be restricted in a PSU/ASPSP authorization dialogue. If the array is empty, also the arrays for accounts or transactions shall be empty, if used.
    * @return balances
   **/
   @ApiModelProperty(value = "Is asking for balances of the addressed accounts.  If the array is empty, the TPP is asking for the balances of all accessible account lists. This may be restricted in a PSU/ASPSP authorization dialogue. If the array is empty, also the arrays for accounts or transactions shall be empty, if used. ")
@@ -223,7 +223,7 @@ public class AccountAccess   {
   }
 
   /**
-   * Is asking for transactions of the addressed accounts.  If the array is empty, the TPP is asking for the transactions of all accessible account lists. This may be restricted in a PSU/ASPSP authorization dialogue. If the array is empty, also the arrays for accounts or balances shall be empty, if used. 
+   * Is asking for transactions of the addressed accounts.  If the array is empty, the TPP is asking for the transactions of all accessible account lists. This may be restricted in a PSU/ASPSP authorization dialogue. If the array is empty, also the arrays for accounts or balances shall be empty, if used.
    * @return transactions
   **/
   @ApiModelProperty(value = "Is asking for transactions of the addressed accounts.  If the array is empty, the TPP is asking for the transactions of all accessible account lists. This may be restricted in a PSU/ASPSP authorization dialogue. If the array is empty, also the arrays for accounts or balances shall be empty, if used. ")
@@ -246,7 +246,7 @@ public class AccountAccess   {
   }
 
   /**
-   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
+   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted.
    * @return availableAccounts
   **/
   @ApiModelProperty(value = "Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. ")
@@ -268,7 +268,7 @@ public class AccountAccess   {
   }
 
   /**
-   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
+   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted.
    * @return availableAccountsWithBalance
   **/
   @ApiModelProperty(value = "Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. ")
@@ -290,7 +290,7 @@ public class AccountAccess   {
   }
 
   /**
-   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
+   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted.
    * @return allPsd2
   **/
   @ApiModelProperty(value = "Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. ")
@@ -357,7 +357,7 @@ public class AccountAccess   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class AccountAccess {\n");
-    
+
     sb.append("    accounts: ").append(toIndentedString(accounts)).append("\n");
     sb.append("    balances: ").append(toIndentedString(balances)).append("\n");
     sb.append("    transactions: ").append(toIndentedString(transactions)).append("\n");

@@ -32,9 +32,9 @@ import java.util.Objects;
  */
 @ApiModel(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 406. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
-public class Error406NGPIS {
+public class Error406NGPIS   {
   @JsonProperty("tppMessages")
   @Valid
   private List<TppMessage406PIS> tppMessages = null;

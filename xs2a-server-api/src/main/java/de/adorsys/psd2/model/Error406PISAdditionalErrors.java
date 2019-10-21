@@ -29,9 +29,9 @@ import java.util.Objects;
  */
 @ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
-public class Error406PISAdditionalErrors {
+public class Error406PISAdditionalErrors   {
   @JsonProperty("title")
   private String title = null;
 
@@ -85,7 +85,7 @@ public class Error406PISAdditionalErrors {
     this.detail = detail;
   }
 
-    public Error406PISAdditionalErrors code(String code) {
+  public Error406PISAdditionalErrors code(String code) {
     this.code = code;
     return this;
   }
@@ -103,7 +103,7 @@ public class Error406PISAdditionalErrors {
     return code;
   }
 
-    public void setCode(String code) {
+  public void setCode(String code) {
     this.code = code;
   }
 

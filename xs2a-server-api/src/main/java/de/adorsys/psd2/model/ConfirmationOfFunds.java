@@ -1,22 +1,37 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.AccountReference;
-import de.adorsys.psd2.model.Amount;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Objects;
 
 /**
- * JSON Request body for the \&quot;Confirmation of Funds Service\&quot;  &lt;table&gt;  &lt;tr&gt;    &lt;td&gt;cardNumber&lt;/td&gt;    &lt;td&gt;String &lt;/td&gt;   &lt;td&gt;Optional&lt;/td&gt;   &lt;td&gt;Card Number of the card issued by the PIISP. Should be delivered if available.&lt;/td&gt; &lt;/tr&gt;  &lt;tr&gt;   &lt;td&gt;account&lt;/td&gt;   &lt;td&gt; Account Reference&lt;/td&gt;   &lt;td&gt;Mandatory&lt;/td&gt;   &lt;td&gt;PSU&#39;s account number.&lt;/td&gt; &lt;/tr&gt;  &lt;tr&gt;    &lt;td&gt;payee&lt;/td&gt;   &lt;td&gt;Max70Text&lt;/td&gt;   &lt;td&gt;Optional&lt;/td&gt;   &lt;td&gt;The merchant where the card is accepted as an information to the PSU.&lt;/td&gt; &lt;/tr&gt;  &lt;tr&gt;   &lt;td&gt;instructedAmount&lt;/td&gt;   &lt;td&gt;Amount&lt;/td&gt;   &lt;td&gt;Mandatory&lt;/td&gt;   &lt;td&gt;Transaction amount to be checked within the funds check mechanism.&lt;/td&gt; &lt;/tr&gt;  &lt;/table&gt; 
+ * JSON Request body for the \&quot;Confirmation of Funds Service\&quot;.  &lt;table&gt; &lt;tr&gt;   &lt;td&gt;cardNumber&lt;/td&gt;   &lt;td&gt;String &lt;/td&gt;   &lt;td&gt;Optional&lt;/td&gt;   &lt;td&gt;Card Number of the card issued by the PIISP. Should be delivered if available.&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;   &lt;td&gt;account&lt;/td&gt;   &lt;td&gt; Account Reference&lt;/td&gt;   &lt;td&gt;Mandatory&lt;/td&gt;   &lt;td&gt;PSU&#39;s account number.&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;   &lt;td&gt;payee&lt;/td&gt;   &lt;td&gt;Max70Text&lt;/td&gt;   &lt;td&gt;Optional&lt;/td&gt;   &lt;td&gt;The merchant where the card is accepted as an information to the PSU.&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;   &lt;td&gt;instructedAmount&lt;/td&gt;   &lt;td&gt;Amount&lt;/td&gt;   &lt;td&gt;Mandatory&lt;/td&gt;   &lt;td&gt;Transaction amount to be checked within the funds check mechanism.&lt;/td&gt; &lt;/tr&gt; &lt;/table&gt;
  */
-@ApiModel(description = "JSON Request body for the \"Confirmation of Funds Service\"  <table>  <tr>    <td>cardNumber</td>    <td>String </td>   <td>Optional</td>   <td>Card Number of the card issued by the PIISP. Should be delivered if available.</td> </tr>  <tr>   <td>account</td>   <td> Account Reference</td>   <td>Mandatory</td>   <td>PSU's account number.</td> </tr>  <tr>    <td>payee</td>   <td>Max70Text</td>   <td>Optional</td>   <td>The merchant where the card is accepted as an information to the PSU.</td> </tr>  <tr>   <td>instructedAmount</td>   <td>Amount</td>   <td>Mandatory</td>   <td>Transaction amount to be checked within the funds check mechanism.</td> </tr>  </table> ")
+@ApiModel(description = "JSON Request body for the \"Confirmation of Funds Service\".  <table> <tr>   <td>cardNumber</td>   <td>String </td>   <td>Optional</td>   <td>Card Number of the card issued by the PIISP. Should be delivered if available.</td> </tr> <tr>   <td>account</td>   <td> Account Reference</td>   <td>Mandatory</td>   <td>PSU's account number.</td> </tr> <tr>   <td>payee</td>   <td>Max70Text</td>   <td>Optional</td>   <td>The merchant where the card is accepted as an information to the PSU.</td> </tr> <tr>   <td>instructedAmount</td>   <td>Amount</td>   <td>Mandatory</td>   <td>Transaction amount to be checked within the funds check mechanism.</td> </tr> </table> ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class ConfirmationOfFunds   {
   @JsonProperty("cardNumber")
@@ -37,12 +52,12 @@ public class ConfirmationOfFunds   {
   }
 
   /**
-   * Card Number of the card issued by the PIISP.  Should be delivered if available. 
+   * Card Number of the card issued by the PIISP. Should be delivered if available.
    * @return cardNumber
   **/
-  @ApiModelProperty(value = "Card Number of the card issued by the PIISP.  Should be delivered if available. ")
+  @ApiModelProperty(value = "Card Number of the card issued by the PIISP. Should be delivered if available. ")
 
-@Size(max=35) 
+@Size(max=35)
 
   @JsonProperty("cardNumber")
   public String getCardNumber() {
@@ -83,12 +98,12 @@ public class ConfirmationOfFunds   {
   }
 
   /**
-   * Name payee
+   * Name payee.
    * @return payee
   **/
-  @ApiModelProperty(value = "Name payee")
+  @ApiModelProperty(value = "Name payee.")
 
-@Size(max=70) 
+@Size(max=70)
 
   @JsonProperty("payee")
   public String getPayee() {
@@ -125,7 +140,7 @@ public class ConfirmationOfFunds   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -148,7 +163,7 @@ public class ConfirmationOfFunds   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ConfirmationOfFunds {\n");
-    
+
     sb.append("    cardNumber: ").append(toIndentedString(cardNumber)).append("\n");
     sb.append("    account: ").append(toIndentedString(account)).append("\n");
     sb.append("    payee: ").append(toIndentedString(payee)).append("\n");
@@ -161,7 +176,7 @@ public class ConfirmationOfFunds   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

@@ -16,21 +16,18 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
-import de.adorsys.psd2.model.ReportExchangeRate;
 import io.swagger.annotations.ApiModel;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
- * Array of exchange rates
+ * Array of exchange rates.
  */
-@ApiModel(description = "Array of exchange rates")
+@ApiModel(description = "Array of exchange rates.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-16T11:06:46.430+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class ReportExchangeRateList extends ArrayList<ReportExchangeRate>  {
 
@@ -42,10 +39,6 @@ public class ReportExchangeRateList extends ArrayList<ReportExchangeRate>  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
-
     return true;
   }
 

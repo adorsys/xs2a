@@ -1,20 +1,35 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
- * Content of the body of a Transaction Authorisation Request 
+ * Content of the body of a Transaction authorisation request.
  */
-@ApiModel(description = "Content of the body of a Transaction Authorisation Request ")
+@ApiModel(description = "Content of the body of a Transaction authorisation request. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class TransactionAuthorisation   {
   @JsonProperty("scaAuthenticationData")
@@ -45,7 +60,7 @@ public class TransactionAuthorisation   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -65,7 +80,7 @@ public class TransactionAuthorisation   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class TransactionAuthorisation {\n");
-    
+
     sb.append("    scaAuthenticationData: ").append(toIndentedString(scaAuthenticationData)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -75,7 +90,7 @@ public class TransactionAuthorisation   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }
