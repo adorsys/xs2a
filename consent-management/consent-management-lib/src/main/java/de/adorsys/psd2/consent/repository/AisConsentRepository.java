@@ -50,8 +50,7 @@ public interface AisConsentRepository extends CrudRepository<AisConsent, Long>, 
 
     @Query(
         "select distinct c from ais_consent c " +
-            "inner join ais_consent_usage u " +
-            "on c.id = u.consent.id " +
+            "join c.usages u " +
             "where c.recurringIndicator = false " +
             "and c.consentStatus in :consentStatuses " +
             "and u.usageDate < :currentDate"
