@@ -169,6 +169,18 @@ public class Xs2aPisCommonPaymentServiceTest {
         assertThat(actualResponse).isFalse();
     }
 
+    @Test
+    public void updateMultilevelSca() {
+        // Given
+        when(pisCommonPaymentServiceEncrypted.updateMultilevelSca(PAYMENT_ID, true)).thenReturn(true);
+
+        // When
+        boolean actualResponse = xs2aPisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true);
+
+        // Then
+        assertThat(actualResponse).isTrue();
+    }
+
     private static TppInfo buildTppInfo() {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber("registrationNumber");

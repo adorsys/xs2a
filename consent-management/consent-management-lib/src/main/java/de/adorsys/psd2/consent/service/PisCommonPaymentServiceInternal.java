@@ -64,6 +64,7 @@ import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.TooManyMethods")
 public class PisCommonPaymentServiceInternal implements PisCommonPaymentService {
     private final PisCommonPaymentMapper pisCommonPaymentMapper;
     private final PsuDataMapper psuDataMapper;
@@ -239,6 +240,28 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         Optional<PisCommonPaymentData> pisCommonPaymentById = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
         pisCommonPaymentById
             .ifPresent(commonPayment -> savePaymentData(commonPayment, request));
+    }
+
+    /**
+     * Updates multilevelScaRequired and stores changes into database
+     *
+     * @param paymentId Payment ID
+     * @param multilevelScaRequired new value for boolean multilevel sca required
+     */
+    @Override
+    @Transactional
+    public boolean updateMultilevelSca(String paymentId, boolean multilevelScaRequired) {
+        Optional<PisCommonPaymentData> pisCommonPaymentDataOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
+        if (!pisCommonPaymentDataOptional.isPresent()) {
+            log.info("Payment ID: [{}]. Update multilevel SCA required status failed, because payment is not found",
+                     paymentId);
+            return false;
+        }
+        PisCommonPaymentData payment = pisCommonPaymentDataOptional.get();
+        payment.setMultilevelScaRequired(multilevelScaRequired);
+        pisCommonPaymentDataRepository.save(payment);
+
+        return true;
     }
 
     /**
