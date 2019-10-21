@@ -330,6 +330,19 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
         verify(pisCommonPaymentService, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID), eq(PaymentAuthorisationType.CREATED));
     }
 
+    @Test
+    public void updateMultilevelSca_True() {
+        // Given
+        when(pisCommonPaymentService.updateMultilevelSca(DECRYPTED_PAYMENT_ID, true)).thenReturn(true);
+
+        // When
+        boolean actualResponse = pisCommonPaymentServiceInternalEncrypted.updateMultilevelSca(ENCRYPTED_PAYMENT_ID, true);
+
+        // Then
+        assertTrue(actualResponse);
+        verify(pisCommonPaymentService, times(1)).updateMultilevelSca(DECRYPTED_PAYMENT_ID, true);
+    }
+
     private PisPaymentInfo buildPisPaymentInfoRequest() {
         return new PisPaymentInfo();
     }

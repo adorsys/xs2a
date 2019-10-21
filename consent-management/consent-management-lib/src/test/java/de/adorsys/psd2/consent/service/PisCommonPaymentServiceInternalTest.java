@@ -437,6 +437,31 @@ public class PisCommonPaymentServiceInternalTest {
         verify(pisAuthorisationRepository, times(1)).findByExternalIdAndAuthorizationType(eq(AUTHORISATION_ID), eq(PaymentAuthorisationType.CREATED));
     }
 
+    @Test
+    public void updateMultilevelSca_ShouldReturnTrue() {
+        // Given
+        when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
+        when(pisCommonPaymentDataRepository.save(pisCommonPaymentData)).thenReturn(pisCommonPaymentData);
+
+        // When
+        boolean actualResponse = pisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true);
+
+        // Then
+        assertTrue(actualResponse);
+    }
+
+    @Test
+    public void updateMultilevelSca_ShouldReturnFalse() {
+        // Given
+        when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.empty());
+
+        // When
+        boolean actualResponse = pisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true);
+
+        // Then
+        assertFalse(actualResponse);
+    }
+
     @NotNull
     private AspspSettings getAspspSettings() {
         return jsonReader.getObjectFromFile("json/AspspSetting.json", AspspSettings.class);

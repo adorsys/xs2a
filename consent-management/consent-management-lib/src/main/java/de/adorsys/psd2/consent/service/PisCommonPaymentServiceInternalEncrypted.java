@@ -117,6 +117,13 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     }
 
     @Override
+    @Transactional
+    public boolean updateMultilevelSca(String paymentId, boolean multilevelScaRequired) {
+        Optional<String> decryptedId = securityDataService.decryptId(paymentId);
+        return decryptedId.filter(id -> pisCommonPaymentService.updateMultilevelSca(id, multilevelScaRequired)).isPresent();
+    }
+
+    @Override
     public Optional<GetPisAuthorisationResponse> getPisAuthorisationById(String authorisationId) {
         return pisCommonPaymentService.getPisAuthorisationById(authorisationId);
     }

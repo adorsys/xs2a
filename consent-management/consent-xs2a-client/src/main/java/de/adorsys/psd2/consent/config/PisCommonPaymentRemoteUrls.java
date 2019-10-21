@@ -204,4 +204,14 @@ public class PisCommonPaymentRemoteUrls {
     public String getCancellationAuthorisationScaApproach() {
         return commonPaymentServiceBaseUrl + "/pis/common-payments/cancellation-authorisations/{authorisation-id}/sca-approach";
     }
+
+    /**
+     * @return <code>true</code> if payment was found and multilevel sca required updated, <code>false</code> otherwise
+     * Method: PUT
+     * PathVariables: String paymentId
+     * PathVariables: boolean isRequired
+     */
+    public String updateMultilevelScaRequired() {
+        return commonPaymentServiceBaseUrl + "/pis/common-payments/{payment-id}/multilevel-sca?multilevel-sca={multilevel-sca}";
+    }
 }
