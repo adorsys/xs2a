@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import java.util.Objects;
@@ -20,11 +36,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Generic JSON response body consistion of the corresponding periodic payment initation JSON body together with an optional transaction status field.
+ * Generic JSON response body consistion of the corresponding periodic payment initation JSON body together with an optional transaction status field. 
  */
 @ApiModel(description = "Generic JSON response body consistion of the corresponding periodic payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class PeriodicPaymentInitiationWithStatusResponse   {
   @JsonProperty("endToEndIdentification")
@@ -92,7 +108,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=35)
+@Size(max=35) 
 
   @JsonProperty("endToEndIdentification")
   public String getEndToEndIdentification() {
@@ -138,7 +154,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=70)
+@Size(max=70) 
 
   @JsonProperty("ultimateDebtor")
   public String getUltimateDebtor() {
@@ -208,7 +224,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}") 
 
   @JsonProperty("creditorAgent")
   public String getCreditorAgent() {
@@ -231,7 +247,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-@Size(max=70)
+@Size(max=70) 
 
   @JsonProperty("creditorName")
   public String getCreditorName() {
@@ -276,7 +292,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=70)
+@Size(max=70) 
 
   @JsonProperty("ultimateCreditor")
   public String getUltimateCreditor() {
@@ -321,7 +337,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=140)
+@Size(max=140) 
 
   @JsonProperty("remittanceInformationUnstructured")
   public String getRemittanceInformationUnstructured() {
@@ -495,7 +511,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -532,7 +548,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class PeriodicPaymentInitiationWithStatusResponse {\n");
-
+    
     sb.append("    endToEndIdentification: ").append(toIndentedString(endToEndIdentification)).append("\n");
     sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
     sb.append("    ultimateDebtor: ").append(toIndentedString(ultimateDebtor)).append("\n");
@@ -559,7 +575,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

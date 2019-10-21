@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import java.util.Objects;
@@ -15,11 +31,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Card account details 
+ * Card account details. 
  */
-@ApiModel(description = "Card account details ")
+@ApiModel(description = "Card account details. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class CardAccountDetails   {
   @JsonProperty("resourceId")
@@ -41,7 +57,7 @@ public class CardAccountDetails   {
   private AccountStatus status = null;
 
   /**
-   * Specifies the usage of the account   * PRIV: private personal account   * ORGA: professional account 
+   * Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account 
    */
   public enum UsageEnum {
     PRIV("PRIV"),
@@ -227,10 +243,10 @@ public class CardAccountDetails   {
   }
 
   /**
-   * Specifies the usage of the account   * PRIV: private personal account   * ORGA: professional account 
+   * Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account 
    * @return usage
   **/
-  @ApiModelProperty(value = "Specifies the usage of the account   * PRIV: private personal account   * ORGA: professional account ")
+  @ApiModelProperty(value = "Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account ")
 
 @Size(max=4) 
 
@@ -249,10 +265,10 @@ public class CardAccountDetails   {
   }
 
   /**
-   * Specifications that might be provided by the ASPSP   - characteristics of the account   - characteristics of the relevant card 
+   * Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card 
    * @return details
   **/
-  @ApiModelProperty(value = "Specifications that might be provided by the ASPSP   - characteristics of the account   - characteristics of the relevant card ")
+  @ApiModelProperty(value = "Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card ")
 
 @Size(max=140) 
 
@@ -336,7 +352,7 @@ public class CardAccountDetails   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -386,7 +402,7 @@ public class CardAccountDetails   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

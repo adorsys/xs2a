@@ -29,11 +29,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * A list of hyperlinks to be recognised by the TPP.  Links of type \&quot;account\&quot; and/or \&quot;cardAccount\&quot;, depending on the nature of the consent.
+ * A list of hyperlinks to be recognised by the TPP.  Links of type \&quot;account\&quot; and/or \&quot;cardAccount\&quot;, depending on the nature of the consent. 
  */
 @ApiModel(description = "A list of hyperlinks to be recognised by the TPP.  Links of type \"account\" and/or \"cardAccount\", depending on the nature of the consent. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-16T11:06:46.430+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class LinksGetConsent extends HashMap<String, HrefType>  {
   @JsonProperty("account")
@@ -97,12 +97,10 @@ public class LinksGetConsent extends HashMap<String, HrefType>  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
     LinksGetConsent _linksGetConsent = (LinksGetConsent) o;
     return Objects.equals(this.account, _linksGetConsent.account) &&
-        Objects.equals(this.cardAccount, _linksGetConsent.cardAccount);
+        Objects.equals(this.cardAccount, _linksGetConsent.cardAccount) &&
+        super.equals(o);
   }
 
   @Override

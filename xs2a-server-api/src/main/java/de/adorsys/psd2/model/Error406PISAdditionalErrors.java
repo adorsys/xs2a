@@ -16,22 +16,23 @@
 
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.Size;
-import java.util.Objects;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * This is a data element to support the declaration of additional errors in the context of [RFC7807].
  */
 @ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
-public class Error406PISAdditionalErrors {
+public class Error406PISAdditionalErrors   {
   @JsonProperty("title")
   private String title = null;
 
@@ -52,7 +53,7 @@ public class Error406PISAdditionalErrors {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=70)
+@Size(max=70) 
 
   @JsonProperty("title")
   public String getTitle() {
@@ -74,7 +75,7 @@ public class Error406PISAdditionalErrors {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512)
+@Size(max=512) 
 
   @JsonProperty("detail")
   public String getDetail() {
@@ -85,7 +86,7 @@ public class Error406PISAdditionalErrors {
     this.detail = detail;
   }
 
-    public Error406PISAdditionalErrors code(String code) {
+  public Error406PISAdditionalErrors code(String code) {
     this.code = code;
     return this;
   }
@@ -103,7 +104,7 @@ public class Error406PISAdditionalErrors {
     return code;
   }
 
-    public void setCode(String code) {
+  public void setCode(String code) {
     this.code = code;
   }
 
@@ -131,7 +132,7 @@ public class Error406PISAdditionalErrors {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Error406PISAdditionalErrors {\n");
-
+    
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    detail: ").append(toIndentedString(detail)).append("\n");
     sb.append("    code: ").append(toIndentedString(code)).append("\n");

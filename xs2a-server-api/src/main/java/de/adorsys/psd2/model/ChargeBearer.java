@@ -10,7 +10,7 @@ import javax.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
- * Charge Bearer. ChargeBearerType1Code from ISO20022
+ * Charge Bearer. ChargeBearerType1Code from ISO20022.
  */
 public enum ChargeBearer {
   
