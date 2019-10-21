@@ -5,6 +5,7 @@
 * Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
 * Bugfix: PIIS consent status is being changed on implicit revocation
 * When bank returns PATC status for payment, multilevel flag in CMS should be set to true
+* Fixed typos in PSD2 yaml file
 
 == Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
 
@@ -19,3 +20,7 @@ From now on, implicit consent revocation on creating new PIIS consent will no lo
 
 From now on, when bank returns `PATC` status for payment, multilevel flag in `pis_common_payment` table is
 set to true.
+
+== Fixed typos in PSD2 yaml file
+
+All typos were fixed in BerlinGroup PSD2 yaml file. Also, all `description` fields were formatted in the same style.
