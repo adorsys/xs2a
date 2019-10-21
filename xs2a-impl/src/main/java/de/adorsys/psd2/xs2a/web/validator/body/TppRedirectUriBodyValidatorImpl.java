@@ -17,9 +17,11 @@
 package de.adorsys.psd2.xs2a.web.validator.body;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +41,7 @@ import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TP
 public class TppRedirectUriBodyValidatorImpl implements BodyValidator {
 
     private final ScaApproachResolver scaApproachResolver;
+    private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
     private final ErrorBuildingService errorBuildingService;
 
     @Override
@@ -61,6 +64,6 @@ public class TppRedirectUriBodyValidatorImpl implements BodyValidator {
 
     private boolean isRedirectScaApproach() {
         ScaApproach scaApproach = scaApproachResolver.resolveScaApproach();
-        return ScaApproach.REDIRECT == scaApproach;
+        return ScaApproach.REDIRECT == scaApproach && aspspProfileServiceWrapper.getScaRedirectFlow().equals(ScaRedirectFlow.REDIRECT);
     }
 }
