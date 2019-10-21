@@ -47,6 +47,7 @@ public class RequestProviderServiceTest {
     });
     private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("9861d849-3302-4162-b79d-c5f8e543cdb0");
     private static final String TOKEN = "111111";
+    private static final String TPP_ROLES_ALLOWED_HEADER = "AISP, PISP, PIISP, ASPSP";
 
     @InjectMocks
     private RequestProviderService requestProviderService;
@@ -107,6 +108,15 @@ public class RequestProviderServiceTest {
 
         // Then
         assertEquals(TOKEN, actualAuthorisationHeader);
+    }
+
+    @Test
+    public void getTppRolesAllowedHeader() {
+        // When
+        String tppRolesAllowedHeader = requestProviderService.getTppRolesAllowedHeader();
+
+        // Then
+        assertEquals(TPP_ROLES_ALLOWED_HEADER, tppRolesAllowedHeader);
     }
 
     private PsuIdData buildPsuIdData() {

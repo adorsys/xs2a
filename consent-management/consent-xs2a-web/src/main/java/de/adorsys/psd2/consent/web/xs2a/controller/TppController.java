@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,31 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
+import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/tpp/stop-list")
-@Api(value = "api/v1/tpp/stop-list", tags = "TPP Stop List", description = "Provides access to the TPP stop list")
-public class TppStopListController {
+@RequestMapping(path = "api/v1/tpp")
+@Api(value = "api/v1/tpp", tags = "TPP", description = "Provides access to the TPP")
+public class TppController {
+    private final TppService tppService;
     private final TppStopListService tppStopListService;
 
-    @GetMapping
+    @PutMapping
+    @ApiOperation(value = "Updates TPP Info")
+    @ApiResponse(code = 200, message = "OK")
+    public ResponseEntity<Boolean> updateTppInfo(@RequestBody TppInfo tppInfo) {
+        return new ResponseEntity<>(tppService.updateTppInfo(tppInfo), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/stop-list")
     @ApiOperation(value = "Checks if TPP is blocked")
     @ApiResponse(code = 200, message = "OK")
     public ResponseEntity<Boolean> checkIfTppBlocked(

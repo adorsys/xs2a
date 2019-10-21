@@ -22,14 +22,18 @@ import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationReque
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
+import de.adorsys.psd2.consent.repository.TppInfoRepository;
+import de.adorsys.psd2.consent.service.mapper.PisCommonPaymentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
@@ -38,7 +42,9 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.collections4.IteratorUtils;
 import org.jetbrains.annotations.NotNull;
@@ -79,6 +85,10 @@ public class PisCommonPaymentServiceInternalTest {
     private PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
     @Mock
     private CmsPsuService cmsPsuService;
+    @Mock
+    private PisCommonPaymentMapper pisCommonPaymentMapper;
+    @Mock
+    private TppInfoRepository tppInfoRepository;
 
     private PisCommonPaymentData pisCommonPaymentData;
     private List<PisAuthorization> pisAuthorizationList = new ArrayList<>();
@@ -113,6 +123,35 @@ public class PisCommonPaymentServiceInternalTest {
         pisPaymentData = buildPaymentData(pisCommonPaymentData);
         pisAuthorizationList.add(buildPisAuthorisation(EXTERNAL_ID, PaymentAuthorisationType.CANCELLED));
         pisAuthorizationList.add(buildPisAuthorisation(AUTHORISATION_ID, PaymentAuthorisationType.CREATED));
+    }
+
+    @Test
+    public void createCommonPayment_checkUpdateTppRoles() {
+        //Given
+        List<TppRole> roles = Arrays.asList(TppRole.AISP, TppRole.PISP, TppRole.PIISP);
+        ArgumentCaptor<PisCommonPaymentData> argument = ArgumentCaptor.forClass(PisCommonPaymentData.class);
+
+        TppInfo tppInfo = new TppInfo();
+        tppInfo.setAuthorisationNumber("tpp-id-1");
+        PisPaymentInfo pisPaymentInfo = new PisPaymentInfo();
+        pisPaymentInfo.setTppInfo(tppInfo);
+
+        TppInfoEntity tppInfoEntity = new TppInfoEntity();
+        tppInfoEntity.setTppRoles(roles);
+
+        PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
+        pisCommonPaymentData.setTppInfo(tppInfoEntity);
+
+        when(pisCommonPaymentMapper.mapToPisCommonPaymentData(pisPaymentInfo))
+            .thenReturn(pisCommonPaymentData);
+        when(pisCommonPaymentDataRepository.save(pisCommonPaymentData)).thenReturn(pisCommonPaymentData);
+
+        //When
+        pisCommonPaymentService.createCommonPayment(pisPaymentInfo);
+
+        //Then
+        verify(pisCommonPaymentDataRepository).save(argument.capture());
+        assertEquals(roles, argument.getValue().getTppInfo().getTppRoles());
     }
 
     @Test

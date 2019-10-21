@@ -5,5 +5,6 @@
   "psu-corporate-id": "CORPORATE_ID",
   "psu-corporate-id-type": "CORPORATE_ID_TYPE",
   "psu-ip-address": "192.168.0.26",
-  "Authorization": "Bearer 111111"
+  "Authorization": "Bearer 111111",
+  "tpp-roles-allowed": "AISP, PISP, PIISP, ASPSP"
 }
