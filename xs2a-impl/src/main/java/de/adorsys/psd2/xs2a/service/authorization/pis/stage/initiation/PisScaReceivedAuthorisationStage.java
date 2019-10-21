@@ -212,6 +212,11 @@ public class PisScaReceivedAuthorisationStage extends PisScaStage<Xs2aUpdatePisC
         }
 
         TransactionStatus paymentStatus = spiResponse.getPayload().getTransactionStatus();
+
+        if (paymentStatus == TransactionStatus.PATC) {
+            xs2aPisCommonPaymentService.updateMultilevelSca(paymentId, true);
+        }
+
         updatePaymentAfterSpiService.updatePaymentStatus(request.getPaymentId(), paymentStatus);
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(resultScaStatus, paymentId, authorisationId, psuData);
     }

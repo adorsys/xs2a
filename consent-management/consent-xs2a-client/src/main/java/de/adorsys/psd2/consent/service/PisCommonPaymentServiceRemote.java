@@ -133,6 +133,16 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
     }
 
     @Override
+    public boolean updateMultilevelSca(String paymentId, boolean multilevelScaRequired) {
+        try {
+            return consentRestTemplate.exchange(remotePisCommonPaymentUrls.updateMultilevelScaRequired(), HttpMethod.PUT, null, Boolean.class, paymentId, multilevelScaRequired).getBody();
+        } catch (CmsRestException cmsRestException) {
+            log.info("Payment ID: [{}]. No payment could be found by given payment ID.", paymentId);
+            return false;
+        }
+    }
+
+    @Override
     public Optional<GetPisAuthorisationResponse> getPisAuthorisationById(String authorizationId) {
         try {
             return Optional.ofNullable(consentRestTemplate.exchange(remotePisCommonPaymentUrls.getPisAuthorisationById(), HttpMethod.GET, null, GetPisAuthorisationResponse.class, authorizationId))

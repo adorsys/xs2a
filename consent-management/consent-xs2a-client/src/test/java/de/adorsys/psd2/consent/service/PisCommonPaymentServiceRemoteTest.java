@@ -41,6 +41,8 @@ public class PisCommonPaymentServiceRemoteTest {
 
     private static final String AUTHORISATION_ID = "2400de4c-1c74-4ca0-941d-8f56b828f31d";
     private static final String URL = "http://base.url";
+    private static final String UPDATE_MULTILEVEL_SCA_URL = "http://base.url/pis/common-payments/{payment-id}/multilevel-sca?multilevel-sca={multilevel-sca}";
+    private static final String PAYMENT_ID = "paymentId";
 
     @InjectMocks
     private PisCommonPaymentServiceRemote service;
@@ -152,5 +154,15 @@ public class PisCommonPaymentServiceRemoteTest {
         Optional<GetPisAuthorisationResponse> actual = service.getPisCancellationAuthorisationById(AUTHORISATION_ID);
 
         assertFalse(actual.isPresent());
+    }
+
+    @Test
+    public void updateMultilevelSca() {
+        when(remotePisCommonPaymentUrls.updateMultilevelScaRequired()).thenReturn(UPDATE_MULTILEVEL_SCA_URL);
+        when(consentRestTemplate.exchange(UPDATE_MULTILEVEL_SCA_URL, HttpMethod.PUT, null, Boolean.class, PAYMENT_ID, true)).thenReturn(ResponseEntity.ok(true));
+
+        boolean actualResponse = service.updateMultilevelSca(PAYMENT_ID, true);
+
+        assertTrue(actualResponse);
     }
 }

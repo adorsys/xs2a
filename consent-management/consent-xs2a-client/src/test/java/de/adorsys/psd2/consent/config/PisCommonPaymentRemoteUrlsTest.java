@@ -170,4 +170,10 @@ public class PisCommonPaymentRemoteUrlsTest {
         assertEquals("http://base.url/pis/common-payments/cancellation-authorisations/{authorisation-id}/sca-approach",
                      pisCommonPaymentRemoteUrls.getCancellationAuthorisationScaApproach());
     }
+
+    @Test
+    public void updateMultilevelScaRequired() {
+        assertEquals("http://base.url/pis/common-payments/{payment-id}/multilevel-sca?multilevel-sca={multilevel-sca}",
+                     pisCommonPaymentRemoteUrls.updateMultilevelScaRequired());
+    }
 }

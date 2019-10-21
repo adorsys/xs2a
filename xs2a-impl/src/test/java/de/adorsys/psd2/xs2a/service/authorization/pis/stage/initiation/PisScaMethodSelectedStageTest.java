@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
@@ -71,7 +72,9 @@ public class PisScaMethodSelectedStageTest {
     private static final SpiContextData CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final TransactionStatus ACCP_TRANSACTION_STATUS = TransactionStatus.ACCP;
+    private static final TransactionStatus PATC_TRANSACTION_STATUS = TransactionStatus.PATC;
     private static final SpiPaymentExecutionResponse SPI_PAYMENT_EXECUTION_RESPONSE = new SpiPaymentExecutionResponse(ACCP_TRANSACTION_STATUS);
+    private static final SpiPaymentExecutionResponse SPI_PAYMENT_EXECUTION_RESPONSE_WITH_PATC_STATUS = new SpiPaymentExecutionResponse(PATC_TRANSACTION_STATUS);
 
     @InjectMocks
     private PisScaMethodSelectedStage pisScaMethodSelectedStage;
@@ -99,6 +102,8 @@ public class PisScaMethodSelectedStageTest {
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
 
     @Before
     public void setUp() {
@@ -115,6 +120,8 @@ public class PisScaMethodSelectedStageTest {
             .thenReturn(spiAspspConsentDataProvider);
 
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
+        when(xs2aPisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true)).thenReturn(true);
     }
 
     @Test
@@ -145,7 +152,7 @@ public class PisScaMethodSelectedStageTest {
             .thenReturn(singlePaymentSpi);
 
         when(singlePaymentSpi.verifyScaAuthorisationAndExecutePayment(any(), any(), any(), any()))
-            .thenReturn(buildSuccessSpiResponse());
+            .thenReturn(buildSuccessSpiResponse(SPI_PAYMENT_EXECUTION_RESPONSE));
 
         when(updatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, ACCP_TRANSACTION_STATUS))
             .thenReturn(true);
@@ -155,6 +162,31 @@ public class PisScaMethodSelectedStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALISED);
+
+        verify(xs2aPisCommonPaymentService, never()).updateMultilevelSca(PAYMENT_ID, true);
+        verify(updatePaymentAfterSpiService, times(1)).updatePaymentStatus(PAYMENT_ID, ACCP_TRANSACTION_STATUS);
+    }
+
+    @Test
+    public void apply_SuccessAndMultilevelScaRequiredUpdated() {
+        when(pisAspspDataService.getInternalPaymentIdByEncryptedString(PAYMENT_ID)).thenReturn(any());
+        when(applicationContext.getBean(SinglePaymentSpi.class))
+            .thenReturn(singlePaymentSpi);
+
+        when(singlePaymentSpi.verifyScaAuthorisationAndExecutePayment(any(), any(), any(), any()))
+            .thenReturn(buildSuccessSpiResponse(SPI_PAYMENT_EXECUTION_RESPONSE_WITH_PATC_STATUS));
+
+        when(updatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, PATC_TRANSACTION_STATUS))
+            .thenReturn(true);
+
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaMethodSelectedStage.apply(buildRequest(), buildResponse());
+
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isFalse();
+        assertThat(actualResponse.getScaStatus()).isEqualTo(FINALISED);
+
+        verify(xs2aPisCommonPaymentService, times(1)).updateMultilevelSca(PAYMENT_ID, true);
+        verify(updatePaymentAfterSpiService, times(1)).updatePaymentStatus(PAYMENT_ID, PATC_TRANSACTION_STATUS);
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataRequest buildRequest() {
@@ -193,9 +225,9 @@ public class PisScaMethodSelectedStageTest {
         return Collections.singletonList(pisPayment);
     }
 
-    private SpiResponse<SpiPaymentExecutionResponse> buildSuccessSpiResponse() {
+    private SpiResponse<SpiPaymentExecutionResponse> buildSuccessSpiResponse(SpiPaymentExecutionResponse spiPaymentExecutionResponse) {
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
-                   .payload(SPI_PAYMENT_EXECUTION_RESPONSE)
+                   .payload(spiPaymentExecutionResponse)
                    .build();
     }
 }

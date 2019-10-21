@@ -370,6 +370,26 @@ public class PisCommonPaymentControllerTest {
         assertThat(response.getBody()).isNull();
     }
 
+    @Test
+    public void updateMultilevelScaRequired_Ok() {
+        when(pisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true)).thenReturn(true);
+
+        ResponseEntity<Boolean> actualResponse = pisCommonPaymentController.updateMultilevelScaRequired(PAYMENT_ID, true);
+
+        assertThat(actualResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(actualResponse.getBody()).isEqualTo(true);
+    }
+
+    @Test
+    public void updateMultilevelScaRequired_NotFound() {
+        when(pisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true)).thenReturn(false);
+
+        ResponseEntity<Boolean> actualResponse = pisCommonPaymentController.updateMultilevelScaRequired(PAYMENT_ID, true);
+
+        assertThat(actualResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(actualResponse.getBody()).isNull();
+    }
+
     private GetPisAuthorisationResponse getGetPisAuthorisationResponse() {
         GetPisAuthorisationResponse response = new GetPisAuthorisationResponse();
         response.setPsuIdData(new PsuIdData(PSU_ID, null, null, null));
