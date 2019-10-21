@@ -7,6 +7,7 @@
 * Feature: Extend CMS to store SCA method and TAN for Redirect approach
 * Bugfix: PIIS consent status is being changed on implicit revocation
 * Save payment transaction status given by ASPSP
+* When bank returns PATC status for payment, multilevel flag in CMS should be set to true
 
 == Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
 
@@ -42,3 +43,8 @@ From now on, implicit consent revocation on creating new PIIS consent will no lo
 
 From now on there is new endpoint in CMS-ASPSP-API: `PUT /aspsp-api/v1/pis/transaction-status/{payment-id}/status/{status}`,
 where you can change payment's transaction status by payment id even if it is already finalised.
+
+== When bank returns PATC status for payment, multilevel flag in CMS should be set to true
+
+From now on, when bank returns `PATC` status for payment, multilevel flag in `pis_common_payment` table is
+set to true.

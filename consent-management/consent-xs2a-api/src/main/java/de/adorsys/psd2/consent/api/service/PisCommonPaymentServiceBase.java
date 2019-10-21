@@ -113,6 +113,14 @@ interface PisCommonPaymentServiceBase {
     void updateCommonPayment(PisCommonPaymentRequest request, String paymentId);
 
     /**
+     * Updates multilevelScaRequired and stores changes into database
+     *
+     * @param paymentId Payment ID
+     * @param multilevelScaRequired new value for boolean multilevel sca required
+     */
+    boolean updateMultilevelSca(String paymentId, boolean multilevelScaRequired);
+
+    /**
      * Get information about Authorisation by authorisation identifier
      *
      * @param authorisationId String representation of the authorisation identifier

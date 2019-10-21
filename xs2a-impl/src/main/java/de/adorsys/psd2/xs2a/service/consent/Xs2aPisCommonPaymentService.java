@@ -105,4 +105,14 @@ public class Xs2aPisCommonPaymentService {
     public void updateScaApproach(String authorisationId, ScaApproach scaApproach) {
         pisCommonPaymentServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
     }
+
+    /**
+     * Updates multilevelScaRequired and stores changes into database
+     *
+     * @param paymentId Payment ID
+     * @param multilevelScaRequired new value for boolean multilevel sca required
+     */
+    public boolean updateMultilevelSca(String paymentId, boolean multilevelScaRequired) {
+        return pisCommonPaymentServiceEncrypted.updateMultilevelSca(paymentId, multilevelScaRequired);
+    }
 }
