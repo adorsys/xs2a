@@ -29,11 +29,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response:   - \&quot;download\&quot;: a link to a resource, where the transaction report might be downloaded from in   case where transaction reports have a huge size.  Remark: This feature shall only be used where camt-data is requested which has a huge size.
+ * A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response:   - \&quot;download\&quot;: a link to a resource, where the transaction report might be downloaded from in   case where transaction reports have a huge size.  Remark: This feature shall only be used where camt-data is requested which has a huge size. 
  */
 @ApiModel(description = "A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response:   - \"download\": a link to a resource, where the transaction report might be downloaded from in   case where transaction reports have a huge size.  Remark: This feature shall only be used where camt-data is requested which has a huge size. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-16T11:06:46.430+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class LinksDownload extends HashMap<String, HrefType>  {
   @JsonProperty("download")
@@ -72,11 +72,9 @@ public class LinksDownload extends HashMap<String, HrefType>  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
     LinksDownload _linksDownload = (LinksDownload) o;
-    return Objects.equals(this.download, _linksDownload.download);
+    return Objects.equals(this.download, _linksDownload.download) &&
+        super.equals(o);
   }
 
   @Override

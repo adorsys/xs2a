@@ -16,24 +16,28 @@
 
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.AccountReference;
+import de.adorsys.psd2.model.Address;
+import de.adorsys.psd2.model.Amount;
+import de.adorsys.psd2.model.PurposeCode;
+import de.adorsys.psd2.model.RemittanceInformationStructured;
+import de.adorsys.psd2.model.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
- * Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field.
+ * Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field. 
  */
 @ApiModel(description = "Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-19T17:12:36.986777+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class PaymentInitiationWithStatusResponse   {
   @JsonProperty("endToEndIdentification")
@@ -89,7 +93,7 @@ public class PaymentInitiationWithStatusResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=35)
+@Size(max=35) 
 
   @JsonProperty("endToEndIdentification")
   public String getEndToEndIdentification() {
@@ -135,7 +139,7 @@ public class PaymentInitiationWithStatusResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=70)
+@Size(max=70) 
 
   @JsonProperty("ultimateDebtor")
   public String getUltimateDebtor() {
@@ -205,7 +209,7 @@ public class PaymentInitiationWithStatusResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}") 
 
   @JsonProperty("creditorAgent")
   public String getCreditorAgent() {
@@ -228,7 +232,7 @@ public class PaymentInitiationWithStatusResponse   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-@Size(max=70)
+@Size(max=70) 
 
   @JsonProperty("creditorName")
   public String getCreditorName() {
@@ -273,7 +277,7 @@ public class PaymentInitiationWithStatusResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=70)
+@Size(max=70) 
 
   @JsonProperty("ultimateCreditor")
   public String getUltimateCreditor() {
@@ -318,7 +322,7 @@ public class PaymentInitiationWithStatusResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=140)
+@Size(max=140) 
 
   @JsonProperty("remittanceInformationUnstructured")
   public String getRemittanceInformationUnstructured() {
@@ -433,7 +437,7 @@ public class PaymentInitiationWithStatusResponse   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class PaymentInitiationWithStatusResponse {\n");
-
+    
     sb.append("    endToEndIdentification: ").append(toIndentedString(endToEndIdentification)).append("\n");
     sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
     sb.append("    ultimateDebtor: ").append(toIndentedString(ultimateDebtor)).append("\n");

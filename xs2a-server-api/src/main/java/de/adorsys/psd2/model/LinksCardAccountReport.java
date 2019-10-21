@@ -32,7 +32,7 @@ import javax.validation.constraints.*;
  * LinksCardAccountReport
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-16T11:06:46.430+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class LinksCardAccountReport extends HashMap<String, HrefType>  {
   @JsonProperty("cardAccount")
@@ -175,15 +175,13 @@ public class LinksCardAccountReport extends HashMap<String, HrefType>  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
     LinksCardAccountReport _linksCardAccountReport = (LinksCardAccountReport) o;
     return Objects.equals(this.cardAccount, _linksCardAccountReport.cardAccount) &&
         Objects.equals(this.first, _linksCardAccountReport.first) &&
         Objects.equals(this.next, _linksCardAccountReport.next) &&
         Objects.equals(this.previous, _linksCardAccountReport.previous) &&
-        Objects.equals(this.last, _linksCardAccountReport.last);
+        Objects.equals(this.last, _linksCardAccountReport.last) &&
+        super.equals(o);
   }
 
   @Override

@@ -23,13 +23,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Mobile phone number.
+ * Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).
  */
-@ApiModel(description = "Mobile phone number.")
+@ApiModel(description = "Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
-public class Msisdn   {
+public class MessageCode406PIS   {
 
   @Override
   public boolean equals(Object o) {
@@ -50,7 +50,7 @@ public class Msisdn   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Msisdn {\n");
+    sb.append("class MessageCode406PIS {\n");
     
     sb.append("}");
     return sb.toString();

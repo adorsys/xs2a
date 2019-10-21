@@ -26,7 +26,7 @@ import javax.validation.constraints.*;
  * ChosenScaMethod
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-16T11:06:46.430+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class ChosenScaMethod extends AuthenticationObject  {
 
@@ -38,10 +38,6 @@ public class ChosenScaMethod extends AuthenticationObject  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
-
     return true;
   }
 

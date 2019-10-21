@@ -16,22 +16,23 @@
 
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.TppMessageCategory;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.Objects;
+import javax.validation.constraints.*;
 
 /**
  * TppMessage406PIS
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-11T18:16:04.641091+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
-public class TppMessage406PIS {
+public class TppMessage406PIS   {
   @JsonProperty("category")
   private TppMessageCategory category = null;
 
@@ -68,7 +69,7 @@ public class TppMessage406PIS {
     this.category = category;
   }
 
-    public TppMessage406PIS code(String code) {
+  public TppMessage406PIS code(String code) {
     this.code = code;
     return this;
   }
@@ -87,7 +88,7 @@ public class TppMessage406PIS {
     return code;
   }
 
-    public void setCode(String code) {
+  public void setCode(String code) {
     this.code = code;
   }
 
@@ -124,7 +125,7 @@ public class TppMessage406PIS {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512)
+@Size(max=512) 
 
   @JsonProperty("text")
   public String getText() {
@@ -160,7 +161,7 @@ public class TppMessage406PIS {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class TppMessage406PIS {\n");
-
+    
     sb.append("    category: ").append(toIndentedString(category)).append("\n");
     sb.append("    code: ").append(toIndentedString(code)).append("\n");
     sb.append("    path: ").append(toIndentedString(path)).append("\n");

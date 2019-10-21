@@ -10,7 +10,7 @@ import javax.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
- * Category of the TPP message category
+ * Category of the TPP message category.
  */
 public enum TppMessageCategory {
   
