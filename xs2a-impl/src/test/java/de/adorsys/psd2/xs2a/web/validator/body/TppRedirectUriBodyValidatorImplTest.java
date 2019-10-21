@@ -18,10 +18,12 @@ package de.adorsys.psd2.xs2a.web.validator.body;
 
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.Before;
@@ -40,6 +42,8 @@ public class TppRedirectUriBodyValidatorImplTest {
 
     @Mock
     private ScaApproachResolver scaApproachResolver;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
     private MessageError messageError;
@@ -49,8 +53,10 @@ public class TppRedirectUriBodyValidatorImplTest {
     public void setUp() {
         messageError = new MessageError();
         ErrorBuildingService errorBuildingService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
-        tppRedirectUriBodyValidator = new TppRedirectUriBodyValidatorImpl(scaApproachResolver, errorBuildingService);
+        tppRedirectUriBodyValidator = new TppRedirectUriBodyValidatorImpl(scaApproachResolver, aspspProfileServiceWrapper, errorBuildingService);
         request = new MockHttpServletRequest();
+
+        when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.REDIRECT);
     }
 
     @Test
@@ -71,6 +77,17 @@ public class TppRedirectUriBodyValidatorImplTest {
         tppRedirectUriBodyValidator.validate(request, messageError);
 
         verify(scaApproachResolver, times(1)).resolveScaApproach();
+        assertTrue(messageError.getTppMessages().isEmpty());
+    }
+
+    @Test
+    public void validate_oAuthApproach_sucess() {
+        when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+
+        tppRedirectUriBodyValidator.validate(request, messageError);
+
+        verify(scaApproachResolver).resolveScaApproach();
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 

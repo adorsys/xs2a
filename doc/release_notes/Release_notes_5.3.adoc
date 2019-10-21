@@ -8,6 +8,7 @@
 * Bugfix: PIIS consent status is being changed on implicit revocation
 * Save payment transaction status given by ASPSP
 * When bank returns PATC status for payment, multilevel flag in CMS should be set to true
+* Support OAuth Redirect for PIS, AIS and Payment Cancellation
 
 == Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
 
@@ -48,3 +49,7 @@ where you can change payment's transaction status by payment id even if it is al
 
 From now on, when bank returns `PATC` status for payment, multilevel flag in `pis_common_payment` table is
 set to true.
+
+== Support OAuth Redirect for PIS, AIS and Payment Cancellation
+
+From now on, integrated OAUTH flow is supported for PIS, AIS and Payment Cancellation.
