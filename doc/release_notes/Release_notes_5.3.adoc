@@ -9,6 +9,7 @@
 * Save payment transaction status given by ASPSP
 * When bank returns PATC status for payment, multilevel flag in CMS should be set to true
 * Support OAuth Redirect for PIS, AIS and Payment Cancellation
+* Validate access of TPP based on role's header
 
 == Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
 
@@ -53,3 +54,11 @@ set to true.
 == Support OAuth Redirect for PIS, AIS and Payment Cancellation
 
 From now on, integrated OAUTH flow is supported for PIS, AIS and Payment Cancellation.
+
+== Validate access of TPP based on role's header
+
+From now on, TPP access to XS2A resources may be verified based on incoming `Tpp-Roles-Allowed` header.
+If this header is present, TPP roles will be validated.
+This header represents TPP roles, based on which XS2A will check access to resources.
+If TPP is prohibited from accessing certain resource it will receive response with 401 code and `ROLE_INVALID` message.
+TPP roles are updated in CMS.

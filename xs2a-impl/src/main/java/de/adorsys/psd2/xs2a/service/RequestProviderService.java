@@ -44,6 +44,7 @@ public class RequestProviderService {
     private static final String PSU_ID_TYPE_HEADER = "psu-id-type";
     private static final String PSU_CORPORATE_ID_HEADER = "psu-corporate-id";
     private static final String PSU_CORPORATE_ID_TYPE_HEADER = "psu-corporate-id-type";
+    private static final String TPP_ROLES_ALLOWED_HEADER = "tpp-roles-allowed";
 
     private final HttpServletRequest httpServletRequest;
     private final InternalRequestIdService internalRequestIdService;
@@ -126,6 +127,10 @@ public class RequestProviderService {
         return StringUtils.isEmpty(headerValue)
                    ? null
                    : headerValue.replace("Bearer ", "");
+    }
+
+    public String getTppRolesAllowedHeader() {
+        return getHeader(TPP_ROLES_ALLOWED_HEADER);
     }
 
     private String getHeader(String headerName) {

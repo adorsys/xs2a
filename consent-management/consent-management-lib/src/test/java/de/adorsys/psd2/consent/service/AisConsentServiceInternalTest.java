@@ -40,6 +40,7 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -282,6 +283,24 @@ public class AisConsentServiceInternalTest {
         // Then
         verify(aisConsentRepository).save(argument.capture());
         assertEquals(LocalDate.now(), argument.getValue().getLastActionDate());
+    }
+
+    @Test
+    public void createConsent_checkUpdateTppRoles() {
+        // Given
+        List<TppRole> roles = Arrays.asList(TppRole.AISP, TppRole.PISP, TppRole.PIISP);
+        when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
+        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
+        ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
+        when(tppInfoMapper.mapToTppInfoEntity(buildTppInfo())).thenReturn(buildTppInfoEntity(roles));
+
+        // When
+        CreateAisConsentRequest createAisConsentRequest = buildCorrectCreateAisConsentRequest(roles);
+        aisConsentService.createConsent(createAisConsentRequest);
+
+        // Then
+        verify(aisConsentRepository).save(argument.capture());
+        assertEquals(roles, argument.getValue().getTppInfo().getTppRoles());
     }
 
     @Test
@@ -647,6 +666,12 @@ public class AisConsentServiceInternalTest {
         return buildCorrectCreateAisConsentRequest(LocalDate.now());
     }
 
+    private CreateAisConsentRequest buildCorrectCreateAisConsentRequest(List<TppRole> roles) {
+        CreateAisConsentRequest createAisConsentRequest = buildCorrectCreateAisConsentRequest();
+        createAisConsentRequest.setTppInfo(buildTppInfo(roles));
+        return createAisConsentRequest;
+    }
+
     private CreateAisConsentRequest buildCorrectCreateAisConsentRequest(LocalDate validUntil) {
         CreateAisConsentRequest request = new CreateAisConsentRequest();
         request.setAccess(buildAccess());
@@ -700,9 +725,21 @@ public class AisConsentServiceInternalTest {
         return tppInfo;
     }
 
+    private TppInfo buildTppInfo(List<TppRole> roles) {
+        TppInfo tppInfo = buildTppInfo();
+        tppInfo.setTppRoles(roles);
+        return tppInfo;
+    }
+
     private TppInfoEntity buildTppInfoEntity() {
         TppInfoEntity tppInfoEntity = new TppInfoEntity();
         tppInfoEntity.setAuthorisationNumber("tpp-id-1");
+        return tppInfoEntity;
+    }
+
+    private TppInfoEntity buildTppInfoEntity(List<TppRole> roles) {
+        TppInfoEntity tppInfoEntity = buildTppInfoEntity();
+        tppInfoEntity.setTppRoles(roles);
         return tppInfoEntity;
     }
 }

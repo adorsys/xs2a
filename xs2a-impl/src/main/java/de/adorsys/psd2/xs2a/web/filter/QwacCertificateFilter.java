@@ -16,12 +16,14 @@
 
 package de.adorsys.psd2.xs2a.web.filter;
 
+import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
+import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,13 +39,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_EXPIRED;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_INVALID_NO_ACCESS;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 
 /**
@@ -61,6 +60,8 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
     private final TppInfoHolder tppInfoHolder;
     private final RequestProviderService requestProviderService;
     private final TppErrorMessageBuilder tppErrorMessageBuilder;
+    private final TppRoleValidationService tppRoleValidationService;
+    private final TppService tppService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -90,13 +91,32 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                 tppInfo.setCity(tppCertificateData.getCity());
                 tppInfo.setState(tppCertificateData.getState());
                 tppInfo.setIssuerCN(tppCertificateData.getIssuerCN());
-
-                List<String> tppRoles = tppCertificateData.getPspRoles();
-                List<TppRole> xs2aTppRoles = tppRoles.stream()
-                                                 .map(TppRole::valueOf)
-                                                 .collect(Collectors.toList());
-                tppInfo.setTppRoles(xs2aTppRoles);
                 tppInfo.setDnsList(tppCertificateData.getDnsList());
+
+                String tppRolesAllowedHeader = requestProviderService.getTppRolesAllowedHeader();
+                if (StringUtils.isNotBlank(tppRolesAllowedHeader)) {
+                    Optional.of(tppRolesAllowedHeader)
+                        .map(roles -> roles.split(","))
+                        .map(Arrays::asList)
+                        .map(this::mapToTppRoles)
+                        .ifPresent(roles -> {
+                            tppInfo.setTppRoles(roles);
+                            tppService.updateTppInfo(tppInfo);
+                        });
+
+                    if (!tppRoleValidationService.hasAccess(tppInfo, request)) {
+                        log.info("InR-ID: [{}], X-Request-ID: [{}], Access forbidden for TPP with authorisation number: [{}]",
+                                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), tppCertificateData.getPspAuthorisationNumber());
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.getWriter().print(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, ROLE_INVALID));
+                        return;
+                    }
+                } else {
+                    Optional.of(tppCertificateData.getPspRoles())
+                        .map(this::mapToTppRoles)
+                        .ifPresent(tppInfo::setTppRoles);
+                }
+
                 tppInfoHolder.setTppInfo(tppInfo);
             } catch (CertificateValidationException e) {
                 log.info("InR-ID: [{}], X-Request-ID: [{}], TPP unauthorised because CertificateValidationException: {}",
@@ -108,6 +128,23 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
         }
 
         chain.doFilter(request, response);
+    }
+
+    private List<TppRole> mapToTppRoles(List<String> rolesList) {
+        return rolesList.stream()
+                   .map(String::trim)
+                   .map(this::getTppRole)
+                   .filter(Objects::nonNull)
+                   .collect(Collectors.toList());
+    }
+
+    private TppRole getTppRole(String role) {
+        return Arrays.stream(TppRole.values())
+                   .map(Enum::toString)
+                   .filter(roleString -> roleString.equals(role))
+                   .findFirst()
+                   .map(TppRole::valueOf)
+                   .orElse(null);
     }
 
     public String getEncodedTppQwacCert(HttpServletRequest httpRequest) {
