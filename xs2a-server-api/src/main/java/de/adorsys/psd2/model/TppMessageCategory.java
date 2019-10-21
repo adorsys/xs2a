@@ -1,21 +1,15 @@
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
-import io.swagger.annotations.ApiModel;
-import com.fasterxml.jackson.annotation.JsonValue;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Category of the TPP message category
+ * Category of the TPP message category.
  */
 public enum TppMessageCategory {
-  
+
   ERROR("ERROR"),
-  
+
   WARNING("WARNING");
 
   private String value;

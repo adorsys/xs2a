@@ -16,24 +16,21 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.HrefType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
- * A _link object with all availabel link types
+ * A _link object with all availabel link types.
  */
-@ApiModel(description = "A _link object with all availabel link types ")
+@ApiModel(description = "A _link object with all availabel link types. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-16T11:06:46.430+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class LinksAll extends HashMap<String, HrefType>  {
   @JsonProperty("scaRedirect")
@@ -851,9 +848,6 @@ public class LinksAll extends HashMap<String, HrefType>  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
     LinksAll _linksAll = (LinksAll) o;
     return Objects.equals(this.scaRedirect, _linksAll.scaRedirect) &&
         Objects.equals(this.scaOAuth, _linksAll.scaOAuth) &&
@@ -885,7 +879,8 @@ public class LinksAll extends HashMap<String, HrefType>  {
         Objects.equals(this.next, _linksAll.next) &&
         Objects.equals(this.previous, _linksAll.previous) &&
         Objects.equals(this.last, _linksAll.last) &&
-        Objects.equals(this.download, _linksAll.download);
+        Objects.equals(this.download, _linksAll.download) &&
+        super.equals(o);
   }
 
   @Override

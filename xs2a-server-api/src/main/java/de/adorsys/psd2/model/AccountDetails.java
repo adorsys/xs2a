@@ -31,11 +31,11 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \&quot;currency\&quot; is set to \&quot;XXX\&quot;. 
+ * The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \&quot;currency\&quot; is set to \&quot;XXX\&quot;.
  */
 @ApiModel(description = "The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \"currency\" is set to \"XXX\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-19T11:57:34.922302+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class AccountDetails   {
   @JsonProperty("resourceId")
@@ -72,11 +72,11 @@ public class AccountDetails   {
   private String linkedAccounts = null;
 
   /**
-   * Specifies the usage of the account   * PRIV: private personal account   * ORGA: professional account 
+   * Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account
    */
   public enum UsageEnum {
     PRIV("PRIV"),
-    
+
     ORGA("ORGA");
 
     private String value;
@@ -153,7 +153,7 @@ public class AccountDetails   {
   **/
   @ApiModelProperty(value = "")
 
-@Pattern(regexp="[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}") 
+@Pattern(regexp="[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}")
 
   @JsonProperty("iban")
   public String getIban() {
@@ -175,7 +175,7 @@ public class AccountDetails   {
   **/
   @ApiModelProperty(value = "")
 
-@Pattern(regexp="[a-zA-Z0-9]{1,30}") 
+@Pattern(regexp="[a-zA-Z0-9]{1,30}")
 
   @JsonProperty("bban")
   public String getBban() {
@@ -197,7 +197,7 @@ public class AccountDetails   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=35) 
+@Size(max=35)
 
   @JsonProperty("msisdn")
   public String getMsisdn() {
@@ -220,7 +220,7 @@ public class AccountDetails   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-@Pattern(regexp="[A-Z]{3}") 
+@Pattern(regexp="[A-Z]{3}")
 
   @JsonProperty("currency")
   public String getCurrency() {
@@ -242,7 +242,7 @@ public class AccountDetails   {
   **/
   @ApiModelProperty(value = "Name of the account given by the bank or the PSU in online-banking.")
 
-@Size(max=35) 
+@Size(max=35)
 
   @JsonProperty("name")
   public String getName() {
@@ -264,7 +264,7 @@ public class AccountDetails   {
   **/
   @ApiModelProperty(value = "Product name of the bank for this account, proprietary definition.")
 
-@Size(max=35) 
+@Size(max=35)
 
   @JsonProperty("product")
   public String getProduct() {
@@ -331,7 +331,7 @@ public class AccountDetails   {
   **/
   @ApiModelProperty(value = "")
 
-@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}") 
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")
 
   @JsonProperty("bic")
   public String getBic() {
@@ -353,7 +353,7 @@ public class AccountDetails   {
   **/
   @ApiModelProperty(value = "Case of a set of pending card transactions, the APSP will provide the relevant cash account the card is set up on.")
 
-@Size(max=70) 
+@Size(max=70)
 
   @JsonProperty("linkedAccounts")
   public String getLinkedAccounts() {
@@ -370,12 +370,12 @@ public class AccountDetails   {
   }
 
   /**
-   * Specifies the usage of the account   * PRIV: private personal account   * ORGA: professional account 
+   * Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account
    * @return usage
   **/
-  @ApiModelProperty(value = "Specifies the usage of the account   * PRIV: private personal account   * ORGA: professional account ")
+  @ApiModelProperty(value = "Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account ")
 
-@Size(max=4) 
+@Size(max=4)
 
   @JsonProperty("usage")
   public UsageEnum getUsage() {
@@ -392,12 +392,12 @@ public class AccountDetails   {
   }
 
   /**
-   * Specifications that might be provided by the ASPSP   - characteristics of the account   - characteristics of the relevant card 
+   * Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card
    * @return details
   **/
-  @ApiModelProperty(value = "Specifications that might be provided by the ASPSP   - characteristics of the account   - characteristics of the relevant card ")
+  @ApiModelProperty(value = "Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card ")
 
-@Size(max=140) 
+@Size(max=140)
 
   @JsonProperty("details")
   public String getDetails() {
@@ -465,7 +465,7 @@ public class AccountDetails   {
   **/
   @ApiModelProperty(value = "Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.")
 
-@Size(max=70) 
+@Size(max=70)
 
   @JsonProperty("ownerName")
   public String getOwnerName() {
@@ -537,7 +537,7 @@ public class AccountDetails   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class AccountDetails {\n");
-    
+
     sb.append("    resourceId: ").append(toIndentedString(resourceId)).append("\n");
     sb.append("    iban: ").append(toIndentedString(iban)).append("\n");
     sb.append("    bban: ").append(toIndentedString(bban)).append("\n");

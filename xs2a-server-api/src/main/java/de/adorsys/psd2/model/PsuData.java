@@ -1,20 +1,34 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import java.util.Objects;
 
 /**
- * PSU Data for Update PSU Authentication.
+ * PSU data for update PSU authentication.
  */
-@ApiModel(description = "PSU Data for Update PSU Authentication.")
+@ApiModel(description = "PSU data for update PSU authentication.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class PsuData   {
   @JsonProperty("password")
@@ -35,10 +49,10 @@ public class PsuData   {
   }
 
   /**
-   * Password
+   * Password.
    * @return password
   **/
-  @ApiModelProperty(value = "Password")
+  @ApiModelProperty(value = "Password.")
 
 
 
@@ -79,10 +93,10 @@ public class PsuData   {
   }
 
   /**
-   * Additional password in plaintext
+   * Additional password in plaintext.
    * @return additionalPassword
   **/
-  @ApiModelProperty(value = "Additional password in plaintext")
+  @ApiModelProperty(value = "Additional password in plaintext.")
 
 
 
@@ -101,10 +115,10 @@ public class PsuData   {
   }
 
   /**
-   * Additional encrypted password
+   * Additional encrypted password.
    * @return additionalEncryptedPassword
   **/
-  @ApiModelProperty(value = "Additional encrypted password")
+  @ApiModelProperty(value = "Additional encrypted password.")
 
 
 
@@ -119,7 +133,7 @@ public class PsuData   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -142,7 +156,7 @@ public class PsuData   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class PsuData {\n");
-    
+
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("    encryptedPassword: ").append(toIndentedString(encryptedPassword)).append("\n");
     sb.append("    additionalPassword: ").append(toIndentedString(additionalPassword)).append("\n");
@@ -155,7 +169,7 @@ public class PsuData   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

@@ -22,13 +22,13 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Objects;
 
 /**
- * SCA authentication data, depending on the chosen authentication method. If the data is binary, then it is base64 encoded.
+ * Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).
  */
-@ApiModel(description = "SCA authentication data, depending on the chosen authentication method. If the data is binary, then it is base64 encoded. ")
+@ApiModel(description = "Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
-public class ScaAuthenticationData   {
+public class MessageCode406PIS   {
 
   @Override
   public boolean equals(Object o) {
@@ -49,7 +49,7 @@ public class ScaAuthenticationData   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ScaAuthenticationData {\n");
+    sb.append("class MessageCode406PIS {\n");
 
     sb.append("}");
     return sb.toString();

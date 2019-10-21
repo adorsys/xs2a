@@ -16,23 +16,20 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.HrefType;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * LinksTransactionDetails
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-16T11:06:46.430+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class LinksTransactionDetails extends HashMap<String, HrefType>  {
   @JsonProperty("transactionDetails")
@@ -71,11 +68,9 @@ public class LinksTransactionDetails extends HashMap<String, HrefType>  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
     LinksTransactionDetails _linksTransactionDetails = (LinksTransactionDetails) o;
-    return Objects.equals(this.transactionDetails, _linksTransactionDetails.transactionDetails);
+    return Objects.equals(this.transactionDetails, _linksTransactionDetails.transactionDetails) &&
+        super.equals(o);
   }
 
   @Override

@@ -1,25 +1,38 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.ChallengeData;
-import de.adorsys.psd2.model.ChosenScaMethod;
-import de.adorsys.psd2.model.ScaMethods;
-import de.adorsys.psd2.model.ScaStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Map;
+import java.util.Objects;
 
 /**
- * Body of the JSON response for a successful update PSU Authentication request.
+ * Body of the JSON response for a successful update PSU authentication request.
  */
-@ApiModel(description = "Body of the JSON response for a successful update PSU Authentication request.")
+@ApiModel(description = "Body of the JSON response for a successful update PSU authentication request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class UpdatePsuAuthenticationResponse   {
   @JsonProperty("chosenScaMethod")
@@ -170,7 +183,7 @@ public class UpdatePsuAuthenticationResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=512)
 
   @JsonProperty("psuMessage")
   public String getPsuMessage() {
@@ -205,7 +218,7 @@ public class UpdatePsuAuthenticationResponse   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -231,7 +244,7 @@ public class UpdatePsuAuthenticationResponse   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class UpdatePsuAuthenticationResponse {\n");
-    
+
     sb.append("    chosenScaMethod: ").append(toIndentedString(chosenScaMethod)).append("\n");
     sb.append("    challengeData: ").append(toIndentedString(challengeData)).append("\n");
     sb.append("    scaMethods: ").append(toIndentedString(scaMethods)).append("\n");
@@ -247,7 +260,7 @@ public class UpdatePsuAuthenticationResponse   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

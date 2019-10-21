@@ -1,25 +1,41 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import de.adorsys.psd2.model.AccountStatus;
-import de.adorsys.psd2.model.Amount;
-import de.adorsys.psd2.model.BalanceList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.util.Map;
+import java.util.Objects;
 
 /**
- * Card account details 
+ * Card account details.
  */
-@ApiModel(description = "Card account details ")
+@ApiModel(description = "Card account details. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-08-07T16:04:49.625002+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
 
 public class CardAccountDetails   {
   @JsonProperty("resourceId")
@@ -41,11 +57,11 @@ public class CardAccountDetails   {
   private AccountStatus status = null;
 
   /**
-   * Specifies the usage of the account   * PRIV: private personal account   * ORGA: professional account 
+   * Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account
    */
   public enum UsageEnum {
     PRIV("PRIV"),
-    
+
     ORGA("ORGA");
 
     private String value;
@@ -92,7 +108,7 @@ public class CardAccountDetails   {
   }
 
   /**
-   * This is the data element to be used in the path when retrieving data from a dedicated account. This shall be filled, if addressable resource are created by the ASPSP on the /card-accounts endpoint. 
+   * This is the data element to be used in the path when retrieving data from a dedicated account. This shall be filled, if addressable resource are created by the ASPSP on the /card-accounts endpoint.
    * @return resourceId
   **/
   @ApiModelProperty(value = "This is the data element to be used in the path when retrieving data from a dedicated account. This shall be filled, if addressable resource are created by the ASPSP on the /card-accounts endpoint. ")
@@ -120,7 +136,7 @@ public class CardAccountDetails   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-@Size(max=35) 
+@Size(max=35)
 
   @JsonProperty("maskedPan")
   public String getMaskedPan() {
@@ -143,7 +159,7 @@ public class CardAccountDetails   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-@Pattern(regexp="[A-Z]{3}") 
+@Pattern(regexp="[A-Z]{3}")
 
   @JsonProperty("currency")
   public String getCurrency() {
@@ -165,7 +181,7 @@ public class CardAccountDetails   {
   **/
   @ApiModelProperty(value = "Name of the account given by the bank or the PSU in online-banking.")
 
-@Size(max=35) 
+@Size(max=35)
 
   @JsonProperty("name")
   public String getName() {
@@ -187,7 +203,7 @@ public class CardAccountDetails   {
   **/
   @ApiModelProperty(value = "Product name of the bank for this account, proprietary definition.")
 
-@Size(max=35) 
+@Size(max=35)
 
   @JsonProperty("product")
   public String getProduct() {
@@ -227,12 +243,12 @@ public class CardAccountDetails   {
   }
 
   /**
-   * Specifies the usage of the account   * PRIV: private personal account   * ORGA: professional account 
+   * Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account
    * @return usage
   **/
-  @ApiModelProperty(value = "Specifies the usage of the account   * PRIV: private personal account   * ORGA: professional account ")
+  @ApiModelProperty(value = "Specifies the usage of the account:   * PRIV: private personal account   * ORGA: professional account ")
 
-@Size(max=4) 
+@Size(max=4)
 
   @JsonProperty("usage")
   public UsageEnum getUsage() {
@@ -249,12 +265,12 @@ public class CardAccountDetails   {
   }
 
   /**
-   * Specifications that might be provided by the ASPSP   - characteristics of the account   - characteristics of the relevant card 
+   * Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card
    * @return details
   **/
-  @ApiModelProperty(value = "Specifications that might be provided by the ASPSP   - characteristics of the account   - characteristics of the relevant card ")
+  @ApiModelProperty(value = "Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card ")
 
-@Size(max=140) 
+@Size(max=140)
 
   @JsonProperty("details")
   public String getDetails() {
@@ -336,7 +352,7 @@ public class CardAccountDetails   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -366,7 +382,7 @@ public class CardAccountDetails   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class CardAccountDetails {\n");
-    
+
     sb.append("    resourceId: ").append(toIndentedString(resourceId)).append("\n");
     sb.append("    maskedPan: ").append(toIndentedString(maskedPan)).append("\n");
     sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
@@ -386,7 +402,7 @@ public class CardAccountDetails   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }
