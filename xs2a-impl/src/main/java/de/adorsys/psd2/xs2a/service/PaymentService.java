@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.payment.PaymentServiceResolver;
@@ -66,6 +67,7 @@ public class PaymentService {
     private final GetPaymentStatusByIdValidator getPaymentStatusByIdValidator;
     private final CancelPaymentValidator cancelPaymentValidator;
     private final PaymentServiceResolver paymentServiceResolver;
+    private final LoggingContextService loggingContextService;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -99,8 +101,11 @@ public class PaymentService {
                        .build();
         }
 
+        PaymentInitiationResponse paymentInitiationResponse = responseObject.getBody();
+        loggingContextService.storeTransactionAndScaStatus(paymentInitiationResponse.getTransactionStatus(), paymentInitiationResponse.getScaStatus());
+
         return ResponseObject.<PaymentInitiationResponse>builder()
-                   .body(responseObject.getBody())
+                   .body(paymentInitiationResponse)
                    .build();
     }
 
@@ -148,8 +153,12 @@ public class PaymentService {
                        .fail(response.getErrorHolder())
                        .build();
         }
+
+        CommonPayment commonPayment = response.getPayment();
+        loggingContextService.storeTransactionStatus(commonPayment.getTransactionStatus());
+
         return ResponseObject.builder()
-                   .body(response.getPayment())
+                   .body(commonPayment)
                    .build();
     }
 
@@ -221,6 +230,8 @@ public class PaymentService {
                      internalRequestId, xRequestId, encryptedPaymentId, transactionStatus);
         }
 
+        loggingContextService.storeTransactionStatus(transactionStatus);
+
         GetPaymentStatusResponse response = new GetPaymentStatusResponse(transactionStatus, readPaymentStatusResponse.getFundsAvailable());
         return ResponseObject.<GetPaymentStatusResponse>builder().body(response).build();
     }
@@ -274,8 +285,11 @@ public class PaymentService {
                        .build();
         }
 
+        CancelPaymentResponse cancelPaymentResponse = responseObject.getBody();
+        loggingContextService.storeTransactionStatus(cancelPaymentResponse.getTransactionStatus());
+
         return ResponseObject.<CancelPaymentResponse>builder()
-                   .body(responseObject.getBody())
+                   .body(cancelPaymentResponse)
                    .build();
     }
 
