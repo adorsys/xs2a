@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.component.logger;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +63,9 @@ public class TppLogger {
         }
 
         public T withParam(String paramName, String paramValue) {
-            putLogParameter(paramName, paramValue);
+            if (StringUtils.isNotBlank(paramValue)) {
+                putLogParameter(paramName, paramValue);
+            }
             return getThis();
         }
 

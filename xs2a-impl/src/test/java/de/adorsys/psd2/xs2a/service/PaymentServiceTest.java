@@ -23,6 +23,7 @@ import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
@@ -31,6 +32,7 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -66,6 +68,7 @@ import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_CANC_405;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -73,7 +76,6 @@ public class PaymentServiceTest {
     private static final String PAYMENT_ID = "12345";
     private static final String WRONG_PAYMENT_ID = "777";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
-    private static final String WRONG_PAYMENT_ID_TEXT = "Payment not found";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null, null);
     private static final MessageError VALIDATION_ERROR = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
@@ -118,6 +120,8 @@ public class PaymentServiceTest {
     private ReadPaymentService readPaymentService;
     @Mock
     private CancelCertainPaymentService cancelCertainPaymentService;
+    @Mock
+    private LoggingContextService loggingContextService;
 
     private JsonReader jsonReader;
 
@@ -305,6 +309,30 @@ public class PaymentServiceTest {
     }
 
     @Test
+    public void createPayment_shouldStoreStatusesInLoggingContext() {
+        // Given
+        PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
+        when(paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters)).thenReturn(createPaymentService);
+
+        SinglePaymentInitiationResponse paymentInitiationResponse = buildSinglePaymentInitiationResponse();
+        ScaStatus scaStatus = ScaStatus.PSUIDENTIFIED;
+        paymentInitiationResponse.setScaStatus(scaStatus);
+        when(createPaymentService.createPayment(any(), any(), any()))
+            .thenReturn(ResponseObject.<PaymentInitiationResponse>builder()
+                            .body(paymentInitiationResponse)
+                            .build());
+
+        PaymentInitiationParameters parameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
+
+        // When
+        ResponseObject<PaymentInitiationResponse> response = paymentService.createPayment(singlePayment, parameters);
+
+        // Then
+        assertFalse(response.hasError());
+        verify(loggingContextService).storeTransactionAndScaStatus(RCVD, scaStatus);
+    }
+
+    @Test
     public void getPaymentById_Success_ShouldRecordEvent() {
         // Given
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
@@ -319,6 +347,24 @@ public class PaymentServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_PAYMENT_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getPaymentById_shouldStoreTransactionStatusInLoggingContext() {
+        // Given
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
+            .thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(paymentServiceResolver.getReadPaymentService(any())).thenReturn(readPaymentService);
+        when(readPaymentService.getPayment(pisCommonPaymentResponse, null, PAYMENT_ID)).thenReturn(new PaymentInformationResponse<>(singlePayment));
+
+        TransactionStatus expectedStatus = singlePayment.getTransactionStatus();
+
+        // When
+        ResponseObject response = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertFalse(response.hasError());
+        verify(loggingContextService).storeTransactionStatus(expectedStatus);
     }
 
     @Test
@@ -368,6 +414,27 @@ public class PaymentServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getPaymentStatusById_shouldStoreTransactionStatusInLoggingContext() {
+        // Given
+        TransactionStatus transactionStatus = RCVD;
+
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(SPI_CONTEXT_DATA);
+        when(paymentServiceResolver.getReadPaymentStatusService(any(PisCommonPaymentResponse.class))).thenReturn(readPaymentStatusService);
+        when(readPaymentStatusService.readPaymentStatus(any(), any(SpiContextData.class), any(String.class)))
+            .thenReturn(new ReadPaymentStatusResponse(transactionStatus));
+        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
+            .thenReturn(true);
+
+        // When
+        ResponseObject<GetPaymentStatusResponse> response = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertFalse(response.hasError());
+        verify(loggingContextService).storeTransactionStatus(transactionStatus);
     }
 
     @Test
@@ -462,16 +529,40 @@ public class PaymentServiceTest {
     public void cancelPayment_Success_ShouldRecordEvent() {
         // Given
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(TransactionStatus.ACCC);
+        when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(RCVD);
+
+        when(paymentServiceResolver.getCancelPaymentService(any())).thenReturn(cancelCertainPaymentService);
+        CancelPaymentResponse cancelPaymentResponse = getCancelPaymentResponse();
+        when(cancelCertainPaymentService.cancelPayment(any(), any())).thenReturn(ResponseObject.<CancelPaymentResponse>builder().body(cancelPaymentResponse).build());
+
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        paymentService.cancelPayment(
-            new PisPaymentCancellationRequest(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID, false, null));
+        paymentService.cancelPayment(new PisPaymentCancellationRequest(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID, false, null));
 
         // Then
-        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
+        verify(xs2aEventService).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void cancelPayment_shouldStoreTransactionStatusInLoggingContext() {
+        // Given
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(RCVD);
+
+        when(paymentServiceResolver.getCancelPaymentService(any())).thenReturn(cancelCertainPaymentService);
+        CancelPaymentResponse cancelPaymentResponse = getCancelPaymentResponse();
+        when(cancelCertainPaymentService.cancelPayment(any(), any())).thenReturn(ResponseObject.<CancelPaymentResponse>builder().body(cancelPaymentResponse).build());
+
+        TransactionStatus expectedTransactionStatus = cancelPaymentResponse.getTransactionStatus();
+
+        // When
+        ResponseObject<CancelPaymentResponse> response = paymentService.cancelPayment(new PisPaymentCancellationRequest(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID, false, null));
+
+        // Then
+        assertFalse(response.hasError());
+        verify(loggingContextService).storeTransactionStatus(expectedTransactionStatus);
     }
 
     @Test
