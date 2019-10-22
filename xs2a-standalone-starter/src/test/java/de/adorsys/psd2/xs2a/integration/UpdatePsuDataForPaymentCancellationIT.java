@@ -34,6 +34,7 @@ import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -188,7 +189,6 @@ public class UpdatePsuDataForPaymentCancellationIT {
         resultActions.andExpect(status().isForbidden())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json(jsonReader.getStringFromFile("json/auth/res/403_resource_unknown.json")));
-        ;
     }
 
     @NotNull
@@ -199,7 +199,8 @@ public class UpdatePsuDataForPaymentCancellationIT {
         pisCommonPaymentResponse.setTppInfo(TPP_INFO);
         pisCommonPaymentResponse.setAuthorisations(Collections.singletonList(new Authorisation(authorisationId,
                                                                                                ScaStatus.PSUIDENTIFIED,
-                                                                                               new PsuIdData(PSU_ID, null , null, null))));
+                                                                                               new PsuIdData(PSU_ID, null, null, null))));
+        pisCommonPaymentResponse.setTransactionStatus(TransactionStatus.ACSP);
         return pisCommonPaymentResponse;
     }
 

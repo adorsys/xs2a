@@ -89,10 +89,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -237,6 +235,7 @@ public class PaymentStartAuthorisationIT {
         pisCommonPaymentResponse.setPaymentType(SINGLE_PAYMENT_TYPE);
         pisCommonPaymentResponse.setPaymentProduct(SEPA_PAYMENT_PRODUCT);
         pisCommonPaymentResponse.setAuthorisations(Collections.singletonList(buildAuthorisation()));
+        pisCommonPaymentResponse.setTransactionStatus(TransactionStatus.ACSP);
         return pisCommonPaymentResponse;
     }
 
