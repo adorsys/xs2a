@@ -37,6 +37,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -46,6 +47,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -73,6 +75,7 @@ public class PaymentCancellationAuthorisationServiceTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
     private static final String WRONG_CANCELLATION_AUTHORISATION_ID = "wrong cancellation authorisation id";
     private static final String CANCELLATION_AUTHORISATION_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
+    private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
 
     private static final PisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = buildPisCommonPaymentResponse();
     private static final PisCommonPaymentResponse INVALID_PIS_COMMON_PAYMENT_RESPONSE = buildInvalidPisCommonPaymentResponse();
@@ -81,6 +84,7 @@ public class PaymentCancellationAuthorisationServiceTest {
     private static final MessageError AUTHORISATION_SERVICE_ERROR = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
     private static final MessageError UNKNOWN_PAYMENT_ERROR = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404_NO_PAYMENT));
     private static final MessageError SCA_STATUS_ERROR = new MessageError(PIS_403, of(RESOURCE_UNKNOWN_403));
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
     @InjectMocks
     private PaymentCancellationAuthorisationServiceImpl paymentCancellationAuthorisationService;
@@ -101,11 +105,13 @@ public class PaymentCancellationAuthorisationServiceTest {
     private GetPaymentCancellationAuthorisationScaStatusValidator getPaymentCancellationAuthorisationScaStatusValidator;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private LoggingContextService loggingContextService;
 
     @Before
     public void setUp() {
         when(pisScaAuthorisationService.getCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID))
-            .thenReturn(Optional.of(ScaStatus.RECEIVED));
+            .thenReturn(Optional.of(SCA_STATUS));
         when(pisScaAuthorisationServiceResolver.getService())
             .thenReturn(pisScaAuthorisationService);
         when(pisScaAuthorisationServiceResolver.getServiceCancellation(CANCELLATION_AUTHORISATION_ID))
@@ -166,6 +172,22 @@ public class PaymentCancellationAuthorisationServiceTest {
 
         Xs2aCreatePisCancellationAuthorisationResponse concreteResponseBody = (Xs2aCreatePisCancellationAuthorisationResponse) responseBody;
         assertThat(concreteResponseBody.getPaymentType()).isEqualTo(paymentType);
+    }
+
+    @Test
+    public void createPisCancellationAuthorisation_shouldStoreStatusesInLoggingContext() {
+        // Given:
+        ScaStatus authorisationStatus = ScaStatus.PSUIDENTIFIED;
+
+        when(pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(anyString(), any(), any()))
+            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(CANCELLATION_AUTHORISATION_ID, authorisationStatus, null, null)));
+
+        // When
+        ResponseObject<CancellationAuthorisationResponse> response = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, null));
+
+        // Then
+        assertFalse(response.hasError());
+        verify(loggingContextService).storeTransactionAndScaStatus(TRANSACTION_STATUS, authorisationStatus);
     }
 
     @Test
@@ -302,6 +324,26 @@ public class PaymentCancellationAuthorisationServiceTest {
     }
 
     @Test
+    public void updatePisCancellationPsuData_shouldStoreStatusesInLoggingContext() {
+        when(pisScaAuthorisationService.updateCommonPaymentCancellationPsuData(any()))
+            .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCA_STATUS, PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, PSU_ID_DATA));
+
+        // Given:
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
+
+        // When
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> response = paymentCancellationAuthorisationService.updatePisCancellationPsuData(request);
+
+        // Then
+        assertFalse(response.hasError());
+
+        InOrder inOrder = inOrder(loggingContextService, pisScaAuthorisationService);
+        inOrder.verify(loggingContextService).storeTransactionStatus(TRANSACTION_STATUS);
+        inOrder.verify(pisScaAuthorisationService).updateCommonPaymentCancellationPsuData(request);
+        inOrder.verify(loggingContextService).storeScaStatus(SCA_STATUS);
+    }
+
+    @Test
     public void updatePisCancellationPsuData_withInvalidPayment_shouldReturnValidationError() {
         // Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest invalidUpdatePisPsuDataRequest = buildInvalidXs2aUpdatePisPsuDataRequest();
@@ -332,6 +374,20 @@ public class PaymentCancellationAuthorisationServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformation_shouldStoreStatusesInLoggingContext() {
+        // Given:
+        when(pisScaAuthorisationService.getCancellationAuthorisationSubResources(anyString()))
+            .thenReturn(Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.emptyList())));
+
+        // When
+        ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> response = paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(PAYMENT_ID);
+
+        // Then
+        assertFalse(response.hasError());
+        verify(loggingContextService).storeTransactionStatus(TRANSACTION_STATUS);
     }
 
     @Test
@@ -385,6 +441,20 @@ public class PaymentCancellationAuthorisationServiceTest {
     }
 
     @Test
+    public void getPaymentCancellationAuthorisationScaStatus_shouldStoreStatusesInLoggingContext() {
+        // Given:
+        when(pisScaAuthorisationServiceResolver.getServiceCancellation(CANCELLATION_AUTHORISATION_ID))
+            .thenReturn(pisScaAuthorisationService);
+
+        // When
+        ResponseObject<ScaStatus> response = paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID);
+
+        // Then
+        assertFalse(response.hasError());
+        verify(loggingContextService).storeTransactionAndScaStatus(TRANSACTION_STATUS, SCA_STATUS);
+    }
+
+    @Test
     public void getPaymentCancellationAuthorisationScaStatus_failure_status() {
         when(getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(buildPisCommonPaymentResponse(), CANCELLATION_AUTHORISATION_ID)))
             .thenReturn(ValidationResult.valid());
@@ -418,7 +488,7 @@ public class PaymentCancellationAuthorisationServiceTest {
 
     private static PisCommonPaymentResponse buildPisCommonPaymentResponse() {
         PisCommonPaymentResponse response = new PisCommonPaymentResponse();
-        response.setTransactionStatus(TransactionStatus.RCVD);
+        response.setTransactionStatus(TRANSACTION_STATUS);
         return response;
     }
 

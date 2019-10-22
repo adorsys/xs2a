@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.config;
 
-import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
 import de.adorsys.psd2.xs2a.config.converter.MappingJackson2TextMessageConverter;
@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
@@ -46,7 +47,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -57,7 +58,7 @@ import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
 @Configuration
 @RequiredArgsConstructor
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-public class WebConfig extends WebMvcConfigurerAdapter {
+public class WebConfig implements WebMvcConfigurer {
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
 
@@ -73,6 +74,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private final RequestProviderService requestProviderService;
     private final RedirectIdService redirectIdService;
     private final RequestResponseLogger requestResponseLogger;
+    private final LoggingContextService loggingContextService;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -87,7 +89,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new AccountLoggingInterceptor(tppService, requestProviderService)).addPathPatterns(ACCOUNTS_PATH);
         registry.addInterceptor(new ConsentLoggingInterceptor(tppService, redirectIdService, requestProviderService)).addPathPatterns(CONSENTS_PATH);
         registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService, requestProviderService)).addPathPatterns(FUNDS_CONFIRMATION_PATH);
-        registry.addInterceptor(new PaymentLoggingInterceptor(tppService, redirectIdService, requestProviderService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
+        registry.addInterceptor(new PaymentLoggingInterceptor(tppService, redirectIdService, requestProviderService, loggingContextService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
         registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService, redirectIdService, requestProviderService)).addPathPatterns(SIGNING_BASKETS_PATH);
 
         registry.addInterceptor(new RequestResponseLoggingInterceptor(requestResponseLogger, requestProviderService)).addPathPatterns(getAllXs2aEndpointPaths());
@@ -154,7 +156,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new MappingJackson2TextMessageConverter(xs2aObjectMapper));
-        super.extendMessageConverters(converters);
     }
 }
 

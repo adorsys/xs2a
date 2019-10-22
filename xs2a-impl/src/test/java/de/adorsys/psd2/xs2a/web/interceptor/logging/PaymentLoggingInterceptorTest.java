@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +60,8 @@ public class PaymentLoggingInterceptorTest {
     private RedirectIdService redirectIdService;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private LoggingContextService loggingContextService;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -114,5 +117,8 @@ public class PaymentLoggingInterceptorTest {
         verify(response).getHeader(eq(X_REQUEST_ID));
         verify(response).getStatus();
         verify(redirectIdService).getRedirectId();
+        verify(loggingContextService).getTransactionStatus();
+        verify(loggingContextService).getScaStatus();
+        verify(loggingContextService, never()).getConsentStatus();
     }
 }

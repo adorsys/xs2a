@@ -29,6 +29,7 @@ import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -185,6 +186,7 @@ public class PaymentStartCancellationAuthorisationIT {
         pisCommonPaymentResponse.setTppInfo(TPP_INFO);
         pisCommonPaymentResponse.setPaymentType(SINGLE_PAYMENT_TYPE);
         pisCommonPaymentResponse.setPaymentProduct(SEPA_PAYMENT_PRODUCT);
+        pisCommonPaymentResponse.setTransactionStatus(TransactionStatus.ACSP);
         return pisCommonPaymentResponse;
     }
 }

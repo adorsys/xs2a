@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
@@ -62,6 +63,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     private final GetPaymentInitiationAuthorisationScaStatusValidator getPaymentAuthorisationScaStatusValidator;
     private final RequestProviderService requestProviderService;
     private final PisPsuDataService pisPsuDataService;
+    private final LoggingContextService loggingContextService;
 
     /**
      * Creates pis authorisation for payment. In case when psu data and password came then second step will be update psu data in created authorisation
@@ -120,7 +122,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                        .build();
         }
 
-        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(pisCommonPaymentResponse.get(), request));
+        PisCommonPaymentResponse pisCommonPayment = pisCommonPaymentResponse.get();
+        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(pisCommonPayment, request));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Update PIS CommonPayment PSU data - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), validationResult.getMessageError());
@@ -128,6 +131,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                        .fail(validationResult.getMessageError())
                        .build();
         }
+
+        loggingContextService.storeTransactionStatus(pisCommonPayment.getTransactionStatus());
 
         PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getServiceInitiation(request.getAuthorisationId());
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisScaAuthorisationService.updateCommonPaymentPsuData(request);
@@ -137,6 +142,9 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                        .fail(new MessageError(response.getErrorHolder()))
                        .build();
         }
+
+        loggingContextService.storeScaStatus(response.getScaStatus());
+
         return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                    .body(response)
                    .build();
@@ -170,6 +178,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                        .build();
         }
 
+        loggingContextService.storeTransactionStatus(pisCommonPaymentResponse.get().getTransactionStatus());
+
         PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
         return pisScaAuthorisationService.getAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
@@ -193,8 +203,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     public ResponseObject<ScaStatus> getPaymentInitiationAuthorisationScaStatus(String paymentId, String authorisationId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_SCA_STATUS_REQUEST_RECEIVED);
 
-        Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
-        if (!pisCommonPaymentResponse.isPresent()) {
+        Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
+        if (!pisCommonPaymentResponseOptional.isPresent()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get SCA status payment initiation authorisation failed. PIS CommonPayment not found by id",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<ScaStatus>builder()
@@ -202,7 +212,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                        .build();
         }
 
-        ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(pisCommonPaymentResponse.get(), authorisationId));
+        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentResponseOptional.get();
+        ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(pisCommonPaymentResponse, authorisationId));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get SCA status payment initiation authorisation - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
@@ -212,16 +223,19 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         }
 
         PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getServiceInitiation(authorisationId);
-        Optional<ScaStatus> scaStatus = pisScaAuthorisationService.getAuthorisationScaStatus(paymentId, authorisationId);
+        Optional<ScaStatus> scaStatusOptional = pisScaAuthorisationService.getAuthorisationScaStatus(paymentId, authorisationId);
 
-        if (!scaStatus.isPresent()) {
+        if (!scaStatusOptional.isPresent()) {
             return ResponseObject.<ScaStatus>builder()
                        .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
+        ScaStatus scaStatus = scaStatusOptional.get();
+        loggingContextService.storeTransactionAndScaStatus(pisCommonPaymentResponse.getTransactionStatus(), scaStatus);
+
         return ResponseObject.<ScaStatus>builder()
-                   .body(scaStatus.get())
+                   .body(scaStatus)
                    .build();
     }
 
@@ -237,7 +251,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                        .build();
         }
 
-        boolean isMultilevel = pisCommonPaymentResponse.get().isMultilevelScaRequired();
+        PisCommonPaymentResponse pisCommonPayment = pisCommonPaymentResponse.get();
+        boolean isMultilevel = pisCommonPayment.isMultilevelScaRequired();
 
         PsuIdData psuIdData = psuDataFromRequest;
 
@@ -248,7 +263,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
             }
         }
 
-        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
+        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(pisCommonPayment));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS Authorisation - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
@@ -258,12 +273,19 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         }
 
         PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
-        return pisScaAuthorisationService.createCommonPaymentAuthorisation(paymentId, paymentService, psuIdData)
-                   .map(resp -> ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
-                                    .body(resp)
-                                    .build())
-                   .orElseGet(ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
-                                  .fail(PIS_400, of(PAYMENT_FAILED))
-                                  ::build);
+        Optional<Xs2aCreatePisAuthorisationResponse> commonPaymentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(paymentId, paymentService, psuIdData);
+
+        if (!commonPaymentAuthorisation.isPresent()) {
+            return ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
+                       .fail(PIS_400, of(PAYMENT_FAILED))
+                       .build();
+        }
+
+        Xs2aCreatePisAuthorisationResponse createAuthorisationResponse = commonPaymentAuthorisation.get();
+        loggingContextService.storeTransactionAndScaStatus(pisCommonPayment.getTransactionStatus(), createAuthorisationResponse.getScaStatus());
+
+        return ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
+                   .body(createAuthorisationResponse)
+                   .build();
     }
 }
