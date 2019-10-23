@@ -67,6 +67,7 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.*;
 
 @RunWith(MockitoJUnitRunner.class)

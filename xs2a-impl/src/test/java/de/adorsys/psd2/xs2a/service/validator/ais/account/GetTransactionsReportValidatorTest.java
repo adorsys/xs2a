@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
@@ -92,11 +93,12 @@ public class GetTransactionsReportValidatorTest {
     private PermittedAccountReferenceValidator permittedAccountReferenceValidator;
     @Mock
     private TransactionReportAcceptHeaderValidator transactionReportAcceptHeaderValidator;
-
     @Mock
     private AccountReference accountReference;
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
+    @Mock
+    private OauthConsentValidator oauthConsentValidator;
 
     @Before
     public void setUp() {
@@ -144,6 +146,8 @@ public class GetTransactionsReportValidatorTest {
         when(permittedAccountReferenceValidator.validate(accountConsent, ACCOUNT_ID, WITH_BALANCE))
             .thenReturn(ValidationResult.valid());
         when(accountConsentValidator.validate(accountConsent, REQUEST_URI))
+            .thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(accountConsent))
             .thenReturn(ValidationResult.valid());
 
         // When

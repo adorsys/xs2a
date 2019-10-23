@@ -127,6 +127,8 @@ public class UpdatePsuDataForPaymentInitiationIT {
         given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo())).willReturn(false);
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
+        given(aspspProfileService.getScaApproaches())
+            .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
     }
 
     @Test

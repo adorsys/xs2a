@@ -38,9 +38,14 @@ public class CommonAspspProfileBankSetting {
     private List<ScaApproach> scaApproachesSupported = new ArrayList<>();
 
     /**
-     * Defines the variant of redirect approach to be used (REDIRECT, OAUTH)
+     * Defines the variant of redirect approach to be used (REDIRECT, OAUTH, OAUTH_PRE_STEP)
      */
     private ScaRedirectFlow scaRedirectFlow;
+
+    /**
+     * URL to be used as link to IDP.
+     */
+    private String oauthConfigurationUrl;
 
     /**
      * Defines variant of forced mode of authorisation

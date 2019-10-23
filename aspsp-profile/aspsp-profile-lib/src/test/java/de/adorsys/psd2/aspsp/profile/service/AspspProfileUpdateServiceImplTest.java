@@ -58,6 +58,7 @@ public class AspspProfileUpdateServiceImplTest {
     private static final boolean AIS_PIS_SESSION_SUPPORTED = true;
     private static final boolean TPP_SIGNATURE_REQUIRED = true;
     private static final ScaApproach REDIRECT_APPROACH = ScaApproach.REDIRECT;
+    private static final String OAUTH_CONFIGURATION_URL = "http://localhost:4200/idp/";
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
     private static final String PIS_CANCELLATION_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/cancellation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
@@ -185,6 +186,7 @@ public class AspspProfileUpdateServiceImplTest {
                                                                 COUNTRY_VALIDATION_SUPPORTED);
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED);
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(SCA_REDIRECT_FLOW,
+                                                                         OAUTH_CONFIGURATION_URL,
                                                                          START_AUTHORISATION_MODE,
                                                                          TPP_SIGNATURE_REQUIRED,
                                                                          PSU_IN_INITIAL_REQUEST_MANDATED,

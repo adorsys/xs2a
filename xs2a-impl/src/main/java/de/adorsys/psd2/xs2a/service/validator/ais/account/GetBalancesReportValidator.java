@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
@@ -33,7 +34,7 @@ import org.springframework.stereotype.Component;
 public class GetBalancesReportValidator extends AbstractAccountTppValidator<CommonAccountBalanceRequestObject> {
     private final AccountConsentValidator accountConsentValidator;
     private final AccountReferenceAccessValidator accountReferenceAccessValidator;
-
+    private final OauthConsentValidator oauthConsentValidator;
 
     /**
      * Validates get balances report request
@@ -49,6 +50,11 @@ public class GetBalancesReportValidator extends AbstractAccountTppValidator<Comm
                                                                                                      accountAccess.getBalances(), consentObject.getAccountId());
         if (accountReferenceValidationResult.isNotValid()) {
             return accountReferenceValidationResult;
+        }
+
+        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(consentObject.getAccountConsent());
+        if (oauthConsentValidationResult.isNotValid()) {
+            return oauthConsentValidationResult;
         }
 
         return accountConsentValidator.validate(consentObject.getAccountConsent(), consentObject.getRequestUri());

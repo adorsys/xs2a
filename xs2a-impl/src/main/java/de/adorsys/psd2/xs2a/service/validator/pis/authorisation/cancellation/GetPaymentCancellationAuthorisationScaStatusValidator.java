@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class GetPaymentCancellationAuthorisationScaStatusValidator extends AbstractPisTppValidator<GetPaymentCancellationAuthorisationScaStatusPO> {
     private final PisAuthorisationValidator pisAuthorisationValidator;
+    private final OauthPaymentValidator oauthPaymentValidator;
 
     /**
      * Validates get payment cancellation authorisation SCA status request
@@ -48,6 +50,12 @@ public class GetPaymentCancellationAuthorisationScaStatusValidator extends Abstr
         ValidationResult authorisationValidationResult = pisAuthorisationValidator.validate(authorisationId, response);
         if (authorisationValidationResult.isNotValid()) {
             return authorisationValidationResult;
+        }
+
+        ValidationResult oauthPaymentValidationResult = oauthPaymentValidator.validate(paymentObject.getPisCommonPaymentResponse());
+
+        if (oauthPaymentValidationResult.isNotValid()) {
+            return oauthPaymentValidationResult;
         }
 
         return ValidationResult.valid();

@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
@@ -58,6 +59,8 @@ public class GetBalancesReportValidatorTest {
     private AisAccountTppInfoValidator aisAccountTppInfoValidator;
     @Mock
     private AccountReferenceAccessValidator accountReferenceAccessValidator;
+    @Mock
+    private OauthConsentValidator oauthConsentValidator;
 
     @InjectMocks
     private GetBalancesReportValidator getBalancesReportValidator;
@@ -84,6 +87,8 @@ public class GetBalancesReportValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getBalances(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
         when(accountConsentValidator.validate(accountConsent, REQUEST_URI))
+            .thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(accountConsent))
             .thenReturn(ValidationResult.valid());
 
         // When

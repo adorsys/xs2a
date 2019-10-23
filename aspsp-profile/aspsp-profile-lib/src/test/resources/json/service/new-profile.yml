@@ -29,6 +29,7 @@ setting:
     authorisationExpirationTimeMs: 86400000
     forceXs2aBaseLinksUrl: false
     multicurrencyAccountLevelSupported: SUBACCOUNT
+    oauthConfigurationUrl: http://localhost:4200/idp/
     psuInInitialRequestMandated: false
     redirectUrlExpirationTimeMs: 600000
     scaApproachesSupported:

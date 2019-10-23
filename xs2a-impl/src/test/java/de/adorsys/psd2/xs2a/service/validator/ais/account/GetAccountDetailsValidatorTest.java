@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
@@ -73,6 +74,8 @@ public class GetAccountDetailsValidatorTest {
     private AccountAccessValidator accountAccessValidator;
     @Mock
     private AccountReference accountReference;
+    @Mock
+    private OauthConsentValidator oauthConsentValidator;
 
     @Before
     public void setUp() {
@@ -116,6 +119,8 @@ public class GetAccountDetailsValidatorTest {
         when(accountAccessValidator.validate(accountConsent, accountConsent.isWithBalance()))
             .thenReturn(ValidationResult.valid());
         when(accountConsentValidator.validate(accountConsent, REQUEST_URI))
+            .thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(accountConsent))
             .thenReturn(ValidationResult.valid());
 
         // When

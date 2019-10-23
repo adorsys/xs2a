@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.CashAccountType;
 import de.adorsys.psd2.xs2a.domain.account.AccountStatus;
@@ -135,6 +136,8 @@ public class AccountControllerIT {
         // common actions for all tests
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
+        given(aspspProfileService.getScaApproaches())
+            .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
         given(tppService.getTppInfo())
             .willReturn(TPP_INFO);
         given(tppService.getTppId())

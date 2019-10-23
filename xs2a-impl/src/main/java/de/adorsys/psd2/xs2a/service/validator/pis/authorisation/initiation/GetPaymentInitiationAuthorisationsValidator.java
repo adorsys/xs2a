@@ -16,16 +16,21 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
+import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
  * Validator to be used for validating get payment initiation authorisations request according to some business rules
  */
 @Component
+@RequiredArgsConstructor
 public class GetPaymentInitiationAuthorisationsValidator extends AbstractPisTppValidator<CommonPaymentObject> {
+
+    private final OauthPaymentValidator oauthPaymentValidator;
 
     /**
      * Validates get payment initiation authorisations request
@@ -35,6 +40,6 @@ public class GetPaymentInitiationAuthorisationsValidator extends AbstractPisTppV
      */
     @Override
     protected ValidationResult executeBusinessValidation(CommonPaymentObject paymentObject) {
-        return ValidationResult.valid();
+        return oauthPaymentValidator.validate(paymentObject.getPisCommonPaymentResponse());
     }
 }

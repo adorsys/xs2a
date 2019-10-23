@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,9 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class GetConsentAuthorisationScaStatusValidator extends AbstractConsentTppValidator<GetConsentAuthorisationScaStatusPO> {
+
     private final AisAuthorisationValidator aisAuthorisationValidator;
+    private final OauthConsentValidator oauthConsentValidator;
 
     /**
      * Validates get consent authorisation sca status request
@@ -45,6 +48,11 @@ public class GetConsentAuthorisationScaStatusValidator extends AbstractConsentTp
         ValidationResult authorisationValidationResult = aisAuthorisationValidator.validate(authorisationId, response);
         if (authorisationValidationResult.isNotValid()) {
             return authorisationValidationResult;
+        }
+
+        ValidationResult authAuthorisationValidationResult = oauthConsentValidator.validate(consentObject.getAccountConsent());
+        if (authAuthorisationValidationResult.isNotValid()) {
+            return authAuthorisationValidationResult;
         }
 
         return ValidationResult.valid();

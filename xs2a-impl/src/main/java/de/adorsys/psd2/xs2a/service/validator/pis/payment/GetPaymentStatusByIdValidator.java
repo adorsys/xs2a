@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.payment;
 
 import de.adorsys.psd2.xs2a.service.validator.GetCommonPaymentByIdResponseValidator;
+import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class GetPaymentStatusByIdValidator extends AbstractPisTppValidator<GetPaymentStatusByIdPO> {
     private final GetCommonPaymentByIdResponseValidator getCommonPaymentByIdResponseValidator;
+    private final OauthPaymentValidator oauthPaymentValidator;
 
     /**
      * Validates get payment status by ID request by checking whether:
@@ -47,6 +49,12 @@ public class GetPaymentStatusByIdValidator extends AbstractPisTppValidator<GetPa
                                                                   paymentObject.getPaymentProduct());
         if (getCommonPaymentValidationResult.isNotValid()) {
             return getCommonPaymentValidationResult;
+        }
+
+        ValidationResult oauthPaymentValidationResult = oauthPaymentValidator.validate(paymentObject.getPisCommonPaymentResponse());
+
+        if (oauthPaymentValidationResult.isNotValid()) {
+            return oauthPaymentValidationResult;
         }
 
         return ValidationResult.valid();

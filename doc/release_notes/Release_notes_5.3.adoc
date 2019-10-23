@@ -13,6 +13,7 @@
 * Fixed typos in PSD2 yaml file
 * Add statuses to logs
 * Refactoring: consent and payment authorisation flows were refactored
+* Support pre-step and integrated OAuth modes
 
 == Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
 
@@ -79,3 +80,23 @@ for all AIS and PIS endpoints, if they were involved in the request.
 
 Authorisation process for the consent and payment initiation and payment cancellation were refactored - chain of responsibility
 design pattern was applied. The authorisation algorithm remained the same.
+
+== Support pre-step and integrated OAuth modes
+
+From now on, there is a possibility to use 3 variants of SCA redirect approach:
+
+ - redirect (usual redirect approach);
+ - OAuth pre-step (TPP asks for token before initiation of the request);
+ - OAuth integrated (TPP asks for token after initiation of the request).
+
+Switching between these modes can be done by changing the `scaRedirectFlow` field value in the ASPSP profile. Also, new field
+was added to the ASPSP profile configuration - `oauthConfigurationUrl`. This is a link to identity provider (IDP) which should
+be used for accessing third-party application for providing the token.
+
+Pre-step mode flow is the following. If token is present, then pre-step OAuth was already applied by TPP and XS2A returns link `scaRedirect`
+to redirect PSU to online-banking (or other authorisation server) for SCA. If token is absent in initial request, XS2A returns
+error `401 Unauthorized` with text `Please retrieve token first from {oauthConfigurationUrl}`.
+
+Integrated mode: if ASPSP supports integrated OAuth and token is absent in initial request for consent, payment and payment
+cancellation, XS2A returns link `scaOauth` (based on `oauthConfigurationUrl` in profile) to redirect TPP to IDP. If token
+is present, XS2A responds with error `403 Forbidden` with text `Token is not valid for the addressed service/resource`.

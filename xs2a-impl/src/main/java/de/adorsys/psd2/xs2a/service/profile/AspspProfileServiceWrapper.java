@@ -292,6 +292,14 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().getCommon().getScaRedirectFlow();
     }
 
+    /**
+     * Reads the link to IDP.
+     *
+     * @return the URL.
+     */
+    public String getOauthConfigurationUrl() {
+        return readAspspSettings().getCommon().getOauthConfigurationUrl();
+    }
 
     /**
      * Reads the maximum allowed by bank accesses for consent's usage per unique resource for each endpoint.

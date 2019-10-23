@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
@@ -50,6 +51,7 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
     private final AspspProfileServiceWrapper aspspProfileService;
     private final TransactionReportAcceptHeaderValidator transactionReportAcceptHeaderValidator;
     private final AccountReferenceAccessValidator accountReferenceAccessValidator;
+    private final OauthConsentValidator oauthConsentValidator;
 
     /**
      * Validates get transactions report request
@@ -88,6 +90,11 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
         BookingStatus bookingStatus = requestObject.getBookingStatus();
         if (isNotSupportedBookingStatus(bookingStatus)) {
             return ValidationResult.invalid(AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_BOOKING_STATUS, bookingStatus.getValue()));
+        }
+
+        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(accountConsent);
+        if (oauthConsentValidationResult.isNotValid()) {
+            return oauthConsentValidationResult;
         }
 
         return accountConsentValidator.validate(accountConsent, requestObject.getRequestUri());
