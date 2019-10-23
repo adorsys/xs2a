@@ -14,6 +14,35 @@
 
 === Using the CMS-ASPSP-API
 
+CMS-ASPSP-API is an API for banks to make particular changes in CMS and to get needed information from it.
+
+In order to do it use next endpoints in CMS-ASPSP-API:
+
+* `GET aspsp-api/v1/ais/consents/tpp/{tpp-id}` - get consents by TPP.
+* `GET aspsp-api/v1/ais/consents/psu` - get consents by PSU.
+* `GET aspsp-api/v1/ais/consents/account/{account-id}` - get consents by account.
+* `GET aspsp-api/v1/events` - get events for dates.
+* `POST aspsp-api/v1/piis/consents` - create PIIS consent.
+* `GET aspsp-api/v1/piis/consents` - get PIIS consents for PSU.
+* `DELETE aspsp-api/v1/piis/consents/{consent-id}` - terminate PIIS consent.
+* `GET aspsp-api/v1/piis/consents/tpp/{tpp-id}` - get PIIS consents by TPP.
+* `GET aspsp-api/v1/piis/consents/psu` - get PIIS consents by PSU.
+* `GET aspsp-api/v1/piis/consents/account/{account-id}` - get PIIS consents by account ID.
+* `GET aspsp-api/v1/pis/payments/tpp/{tpp-id}` - get payments by TPP.
+* `GET aspsp-api/v1/pis/payments/psu` - get payments by PSU.
+* `GET aspsp-api/v1/pis/payments/account/{account-id}` - get payments by account ID.
+* `PUT /aspsp-api/v1/pis/transaction-status/{payment-id}/status/{status}` - update payment status.
+* `GET aspsp-api/v1/tpp/stop-list` - get TPP stop list record.
+* `PUT aspsp-api/v1/tpp/stop-list/block` - block TPP.
+* `DELETE aspsp-api/v1/tpp/stop-list/unblock` - unblock TPP.
+* `GET aspsp-api/v1/tpp/{tpp-id}` - get TPP info.
+
+`PUT /aspsp-api/v1/pis/transaction-status/{payment-id}/status/{status}`:
+on this endpoint you can update transaction status of payment by its payment ID.
+
+In order to do this you should enter payment id and new transaction status as path variables,
+also you can pass instance id as header, but it is not required.
+
 === Using the Tpp locking interface
 
 === Using the Consents/Payments export interface
