@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
+import de.adorsys.psd2.xs2a.component.MultiReadHttpServletResponse;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -55,7 +56,7 @@ public class PaymentLoggingInterceptorTest {
     @Mock
     private HttpServletRequest request;
     @Mock
-    private HttpServletResponse response;
+    private MultiReadHttpServletResponse response;
     @Mock
     private RedirectIdService redirectIdService;
     @Mock

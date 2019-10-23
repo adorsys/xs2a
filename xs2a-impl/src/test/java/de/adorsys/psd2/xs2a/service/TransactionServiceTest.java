@@ -38,6 +38,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ais.AccountHelperService;
 import de.adorsys.psd2.xs2a.service.ais.TransactionService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -170,6 +171,8 @@ public class TransactionServiceTest {
     private SpiToXs2aDownloadTransactionsMapper spiToXs2aDownloadTransactionsMapper;
     @Mock
     private AccountHelperService accountHelperService;
+    @Mock
+    private LoggingContextService loggingContextService;
 
     @Before
     public void setUp() {
@@ -401,6 +404,34 @@ public class TransactionServiceTest {
         assertThatErrorIs(actualResponse, CONSENT_INVALID);
     }
 
+    @Test
+    public void getTransactionsReportByPeriod_shouldRecordStatusInLoggingContext() {
+        // Given
+        doNothing().when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
+
+        when(aspspProfileService.isTransactionsWithoutBalancesSupported())
+            .thenReturn(true);
+        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
+        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
+        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
+            .thenReturn(Optional.of(xs2aAccountReport));
+        when(referenceMapper.mapToXs2aAccountReference(spiAccountReference))
+            .thenReturn(XS2A_ACCOUNT_REFERENCE);
+        when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))
+            .thenReturn(Collections.emptyList());
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
+
+        // When
+        transactionService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
+
+        // Then
+        verify(loggingContextService).storeConsentStatus(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
+    }
+
 
     @Test
     public void downloadTransactions_success() throws IOException {
@@ -477,6 +508,27 @@ public class TransactionServiceTest {
         // Then
         assertNotNull(actualResponse.getError().getTppMessage());
         inputStream.close();
+    }
+
+    @Test
+    public void downloadTransactions_shouldRecordStatusInLoggingContext() throws IOException {
+        // Given
+        ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
+        when(downloadTransactionsReportValidator.validate(any(DownloadTransactionListRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        SpiTransactionsDownloadResponse spiTransactionsDownloadResponse = new SpiTransactionsDownloadResponse(inputStream, FILENAME, DATA_SIZE_BYTES);
+        when(accountSpi.requestTransactionsByDownloadLink(SPI_CONTEXT_DATA, SPI_ACCOUNT_CONSENT, new String(Base64.getDecoder().decode(BASE64_STRING_EXAMPLE)), spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(spiTransactionsDownloadResponse));
+
+        // When
+        transactionService.downloadTransactions(CONSENT_ID, ACCOUNT_ID, BASE64_STRING_EXAMPLE);
+
+        // Then
+        verify(loggingContextService).storeConsentStatus(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
     }
 
     @Test
@@ -596,6 +648,26 @@ public class TransactionServiceTest {
         // Then
         verify(getTransactionDetailsValidator).validate(new CommonAccountTransactionsRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI));
         assertThatErrorIs(actualResponse, CONSENT_INVALID);
+    }
+
+    @Test
+    public void getTransactionDetails_shouldRecordStatusInLoggingContext() {
+        // Given
+        doNothing().when(validatorService).validateAccountIdTransactionId(ACCOUNT_ID, TRANSACTION_ID);
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(accountSpi.requestTransactionForAccountByTransactionId(SPI_CONTEXT_DATA, TRANSACTION_ID, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(spiTransaction));
+        when(spiToXs2aTransactionMapper.mapToXs2aTransaction(spiTransaction))
+            .thenReturn(transactions);
+        ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
+
+        // When
+        transactionService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID, REQUEST_URI);
+
+        // Then
+        verify(loggingContextService).storeConsentStatus(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
     }
 
     // Needed because SpiResponse is final, so it's impossible to mock it
