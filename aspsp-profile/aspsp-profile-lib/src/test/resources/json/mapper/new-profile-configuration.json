@@ -44,6 +44,7 @@
         "DECOUPLED"
       ],
       "scaRedirectFlow": "REDIRECT",
+      "oauthConfigurationUrl": "http://localhost:4200/idp/",
       "signingBasketSupported": false,
       "startAuthorisationMode": "auto",
       "supportedAccountReferenceFields": [

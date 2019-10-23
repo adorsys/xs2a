@@ -52,14 +52,18 @@ public class CreateConsentLinks extends AbstractLinks {
                 setStartAuthorisation(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));
             } else {
                 String redirectId = redirectIdService.generateRedirectId(authorisationId);
-                setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId()));
+                String consentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
+                                              ? redirectLinkBuilder.buildConsentScaOauthRedirectLink(consentId, redirectId, response.getInternalRequestId())
+                                              : redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId());
+
+                setScaRedirectOAuthLink(scaRedirectFlow, consentOauthLink);
                 setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
             }
         }
     }
 
     private void buildLinkForEmbeddedAndDecoupledScaApproach(String consentId, String authorizationId,
-                                                             boolean explicitMethod,boolean signingBasketModeActive) {
+                                                             boolean explicitMethod, boolean signingBasketModeActive) {
         if (explicitMethod) {
             if (signingBasketModeActive) {
                 setStartAuthorisation(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));

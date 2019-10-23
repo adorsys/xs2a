@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
@@ -37,6 +38,7 @@ public class GetAccountDetailsValidator extends AbstractAccountTppValidator<Comm
     private final AccountConsentValidator accountConsentValidator;
     private final AccountAccessValidator accountAccessValidator;
     private final AccountReferenceAccessValidator accountReferenceAccessValidator;
+    private final OauthConsentValidator oauthConsentValidator;
 
     /**
      * Validates get account details request
@@ -65,6 +67,11 @@ public class GetAccountDetailsValidator extends AbstractAccountTppValidator<Comm
         ValidationResult accountAccessValidationResult = accountAccessValidator.validate(commonAccountRequestObject.getAccountConsent(), commonAccountRequestObject.isWithBalance());
         if (accountAccessValidationResult.isNotValid()) {
             return accountAccessValidationResult;
+        }
+
+        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(accountConsent);
+        if (oauthConsentValidationResult.isNotValid()) {
+            return oauthConsentValidationResult;
         }
 
         return accountConsentValidator.validate(accountConsent, commonAccountRequestObject.getRequestUri());

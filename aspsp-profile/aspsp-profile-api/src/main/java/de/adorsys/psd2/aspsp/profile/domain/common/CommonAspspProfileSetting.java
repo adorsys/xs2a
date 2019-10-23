@@ -34,6 +34,7 @@ import java.util.List;
 @EqualsAndHashCode
 public class CommonAspspProfileSetting {
     private ScaRedirectFlow scaRedirectFlow;
+    private String oauthConfigurationUrl;
     private StartAuthorisationMode startAuthorisationMode;
     private boolean tppSignatureRequired;
     private boolean psuInInitialRequestMandated;

@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
@@ -64,6 +65,9 @@ public class GetPaymentCancellationAuthorisationScaStatusValidatorTest {
     @Mock
     PaymentTypeAndProductValidator paymentProductAndTypeValidator;
 
+    @Mock
+    private OauthPaymentValidator oauthPaymentValidator;
+
     @InjectMocks
     private GetPaymentCancellationAuthorisationScaStatusValidator getPaymentCancellationAuthorisationScaStatusValidator;
 
@@ -88,7 +92,8 @@ public class GetPaymentCancellationAuthorisationScaStatusValidatorTest {
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
         when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
             .thenReturn(ValidationResult.valid());
-
+        when(oauthPaymentValidator.validate(commonPaymentResponse))
+            .thenReturn(ValidationResult.valid());
         // When
         ValidationResult validationResult = getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(commonPaymentResponse, AUTHORISATION_ID));
 

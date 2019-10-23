@@ -43,6 +43,7 @@ setting:
     scaApproachesSupported:
       - REDIRECT
     scaRedirectFlow: REDIRECT
+    oauthConfigurationUrl: http://localhost:4200/idp/
     startAuthorisationMode: auto
     tppSignatureRequired: FALSE
     psuInInitialRequestMandated: FALSE

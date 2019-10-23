@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessMultipleAccountsValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
@@ -64,7 +65,8 @@ public class GetAccountListValidatorTest {
     private AccountAccessValidator accountAccessValidator;
     @Mock
     private AccountAccessMultipleAccountsValidator accountAccessMultipleAccountsValidator;
-
+    @Mock
+    private OauthConsentValidator oauthConsentValidator;
 
     @InjectMocks
     private GetAccountListValidator getAccountListValidator;
@@ -91,6 +93,8 @@ public class GetAccountListValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(accountAccessMultipleAccountsValidator.validate(accountConsent, accountConsent.isWithBalance()))
             .thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(accountConsent))
+            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, false, REQUEST_URI));
@@ -111,6 +115,8 @@ public class GetAccountListValidatorTest {
         when(accountAccessValidator.validate(any(), anyBoolean()))
             .thenReturn(ValidationResult.valid());
         when(accountAccessMultipleAccountsValidator.validate(accountConsent, true))
+            .thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(accountConsent))
             .thenReturn(ValidationResult.valid());
 
         // When

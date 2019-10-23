@@ -25,6 +25,7 @@ import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
@@ -49,6 +50,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -100,6 +102,8 @@ public class DeleteConsentTest {
 
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
+        given(aspspProfileService.getScaApproaches())
+            .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
         given(tppService.getTppInfo())
             .willReturn(TPP_INFO);
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))

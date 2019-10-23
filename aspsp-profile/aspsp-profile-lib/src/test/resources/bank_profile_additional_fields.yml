@@ -41,6 +41,7 @@ setting:
   common:
     scaApproachesSupported:
     - REDIRECT
+    oauthConfigurationUrl: http://localhost:4200/idp/
     scaRedirectFlow: REDIRECT
     startAuthorisationMode: auto
     tppSignatureRequired: FALSE

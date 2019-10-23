@@ -79,6 +79,7 @@ public class AspspProfileControllerTest {
     private static final boolean FORCE_XS2A_BASE_LINKS_URL = false;
     private static final String XS2A_BASE_LINKS_URL = "http://myhost.com/";
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
+    private static final String OAUTH_CONFIGURATION_URL = "http://localhost:4200/idp/";
     private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("application/json", "application/xml");
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
@@ -152,6 +153,7 @@ public class AspspProfileControllerTest {
                                                                 COUNTRY_VALIDATION_SUPPORTED);
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED);
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(SCA_REDIRECT_FLOW,
+                                                                         OAUTH_CONFIGURATION_URL,
                                                                          START_AUTHORISATION_MODE,
                                                                          TPP_SIGNATURE_REQUIRED,
                                                                          PSU_IN_INITIAL_REQUEST_MANDATED,

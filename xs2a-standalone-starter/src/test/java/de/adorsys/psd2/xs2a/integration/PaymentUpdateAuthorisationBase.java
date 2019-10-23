@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -75,6 +76,8 @@ public abstract class PaymentUpdateAuthorisationBase {
         given(tppService.getTppInfo()).willReturn(TPP_INFO);
         given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
+        given(aspspProfileService.getScaApproaches())
+            .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
     }
 
     protected void updatePaymentPsuData_checkForPsuCredentialsInvalidResponse(String psuIdAuthorisation, String psuIdHeader) throws Exception {

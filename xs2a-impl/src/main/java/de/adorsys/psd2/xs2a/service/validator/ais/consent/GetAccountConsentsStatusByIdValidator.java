@@ -16,8 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +27,11 @@ import org.springframework.stereotype.Component;
  * Validator to be used for validating get account consent status by id request according to some business rules
  */
 @Component
+@RequiredArgsConstructor
 public class GetAccountConsentsStatusByIdValidator extends AbstractConsentTppValidator<CommonConsentObject> {
+
+    private final OauthConsentValidator oauthConsentValidator;
+
     /**
      * Validates get account consent status by id request
      *
@@ -35,6 +41,6 @@ public class GetAccountConsentsStatusByIdValidator extends AbstractConsentTppVal
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(CommonConsentObject consentObject) {
-        return ValidationResult.valid();
+        return oauthConsentValidator.validate(consentObject.getAccountConsent());
     }
 }

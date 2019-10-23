@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.GetCommonPaymentByIdResponseValidator;
+import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
@@ -64,6 +65,9 @@ public class GetPaymentByIdValidatorTest {
     @Mock
     PaymentTypeAndProductValidator paymentProductAndTypeValidator;
 
+    @Mock
+    private OauthPaymentValidator oauthPaymentValidator;
+
     @InjectMocks
     private GetPaymentByIdValidator getPaymentByIdValidator;
 
@@ -94,6 +98,8 @@ public class GetPaymentByIdValidatorTest {
     public void validate_withValidPaymentObject_shouldReturnValid() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
+        when(oauthPaymentValidator.validate(commonPaymentResponse))
+            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = getPaymentByIdValidator.validate(new GetPaymentByIdPO(commonPaymentResponse, PAYMENT_TYPE, PAYMENT_PRODUCT));

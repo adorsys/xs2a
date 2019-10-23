@@ -29,7 +29,7 @@ import java.util.Optional;
 @SuppressWarnings("PMD.ExcessivePublicCount")
 public enum MessageErrorCode {
     SERVICE_NOT_SUPPORTED(406), // Requested service or it's part is not supported by ASPSP
-    ROLE_INVALID (401), // The TPP does not have the correct PSD2 role to access this service
+    ROLE_INVALID(401), // The TPP does not have the correct PSD2 role to access this service
     CERTIFICATE_INVALID(401),  // The contents of the signature/corporate seal certificate are not matching PSD2 general PSD2 or attribute requirements
 
     // TPP certificate doesn’t match the initial request
@@ -52,6 +52,9 @@ public enum MessageErrorCode {
     CERTIFICATE_MISSING(401),  // Signature/corporate seal certificate was not available in the request but is mandated for the corresponding
     SIGNATURE_INVALID(401),  // Application layer eIDAS Signature for TPP authentication is not correct
     SIGNATURE_MISSING(401),  // Application layer eIDAS Signature for TPP authentication is mandated by the ASPSP but is missing
+
+    FORBIDDEN(403), // Token is not valid for the addressed service/resource
+
     FORMAT_ERROR(400),  // Format of certain request fields are not matching the XS2A requirements
 
     // Please provide the PSU identification data
@@ -437,7 +440,7 @@ public enum MessageErrorCode {
 
     // Signing Basket Specific Error Codes
     REFERENCE_MIX_INVALID(400),
-    REFERENCE_STATUS_INVALID (409),
+    REFERENCE_STATUS_INVALID(409),
 
     // AIS specific error code
     SESSIONS_NOT_SUPPORTED(400),  // Sessions are not supported by ASPSP
@@ -625,6 +628,12 @@ public enum MessageErrorCode {
     },
     // Couldn’t authorise payment cancellation
     UNAUTHORIZED_CANCELLATION(401) {
+        @Override
+        public String getName() {
+            return UNAUTHORIZED_STRING;
+        }
+    },
+    UNAUTHORIZED_NO_TOKEN(401) {
         @Override
         public String getName() {
             return UNAUTHORIZED_STRING;

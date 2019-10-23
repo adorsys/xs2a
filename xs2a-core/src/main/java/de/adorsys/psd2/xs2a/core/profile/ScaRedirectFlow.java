@@ -17,5 +17,13 @@
 package de.adorsys.psd2.xs2a.core.profile;
 
 public enum ScaRedirectFlow {
-    REDIRECT, OAUTH
+
+    // Usual redirect mode.
+    REDIRECT,
+
+    // Integrated OAuth mode (TPP asks for token after initiation of request).
+    OAUTH,
+
+    // Pre-step OAuth mode (TPP asks for token before initiation of request).
+    OAUTH_PRE_STEP
 }

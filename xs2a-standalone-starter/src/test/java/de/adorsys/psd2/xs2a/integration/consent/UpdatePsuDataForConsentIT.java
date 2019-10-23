@@ -30,6 +30,10 @@ import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
@@ -126,6 +130,8 @@ public class UpdatePsuDataForConsentIT {
         given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo())).willReturn(false);
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
+        given(aspspProfileService.getScaApproaches())
+            .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
     }
 
     @Test

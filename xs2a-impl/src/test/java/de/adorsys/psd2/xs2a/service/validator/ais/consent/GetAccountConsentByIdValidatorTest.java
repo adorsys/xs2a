@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisConsentTppInfoValidator;
@@ -48,6 +49,8 @@ public class GetAccountConsentByIdValidatorTest {
 
     @Mock
     private AisConsentTppInfoValidator aisConsentTppInfoValidator;
+    @Mock
+    private OauthConsentValidator oauthConsentValidator;
 
     @InjectMocks
     private GetAccountConsentByIdValidator getAccountConsentByIdValidator;
@@ -67,6 +70,8 @@ public class GetAccountConsentByIdValidatorTest {
     public void validate_withValidConsentObject_shouldReturnValid() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        when(oauthConsentValidator.validate(accountConsent))
+            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = getAccountConsentByIdValidator.validate(new CommonConsentObject(accountConsent));

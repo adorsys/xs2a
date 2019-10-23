@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessMultipleAccountsValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
@@ -34,6 +36,8 @@ public class GetAccountListValidator extends AbstractAccountTppValidator<GetAcco
     private final AccountConsentValidator accountConsentValidator;
     private final AccountAccessValidator accountAccessValidator;
     private final AccountAccessMultipleAccountsValidator accountAccessMultipleAccountsValidator;
+    private final OauthConsentValidator oauthConsentValidator;
+
     /**
      * Validates get account list request  by checking whether:
      * <ul>
@@ -46,20 +50,27 @@ public class GetAccountListValidator extends AbstractAccountTppValidator<GetAcco
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(GetAccountListConsentObject consentObject) {
-        ValidationResult accountConsentValidationResult = accountConsentValidator.validate(consentObject.getAccountConsent(), consentObject.getRequestUri());
+        AccountConsent accountConsent = consentObject.getAccountConsent();
+
+        ValidationResult accountConsentValidationResult = accountConsentValidator.validate(accountConsent, consentObject.getRequestUri());
 
         if (accountConsentValidationResult.isNotValid()) {
             return accountConsentValidationResult;
         }
 
-        ValidationResult accountAccessValidationResult = accountAccessValidator.validate(consentObject.getAccountConsent(), consentObject.isWithBalance());
+        ValidationResult accountAccessValidationResult = accountAccessValidator.validate(accountConsent, consentObject.isWithBalance());
         if (accountAccessValidationResult.isNotValid()) {
             return accountAccessValidationResult;
         }
 
-        ValidationResult accountAccessMultipleAccountsValidatorResult = accountAccessMultipleAccountsValidator.validate(consentObject.getAccountConsent(), consentObject.isWithBalance());
+        ValidationResult accountAccessMultipleAccountsValidatorResult = accountAccessMultipleAccountsValidator.validate(accountConsent, consentObject.isWithBalance());
         if (accountAccessMultipleAccountsValidatorResult.isNotValid()) {
             return accountAccessMultipleAccountsValidatorResult;
+        }
+
+        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(accountConsent);
+        if (oauthConsentValidationResult.isNotValid()) {
+            return oauthConsentValidationResult;
         }
 
         return ValidationResult.valid();

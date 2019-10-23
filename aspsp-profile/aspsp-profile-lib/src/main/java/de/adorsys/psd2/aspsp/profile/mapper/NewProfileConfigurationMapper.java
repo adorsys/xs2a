@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 @Component
 public class NewProfileConfigurationMapper {
     private static final boolean DEFAULT_SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED = true;
+    private static final String DEFAULT_OAUTH_CONFIGURATION_URL = "http://localhost:4200/idp/";
 
     public NewProfileConfiguration mapToNewProfileConfiguration(OldProfileConfiguration oldProfileConfiguration) {
         OldBankProfileSetting setting = oldProfileConfiguration.getSetting();
@@ -65,6 +66,7 @@ public class NewProfileConfigurationMapper {
         PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(setting.isPiisConsentSupported());
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting(setting.getScaApproaches(),
                                                                                  setting.getScaRedirectFlow(),
+                                                                                 DEFAULT_OAUTH_CONFIGURATION_URL,
                                                                                  setting.getStartAuthorisationMode(),
                                                                                  setting.isTppSignatureRequired(),
                                                                                  setting.isPsuInInitialRequestMandated(),

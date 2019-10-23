@@ -77,6 +77,7 @@ public class AspspProfileServiceImpl implements AspspProfileService {
 
         CommonAspspProfileBankSetting commonBankSetting = setting.getCommon();
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(commonBankSetting.getScaRedirectFlow(),
+                                                                         commonBankSetting.getOauthConfigurationUrl(),
                                                                          commonBankSetting.getStartAuthorisationMode() == null
                                                                              ? StartAuthorisationMode.AUTO
                                                                              : StartAuthorisationMode.getByValue(commonBankSetting.getStartAuthorisationMode()),

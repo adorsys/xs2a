@@ -33,4 +33,10 @@ public class TppErrorMessageBuilder {
         String text = messageService.getMessage(messageErrorCode.name());
         return new TppErrorMessage(messageCategory, messageErrorCode, text);
     }
+
+    public TppErrorMessage buildTppErrorMessageWithPlaceholder(MessageCategory messageCategory, MessageErrorCode messageErrorCode, String placeholder) {
+        String text = String.format(messageService.getMessage(messageErrorCode.name()), placeholder);
+        return new TppErrorMessage(messageCategory, messageErrorCode, text);
+    }
+
 }

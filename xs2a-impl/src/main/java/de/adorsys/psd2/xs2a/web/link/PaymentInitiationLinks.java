@@ -69,7 +69,7 @@ public class PaymentInitiationLinks extends AbstractLinks {
 
         ScaApproach scaApproach = authorisationId == null ?
                                       scaApproachResolver.resolveScaApproach()
-                                      : scaApproachResolver.getInitiationScaApproach( authorisationId );
+                                      : scaApproachResolver.getInitiationScaApproach(authorisationId);
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproach)) {
             addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, signingBasketModeActive);
         } else if (scaApproach == REDIRECT) {
@@ -100,7 +100,12 @@ public class PaymentInitiationLinks extends AbstractLinks {
             setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
         } else {
             String redirectId = redirectIdService.generateRedirectId(authorisationId);
-            setScaRedirectOAuthLink(scaRedirectFlow, redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId));
+
+            String paymentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
+                                          ? redirectLinkBuilder.buildPaymentScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
+                                          : redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId);
+
+            setScaRedirectOAuthLink(scaRedirectFlow, paymentOauthLink);
             setScaStatus(
                 buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
         }
