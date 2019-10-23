@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -130,6 +131,8 @@ public class AccountListServiceTest {
     private SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory;
     @Mock
     private AccountHelperService accountHelperService;
+    @Mock
+    private LoggingContextService loggingContextService;
 
     @Before
     public void setUp() {
@@ -318,6 +321,29 @@ public class AccountListServiceTest {
         verify(getAccountListValidator).validate(getAccountListConsentObject);
 
         assertThatErrorIs(actualResponse, CONSENT_INVALID);
+    }
+
+    @Test
+    public void getAccountList_shouldRecordStatusIntoLoggingContext() {
+        // Given
+        List<SpiAccountDetails> spiAccountDetailsList = Collections.singletonList(spiAccountDetails);
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(accountSpi.requestAccountList(SPI_CONTEXT_DATA, WITH_BALANCE, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
+        List<Xs2aAccountDetails> xs2aAccountDetailsList = Collections.singletonList(xs2aAccountDetails);
+        when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
+            .thenReturn(xs2aAccountDetailsList);
+        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList()))
+            .thenReturn(Optional.of(accountConsent));
+        ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
+
+        // When
+        accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
+
+        // Then
+        verify(loggingContextService).storeConsentStatus(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
     }
 
     @Test

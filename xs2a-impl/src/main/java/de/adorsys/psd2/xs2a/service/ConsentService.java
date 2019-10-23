@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -92,11 +93,11 @@ public class ConsentService {
     private final CreateConsentAuthorisationValidator createConsentAuthorisationValidator;
     private final UpdateConsentPsuDataValidator updateConsentPsuDataValidator;
     private final GetConsentAuthorisationsValidator getConsentAuthorisationsValidator;
-    private final AisAuthorisationValidator authorisationValidator;
     private final GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
     private final AisScaAuthorisationService aisScaAuthorisationService;
     private final RequestProviderService requestProviderService;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    private final LoggingContextService loggingContextService;
 
     /**
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
@@ -169,12 +170,15 @@ public class ConsentService {
         xs2aAccountAccess.ifPresent(accountAccess ->
                                         accountReferenceUpdater.rewriteAccountAccess(consentId, accountAccess));
 
-        CreateConsentResponse createConsentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, spiResponsePayload.getPsuMessage(), multilevelScaRequired, requestProviderService.getInternalRequestIdString());
+        ConsentStatus consentStatus = ConsentStatus.RECEIVED;
+        CreateConsentResponse createConsentResponse = new CreateConsentResponse(consentStatus.getValue(), consentId, null, null, null, spiResponsePayload.getPsuMessage(), multilevelScaRequired, requestProviderService.getInternalRequestIdString());
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(createConsentResponse).build();
 
         if (authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {
             proceedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuData, consentId);
         }
+
+        loggingContextService.storeConsentStatus(consentStatus);
 
         return createConsentResponseObject;
     }
@@ -219,6 +223,7 @@ public class ConsentService {
 
         ConsentStatus consentStatus = validatedAccountConsent.getConsentStatus();
         if (consentStatus.isFinalisedStatus()) {
+            loggingContextService.storeConsentStatus(consentStatus);
             return responseBuilder
                        .body(new ConsentStatusResponse(consentStatus))
                        .build();
@@ -236,6 +241,7 @@ public class ConsentService {
         }
         ConsentStatus spiConsentStatus = spiResponse.getPayload().getConsentStatus();
         aisConsentService.updateConsentStatus(consentId, spiConsentStatus);
+        loggingContextService.storeConsentStatus(spiConsentStatus);
 
         return responseBuilder.body(new ConsentStatusResponse(spiConsentStatus)).build();
     }
@@ -281,6 +287,8 @@ public class ConsentService {
                                                  ? ConsentStatus.REJECTED
                                                  : ConsentStatus.TERMINATED_BY_TPP;
 
+            loggingContextService.storeConsentStatus(newConsentStatus);
+
             aisConsentService.updateConsentStatus(consentId, newConsentStatus);
             return ResponseObject.<Void>builder().build();
         }
@@ -323,7 +331,7 @@ public class ConsentService {
 
         if (Objects.nonNull(consent.getConsentStatus()) &&
                 consent.getConsentStatus().isFinalisedStatus()) {
-
+            loggingContextService.storeConsentStatus(consent.getConsentStatus());
             return ResponseObject.<AccountConsent>builder()
                        .body(consent)
                        .build();
@@ -342,6 +350,7 @@ public class ConsentService {
 
         ConsentStatus consentStatus = spiConsentStatus.getPayload().getConsentStatus();
         aisConsentService.updateConsentStatus(consentId, consentStatus);
+        loggingContextService.storeConsentStatus(consent.getConsentStatus());
 
         return ResponseObject.<AccountConsent>builder()
                    .body(aisConsentMapper.mapToAccountConsentWithNewStatus(consent, consentStatus))
@@ -367,6 +376,7 @@ public class ConsentService {
 
         if (psuData.isEmpty()
                 || StringUtils.isBlank(password)) {
+            loggingContextService.storeScaStatus(createAisAuthorizationResponse.getBody().getScaStatus());
             return ResponseObject.<AuthorisationResponse>builder()
                        .body(createAisAuthorizationResponse.getBody())
                        .build();
@@ -433,6 +443,8 @@ public class ConsentService {
                        .build();
         }
 
+        loggingContextService.storeConsentStatus(accountConsent.get().getConsentStatus());
+
         AisAuthorizationService service = aisScaAuthorisationServiceResolver.getService();
         return service.createConsentAuthorization(psuIdData, consentId)
                    .map(resp -> ResponseObject.<CreateConsentAuthorizationResponse>builder().body(resp).build())
@@ -475,13 +487,17 @@ public class ConsentService {
                        .build();
         }
 
-        if (accountConsent.get().isExpired()) {
+        AccountConsent consent = accountConsent.get();
+
+        if (consent.isExpired()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Update consent PSU data failed: consent expired",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(AIS_401, of(CONSENT_EXPIRED))
                        .build();
         }
+
+        loggingContextService.storeConsentStatus(consent.getConsentStatus());
 
         return getUpdateConsentPsuDataResponse(updatePsuData);
     }
@@ -499,6 +515,7 @@ public class ConsentService {
         }
 
         UpdateConsentPsuDataResponse response = service.updateConsentPsuData(updatePsuData, authorization.get());
+        loggingContextService.storeScaStatus(response.getScaStatus());
 
         return Optional.ofNullable(response)
                    .map(s -> Optional.ofNullable(s.getMessageError())
@@ -530,6 +547,8 @@ public class ConsentService {
                        .fail(validationResult.getMessageError())
                        .build();
         }
+
+        loggingContextService.storeConsentStatus(accountConsent.get().getConsentStatus());
 
         return getAuthorisationSubResources(consentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
@@ -569,10 +588,10 @@ public class ConsentService {
                        .build();
         }
 
-        Optional<ScaStatus> scaStatus = aisScaAuthorisationServiceResolver.getServiceInitiation(authorisationId)
-                                            .getAuthorisationScaStatus(consentId, authorisationId);
+        Optional<ScaStatus> scaStatusOptional = aisScaAuthorisationServiceResolver.getServiceInitiation(authorisationId)
+                                                    .getAuthorisationScaStatus(consentId, authorisationId);
 
-        if (!scaStatus.isPresent()) {
+        if (!scaStatusOptional.isPresent()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Get consent authorisation SCA status failed: consent not found at CMS by id",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
             return ResponseObject.<ScaStatus>builder()
@@ -580,8 +599,13 @@ public class ConsentService {
                        .build();
         }
 
+        ScaStatus scaStatus = scaStatusOptional.get();
+
+        loggingContextService.storeConsentStatus(accountConsent.get().getConsentStatus());
+        loggingContextService.storeScaStatus(scaStatus);
+
         return ResponseObject.<ScaStatus>builder()
-                   .body(scaStatus.get())
+                   .body(scaStatus)
                    .build();
     }
 
@@ -604,7 +628,10 @@ public class ConsentService {
 
     private void proceedImplicitCaseForCreateConsent(CreateConsentResponse response, PsuIdData psuData, String consentId) {
         aisScaAuthorisationServiceResolver.getService().createConsentAuthorization(psuData, consentId)
-            .ifPresent(a -> response.setAuthorizationId(a.getAuthorisationId()));
+            .ifPresent(a -> {
+                response.setAuthorizationId(a.getAuthorisationId());
+                loggingContextService.storeScaStatus(a.getScaStatus());
+            });
     }
 
     private SpiContextData getSpiContextData() {

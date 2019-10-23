@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.interceptor.logging;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +60,8 @@ public class AccountLoggingInterceptorTest {
     private HttpServletResponse response;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private LoggingContextService loggingContextService;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -115,6 +118,7 @@ public class AccountLoggingInterceptorTest {
 
         verify(tppService).getTppInfo();
         verify(requestProviderService).getInternalRequestId();
+        verify(loggingContextService).getConsentStatus();
         verify(response).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
         verify(response).getStatus();
     }
