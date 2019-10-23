@@ -42,9 +42,7 @@ public class DecoupledAisAuthorizationServiceTest {
     private static final AccountConsentAuthorization ACCOUNT_CONSENT_AUTHORIZATION = buildAccountConsentAuthorization();
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final ScaApproach SCA_APPROACH = ScaApproach.DECOUPLED;
-    private static final List<String> STRING_LIST = Collections.singletonList(AUTHORISATION_ID);
     private static final AccountConsent ACCOUNT_CONSENT = buildConsent(CONSENT_ID);
-    private static final Xs2aAuthorisationSubResources AUTHORISATION_SUB_RESOURCES = new Xs2aAuthorisationSubResources(STRING_LIST);
     private static final CreateConsentAuthorizationResponse CREATE_CONSENT_AUTHORIZATION_RESPONSE = buildCreateConsentAuthorizationResponse();
     private static final UpdateConsentPsuDataReq UPDATE_CONSENT_PSU_DATA_REQ = new UpdateConsentPsuDataReq();
     private static final UpdateConsentPsuDataResponse UPDATE_CONSENT_PSU_DATA_RESPONSE = new UpdateConsentPsuDataResponse(SCA_STATUS, CONSENT_ID, AUTHORISATION_ID);
@@ -102,7 +100,7 @@ public class DecoupledAisAuthorizationServiceTest {
         // Given
         when(scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + SCA_APPROACH.name() + SEPARATOR + ACCOUNT_CONSENT_AUTHORIZATION.getScaStatus().name()))
             .thenReturn(aisScaAuthenticatedStage);
-        when(aisScaAuthenticatedStage.apply(UPDATE_CONSENT_PSU_DATA_REQ))
+        when(aisScaAuthenticatedStage.apply(UPDATE_CONSENT_PSU_DATA_REQ, ACCOUNT_CONSENT_AUTHORIZATION))
             .thenReturn(UPDATE_CONSENT_PSU_DATA_RESPONSE);
 
         // When

@@ -124,7 +124,6 @@ public class Xs2aAisConsentMapperTest {
     @Test
     public void mapToSpiUpdateConsentPsuDataReq() {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, CONSENT_ID, AUTHORISATION_ID);
-        response.setScaAuthenticationData("123456");
         Xs2aAuthenticationObject chosenScaMethod = new Xs2aAuthenticationObject();
         chosenScaMethod.setAuthenticationMethodId("3284932jk6456");
         response.setChosenScaMethod(chosenScaMethod);
@@ -132,6 +131,7 @@ public class Xs2aAisConsentMapperTest {
         UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
         PsuIdData psuData = new PsuIdData("1", "2", "3", "4");
         request.setPsuData(psuData);
+        request.setScaAuthenticationData("123456");
         request.setConsentId(CONSENT_ID);
         request.setAuthorizationId(AUTHORISATION_ID);
 

@@ -29,10 +29,12 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
+import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
@@ -99,6 +101,7 @@ public class ConsentService {
     private final AisScaAuthorisationService aisScaAuthorisationService;
     private final RequestProviderService requestProviderService;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    private final AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
     private final LoggingContextService loggingContextService;
 
     /**
@@ -510,11 +513,16 @@ public class ConsentService {
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
 
-        UpdateConsentPsuDataResponse response = service.updateConsentPsuData(updatePsuData, authorization.get());
+        AccountConsentAuthorization consentAuthorization = authorization.get();
+        UpdateConsentPsuDataResponse response = (UpdateConsentPsuDataResponse) authorisationChainResponsibilityService.apply(
+            new AisAuthorisationProcessorRequest(consentAuthorization.getChosenScaApproach(),
+                                                 consentAuthorization.getScaStatus(),
+                                                 updatePsuData,
+                                                 consentAuthorization));
         loggingContextService.storeScaStatus(response.getScaStatus());
 
         return Optional.ofNullable(response)
-                   .map(s -> Optional.ofNullable(s.getMessageError())
+                   .map(s -> Optional.ofNullable(s.getErrorHolder())
                                  .map(e -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                                .fail(e)
                                                .build())

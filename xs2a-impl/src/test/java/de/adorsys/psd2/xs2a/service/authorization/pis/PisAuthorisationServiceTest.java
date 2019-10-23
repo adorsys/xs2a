@@ -19,9 +19,7 @@ package de.adorsys.psd2.xs2a.service.authorization.pis;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
-import de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -31,12 +29,14 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.authorization.pis.stage.initiation.PisScaReceivedAuthorisationStage;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
+import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -48,7 +48,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -73,7 +72,6 @@ public class PisAuthorisationServiceTest {
     private static final Xs2aUpdatePisCommonPaymentPsuDataRequest XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST = buildXs2aUpdatePisCommonPaymentPsuDataRequest();
     private static final GetPisAuthorisationResponse GET_PIS_AUTHORISATION_RESPONSE = buildGetPisAuthorisationResponse();
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse STAGE_RESPONSE = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCA_STATUS, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA);
-    private static final UpdatePisCommonPaymentPsuDataRequest UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST = new UpdatePisCommonPaymentPsuDataRequest();
 
     @InjectMocks
     private PisAuthorisationService pisAuthorisationService;
@@ -81,17 +79,14 @@ public class PisAuthorisationServiceTest {
     @Mock
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @Mock
-    private PisScaStageAuthorisationFactory pisScaStageAuthorisationFactory;
-    @Mock
-    private Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
-    @Mock
     private ScaApproachResolver scaApproachResolver;
-    @Mock
-    private PisScaReceivedAuthorisationStage pisScaReceivedAuthorisationStage;
     @Mock
     private RequestProviderService requestProviderService;
     @Mock
     private TppRedirectUriMapper tppRedirectUriMapper;
+    @Mock
+    private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
+
 
     @Before
     public void setUp() {
@@ -146,40 +141,43 @@ public class PisAuthorisationServiceTest {
 
     @Test
     public void updatePisAuthorisation_success() {
+        ArgumentCaptor<AuthorisationProcessorRequest> authorisationProcessorRequestCaptor = ArgumentCaptor.forClass(AuthorisationProcessorRequest.class);
         // Given
         when(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(GET_PIS_AUTHORISATION_RESPONSE));
-        when(pisScaStageAuthorisationFactory.getService(any(String.class)))
-            .thenReturn(pisScaReceivedAuthorisationStage);
-        when(pisScaReceivedAuthorisationStage.apply(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, GET_PIS_AUTHORISATION_RESPONSE))
-            .thenReturn(STAGE_RESPONSE);
-        when(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(STAGE_RESPONSE))
-            .thenReturn(UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
+        when(authorisationChainResponsibilityService.apply(authorisationProcessorRequestCaptor.capture())).thenReturn(STAGE_RESPONSE);
 
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisAuthorisationService.updatePisAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, SCA_APPROACH);
 
         // Then
         assertThat(actualResponse).isEqualTo(STAGE_RESPONSE);
+
+        assertThat(authorisationProcessorRequestCaptor.getValue().getServiceType()).isEqualTo(ServiceType.PIS);
+        assertThat(authorisationProcessorRequestCaptor.getValue().getPaymentAuthorisationType()).isEqualTo(PaymentAuthorisationType.CREATED);
+        assertThat(authorisationProcessorRequestCaptor.getValue().getUpdateAuthorisationRequest()).isEqualTo(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
+        assertThat(authorisationProcessorRequestCaptor.getValue().getAuthorisation()).isEqualTo(GET_PIS_AUTHORISATION_RESPONSE);
     }
 
     @Test
     public void updatePisCancellationAuthorisation_success() {
+        ArgumentCaptor<AuthorisationProcessorRequest> authorisationProcessorRequestCaptor = ArgumentCaptor.forClass(AuthorisationProcessorRequest.class);
+
         // Given
         when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(GET_PIS_AUTHORISATION_RESPONSE));
-        when(pisScaStageAuthorisationFactory.getService(any(String.class)))
-            .thenReturn(pisScaReceivedAuthorisationStage);
-        when(pisScaReceivedAuthorisationStage.apply(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, GET_PIS_AUTHORISATION_RESPONSE))
-            .thenReturn(STAGE_RESPONSE);
-        when(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(STAGE_RESPONSE))
-            .thenReturn(UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
+        when(authorisationChainResponsibilityService.apply(authorisationProcessorRequestCaptor.capture())).thenReturn(STAGE_RESPONSE);
 
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisAuthorisationService.updatePisCancellationAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, SCA_APPROACH);
 
         // Then
         assertThat(actualResponse).isEqualTo(STAGE_RESPONSE);
+
+        assertThat(authorisationProcessorRequestCaptor.getValue().getServiceType()).isEqualTo(ServiceType.PIS);
+        assertThat(authorisationProcessorRequestCaptor.getValue().getPaymentAuthorisationType()).isEqualTo(PaymentAuthorisationType.CANCELLED);
+        assertThat(authorisationProcessorRequestCaptor.getValue().getUpdateAuthorisationRequest()).isEqualTo(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
+        assertThat(authorisationProcessorRequestCaptor.getValue().getAuthorisation()).isEqualTo(GET_PIS_AUTHORISATION_RESPONSE);
     }
 
     @Test

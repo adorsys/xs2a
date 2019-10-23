@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded;
 
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -51,7 +52,7 @@ public class AisScaFinalisedStageTest {
 
     @Test
     public void apply_Success() {
-        UpdateConsentPsuDataResponse actualResponse = scaFinalisedStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaFinalisedStage.apply(request, new AccountConsentAuthorization());
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);

@@ -24,9 +24,11 @@ import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
-import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -37,7 +39,6 @@ import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.service.TppService;
-import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -132,6 +133,7 @@ public class UpdatePsuDataForConsentIT {
         given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
         AisConsentAuthorizationResponse authorizationResponse = new AisConsentAuthorizationResponse();
         authorizationResponse.setScaStatus(ScaStatus.PSUIDENTIFIED);
+        authorizationResponse.setChosenScaApproach(ScaApproach.EMBEDDED);
         given(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, ENCRYPTED_CONSENT_ID))
             .willReturn(Optional.of(authorizationResponse));
         given(aisConsentServiceEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID))

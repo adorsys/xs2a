@@ -21,10 +21,12 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
@@ -45,14 +47,11 @@ import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Optional;
-
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 
 @Slf4j
 @Service("AIS_PSUAUTHENTICATED")
-public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
+public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataReq, AccountConsentAuthorization, UpdateConsentPsuDataResponse> {
     private final SpiContextDataProvider spiContextDataProvider;
     private final CommonDecoupledAisService commonDecoupledAisService;
     private final RequestProviderService requestProviderService;
@@ -82,17 +81,20 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
      * @return UpdateConsentPsuDataResponse as a result of updating process
      */
     @Override
-    public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
+    public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request, AccountConsentAuthorization authorisationResponse) {
         String consentId = request.getConsentId();
+        String authorisationId = request.getAuthorisationId();
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (!accountConsentOptional.isPresent()) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}]. AIS_PSUAUTHENTICATED stage. Apply authorisation when update consent PSU data has failed. Consent not found by id.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
-            MessageError messageError = new MessageError(ErrorType.AIS_400, of(MessageErrorCode.CONSENT_UNKNOWN_400));
-            return createFailedResponse(messageError, Collections.emptyList(), request);
+            ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_400)
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400))
+                                          .build();
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}]. AIS_PSUAUTHENTICATED stage. Apply authorisation when update consent PSU data has failed. Consent not found by id. Error msg: {}.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, errorHolder);
+            return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId);
         }
 
-        PsuIdData psuData = extractPsuIdData(request);
+        PsuIdData psuData = extractPsuIdData(request, authorisationResponse);
         AccountConsent accountConsent = accountConsentOptional.get();
 
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
@@ -100,7 +102,7 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
         String authenticationMethodId = request.getAuthenticationMethodId();
         if (isDecoupledApproach(request.getAuthorizationId(), authenticationMethodId)) {
             aisConsentService.updateScaApproach(request.getAuthorizationId(), ScaApproach.DECOUPLED);
-            return commonDecoupledAisService.proceedDecoupledApproach(request, spiAccountConsent, authenticationMethodId, psuData);
+            return commonDecoupledAisService.proceedDecoupledApproach(request.getConsentId(), request.getAuthorisationId(), spiAccountConsent, authenticationMethodId, psuData);
         }
 
         return proceedEmbeddedApproach(request, spiAccountConsent, psuData);
@@ -115,10 +117,10 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
         SpiResponse<SpiAuthorizationCodeResult> spiResponse = aisConsentSpi.requestAuthorisationCode(spiContextDataProvider.provideWithPsuIdData(psuData), authenticationMethodId, spiAccountConsent, aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getConsentId()));
 
         if (spiResponse.hasError()) {
-            MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}], Authentication-Method-ID [{}]. AIS_PSUAUTHENTICATED stage. Proceed embedded approach when performs authorisation depending on selected SCA method has failed. Error msg: [{}].",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId(), request.getPsuData().getPsuId(), authenticationMethodId, messageError);
-            return createFailedResponse(messageError, spiResponse.getErrors(), request);
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId(), request.getPsuData().getPsuId(), authenticationMethodId, errorHolder);
+            return new UpdateConsentPsuDataResponse(errorHolder, request.getConsentId(), request.getAuthorizationId());
         }
 
         SpiAuthorizationCodeResult authorizationCodeResult = spiResponse.getPayload();

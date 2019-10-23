@@ -12,6 +12,7 @@
 * Validate access of TPP based on role's header
 * Fixed typos in PSD2 yaml file
 * Add statuses to logs
+* Refactoring: consent and payment authorisation flows were refactored
 
 == Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
 
@@ -73,3 +74,8 @@ All typos were fixed in BerlinGroup PSD2 yaml file. Also, all `description` fiel
 
 From now on, `consentStatus`, `paymentStatus` and `scaStatus` values are being logged to `access-log`
 for all AIS and PIS endpoints, if they were involved in the request.
+
+== Refactoring: consent and payment authorisation flows were refactored
+
+Authorisation process for the consent and payment initiation and payment cancellation were refactored - chain of responsibility
+design pattern was applied. The authorisation algorithm remained the same.

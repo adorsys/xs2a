@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.authorization.pis;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
@@ -26,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationS
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.ScaApproachServiceTypeProvider;
+import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 
 import java.util.Optional;
 
@@ -47,6 +49,9 @@ public interface PisScaAuthorisationService extends ScaApproachServiceTypeProvid
      * @return update payment authorisation response
      */
     Xs2aUpdatePisCommonPaymentPsuDataResponse updateCommonPaymentPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request);
+
+    void updateAuthorisation(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response);
+    void updateCancellationAuthorisation(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response);
 
     /**
      * Creates authorisation cancellation for the payment

@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -244,7 +243,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     private static Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdatePisCommonPaymentPsuDataResponse(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED, PAYMENT_ID, AUTHORISATION_ID, PSU_DATA);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED, PAYMENT_ID, AUTHORISATION_ID, PSU_DATA);
         response.setPsuMessage(AUTH_DECOUPLED_RESPONSE.getPayload().getPsuMessage());
         response.setChosenScaMethod(buildXs2aAuthenticationObjectForDecoupledApproach(request.getAuthenticationMethodId()));
         return response;

@@ -33,13 +33,13 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.service.spi.payment.SpiPaymentServiceResolver;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
@@ -52,7 +52,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Collections;
 import java.util.List;
@@ -87,13 +86,7 @@ public class PisScaMethodSelectedStageTest {
     @Mock
     private SinglePaymentSpi singlePaymentSpi;
     @Mock
-    private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
-    @Mock
     private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
-    @Mock
-    private CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
-    @Mock
-    private ApplicationContext applicationContext;
     @Mock
     private Xs2aUpdatePaymentAfterSpiService updatePaymentAfterSpiService;
     @Mock
@@ -104,6 +97,10 @@ public class PisScaMethodSelectedStageTest {
     private RequestProviderService requestProviderService;
     @Mock
     private Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
+    @Mock
+    private Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
+    @Mock
+    private SpiPaymentServiceResolver spiPaymentServiceResolver;
 
     @Before
     public void setUp() {
@@ -120,8 +117,7 @@ public class PisScaMethodSelectedStageTest {
             .thenReturn(spiAspspConsentDataProvider);
 
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-
-        when(xs2aPisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true)).thenReturn(true);
+        when(spiPaymentServiceResolver.getPaymentService(buildResponse(), PaymentType.SINGLE)).thenReturn(singlePaymentSpi);
     }
 
     @Test
@@ -129,9 +125,7 @@ public class PisScaMethodSelectedStageTest {
         SpiResponse<SpiPaymentExecutionResponse> spiErrorMessage = SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                        .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                                        .build();
-        when(pisAspspDataService.getInternalPaymentIdByEncryptedString(PAYMENT_ID)).thenReturn(any());
-        when(applicationContext.getBean(SinglePaymentSpi.class))
-            .thenReturn(singlePaymentSpi);
+        when(pisAspspDataService.getInternalPaymentIdByEncryptedString(PAYMENT_ID)).thenReturn("internal payment id");
 
         // generate an error
         when(singlePaymentSpi.verifyScaAuthorisationAndExecutePayment(any(), any(), any(), any()))
@@ -147,9 +141,7 @@ public class PisScaMethodSelectedStageTest {
 
     @Test
     public void apply_Success() {
-        when(pisAspspDataService.getInternalPaymentIdByEncryptedString(PAYMENT_ID)).thenReturn(any());
-        when(applicationContext.getBean(SinglePaymentSpi.class))
-            .thenReturn(singlePaymentSpi);
+        when(pisAspspDataService.getInternalPaymentIdByEncryptedString(PAYMENT_ID)).thenReturn("internal payment id");
 
         when(singlePaymentSpi.verifyScaAuthorisationAndExecutePayment(any(), any(), any(), any()))
             .thenReturn(buildSuccessSpiResponse(SPI_PAYMENT_EXECUTION_RESPONSE));
@@ -165,28 +157,6 @@ public class PisScaMethodSelectedStageTest {
 
         verify(xs2aPisCommonPaymentService, never()).updateMultilevelSca(PAYMENT_ID, true);
         verify(updatePaymentAfterSpiService, times(1)).updatePaymentStatus(PAYMENT_ID, ACCP_TRANSACTION_STATUS);
-    }
-
-    @Test
-    public void apply_SuccessAndMultilevelScaRequiredUpdated() {
-        when(pisAspspDataService.getInternalPaymentIdByEncryptedString(PAYMENT_ID)).thenReturn(any());
-        when(applicationContext.getBean(SinglePaymentSpi.class))
-            .thenReturn(singlePaymentSpi);
-
-        when(singlePaymentSpi.verifyScaAuthorisationAndExecutePayment(any(), any(), any(), any()))
-            .thenReturn(buildSuccessSpiResponse(SPI_PAYMENT_EXECUTION_RESPONSE_WITH_PATC_STATUS));
-
-        when(updatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, PATC_TRANSACTION_STATUS))
-            .thenReturn(true);
-
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaMethodSelectedStage.apply(buildRequest(), buildResponse());
-
-        assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.hasError()).isFalse();
-        assertThat(actualResponse.getScaStatus()).isEqualTo(FINALISED);
-
-        verify(xs2aPisCommonPaymentService, times(1)).updateMultilevelSca(PAYMENT_ID, true);
-        verify(updatePaymentAfterSpiService, times(1)).updatePaymentStatus(PAYMENT_ID, PATC_TRANSACTION_STATUS);
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataRequest buildRequest() {
