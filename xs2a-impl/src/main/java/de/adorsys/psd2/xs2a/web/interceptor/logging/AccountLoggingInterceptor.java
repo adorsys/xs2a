@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.interceptor.logging;
 import de.adorsys.psd2.xs2a.component.logger.TppLogger;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
@@ -35,6 +36,7 @@ public class AccountLoggingInterceptor extends HandlerInterceptorAdapter {
     private static final String NOT_EXIST_IN_URI = "Not exist in URI";
     private final TppService tppService;
     private final RequestProviderService requestProviderService;
+    private final LoggingContextService loggingContextService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -62,6 +64,7 @@ public class AccountLoggingInterceptor extends HandlerInterceptorAdapter {
             .withInternalRequestId(requestProviderService.getInternalRequestId())
             .withXRequestId()
             .withResponseStatus()
+            .withParam("consentStatus", loggingContextService.getConsentStatus())
             .perform();
     }
 }

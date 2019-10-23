@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.component.logger.TppLogger;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
@@ -37,6 +38,7 @@ public class ConsentLoggingInterceptor extends HandlerInterceptorAdapter {
     private final TppService tppService;
     private final RedirectIdService redirectIdService;
     private final RequestProviderService requestProviderService;
+    private final LoggingContextService loggingContextService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -64,6 +66,8 @@ public class ConsentLoggingInterceptor extends HandlerInterceptorAdapter {
             .withXRequestId()
             .withResponseStatus()
             .withOptionalRedirectId(redirectIdService.getRedirectId())
+            .withParam("consentStatus", loggingContextService.getConsentStatus())
+            .withParam("scaStatus", loggingContextService.getScaStatus())
             .perform();
     }
 }

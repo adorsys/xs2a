@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
@@ -72,6 +73,7 @@ public class AccountListService {
     private final RequestProviderService requestProviderService;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final AccountHelperService accountHelperService;
+    private final LoggingContextService loggingContextService;
 
     /**
      * Gets AccountDetails list based on accounts in provided AIS-consent, depending on withBalance variable and
@@ -133,6 +135,8 @@ public class AccountListService {
                        .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                        .build();
         }
+
+        loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
 
         return getXs2aAccountListHolderResponseObject(consentId, withBalance, requestUri, accountConsentUpdated.get(), accountDetails);
     }

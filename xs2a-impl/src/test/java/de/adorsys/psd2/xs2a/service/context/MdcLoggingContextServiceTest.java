@@ -39,19 +39,28 @@ public class MdcLoggingContextServiceTest {
         MDC.clear();
     }
 
-    @Test(expected = NotImplementedException.class)
-    public void storeConsentStatus() {
+    @Test
+    public void storeConsentStatus_shouldPutStatusIntoMdc() {
         // Given
         ConsentStatus status = ConsentStatus.RECEIVED;
 
         // When
         mdcLoggingContextService.storeConsentStatus(status);
+        // Then
+        assertEquals(status.getValue(), MDC.get(CONSENT_STATUS_KEY));
     }
 
-    @Test(expected = NotImplementedException.class)
-    public void getConsentStatus() {
+    @Test
+    public void getConsentStatus_shouldTakeStatusFromMdc() {
+        // Given
+        String expectedStatus = ConsentStatus.REJECTED.getValue();
+        MDC.put(CONSENT_STATUS_KEY, expectedStatus);
+
         // When
-        mdcLoggingContextService.getConsentStatus();
+        String actualStatus = mdcLoggingContextService.getConsentStatus();
+
+        // Then
+        assertEquals(expectedStatus, actualStatus);
     }
 
     @Test

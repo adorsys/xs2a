@@ -27,6 +27,7 @@ import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
@@ -36,6 +37,7 @@ import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -197,6 +199,7 @@ public class UpdatePsuDataForConsentIT {
         aisAccountConsent.setAccountConsentAuthorizations(Collections.singletonList(
             new AisAccountConsentAuthorisation(AUTHORISATION_ID, psuIdData, ScaStatus.PSUIDENTIFIED)));
         aisAccountConsent.setTppInfo(TPP_INFO);
+        aisAccountConsent.setConsentStatus(ConsentStatus.VALID);
         return aisAccountConsent;
     }
 }
