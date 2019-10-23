@@ -36,7 +36,7 @@ public class CmsAspspPisTransactionController {
     @ApiOperation(value = "Updated transaction status by payment id")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not found")})
+        @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<Void> updatePaymentStatus(
         @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
         @PathVariable("payment-id") String paymentId,
@@ -44,9 +44,15 @@ public class CmsAspspPisTransactionController {
             allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC", required = true)
         @PathVariable("status") String status,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
-        return aspspPaymentService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status), instanceId)
-                   ? ResponseEntity.ok().build()
-                   : ResponseEntity.badRequest().build();
+        TransactionStatus transactionStatus;
+        try {
+            transactionStatus = TransactionStatus.valueOf(status);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            return ResponseEntity.badRequest().build();
+        }
+        return aspspPaymentService.updatePaymentStatus(paymentId, transactionStatus, instanceId)
+            ? ResponseEntity.ok().build()
+            : ResponseEntity.badRequest().build();
     }
 }
 
