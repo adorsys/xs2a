@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.context;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.MDC;
@@ -28,16 +27,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class MdcLoggingContextService implements LoggingContextService {
     private static final String TRANSACTION_STATUS_KEY = "transactionStatus";
+    private static final String CONSENT_STATUS_KEY = "consentStatus";
     private static final String SCA_STATUS_KEY = "scaStatus";
 
     @Override
     public void storeConsentStatus(@NotNull ConsentStatus consentStatus) {
-        throw new NotImplementedException("Method hasn't been implemented yet");
+        MDC.put(CONSENT_STATUS_KEY, consentStatus.getValue());
     }
 
     @Override
     public String getConsentStatus() {
-        throw new NotImplementedException("Method hasn't been implemented yet");
+        return MDC.get(CONSENT_STATUS_KEY);
     }
 
     @Override

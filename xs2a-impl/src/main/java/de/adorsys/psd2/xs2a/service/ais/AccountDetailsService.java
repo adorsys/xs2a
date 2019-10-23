@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
@@ -70,6 +71,7 @@ public class AccountDetailsService {
     private final RequestProviderService requestProviderService;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final AccountHelperService accountHelperService;
+    private final LoggingContextService loggingContextService;
 
     /**
      * Gets AccountDetails based on accountId, details get checked with provided AIS-consent, depending on
@@ -115,6 +117,8 @@ public class AccountDetailsService {
         if (spiResponse.hasError()) {
             return checkSpiResponse(consentId, accountId, spiResponse);
         }
+
+        loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
 
         return getXs2aAccountDetailsHolderResponseObject(consentId, withBalance, requestUri, accountConsent, spiResponse.getPayload());
     }

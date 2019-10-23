@@ -35,6 +35,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -129,6 +130,8 @@ public class AccountDetailsServiceTest {
     private SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory;
     @Mock
     private AccountHelperService accountHelperService;
+    @Mock
+    private LoggingContextService loggingContextService;
 
     @Before
     public void setUp() {
@@ -247,6 +250,25 @@ public class AccountDetailsServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.READ_ACCOUNT_DETAILS_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getAccountDetails_shouldRecordStatusIntoLoggingContext() {
+        // Given
+        when(accountSpi.requestAccountDetailForAccount(SPI_CONTEXT_DATA, WITH_BALANCE, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(spiAccountDetails));
+        when(accountDetailsMapper.mapToXs2aAccountDetails(spiAccountDetails))
+            .thenReturn(xs2aAccountDetails);
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
+
+        // When
+        accountDetailsService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI);
+
+        // Then
+        verify(loggingContextService).storeConsentStatus(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
     }
 
     @Test

@@ -34,6 +34,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -124,6 +125,8 @@ public class BalanceServiceTest {
     private SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory;
     @Mock
     private AccountHelperService accountHelperService;
+    @Mock
+    private LoggingContextService loggingContextService;
 
     @Before
     public void setUp() {
@@ -259,6 +262,25 @@ public class BalanceServiceTest {
         // Then
         verify(getBalancesReportValidator).validate(commonAccountBalanceRequestObject);
         assertThatErrorIs(actualResponse, CONSENT_INVALID);
+    }
+
+    @Test
+    public void getBalancesReport_shouldRecordStatusIntoLoggingContext() {
+        // Given
+        when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
+        when(balanceReportMapper.mapToXs2aBalancesReport(spiAccountReference, Collections.emptyList()))
+            .thenReturn(xs2aBalancesReport);
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
+
+        // When
+        balanceService.getBalancesReport(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
+
+        // Then
+        verify(loggingContextService).storeConsentStatus(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
     }
 
     private void assertResponseHasNoErrors(ResponseObject actualResponse) {
