@@ -17,14 +17,15 @@
 package de.adorsys.psd2.xs2a.service.authorization.ais.stage.decoupled;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.error.TppMessage;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
@@ -48,14 +49,11 @@ import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Optional;
-
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 @Slf4j
 @Service("AIS_DECOUPLED_RECEIVED")
-public class AisDecoupledScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
+public class AisDecoupledScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, AccountConsentAuthorization, UpdateConsentPsuDataResponse> {
 
     private final RequestProviderService requestProviderService;
     private final SpiContextDataProvider spiContextDataProvider;
@@ -81,67 +79,71 @@ public class AisDecoupledScaReceivedAuthorisationStage extends AisScaStage<Updat
     }
 
     @Override
-    public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq updateConsentPsuDataReq) {
+    public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq updateConsentPsuDataReq, AccountConsentAuthorization authorisationResponse) {
         return updateConsentPsuDataReq.isUpdatePsuIdentification()
                    ? applyIdentification(updateConsentPsuDataReq)
-                   : applyAuthorisation(updateConsentPsuDataReq);
+                   : applyAuthorisation(updateConsentPsuDataReq, authorisationResponse);
     }
 
-    private UpdateConsentPsuDataResponse applyAuthorisation(UpdateConsentPsuDataReq updateConsentPsuDataReq) {
-        String consentId = updateConsentPsuDataReq.getConsentId();
+    private UpdateConsentPsuDataResponse applyAuthorisation(UpdateConsentPsuDataReq request, AccountConsentAuthorization authorisationResponse) {
+        String consentId = request.getConsentId();
+        String authorisationId = request.getAuthorisationId();
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
         if (!accountConsentOptional.isPresent()) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}]. AIS_DECOUPLED_RECEIVED stage. Apply authorisation when update consent PSU data has failed. Consent not found by id.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
-            MessageError messageError = new MessageError(ErrorType.AIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400));
-            return createFailedResponse(messageError, Collections.emptyList(), updateConsentPsuDataReq);
+            ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_400)
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400))
+                                          .build();
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}]. AIS_DECOUPLED_RECEIVED stage. Apply authorisation when update consent PSU data has failed. Consent not found by id. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, errorHolder);
+            return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId);
         }
         AccountConsent accountConsent = accountConsentOptional.get();
 
+        PsuIdData psuData = extractPsuIdData(request, authorisationResponse);
+
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
-        PsuIdData psuData = extractPsuIdData(updateConsentPsuDataReq);
-
-
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuData);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<SpiPsuAuthorisationResponse> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(spiContextData,
                                                                                                              spiPsuData,
-                                                                                                             updateConsentPsuDataReq.getPassword(),
+                                                                                                             request.getPassword(),
                                                                                                              spiAccountConsent,
                                                                                                              aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
 
         if (authorisationStatusSpiResponse.hasError()) {
-            MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(authorisationStatusSpiResponse, ServiceType.AIS));
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(authorisationStatusSpiResponse, ServiceType.AIS);
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_DECOUPLED_RECEIVED stage. Authorise PSU when apply authorisation with update consent PSU data has failed. Error msg: [{}].",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, updateConsentPsuDataReq.getAuthorizationId(), spiPsuData.getPsuId(), messageError);
-            return createFailedResponse(messageError, authorisationStatusSpiResponse.getErrors(), updateConsentPsuDataReq);
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, request.getAuthorizationId(), spiPsuData.getPsuId(), errorHolder);
+            return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId);
         }
 
         if (authorisationStatusSpiResponse.getPayload().getSpiAuthorisationStatus() == SpiAuthorisationStatus.FAILURE) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_DECOUPLED_RECEIVED stage. Authorise PSU when apply authorisation with update consent PSU data has failed. PSU credentials invalid.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, updateConsentPsuDataReq.getAuthorizationId(), spiPsuData.getPsuId());
-            MessageError messageError = new MessageError(ErrorType.AIS_401, TppMessageInformation.of(PSU_CREDENTIALS_INVALID));
-            return createFailedResponse(messageError, Collections.singletonList(new TppMessage(PSU_CREDENTIALS_INVALID)), updateConsentPsuDataReq);
+            ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_401)
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID))
+                                          .build();
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_DECOUPLED_RECEIVED stage. Authorise PSU when apply authorisation with update consent PSU data has failed. PSU credentials invalid. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, request.getAuthorizationId(), spiPsuData.getPsuId(), errorHolder);
+            return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId);
         }
 
         if (aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent)) {
             aisConsentService.updateConsentStatus(consentId, ConsentStatus.VALID);
 
-            UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, consentId, updateConsentPsuDataReq.getAuthorizationId());
-            response.setScaAuthenticationData(updateConsentPsuDataReq.getScaAuthenticationData());
-            return response;
+            return new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, consentId, request.getAuthorizationId());
         }
 
-        return commonDecoupledAisService.proceedDecoupledApproach(updateConsentPsuDataReq, spiAccountConsent, psuData);
+        return commonDecoupledAisService.proceedDecoupledApproach(request.getConsentId(), request.getAuthorisationId(), spiAccountConsent, psuData);
     }
 
     private UpdateConsentPsuDataResponse applyIdentification(UpdateConsentPsuDataReq request) {
         if (!isPsuExist(request.getPsuData())) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}]. AIS_DECOUPLED_RECEIVED stage. Apply identification when update consent PSU data has failed. No PSU data available in request.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId());
-            MessageError messageError = new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR_NO_PSU));
-            return createFailedResponse(messageError, Collections.singletonList(new TppMessage(FORMAT_ERROR_NO_PSU)), request);
+            ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_400)
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_NO_PSU))
+                                          .build();
+            log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}]. AIS_DECOUPLED_RECEIVED stage. Apply identification when update consent PSU data has failed. No PSU data available in request. Error msg: [{}]",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId(), errorHolder);
+            return new UpdateConsentPsuDataResponse(errorHolder, request.getConsentId(), request.getAuthorisationId());
         }
 
         return new UpdateConsentPsuDataResponse(ScaStatus.PSUIDENTIFIED, request.getConsentId(), request.getAuthorizationId());

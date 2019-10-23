@@ -84,7 +84,7 @@ public class EmbeddedAisAuthorizationServiceTest {
         when(scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + STARTED_SCA_STATUS.name()))
             .thenReturn(receivedAuthorisationStage);
 
-        when(receivedAuthorisationStage.apply(updateConsentPsuDataRequest))
+        when(receivedAuthorisationStage.apply(updateConsentPsuDataRequest, consentAuthorization))
             .thenReturn(updateConsentPsuDataResponse);
 
         when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))

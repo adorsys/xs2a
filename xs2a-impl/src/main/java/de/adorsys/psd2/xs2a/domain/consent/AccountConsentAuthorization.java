@@ -16,20 +16,22 @@
 
 package de.adorsys.psd2.xs2a.domain.consent;
 
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
 @Data
 public class AccountConsentAuthorization {
     private String id;
-    private String consentId;
-    private PsuIdData psuIdData;
 
+    private String consentId;
+
+    private PsuIdData psuIdData;
     private ScaStatus scaStatus;
-    private String authenticationMethodId;
-    private String scaAuthenticationData;
     private String password;
     private ScaApproach chosenScaApproach;
+
+    private String authenticationMethodId;
+    private String scaAuthenticationData;
 }

@@ -16,33 +16,14 @@
 
 package de.adorsys.psd2.xs2a.domain.consent;
 
-import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.Links;
-import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import lombok.Data;
-
-import java.util.List;
 
 // Class can't be immutable, because it it used in aspect (links setting)
 @Data
-public class UpdateConsentPsuDataResponse implements AuthorisationResponse {
-
-    private String consentId;
-    private String authorisationId;
-
-    private ScaStatus scaStatus;
-    private List<Xs2aAuthenticationObject> availableScaMethods;
-    private Xs2aAuthenticationObject chosenScaMethod;
-    private ChallengeData challengeData;
-    private String authenticationMethodId;
-    private String scaAuthenticationData;
-    private Links links;
-    private String psuMessage;
-    private String internalRequestId;
-
-    private MessageError messageError;
+public class UpdateConsentPsuDataResponse extends AuthorisationProcessorResponse {
 
     public UpdateConsentPsuDataResponse(ScaStatus scaStatus, String consentId, String authorisationId) {
         this.scaStatus = scaStatus;
@@ -50,16 +31,8 @@ public class UpdateConsentPsuDataResponse implements AuthorisationResponse {
         this.authorisationId = authorisationId;
     }
 
-    public boolean hasError() {
-        return messageError != null;
-    }
-
-    /**
-     * Returns chosenScaMethod. Should be used ONLY for mapping to PSD2 response.
-     *
-     * @return chosenScaMethod
-     */
-    public Xs2aAuthenticationObject getChosenScaMethodForPsd2Response() {
-        return getChosenScaMethod();
+    public UpdateConsentPsuDataResponse(ErrorHolder errorHolder, String consentId, String authorisationId) {
+        this(ScaStatus.FAILED, consentId, authorisationId);
+        this.errorHolder = errorHolder;
     }
 }

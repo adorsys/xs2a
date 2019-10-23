@@ -20,10 +20,12 @@ import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaMethodSelectedStage;
+import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import lombok.RequiredArgsConstructor;
@@ -103,14 +105,26 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
      */
     @Override
     public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq request, AccountConsentAuthorization consentAuthorization) {
-        AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + consentAuthorization.getScaStatus().name());
-        UpdateConsentPsuDataResponse response = service.apply(request);
+        AisScaStage<UpdateConsentPsuDataReq, AccountConsentAuthorization, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + consentAuthorization.getScaStatus().name());
+        UpdateConsentPsuDataResponse response = service.apply(request, consentAuthorization);
 
         if (response.hasError()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}]. Update consent authorisation failed. Error msg: {}.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId(), response.getMessageError());
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId(), response.getErrorHolder());
         } else {
             aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, request));
+        }
+
+        return response;
+    }
+
+    @Override
+    public AuthorisationProcessorResponse updateConsentPsuData(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response) {
+        if (response.hasError()) {
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}]. Update consent authorisation failed. Error msg: {}.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getBusinessObjectId(), request.getAuthorisationId(), response.getErrorHolder());
+        } else {
+            aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(request, response));
         }
 
         return response;

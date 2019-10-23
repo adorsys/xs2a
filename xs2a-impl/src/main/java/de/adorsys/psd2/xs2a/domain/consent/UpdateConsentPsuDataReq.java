@@ -34,4 +34,13 @@ public class UpdateConsentPsuDataReq implements UpdateAuthorisationRequest {
     private String scaAuthenticationData;
     private String password;
 
+    @Override
+    public String getBusinessObjectId() {
+        return consentId;
+    }
+
+    @Override
+    public String getAuthorisationId() {
+        return authorizationId;
+    }
 }

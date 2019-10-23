@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded;
 
 import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
@@ -34,7 +35,7 @@ import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactor
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
 
 @Service("AIS_PSUIDENTIFIED")
-public class AisScaIdentifiedAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
+public class AisScaIdentifiedAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, AccountConsentAuthorization, UpdateConsentPsuDataResponse> {
     private final AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
 
     public AisScaIdentifiedAuthorisationStage(Xs2aAisConsentService aisConsentService,
@@ -58,8 +59,8 @@ public class AisScaIdentifiedAuthorisationStage extends AisScaStage<UpdateConsen
      * @return UpdateConsentPsuDataResponse as a result of updating process
      */
     @Override
-    public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
-        AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + ScaStatus.RECEIVED.name());
-        return service.apply(request);
+    public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request, AccountConsentAuthorization authorisationResponse) {
+        AisScaStage<UpdateConsentPsuDataReq, AccountConsentAuthorization, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + ScaStatus.RECEIVED.name());
+        return service.apply(request, authorisationResponse);
     }
 }

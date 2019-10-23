@@ -38,7 +38,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -80,7 +80,6 @@ public class PisScaAuthenticatedStageTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
-    private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfo();
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = buildSpiPaymentInfo();
 
     @InjectMocks
@@ -115,11 +114,11 @@ public class PisScaAuthenticatedStageTest {
     @Mock
     private Xs2aAuthenticationObject xs2aAuthenticationObject;
     @Mock
-    private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
-    @Mock
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
+    @Mock
+    private Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
 
     @Before
     public void setUp() {
@@ -129,22 +128,15 @@ public class PisScaAuthenticatedStageTest {
         when(response.getPaymentProduct())
             .thenReturn(PAYMENT_PRODUCT);
 
-        when(response.getPayments())
-            .thenReturn(Collections.emptyList());
-
-        when(response.getPaymentInfo())
-            .thenReturn(PAYMENT_INFO);
-
         when(request.getAuthorisationId())
             .thenReturn(AUTHORISATION_ID);
 
         when(request.getAuthenticationMethodId())
             .thenReturn(AUTHENTICATION_METHOD_ID);
 
-        when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(Collections.singletonList(PSU_ID_DATA)))
-            .thenReturn(Collections.singletonList(SPI_PSU_DATA));
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(response, SINGLE_PAYMENT_TYPE, PAYMENT_PRODUCT)).thenReturn(SPI_PAYMENT_INFO);
 
     }
 

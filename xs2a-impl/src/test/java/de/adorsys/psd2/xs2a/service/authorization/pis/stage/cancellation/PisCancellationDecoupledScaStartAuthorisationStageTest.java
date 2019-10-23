@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage.cancellation;
 
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -37,6 +36,7 @@ import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -57,10 +57,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
-import java.util.Optional;
 import java.util.UUID;
 
-import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.EXEMPTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -85,7 +83,6 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
     private static final byte[] PAYMENT_DATA = "Test payment data".getBytes();
-    private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfo();
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = buildSpiPaymentInfo();
     private static final GetPisAuthorisationResponse PIS_AUTHORISATION_RESPONSE = new GetPisAuthorisationResponse();
 
@@ -115,7 +112,7 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
     @Mock
-    private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    private Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
 
     @Before
     public void setUp() {
@@ -126,12 +123,6 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
 
         when(response.getPaymentProduct())
             .thenReturn(PAYMENT_PRODUCT);
-
-        when(response.getPayments())
-            .thenReturn(Collections.emptyList());
-
-        when(response.getPaymentInfo())
-            .thenReturn(PAYMENT_INFO);
 
         when(request.getPaymentId())
             .thenReturn(PAYMENT_ID);
@@ -148,12 +139,9 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
         when(request.getPassword())
             .thenReturn(PASSWORD);
 
-        when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(Collections.singletonList(PSU_ID_DATA)))
-            .thenReturn(Collections.singletonList(SPI_PSU_DATA));
-
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
-
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(response, SINGLE_PAYMENT_TYPE, PAYMENT_PRODUCT)).thenReturn(SPI_PAYMENT_INFO);
     }
 
     @Test
@@ -212,14 +200,12 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
         request.setPaymentId(PAYMENT_ID);
         request.setAuthorisationId(AUTHORISATION_ID);
         request.setPassword(PASSWORD);
+        request.setPsuData(PSU_ID_DATA);
 
         SpiResponse<SpiPsuAuthorisationResponse> expectedResponse = buildSuccessSpiResponse();
 
         when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
             .thenReturn(expectedResponse);
-
-        when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID))
-            .thenReturn(Optional.of(PIS_AUTHORISATION_RESPONSE));
 
         when(pisCommonDecoupledService.proceedDecoupledCancellation(request, SPI_PAYMENT_INFO))
             .thenReturn(mockedExpectedResponse);

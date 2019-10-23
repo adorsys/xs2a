@@ -17,9 +17,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.pis.stage.cancellation;
 
-import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -29,16 +27,14 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -55,7 +51,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,8 +78,6 @@ public class PisCancellationScaStartAuthorisationStageTest {
     private static final List<SpiAuthenticationObject> ONE_SPI_SCA_METHOD = Collections.singletonList(buildSpiSmsAuthenticationObject());
     private static final List<SpiAuthenticationObject> NONE_SPI_SCA_METHOD = Collections.emptyList();
     private static final List<Xs2aAuthenticationObject> MULTIPLE_XS2A_SCA_METHODS = Arrays.asList(buildXs2aSmsAuthenticationObject(), buildXs2aPhotoAuthenticationObject());
-    private static final PisPayment PIS_PAYMENT = new PisPayment();
-    private static final SinglePayment XS2A_PAYMENT = new SinglePayment();
 
     @InjectMocks
     private PisCancellationScaReceivedAuthorisationStage pisCancellationScaReceivedAuthorisationStage;
@@ -103,17 +100,13 @@ public class PisCancellationScaStartAuthorisationStageTest {
     @Mock
     private SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
     @Mock
-    private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
-    @Mock
-    private CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
-    @Mock
-    private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
-    @Mock
     private RequestProviderService requestProviderService;
     @Mock
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
+    @Mock
+    private Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
 
     @Before
     public void setUp() {
@@ -122,15 +115,13 @@ public class PisCancellationScaStartAuthorisationStageTest {
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPassword()).thenReturn(PASSWORD);
         when(getPisAuthorisationResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
         when(getPisAuthorisationResponse.getPaymentType()).thenReturn(PAYMENT_TYPE);
+        when(getPisAuthorisationResponse.getPsuIdData()).thenReturn(PSU_ID_DATA);
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA)).thenReturn(SPI_CONTEXT_DATA);
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuData(PSU_ID_DATA)).thenReturn(SPI_PSU_DATA);
         when(xs2aPisCommonPaymentService.saveAuthenticationMethods(any(), anyListOf(Xs2aAuthenticationObject.class))).thenReturn(true);
-        when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID)).thenReturn(Optional.of(buildGetPisAuthorisationResponse()));
-        when(getPisAuthorisationResponse.getPayments()).thenReturn(Collections.singletonList(PIS_PAYMENT));
-        when(cmsToXs2aPaymentMapper.mapToSinglePayment(PIS_PAYMENT)).thenReturn(XS2A_PAYMENT);
-        when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(XS2A_PAYMENT, PAYMENT_PRODUCT)).thenReturn(buildSpiPayment());
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(getPisAuthorisationResponse, PAYMENT_TYPE, PAYMENT_PRODUCT)).thenReturn(buildSpiPayment());
     }
 
     @Test

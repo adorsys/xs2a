@@ -16,110 +16,24 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.pis.stage;
 
-import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
-import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
-import de.adorsys.psd2.xs2a.spi.service.*;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.context.ApplicationContext;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-@RequiredArgsConstructor
 public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
-    private final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
-    private final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;
-    private final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
-    private final Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper;
-    private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
-    private final ApplicationContext applicationContext;
-    private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
-    protected PaymentSpi getPaymentService(GetPisAuthorisationResponse pisAuthorisationResponse, PaymentType paymentType) {
-        // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
-        if (CollectionUtils.isEmpty(pisAuthorisationResponse.getPayments())) {
-            return applicationContext.getBean(CommonPaymentSpi.class);
-        }
-
-        if (PaymentType.SINGLE == paymentType) {
-            return applicationContext.getBean(SinglePaymentSpi.class);
-        } else if (PaymentType.PERIODIC == paymentType) {
-            return applicationContext.getBean(PeriodicPaymentSpi.class);
-        } else {
-            return applicationContext.getBean(BulkPaymentSpi.class);
-        }
-    }
-
-    protected SpiPayment mapToSpiPayment(GetPisAuthorisationResponse pisAuthorisationResponse,
-                                         PaymentType paymentType, String paymentProduct) {
-        if (CollectionUtils.isEmpty(pisAuthorisationResponse.getPayments())) {
-            return mapToSpiPayment(pisAuthorisationResponse.getPaymentInfo());
-        } else {
-            return mapToSpiPayment(pisAuthorisationResponse.getPayments(), paymentType, paymentProduct, pisAuthorisationResponse.getPaymentId());
-        }
-    }
-
-    private SpiPayment mapToSpiPayment(List<PisPayment> payments, PaymentType paymentType, String paymentProduct, String globalPaymentId) {
-        if (PaymentType.SINGLE == paymentType) {
-            SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(payments.get(0));
-            return xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, paymentProduct);
-        }
-        if (PaymentType.PERIODIC == paymentType) {
-            PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(payments.get(0));
-            return xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(periodicPayment, paymentProduct);
-        } else {
-            BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(payments);
-            bulkPayment.setPaymentId(globalPaymentId);
-            return xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, paymentProduct);
-        }
-    }
-
-    private SpiPayment mapToSpiPayment(PisPaymentInfo paymentInfo) {
-        SpiPaymentInfo spiPaymentInfo = new SpiPaymentInfo(paymentInfo.getPaymentProduct());
-        spiPaymentInfo.setPaymentId(paymentInfo.getPaymentId());
-        spiPaymentInfo.setPaymentType(paymentInfo.getPaymentType());
-        spiPaymentInfo.setStatus(paymentInfo.getTransactionStatus());
-        spiPaymentInfo.setPaymentData(paymentInfo.getPaymentData());
-        spiPaymentInfo.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(paymentInfo.getPsuDataList()));
-        return spiPaymentInfo;
-    }
-
-    protected PsuIdData extractPsuIdData(Xs2aUpdatePisCommonPaymentPsuDataRequest request, boolean paymentCancellation) {
+    protected PsuIdData extractPsuIdData(Xs2aUpdatePisCommonPaymentPsuDataRequest request,
+                                         GetPisAuthorisationResponse authorisationResponse) {
         PsuIdData psuDataInRequest = request.getPsuData();
-        if (isPsuExist(psuDataInRequest)) {
-            return psuDataInRequest;
-        }
-
-        return getGetPisAuthorisationResponse(request.getAuthorisationId(), paymentCancellation)
-                   .map(GetPisAuthorisationResponse::getPsuIdData)
-                   .orElse(psuDataInRequest);
+        return isPsuExist(psuDataInRequest) ? psuDataInRequest : authorisationResponse.getPsuIdData();
     }
 
     protected boolean isPsuExist(PsuIdData psuIdData) {
         return Optional.ofNullable(psuIdData)
                    .map(PsuIdData::isNotEmpty)
                    .orElse(false);
-    }
-
-    private Optional<GetPisAuthorisationResponse> getGetPisAuthorisationResponse(String authorisationId, boolean paymentCancellation) {
-        return paymentCancellation
-                   ? pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(authorisationId)
-                   : pisCommonPaymentServiceEncrypted.getPisAuthorisationById(authorisationId);
     }
 }

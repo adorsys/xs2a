@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -63,7 +64,6 @@ public class AisScaAuthenticatedStageTest {
     private static final String AUTHORISATION = "Bearer 1111111";
     private static final String CONSENT_ID = "Test consentId";
     private static final String WRONG_CONSENT_ID = "wrong consent id";
-    private static final String TEST_AUTHENTICATION_DATA = "Test authenticationData";
     private static final String PSU_ID = "Test psuId";
     private static final ConsentStatus VALID_CONSENT_STATUS = ConsentStatus.VALID;
     private static final ConsentStatus PARTIALLY_AUTHORISED_CONSENT_STATUS = ConsentStatus.PARTIALLY_AUTHORISED;
@@ -136,16 +136,12 @@ public class AisScaAuthenticatedStageTest {
         doNothing()
             .when(aisConsentService).updateConsentStatus(CONSENT_ID, VALID_CONSENT_STATUS);
 
-        when(request.getScaAuthenticationData())
-            .thenReturn(TEST_AUTHENTICATION_DATA);
-
         when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(true);
 
-        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request, new AccountConsentAuthorization());
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
     }
 
@@ -160,11 +156,11 @@ public class AisScaAuthenticatedStageTest {
                             .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
                             .build());
 
-        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request, new AccountConsentAuthorization());
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
-        assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
+        assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }
 
     @Test
@@ -173,12 +169,12 @@ public class AisScaAuthenticatedStageTest {
         when(request.getConsentId()).thenReturn(WRONG_CONSENT_ID);
 
         //When
-        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request, new AccountConsentAuthorization());
 
         //Then
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FAILED);
-        assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
-        assertThat(actualResponse.getMessageError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.CONSENT_UNKNOWN_400);
+        assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(ErrorType.AIS_400);
+        assertThat(actualResponse.getErrorHolder().getTppMessageInformationList().get(0).getMessageErrorCode()).isEqualTo(MessageErrorCode.CONSENT_UNKNOWN_400);
     }
 
     @Test
@@ -189,16 +185,12 @@ public class AisScaAuthenticatedStageTest {
         doNothing()
             .when(aisConsentService).updateConsentStatus(CONSENT_ID, PARTIALLY_AUTHORISED_CONSENT_STATUS);
 
-        when(request.getScaAuthenticationData())
-            .thenReturn(TEST_AUTHENTICATION_DATA);
-
         when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(true);
 
-        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request, new AccountConsentAuthorization());
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
 
         verify(aisConsentService).updateMultilevelScaRequired(CONSENT_ID, true);
@@ -212,16 +204,12 @@ public class AisScaAuthenticatedStageTest {
         doNothing()
             .when(aisConsentService).updateConsentStatus(CONSENT_ID, VALID_CONSENT_STATUS);
 
-        when(request.getScaAuthenticationData())
-            .thenReturn(TEST_AUTHENTICATION_DATA);
-
         when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(true);
 
-        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request, new AccountConsentAuthorization());
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
 
         verify(aisConsentService, never()).updateMultilevelScaRequired(CONSENT_ID, true);
@@ -238,16 +226,12 @@ public class AisScaAuthenticatedStageTest {
         doNothing()
             .when(aisConsentService).updateConsentStatus(CONSENT_ID, VALID_CONSENT_STATUS);
 
-        when(request.getScaAuthenticationData())
-            .thenReturn(TEST_AUTHENTICATION_DATA);
-
         when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(true);
 
-        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request, new AccountConsentAuthorization());
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
 
         verify(aisConsentService).updateConsentStatus(CONSENT_ID, VALID_CONSENT_STATUS);
@@ -261,16 +245,12 @@ public class AisScaAuthenticatedStageTest {
         when(accountConsent.getConsentStatus())
             .thenReturn(PARTIALLY_AUTHORISED_CONSENT_STATUS);
 
-        when(request.getScaAuthenticationData())
-            .thenReturn(TEST_AUTHENTICATION_DATA);
-
         when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(true);
 
-        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request, new AccountConsentAuthorization());
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
 
         verify(aisConsentService, never()).updateConsentStatus(CONSENT_ID, PARTIALLY_AUTHORISED_CONSENT_STATUS);

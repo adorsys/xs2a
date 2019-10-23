@@ -91,12 +91,6 @@ public class CommonDecoupledAisServiceTest {
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
 
-        when(request.getAuthorizationId())
-            .thenReturn(AUTHORISATION_ID);
-
-        when(request.getConsentId())
-            .thenReturn(CONSENT_ID);
-
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
@@ -109,7 +103,7 @@ public class CommonDecoupledAisServiceTest {
             .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE)));
 
         // When
-        UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(request, spiAccountConsent, PSU_ID_DATA);
+        UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, PSU_ID_DATA);
 
         // Then
         assertThat(actualResponse).isEqualTo(UPDATE_CONSENT_PSU_DATA_RESPONSE);
@@ -122,7 +116,7 @@ public class CommonDecoupledAisServiceTest {
             .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE)));
 
         // When
-        UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(request, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA);
+        UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA);
 
         // Then
         assertThat(actualResponse).isNotNull();
@@ -142,12 +136,12 @@ public class CommonDecoupledAisServiceTest {
                             .build());
 
         // When
-        UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(request, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA);
+        UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA);
 
         // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
-        assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
+        assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }
 
     @Test
@@ -157,12 +151,11 @@ public class CommonDecoupledAisServiceTest {
             .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE)));
 
         // When
-        UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(request, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA);
+        UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA);
 
         // Then
         String actualMethodId = actualResponse.getChosenScaMethod().getAuthenticationMethodId();
         assertThat(actualMethodId).isEqualTo(AUTHENTICATION_METHOD_ID);
-        assertThat(actualResponse.getChosenScaMethodForPsd2Response()).isNull();
     }
 
     // Needed because SpiResponse is final, so it's impossible to mock it

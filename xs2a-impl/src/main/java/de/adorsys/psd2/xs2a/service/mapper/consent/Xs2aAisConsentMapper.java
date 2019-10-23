@@ -25,7 +25,9 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -98,9 +100,28 @@ public class Xs2aAisConsentMapper {
                        request.setConsentId(updatePsuDataRequest.getConsentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
                        request.setAuthenticationMethodId(getAuthenticationMethodId(data));
-                       request.setScaAuthenticationData(data.getScaAuthenticationData());
+                       request.setScaAuthenticationData(updatePsuDataRequest.getScaAuthenticationData());
                        request.setScaStatus(data.getScaStatus());
                        return request;
+                   })
+                   .orElse(null);
+    }
+
+    public UpdateConsentPsuDataReq mapToSpiUpdateConsentPsuDataReq(UpdateAuthorisationRequest request,
+                                                                   AuthorisationProcessorResponse response) {
+        return Optional.ofNullable(response)
+                   .map(data -> {
+                       PsuIdData psuIdDataFromRequest = request.getPsuData();
+                       UpdateConsentPsuDataReq req = new UpdateConsentPsuDataReq();
+                       req.setPsuData(new PsuIdData(psuIdDataFromRequest.getPsuId(), psuIdDataFromRequest.getPsuIdType(), psuIdDataFromRequest.getPsuCorporateId(), psuIdDataFromRequest.getPsuCorporateIdType()));
+                       req.setConsentId(request.getBusinessObjectId());
+                       req.setAuthorizationId(request.getAuthorisationId());
+                       req.setAuthenticationMethodId(Optional.ofNullable(data.getChosenScaMethod())
+                                                         .map(Xs2aAuthenticationObject::getAuthenticationMethodId)
+                                                         .orElse(null));
+                       req.setScaAuthenticationData(request.getScaAuthenticationData());
+                       req.setScaStatus(data.getScaStatus());
+                       return req;
                    })
                    .orElse(null);
     }
@@ -114,6 +135,14 @@ public class Xs2aAisConsentMapper {
     public SpiScaConfirmation mapToSpiScaConfirmation(UpdateConsentPsuDataReq request, PsuIdData psuData) {
         SpiScaConfirmation accountConfirmation = new SpiScaConfirmation();
         accountConfirmation.setConsentId(request.getConsentId());
+        accountConfirmation.setPsuId(Optional.ofNullable(psuData).map(PsuIdData::getPsuId).orElse(null));
+        accountConfirmation.setTanNumber(request.getScaAuthenticationData());
+        return accountConfirmation;
+    }
+
+    public SpiScaConfirmation mapToSpiScaConfirmation(UpdateAuthorisationRequest request, PsuIdData psuData) {
+        SpiScaConfirmation accountConfirmation = new SpiScaConfirmation();
+        accountConfirmation.setConsentId(request.getBusinessObjectId());
         accountConfirmation.setPsuId(Optional.ofNullable(psuData).map(PsuIdData::getPsuId).orElse(null));
         accountConfirmation.setTanNumber(request.getScaAuthenticationData());
         return accountConfirmation;

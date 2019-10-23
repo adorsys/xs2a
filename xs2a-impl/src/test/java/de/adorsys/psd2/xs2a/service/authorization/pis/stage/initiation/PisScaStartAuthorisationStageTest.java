@@ -37,19 +37,18 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.service.spi.payment.SpiPaymentServiceResolver;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -61,7 +60,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -102,12 +100,6 @@ public class PisScaStartAuthorisationStageTest {
     @Mock
     private SinglePaymentSpi singlePaymentSpi;
     @Mock
-    private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
-    @Mock
-    private CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
-    @Mock
-    private ApplicationContext applicationContext;
-    @Mock
     private SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
     @Mock
     private Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
@@ -133,6 +125,10 @@ public class PisScaStartAuthorisationStageTest {
     private SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory;
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
+    @Mock
+    private Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
+    @Mock
+    private SpiPaymentServiceResolver spiPaymentServiceResolver;
 
     @Before
     public void setUp() {
@@ -146,7 +142,7 @@ public class PisScaStartAuthorisationStageTest {
         when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
             .thenReturn(spiAspspConsentDataProvider);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-
+        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
     }
 
     @Test
@@ -273,13 +269,6 @@ public class PisScaStartAuthorisationStageTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any()))
             .thenReturn(availableScaMethodsResponse);
 
-        when(applicationContext.getBean(SinglePaymentSpi.class))
-            .thenReturn(singlePaymentSpi);
-
-        when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(any(), any()))
-            .thenReturn(new SpiSinglePayment(PAYMENT_PRODUCT));
-
-
         // generate an error
         SpiResponse<SpiPaymentExecutionResponse> spiErrorMessage = SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                        .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR))
@@ -314,12 +303,6 @@ public class PisScaStartAuthorisationStageTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any()))
             .thenReturn(availableScaMethodsResponse);
 
-        when(applicationContext.getBean(SinglePaymentSpi.class))
-            .thenReturn(singlePaymentSpi);
-
-        when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(any(), any()))
-            .thenReturn(new SpiSinglePayment(PAYMENT_PRODUCT));
-
         SpiResponse<SpiPaymentExecutionResponse> executePaymentWithoutScaResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                         .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
                                                                                         .build();
@@ -349,12 +332,6 @@ public class PisScaStartAuthorisationStageTest {
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuData(any()))
             .thenReturn(SPI_PSU_DATA);
 
-        when(applicationContext.getBean(SinglePaymentSpi.class))
-            .thenReturn(singlePaymentSpi);
-
-        when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(any(), any()))
-            .thenReturn(new SpiSinglePayment(PAYMENT_PRODUCT));
-
         SpiResponse<SpiPaymentExecutionResponse> executePaymentWithoutScaResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                         .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
                                                                                         .build();
@@ -380,13 +357,6 @@ public class PisScaStartAuthorisationStageTest {
 
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any()))
             .thenReturn(spiStatus);
-
-        when(applicationContext.getBean(SinglePaymentSpi.class))
-            .thenReturn(singlePaymentSpi);
-
-        when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(any(), any()))
-            .thenReturn(new SpiSinglePayment(PAYMENT_PRODUCT));
-
 
         // generate an error
         SpiResponse<SpiPaymentExecutionResponse> spiErrorMessage = SpiResponse.<SpiPaymentExecutionResponse>builder()
@@ -422,9 +392,6 @@ public class PisScaStartAuthorisationStageTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any()))
             .thenReturn(availableScaMethodsResponse);
 
-        when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(any(), any()))
-            .thenReturn(new SpiSinglePayment(PAYMENT_PRODUCT));
-
         when(xs2aPisCommonPaymentService.saveAuthenticationMethods(any(), eq(Collections.emptyList())))
             .thenReturn(true);
 
@@ -455,9 +422,6 @@ public class PisScaStartAuthorisationStageTest {
 
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any()))
             .thenReturn(availableScaMethodsResponse);
-
-        when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(any(), any()))
-            .thenReturn(new SpiSinglePayment(PAYMENT_PRODUCT));
 
         when(xs2aPisCommonPaymentService.saveAuthenticationMethods(any(), eq(Collections.emptyList())))
             .thenReturn(true);
@@ -505,9 +469,6 @@ public class PisScaStartAuthorisationStageTest {
 
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any()))
             .thenReturn(availableScaMethodsResponse);
-
-        when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(any(), any()))
-            .thenReturn(new SpiSinglePayment(PAYMENT_PRODUCT));
 
         List<Xs2aAuthenticationObject> xs2aAuthenticationObjects = Arrays.asList(buildXs2aSmsAuthenticationObject(false), buildXs2aPushAuthenticationObject(true));
 

@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage.cancellation;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -31,12 +30,12 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import org.junit.Before;
@@ -46,7 +45,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -71,17 +72,13 @@ public class PisCancellationScaMethodSelectedStageTest {
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
-    private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
-    @Mock
     private PaymentCancellationSpi paymentCancellationSpi;
-    @Mock
-    private CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
-    @Mock
-    private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     @Mock
     private RequestProviderService requestProviderService;
     @Mock
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    @Mock
+    private Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
 
     @Before
     public void setUp() {
@@ -91,10 +88,9 @@ public class PisCancellationScaMethodSelectedStageTest {
 
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIS)))
             .thenReturn(errorHolder);
-        when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID))
-            .thenReturn(Optional.of(buildGetPisAuthorisationResponse()));
 
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(buildResponse(PAYMENT_ID), PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(new SpiSinglePayment(PAYMENT_PRODUCT));
     }
 
     @Test

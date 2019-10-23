@@ -3,6 +3,7 @@ package de.adorsys.psd2.xs2a.service.authorization.ais.stage.decoupled;
 import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
@@ -19,7 +20,7 @@ import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactor
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
 
 @Service("AIS_DECOUPLED_PSUIDENTIFIED")
-public class AisDecoupledScaIdentifiedAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
+public class AisDecoupledScaIdentifiedAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, AccountConsentAuthorization, UpdateConsentPsuDataResponse> {
     private final AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
 
     public AisDecoupledScaIdentifiedAuthorisationStage(Xs2aAisConsentService aisConsentService,
@@ -43,8 +44,8 @@ public class AisDecoupledScaIdentifiedAuthorisationStage extends AisScaStage<Upd
      * @return UpdateConsentPsuDataResponse as a result of updating process
      */
     @Override
-    public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
-        AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + ScaApproach.DECOUPLED + SEPARATOR + ScaStatus.RECEIVED.name());
-        return service.apply(request);
+    public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request, AccountConsentAuthorization authorisationResponse) {
+        AisScaStage<UpdateConsentPsuDataReq, AccountConsentAuthorization, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + ScaApproach.DECOUPLED + SEPARATOR + ScaStatus.RECEIVED.name());
+        return service.apply(request, authorisationResponse);
     }
 }
