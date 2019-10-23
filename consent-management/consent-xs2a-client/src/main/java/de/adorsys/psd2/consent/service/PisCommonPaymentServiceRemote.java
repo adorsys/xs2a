@@ -94,8 +94,8 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
     public Optional<CreatePisAuthorisationResponse> createAuthorization(String paymentId, CreatePisAuthorisationRequest request) {
         try {
             return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisCommonPaymentUrls.createPisAuthorisation(),
-                                                                         request, CreatePisAuthorisationResponse.class, paymentId))
-                       .map(ResponseEntity::getBody);
+                                                                  request, CreatePisAuthorisationResponse.class, paymentId))
+                .map(ResponseEntity::getBody);
         } catch (CmsRestException cmsRestException) {
             log.warn("No authorisation was created for the paymentId {}", paymentId);
             return Optional.empty();
