@@ -53,6 +53,33 @@ public class TppRoleValidationServiceTest {
         assertThat(tppRoleValidationService.hasAccess(buildTppInfo(TppRole.PIISP), request)).isFalse();
     }
 
+    @Test
+    public void shouldSuccess_when_aspspRole_consentRequest() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("GET");
+        request.setRequestURI("/v1/consents");
+
+        assertThat(tppRoleValidationService.hasAccess(buildTppInfo(TppRole.ASPSP), request)).isTrue();
+    }
+
+    @Test
+    public void shouldSuccess_when_aspspRole_paymentRequest() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("POST");
+        request.setRequestURI("/v1/payments/sepa");
+
+        assertThat(tppRoleValidationService.hasAccess(buildTppInfo(TppRole.ASPSP), request)).isTrue();
+    }
+
+    @Test
+    public void shouldSuccess_when_aspspRole_accountsRequest() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("GET");
+        request.setRequestURI("/v1/accounts");
+
+        assertThat(tppRoleValidationService.hasAccess(buildTppInfo(TppRole.ASPSP), request)).isTrue();
+    }
+
     private TppInfo buildTppInfo(TppRole tppRole) {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setTppRoles(singletonList(tppRole));

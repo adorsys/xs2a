@@ -83,12 +83,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
         AisConsent consent = createConsentFromRequest(request);
         tppInfoRepository.findByAuthorisationNumber(request.getTppInfo().getAuthorisationNumber())
-            .ifPresent(tppInfoEntity -> {
-                Optional.of(consent.getTppInfo())
-                    .map(TppInfoEntity::getTppRoles)
-                    .ifPresent(tppInfoEntity::setTppRoles);
-                consent.setTppInfo(tppInfoEntity);
-            });
+            .ifPresent(consent::setTppInfo);
 
         AisConsent savedConsent = aisConsentRepository.save(consent);
 

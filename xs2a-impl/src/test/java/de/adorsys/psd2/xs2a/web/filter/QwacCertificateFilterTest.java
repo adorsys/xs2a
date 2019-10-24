@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -46,6 +45,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_EXPIR
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.ROLE_INVALID;
 import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -118,7 +118,6 @@ public class QwacCertificateFilterTest {
         //Given
         ArgumentCaptor<TppInfo> tppInfoArgumentCaptor = ArgumentCaptor.forClass(TppInfo.class);
         when(request.getHeader(HEADER_QWAC)).thenReturn(TEST_QWAC_CERTIFICATE_VALID);
-        List<TppRole> roles = Arrays.asList(TppRole.AISP, TppRole.PISP, TppRole.PIISP);
         when(requestProviderService.getTppRolesAllowedHeader()).thenReturn(null);
 
         //When
@@ -128,7 +127,7 @@ public class QwacCertificateFilterTest {
         verify(chain).doFilter(any(), any());
         verify(tppInfoHolder).setTppInfo(tppInfoArgumentCaptor.capture());
         TppInfo tppInfo = tppInfoArgumentCaptor.getValue();
-        assertEquals(roles, tppInfo.getTppRoles());
+        assertNull(tppInfo.getTppRoles());
     }
 
     @Test

@@ -111,10 +111,6 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                         response.getWriter().print(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, ROLE_INVALID));
                         return;
                     }
-                } else {
-                    Optional.of(tppCertificateData.getPspRoles())
-                        .map(this::mapToTppRoles)
-                        .ifPresent(tppInfo::setTppRoles);
                 }
 
                 tppInfoHolder.setTppInfo(tppInfo);

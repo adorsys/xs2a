@@ -17,15 +17,17 @@
 package de.adorsys.psd2.xs2a.service.validator.tpp;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Service
 public class TppRoleValidationService {
 
     public boolean hasAccess(TppInfo tppInfo, HttpServletRequest request) {
-        return TppRoleAccess.hasAccessForPath(tppInfo.getTppRoles(),
-            request.getRequestURI());
+        List<TppRole> tppRoles = tppInfo.getTppRoles();
+        return tppRoles.contains(TppRole.ASPSP) || TppRoleAccess.hasAccessForPath(tppRoles, request.getRequestURI());
     }
 }
