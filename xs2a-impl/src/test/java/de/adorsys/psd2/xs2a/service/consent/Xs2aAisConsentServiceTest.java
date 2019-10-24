@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
@@ -53,13 +54,11 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Xs2aAisConsentServiceTest {
     private static final String CONSENT_ID = "f2c43cad-6811-4cb6-bfce-31050095ed5d";
-    private static final String NEW_ID = "fhu53g-6811-19ff-4b5a-8188";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
     private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
@@ -103,6 +102,8 @@ public class Xs2aAisConsentServiceTest {
     private ScaApproachResolver scaApproachResolver;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private LoggingContextService loggingContextService;
 
     @Before
     public void setUp() {
@@ -378,6 +379,30 @@ public class Xs2aAisConsentServiceTest {
 
         //Then
         assertThat(actualResponse).isFalse();
+    }
+
+    @Test
+    public void updateConsentStatus_shouldStoreConsentStatusInLoggingContext() {
+        // Given
+        when(aisConsentServiceEncrypted.updateConsentStatusById(CONSENT_ID, CONSENT_STATUS))
+            .thenReturn(true);
+
+        // When
+        xs2aAisConsentService.updateConsentStatus(CONSENT_ID, CONSENT_STATUS);
+
+        // Then
+        verify(aisConsentServiceEncrypted).updateConsentStatusById(CONSENT_ID, CONSENT_STATUS);
+        verify(loggingContextService).storeConsentStatus(CONSENT_STATUS);
+    }
+
+    @Test
+    public void updateConsentStatus_failure_shouldNotStoreConsentStatusInLoggingContext() {
+        // When
+        xs2aAisConsentService.updateConsentStatus(CONSENT_ID, CONSENT_STATUS);
+
+        // Then
+        verify(aisConsentServiceEncrypted).updateConsentStatusById(CONSENT_ID, CONSENT_STATUS);
+        verify(loggingContextService, never()).storeConsentStatus(any());
     }
 
     @Test
