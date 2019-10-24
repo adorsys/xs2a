@@ -286,24 +286,6 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void createConsent_checkUpdateTppRoles() {
-        // Given
-        List<TppRole> roles = Arrays.asList(TppRole.AISP, TppRole.PISP, TppRole.PIISP);
-        when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
-        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
-        ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
-        when(tppInfoMapper.mapToTppInfoEntity(buildTppInfo())).thenReturn(buildTppInfoEntity(roles));
-
-        // When
-        CreateAisConsentRequest createAisConsentRequest = buildCorrectCreateAisConsentRequest(roles);
-        aisConsentService.createConsent(createAisConsentRequest);
-
-        // Then
-        verify(aisConsentRepository).save(argument.capture());
-        assertEquals(roles, argument.getValue().getTppInfo().getTppRoles());
-    }
-
-    @Test
     public void updateAccountAccessById() {
         // Given
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());

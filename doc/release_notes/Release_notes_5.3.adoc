@@ -61,11 +61,12 @@ From now on, integrated OAUTH flow is supported for PIS, AIS and Payment Cancell
 
 == Validate access of TPP based on role's header
 
-From now on, TPP access to XS2A resources may be verified based on incoming `Tpp-Roles-Allowed` header.
-If this header is present, TPP roles will be validated.
-This header represents TPP roles, based on which XS2A will check access to resources.
-If TPP is prohibited from accessing certain resource it will receive response with 401 code and `ROLE_INVALID` message.
-TPP roles are updated in CMS.
+From now on, TPP access to XS2A resources may be verified based on incoming `Tpp-Roles-Allowed` header, which can be set between ASPSP’s gateway and xs2a,
+but not before the ASPSP’s gateway (one can use adorsys QwacAssessor (https://adorsys-platform.de/solutions/qwac-assessor/) for it).
+ASPSP Gateway is responsible that this header is prohibited from receiving it from TPP.
+If header `Tpp-Roles-Allowed` is present, TPP’s requests will be validated according to roles in header.
+If TPP is prohibited from accessing certain resource it will receive response with 401 code and `ROLE_INVALID` message. TPP roles will be saved and updated in CMS.
+Since the pasportisation process in place acts without changing the TPP’s certificate, XS2A doesn’t use the roles from TPP’s certificate and won’t validate requests according to them any more.
 
 == Fixed typos in PSD2 yaml file
 
