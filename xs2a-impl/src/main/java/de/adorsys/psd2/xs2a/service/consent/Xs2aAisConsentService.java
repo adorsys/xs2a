@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
@@ -53,6 +54,7 @@ public class Xs2aAisConsentService {
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     private final ScaApproachResolver scaApproachResolver;
     private final RequestProviderService requestProviderService;
+    private final LoggingContextService loggingContextService;
 
     /**
      * Sends a POST request to CMS to store created AISconsent
@@ -106,7 +108,11 @@ public class Xs2aAisConsentService {
      * @param consentStatus ConsentStatus the consent be changed to
      */
     public void updateConsentStatus(String consentId, ConsentStatus consentStatus) {
-        aisConsentService.updateConsentStatusById(consentId, consentStatus);
+        boolean statusUpdated = aisConsentService.updateConsentStatusById(consentId, consentStatus);
+
+        if (statusUpdated) {
+            loggingContextService.storeConsentStatus(consentStatus);
+        }
     }
 
     /**
