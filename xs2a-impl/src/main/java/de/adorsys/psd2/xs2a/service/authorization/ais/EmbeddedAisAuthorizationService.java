@@ -21,10 +21,10 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
-import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaMethodSelectedStage;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -33,9 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
-import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
-import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
 
 /**
  * AisAuthorizationService implementation to be used in case of embedded approach
@@ -89,33 +86,6 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     @Override
     public Optional<AccountConsentAuthorization> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
         return aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId);
-    }
-
-    /**
-     * Updates consent PSU data.
-     * {@link AisScaStageAuthorisationFactory} is used there to provide the actual service for current stage.
-     * Service returns UpdateConsentPsuDataResponse on invoking its apply() method
-     * (e.g. see {@link AisScaMethodSelectedStage#apply}).
-     * If response has no errors, consent authorisation is updated by invoking CMS through AisConsentService
-     * See {@link Xs2aAisConsentService#updateConsentAuthorization(UpdateConsentPsuDataReq)} for details.
-     *
-     * @param request              UpdateConsentPsuDataReq request to update PSU data
-     * @param consentAuthorization AccountConsentAuthorization instance with authorisation data
-     * @return UpdateConsentPsuDataResponse update consent PSU data response
-     */
-    @Override
-    public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq request, AccountConsentAuthorization consentAuthorization) {
-        AisScaStage<UpdateConsentPsuDataReq, AccountConsentAuthorization, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + consentAuthorization.getScaStatus().name());
-        UpdateConsentPsuDataResponse response = service.apply(request, consentAuthorization);
-
-        if (response.hasError()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}]. Update consent authorisation failed. Error msg: {}.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId(), response.getErrorHolder());
-        } else {
-            aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, request));
-        }
-
-        return response;
     }
 
     @Override

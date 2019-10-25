@@ -20,7 +20,8 @@ import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,8 +29,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,9 +41,6 @@ public class RedirectAisAuthorizationServiceTest {
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
-    private static final List<String> STRING_LIST = Collections.singletonList(CONSENT_ID);
-    private static final UpdateConsentPsuDataReq UPDATE_CONSENT_PSU_DATA_REQ = new UpdateConsentPsuDataReq();
-    private static final AccountConsentAuthorization ACCOUNT_CONSENT_AUTHORIZATION = new AccountConsentAuthorization();
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null);
     private static final CreateConsentAuthorizationResponse CREATE_CONSENT_AUTHORIZATION_RESPONSE = buildCreateConsentAuthResponse();
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
@@ -80,15 +76,6 @@ public class RedirectAisAuthorizationServiceTest {
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
-    }
-
-    @Test
-    public void updateConsentPsuData_success() {
-        // When
-        UpdateConsentPsuDataResponse actualResponse = redirectAisAuthorisationService.updateConsentPsuData(UPDATE_CONSENT_PSU_DATA_REQ, ACCOUNT_CONSENT_AUTHORIZATION);
-
-        // Then
-        assertThat(actualResponse).isNull();
     }
 
     @Test
