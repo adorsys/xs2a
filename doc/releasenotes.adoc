@@ -6,19 +6,25 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 5.x (Development. Planned to be released 13.03.2020 as 6.0 Stable version)
 
-* xref:release_notes/Release_notes_5.3.adoc[Version 5.3 (release date: ?)]
+* xref:release_notes/Release_notes_5.4.adoc[Version 5.4 (release date: ?)]
+* xref:release_notes/Release_notes_5.3.adoc[Version 5.3 (release date: 25.10.2019)]
 * xref:release_notes/Release_notes_5.2.adoc[Version 5.2 (release date: 11.10.2019)]
 * xref:release_notes/Release_notes_5.1.adoc[Version 5.1  (release date: 27.09.2019)]
 * xref:release_notes/Release_notes_5.0.1.adoc[Version 5.0.1  (release date: 13.09.2019)]
 * xref:release_notes/Release_notes_5.0.adoc[Version 5.0  (release date: 13.09.2019)]
 
 === Mainline 4.x (Stable. Supported minimum till 01.03.2020)
-* xref:release_notes/Release_notes_4.2.adoc[Version 4.2  (release date: ?)]
+
+* xref:release_notes/Release_notes_4.4.adoc[Version 4.4  (release date: ?)]
+* xref:release_notes/Release_notes_4.3.adoc[Version 4.3  (release date: 25.10.2019)]
+* xref:release_notes/Release_notes_4.2.1.adoc[Version 4.2.1  (release date: 21.10.2019)]
+* xref:release_notes/Release_notes_4.2.adoc[Version 4.2  (release date: 11.10.2019)]
 * xref:release_notes/Release_notes_4.1.adoc[Version 4.1  (release date: 27.09.2019)]
 * xref:release_notes/Release_notes_4.0.1.adoc[Version 4.0.1  (release date: 13.09.2019)]
 * xref:release_notes/Release_notes_4.0.adoc[Version 4.0  (release date: 13.09.2019)]
 
 === Mainline 3.x (Development. Released 13.09.2019 as 4.0)
+
 * xref:release_notes/Release_notes_3.11.adoc[Version 3.11   (release date: 30.08.2019)]
 * xref:release_notes/Release_notes_3.10.adoc[Version 3.10   (release date: 16.08.2019)]
 * xref:release_notes/Release_notes_3.9.adoc[Version 3.9   (release date: 02.08.2019)]
