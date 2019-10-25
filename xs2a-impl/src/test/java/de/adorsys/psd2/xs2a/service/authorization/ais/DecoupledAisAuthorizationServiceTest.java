@@ -7,9 +7,11 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaAuthenticatedStage;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import org.junit.Before;
@@ -22,12 +24,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
-import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -44,8 +43,6 @@ public class DecoupledAisAuthorizationServiceTest {
     private static final ScaApproach SCA_APPROACH = ScaApproach.DECOUPLED;
     private static final AccountConsent ACCOUNT_CONSENT = buildConsent(CONSENT_ID);
     private static final CreateConsentAuthorizationResponse CREATE_CONSENT_AUTHORIZATION_RESPONSE = buildCreateConsentAuthorizationResponse();
-    private static final UpdateConsentPsuDataReq UPDATE_CONSENT_PSU_DATA_REQ = new UpdateConsentPsuDataReq();
-    private static final UpdateConsentPsuDataResponse UPDATE_CONSENT_PSU_DATA_RESPONSE = new UpdateConsentPsuDataResponse(SCA_STATUS, CONSENT_ID, AUTHORISATION_ID);
 
     @InjectMocks
     private DecoupledAisAuthorizationService decoupledAisAuthorizationService;
@@ -56,8 +53,6 @@ public class DecoupledAisAuthorizationServiceTest {
     private Xs2aAisConsentMapper aisConsentMapper;
     @Mock
     private AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
-    @Mock
-    private AisScaAuthenticatedStage aisScaAuthenticatedStage;
     @Mock
     private RequestProviderService requestProviderService;
 
@@ -93,21 +88,6 @@ public class DecoupledAisAuthorizationServiceTest {
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
-    }
-
-    @Test
-    public void updateConsentPsuData_success() {
-        // Given
-        when(scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + SCA_APPROACH.name() + SEPARATOR + ACCOUNT_CONSENT_AUTHORIZATION.getScaStatus().name()))
-            .thenReturn(aisScaAuthenticatedStage);
-        when(aisScaAuthenticatedStage.apply(UPDATE_CONSENT_PSU_DATA_REQ, ACCOUNT_CONSENT_AUTHORIZATION))
-            .thenReturn(UPDATE_CONSENT_PSU_DATA_RESPONSE);
-
-        // When
-        UpdateConsentPsuDataResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(UPDATE_CONSENT_PSU_DATA_REQ, ACCOUNT_CONSENT_AUTHORIZATION);
-
-        // Then
-        assertThat(actualResponse).isEqualTo(UPDATE_CONSENT_PSU_DATA_RESPONSE);
     }
 
     @Test

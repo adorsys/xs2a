@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaReceivedAuthorisationStage;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import org.junit.Before;
@@ -36,10 +35,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Optional;
 import java.util.UUID;
 
-import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
-import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -64,8 +61,6 @@ public class EmbeddedAisAuthorizationServiceTest {
     @Mock
     private AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
     @Mock
-    private AisScaReceivedAuthorisationStage receivedAuthorisationStage;
-    @Mock
     private UpdateConsentPsuDataReq updateConsentPsuDataRequest;
     @Mock
     private AccountConsentAuthorization consentAuthorization;
@@ -78,15 +73,6 @@ public class EmbeddedAisAuthorizationServiceTest {
 
     @Before
     public void setUp() {
-        when(consentAuthorization.getScaStatus())
-            .thenReturn(STARTED_SCA_STATUS);
-
-        when(scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + STARTED_SCA_STATUS.name()))
-            .thenReturn(receivedAuthorisationStage);
-
-        when(receivedAuthorisationStage.apply(updateConsentPsuDataRequest, consentAuthorization))
-            .thenReturn(updateConsentPsuDataResponse);
-
         when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
         when(aisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
@@ -205,34 +191,6 @@ public class EmbeddedAisAuthorizationServiceTest {
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(actualResponse.getAuthorisationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
-    }
-
-    @Test
-    public void updateConsentPsuData_Failure_ResponseWithError() {
-        when(updateConsentPsuDataResponse.hasError())
-            .thenReturn(true);
-
-        authorizationService.updateConsentPsuData(updateConsentPsuDataRequest, consentAuthorization);
-
-        verify(aisConsentService, times(0)).updateConsentAuthorization(any(UpdateConsentPsuDataReq.class));
-        assertThat(updateConsentPsuDataResponse).isNotNull();
-    }
-
-    @Test
-    public void updateConsentPsuData_Success_ResponseWithoutError() {
-        when(updateConsentPsuDataResponse.hasError())
-            .thenReturn(false);
-
-        when(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(updateConsentPsuDataResponse, updateConsentPsuDataRequest))
-            .thenReturn(updateConsentPsuDataRequest);
-
-        doNothing()
-            .when(aisConsentService).updateConsentAuthorization(updateConsentPsuDataRequest);
-
-        authorizationService.updateConsentPsuData(updateConsentPsuDataRequest, consentAuthorization);
-
-        verify(aisConsentService).updateConsentAuthorization(updateConsentPsuDataRequest);
-        assertThat(updateConsentPsuDataResponse).isNotNull();
     }
 
     @Test
