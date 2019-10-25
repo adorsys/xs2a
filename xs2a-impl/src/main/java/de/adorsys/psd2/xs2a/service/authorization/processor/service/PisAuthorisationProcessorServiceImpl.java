@@ -288,7 +288,6 @@ public class PisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
         } else if (isSingleScaMethod(spiScaMethods)) {
             return buildUpdateResponseWhenScaMethodIsSingle(authorisationProcessorRequest, psuData, payment, aspspConsentDataProvider, contextData, spiScaMethods);
         } else if (isMultipleScaMethods(spiScaMethods)) {
-
             return buildUpdateResponseWhenScaMethodsAreMultiple(request, psuData, spiScaMethods);
         }
 
@@ -300,7 +299,6 @@ public class PisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
         xs2aPisCommonPaymentService.saveAuthenticationMethods(request.getAuthorisationId(), spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(spiScaMethods));
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUAUTHENTICATED, request.getPaymentId(), request.getAuthorisationId(), psuData);
         response.setAvailableScaMethods(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(spiScaMethods));
-        response.setPsuData(psuData);
         return response;
     }
 

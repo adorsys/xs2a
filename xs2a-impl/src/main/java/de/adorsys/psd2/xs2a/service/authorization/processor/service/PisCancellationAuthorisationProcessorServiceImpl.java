@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
@@ -250,11 +249,6 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends BaseAuthor
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
         }
 
-        if (psuAuthorisationResponse.isScaExempted() && paymentType != PaymentType.PERIODIC) {
-            writeInfoLog(authorisationProcessorRequest, psuData, "SCA was exempted for the payment after AuthorisationSpi#authorisePsu.");
-            return cancelPaymentWithoutSca(authorisationProcessorRequest, psuData, payment, spiContextData, EXEMPTED);
-        }
-
         if (pisAuthorisationResponse.getChosenScaApproach() == ScaApproach.DECOUPLED) {
             return pisCommonDecoupledService.proceedDecoupledCancellation(request, payment);
         }
@@ -268,11 +262,6 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends BaseAuthor
         }
 
         SpiAvailableScaMethodsResponse availableScaMethods = availableScaMethodsResponse.getPayload();
-
-        if (availableScaMethods.isScaExempted() && paymentType != PaymentType.PERIODIC) {
-            writeInfoLog(authorisationProcessorRequest, psuData, "SCA was exempted for the payment after AuthorisationSpi#requestAvailableScaMethods.");
-            return cancelPaymentWithoutSca(authorisationProcessorRequest, psuData, payment, spiContextData, EXEMPTED);
-        }
 
         List<SpiAuthenticationObject> spiScaMethods = availableScaMethods.getAvailableScaMethods();
 
@@ -330,13 +319,6 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends BaseAuthor
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
         }
 
-        SpiAuthorizationCodeResult authorizationCodeResult = authCodeResponse.getPayload();
-
-        if (authorizationCodeResult.isScaExempted() && payment.getPaymentType() != PaymentType.PERIODIC) {
-            writeInfoLog(authorisationProcessorRequest, psuData, "SCA was exempted for the payment after AuthorisationSpi#requestAuthorisationCode.");
-            return cancelPaymentWithoutSca(authorisationProcessorRequest, psuData, payment, contextData, EXEMPTED);
-        }
-
         ChallengeData challengeData = mapToChallengeData(authCodeResponse.getPayload());
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED, paymentId, authorisationId, psuData);
@@ -366,11 +348,6 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends BaseAuthor
 
         SpiAuthorizationCodeResult authorizationCodeResult = spiResponse.getPayload();
 
-        if (authorizationCodeResult.isScaExempted() && payment.getPaymentType() != PaymentType.PERIODIC) {
-            writeInfoLog(authorisationProcessorRequest, psuData, "SCA was exempted for the payment after AuthorisationSpi#requestAuthorisationCode");
-            return cancelPaymentWithoutSca(authorisationProcessorRequest, psuData, payment, spiContextData, EXEMPTED);
-        }
-
         if (authorizationCodeResult.isEmpty()) {
             ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400).tppMessages(TppMessageInformation.of(MessageErrorCode.SCA_METHOD_UNKNOWN))
                                           .build();
@@ -386,26 +363,6 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends BaseAuthor
         response.setChallengeData(challengeData);
         response.setPsuData(psuData);
         return response;
-    }
-
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse cancelPaymentWithoutSca(AuthorisationProcessorRequest authorisationProcessorRequest, PsuIdData psuData, SpiPayment payment, SpiContextData contextData, ScaStatus resultScaStatus) {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = (Xs2aUpdatePisCommonPaymentPsuDataRequest) authorisationProcessorRequest.getUpdateAuthorisationRequest();
-        String authorisationId = request.getAuthorisationId();
-        String paymentId = request.getPaymentId();
-
-        final SpiAspspConsentDataProvider aspspConsentDataProvider =
-            aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(paymentId);
-
-        SpiResponse<SpiResponse.VoidResponse> spiResponse = paymentCancellationSpi.cancelPaymentWithoutSca(contextData, payment, aspspConsentDataProvider);
-
-        if (spiResponse.hasError()) {
-            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            writeErrorLog(authorisationProcessorRequest, psuData, errorHolder, "Cancel payment without SCA has failed.");
-            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
-        }
-
-        updatePaymentAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.CANC);
-        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(resultScaStatus, paymentId, authorisationId, psuData);
     }
 
     private boolean isSingleScaMethod(List<SpiAuthenticationObject> spiScaMethods) {
