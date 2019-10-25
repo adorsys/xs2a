@@ -109,4 +109,21 @@ public class RedirectLinkBuilder {
                    .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId)
                    .replace(INTERNAL_REQUEST_ID, internalRequestId);
     }
+
+    /**
+     * Builds OAuth redirect links by template from AspspProfile.
+     * Variables "{redirect-id}" and {encrypted-payment-id} may be used in template.
+     *
+     * @param encryptedPaymentId - Encrypted Payment ID provided to TPP
+     * @param redirectId         - Redirect ID
+     * @param internalRequestId  - Internal Request ID
+     * @return redirect link
+     */
+    public String buildPaymentCancellationScaOauthRedirectLink(String encryptedPaymentId, String redirectId, String internalRequestId) {
+        return aspspProfileService.getOauthConfigurationUrl()
+                   .replace(REDIRECT_URL, redirectId)
+                   .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId)
+                   .replace(INTERNAL_REQUEST_ID, internalRequestId);
+    }
+
 }
