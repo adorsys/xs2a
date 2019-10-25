@@ -47,8 +47,12 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
             setUpdatePsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorisationId));
         } else if (initiationScaApproach == REDIRECT) {
             String redirectId = redirectIdService.generateRedirectId(authorisationId);
-            String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId);
-            setScaRedirectOAuthLink(scaRedirectFlow, scaRedirectLink);
+
+            String paymentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
+                                          ? redirectLinkBuilder.buildPaymentScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
+                                          : redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId);
+
+            setScaRedirectOAuthLink(scaRedirectFlow, paymentOauthLink);
         }
     }
 }
