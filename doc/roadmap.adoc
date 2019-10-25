@@ -15,36 +15,6 @@ No backward compatibility with 4.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 4.x|version 5.x
 
-|25.10.2019|4.3|5.3
-
-a|
-
-a|* Bugfix: When bank returns PATC status for payment, multilevel flag in CMS should be set to true 
-
-* Bugfix: Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
-
-* Bugfix: Incorrect response for Update PSU data request with incorrect PSU-ID in header
-
-* Bugfix: PIIS consent status is being changed on implicit revocation
-
-* Add statuses to logs
-
-a|* All fixes from v.4.3
-
-* Authorisation stage classes refactoring
-
-* Provide header Authorization in ContextData
-
-* Support OAuth Redirect for PIS, AIS, Payment Cancellation
-
-* Validate access of TPP based on role's header
-
-* Extend CMS to store sca method and TAN for Redirect approach
-
-* Save payment transaction status given by ASPSP
-
-* XS2A-Swagger. Typos and small errors fixes
-
 |08.11.2019|4.4|5.4
 
 a|
@@ -53,13 +23,13 @@ a|* Bugfix: Incorrect scaStatus for failed authorisation PIS/AIS/Payments-Cancel
 
 * Bugfix: Incorrect consent status for already used one time consent (All consent types)
 
-* Refactor CMS: return ResponseObject instead of Strings, Enums, Booleans etc.
+* Improve payment type validation
+
+* Describe "Configuring SCA Redirect OAuth" at SPI Developer Guide
 
 a|* All fixes from v.4.4
 
-* Add validation of Swiss domestic payments
-
-* Support pre-step and integrated OAuth modes
+* Refactor CMS: return ResponseObject instead of Strings, Enums, Booleans etc.
 
 * Provide creation date and time in SPIrequest
 
@@ -74,8 +44,6 @@ a|
 a|* Create an opportunity to disable IBAN validation
 
 * Remove MockContentCachingWrappingFilter and properly enable XS2A filters for integration tests
-
-* Improve payment type validation
 
 * Refactor request validation chain
 
@@ -135,15 +103,27 @@ a|* All fixes from v.4.7
 
 * Refactoring of payment saving
 
+|17.01.2020|4.8|5.8
+
+a|
+
+a|
+
+a|* All fixes from v.4.8
+
+* Logging of RequestId/InternalRequestId via slf4j MDC
+
+* Prevent modification of an established consent
+
+* Refactor applyAuthorisation methods in PisAuthorisationProcessorServiceImpl and PisCancellationAuthorisationProcessorServiceImpl
+
 |Further development| |
 
 a|
 
 a|
 
-a|* Logging of RequestId/InternalRequestId via slf4j MDC
-
-* _Lean Push Service_
+a|* _Lean Push Service_
 
 * _Support of Signing Basket:_
 
