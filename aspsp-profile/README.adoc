@@ -129,8 +129,16 @@ If piisConsentSupported = TRUE then PIIS consent should be stored in CMS and req
 If piisConsentSupported = FALSE then PIIS consent is not stored in CMS and request is sent to SPI with NULL value. |FALSE |TRUE, FALSE
 |*Common:* | | |
 |scaApproachesSupported |This field contains the List of SCA Approach supported by ASPSP ordered by priority - first one with the highest priority. |REDIRECT |	REDIRECT, EMBEDDED, DECOUPLED
-|scaRedirectFlow |This field defines variant of the SCA redirect approach. |REDIRECT |REDIRECT, OAUTH, OAUTH_PRE_STEP
-|oauthConfigurationUrl |The link to identity provider (IDP) for OAuth. |http://localhost:4200/idp/ |String
+|scaRedirectFlow |This field defines variant of the SCA redirect approach:
+
+- REDIRECT for standard Redirect SCA;
+
+- OAUTH_PRE_STEP for pre-step OAuth SCA (TPP asks for token before initiation of request);
+
+- OAUTH for integrated OAuth SCA (TPP asks for token after initiation of request).
+
+|REDIRECT |REDIRECT, OAUTH, OAUTH_PRE_STEP
+|oauthConfigurationUrl |Link to IDP (Authorisation Server) to authorise request with Redirect approach. Attribute is available to be configured with custom url pattern. |http://localhost:4200/idp/ |String
 |startAuthorisationMode |This field defines variant of forced mode of Authorisation.
 
 ASPSP may have explicit\implicit\auto start of authorisation in any case of all flows.
