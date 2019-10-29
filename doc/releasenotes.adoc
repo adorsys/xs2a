@@ -5,6 +5,8 @@ For Versioning policy see xref:Version_Policy.adoc[Versioning, Release and Suppo
 For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 5.x (Development. Planned to be released 13.03.2020 as 6.0 Stable version)
+
+* xref:release_notes/Release_notes_5.1.1.adoc[Version 5.1.1  (release date: ?)]
 * xref:release_notes/Release_notes_5.1.adoc[Version 5.1  (release date: ?)]
 * xref:release_notes/Release_notes_5.0.1.adoc[Version 5.0.1  (release date: 13.09.2019)]
 * xref:release_notes/Release_notes_5.0.adoc[Version 5.0  (release date: 13.09.2019)]
