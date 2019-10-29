@@ -23,11 +23,11 @@ regulated by PSD2.
 [adorsys](https://adorsys.de/en/index.html) is a company who works ever since the very beginning of PSD2 with its requirements and implicit tasks.
 We help banks to be PSD2 complaint (technical and legal terms). To speed up the process we provide this open source XS2A interface, specified by Berlin Group,
 that can be connected to your middleware system.
-You can check your readiness for PSD2 Compliance and other information via [our Web-site](https://adorsys.de/en/psd2).
+You can check your readiness for PSD2 Compliance and other information via [our Web-site](https://adorsys-platform.de/solutions/).
 
 ## Features of adorsys/XS2A
 
-* **Current supported version of NextGenPSD2 XS2A API is 1.3**.
+* **Current supported version of NextGenPSD2 XS2A API is 1.3.4**.
 You can check out our [Swagger API yaml file](xs2a-impl/src/main/resources/static/psd2-api_1.3.4_20190717v1.yaml).
 
 * **XS2A-impl** is an implemetation of NextGenPSD2 XS2A Interface of Berlin Group.
@@ -93,7 +93,7 @@ Please read [CONTRIBUTING](doc/CONTRIBUTING.md) for details on our code of condu
 
 See also the list of [contributors](doc/contributors.md) who participated in this project.
 
-For commercial support please contact **[adorsys Team](https://adorsys.de/en/psd2)**.
+For commercial support please contact **[adorsys Team](https://adorsys.de/en/kontakt/)**.
 
 ## License
 
