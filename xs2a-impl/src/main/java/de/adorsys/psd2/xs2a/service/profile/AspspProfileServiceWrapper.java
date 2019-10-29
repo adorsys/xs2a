@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.profile;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -338,5 +339,14 @@ public class AspspProfileServiceWrapper {
      */
     public String getSupportedPaymentCountryValidation(){
         return readAspspSettings().getPis().getCountryValidationSupported();
+    }
+
+    /**
+     * Reads Multicurrency account level
+     *
+     * @return MulticurrencyAccountLevel object
+     */
+    public MulticurrencyAccountLevel getMulticurrencyAccountLevel() {
+     return readAspspSettings().getCommon().getMulticurrencyAccountLevelSupported();
     }
 }

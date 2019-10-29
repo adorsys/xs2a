@@ -511,3 +511,10 @@ The Method *updateCommonPaymentCancellationPsuData* updates the cancellation for
 The Method *getCancellationAuthorisationScaStatus* with *PaymentId* and *CancellationId* (Resource identification of the related Payment Cancellation authorisation sub-resource) returns SCA status.
 
 The Method *getScaApproachServiceTypeProvider* provides SCA approach used in current service. It returns the ScaApproach *“Redirect”*.
+
+=== Multicurrency Accounts
+
+Multicurrency accounts support can be enabled in ASPSP Profile by setting `multicurrencyAccountLevelSupported` property to `AGGREGATION_AND_SUBACCOUNT` or `AGGREGATION` value.
+By default, `multicurrencyAccountLevelSupported` property is set to `SUBACCOUNT`.
+When TPP asks for account list information or account information (*requestAccountList* or *requestAccountDetailForAccount* method in AccountSpi), ASPSP can return *null* in currency field.
+In such case, XS2A will mark `currency` field with `XXX` text.
