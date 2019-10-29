@@ -17,15 +17,14 @@
 package de.adorsys.psd2.xs2a.service.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.*;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetailsHolder;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountListHolder;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
+import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapperImpl;
@@ -35,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,14 +44,10 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {AccountModelMapperImpl.class, AccountModelMapperTest.TestConfiguration.class, Xs2aAddressMapperImpl.class})
@@ -66,13 +62,14 @@ public class AccountModelMapperTest {
 
     @Autowired
     private AccountModelMapper mapper;
-
     @Autowired
     private HrefLinkMapper mockedHrefLinkMapper;
     @Autowired
     private AmountModelMapper mockedAmountModelMapper;
     @Autowired
     private PurposeCodeMapper mockedPurposeCodeMapper;
+    @MockBean
+    private AspspProfileServiceWrapper aspspProfileService;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -276,6 +273,117 @@ public class AccountModelMapperTest {
         expected.setLinks(actual.getLinks());
         assertEquals(expected, actual);
 
+    }
+
+    @Test
+    public void mapToAccountDetailsCurrency_currencyPresent() {
+        //Given
+        Currency currency = Currency.getInstance("EUR");
+        //When
+        String currencyRepresentation = mapper.mapToAccountDetailsCurrency(currency);
+        //Then
+        assertEquals(currency.getCurrencyCode(), currencyRepresentation);
+    }
+
+    @Test
+    public void mapToAccountDetailsCurrency_currencyNull() {
+        //Given
+        //When
+        String currencyRepresentation = mapper.mapToAccountDetailsCurrency(null);
+        //Then
+        assertNull(currencyRepresentation);
+    }
+
+    @Test
+    public void mapToAccountDetailsCurrency_multicurrencySubaccount() {
+        //Given
+        when(aspspProfileService.getMulticurrencyAccountLevel()).thenReturn(MulticurrencyAccountLevel.SUBACCOUNT);
+        //When
+        String currencyRepresentation = mapper.mapToAccountDetailsCurrency(null);
+        //Then
+        assertNull(currencyRepresentation);
+    }
+
+    @Test
+    public void mapToAccountDetailsCurrency_multicurrencyAggregations() {
+        Arrays.asList(MulticurrencyAccountLevel.AGGREGATION, MulticurrencyAccountLevel.AGGREGATION_AND_SUBACCOUNT).forEach(multicurrencyAccountLevel -> {
+            //Given
+            when(aspspProfileService.getMulticurrencyAccountLevel()).thenReturn(multicurrencyAccountLevel);
+            //When
+            String currencyRepresentation = mapper.mapToAccountDetailsCurrency(null);
+            //Then
+            assertEquals("XXX", currencyRepresentation);
+        });
+    }
+
+    @Test
+    public void mapToAccountList_currencyPresent_multicurrencyLevelSubaccount() {
+        //Given
+        when(aspspProfileService.getMulticurrencyAccountLevel()).thenReturn(MulticurrencyAccountLevel.SUBACCOUNT);
+        Currency currency = Currency.getInstance("EUR");
+        Xs2aAccountDetails xs2aAccountDetails = buildXs2aAccountDetails(currency);
+        Xs2aAccountListHolder xs2aAccountListHolder = new Xs2aAccountListHolder(Collections.singletonList(xs2aAccountDetails), null);
+        //When
+        AccountList actualAccountList = mapper.mapToAccountList(xs2aAccountListHolder);
+        //Then
+        AccountDetails accountDetails = actualAccountList.getAccounts().get(0);
+        assertEquals(currency.getCurrencyCode(), accountDetails.getCurrency());
+    }
+
+    @Test
+    public void mapToAccountList_currencyNull_multicurrencyLevelSubaccount() {
+        //Given
+        when(aspspProfileService.getMulticurrencyAccountLevel()).thenReturn(MulticurrencyAccountLevel.SUBACCOUNT);
+        Currency currency = null;
+        Xs2aAccountDetails xs2aAccountDetails = buildXs2aAccountDetails(currency);
+        Xs2aAccountListHolder xs2aAccountListHolder = new Xs2aAccountListHolder(Collections.singletonList(xs2aAccountDetails), null);
+        //When
+        AccountList actualAccountList = mapper.mapToAccountList(xs2aAccountListHolder);
+        //Then
+        AccountDetails accountDetails = actualAccountList.getAccounts().get(0);
+        assertNull(accountDetails.getCurrency());
+    }
+
+    @Test
+    public void mapToAccountList_currencyPresent_multicurrencyLevelAggregation() {
+        //Given
+        Arrays.asList(MulticurrencyAccountLevel.AGGREGATION, MulticurrencyAccountLevel.AGGREGATION_AND_SUBACCOUNT).forEach(multicurrencyAccountLevel -> {
+            //Given
+            when(aspspProfileService.getMulticurrencyAccountLevel()).thenReturn(multicurrencyAccountLevel);
+            Currency currency = Currency.getInstance("EUR");
+            Xs2aAccountDetails xs2aAccountDetails = buildXs2aAccountDetails(currency);
+            Xs2aAccountListHolder xs2aAccountListHolder = new Xs2aAccountListHolder(Collections.singletonList(xs2aAccountDetails), null);
+            //When
+            AccountList actualAccountList = mapper.mapToAccountList(xs2aAccountListHolder);
+            //Then
+            AccountDetails accountDetails = actualAccountList.getAccounts().get(0);
+            assertEquals(currency.getCurrencyCode(), accountDetails.getCurrency());
+        });
+    }
+
+    @Test
+    public void mapToAccountList_currencyNull_multicurrencyLevelAggregation() {
+        //Given
+        Arrays.asList(MulticurrencyAccountLevel.AGGREGATION, MulticurrencyAccountLevel.AGGREGATION_AND_SUBACCOUNT).forEach(multicurrencyAccountLevel -> {
+            //Given
+            when(aspspProfileService.getMulticurrencyAccountLevel()).thenReturn(multicurrencyAccountLevel);
+            Currency currency = null;
+            Xs2aAccountDetails xs2aAccountDetails = buildXs2aAccountDetails(currency);
+            Xs2aAccountListHolder xs2aAccountListHolder = new Xs2aAccountListHolder(Collections.singletonList(xs2aAccountDetails), null);
+            //When
+            AccountList actualAccountList = mapper.mapToAccountList(xs2aAccountListHolder);
+            //Then
+            AccountDetails accountDetails = actualAccountList.getAccounts().get(0);
+            assertEquals("XXX", accountDetails.getCurrency());
+        });
+    }
+
+    private Xs2aAccountDetails buildXs2aAccountDetails(Currency currency) {
+        return new Xs2aAccountDetails(null, null, null, null,
+                                      null, null, null, currency,
+                                      null, null, null, null,
+                                      null, null, null, null,
+                                      null, null, null);
     }
 
     private void assertLinks(Map expectedLinks, Map actualLinks) {

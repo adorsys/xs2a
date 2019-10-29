@@ -16,12 +16,14 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
+import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import de.adorsys.psd2.xs2a.domain.Xs2aExchangeRate;
 import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapper;
@@ -35,14 +37,20 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", uses = {AmountModelMapper.class, PurposeCodeMapper.class, Xs2aAddressMapper.class})
+@Mapper(componentModel = "spring", uses = {AmountModelMapper.class, PurposeCodeMapper.class, Xs2aAddressMapper.class, AspspProfileServiceWrapper.class})
 public abstract class AccountModelMapper {
+    private static final List<MulticurrencyAccountLevel> MULTICURRENCY_ACCOUNT_AGGREGATION_LEVELS = Arrays.asList(MulticurrencyAccountLevel.AGGREGATION, MulticurrencyAccountLevel.AGGREGATION_AND_SUBACCOUNT);
 
     @Autowired
     protected HrefLinkMapper hrefLinkMapper;
+    @Autowired
+    protected AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     @Mapping(target = "currency", source = "currency.currencyCode")
     public abstract de.adorsys.psd2.model.AccountReference mapToAccountReference(AccountReference accountReference);
@@ -67,6 +75,7 @@ public abstract class AccountModelMapper {
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(accountDetails.getLinks()))")
     @Mapping(target = "status", source = "accountStatus")
     @Mapping(target = "usage", source = "usageType")
+    @Mapping(target = "currency", expression = "java(mapToAccountDetailsCurrency(accountDetails.getCurrency()))")
     public abstract AccountDetails mapToAccountDetails(Xs2aAccountDetails accountDetails);
 
     @Mapping(target = "balanceType", expression = "java(mapToBalanceType(balance.getBalanceType()))")
@@ -154,5 +163,15 @@ public abstract class AccountModelMapper {
     }
 
     protected abstract ReportExchangeRate mapToReportExchangeRate(Xs2aExchangeRate xs2aExchangeRate);
+
+    protected String mapToAccountDetailsCurrency(Currency currency) {
+        return Optional.ofNullable(currency)
+                   .map(Currency::getCurrencyCode)
+                   .orElseGet(this::getMulticurrencyRepresentationOrNull);
+    }
+
+    private String getMulticurrencyRepresentationOrNull() {
+        return MULTICURRENCY_ACCOUNT_AGGREGATION_LEVELS.contains(aspspProfileServiceWrapper.getMulticurrencyAccountLevel()) ? "XXX" : null;
+    }
 }
 
