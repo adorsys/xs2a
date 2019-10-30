@@ -9,7 +9,7 @@
 ==== How to add new custom payment-product
 
 Xs2a has implementation to support custom payment-products which are different from Berlin Group list.
-To use for example "new-payment-product", open *bank-profile.yaml* and add it to *supportedPaymentTypeAndProductMatrix*:
+To use for example "new-payment-product", open *bank_profile.yaml* and add it to *supportedPaymentTypeAndProductMatrix*:
 ```
   SINGLE:
    - new-payment-product
@@ -30,26 +30,52 @@ Redirect link for consent is constructed with `aisRedirectUrlToAspsp` parameter 
 
 Examples:
 
-* "http://localhost/ais/{redirect-id}/{encrypted-consent-id}",
-* "http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}/{inr-id}",
-* "http://localhost:4200/ais/{redirect-id}"
+* "http://localhost/ais/{redirect-id}/{encrypted-consent-id}";
+* "http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}/{inr-id}";
+* "http://localhost:4200/ais/{redirect-id}".
 
 Redirect link for payment is constructed with  `pisRedirectUrlToAspsp` parameter and can be configured with `{redirect-id}`, `{encrypted-payment-id}`, `{inr-id}` options.
 
 Examples:
 
-* "http://localhost/pis/{redirect-id}/{encrypted-payment-id}",
-* "http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}/{inr-id}",
-* "http://localhost:4200/pis/{redirect-id}"
+* "http://localhost/pis/{redirect-id}/{encrypted-payment-id}";
+* "http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}/{inr-id}";
+* "http://localhost:4200/pis/{redirect-id}".
 
 Redirect link for payment cancellation is constructed with `pisPaymentCancellationRedirectUrlToAspsp` parameter and can be configured with the same options as for payment.
 
 Examples:
 
-* "http://localhost/pis/cancellation/{redirect-id}/{encrypted-payment-id}",
-* "http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}/{inr-id}",
-* "http://localhost:4200/pis/cancellation/{redirect-id}"
+* "http://localhost/pis/cancellation/{redirect-id}/{encrypted-payment-id}";
+* "http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}/{inr-id}";
+* "http://localhost:4200/pis/cancellation/{redirect-id}".
 
 All parameters are optional and can be omitted.
+
+== Configuring SCA Redirect OAuth
+
+XS2A supports several modes of redirect SCA approach:
+
+* redirect (usual redirect approach);
+* OAuth pre-step (TPP asks for token before initiation of the request);
+* OAuth integrated (TPP asks for token after initiation of the request).
+
+Switching between these modes can be done by changing the `scaRedirectFlow` field value in the ASPSP profile. Possible
+values for it are:
+
+* `REDIRECT`;
+* `OAUTH_PRE_STEP`;
+* `OAUTH`.
+
+OAUTH and OAUTH_PRE_STEP modes require link to identity provider (IDP) in the ASPSP profile. This is the field `oauthConfigurationUrl`.
+It should be used for accessing third-party applications for providing the token.
+
+Pre-step mode flow is the following. If token is present, then pre-step OAuth was already applied by TPP and XS2A returns link `scaRedirect`
+to redirect PSU to online-banking (or other authorisation server) for SCA. If token is absent in initial request, XS2A returns
+error `401 UNAUTHORIZED` with text `Please retrieve token first from {oauthConfigurationUrl}`.
+
+Integrated mode: if ASPSP supports integrated OAuth and token is absent in initial request for consent, payment and payment
+cancellation, XS2A returns link `scaOauth` (based on `oauthConfigurationUrl` in profile) to redirect TPP to IDP. If token
+is present, XS2A responds with error `403 FORBIDDEN` with text `Token is not valid for the addressed service/resource`.
 
 === Using debug interface
