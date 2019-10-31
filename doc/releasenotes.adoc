@@ -9,6 +9,7 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 * xref:release_notes/Release_notes_5.4.adoc[Version 5.4 (release date: ?)]
 * xref:release_notes/Release_notes_5.3.adoc[Version 5.3 (release date: 25.10.2019)]
 * xref:release_notes/Release_notes_5.2.adoc[Version 5.2 (release date: 11.10.2019)]
+* xref:release_notes/Release_notes_5.1.1.adoc[Version 5.1.1  (release date: 29.10.2019)]
 * xref:release_notes/Release_notes_5.1.adoc[Version 5.1  (release date: 27.09.2019)]
 * xref:release_notes/Release_notes_5.0.1.adoc[Version 5.0.1  (release date: 13.09.2019)]
 * xref:release_notes/Release_notes_5.0.adoc[Version 5.0  (release date: 13.09.2019)]

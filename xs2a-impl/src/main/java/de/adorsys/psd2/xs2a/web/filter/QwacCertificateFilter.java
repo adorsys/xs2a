@@ -93,24 +93,18 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                 tppInfo.setIssuerCN(tppCertificateData.getIssuerCN());
                 tppInfo.setDnsList(tppCertificateData.getDnsList());
 
-                String tppRolesAllowedHeader = requestProviderService.getTppRolesAllowedHeader();
-                if (StringUtils.isNotBlank(tppRolesAllowedHeader)) {
-                    Optional.of(tppRolesAllowedHeader)
-                        .map(roles -> roles.split(","))
-                        .map(Arrays::asList)
-                        .map(this::mapToTppRoles)
-                        .ifPresent(roles -> {
-                            tppInfo.setTppRoles(roles);
-                            tppService.updateTppInfo(tppInfo);
-                        });
+                List<TppRole> xs2aTppRoles = extractTppRoles(tppCertificateData);
+                if (!xs2aTppRoles.isEmpty()) {
+                    tppInfo.setTppRoles(xs2aTppRoles);
+                    tppService.updateTppInfo(tppInfo);
+                }
 
-                    if (!tppRoleValidationService.hasAccess(tppInfo, request)) {
-                        log.info("InR-ID: [{}], X-Request-ID: [{}], Access forbidden for TPP with authorisation number: [{}]",
-                                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), tppCertificateData.getPspAuthorisationNumber());
-                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                        response.getWriter().print(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, ROLE_INVALID));
-                        return;
-                    }
+                if (!tppRoleValidationService.hasAccess(tppInfo, request)) {
+                    log.info("InR-ID: [{}], X-Request-ID: [{}], Access forbidden for TPP with authorisation number: [{}]",
+                             requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), tppCertificateData.getPspAuthorisationNumber());
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().print(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, ROLE_INVALID));
+                    return;
                 }
 
                 tppInfoHolder.setTppInfo(tppInfo);
@@ -152,5 +146,18 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                    .map(d -> d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
                    .map(d -> d.isBefore(LocalDateTime.now()))
                    .orElse(true);
+    }
+
+    private List<TppRole> extractTppRoles(TppCertificateData tppCertificateData) {
+        String tppRolesAllowedHeader = requestProviderService.getTppRolesAllowedHeader();
+
+        if (StringUtils.isNotBlank(tppRolesAllowedHeader)) {
+            String[] rolesInHeader = tppRolesAllowedHeader.split(",");
+            return mapToTppRoles(Arrays.asList(rolesInHeader));
+        }
+
+        return tppCertificateData.getPspRoles().stream()
+                   .map(TppRole::valueOf)
+                   .collect(Collectors.toList());
     }
 }
