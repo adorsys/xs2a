@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -45,7 +46,9 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_EXPIR
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.ROLE_INVALID;
 import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -81,6 +84,7 @@ public class QwacCertificateFilterTest {
     public void doFilterInternal_success() throws IOException, ServletException {
         //Given
         when(request.getHeader(HEADER_QWAC)).thenReturn(TEST_QWAC_CERTIFICATE_VALID);
+        when(tppRoleValidationService.hasAccess(any(), eq(request))).thenReturn(true);
 
         //When
         qwacCertificateFilter.doFilterInternal(request, response, chain);
@@ -119,6 +123,7 @@ public class QwacCertificateFilterTest {
         ArgumentCaptor<TppInfo> tppInfoArgumentCaptor = ArgumentCaptor.forClass(TppInfo.class);
         when(request.getHeader(HEADER_QWAC)).thenReturn(TEST_QWAC_CERTIFICATE_VALID);
         when(requestProviderService.getTppRolesAllowedHeader()).thenReturn(null);
+        when(tppRoleValidationService.hasAccess(any(), eq(request))).thenReturn(true);
 
         //When
         qwacCertificateFilter.doFilterInternal(request, response, chain);
@@ -127,7 +132,7 @@ public class QwacCertificateFilterTest {
         verify(chain).doFilter(any(), any());
         verify(tppInfoHolder).setTppInfo(tppInfoArgumentCaptor.capture());
         TppInfo tppInfo = tppInfoArgumentCaptor.getValue();
-        assertNull(tppInfo.getTppRoles());
+        assertTrue(tppInfo.getTppRoles().containsAll(EnumSet.of(TppRole.AISP, TppRole.PISP, TppRole.PIISP)));
     }
 
     @Test

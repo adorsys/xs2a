@@ -44,8 +44,10 @@ public class TppServiceInternalTest {
     private final static String INSTANCE_ID = "UNDEFINED";
     private final static String AUTHORISATION_NUMBER = "HDIDF-SDKJHUD-767DHB";
 
-    @InjectMocks private TppServiceInternal tppServiceInternal;
-    @Mock private TppInfoRepository tppInfoRepository;
+    @InjectMocks
+    private TppServiceInternal tppServiceInternal;
+    @Mock
+    private TppInfoRepository tppInfoRepository;
 
     @Before
     public void setUp() {

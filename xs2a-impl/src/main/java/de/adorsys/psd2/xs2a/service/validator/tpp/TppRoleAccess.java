@@ -76,11 +76,11 @@ public class TppRoleAccess {
             Set<TppRole> roles = Arrays.stream(tppRoles)
                                      .collect(Collectors.toSet());
 
-            if (this.secureURIs.containsKey(pattern)) {
-                this.secureURIs.get(pattern)
+            if (secureURIs.containsKey(pattern)) {
+                secureURIs.get(pattern)
                     .addAll(roles);
             } else {
-                this.secureURIs.put(pattern, roles);
+                secureURIs.put(pattern, roles);
             }
             return this;
         }

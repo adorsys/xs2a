@@ -27,7 +27,7 @@ public class TppServiceRemoteUrls {
     /**
      * Returns URL-string to CMS endpoint that updates TPP
      *
-     * @return String
+     * @return String representation of URL
      */
     public String updateTppInfo() {
         return consentServiceBaseUrl + "/tpp";

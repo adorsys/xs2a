@@ -25,7 +25,6 @@ public interface TppService {
      * Updates TPP by TPP authorisation number
      *
      * @param tppInfo TPP Info
-     *
      * @return <code>true</code> if TPP was found and was updated. <code>false</code> otherwise.
      */
     boolean updateTppInfo(@NotNull TppInfo tppInfo);
