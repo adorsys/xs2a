@@ -32,19 +32,11 @@ public class CreatePisCancellationAuthorisationPO implements PaymentTypeAndInfoP
     @NotNull
     private final PisCommonPaymentResponse pisCommonPaymentResponse;
     private final PsuIdData psuData;
+    private PaymentType paymentType;
+    private String paymentProduct;
 
     @Override
     public TppInfo getTppInfo() {
         return pisCommonPaymentResponse.getTppInfo();
-    }
-
-    @Override
-    public PaymentType getPaymentType() {
-        return pisCommonPaymentResponse.getPaymentType();
-    }
-
-    @Override
-    public String getPaymentProduct() {
-        return pisCommonPaymentResponse.getPaymentProduct();
     }
 }

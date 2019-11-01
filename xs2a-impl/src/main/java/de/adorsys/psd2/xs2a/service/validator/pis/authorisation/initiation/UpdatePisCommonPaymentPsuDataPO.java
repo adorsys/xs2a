@@ -20,7 +20,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndInfoProvider;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.UpdatePisPsuDataPO;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
  * Payment object that contains necessary information for validating payment in {@link UpdatePisCommonPaymentPsuDataValidator}
  */
 @Value
-public class UpdatePisCommonPaymentPsuDataPO implements PaymentTypeAndInfoProvider {
+public class UpdatePisCommonPaymentPsuDataPO implements UpdatePisPsuDataPO {
     @NotNull
     private final PisCommonPaymentResponse pisCommonPaymentResponse;
     @NotNull
@@ -41,11 +41,11 @@ public class UpdatePisCommonPaymentPsuDataPO implements PaymentTypeAndInfoProvid
 
     @Override
     public PaymentType getPaymentType() {
-        return pisCommonPaymentResponse.getPaymentType();
+        return updateRequest.getPaymentService();
     }
 
     @Override
     public String getPaymentProduct() {
-        return pisCommonPaymentResponse.getPaymentProduct();
+        return updateRequest.getPaymentProduct();
     }
 }

@@ -3,6 +3,7 @@
 == Table of Contents
 
 * Implement support of Multicurrency Accounts
+* Improve payment type validation
 
 == Implement support of Multicurrency Accounts
 
@@ -11,3 +12,8 @@ A multicurrency account is an account which is a collection of different sub-acc
 The sub-accounts are legally different accounts and they all differ in their currency, balances and transactions.
 An account identifier like an IBAN together with a currency always addresses uniquely a sub-account of a multicurrency account.
 ASPSP can grant data access to multicurrency account on SUBACCOUNT, AGGREGATION or AGGREGATION_AND_SUBACCOUNT level by setting `multicurrencyAccountLevelSupported` property in ASPSP-Profile.
+
+== Improve payment type validation
+
+From now on, all payment and payment cancellation requests are validated to have proper
+payment type and payment service.

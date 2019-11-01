@@ -73,7 +73,10 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
      */
     @Override
     public ResponseObject<AuthorisationResponse> createPisAuthorisation(Xs2aCreatePisAuthorisationRequest createRequest) {
-        ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorisationResponse = createPisAuthorisation(createRequest.getPaymentId(), createRequest.getPaymentService(), createRequest.getPsuData());
+        ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorisationResponse = createPisAuthorisation(createRequest.getPaymentId(),
+                                                                                                                   createRequest.getPaymentService(),
+                                                                                                                   createRequest.getPaymentProduct(),
+                                                                                                                   createRequest.getPsuData());
 
         if (createPisAuthorisationResponse.hasError()) {
             return ResponseObject.<AuthorisationResponse>builder()
@@ -157,7 +160,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
      * @return Response containing list of authorisations
      */
     @Override
-    public ResponseObject<Xs2aAuthorisationSubResources> getPaymentInitiationAuthorisations(String paymentId) {
+    public ResponseObject<Xs2aAuthorisationSubResources> getPaymentInitiationAuthorisations(String paymentId, String paymentProduct, PaymentType paymentType) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
@@ -169,7 +172,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                        .build();
         }
 
-        ValidationResult validationResult = getPaymentAuthorisationsValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
+        ValidationResult validationResult = getPaymentAuthorisationsValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get(), paymentType, paymentProduct));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get payment initiation authorisation - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
@@ -200,7 +203,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
      * @return Response containing SCA status of authorisation or corresponding error
      */
     @Override
-    public ResponseObject<ScaStatus> getPaymentInitiationAuthorisationScaStatus(String paymentId, String authorisationId) {
+    public ResponseObject<ScaStatus> getPaymentInitiationAuthorisationScaStatus(String paymentId, String authorisationId,
+                                                                                PaymentType paymentType, String paymentProduct) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_SCA_STATUS_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
@@ -213,7 +217,10 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         }
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentResponseOptional.get();
-        ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(pisCommonPaymentResponse, authorisationId));
+        ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(pisCommonPaymentResponse,
+                                                                                                                                                authorisationId,
+                                                                                                                                                paymentType,
+                                                                                                                                                paymentProduct));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get SCA status payment initiation authorisation - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
@@ -239,7 +246,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                    .build();
     }
 
-    private ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorisation(String paymentId, PaymentType paymentService, PsuIdData psuDataFromRequest) {
+    private ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorisation(String paymentId, PaymentType paymentService,
+                                                                                      String paymentProduct, PsuIdData psuDataFromRequest) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
@@ -263,7 +271,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
             }
         }
 
-        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(pisCommonPayment));
+        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(pisCommonPayment, paymentService, paymentProduct));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS Authorisation - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());

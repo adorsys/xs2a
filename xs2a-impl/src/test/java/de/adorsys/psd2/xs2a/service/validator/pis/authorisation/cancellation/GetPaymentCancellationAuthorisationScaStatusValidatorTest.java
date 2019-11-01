@@ -17,14 +17,13 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
 import org.junit.Before;
@@ -35,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,7 +49,7 @@ public class GetPaymentCancellationAuthorisationScaStatusValidatorTest {
     private static final MessageError TPP_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final MessageError PAYMENT_PRODUCT_VALIDATION_ERROR =
-        new MessageError(ErrorType.PIS_404, TppMessageInformation.of(PRODUCT_UNKNOWN));
+        new MessageError(ErrorType.PIS_403, TppMessageInformation.of(PRODUCT_INVALID_FOR_PAYMENT));
     private static final MessageError AUTHORISATION_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403));
 
@@ -63,7 +63,7 @@ public class GetPaymentCancellationAuthorisationScaStatusValidatorTest {
     private PisTppInfoValidator pisTppInfoValidator;
 
     @Mock
-    PaymentTypeAndProductValidator paymentProductAndTypeValidator;
+    private RequestProviderService requestProviderService;
 
     @Mock
     private OauthPaymentValidator oauthPaymentValidator;
@@ -74,16 +74,12 @@ public class GetPaymentCancellationAuthorisationScaStatusValidatorTest {
     @Before
     public void setUp() {
         // Inject pisTppInfoValidator via setter
-        getPaymentCancellationAuthorisationScaStatusValidator.setPisValidators(pisTppInfoValidator, paymentProductAndTypeValidator);
+        getPaymentCancellationAuthorisationScaStatusValidator.setPisValidators(pisTppInfoValidator);
 
         when(pisTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());
         when(pisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
             .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(PaymentType.SINGLE, CORRECT_PAYMENT_PRODUCT))
-            .thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(PaymentType.SINGLE, WRONG_PAYMENT_PRODUCT))
-            .thenReturn(ValidationResult.invalid(PAYMENT_PRODUCT_VALIDATION_ERROR));
     }
 
     @Test
@@ -95,7 +91,7 @@ public class GetPaymentCancellationAuthorisationScaStatusValidatorTest {
         when(oauthPaymentValidator.validate(commonPaymentResponse))
             .thenReturn(ValidationResult.valid());
         // When
-        ValidationResult validationResult = getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(commonPaymentResponse, AUTHORISATION_ID));
+        ValidationResult validationResult = getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(commonPaymentResponse, AUTHORISATION_ID, SINGLE, CORRECT_PAYMENT_PRODUCT));
 
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
@@ -113,7 +109,7 @@ public class GetPaymentCancellationAuthorisationScaStatusValidatorTest {
             .thenReturn(ValidationResult.invalid(AUTHORISATION_VALIDATION_ERROR));
 
         // When
-        ValidationResult validationResult = getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(commonPaymentResponse, WRONG_AUTHORISATION_ID));
+        ValidationResult validationResult = getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(commonPaymentResponse, WRONG_AUTHORISATION_ID, SINGLE, CORRECT_PAYMENT_PRODUCT));
 
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
@@ -127,9 +123,8 @@ public class GetPaymentCancellationAuthorisationScaStatusValidatorTest {
     public void validate_withInvalidPaymentProduct_shouldReturnPaymentProductValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
-        commonPaymentResponse.setPaymentProduct(WRONG_PAYMENT_PRODUCT);
         // When
-        ValidationResult validationResult = getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(commonPaymentResponse, AUTHORISATION_ID));
+        ValidationResult validationResult = getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(commonPaymentResponse, AUTHORISATION_ID, SINGLE, WRONG_PAYMENT_PRODUCT));
 
         // Then
         assertNotNull(validationResult);
@@ -143,7 +138,7 @@ public class GetPaymentCancellationAuthorisationScaStatusValidatorTest {
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(INVALID_TPP_INFO);
 
         // When
-        ValidationResult validationResult = getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(commonPaymentResponse, AUTHORISATION_ID));
+        ValidationResult validationResult = getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(commonPaymentResponse, AUTHORISATION_ID, SINGLE, CORRECT_PAYMENT_PRODUCT));
 
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
@@ -163,7 +158,7 @@ public class GetPaymentCancellationAuthorisationScaStatusValidatorTest {
         PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
         pisCommonPaymentResponse.setTppInfo(tppInfo);
         pisCommonPaymentResponse.setPaymentProduct(CORRECT_PAYMENT_PRODUCT);
-        pisCommonPaymentResponse.setPaymentType(PaymentType.SINGLE);
+        pisCommonPaymentResponse.setPaymentType(SINGLE);
         return pisCommonPaymentResponse;
     }
 }

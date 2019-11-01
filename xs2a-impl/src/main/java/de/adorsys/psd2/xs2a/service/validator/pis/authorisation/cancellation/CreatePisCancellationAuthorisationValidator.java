@@ -17,25 +17,19 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
-import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
 import org.springframework.stereotype.Component;
 
 /**
- * Validator to be used for validating get payment cancellation authorisations request according to some business rules
+ * Validator to be used for validating create pis cancellation authorisation request according to some business rules
  */
 @Component
-public class GetPaymentCancellationAuthorisationsValidator extends AbstractPisValidator<CommonPaymentObject> {
-    private final OauthPaymentValidator oauthPaymentValidator;
+public class CreatePisCancellationAuthorisationValidator extends AbstractPisValidator<CreatePisCancellationAuthorisationPO> {
 
-    public GetPaymentCancellationAuthorisationsValidator(RequestProviderService requestProviderService,
-                                                         OauthPaymentValidator oauthPaymentValidator) {
+    public CreatePisCancellationAuthorisationValidator(RequestProviderService requestProviderService) {
         super(requestProviderService);
-        this.oauthPaymentValidator = oauthPaymentValidator;
     }
-
 
     /**
      * Validates get payment cancellation authorisations request
@@ -44,7 +38,7 @@ public class GetPaymentCancellationAuthorisationsValidator extends AbstractPisVa
      * @return valid result if the payment is valid, invalid result with appropriate error otherwise
      */
     @Override
-    protected ValidationResult executeBusinessValidation(CommonPaymentObject paymentObject) {
-        return oauthPaymentValidator.validate(paymentObject.getPisCommonPaymentResponse());
+    protected ValidationResult executeBusinessValidation(CreatePisCancellationAuthorisationPO paymentObject) {
+        return ValidationResult.valid();
     }
 }
