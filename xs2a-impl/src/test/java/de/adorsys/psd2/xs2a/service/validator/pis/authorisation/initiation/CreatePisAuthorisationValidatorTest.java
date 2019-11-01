@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -26,7 +25,6 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
-import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +36,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
 import static org.junit.Assert.*;
@@ -56,7 +55,7 @@ public class CreatePisAuthorisationValidatorTest {
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final MessageError EXPIRED_PAYMENT_ERROR = new MessageError(PIS_403, of(RESOURCE_EXPIRED_403));
     private static final MessageError PAYMENT_PRODUCT_VALIDATION_ERROR =
-        new MessageError(ErrorType.PIS_404, TppMessageInformation.of(PRODUCT_UNKNOWN));
+        new MessageError(ErrorType.PIS_403, TppMessageInformation.of(PRODUCT_INVALID_FOR_PAYMENT));
 
     private static final String CORRECT_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String WRONG_PAYMENT_PRODUCT = "sepa-credit-transfers111";
@@ -65,8 +64,6 @@ public class CreatePisAuthorisationValidatorTest {
     private PisTppInfoValidator pisTppInfoValidator;
     @Mock
     private RequestProviderService requestProviderService;
-    @Mock
-    PaymentTypeAndProductValidator paymentProductAndTypeValidator;
 
     @InjectMocks
     private CreatePisAuthorisationValidator createPisAuthorisationValidator;
@@ -74,7 +71,7 @@ public class CreatePisAuthorisationValidatorTest {
     @Before
     public void setUp() {
         // Inject pisTppInfoValidator via setter
-        createPisAuthorisationValidator.setPisValidators(pisTppInfoValidator, paymentProductAndTypeValidator);
+        createPisAuthorisationValidator.setPisValidators(pisTppInfoValidator);
 
         when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
 
@@ -82,10 +79,6 @@ public class CreatePisAuthorisationValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(pisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
             .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(PaymentType.SINGLE, CORRECT_PAYMENT_PRODUCT))
-            .thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(PaymentType.SINGLE, WRONG_PAYMENT_PRODUCT))
-            .thenReturn(ValidationResult.invalid(PAYMENT_PRODUCT_VALIDATION_ERROR));
     }
 
     @Test
@@ -94,7 +87,7 @@ public class CreatePisAuthorisationValidatorTest {
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO);
 
         // When
-        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(commonPaymentResponse));
+        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(commonPaymentResponse, SINGLE, CORRECT_PAYMENT_PRODUCT));
 
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
@@ -108,9 +101,8 @@ public class CreatePisAuthorisationValidatorTest {
     public void validate_withInvalidPaymentProduct_shouldReturnPaymentProductValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO);
-        commonPaymentResponse.setPaymentProduct(WRONG_PAYMENT_PRODUCT);
         // When
-        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(commonPaymentResponse));
+        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(commonPaymentResponse, SINGLE, WRONG_PAYMENT_PRODUCT));
 
         // Then
         assertNotNull(validationResult);
@@ -124,7 +116,7 @@ public class CreatePisAuthorisationValidatorTest {
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, INVALID_TPP_INFO);
 
         // When
-        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(commonPaymentResponse));
+        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(commonPaymentResponse, SINGLE, CORRECT_PAYMENT_PRODUCT));
 
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
@@ -140,7 +132,7 @@ public class CreatePisAuthorisationValidatorTest {
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(REJECTED_TRANSACTION_STATUS, TPP_INFO);
 
         // When
-        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(commonPaymentResponse));
+        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(commonPaymentResponse, SINGLE, CORRECT_PAYMENT_PRODUCT));
 
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
@@ -156,7 +148,7 @@ public class CreatePisAuthorisationValidatorTest {
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(REJECTED_TRANSACTION_STATUS, INVALID_TPP_INFO);
 
         // When
-        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(commonPaymentResponse));
+        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CommonPaymentObject(commonPaymentResponse, SINGLE, CORRECT_PAYMENT_PRODUCT));
 
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
@@ -177,7 +169,7 @@ public class CreatePisAuthorisationValidatorTest {
         pisCommonPaymentResponse.setTransactionStatus(transactionStatus);
         pisCommonPaymentResponse.setTppInfo(tppInfo);
         pisCommonPaymentResponse.setPaymentProduct(CORRECT_PAYMENT_PRODUCT);
-        pisCommonPaymentResponse.setPaymentType(PaymentType.SINGLE);
+        pisCommonPaymentResponse.setPaymentType(SINGLE);
         return pisCommonPaymentResponse;
     }
 }

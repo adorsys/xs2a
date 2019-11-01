@@ -33,7 +33,6 @@ import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.PisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
-import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationStatusValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
@@ -81,7 +80,7 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     private static final MessageError EXPIRED_PAYMENT_ERROR = new MessageError(PIS_403, of(RESOURCE_EXPIRED_403));
     private static final MessageError BLOCKED_ENDPOINT_ERROR = new MessageError(PIS_403, of(SERVICE_BLOCKED));
     private static final MessageError PAYMENT_PRODUCT_VALIDATION_ERROR =
-        new MessageError(ErrorType.PIS_404, TppMessageInformation.of(PRODUCT_UNKNOWN));
+        new MessageError(ErrorType.PIS_403, TppMessageInformation.of(PRODUCT_INVALID_FOR_PAYMENT));
     private static final MessageError INVALID_AUTHORISATION_ERROR = new MessageError(PIS_403, of(RESOURCE_UNKNOWN_403));
     private static final MessageError FORMAT_BOTH_PSUS_ABSENT_ERROR = new MessageError(ErrorType.PIS_400, of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU));
     private static final MessageError CREDENTIALS_INVALID_ERROR = new MessageError(PIS_401, of(PSU_CREDENTIALS_INVALID));
@@ -99,8 +98,6 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     @Mock
     private RequestProviderService requestProviderService;
     @Mock
-    PaymentTypeAndProductValidator paymentProductAndTypeValidator;
-    @Mock
     private PisAuthorisationValidator pisAuthorisationValidator;
     @Mock
     private PisAuthorisationStatusValidator pisAuthorisationStatusValidator;
@@ -113,7 +110,7 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     @Before
     public void setUp() {
         // Inject pisTppInfoValidator via setter
-        updatePisCommonPaymentPsuDataValidator.setPisValidators(pisTppInfoValidator, paymentProductAndTypeValidator);
+        updatePisCommonPaymentPsuDataValidator.setPisValidators(pisTppInfoValidator);
 
         when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
 
@@ -126,10 +123,6 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
             .thenReturn(true);
         when(pisEndpointAccessCheckerService.isEndpointAccessible(INVALID_AUTHORISATION_ID_FOR_ENDPOINT, PaymentAuthorisationType.CREATED))
             .thenReturn(false);
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(PaymentType.SINGLE, CORRECT_PAYMENT_PRODUCT))
-            .thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(PaymentType.SINGLE, WRONG_PAYMENT_PRODUCT))
-            .thenReturn(ValidationResult.invalid(PAYMENT_PRODUCT_VALIDATION_ERROR));
         when(pisPsuDataUpdateAuthorisationCheckerValidator.validate(PSU_ID_DATA_1, PSU_ID_DATA_1))
             .thenReturn(ValidationResult.valid());
         when(authorisationStageCheckValidator.validate(any(), any(), eq(PIS)))
@@ -442,6 +435,8 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
         Xs2aUpdatePisCommonPaymentPsuDataRequest result = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         result.setAuthorisationId(authoridsationId);
         result.setPsuData(psuIdData);
+        result.setPaymentService(PaymentType.SINGLE);
+        result.setPaymentProduct(CORRECT_PAYMENT_PRODUCT);
         return result;
     }
 

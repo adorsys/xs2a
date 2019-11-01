@@ -113,13 +113,13 @@ public class PaymentAuthorisationServiceTest {
         when(pisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID))
             .thenReturn(pisScaAuthorisationService);
 
-        when(createPisAuthorisationValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse())))
+        when(createPisAuthorisationValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse(), SINGLE, PAYMENT_PRODUCT)))
             .thenReturn(ValidationResult.valid());
         when(updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());
-        when(getPaymentInitiationAuthorisationsValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse())))
+        when(getPaymentInitiationAuthorisationsValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse(), SINGLE, PAYMENT_PRODUCT)))
             .thenReturn(ValidationResult.valid());
-        when(getPaymentInitiationAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(buildPisCommonPaymentResponse(), AUTHORISATION_ID)))
+        when(getPaymentInitiationAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(buildPisCommonPaymentResponse(), AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT)))
             .thenReturn(ValidationResult.valid());
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
@@ -203,7 +203,7 @@ public class PaymentAuthorisationServiceTest {
         ResponseObject<AuthorisationResponse> actualResponse = paymentAuthorisationService.createPisAuthorisation(CREATE_AUTHORISATION_REQUEST);
 
         // Then
-        verify(createPisAuthorisationValidator).validate(new CommonPaymentObject(invalidPisCommonPaymentResponse));
+        verify(createPisAuthorisationValidator).validate(new CommonPaymentObject(invalidPisCommonPaymentResponse, SINGLE, PAYMENT_PRODUCT));
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
@@ -293,7 +293,7 @@ public class PaymentAuthorisationServiceTest {
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        ResponseObject<Xs2aAuthorisationSubResources> paymentInitiationAuthorisation = paymentAuthorisationService.getPaymentInitiationAuthorisations(PAYMENT_ID);
+        ResponseObject<Xs2aAuthorisationSubResources> paymentInitiationAuthorisation = paymentAuthorisationService.getPaymentInitiationAuthorisations(PAYMENT_ID, PAYMENT_PRODUCT, SINGLE);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
@@ -317,7 +317,7 @@ public class PaymentAuthorisationServiceTest {
             .thenReturn(Optional.of(commonPaymentResponse));
 
         // When
-        ResponseObject<Xs2aAuthorisationSubResources> response = paymentAuthorisationService.getPaymentInitiationAuthorisations(PAYMENT_ID);
+        ResponseObject<Xs2aAuthorisationSubResources> response = paymentAuthorisationService.getPaymentInitiationAuthorisations(PAYMENT_ID, PAYMENT_PRODUCT, SINGLE);
 
         // Then
         assertFalse(response.hasError());
@@ -336,10 +336,10 @@ public class PaymentAuthorisationServiceTest {
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<Xs2aAuthorisationSubResources> actualResponse = paymentAuthorisationService.getPaymentInitiationAuthorisations(PAYMENT_ID);
+        ResponseObject<Xs2aAuthorisationSubResources> actualResponse = paymentAuthorisationService.getPaymentInitiationAuthorisations(PAYMENT_ID, PAYMENT_PRODUCT, SINGLE);
 
         // Then
-        verify(getPaymentInitiationAuthorisationsValidator).validate(new CommonPaymentObject(invalidPisCommonPaymentResponse));
+        verify(getPaymentInitiationAuthorisationsValidator).validate(new CommonPaymentObject(invalidPisCommonPaymentResponse, SINGLE, PAYMENT_PRODUCT));
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
@@ -354,7 +354,7 @@ public class PaymentAuthorisationServiceTest {
 
         // When
         ResponseObject<ScaStatus> actual = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID,
-                                                                                                                  AUTHORISATION_ID);
+                                                                                                                  AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
         // Then
         assertFalse(actual.hasError());
         assertEquals(ScaStatus.RECEIVED, actual.getBody());
@@ -369,7 +369,7 @@ public class PaymentAuthorisationServiceTest {
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID);
+        paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
 
 
         // Then
@@ -385,7 +385,7 @@ public class PaymentAuthorisationServiceTest {
             .thenReturn(Optional.of(commonPaymentResponse));
 
         // When
-        ResponseObject<ScaStatus> response = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID);
+        ResponseObject<ScaStatus> response = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
 
         // Then
         assertFalse(response.hasError());
@@ -400,7 +400,7 @@ public class PaymentAuthorisationServiceTest {
 
         // When
         ResponseObject<ScaStatus> actual = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(WRONG_PAYMENT_ID,
-                                                                                                                  WRONG_AUTHORISATION_ID);
+                                                                                                                  WRONG_AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
 
         // Then
         assertTrue(actual.hasError());
@@ -418,10 +418,10 @@ public class PaymentAuthorisationServiceTest {
 
         // When
         ResponseObject<ScaStatus> actualResponse = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID,
-                                                                                                                          AUTHORISATION_ID);
+                                                                                                                          AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
 
         // Then
-        verify(getPaymentInitiationAuthorisationScaStatusValidator).validate(new GetPaymentInitiationAuthorisationScaStatusPO(invalidPisCommonPaymentResponse, AUTHORISATION_ID));
+        verify(getPaymentInitiationAuthorisationScaStatusValidator).validate(new GetPaymentInitiationAuthorisationScaStatusPO(invalidPisCommonPaymentResponse, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT));
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
@@ -444,6 +444,8 @@ public class PaymentAuthorisationServiceTest {
     private PisCommonPaymentResponse buildInvalidPisCommonPaymentResponse() {
         PisCommonPaymentResponse response = new PisCommonPaymentResponse();
         response.setTppInfo(new TppInfo());
+        response.setPaymentType(SINGLE);
+        response.setPaymentProduct(PAYMENT_PRODUCT);
         return response;
     }
 

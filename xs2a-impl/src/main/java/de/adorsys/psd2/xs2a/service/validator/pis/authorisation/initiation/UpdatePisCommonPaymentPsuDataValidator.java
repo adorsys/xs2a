@@ -16,27 +16,23 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
-import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.PisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
-import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.AbstractUpdatePisPsuDataValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationStatusValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
-import lombok.RequiredArgsConstructor;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.UpdatePisPsuDataPO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_EXPIRED_403;
 import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType.PIS;
 
 /**
@@ -44,74 +40,40 @@ import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class UpdatePisCommonPaymentPsuDataValidator extends AbstractPisTppValidator<UpdatePisCommonPaymentPsuDataPO> {
-    private final PisEndpointAccessCheckerService pisEndpointAccessCheckerService;
-    private final RequestProviderService requestProviderService;
-    private final PisAuthorisationValidator pisAuthorisationValidator;
-    private final PisAuthorisationStatusValidator pisAuthorisationStatusValidator;
-    private final PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator;
-    private final AuthorisationStageCheckValidator authorisationStageCheckValidator;
+public class UpdatePisCommonPaymentPsuDataValidator extends AbstractUpdatePisPsuDataValidator<UpdatePisCommonPaymentPsuDataPO> {
 
-    /**
-     * Validates update PSU Data in payment authorisation request by checking whether:
-     * <ul>
-     * <li>endpoint is accessible for given authorisation</li>
-     * <li>payment is not expired</li>
-     * </ul>
-     *
-     * @param paymentObject payment information object
-     * @return valid result if the payment is valid, invalid result with appropriate error otherwise
-     */
+    public UpdatePisCommonPaymentPsuDataValidator(RequestProviderService requestProviderService,
+                                                  PisEndpointAccessCheckerService pisEndpointAccessCheckerService,
+                                                  PisAuthorisationValidator pisAuthorisationValidator,
+                                                  PisAuthorisationStatusValidator pisAuthorisationStatusValidator,
+                                                  PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator,
+                                                  AuthorisationStageCheckValidator authorisationStageCheckValidator) {
+        super(requestProviderService, pisEndpointAccessCheckerService, pisAuthorisationValidator,
+              pisAuthorisationStatusValidator, pisPsuDataUpdateAuthorisationCheckerValidator,
+              authorisationStageCheckValidator);
+    }
+
     @Override
-    protected ValidationResult executeBusinessValidation(UpdatePisCommonPaymentPsuDataPO paymentObject) {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = paymentObject.getUpdateRequest();
-        String authorisationId = request.getAuthorisationId();
-        if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, PaymentAuthorisationType.CREATED)) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data  has failed: endpoint is not accessible for authorisation",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
-            return ValidationResult.invalid(ErrorType.PIS_403, SERVICE_BLOCKED);
-        }
+    protected AuthorisationServiceType getAuthorisationServiceType() {
+        return PIS;
+    }
 
-        PisCommonPaymentResponse pisCommonPaymentResponse = paymentObject.getPisCommonPaymentResponse();
-        // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
-        if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
+    @Override
+    protected PaymentAuthorisationType getPaymentAuthorisationType() {
+        return PaymentAuthorisationType.CREATED;
+    }
+
+    @Override
+    protected ValidationResult validateTransactionStatus(UpdatePisPsuDataPO paymentObject) {
+        // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc.,
+        //  so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
+        if (paymentObject.getPisCommonPaymentResponse().getTransactionStatus() == TransactionStatus.RJCT) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: payment has been rejected",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
+                     getRequestProviderService().getInternalRequestId(), getRequestProviderService().getRequestId(),
+                     paymentObject.getUpdateRequest().getAuthorisationId());
 
             return ValidationResult.invalid(ErrorType.PIS_403, RESOURCE_EXPIRED_403);
         }
-
-        ValidationResult authorisationValidationResult = pisAuthorisationValidator.validate(authorisationId, pisCommonPaymentResponse);
-        if (authorisationValidationResult.isNotValid()) {
-            return authorisationValidationResult;
-        }
-
-        Optional<Authorisation> authorisationOptional = pisCommonPaymentResponse.findAuthorisationInPayment(authorisationId);
-
-        if (!authorisationOptional.isPresent()) {
-            return ValidationResult.invalid(ErrorType.PIS_403, RESOURCE_UNKNOWN_403);
-        }
-
-        Authorisation authorisation = authorisationOptional.get();
-
-        ValidationResult validationResult = pisPsuDataUpdateAuthorisationCheckerValidator
-                                                .validate(request.getPsuData(), authorisation.getPsuData());
-
-        if (validationResult.isNotValid()) {
-            return validationResult;
-        }
-
-        ValidationResult authorisationStatusValidationResult = pisAuthorisationStatusValidator.validate(authorisation.getScaStatus());
-        if (authorisationStatusValidationResult.isNotValid()) {
-            return authorisationStatusValidationResult;
-        }
-
-        ValidationResult authorisationStageCheckValidatorResult = authorisationStageCheckValidator.validate(request, authorisation.getScaStatus(), PIS);
-        if (authorisationStageCheckValidatorResult.isNotValid()) {
-            return authorisationStageCheckValidatorResult;
-        }
-
         return ValidationResult.valid();
     }
 }

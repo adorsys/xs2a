@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.validator.pis;
+package de.adorsys.psd2.xs2a.service.validator.pis.authorisation;
 
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndInfoProvider;
 
-public interface PaymentTypeAndInfoProvider extends TppInfoProvider {
-    PaymentType getPaymentType();
-
-    String getPaymentProduct();
-
-    PisCommonPaymentResponse getPisCommonPaymentResponse();
+public interface UpdatePisPsuDataPO extends PaymentTypeAndInfoProvider {
+    Xs2aUpdatePisCommonPaymentPsuDataRequest getUpdateRequest();
 }
