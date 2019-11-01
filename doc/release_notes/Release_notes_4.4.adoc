@@ -1,3 +1,10 @@
 = Release notes v.4.4
 
 == Table of Contents
+
+* Improve payment type validation
+
+== Improve payment type validation
+
+From now on, all payment and payment cancellation requests are validated to have proper
+payment type and payment service.

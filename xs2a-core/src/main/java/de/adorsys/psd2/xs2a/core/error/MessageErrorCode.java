@@ -460,6 +460,13 @@ public enum MessageErrorCode {
             return SERVICE_INVALID_NAME;
         }
     },
+    // 405 - Wrong payment service
+    SERVICE_INVALID_405_FOR_PAYMENT(405) {
+        @Override
+        public String getName() {
+            return SERVICE_INVALID_NAME;
+        }
+    },
     // 405 - HTTP method '%s' is not supported
     SERVICE_INVALID_405_METHOD_NOT_SUPPORTED(405) {
         @Override

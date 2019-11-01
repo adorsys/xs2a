@@ -20,9 +20,8 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -34,9 +33,11 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class CreatePisAuthorisationValidator extends AbstractPisTppValidator<CommonPaymentObject> {
-    private final RequestProviderService requestProviderService;
+public class CreatePisAuthorisationValidator extends AbstractPisValidator<CommonPaymentObject> {
+
+    public CreatePisAuthorisationValidator(RequestProviderService requestProviderService) {
+        super(requestProviderService);
+    }
 
     /**
      * Validates create PIS authorisation request by checking whether:
@@ -53,7 +54,7 @@ public class CreatePisAuthorisationValidator extends AbstractPisTppValidator<Com
         PisCommonPaymentResponse pisCommonPaymentResponse = paymentObject.getPisCommonPaymentResponse();
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Creation of PIS authorisation has failed: payment has been rejected",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), pisCommonPaymentResponse.getExternalId());
+                     getRequestProviderService().getInternalRequestId(), getRequestProviderService().getRequestId(), pisCommonPaymentResponse.getExternalId());
             return ValidationResult.invalid(PIS_403, RESOURCE_EXPIRED_403);
         }
 

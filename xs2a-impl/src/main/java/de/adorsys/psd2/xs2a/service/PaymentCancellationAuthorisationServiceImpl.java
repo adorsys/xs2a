@@ -55,6 +55,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     private final PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
     private final Xs2aEventService xs2aEventService;
     private final Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
+    private final CreatePisCancellationAuthorisationValidator createPisCancellationAuthorisationValidator;
     private final UpdatePisCancellationPsuDataValidator updatePisCancellationPsuDataValidator;
     private final GetPaymentCancellationAuthorisationsValidator getPaymentAuthorisationsValidator;
     private final GetPaymentCancellationAuthorisationScaStatusValidator getPaymentAuthorisationScaStatusValidator;
@@ -70,7 +71,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     @Override
     public ResponseObject<CancellationAuthorisationResponse> createPisCancellationAuthorisation(Xs2aCreatePisAuthorisationRequest request) {
         ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> cancellationAuthorisation =
-            createCancellationAuthorisation(request.getPaymentId(), request.getPsuData(), request.getPaymentService());
+            createCancellationAuthorisation(request.getPaymentId(), request.getPsuData(), request.getPaymentService(), request.getPaymentProduct());
 
         if (cancellationAuthorisation.hasError()) {
             return ResponseObject.<CancellationAuthorisationResponse>builder().fail(cancellationAuthorisation.getError()).build();
@@ -150,7 +151,9 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
      * @return Response containing list of cancellation identifiers in case of success or empty list in case of failure
      */
     @Override
-    public ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getPaymentInitiationCancellationAuthorisationInformation(String paymentId) {
+    public ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getPaymentInitiationCancellationAuthorisationInformation(String paymentId,
+                                                                                                                                    PaymentType paymentType,
+                                                                                                                                    String paymentProduct) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
@@ -164,7 +167,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         loggingContextService.storeTransactionStatus(pisCommonPaymentResponse.get().getTransactionStatus());
 
-        ValidationResult validationResult = getPaymentAuthorisationsValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get()));
+        ValidationResult validationResult = getPaymentAuthorisationsValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get(), paymentType, paymentProduct));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get information PIS cancellation authorisation - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
@@ -193,7 +196,10 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
      * @return Response containing SCA status of authorisation or corresponding error
      */
     @Override
-    public ResponseObject<ScaStatus> getPaymentCancellationAuthorisationScaStatus(String paymentId, String authorisationId) {
+    public ResponseObject<ScaStatus> getPaymentCancellationAuthorisationScaStatus(String paymentId,
+                                                                                  String authorisationId,
+                                                                                  PaymentType paymentType,
+                                                                                  String paymentProduct) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_CANCELLATION_SCA_STATUS_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
@@ -206,7 +212,11 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
         }
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentResponseOptional.get();
-        ValidationResult validationResult = getPaymentAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(pisCommonPaymentResponse, authorisationId));
+        ValidationResult validationResult =
+            getPaymentAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(pisCommonPaymentResponse,
+                                                                                                                  authorisationId,
+                                                                                                                  paymentType,
+                                                                                                                  paymentProduct));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get SCA status PIS cancellation authorisation - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
@@ -232,7 +242,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                    .build();
     }
 
-    private ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createCancellationAuthorisation(String paymentId, PsuIdData psuData, PaymentType paymentType) {
+    private ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createCancellationAuthorisation(String paymentId, PsuIdData psuData, PaymentType paymentType, String paymentProduct) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
@@ -241,6 +251,19 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
+                       .build();
+        }
+
+        ValidationResult validationResult =
+            createPisCancellationAuthorisationValidator.validate(new CreatePisCancellationAuthorisationPO(pisCommonPaymentResponseOptional.get(),
+                                                                                                          psuData,
+                                                                                                          paymentType,
+                                                                                                          paymentProduct));
+        if (validationResult.isNotValid()) {
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS Cancellation Authorisation - validation failed: {}",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
+            return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                       .fail(validationResult.getMessageError())
                        .build();
         }
 

@@ -17,10 +17,10 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -30,9 +30,13 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class GetPaymentCancellationAuthorisationScaStatusValidator extends AbstractPisTppValidator<GetPaymentCancellationAuthorisationScaStatusPO> {
+public class GetPaymentCancellationAuthorisationScaStatusValidator extends AbstractPisValidator<GetPaymentCancellationAuthorisationScaStatusPO> {
     private final PisAuthorisationValidator pisAuthorisationValidator;
+
+    public GetPaymentCancellationAuthorisationScaStatusValidator(RequestProviderService requestProviderService, PisAuthorisationValidator pisAuthorisationValidator) {
+        super(requestProviderService);
+        this.pisAuthorisationValidator = pisAuthorisationValidator;
+    }
 
     /**
      * Validates get payment cancellation authorisation SCA status request
