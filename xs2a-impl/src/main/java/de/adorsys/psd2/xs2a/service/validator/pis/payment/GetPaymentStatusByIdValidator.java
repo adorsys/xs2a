@@ -16,21 +16,24 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.payment;
 
-import de.adorsys.psd2.xs2a.service.validator.GetCommonPaymentByIdResponseValidator;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
-import lombok.RequiredArgsConstructor;
+import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
 import org.springframework.stereotype.Component;
 
 /**
  * Validator to be used for validating get payment status by ID request according to some business rules
  */
 @Component
-@RequiredArgsConstructor
-public class GetPaymentStatusByIdValidator extends AbstractPisTppValidator<GetPaymentStatusByIdPO> {
-    private final GetCommonPaymentByIdResponseValidator getCommonPaymentByIdResponseValidator;
+public class GetPaymentStatusByIdValidator extends AbstractPisValidator<GetPaymentStatusByIdPO> {
     private final OauthPaymentValidator oauthPaymentValidator;
+
+    public GetPaymentStatusByIdValidator(RequestProviderService requestProviderService,
+                                         OauthPaymentValidator oauthPaymentValidator) {
+        super(requestProviderService);
+        this.oauthPaymentValidator = oauthPaymentValidator;
+    }
 
     /**
      * Validates get payment status by ID request by checking whether:
@@ -43,14 +46,6 @@ public class GetPaymentStatusByIdValidator extends AbstractPisTppValidator<GetPa
      */
     @Override
     protected ValidationResult executeBusinessValidation(GetPaymentStatusByIdPO paymentObject) {
-        ValidationResult getCommonPaymentValidationResult =
-            getCommonPaymentByIdResponseValidator.validateRequest(paymentObject.getPisCommonPaymentResponse(),
-                                                                  paymentObject.getPaymentType(),
-                                                                  paymentObject.getPaymentProduct());
-        if (getCommonPaymentValidationResult.isNotValid()) {
-            return getCommonPaymentValidationResult;
-        }
-
         ValidationResult oauthPaymentValidationResult = oauthPaymentValidator.validate(paymentObject.getPisCommonPaymentResponse());
 
         if (oauthPaymentValidationResult.isNotValid()) {

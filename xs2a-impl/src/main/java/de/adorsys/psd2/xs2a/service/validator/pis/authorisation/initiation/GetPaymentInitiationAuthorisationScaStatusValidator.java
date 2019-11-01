@@ -17,11 +17,11 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -31,11 +31,17 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class GetPaymentInitiationAuthorisationScaStatusValidator extends AbstractPisTppValidator<GetPaymentInitiationAuthorisationScaStatusPO> {
-
+public class GetPaymentInitiationAuthorisationScaStatusValidator extends AbstractPisValidator<GetPaymentInitiationAuthorisationScaStatusPO> {
     private final PisAuthorisationValidator pisAuthorisationValidator;
     private final OauthPaymentValidator oauthPaymentValidator;
+
+    public GetPaymentInitiationAuthorisationScaStatusValidator(RequestProviderService requestProviderService,
+                                                               PisAuthorisationValidator pisAuthorisationValidator,
+                                                               OauthPaymentValidator oauthPaymentValidator) {
+        super(requestProviderService);
+        this.pisAuthorisationValidator = pisAuthorisationValidator;
+        this.oauthPaymentValidator = oauthPaymentValidator;
+    }
 
     /**
      * Validates get payment initiation authorisation SCA status request

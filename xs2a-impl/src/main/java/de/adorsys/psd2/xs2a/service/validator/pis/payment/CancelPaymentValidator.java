@@ -16,20 +16,20 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.payment;
 
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
-import de.adorsys.psd2.xs2a.service.validator.GetCommonPaymentByIdResponseValidator;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisTppValidator;
-import lombok.RequiredArgsConstructor;
+import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
 import org.springframework.stereotype.Component;
 
 /**
  * Validator to be used for validating cancel payment request according to some business rules
  */
 @Component
-@RequiredArgsConstructor
-public class CancelPaymentValidator extends AbstractPisTppValidator<CancelPaymentPO> {
-    private final GetCommonPaymentByIdResponseValidator getCommonPaymentByIdResponseValidator;
+public class CancelPaymentValidator extends AbstractPisValidator<CancelPaymentPO> {
+
+    public CancelPaymentValidator(RequestProviderService requestProviderService) {
+        super(requestProviderService);
+    }
 
     /**
      * Validates cancel payment request by checking whether:
@@ -42,15 +42,6 @@ public class CancelPaymentValidator extends AbstractPisTppValidator<CancelPaymen
      */
     @Override
     protected ValidationResult executeBusinessValidation(CancelPaymentPO paymentObject) {
-        PisCommonPaymentResponse pisCommonPaymentResponse = paymentObject.getPisCommonPaymentResponse();
-
-        ValidationResult getCommonPaymentValidationResult = getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse,
-                                                                                                                  paymentObject.getPaymentType(),
-                                                                                                                  paymentObject.getPaymentProduct());
-        if (getCommonPaymentValidationResult.isNotValid()) {
-            return getCommonPaymentValidationResult;
-        }
-
         return ValidationResult.valid();
     }
 }

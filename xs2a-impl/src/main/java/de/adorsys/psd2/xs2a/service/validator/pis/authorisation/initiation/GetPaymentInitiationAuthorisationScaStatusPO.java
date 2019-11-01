@@ -14,19 +14,11 @@ public class GetPaymentInitiationAuthorisationScaStatusPO implements PaymentType
 
     @NotNull
     private String authorisationId;
+    private PaymentType paymentType;
+    private String paymentProduct;
 
     @Override
     public TppInfo getTppInfo() {
         return pisCommonPaymentResponse.getTppInfo();
-    }
-
-    @Override
-    public PaymentType getPaymentType() {
-        return pisCommonPaymentResponse.getPaymentType();
-    }
-
-    @Override
-    public String getPaymentProduct() {
-        return pisCommonPaymentResponse.getPaymentProduct();
     }
 }
