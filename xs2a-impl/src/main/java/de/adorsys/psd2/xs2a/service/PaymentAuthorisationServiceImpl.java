@@ -128,6 +128,10 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         PisCommonPaymentResponse pisCommonPayment = pisCommonPaymentResponse.get();
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(pisCommonPayment, request));
         if (validationResult.isNotValid()) {
+            if (validationResult.getMessageError().getTppMessage().getMessageErrorCode() == PSU_CREDENTIALS_INVALID) {
+                pisCommonPaymentService.updatePisAuthorisationStatus(request.getAuthorisationId(), ScaStatus.FAILED);
+            }
+
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Update PIS CommonPayment PSU data - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), validationResult.getMessageError());
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()

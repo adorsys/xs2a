@@ -5,6 +5,7 @@
 * Implement support of Multicurrency Accounts
 * Improve payment type validation
 * Not possible to work with consent that was created in xs2a v.5.1 and earlier
+* Incorrect scaStatus for failed authorisation PIS/AIS/Payments-Cancellation
 
 == Implement support of Multicurrency Accounts
 
@@ -22,3 +23,8 @@ payment type and payment service.
 == Not possible to work with consent that was created in xs2a v.5.1 and earlier
 
 From now on, it is possible to work with consent that was created in xs2a v.5.1 and earlier.
+
+== Incorrect scaStatus for failed authorisation PIS/AIS/Payments-Cancellation
+
+From now on, update PSU data and initiate endpoints for PIS, AIS and Payment-Cancellation return `scaStatus: failed` when
+encountering `PSU_CREDENTIALS_INVALID`.

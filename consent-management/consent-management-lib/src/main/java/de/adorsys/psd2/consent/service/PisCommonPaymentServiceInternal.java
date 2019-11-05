@@ -202,6 +202,23 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         return Optional.of(new UpdatePisCommonPaymentPsuDataResponse(scaStatus));
     }
 
+    @Override
+    @Transactional
+    public boolean updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
+        Optional<PisAuthorization> pisAuthorisationOptional = pisAuthorisationRepository.findByExternalId(authorisationId);
+
+        if (!pisAuthorisationOptional.isPresent()) {
+            log.info("Authorisation ID: [{}]. Update pis authorisation failed, because pis authorisation with PaymentAuthorisationType.CREATED is not found by id",
+                     authorisationId);
+            return false;
+        }
+
+        PisAuthorization authorisation = pisAuthorisationOptional.get();
+        authorisation.setScaStatus(scaStatus);
+        pisAuthorisationRepository.save(authorisation);
+        return true;
+    }
+
     /**
      * Update common payment cancellation authorisation
      *
