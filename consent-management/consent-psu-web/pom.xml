@@ -37,12 +37,26 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-core-web</artifactId>
-            <version>5.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-psu-api</artifactId>
-            <version>5.4-SNAPSHOT</version>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <version>${spring-boot.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- other dependencies -->
@@ -64,12 +78,6 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
