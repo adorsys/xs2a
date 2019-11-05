@@ -4,6 +4,7 @@
 
 * Implement support of Multicurrency Accounts
 * Improve payment type validation
+* Not possible to work with consent that was created in xs2a v.5.1 and earlier
 
 == Implement support of Multicurrency Accounts
 
@@ -17,3 +18,7 @@ ASPSP can grant data access to multicurrency account on SUBACCOUNT, AGGREGATION 
 
 From now on, all payment and payment cancellation requests are validated to have proper
 payment type and payment service.
+
+== Not possible to work with consent that was created in xs2a v.5.1 and earlier
+
+From now on, it is possible to work with consent that was created in xs2a v.5.1 and earlier.
