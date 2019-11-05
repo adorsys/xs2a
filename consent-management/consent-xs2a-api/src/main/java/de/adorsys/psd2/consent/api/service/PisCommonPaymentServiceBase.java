@@ -87,7 +87,7 @@ interface PisCommonPaymentServiceBase {
     Optional<CreatePisAuthorisationResponse> createAuthorizationCancellation(String paymentId, CreatePisAuthorisationRequest pisAuthorisationRequest);
 
     /**
-     * Updates payment authorization
+     * Updates payment authorisation
      *
      * @param authorisationId String representation of the authorisation identifier
      * @param request         Incoming request for updating authorization
@@ -96,7 +96,16 @@ interface PisCommonPaymentServiceBase {
     Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisAuthorisation(String authorisationId, UpdatePisCommonPaymentPsuDataRequest request);
 
     /**
-     * Updates payment cancellation authorization
+     * Updates a specific payment authorization's status
+     *
+     * @param authorisationId String representation of the authorisation identifier
+     * @param scaStatus       The to be updated status
+     * @return
+     */
+    boolean updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus);
+
+    /**
+     * Updates payment cancellation authorisation
      *
      * @param authorizationId String representation of the authorisation identifier
      * @param request         Incoming request for updating authorization
@@ -115,7 +124,7 @@ interface PisCommonPaymentServiceBase {
     /**
      * Updates multilevelScaRequired and stores changes into database
      *
-     * @param paymentId Payment ID
+     * @param paymentId             Payment ID
      * @param multilevelScaRequired new value for boolean multilevel sca required
      */
     boolean updateMultilevelSca(String paymentId, boolean multilevelScaRequired);

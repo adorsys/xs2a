@@ -104,6 +104,12 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
 
     @Override
     @Transactional
+    public boolean updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
+        return pisCommonPaymentService.updatePisAuthorisationStatus(authorisationId, scaStatus);
+    }
+
+    @Override
+    @Transactional
     public Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisCancellationAuthorisation(String authorisationId,
                                                                                               UpdatePisCommonPaymentPsuDataRequest request) {
         return pisCommonPaymentService.updatePisCancellationAuthorisation(authorisationId, request);

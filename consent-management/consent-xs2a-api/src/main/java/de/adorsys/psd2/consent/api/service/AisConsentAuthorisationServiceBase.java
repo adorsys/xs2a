@@ -64,6 +64,16 @@ interface AisConsentAuthorisationServiceBase {
     boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request);
 
     /**
+     * Updates consent authorisation status
+     *
+     * @param authorisationId id of authorisation session
+     * @param scaStatus       to be updated status
+     * @return boolean
+     */
+
+    boolean updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus);
+
+    /**
      * Gets list of consent authorisation IDs by consent ID
      *
      * @param consentId id of consent
