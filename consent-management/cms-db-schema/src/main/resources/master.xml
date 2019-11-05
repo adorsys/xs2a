@@ -109,4 +109,5 @@
     <include relativeToChangelogFile="true" file="migration/0081-add-additional-information-type-columns-to-ais-consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0082-add-internal-request-ids.xml"/>
     <include relativeToChangelogFile="true" file="migration/0083-add-sca-authentication-data-to-pis-consent-authorization.xml"/>
-    </databaseChangeLog>
+    <include relativeToChangelogFile="true" file="migration/0084-add-value-to-owner-name-type-and-owner-address-type-columns-in-ais-consent-table.xml"/>
+</databaseChangeLog>
