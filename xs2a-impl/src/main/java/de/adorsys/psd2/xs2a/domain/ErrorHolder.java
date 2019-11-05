@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -73,5 +74,18 @@ public class ErrorHolder {
                    : tppMessageInformationList.stream()
                          .map(t -> t.getMessageErrorCode().getName())
                          .collect(Collectors.joining(", "));
+    }
+
+    public Optional<MessageErrorCode> getFirstErrorCode() {
+        TppMessageInformation first = tppMessageInformationList.get(0);
+        if (first == null) {
+            return Optional.empty();
+        }
+
+        if (first.getMessageErrorCode() == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(first.getMessageErrorCode());
     }
 }

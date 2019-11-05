@@ -121,6 +121,7 @@ public class AisDecoupledScaReceivedAuthorisationStage extends AisScaStage<Updat
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_DECOUPLED_RECEIVED stage. Authorise PSU when apply authorisation with update consent PSU data has failed. PSU credentials invalid.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, updateConsentPsuDataReq.getAuthorizationId(), spiPsuData.getPsuId());
             MessageError messageError = new MessageError(ErrorType.AIS_401, TppMessageInformation.of(PSU_CREDENTIALS_INVALID));
+            aisConsentService.updateConsentAuthorisationStatus(updateConsentPsuDataReq.getAuthorizationId(), ScaStatus.FAILED);
             return createFailedResponse(messageError, Collections.singletonList(new TppMessage(PSU_CREDENTIALS_INVALID)), updateConsentPsuDataReq);
         }
 

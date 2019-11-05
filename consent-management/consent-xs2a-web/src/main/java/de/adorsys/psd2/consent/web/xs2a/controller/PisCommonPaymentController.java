@@ -137,6 +137,22 @@ public class PisCommonPaymentController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @PutMapping(path = "authorisations/{authorisation-id}/status/{status}")
+    @ApiOperation(value = "Update status for pis authorisation.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")
+    })
+    public ResponseEntity<Void> updateAuthorisationStatus(
+        @ApiParam(name = "authorisation-id", value = "The authorisation identification assigned to the created authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId,
+        @ApiParam(name = "status", value = "The authorisation status.", example = "ScaStatus.FAILED")
+        @PathVariable("status") String authorisationStatus) {
+        return pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(authorisationId, ScaStatus.fromValue(authorisationStatus))
+                   ? new ResponseEntity<>(HttpStatus.OK)
+                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @GetMapping(path = "/authorizations/{authorization-id}")
     @ApiOperation(value = "Getting pis authorization.")
     @ApiResponses(value = {

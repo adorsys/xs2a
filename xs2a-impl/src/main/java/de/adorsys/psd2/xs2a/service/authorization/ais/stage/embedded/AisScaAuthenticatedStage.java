@@ -96,6 +96,10 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}]. AIS_SCAMETHODSELECTED stage. Verify SCA authorisation failed when update PSU data. Error msg: [{}]",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, request.getAuthorizationId(), psuData.getPsuId(), messageError);
+
+            if (messageError.getTppMessage().getMessageErrorCode() == MessageErrorCode.PSU_CREDENTIALS_INVALID) {
+                aisConsentService.updateConsentAuthorisationStatus(request.getAuthorizationId(), ScaStatus.FAILED);
+            }
             return createFailedResponse(messageError, spiResponse.getErrors(), request);
         }
 

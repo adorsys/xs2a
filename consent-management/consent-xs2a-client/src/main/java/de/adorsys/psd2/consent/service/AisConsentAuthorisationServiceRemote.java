@@ -80,6 +80,17 @@ public class AisConsentAuthorisationServiceRemote implements AisConsentAuthorisa
     }
 
     @Override
+    public boolean updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
+        try {
+            consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorisationStatus(), null, authorisationId, scaStatus);
+            return true;
+        } catch (CmsRestException cmsRestException) {
+            log.info("Couldn't update authorisation status by authorisationId {}", authorisationId);
+        }
+        return false;
+    }
+
+    @Override
     public Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId) {
         try {
             ResponseEntity<List<String>> request = consentRestTemplate.exchange(
