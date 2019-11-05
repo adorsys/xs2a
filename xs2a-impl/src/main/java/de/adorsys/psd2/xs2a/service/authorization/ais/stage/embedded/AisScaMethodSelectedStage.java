@@ -118,6 +118,10 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}], Authentication-Method-ID [{}]. AIS_PSUAUTHENTICATED stage. Proceed embedded approach when performs authorisation depending on selected SCA method has failed. Error msg: [{}].",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getConsentId(), request.getAuthorizationId(), request.getPsuData().getPsuId(), authenticationMethodId, messageError);
+
+            if (messageError.getTppMessage().getMessageErrorCode() == MessageErrorCode.PSU_CREDENTIALS_INVALID) {
+                aisConsentService.updateConsentAuthorisationStatus(request.getAuthorizationId(), ScaStatus.FAILED);
+            }
             return createFailedResponse(messageError, spiResponse.getErrors(), request);
         }
 

@@ -480,6 +480,10 @@ public class ConsentService {
         ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent.get(), updatePsuData));
 
         if (validationResult.isNotValid()) {
+            if (validationResult.getMessageError().getTppMessage().getMessageErrorCode() == PSU_CREDENTIALS_INVALID) {
+                aisConsentService.updateConsentAuthorisationStatus(authorisationId, ScaStatus.FAILED);
+            }
+
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, validationResult.getMessageError());
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()

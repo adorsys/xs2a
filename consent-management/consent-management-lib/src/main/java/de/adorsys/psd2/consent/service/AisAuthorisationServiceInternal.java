@@ -239,6 +239,24 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
 
     @Override
     @Transactional
+    public boolean updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
+        Optional<AisConsentAuthorization> aisConsentAuthorisationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
+
+        if (!aisConsentAuthorisationOptional.isPresent()) {
+            log.info("Authorisation ID: [{}]. Update consent authorisation failed, because consent authorisation is not found",
+                     authorisationId);
+            return false;
+        }
+
+        AisConsentAuthorization aisConsentAuthorisation = aisConsentAuthorisationOptional.get();
+        aisConsentAuthorisation.setScaStatus(scaStatus);
+        aisConsentAuthorisationRepository.save(aisConsentAuthorisation);
+
+        return true;
+    }
+
+    @Override
+    @Transactional
     public boolean updateScaApproach(String authorisationId, ScaApproach scaApproach) {
         Optional<AisConsentAuthorization> aisConsentAuthorisationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
 

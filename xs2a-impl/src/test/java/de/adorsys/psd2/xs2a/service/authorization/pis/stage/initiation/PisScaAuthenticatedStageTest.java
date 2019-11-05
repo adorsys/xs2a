@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
@@ -60,7 +61,8 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisScaAuthenticatedStageTest {
@@ -183,7 +185,7 @@ public class PisScaAuthenticatedStageTest {
             .thenReturn(spiResponse);
 
         when(spiErrorMapper.mapToErrorHolder(spiResponse, PIS_SERVICE_TYPE))
-            .thenReturn(ErrorHolder.builder(ErrorType.PIS_400).build());
+            .thenReturn(ErrorHolder.builder(ErrorType.PIS_400).tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR)).build());
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaAuthenticatedStage.apply(request, response);
 

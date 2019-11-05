@@ -228,8 +228,7 @@ public class AisScaStartAuthorisationStageTest {
 
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);
-        when(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(any(UpdateConsentPsuDataResponse.class),
-                                                              any(UpdateConsentPsuDataReq.class))).thenReturn(request);
+        when(request.getAuthorizationId()).thenReturn(AUTHORISATION_ID);
 
         UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
@@ -237,7 +236,7 @@ public class AisScaStartAuthorisationStageTest {
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
         assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_401);
 
-        verify(aisConsentService).updateConsentAuthorization(any(UpdateConsentPsuDataReq.class));
+        verify(aisConsentService).updateConsentAuthorisationStatus(AUTHORISATION_ID, FAILED_SCA_STATUS);
     }
 
     @Test

@@ -63,6 +63,12 @@ public class AisAuthorisationServiceInternalEncrypted implements AisConsentAutho
     }
 
     @Override
+    @Transactional
+    public boolean updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
+        return aisConsentAuthorisationService.updateConsentAuthorisationStatus(authorisationId, scaStatus);
+    }
+
+    @Override
     public Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(aisConsentAuthorisationService::getAuthorisationsByConsentId);
