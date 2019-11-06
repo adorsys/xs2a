@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.ContentType;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
@@ -63,6 +64,7 @@ public class ReadCommonPaymentServiceTest {
     private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
     private static final CommonPayment PIS_PAYMENT_INFO = getCommonPayment();
     private static final String SOME_ENCRYPTED_PAYMENT_ID = "Encrypted Payment Id";
+    private static final String ACCEPT_MEDIA_TYPE = ContentType.JSON.getType();
 
     @InjectMocks
     private ReadCommonPaymentService readCommonPaymentService;
@@ -89,7 +91,7 @@ public class ReadCommonPaymentServiceTest {
         when(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(COMMON_PAYMENT)).thenReturn(SPI_PAYMENT_INFO);
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
         when(spiToXs2aPaymentInfoMapper.mapToXs2aPaymentInfo(any())).thenReturn(PIS_PAYMENT_INFO);
-        when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
+        when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ACCEPT_MEDIA_TYPE, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPaymentInfo>builder()
                             .payload(SPI_PAYMENT_INFO)
                             .build());
@@ -101,7 +103,7 @@ public class ReadCommonPaymentServiceTest {
     @Test
     public void getPayment_success() {
         // When
-        PaymentInformationResponse<CommonPayment> actualResponse = readCommonPaymentService.getPayment(COMMON_PAYMENT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
+        PaymentInformationResponse<CommonPayment> actualResponse = readCommonPaymentService.getPayment(COMMON_PAYMENT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID, ACCEPT_MEDIA_TYPE);
 
         // Then
         assertThat(actualResponse.hasError()).isFalse();
@@ -118,12 +120,12 @@ public class ReadCommonPaymentServiceTest {
                                                           .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                           .build();
 
-        when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, spiAspspConsentDataProvider)).thenReturn(failSpiResponse);
+        when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ACCEPT_MEDIA_TYPE, SPI_PAYMENT_INFO, spiAspspConsentDataProvider)).thenReturn(failSpiResponse);
         when(spiErrorMapper.mapToErrorHolder(failSpiResponse, ServiceType.PIS))
             .thenReturn(expectedError);
 
         // When
-        PaymentInformationResponse<CommonPayment> actualResponse = readCommonPaymentService.getPayment(COMMON_PAYMENT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
+        PaymentInformationResponse<CommonPayment> actualResponse = readCommonPaymentService.getPayment(COMMON_PAYMENT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID, ACCEPT_MEDIA_TYPE);
 
         // Then
         assertThat(actualResponse.hasError()).isTrue();

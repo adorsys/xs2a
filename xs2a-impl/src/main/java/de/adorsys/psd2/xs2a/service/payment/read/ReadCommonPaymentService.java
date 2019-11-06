@@ -55,7 +55,7 @@ public class ReadCommonPaymentService implements ReadPaymentService {
     private final RequestProviderService requestProviderService;
 
     @Override
-    public PaymentInformationResponse<CommonPayment> getPayment(CommonPaymentData commonPaymentData, PsuIdData psuData, String encryptedPaymentId) {
+    public PaymentInformationResponse<CommonPayment> getPayment(CommonPaymentData commonPaymentData, PsuIdData psuData, String encryptedPaymentId, String acceptMediaType) {
         SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPaymentData);
 
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuData);
@@ -63,7 +63,7 @@ public class ReadCommonPaymentService implements ReadPaymentService {
             aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(encryptedPaymentId);
 
 
-        SpiResponse<SpiPaymentInfo> spiResponse = commonPaymentSpi.getPaymentById(spiContextData, spiPaymentInfo, aspspConsentDataProvider);
+        SpiResponse<SpiPaymentInfo> spiResponse = commonPaymentSpi.getPaymentById(spiContextData, acceptMediaType, spiPaymentInfo, aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);

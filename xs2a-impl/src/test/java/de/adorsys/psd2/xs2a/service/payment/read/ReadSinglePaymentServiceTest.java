@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.ContentType;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
@@ -58,7 +59,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -78,6 +78,7 @@ public class ReadSinglePaymentServiceTest {
     private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
     private static final SinglePayment SINGLE_PAYMENT = buildSinglePayment();
     private static final String SOME_ENCRYPTED_PAYMENT_ID = "Encrypted Payment Id";
+    private static final String ACCEPT_MEDIA_TYPE = ContentType.JSON.getType();
 
     @InjectMocks
     private ReadSinglePaymentService readSinglePaymentService;
@@ -110,7 +111,7 @@ public class ReadSinglePaymentServiceTest {
 
         when(spiPaymentFactory.createSpiSinglePayment(PIS_PAYMENTS.get(0), PRODUCT)).thenReturn(Optional.of(SPI_SINGLE_PAYMENT));
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
-        when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
+        when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ACCEPT_MEDIA_TYPE, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiSinglePayment>builder()
                             .payload(SPI_SINGLE_PAYMENT)
                             .build());
@@ -123,7 +124,7 @@ public class ReadSinglePaymentServiceTest {
     @Test
     public void getPayment_success() {
         // When
-        PaymentInformationResponse<CommonPayment> actualResponse = readSinglePaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
+        PaymentInformationResponse<CommonPayment> actualResponse = readSinglePaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID, ACCEPT_MEDIA_TYPE);
 
         // Then
         assertThat(actualResponse.hasError()).isFalse();
@@ -135,7 +136,7 @@ public class ReadSinglePaymentServiceTest {
     @Test
     public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_failed() {
         // When
-        PaymentInformationResponse<CommonPayment> actualResponse = readSinglePaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
+        PaymentInformationResponse<CommonPayment> actualResponse = readSinglePaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID, ACCEPT_MEDIA_TYPE);
 
         // Then
         assertThat(actualResponse.hasError()).isFalse();
@@ -155,11 +156,11 @@ public class ReadSinglePaymentServiceTest {
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                                         .build();
 
-        when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider)).thenReturn(spiResponseError);
+        when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ContentType.JSON.getType(), SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider)).thenReturn(spiResponseError);
         when(spiErrorMapper.mapToErrorHolder(spiResponseError, ServiceType.PIS)).thenReturn(expectedError);
 
         // When
-        PaymentInformationResponse<CommonPayment> actualResponse = readSinglePaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
+        PaymentInformationResponse<CommonPayment> actualResponse = readSinglePaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID, ACCEPT_MEDIA_TYPE);
 
         // Then
         assertThat(actualResponse.hasError()).isTrue();
@@ -177,7 +178,7 @@ public class ReadSinglePaymentServiceTest {
         pisCommonPaymentResponse.setPayments(Collections.emptyList());
 
         // When
-        PaymentInformationResponse<CommonPayment> actualResponse = readSinglePaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
+        PaymentInformationResponse<CommonPayment> actualResponse = readSinglePaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID, ACCEPT_MEDIA_TYPE);
 
         // Then
         verify(spiPaymentFactory, never()).createSpiSinglePayment(any(), anyString());
@@ -191,13 +192,13 @@ public class ReadSinglePaymentServiceTest {
     public void getPayment_spiPaymentFactory_createSpiSinglePayment_failed() {
         // Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
-            .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
-            .build();
+                                        .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
+                                        .build();
 
         when(spiPaymentFactory.createSpiSinglePayment(PIS_PAYMENTS.get(0), PRODUCT)).thenReturn(Optional.empty());
 
         // When
-        PaymentInformationResponse<CommonPayment> actualResponse = readSinglePaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
+        PaymentInformationResponse<CommonPayment> actualResponse = readSinglePaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID, ACCEPT_MEDIA_TYPE);
 
         // Then
         assertThat(actualResponse.hasError()).isTrue();

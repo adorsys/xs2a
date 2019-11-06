@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.payment.read;
+package de.adorsys.psd2.xs2a.service.mapper;
 
-import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 
-public interface ReadPaymentService {
-
-    PaymentInformationResponse<CommonPayment> getPayment(CommonPaymentData commonPaymentData, PsuIdData psuData,
-                                                         String encryptedPaymentId, String acceptMediaType);
+@Component
+public class MediaTypeMapper {
+    public MediaType mapToMediaType(String responseContentType) {
+        return MediaType.parseMediaType(responseContentType);
+    }
 }

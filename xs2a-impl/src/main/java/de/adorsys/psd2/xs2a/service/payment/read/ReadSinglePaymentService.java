@@ -58,8 +58,8 @@ public class ReadSinglePaymentService extends AbstractReadPaymentService {
     }
 
     @Override
-    public SpiResponse<SpiSinglePayment> getSpiPaymentById(SpiContextData spiContextData, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return singlePaymentSpi.getPaymentById(spiContextData, (SpiSinglePayment) spiPayment, aspspConsentDataProvider);
+    public SpiResponse<SpiSinglePayment> getSpiPaymentById(SpiContextData spiContextData, String acceptMediaType, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return singlePaymentSpi.getPaymentById(spiContextData, acceptMediaType, (SpiSinglePayment) spiPayment, aspspConsentDataProvider);
     }
 
     @Override

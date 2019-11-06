@@ -28,6 +28,9 @@ import org.jetbrains.annotations.Nullable;
 @Data
 @AllArgsConstructor
 public class SpiGetPaymentStatusResponse {
+    public static final String RESPONSE_TYPE_JSON = "application/json";
+    public static final String RESPONSE_TYPE_XML = "application/xml";
+
     /**
      * The current transaction status of the requested payment.
      */
@@ -40,4 +43,30 @@ public class SpiGetPaymentStatusResponse {
      */
     @Nullable
     private Boolean fundsAvailable;
+
+    /**
+     * Content type to be used for returning response to TPP.
+     */
+    @NotNull
+    private final String responseContentType;
+
+    /**
+     * Body of the payment status response to be returned to the TPP.
+     * Should not be null if response content type is not application/json.
+     */
+    @Nullable
+    private final byte[] paymentStatusRaw;
+
+    /**
+     * Constructs new instance of SpiGetPaymentStatusResponse
+     *
+     * @param transactionStatus current transaction status of the requested payment
+     * @param fundsAvailable    whether funds are available for the customer
+     * @deprecated since 5.4, use all arguments constructor instead
+     */
+    @Deprecated
+    // TODO Remove deprecated constructor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1094
+    public SpiGetPaymentStatusResponse(TransactionStatus transactionStatus, Boolean fundsAvailable) {
+        this(transactionStatus, fundsAvailable, RESPONSE_TYPE_JSON, null);
+    }
 }

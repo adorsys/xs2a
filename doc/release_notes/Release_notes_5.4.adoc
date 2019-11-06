@@ -9,6 +9,7 @@
 * Provide creation date and time in SPI Request
 * Incorrect consent status for already used one time consent
 * Read the SCA status returns incorrect SCA status after Update PSU data request without PSU-ID in header
+* Support Get Transaction Status Response with raw format
 
 == Implement support of Multicurrency Accounts
 
@@ -46,3 +47,13 @@ used - the consent receives the `EXPIRED` status.
 
 From now on, if you try to update PSU data without PSU-ID in header, `scaStatus` from response will be persisted
 into database, and when you'll try to get it, the response will contain proper `scaStatus`.
+
+== Support Get Transaction Status Response with raw format
+
+From now on, it's possible to return transaction statuses on Get Transaction Status request (`GET /v1/{payment-service}/{paymentId}/status`) in formats other than JSON.
+
+`PaymentSpi#getPaymentStatusById` now gets a string of acceptable content-types from TPP(received in `Accept` header of the request) and depending on its value SPI may return either JSON response (by setting `SpiGetPaymentStatusResponse#responseContentType` to `application/json`), or some custom response.
+To return custom response SPI should set the response body in `paymentStatusRaw` and `responseContentType` to appropriate value in `SpiGetPaymentStatusResponse`.
+Response body will be returned to the TPP without any additional transformation.
+
+`PaymentSpi#getPaymentById` has been extended to accept requested content-types from TPP as well.

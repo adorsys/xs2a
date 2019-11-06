@@ -17,16 +17,31 @@
 package de.adorsys.psd2.xs2a.domain.pis;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.domain.CustomContentTypeProvider;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.http.MediaType;
 
 @Data
 @AllArgsConstructor
-public class GetPaymentStatusResponse {
+public class GetPaymentStatusResponse implements CustomContentTypeProvider {
     @NotNull
     private TransactionStatus transactionStatus;
     @Nullable
     private Boolean fundsAvailable;
+    @NotNull
+    private final MediaType responseContentType;
+    @Nullable
+    private final byte[] paymentStatusRaw;
+
+    public boolean isResponseContentTypeJson() {
+        return MediaType.APPLICATION_JSON.includes(responseContentType);
+    }
+
+    @Override
+    public MediaType getCustomContentType() {
+        return responseContentType;
+    }
 }

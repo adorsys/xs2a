@@ -98,4 +98,10 @@ public class UrlBuilder {
                    .buildAndExpand(consentId, authorisationId)
                    .toUriString();
     }
+
+    public static String buildGetTransactionStatusUrl(String paymentType, String paymentProduct, String encryptedPaymentId) {
+        return UriComponentsBuilder.fromPath(UrlHolder.PAYMENT_STATUS_URL)
+                   .buildAndExpand(paymentType, paymentProduct, encryptedPaymentId)
+                   .toUriString();
+    }
 }

@@ -23,6 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ReadPaymentStatusService {
 
-    ReadPaymentStatusResponse readPaymentStatus(CommonPaymentData commonPaymentData, SpiContextData spiContextData, @NotNull String encryptedPaymentId);
+    ReadPaymentStatusResponse readPaymentStatus(CommonPaymentData commonPaymentData, SpiContextData spiContextData, @NotNull String encryptedPaymentId, String acceptMediaType);
 
 }

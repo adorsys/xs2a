@@ -40,7 +40,7 @@ public interface CommonPaymentSpi extends PaymentSpi<SpiPaymentInfo, SpiPaymentI
 
     @Override
     @NotNull
-    default SpiResponse<SpiPaymentInfo> getPaymentById(@NotNull SpiContextData contextData, @NotNull SpiPaymentInfo payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    default SpiResponse<SpiPaymentInfo> getPaymentById(@NotNull SpiContextData contextData, @NotNull String acceptMediaType, @NotNull SpiPaymentInfo payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiPaymentInfo>builder()
                    .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
@@ -48,7 +48,7 @@ public interface CommonPaymentSpi extends PaymentSpi<SpiPaymentInfo, SpiPaymentI
 
     @Override
     @NotNull
-    default SpiResponse<SpiGetPaymentStatusResponse> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull SpiPaymentInfo payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    default SpiResponse<SpiGetPaymentStatusResponse> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull String acceptMediaType, @NotNull SpiPaymentInfo payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiGetPaymentStatusResponse>builder()
                    .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();

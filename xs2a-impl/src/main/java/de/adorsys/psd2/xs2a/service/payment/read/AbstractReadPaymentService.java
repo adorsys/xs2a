@@ -48,7 +48,6 @@ import java.util.UUID;
 
 /**
  * This class handles traditional payments (single, bulk, periodic).
- *
  */
 @Slf4j
 public abstract class AbstractReadPaymentService implements ReadPaymentService {
@@ -73,7 +72,7 @@ public abstract class AbstractReadPaymentService implements ReadPaymentService {
     }
 
     @Override
-    public PaymentInformationResponse<CommonPayment> getPayment(CommonPaymentData commonPaymentData, PsuIdData psuData, @NotNull String encryptedPaymentId) {
+    public PaymentInformationResponse<CommonPayment> getPayment(CommonPaymentData commonPaymentData, PsuIdData psuData, @NotNull String encryptedPaymentId, String acceptMediaType) {
         List<PisPayment> pisPayments = getPisPayments(commonPaymentData);
         if (CollectionUtils.isEmpty(pisPayments)) {
             return new PaymentInformationResponse<>(
@@ -95,7 +94,7 @@ public abstract class AbstractReadPaymentService implements ReadPaymentService {
         SpiAspspConsentDataProvider aspspConsentDataProvider =
             aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(encryptedPaymentId);
 
-        SpiResponse spiResponse = getSpiPaymentById(spiContextData, spiPaymentOptional.get(), aspspConsentDataProvider);
+        SpiResponse spiResponse = getSpiPaymentById(spiContextData, acceptMediaType, spiPaymentOptional.get(), aspspConsentDataProvider);
         UUID internalRequestId = requestProviderService.getInternalRequestId();
         UUID xRequestId = requestProviderService.getRequestId();
 
@@ -120,7 +119,7 @@ public abstract class AbstractReadPaymentService implements ReadPaymentService {
 
     protected abstract Optional createSpiPayment(List<PisPayment> pisPayments, String paymentProduct);
 
-    protected abstract SpiResponse getSpiPaymentById(SpiContextData spiContextData, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider);
+    protected abstract SpiResponse getSpiPaymentById(SpiContextData spiContextData, String acceptMediaType, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     protected abstract CommonPayment getXs2aPayment(SpiResponse spiResponse);
 

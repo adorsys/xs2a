@@ -95,9 +95,16 @@ public class PaymentController implements PaymentApi {
                                                                        .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentProduct, paymentId))
                                                                        .orElseGet(ResponseObject.<GetPaymentStatusResponse>builder()
                                                                                       .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404))::build);
-        return serviceResponse.hasError()
-                   ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
-                   : responseMapper.ok(serviceResponse, PaymentModelMapperPsd2::mapToStatusResponse);
+
+        if (serviceResponse.hasError()) {
+            return responseErrorMapper.generateErrorResponse(serviceResponse.getError());
+        }
+
+        if (serviceResponse.getBody().isResponseContentTypeJson()) {
+            return responseMapper.ok(serviceResponse, paymentModelMapperPsd2::mapToStatusResponseJson);
+        } else {
+            return responseMapper.ok(serviceResponse, paymentModelMapperPsd2::mapToStatusResponseRaw);
+        }
     }
 
     @Override

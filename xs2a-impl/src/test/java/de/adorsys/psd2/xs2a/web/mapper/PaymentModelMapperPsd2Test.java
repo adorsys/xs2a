@@ -36,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -53,7 +54,7 @@ public class PaymentModelMapperPsd2Test {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACCP;
     private static final boolean FUNDS_AVAILABLE = true;
-    private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE);
+    private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_JSON, null);
     private static final String AMOUNT = "100";
 
     private PaymentModelMapperPsd2 mapper;
@@ -96,10 +97,23 @@ public class PaymentModelMapperPsd2Test {
     }
 
     @Test
-    public void mapToStatusResponse_ShouldMapCorrectly(){
-        PaymentInitiationStatusResponse200Json response = mapper.mapToStatusResponse(PAYMENT_STATUS_RESPONSE);
-        assertEquals(response.getTransactionStatus(), de.adorsys.psd2.model.TransactionStatus.ACCP);
-        assertEquals(response.getFundsAvailable(), true);
+    public void mapToStatusResponse_ShouldMapCorrectly() {
+        PaymentInitiationStatusResponse200Json response = mapper.mapToStatusResponseJson(PAYMENT_STATUS_RESPONSE);
+        assertEquals(de.adorsys.psd2.model.TransactionStatus.ACCP, response.getTransactionStatus());
+        assertEquals(true, response.getFundsAvailable());
+    }
+
+    @Test
+    public void mapToStatusResponseRaw_shouldReturnBytesFromResponse() {
+        // Given
+        byte[] rawPaymentStatusBody = "some raw body".getBytes();
+        GetPaymentStatusResponse getPaymentStatusResponse = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_XML, rawPaymentStatusBody);
+
+        // When
+        byte[] actual = mapper.mapToStatusResponseRaw(getPaymentStatusResponse);
+
+        // Then
+        assertEquals(rawPaymentStatusBody, actual);
     }
 
     @Test

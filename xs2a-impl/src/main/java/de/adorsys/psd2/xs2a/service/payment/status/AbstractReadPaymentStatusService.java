@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
+import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -41,25 +42,27 @@ import java.util.Optional;
 
 /**
  * This class handles traditional payments (single, bulk, periodic).
- *
  */
 @Slf4j
 public abstract class AbstractReadPaymentStatusService implements ReadPaymentStatusService {
 
-    protected SpiPaymentFactory spiPaymentFactory;
+    protected final SpiPaymentFactory spiPaymentFactory;
 
-    private SpiErrorMapper spiErrorMapper;
-    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    private final SpiErrorMapper spiErrorMapper;
+    private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    private final MediaTypeMapper mediaTypeMapper;
 
     public AbstractReadPaymentStatusService(SpiPaymentFactory spiPaymentFactory, SpiErrorMapper spiErrorMapper,
-                                            SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory) {
+                                            SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
+                                            MediaTypeMapper mediaTypeMapper) {
         this.spiPaymentFactory = spiPaymentFactory;
         this.spiErrorMapper = spiErrorMapper;
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
+        this.mediaTypeMapper = mediaTypeMapper;
     }
 
     @Override
-    public ReadPaymentStatusResponse readPaymentStatus(CommonPaymentData commonPaymentData, SpiContextData spiContextData, @NotNull String encryptedPaymentId) {
+    public ReadPaymentStatusResponse readPaymentStatus(CommonPaymentData commonPaymentData, SpiContextData spiContextData, @NotNull String encryptedPaymentId, String acceptMediaType) {
         List<PisPayment> pisPayments = getPisPayments(commonPaymentData);
 
         if (CollectionUtils.isEmpty(pisPayments)) {
@@ -82,7 +85,7 @@ public abstract class AbstractReadPaymentStatusService implements ReadPaymentSta
         SpiAspspConsentDataProvider aspspConsentDataProvider =
             aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(encryptedPaymentId);
 
-        SpiResponse<SpiGetPaymentStatusResponse> spiResponse = getSpiPaymentStatusById(spiContextData, spiPaymentOptional.get(), aspspConsentDataProvider);
+        SpiResponse<SpiGetPaymentStatusResponse> spiResponse = getSpiPaymentStatusById(spiContextData, acceptMediaType, spiPaymentOptional.get(), aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
@@ -90,12 +93,12 @@ public abstract class AbstractReadPaymentStatusService implements ReadPaymentSta
         }
 
         SpiGetPaymentStatusResponse payload = spiResponse.getPayload();
-        return new ReadPaymentStatusResponse(payload.getTransactionStatus(), payload.getFundsAvailable());
+        return new ReadPaymentStatusResponse(payload.getTransactionStatus(), payload.getFundsAvailable(), mediaTypeMapper.mapToMediaType(payload.getResponseContentType()), payload.getPaymentStatusRaw());
     }
 
     protected abstract Optional createSpiPayment(List<PisPayment> pisPayments, String paymentProduct);
 
-    protected abstract SpiResponse<SpiGetPaymentStatusResponse> getSpiPaymentStatusById(SpiContextData spiContextData, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider);
+    protected abstract SpiResponse<SpiGetPaymentStatusResponse> getSpiPaymentStatusById(SpiContextData spiContextData, String acceptMediaType, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     private List<PisPayment> getPisPayments(CommonPaymentData commonPaymentData) {
         List<PisPayment> pisPayments = Optional.of(commonPaymentData)

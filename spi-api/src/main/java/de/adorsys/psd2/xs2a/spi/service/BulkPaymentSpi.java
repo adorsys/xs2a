@@ -40,7 +40,7 @@ public interface BulkPaymentSpi extends PaymentSpi<SpiBulkPayment, SpiBulkPaymen
 
     @Override
     @NotNull
-    default SpiResponse<SpiBulkPayment> getPaymentById(@NotNull SpiContextData contextData, @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    default SpiResponse<SpiBulkPayment> getPaymentById(@NotNull SpiContextData contextData, @NotNull String acceptMediaType, @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiBulkPayment>builder()
                    .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
@@ -48,7 +48,7 @@ public interface BulkPaymentSpi extends PaymentSpi<SpiBulkPayment, SpiBulkPaymen
 
     @Override
     @NotNull
-    default SpiResponse<SpiGetPaymentStatusResponse> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    default SpiResponse<SpiGetPaymentStatusResponse> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull String acceptMediaType, @NotNull SpiBulkPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiGetPaymentStatusResponse>builder()
                    .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();

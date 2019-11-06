@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -39,7 +40,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * This class handles common payments (with byte array in the body).
- *
  */
 @Slf4j
 @Service
@@ -51,16 +51,17 @@ public class ReadCommonPaymentStatusService implements ReadPaymentStatusService 
     private final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final RequestProviderService requestProviderService;
+    private final MediaTypeMapper mediaTypeMapper;
 
     @Override
-    public ReadPaymentStatusResponse readPaymentStatus(CommonPaymentData commonPaymentData, SpiContextData spiContextData, @NotNull String encryptedPaymentId) {
+    public ReadPaymentStatusResponse readPaymentStatus(CommonPaymentData commonPaymentData, SpiContextData spiContextData, @NotNull String encryptedPaymentId, String acceptMediaType) {
         CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(commonPaymentData);
         SpiPaymentInfo request = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPayment);
 
         SpiAspspConsentDataProvider aspspConsentDataProvider =
             aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(encryptedPaymentId);
 
-        SpiResponse<SpiGetPaymentStatusResponse> spiResponse = commonPaymentSpi.getPaymentStatusById(spiContextData, request, aspspConsentDataProvider);
+        SpiResponse<SpiGetPaymentStatusResponse> spiResponse = commonPaymentSpi.getPaymentStatusById(spiContextData, acceptMediaType, request, aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
@@ -70,6 +71,6 @@ public class ReadCommonPaymentStatusService implements ReadPaymentStatusService 
         }
 
         SpiGetPaymentStatusResponse payload = spiResponse.getPayload();
-        return new ReadPaymentStatusResponse(payload.getTransactionStatus(), payload.getFundsAvailable());
+        return new ReadPaymentStatusResponse(payload.getTransactionStatus(), payload.getFundsAvailable(), mediaTypeMapper.mapToMediaType(payload.getResponseContentType()), payload.getPaymentStatusRaw());
     }
 }

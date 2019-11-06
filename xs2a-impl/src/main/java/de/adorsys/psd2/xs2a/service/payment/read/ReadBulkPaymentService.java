@@ -58,8 +58,8 @@ public class ReadBulkPaymentService extends AbstractReadPaymentService {
     }
 
     @Override
-    public SpiResponse<SpiBulkPayment> getSpiPaymentById(SpiContextData spiContextData, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return bulkPaymentSpi.getPaymentById(spiContextData, (SpiBulkPayment) spiPayment, aspspConsentDataProvider);
+    public SpiResponse<SpiBulkPayment> getSpiPaymentById(SpiContextData spiContextData, String acceptMediaType, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return bulkPaymentSpi.getPaymentById(spiContextData, acceptMediaType, (SpiBulkPayment) spiPayment, aspspConsentDataProvider);
     }
 
     @Override
