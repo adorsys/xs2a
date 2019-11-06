@@ -1,0 +1,37 @@
+{
+  "consentId": "consentId",
+  "paymentId": "paymentId",
+  "authorisationId": "authorizationId",
+  "scaStatus": "RECEIVED",
+  "availableScaMethods": [
+    {
+      "authenticationType": "authenticationType",
+      "authenticationVersion": "authenticationVersion",
+      "authenticationMethodId": "authenticationMethodId",
+      "name": "name",
+      "explanation": "explanation"
+    },
+    {
+      "authenticationType": "authenticationType1",
+      "authenticationVersion": "authenticationVersion1",
+      "authenticationMethodId": "authenticationMethodId1",
+      "name": "name1",
+      "explanation": "explanation1"
+    }
+  ],
+  "chosenScaMethod": {
+    "authenticationType": "authenticationType",
+    "authenticationVersion": "authenticationVersion",
+    "authenticationMethodId": "authenticationMethodId",
+    "name": "name",
+    "explanation": "explanation"
+  },
+  "psuMessage": "psuMessage",
+
+  "psuData": {
+    "psuId": "psuId"
+  }
+}
+
+
+

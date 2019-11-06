@@ -1,0 +1,11 @@
+{
+  "paymentId": "paymentId",
+  "authorizationId": "authorizationId",
+  "psuData": {
+    "psuId": "psuId"
+  },
+  "authenticationMethodId": "authenticationMethodId",
+  "scaStatus": "RECEIVED"
+}
+
+
