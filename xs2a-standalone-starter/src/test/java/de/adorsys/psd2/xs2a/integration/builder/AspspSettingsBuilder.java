@@ -137,7 +137,8 @@ public class AspspSettingsBuilder {
                                                                          SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
                                                                          MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
                                                                          AIS_PIS_SESSION_SUPPORTED,
-                                                                         signingBasketSupported == null ? SIGNING_BASKET_SUPPORTED : signingBasketSupported);
+                                                                         signingBasketSupported == null ? SIGNING_BASKET_SUPPORTED : signingBasketSupported,
+                                                                         true);
 
         return new AspspSettings(ais, pis, piis, common);
     }

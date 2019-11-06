@@ -1,0 +1,17 @@
+{
+  "authorisationNumber":"PSDDE-FAKENCA-87B2AC",
+  "tppRoles":["AISP","PISP","PIISP"],
+  "tppName":"",
+  "authorityName":"Trust Service Provider AG",
+  "authorityId":"DE-FAKENCA",
+  "country":"Germany",
+  "organisation":"Fictional Corporation AG",
+  "organisationUnit":"Information Technology",
+  "city":"Nuremberg",
+  "state":"Bayern",
+  "issuerCN":null,
+  "dnsList":[
+    "adorsys.de",
+    "adorsys.com"
+  ]
+}

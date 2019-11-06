@@ -358,4 +358,13 @@ public class AspspProfileServiceWrapper {
     public List<String> getSupportedTransactionStatusFormats() {
         return readAspspSettings().getPis().getSupportedTransactionStatusFormats();
     }
+
+    /**
+     * Reads if ASPSP supports validation TPP roles from certificate
+     *
+     * @return true if ASPSP supports validation TPP roles from certificate
+     */
+    public boolean isCheckTppRolesFromCertificateSupported() {
+        return readAspspSettings().getCommon().isCheckTppRolesFromCertificateSupported();
+    }
 }

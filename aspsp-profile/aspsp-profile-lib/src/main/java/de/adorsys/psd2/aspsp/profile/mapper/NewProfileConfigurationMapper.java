@@ -77,7 +77,8 @@ public class NewProfileConfigurationMapper {
                                                                                  setting.getSupportedAccountReferenceFields(),
                                                                                  setting.getMulticurrencyAccountLevel(),
                                                                                  setting.isCombinedServiceIndicator(),
-                                                                                 setting.isSigningBasketSupported());
+                                                                                 setting.isSigningBasketSupported(),
+                                                                                 true);
 
         NewProfileConfiguration result = new NewProfileConfiguration();
         result.setSetting(new NewBankProfileSetting(ais, pis, piis, common));

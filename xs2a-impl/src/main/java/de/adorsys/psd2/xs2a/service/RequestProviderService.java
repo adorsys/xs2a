@@ -47,6 +47,7 @@ public class RequestProviderService {
     private static final String PSU_CORPORATE_ID_TYPE_HEADER = "psu-corporate-id-type";
     private static final String TPP_ROLES_ALLOWED_HEADER = "tpp-roles-allowed";
     private static final String ACCEPT_HEADER = "accept";
+    private static final String TPP_QWAC_CERTIFICATE_HEADER = "tpp-qwac-certificate";
 
     private final HttpServletRequest httpServletRequest;
     private final InternalRequestIdService internalRequestIdService;
@@ -148,6 +149,10 @@ public class RequestProviderService {
         }
 
         return acceptHeader;
+    }
+
+    public String getEncodedTppQwacCert() {
+        return getHeader(TPP_QWAC_CERTIFICATE_HEADER);
     }
 
     private String getHeader(String headerName) {
