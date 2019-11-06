@@ -24,7 +24,6 @@ import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
-import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
@@ -329,14 +328,14 @@ public class AccountControllerIT {
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
         return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, true, LocalDate.now().plusDays(1), 10,
                                   null, ConsentStatus.VALID, false, false,
-                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter);
+                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter, OffsetDateTime.now());
     }
 
     private AccountConsent buildOneOffAccountConsent(Map<String, Integer> usageCounter) {
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
         return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess,false, LocalDate.now().plusDays(1), 10,
                                   null, ConsentStatus.VALID, false, false,
-                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter);
+                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter, OffsetDateTime.now());
     }
 
 }

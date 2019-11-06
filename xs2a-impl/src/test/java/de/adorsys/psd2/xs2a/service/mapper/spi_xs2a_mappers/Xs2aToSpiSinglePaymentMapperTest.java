@@ -143,6 +143,7 @@ public class Xs2aToSpiSinglePaymentMapperTest {
         assertEquals(ULTIMATE_CREDITOR, spiSinglePayment.getUltimateCreditor());
         assertEquals(PURPOSE_CODE, spiSinglePayment.getPurposeCode());
         assertEquals(remittanceMapper.mapToSpiRemittance(REMITTANCE), spiSinglePayment.getRemittanceInformationStructured());
+        assertEquals(singlePayment.getCreationTimestamp(), spiSinglePayment.getCreationTimestamp());
     }
 
     private SinglePayment buildSinglePayment() {
@@ -165,6 +166,7 @@ public class Xs2aToSpiSinglePaymentMapperTest {
         singlePayment.setUltimateCreditor(ULTIMATE_CREDITOR);
         singlePayment.setPurposeCode(PURPOSE_CODE);
         singlePayment.setRemittanceInformationStructured(REMITTANCE);
+        singlePayment.setCreationTimestamp(OffsetDateTime.now());
         return singlePayment;
     }
 

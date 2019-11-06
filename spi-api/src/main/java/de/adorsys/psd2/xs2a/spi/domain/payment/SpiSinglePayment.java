@@ -51,6 +51,7 @@ public class SpiSinglePayment implements SpiPayment {
     private String ultimateCreditor;
     private PurposeCode purposeCode;
     private SpiRemittance remittanceInformationStructured;
+    private OffsetDateTime creationTimestamp;
 
     public SpiSinglePayment(String paymentProduct) {
         this.paymentProduct = paymentProduct;

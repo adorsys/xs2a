@@ -31,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -167,49 +168,49 @@ public class AccountConsentValidatorTest {
         return new AccountConsent("id", null, null, false, LocalDate.now().plusYears(1), 0,
                                   null, ConsentStatus.VALID, false, false,
                                   Collections.emptyList(), buildTppInfo(), null, false,
-                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 10));
+                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 10), OffsetDateTime.now());
     }
 
     private AccountConsent buildAccountConsentExpired() {
         return new AccountConsent("id", null, null, false, LocalDate.now().minusDays(1), 0,
                                   null, ConsentStatus.VALID, false, false,
                                   Collections.emptyList(), buildTppInfo(), null, false,
-                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 10));
+                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 10), OffsetDateTime.now());
     }
 
     private AccountConsent buildAccountConsentInvalid() {
         return new AccountConsent("id", null, null, false, LocalDate.now().plusYears(1), 0,
                                   null, ConsentStatus.RECEIVED, false, false,
                                   Collections.emptyList(), buildTppInfo(), null, false,
-                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 10));
+                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 10), OffsetDateTime.now());
     }
 
     private AccountConsent buildAccountConsentInvalidRevokedByPsu() {
         return new AccountConsent("id", null, null, false, LocalDate.now().plusYears(1), 0,
                                   null, ConsentStatus.REVOKED_BY_PSU, false, false,
                                   Collections.emptyList(), buildTppInfo(), null, false,
-                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 10));
+                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 10), OffsetDateTime.now());
     }
 
     private AccountConsent buildOneOffAccountConsentAccessExceeded() {
         return new AccountConsent("id", null, null, false, LocalDate.now().plusYears(1), 1,
                                   null, ConsentStatus.VALID, false, false,
                                   Collections.emptyList(), buildTppInfo(), null, false,
-                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 0));
+                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 0), OffsetDateTime.now());
     }
 
     private AccountConsent buildAccountConsentAccessExceeded() {
         return new AccountConsent("id", null, null, true, LocalDate.now().plusYears(1), 0,
                                   null, ConsentStatus.VALID, false, false,
                                   Collections.emptyList(), buildTppInfo(), null, false,
-                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 0));
+                                  Collections.emptyList(), null, Collections.singletonMap(REQUEST_URI, 0), OffsetDateTime.now());
     }
 
     private AccountConsent buildAccountConsentAccessExceededIsOneAccessType() {
         return new AccountConsent("id", null, null, false, LocalDate.now().plusYears(1), 0,
                                   null, ConsentStatus.VALID, false, false,
                                   Collections.emptyList(), buildTppInfo(), null, false,
-                                  Collections.emptyList(), null, Collections.emptyMap());
+                                  Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
     }
 
     private static TppInfo buildTppInfo() {

@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountReferenceMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Test;
@@ -188,5 +189,16 @@ public class Xs2aAisConsentMapperTest {
         CreateAisConsentRequest createAisConsentRequest = mapper.mapToCreateAisConsentRequest(null, psuData, tppInfo, 34, INTERNAL_REQUEST_ID);
 
         assertNull(createAisConsentRequest);
+    }
+
+    @Test
+    public void mapToSpiAccountConsent() {
+        //Given
+        AccountConsent accountConsent = jsonReader.getObjectFromFile("json/service/mapper/consent/xs2a-account-consent.json", AccountConsent.class);
+        //When
+        SpiAccountConsent spiAccountConsent = mapper.mapToSpiAccountConsent(accountConsent);
+        SpiAccountConsent spiAccountConsentExpected = jsonReader.getObjectFromFile("json/service/mapper/consent/spi-account-consent.json", SpiAccountConsent.class);
+        //Then
+        assertEquals(spiAccountConsentExpected, spiAccountConsent);
     }
 }

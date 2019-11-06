@@ -31,6 +31,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORBIDDEN;
@@ -134,6 +135,6 @@ public class OauthConsentValidatorTest {
         return new AccountConsent("id", null, null, false, null, 0,
                                   null, consentStatus, false, false,
                                   Collections.emptyList(), null, null, false,
-                                  Collections.emptyList(), null, Collections.emptyMap());
+                                  Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
     }
 }

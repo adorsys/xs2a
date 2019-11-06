@@ -23,7 +23,8 @@
           "psuCorporateId": "PSU CORPORATE ID",
           "psuCorporateIdType": "PSU CORPORATE ID TYPE"
         }
-      ]
+      ],
+      "creationTimestamp": "2019-08-22T11:00:00Z"
     }
   ],
   "paymentProduct": "sepa-credit-transfers",
@@ -54,6 +55,7 @@
   "paymentData": "c29tZSBwYXltZW50IGNvbnRlbnQ=",
   "transactionStatus": "RCVD",
   "statusChangeTimestamp": "2019-08-22T11:01:27Z",
+  "creationTimestamp": "2019-08-22T11:00:00Z",
   "authorisations": [
     {
       "id": "5e89f573-800e-4158-bb9c-c7fcc9c701d9",

@@ -1,0 +1,37 @@
+{
+  "instanceId": "UNDEFINED",
+  "paymentId": "329d04d9-cb42-4fb5-8265-de58fa00366d",
+  "paymentType": "payments",
+  "paymentProduct": "sepa-credit-transfers",
+  "transactionStatus": "RCVD",
+  "payment": "c29tZSBwYXltZW50IGNvbnRlbnQ=",
+  "psuDataList": [
+    {
+      "psuId": "PSU ID",
+      "psuIdType": "PSU ID TYPE",
+      "psuCorporateId": "PSU CORPORATE ID",
+      "psuCorporateIdType": "PSU CORPORATE ID TYPE"
+    }
+  ],
+  "tppInfo": {
+    "authorisationNumber": "12345987",
+    "tppName": "Tpp company",
+    "tppRoles": [
+      "PISP"
+    ],
+    "authorityId": "authority id",
+    "authorityName": "authority name",
+    "country": "Germany",
+    "organisation": "Organisation",
+    "organisationUnit": "Organisation unit",
+    "city": "Nuremberg",
+    "state": "Bayern"
+  },
+  "authorisationTemplate" : {
+    "redirectUri" : "uri",
+    "nokRedirectUri" : "nokUri"
+  },
+  "creationTimestamp": "2019-08-22T11:00:00Z",
+  "multilevelScaRequired": false,
+  "aspspAccountId": "some account id"
+}

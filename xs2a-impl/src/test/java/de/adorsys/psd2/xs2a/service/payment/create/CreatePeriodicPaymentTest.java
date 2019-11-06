@@ -56,10 +56,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -108,13 +111,12 @@ public class CreatePeriodicPaymentTest {
     @Before
     public void setUp() {
         periodicPaymentInitiationResponse = buildPeriodicPaymentInitiationResponse(new SpiAspspConsentDataProviderFactory(aspspDataService).getInitialAspspConsentDataProvider());
-        when(periodicPaymentInitiationService.initiatePayment(buildPeriodicPayment(), "sepa-credit-transfers", PSU_ID_DATA)).thenReturn(periodicPaymentInitiationResponse);
+        when(periodicPaymentInitiationService.initiatePayment(any(PeriodicPayment.class), eq("sepa-credit-transfers"), eq(PSU_ID_DATA))).thenReturn(periodicPaymentInitiationResponse);
+        when(periodicPaymentInitiationService.initiatePayment(any(PeriodicPayment.class), eq("sepa-credit-transfers"), eq(WRONG_PSU_DATA))).thenReturn(buildSpiErrorForPeriodicPayment());
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, periodicPaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(eq(PARAM), eq(TPP_INFO), eq(periodicPaymentInitiationResponse), eq(null), eq(INTERNAL_REQUEST_ID), any(OffsetDateTime.class)))
             .thenReturn(PAYMENT_INFO);
-        when(periodicPaymentInitiationService.initiatePayment(buildPeriodicPayment(), "sepa-credit-transfers", WRONG_PSU_DATA))
-            .thenReturn(buildSpiErrorForPeriodicPayment());
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
     }
 
@@ -147,7 +149,6 @@ public class CreatePeriodicPaymentTest {
         PaymentInitiationParameters param = buildPaymentInitiationParameters();
         param.setPsuData(WRONG_PSU_DATA);
 
-        when(periodicPaymentInitiationService.initiatePayment(buildPeriodicPayment(), "sepa-credit-transfers", WRONG_PSU_DATA)).thenReturn(buildSpiErrorForPeriodicPayment());
         //When
         ResponseObject<PaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), param, WRONG_TPP_INFO);
 

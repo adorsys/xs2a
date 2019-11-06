@@ -54,10 +54,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -108,10 +111,10 @@ public class CreateCommonPaymentServiceTest {
         InitialSpiAspspConsentDataProvider initialSpiAspspConsentDataProvider =
             new SpiAspspConsentDataProviderFactory(aspspDataService).getInitialAspspConsentDataProvider();
         commonPaymentInitiationResponse = buildCommonPaymentInitiationResponse(initialSpiAspspConsentDataProvider);
-        when(commonPaymentInitiationService.initiatePayment(COMMON_PAYMENT, PRODUCT, PSU_DATA)).thenReturn(commonPaymentInitiationResponse);
+        when(commonPaymentInitiationService.initiatePayment(any(CommonPayment.class), eq(PRODUCT), eq(PSU_DATA))).thenReturn(commonPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, commonPaymentInitiationResponse, COMMON_PAYMENT.getPaymentData(), INTERNAL_REQUEST_ID))
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(eq(PARAM), eq(TPP_INFO), eq(commonPaymentInitiationResponse), eq(COMMON_PAYMENT.getPaymentData()), eq(INTERNAL_REQUEST_ID), any(OffsetDateTime.class)))
             .thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
     }
@@ -138,7 +141,7 @@ public class CreateCommonPaymentServiceTest {
 
         CommonPayment commonPayment = buildCommonPayment();
         commonPayment.setPsuDataList(Collections.singletonList(WRONG_PSU_DATA));
-        when(commonPaymentInitiationService.initiatePayment(commonPayment, PRODUCT, WRONG_PSU_DATA)).thenReturn(buildSpiErrorForCommonPayment());
+        when(commonPaymentInitiationService.initiatePayment(any(CommonPayment.class), eq(PRODUCT), eq(WRONG_PSU_DATA))).thenReturn(buildSpiErrorForCommonPayment());
 
         //When
         ResponseObject<PaymentInitiationResponse> actualResponse = createCommonPaymentService.createPayment(PAYMENT_DATA_IN_BYTES, param, WRONG_TPP_INFO);

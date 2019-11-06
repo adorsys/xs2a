@@ -68,6 +68,9 @@ public class PisCommonPaymentResponse implements CommonPaymentData {
     @ApiModelProperty(value = "Defines whether the payment requires multilevel SCA", example = "true")
     private boolean multilevelScaRequired;
 
+    @ApiModelProperty(value = "Timestamp of the payment creation")
+    private OffsetDateTime creationTimestamp;
+
     public Optional<Authorisation> findAuthorisationInPayment(String authorisationId) {
         return authorisations.stream()
                    .filter(auth -> auth.getId().equals(authorisationId))

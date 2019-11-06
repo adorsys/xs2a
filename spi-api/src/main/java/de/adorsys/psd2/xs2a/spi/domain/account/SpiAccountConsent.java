@@ -47,4 +47,5 @@ public class SpiAccountConsent {
     private TppInfo tppInfo;
     private AisConsentRequestType aisConsentRequestType;
     private OffsetDateTime statusChangeTimestamp;
+    private OffsetDateTime creationTimestamp;
 }

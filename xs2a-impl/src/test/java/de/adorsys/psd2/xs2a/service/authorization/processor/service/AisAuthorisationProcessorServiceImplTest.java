@@ -194,7 +194,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -269,7 +269,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -335,7 +335,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -398,7 +398,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -445,7 +445,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -494,7 +494,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -579,7 +579,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -636,7 +636,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         String psuPassword = PSU_PASSWORD;
         updateAuthorisationRequest.setPassword(psuPassword);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -686,7 +686,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         String psuPassword = PSU_PASSWORD;
         updateAuthorisationRequest.setPassword(psuPassword);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -789,7 +789,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -865,7 +865,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -931,7 +931,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -994,7 +994,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -1041,7 +1041,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -1090,7 +1090,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -1175,7 +1175,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -1232,7 +1232,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         String psuPassword = PSU_PASSWORD;
         updateAuthorisationRequest.setPassword(psuPassword);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -1282,7 +1282,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         String psuPassword = PSU_PASSWORD;
         updateAuthorisationRequest.setPassword(psuPassword);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -1344,7 +1344,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -1398,7 +1398,7 @@ public class AisAuthorisationProcessorServiceImplTest {
 
         updateAuthorisationRequest.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -1467,7 +1467,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -1525,7 +1525,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -1574,7 +1574,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -1648,7 +1648,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPsuData(psuIdData);
         updateAuthorisationRequest.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
 
-        AccountConsent accountConsent = new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null);
+        AccountConsent accountConsent = buildAccountConsent();
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
@@ -1694,6 +1694,10 @@ public class AisAuthorisationProcessorServiceImplTest {
         assertEquals(ScaStatus.FAILED, processorResponse.getScaStatus());
         assertEquals(ENCRYPTED_CONSENT_ID, processorResponse.getConsentId());
         assertEquals(AUTHORISATION_ID, processorResponse.getAuthorisationId());
+    }
+
+    private AccountConsent buildAccountConsent() {
+        return new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null, null);
     }
 
     @Test(expected = UnsupportedOperationException.class)

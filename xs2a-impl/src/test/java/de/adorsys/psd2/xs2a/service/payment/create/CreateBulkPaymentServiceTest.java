@@ -50,9 +50,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.OffsetDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -99,11 +102,11 @@ public class CreateBulkPaymentServiceTest {
     public void init() {
         BulkPaymentInitiationResponse buildBulkPaymentInitiationResponse = buildBulkPaymentInitiationResponse(initialSpiAspspConsentDataProvider);
 
-        when(bulkPaymentInitiationService.initiatePayment(buildBulkPayment(), "sepa-credit-transfers", PSU_DATA)).thenReturn(buildBulkPaymentInitiationResponse);
-        when(bulkPaymentInitiationService.initiatePayment(buildBulkPayment(), "sepa-credit-transfers", WRONG_PSU_DATA)).thenReturn(buildSpiErrorForBulkPayment());
+        when(bulkPaymentInitiationService.initiatePayment(any(BulkPayment.class), eq("sepa-credit-transfers"), eq(PSU_DATA))).thenReturn(buildBulkPaymentInitiationResponse);
+        when(bulkPaymentInitiationService.initiatePayment(any(BulkPayment.class), eq("sepa-credit-transfers"), eq(WRONG_PSU_DATA))).thenReturn(buildSpiErrorForBulkPayment());
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, buildBulkPaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(eq(PARAM), eq(TPP_INFO), eq(buildBulkPaymentInitiationResponse), eq(null), eq(INTERNAL_REQUEST_ID), any(OffsetDateTime.class)))
             .thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
     }

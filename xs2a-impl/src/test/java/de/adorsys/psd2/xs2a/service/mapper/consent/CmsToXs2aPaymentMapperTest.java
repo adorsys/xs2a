@@ -35,7 +35,6 @@ import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mapstruct.factory.Mappers;
@@ -161,6 +160,7 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(pisPayment.getUltimateCreditor(), periodicPayment.getUltimateCreditor());
         assertEquals(pisPayment.getPurposeCode(), periodicPayment.getPurposeCode().toString());
         assertEquals(xs2aRemittanceMapper.mapToRemittance(pisPayment.getRemittanceInformationStructured()), periodicPayment.getRemittanceInformationStructured());
+        assertEquals(pisPayment.getCreationTimestamp(), periodicPayment.getCreationTimestamp());
     }
 
     @Test
@@ -218,6 +218,7 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(pisPayment.getUltimateCreditor(), singlePayment.getUltimateCreditor());
         assertEquals(pisPayment.getPurposeCode(), singlePayment.getPurposeCode().toString());
         assertEquals(xs2aRemittanceMapper.mapToRemittance(pisPayment.getRemittanceInformationStructured()), singlePayment.getRemittanceInformationStructured());
+        assertEquals(pisPayment.getCreationTimestamp(), singlePayment.getCreationTimestamp());
     }
 
     @Test
@@ -281,6 +282,7 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(pisPayment.getUltimateCreditor(), firstPayment.getUltimateCreditor());
         assertEquals(pisPayment.getPurposeCode(), firstPayment.getPurposeCode().toString());
         assertEquals(xs2aRemittanceMapper.mapToRemittance(pisPayment.getRemittanceInformationStructured()), firstPayment.getRemittanceInformationStructured());
+        assertEquals(pisPayment.getCreationTimestamp(), firstPayment.getCreationTimestamp());
     }
 
     @Test
@@ -297,6 +299,7 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(PAYMENT_DATA, commonPayment.getPaymentData());
         assertEquals(PSU_ID_DATA_LIST, commonPayment.getPsuDataList());
         assertEquals(STATUS_CHANGE_TIMESTAMP, commonPayment.getStatusChangeTimestamp());
+        assertEquals(pisCommonPaymentResponse.getCreationTimestamp(), commonPayment.getCreationTimestamp());
     }
 
     @Test
@@ -341,6 +344,7 @@ public class CmsToXs2aPaymentMapperTest {
         pisPayment.setPsuDataList(PSU_ID_DATA_LIST);
         pisPayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         pisPayment.setBatchBookingPreferred(Boolean.TRUE);
+        pisPayment.setCreationTimestamp(OffsetDateTime.now());
         return pisPayment;
     }
 
@@ -373,6 +377,7 @@ public class CmsToXs2aPaymentMapperTest {
         pisCommonPaymentResponse.setTransactionStatus(TRANSACTION_STATUS);
         pisCommonPaymentResponse.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         pisCommonPaymentResponse.setMultilevelScaRequired(false);
+        pisCommonPaymentResponse.setCreationTimestamp(OffsetDateTime.now());
 
         return pisCommonPaymentResponse;
     }

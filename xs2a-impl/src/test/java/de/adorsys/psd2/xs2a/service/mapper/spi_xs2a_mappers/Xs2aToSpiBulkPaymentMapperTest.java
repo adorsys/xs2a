@@ -97,6 +97,7 @@ public class Xs2aToSpiBulkPaymentMapperTest {
         assertEquals(PAYMENT_PRODUCT, spiBulkPayment.getPaymentProduct());
         assertEquals(spiPsuDataList, spiBulkPayment.getPsuDataList());
         assertEquals(STATUS_CHANGE_TIMESTAMP, spiBulkPayment.getStatusChangeTimestamp());
+        assertEquals(payment.getCreationTimestamp(), spiBulkPayment.getCreationTimestamp());
     }
 
     @NotNull
@@ -111,6 +112,7 @@ public class Xs2aToSpiBulkPaymentMapperTest {
         payment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
         payment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
         payment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
+        payment.setCreationTimestamp(OffsetDateTime.now());
         return payment;
     }
 

@@ -29,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -71,6 +72,7 @@ public class PisCommonPaymentMapper {
         }
         commonPaymentData.setAuthorisationTemplate(authorisationTemplate);
         commonPaymentData.setInternalRequestId(paymentInfo.getInternalRequestId());
+        Optional.ofNullable(paymentInfo.getCreationTimestamp()).ifPresent(commonPaymentData::setCreationTimestamp);
         return commonPaymentData;
     }
 
@@ -110,7 +112,7 @@ public class PisCommonPaymentMapper {
         GetPisAuthorisationResponse response = new GetPisAuthorisationResponse();
         Optional.ofNullable(pis.getPaymentData())
             .ifPresent(paymentData -> {
-                response.setPayments(mapToPisPaymentList(paymentData.getPayments()));
+                response.setPayments(mapToPisPaymentList(paymentData.getPayments(), paymentData.getCreationTimestamp()));
                 response.setPaymentId(paymentData.getPaymentId());
                 response.setPaymentType(paymentData.getPaymentType());
                 response.setPaymentInfo(mapToPisPaymentInfo(paymentData));
@@ -125,7 +127,7 @@ public class PisCommonPaymentMapper {
         return Optional.ofNullable(commonPaymentData)
                    .map(cmd -> {
                        PisCommonPaymentResponse response = new PisCommonPaymentResponse();
-                       response.setPayments(mapToPisPaymentList(cmd.getPayments()));
+                       response.setPayments(mapToPisPaymentList(cmd.getPayments(), cmd.getCreationTimestamp()));
                        response.setExternalId(cmd.getPaymentId());
                        response.setPaymentType(cmd.getPaymentType());
                        response.setPaymentProduct(cmd.getPaymentProduct());
@@ -136,6 +138,7 @@ public class PisCommonPaymentMapper {
                        response.setStatusChangeTimestamp(cmd.getStatusChangeTimestamp());
                        response.setMultilevelScaRequired(cmd.isMultilevelScaRequired());
                        response.setAuthorisations(cmsAuthorisationMapper.mapToAuthorisations(cmd.getAuthorizations()));
+                       response.setCreationTimestamp(cmd.getCreationTimestamp());
                        return response;
                    });
     }
@@ -151,6 +154,7 @@ public class PisCommonPaymentMapper {
                             paymentInfo.setPaymentData(dta.getPayment());
                             paymentInfo.setPsuDataList(psuDataMapper.mapToPsuIdDataList(dta.getPsuDataList()));
                             paymentInfo.setTppInfo(tppInfoMapper.mapToTppInfo(dta.getTppInfo()));
+                            paymentInfo.setCreationTimestamp(paymentData.getCreationTimestamp());
 
                             return paymentInfo;
                         }
@@ -158,10 +162,13 @@ public class PisCommonPaymentMapper {
                    .orElse(null);
     }
 
-    private List<PisPayment> mapToPisPaymentList(List<PisPaymentData> payments) {
-        return payments.stream()
-                   .map(this::mapToPisPayment)
-                   .collect(Collectors.toList());
+    private List<PisPayment> mapToPisPaymentList(List<PisPaymentData> payments, OffsetDateTime offsetDateTime) {
+        List<PisPayment> pisPayments = payments.stream()
+                                       .map(this::mapToPisPayment)
+                                       .collect(Collectors.toList());
+
+        pisPayments.forEach(pisPayment -> pisPayment.setCreationTimestamp(offsetDateTime));
+        return pisPayments;
     }
 
     private PisPayment mapToPisPayment(PisPaymentData payment) {
