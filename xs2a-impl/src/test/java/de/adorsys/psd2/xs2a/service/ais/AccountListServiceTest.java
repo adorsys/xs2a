@@ -357,7 +357,7 @@ public class AccountListServiceTest {
         accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
 
         // Then
-        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, false);
+        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, false, null, null);
     }
 
     @Test
@@ -371,7 +371,7 @@ public class AccountListServiceTest {
         accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
 
         // Then
-        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true);
+        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
     }
 
     @Test
@@ -385,7 +385,7 @@ public class AccountListServiceTest {
         accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
 
         // Then
-        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true);
+        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
     }
 
     @Test
@@ -399,7 +399,7 @@ public class AccountListServiceTest {
         accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
 
         // Then
-        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true);
+        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
     }
 
     private void assertResponseHasNoErrors(ResponseObject actualResponse) {

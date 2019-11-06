@@ -110,4 +110,6 @@
     <include relativeToChangelogFile="true" file="migration/0082-add-internal-request-ids.xml"/>
     <include relativeToChangelogFile="true" file="migration/0083-add-sca-authentication-data-to-pis-consent-authorization.xml"/>
     <include relativeToChangelogFile="true" file="migration/0084-add-value-to-owner-name-type-and-owner-address-type-columns-in-ais-consent-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0085-create-ais-consent-transaction-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0086-add-columns-to-ais-consent-usage-table.xml"/>
 </databaseChangeLog>

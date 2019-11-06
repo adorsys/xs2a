@@ -168,7 +168,7 @@ public class AccountListService {
 
         aisConsentService.consentActionLog(tppService.getTppId(), consentId,
                                            accountHelperService.createActionStatus(withBalance, TypeAccess.ACCOUNT, response),
-                                           requestUri, accountHelperService.needsToUpdateUsage(accountConsent));
+                                           requestUri, accountHelperService.needsToUpdateUsage(accountConsent), null, null);
 
         return response;
     }

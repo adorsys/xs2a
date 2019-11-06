@@ -339,7 +339,7 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     private AisConsentActionRequest buildAisActionRequest(String consentId) {
-        return new AisConsentActionRequest("tpp id", consentId, ActionStatus.SUCCESS, "request/uri", true);
+        return new AisConsentActionRequest("tpp id", consentId, ActionStatus.SUCCESS, "request/uri", true, null, null);
     }
 
     private AisAccountAccessInfo buildAisAccountAccessInfo() {

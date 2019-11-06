@@ -28,4 +28,9 @@ public class AisConsentActionRequest {
     private ActionStatus actionStatus;
     private String requestUri;
     private boolean updateUsage;
+
+    // These 2 parameters are optional. Are used while storing data about consent usage in case or request URI has resource
+    // ID and/or transaction ID in path parameters.
+    private String resourceId;
+    private String transactionId;
 }

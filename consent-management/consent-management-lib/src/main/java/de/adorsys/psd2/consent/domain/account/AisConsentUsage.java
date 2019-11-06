@@ -41,6 +41,12 @@ public class AisConsentUsage {
     @Column(name = "request_uri", nullable = false)
     private String requestUri;
 
+    @Column(name = "resource_id")
+    private String resourceId;
+
+    @Column(name = "transaction_id")
+    private String transactionId;
+
     @Column(name = "usage_date", nullable = false)
     private LocalDate usageDate;
 

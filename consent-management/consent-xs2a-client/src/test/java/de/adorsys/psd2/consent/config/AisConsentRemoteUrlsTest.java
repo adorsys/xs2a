@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class AisConsentRemoteUrlsTest {
     private static final String BASE_URL = "http://base.url";
@@ -145,5 +145,11 @@ public class AisConsentRemoteUrlsTest {
     public void getAuthorisationScaApproach() {
         assertEquals("http://base.url/ais/consent/authorisations/{authorisation-id}/sca-approach",
                      aisConsentRemoteUrls.getAuthorisationScaApproach());
+    }
+
+    @Test
+    public void saveNumberOfTransactions() {
+        assertEquals("http://base.url/ais/consent/{consent-id}/{resource-id}",
+                     aisConsentRemoteUrls.saveNumberOfTransactions());
     }
 }

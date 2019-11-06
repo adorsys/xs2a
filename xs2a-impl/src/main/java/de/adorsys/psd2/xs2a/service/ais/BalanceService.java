@@ -164,7 +164,7 @@ public class BalanceService {
 
         aisConsentService.consentActionLog(tppService.getTppId(), consentId,
                                            accountHelperService.createActionStatus(false, TypeAccess.BALANCE, response),
-                                           requestUri, accountHelperService.needsToUpdateUsage(accountConsent));
+                                           requestUri, accountHelperService.needsToUpdateUsage(accountConsent), accountId, null);
 
         return response;
     }
