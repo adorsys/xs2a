@@ -36,6 +36,8 @@ setting:
       pisPaymentCancellationRedirectUrlToAspsp: http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}
       paymentCancellationRedirectUrlExpirationTimeMs: 600000
     countryValidationSupported: DE
+    supportedTransactionStatusFormats:
+      - application/json
   piis:
     piisConsentSupported: FALSE
   common:

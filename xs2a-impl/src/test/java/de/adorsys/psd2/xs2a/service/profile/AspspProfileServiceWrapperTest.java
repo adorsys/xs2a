@@ -60,4 +60,16 @@ public class AspspProfileServiceWrapperTest {
         // Then
         assertEquals(Collections.singletonList(bookingStatus), actualAvailableStatuses);
     }
+
+    @Test
+    public void getSupportedTransactionStatusFormats() {
+        // Given
+        List<String> expectedFormats = Collections.singletonList("application/json");
+
+        // When
+        List<String> actualFormats = aspspProfileServiceWrapper.getSupportedTransactionStatusFormats();
+
+        // Then
+        assertEquals(expectedFormats, actualFormats);
+    }
 }

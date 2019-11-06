@@ -19,6 +19,7 @@ package de.adorsys.psd2.aspsp.profile.domain.pis;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Value;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,4 +31,5 @@ public class PisAspspProfileSetting {
     private boolean paymentCancellationAuthorisationMandated;
     private PisRedirectLinkSetting redirectLinkToOnlineBanking;
     private String countryValidationSupported;
+    private List<String> supportedTransactionStatusFormats;
 }

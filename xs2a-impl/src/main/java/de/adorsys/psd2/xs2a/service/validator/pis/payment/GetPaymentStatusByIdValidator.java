@@ -27,18 +27,24 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class GetPaymentStatusByIdValidator extends AbstractPisValidator<GetPaymentStatusByIdPO> {
+    private final RequestProviderService requestProviderService;
     private final OauthPaymentValidator oauthPaymentValidator;
+    private final TransactionStatusAcceptHeaderValidator transactionStatusAcceptHeaderValidator;
 
     public GetPaymentStatusByIdValidator(RequestProviderService requestProviderService,
-                                         OauthPaymentValidator oauthPaymentValidator) {
+                                         OauthPaymentValidator oauthPaymentValidator,
+                                         TransactionStatusAcceptHeaderValidator transactionStatusAcceptHeaderValidator) {
         super(requestProviderService);
+        this.requestProviderService = requestProviderService;
         this.oauthPaymentValidator = oauthPaymentValidator;
+        this.transactionStatusAcceptHeaderValidator = transactionStatusAcceptHeaderValidator;
     }
 
     /**
      * Validates get payment status by ID request by checking whether:
      * <ul>
-     * <li>given payment's type and product are valid for the payment</li>
+     * <li>accept header in the request is supported by the ASPSP</li>
+     * <li>oauth request is valid for given payment</li>
      * </ul>
      *
      * @param paymentObject payment information object
@@ -46,6 +52,11 @@ public class GetPaymentStatusByIdValidator extends AbstractPisValidator<GetPayme
      */
     @Override
     protected ValidationResult executeBusinessValidation(GetPaymentStatusByIdPO paymentObject) {
+        ValidationResult transactionStatusFormatValidationResult = transactionStatusAcceptHeaderValidator.validate(requestProviderService.getAcceptHeader());
+        if (transactionStatusFormatValidationResult.isNotValid()) {
+            return transactionStatusFormatValidationResult;
+        }
+
         ValidationResult oauthPaymentValidationResult = oauthPaymentValidator.validate(paymentObject.getPisCommonPaymentResponse());
 
         if (oauthPaymentValidationResult.isNotValid()) {

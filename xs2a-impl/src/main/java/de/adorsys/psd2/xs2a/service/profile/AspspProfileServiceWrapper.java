@@ -349,4 +349,13 @@ public class AspspProfileServiceWrapper {
     public MulticurrencyAccountLevel getMulticurrencyAccountLevel() {
      return readAspspSettings().getCommon().getMulticurrencyAccountLevelSupported();
     }
+
+    /**
+     * Reads transaction status application types supported by ASPSP (application/json, application/xml etc).
+     *
+     * @return list of transaction status application types
+     */
+    public List<String> getSupportedTransactionStatusFormats() {
+        return readAspspSettings().getPis().getSupportedTransactionStatusFormats();
+    }
 }

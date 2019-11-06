@@ -47,6 +47,8 @@ public class GetPaymentStatusByIdValidatorTest {
     private static final String WRONG_PAYMENT_PRODUCT = "sepa-credit-transfers111";
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
+    private static final String JSON_ACCEPT_HEADER = "application/json";
+    private static final String XML_ACCEPT_HEADER = "application/xml";
 
     private static final MessageError TPP_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
@@ -54,18 +56,17 @@ public class GetPaymentStatusByIdValidatorTest {
         new MessageError(ErrorType.PIS_405, TppMessageInformation.of(SERVICE_INVALID_405_FOR_PAYMENT));
     private static final MessageError PAYMENT_PRODUCT_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_403, TppMessageInformation.of(PRODUCT_INVALID_FOR_PAYMENT));
+    private static final MessageError ACCEPT_HEADER_VALIDATION_ERROR =
+        new MessageError(ErrorType.PIS_406, TppMessageInformation.of(REQUESTED_FORMATS_INVALID));
 
     @Mock
     private PisTppInfoValidator pisTppInfoValidator;
-
     @Mock
     private RequestProviderService requestProviderService;
-
-    @Mock
-    private RequestProviderService requestProviderServic;
-
     @Mock
     private OauthPaymentValidator oauthPaymentValidator;
+    @Mock
+    private TransactionStatusAcceptHeaderValidator transactionStatusAcceptHeaderValidator;
 
     @InjectMocks
     private GetPaymentStatusByIdValidator getPaymentStatusByIdValidator;
@@ -79,6 +80,14 @@ public class GetPaymentStatusByIdValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(pisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
             .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
+
+        when(requestProviderService.getAcceptHeader())
+            .thenReturn(JSON_ACCEPT_HEADER);
+
+        when(transactionStatusAcceptHeaderValidator.validate(JSON_ACCEPT_HEADER))
+            .thenReturn(ValidationResult.valid());
+        when(transactionStatusAcceptHeaderValidator.validate(XML_ACCEPT_HEADER))
+            .thenReturn(ValidationResult.invalid(ACCEPT_HEADER_VALIDATION_ERROR));
     }
 
     @Test
@@ -157,6 +166,22 @@ public class GetPaymentStatusByIdValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(PAYMENT_PRODUCT_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    public void validate_withNotSupportedAcceptHeader_shouldReturnAcceptHeaderValidationError() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
+        when(requestProviderService.getAcceptHeader())
+            .thenReturn(XML_ACCEPT_HEADER);
+
+        // When
+        ValidationResult validationResult = getPaymentStatusByIdValidator.validate(new GetPaymentStatusByIdPO(commonPaymentResponse, PAYMENT_TYPE, PAYMENT_PRODUCT));
+
+        // Then
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+        assertEquals(ACCEPT_HEADER_VALIDATION_ERROR, validationResult.getMessageError());
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {
