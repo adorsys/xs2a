@@ -2,8 +2,8 @@
 
 == Table of Contents
 
-* Bugfix: Fix application not starting with embedded CMS
+* Bugfix: fix application not starting with embedded CMS
 
-== Bugfix: Fix application not starting with embedded CMS
+== Bugfix: fix application not starting with embedded CMS
 
 Fix `ConflictingBeanDefinitionException` that prevented application from starting when CMS was used in embedded mode

@@ -2,27 +2,27 @@
 
 == Table of Contents
 
-* Add integration test for embedded mode for XS2A
+* Added integration test for embedded mode for XS2A
 * Bugfix: the field `lastActionDate` was not updated in piis_consent DB table
-* Remove redundant request to delete ASPSP consent data on consent creation
-* Create Bulk Payment validators
-* Remove TppRedirectUri from TppInfo
-* Remove redundant request to retrieve the consent from the database on consent creation
-* Support country specific extensions for payments in the ASPSP profile
-* Support Additional Account Information in AIS
-* Check incoming requests to have required information
-* Refactoring: Move CMS scheduler tasks into separate module
-* Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow
-* Remove PSU Data from update consent status requests in cms-psu-api
+* Removed redundant request to delete ASPSP consent data on consent creation
+* Created Bulk Payment validators
+* Removed TppRedirectUri from TppInfo
+* Removed redundant request to retrieve the consent from the database on consent creation
+* Implemented support country specific extensions for payments in the ASPSP profile
+* Implemented support Additional Account Information in AIS
+* Checked incoming requests to have required information
+* Refactoring: moved CMS scheduler tasks into separate module
+* Bugfix: incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow
+* Removed PSU Data from update consent status requests in cms-psu-api
 * Bugfix: error on initiating payment with custom payment product and JSON body
-* Bugfix: Array "account" in Read Balances and Read Transaction List responses is empty for Global consent
-* Create common class for Jackson functionality
-* Add Internal Request-ID (inr-id) as additional parameter in scaRedirect URI
-* Use PaymentType enum instead of string values in Xs2aCreatePisAuthorisationRequest and Xs2aUpdatePisCommonPaymentPsuDataRequest
+* Bugfix: array "account" in Read Balances and Read Transaction List responses is empty for Global consent
+* Created common class for Jackson functionality
+* Added Internal Request-ID (inr-id) as additional parameter in scaRedirect URI
+* Refactoring: use PaymentType enum instead of string values in Xs2aCreatePisAuthorisationRequest and Xs2aUpdatePisCommonPaymentPsuDataRequest
 * Added special mapping for `dayOfExecution` in periodic payments
-* Remove JsonReader duplicates
+* Removed JsonReader duplicates
 
-== Add integration test for embedded mode for XS2A
+== Added integration test for embedded mode for XS2A
 
 Integration test has been added for XS2A to ensure that application correctly starts with embedded CMS and ASPSP Profile.
 
@@ -31,43 +31,43 @@ Integration test has been added for XS2A to ensure that application correctly st
 From now on, initial value is set to the field `lastActionDate` in case of PIIS consent creation.
 Also, new value is set if the consent was revoked.
 
-== Remove redundant request to delete ASPSP consent data on consent creation
+== Removed redundant request to delete ASPSP consent data on consent creation
 
 From now on, XS2A won't try to delete ASPSP consent data in CMS for newly created AIS consent before the consent was passed to SPI.
 
-== Create Bulk Payment validators
+== Created Bulk Payment validators
 
 From now on all fields of bulk payments are validated according to specification.
 
-== Remove TppRedirectUri from TppInfo
+== Removed TppRedirectUri from TppInfo
 
 From now on deprecated field `tppRedirectUri` is removed from `TppInfo`. And  fields `redirectUri`, `nokRedirectUri`,
 `cancelRedirectUri`, `cancelNokRedirectUri` are removed from `TppInfoEntity`. Columns `redirect_uri`, `nok_redirect_uri`,
 `cancel_redirect_uri`, `cancel_nok_redirect_uri` from `tpp_info table` will be removed in v.4.5.
 
-== Remove redundant request to retrieve the consent from the database on consent creation
+== Removed redundant request to retrieve the consent from the database on consent creation
 
 From now on, XS2A won't retrieve AIS consent from the CMS immediately after its creation.
 
-== Support country specific extensions for payments in the ASPSP profile
+== Implemented support country specific extensions for payments in the ASPSP profile
 
 From now on, ASPSP is able to configure payment for different countries `countryValidationSupported` property in PIS block.
 The configuration parameter takes country as ISO 3166-1 alpha-2 code (DE, AT, UA, etc). Germany (DE) is supported by default and Austria (AT) is available to choose from.
 To extend existing configuration register custom implementation in `CountryPaymentValidatorResolver` for new country based on default one `DefaultPaymentValidationConfigImpl`.
 Previous validation payment configuration in `application.properties` file has been removed.
 
-== Support Additional Account Information in AIS
+== Implemented support Additional Account Information in AIS
 
 From now on, Additional Account Information is supported in AIS. To activate its support set property `accountOwnerInformationSupported` in APSPS profile to "TRUE".
 After that, if TPP asks for additional account information during consent creation process it will be present in `SpiAdditionalInformationAccess` field in `SpiAccountConsent` object.
 Based on this information, when TPP makes request for retrieving information about PSU account (`GET /v1/accounts` or `GET /v1/accounts/{account-id}`),
 ASPSP can provide additional information in `ownerName` and `ownerAddress` fields in `SpiAccountDetails` object.
 
-== Check incoming requests to have required information
+== Checked incoming requests to have required information
 From now on, validation for update AIS, PIS and payment cancellation authorisation requests was added. It checks whether
 the provided authorisation data matches current authorisation stage. In negative case, `SERVICE_INVALID_400` is returned.
 
-== Refactoring: Move CMS scheduler tasks in separate module
+== Refactoring: moved CMS scheduler tasks in separate module
 
 From now on, all CMS scheduler tasks are moved into separate module `cms-scheduler-service`.
 Scheduler tasks will start automatically based on cron configuration in `application.properties` after adding dependency in standalone starter:
@@ -78,12 +78,12 @@ Scheduler tasks will start automatically based on cron configuration in `applica
             <version>${project.version}</version>
         </dependency>
 
-== Incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow
+== Bugfix: incorrect link in response to create consent authorisation request in Oauth SCA Redirect flow
 
 From now on, response to create consent authorisation request in Oauth SCA Redirect flow
 `/v1/consents/{consentId}/authorisations` contains `scaOAuth` link instead of `scaRedirect` link.
 
-== Remove PSU Data from update consent status requests in cms-psu-api
+== Removed PSU Data from update consent status requests in cms-psu-api
 
 From now on, method `authorisePartiallyConsent(PsuIdData, String, String)` in `CmsPsuAisService` interface
 is deprecated, use overloaded version `authorisePartiallyConsent(String, String)` instead. Headers `psuI`, `psuIdType`,
@@ -96,23 +96,23 @@ From now on, there is a possibility to create a custom payment product in the AS
 such type with JSON body. As there is no common model for them - such payments will pass to SPI level with their bodies as
 byte arrays.
 
-== Array "account" in Read Balances and Read Transaction List responses is empty for Global consent
+== Bugfix: array "account" in Read Balances and Read Transaction List responses is empty for Global consent
 
 From now on, the field `account` in read balances `GET /v1/accounts/{account-id}/balances` and read transactions
 `GET /v1/accounts/{account-id}/transactions` is not empty for global consent, and contains account reference.
 
-== Create common class for Jackson functionality
+== Created common class for Jackson functionality
 
 From now on Jackson functionality from ObjectMapper and JsonConverter is united into Xs2aObjectMapper class in xs2a-object-mapper module.
 
-== Add Internal Request-ID (inr-id) as additional parameter in scaRedirect URI
+== Added Internal Request-ID (inr-id) as additional parameter in scaRedirect URI
 
 From now on, ASPSP is able to modify redirect URLs for consent, payment and payment cancellation  with new parameter `{inr-id}`.
 This parameter will be filled with internal request ID during construction `scaRedirect` link.
 Also pay attention, if authorisation is created explicitly, value of this parameter
 will be fetched from previous request (consent creation, payment initiation or cancel payment).
 
-== Use PaymentType enum instead of string values in Xs2aCreatePisAuthorisationRequest and Xs2aUpdatePisCommonPaymentPsuDataRequest
+== Refactoring: use PaymentType enum instead of string values in Xs2aCreatePisAuthorisationRequest and Xs2aUpdatePisCommonPaymentPsuDataRequest
 
 From now on, in classes `Xs2aCreatePisAuthorisationRequest` and `Xs2aUpdatePisCommonPaymentPsuDataRequest`
 `paymentService` field is PaymentType enum instead of string.
@@ -122,6 +122,6 @@ From now on, in classes `Xs2aCreatePisAuthorisationRequest` and `Xs2aUpdatePisCo
 From now on, while creating periodic payments, there is a possibility to pass the `dayOfExecution` value like `5` and
 `05`. Both these variants will be passed to the SPI level (leading zero is ignored).
 
-== Remove JsonReader duplicates
+== Removed JsonReader duplicates
 
 From now on there is only one JsonReader class located in json-reader module.
