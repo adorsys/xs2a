@@ -411,7 +411,7 @@ public class Xs2aAisConsentServiceTest {
         ActionStatus actionStatus = ActionStatus.SUCCESS;
         ArgumentCaptor<AisConsentActionRequest> argumentCaptor = ArgumentCaptor.forClass(AisConsentActionRequest.class);
         //When
-        xs2aAisConsentService.consentActionLog(TPP_ID, CONSENT_ID, actionStatus, REQUEST_URI, true);
+        xs2aAisConsentService.consentActionLog(TPP_ID, CONSENT_ID, actionStatus, REQUEST_URI, true, null, null);
         //Then
         verify(aisConsentServiceEncrypted).checkConsentAndSaveActionLog(argumentCaptor.capture());
 

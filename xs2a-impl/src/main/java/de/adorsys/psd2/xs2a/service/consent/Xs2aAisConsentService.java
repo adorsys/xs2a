@@ -124,8 +124,9 @@ public class Xs2aAisConsentService {
      * @param requestUri   target URL of the request
      * @param updateUsage  Update usage indicator
      */
-    public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus, String requestUri, boolean updateUsage) {
-        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(tppId, consentId, actionStatus, requestUri, updateUsage));
+    public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus, String requestUri, boolean updateUsage,
+                                 String resourceId, String transactionId) {
+        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(tppId, consentId, actionStatus, requestUri, updateUsage, resourceId, transactionId));
     }
 
     /**

@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.web.xs2a.controller;
 
 
 import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -45,6 +46,7 @@ import static org.mockito.Mockito.*;
 public class AisConsentControllerTest {
 
     private static final String CONSENT_ID = "ed4190c7-64ee-42fb-b671-d62645f54672";
+    private static final String ACCOUNT_ID = "testAccountId";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final ConsentStatus CONSENT_STATUS = ConsentStatus.VALID;
     private static final ConsentStatus WRONG_CONSENT_STATUS = ConsentStatus.EXPIRED;
@@ -64,6 +66,8 @@ public class AisConsentControllerTest {
 
     @Mock
     private AisConsentServiceEncrypted aisConsentService;
+    @Mock
+    private AccountServiceEncrypted accountServiceEncrypted;
     @Mock
     private AisConsentAuthorisationServiceEncrypted aisAuthorisationServiceEncrypted;
 
@@ -326,6 +330,28 @@ public class AisConsentControllerTest {
         ResponseEntity<AuthorisationScaApproachResponse> response = aisConsentController.getAuthorisationScaApproach(AUTHORIZATION_ID);
 
         verify(aisAuthorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(eq(AUTHORIZATION_ID));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isNull();
+    }
+
+    @Test
+    public void saveNumberOfTransactions_success() {
+        when(accountServiceEncrypted.saveNumberOfTransactions(CONSENT_ID, ACCOUNT_ID, 5))
+            .thenReturn(Boolean.TRUE);
+
+        ResponseEntity<Boolean> response = aisConsentController.saveNumberOfTransactions(CONSENT_ID, ACCOUNT_ID, 5);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+    }
+
+    @Test
+    public void saveNumberOfTransactions_error() {
+        when(accountServiceEncrypted.saveNumberOfTransactions(CONSENT_ID, ACCOUNT_ID, 5))
+            .thenReturn(Boolean.FALSE);
+
+        ResponseEntity<Boolean> response = aisConsentController.saveNumberOfTransactions(CONSENT_ID, ACCOUNT_ID, 5);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isNull();

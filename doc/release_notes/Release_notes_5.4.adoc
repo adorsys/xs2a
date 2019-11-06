@@ -7,6 +7,7 @@
 * Not possible to work with consent that was created in xs2a v.5.1 and earlier
 * Incorrect scaStatus for failed authorisation PIS/AIS/Payments-Cancellation
 * Provide creation date and time in SPI Request
+* Incorrect consent status for already used one time consent
 
 == Implement support of Multicurrency Accounts
 
@@ -33,3 +34,9 @@ encountering `PSU_CREDENTIALS_INVALID`.
 == Provide creation date and time in SPI Request
 
 From now on, consent and payment in SPI level incorporate `creationTimestamp` field that represents information about when object was created.
+
+== Incorrect consent status for already used one time consent
+
+From now on, all one-off consents (`recurringIndicator` = false and `frequencyPerDay` = 1) are being checked for
+using all possible combinations of GET endpoints (accounts, balances, transactions). If all possible GET endpoints were
+used - the consent receives the `EXPIRED` status.
