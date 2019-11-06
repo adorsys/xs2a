@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,4 +60,6 @@ public class PisAspspProfileBankSetting {
      * Indicates for which country the payment will be validated
      */
     private String countryValidationSupported;
+
+    private List<String> supportedTransactionStatusFormats;
 }

@@ -85,6 +85,7 @@ public class AspspProfileControllerTest {
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
     private static final boolean ACCOUNT_OWNER_INFORMATION_SUPPORTED = true;
     private static final String COUNTRY_VALIDATION_SUPPORTED = "DE";
+    private static final List<String> SUPPORTED_TRANSACTION_STATUS_FORMATS = Arrays.asList("application/json", "application/xml");
 
     @InjectMocks
     private AspspProfileController aspspProfileController;
@@ -150,7 +151,9 @@ public class AspspProfileControllerTest {
                                                                 NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS,
                                                                 PAYMENT_CANCELLATION_AUTHORISATION_MANDATED,
                                                                 pisRedirectLinkToOnlineBanking,
-                                                                COUNTRY_VALIDATION_SUPPORTED);
+                                                                COUNTRY_VALIDATION_SUPPORTED,
+                                                                SUPPORTED_TRANSACTION_STATUS_FORMATS
+        );
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED);
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(SCA_REDIRECT_FLOW,
                                                                          OAUTH_CONFIGURATION_URL,

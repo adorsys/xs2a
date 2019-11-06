@@ -85,7 +85,7 @@ public class AspspProfileServiceTest {
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
     private static final boolean ACCOUNT_OWNER_INFORMATION_SUPPORTED = true;
     private static final String COUNTRY_VALIDATION_SUPPORTED = "DE";
-
+    private static final List<String> SUPPORTED_TRANSACTION_STATUS_FORMATS = Arrays.asList("application/json", "application/xml");
 
     @InjectMocks
     private AspspProfileServiceImpl aspspProfileService;
@@ -229,7 +229,8 @@ public class AspspProfileServiceTest {
                                                                         NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS,
                                                                         PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
                                                                         pisRedirectLinkToOnlineBanking,
-                                                                        COUNTRY_VALIDATION_SUPPORTED);
+                                                                        COUNTRY_VALIDATION_SUPPORTED,
+                                                                        SUPPORTED_TRANSACTION_STATUS_FORMATS);
         PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(PIIS_CONSENT_SUPPORTED);
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting(Collections.singletonList(REDIRECT_APPROACH),
                                                                                  SCA_REDIRECT_FLOW,

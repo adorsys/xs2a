@@ -50,10 +50,16 @@ into database, and when you'll try to get it, the response will contain proper `
 
 == Support Get Transaction Status Response with raw format
 
-From now on, it's possible to return transaction statuses on Get Transaction Status request (`GET /v1/{payment-service}/{paymentId}/status`) in formats other than JSON.
+From now on, it's possible to return transaction statuses on Get Transaction Status request(`GET /v1/{payment-service}/{paymentId}/status`) in formats other than JSON.
 
-`PaymentSpi#getPaymentStatusById` now gets a string of acceptable content-types from TPP(received in `Accept` header of the request) and depending on its value SPI may return either JSON response (by setting `SpiGetPaymentStatusResponse#responseContentType` to `application/json`), or some custom response.
+`PaymentSpi#getPaymentStatusById` now gets a string of acceptable content-types from TPP(received in `Accept` header of the request) and depending on its value SPI may return either JSON response(by setting `SpiGetPaymentStatusResponse#responseContentType` to `application/json`), or some custom response.
 To return custom response SPI should set the response body in `paymentStatusRaw` and `responseContentType` to appropriate value in `SpiGetPaymentStatusResponse`.
 Response body will be returned to the TPP without any additional transformation.
 
 `PaymentSpi#getPaymentById` has been extended to accept requested content-types from TPP as well.
+
+== Validate Accept header on Get Transaction Status request
+
+From now on, `Accept` header is being validated on Get Transaction Status request (`GET /v1/{payment-service}/{paymentId}/status`) based on new `supportedTransactionStatusFormats` property in the ASPSP profile.
+If `Accept` header doesn't contain at least one of the allowed formats, `REQUESTED_FORMATS_INVALID` error with status code `406` will be returned in the response to the TPP.
+If `supportedTransactionStatusFormats` property hasn't been configured in the profile, no validation will occur.

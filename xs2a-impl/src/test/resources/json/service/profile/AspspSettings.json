@@ -5,5 +5,10 @@
         "BOOKED"
       ]
     }
+  },
+  "pis": {
+    "supportedTransactionStatusFormats": [
+      "application/json"
+    ]
   }
 }
