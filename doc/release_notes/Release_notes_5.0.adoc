@@ -3,21 +3,21 @@
 == Table of Contents
 * ASPSP profile was refactored and REQUIRES MIGRATION!
 * Bugfix: TPP domain validator ignores non-domain `tppName` field
-* Remove deprecated frequencyPerDay for PiisConsent
+* Removed deprecated frequencyPerDay for PiisConsent
 * Bugfix: statuses of obsoleted AIS consents
-* Remove column `tpp_info_id` from `authorisation_template` table
-* Multilevel SCA for Establish Consent in Redirect approach
+* Removed column `tpp_info_id` from `authorisation_template` table
+* Provided multilevel SCA for Establish Consent in Redirect approach
 * Bugfix: changed link for update PSU data without password
-* Remove deprecated TppInfo from PiisConsent
+* Removed deprecated TppInfo from PiisConsent
 * Bugfix: changed link for update PSU data without password for payment cancellation
-* Update enum MessageErrorCode.
-* Add indexes to the CMS database
-* Bugfix: Providing incorrect request body on PIIS consent creation in CMS-ASPSP-API results in Internal Server Error
-* SupportedTransactionApplicationTypes in profile should be String
-* Extend XS2A with Austria requirements to payment products
-* Bugfix: Incorrect error code in response for ReadAccountList for consent which was revoked by PSU
-* Bugfix: Incorrect TransactionId in read transaction details leads to internal server error
-* Only Pending transactions should be available in getTransactionList response when query param set to "pending"
+* Updated enum MessageErrorCode
+* Added indexes to the CMS database
+* Bugfix: providing incorrect request body on PIIS consent creation in CMS-ASPSP-API results in Internal Server Error
+* Bugfix: SupportedTransactionApplicationTypes in profile should be String
+* Extended XS2A with Austria requirements to payment products
+* Bugfix: incorrect error code in response for ReadAccountList for consent which was revoked by PSU
+* Bugfix: incorrect TransactionId in read transaction details leads to internal server error
+* Bugfix: only Pending transactions should be available in getTransactionList response when query param set to "pending"
 
 == ASPSP profile was refactored and REQUIRES MIGRATION!
 
@@ -45,7 +45,7 @@ profile for `aspsp-profile-server` application should be enabled. The migration 
 From now on, if `tppName` is not a proper domain name, it will be ignored by XS2A in TPP domain validation.
 Before, java `IllegalArgumentException` was thrown by the validator.
 
-== Remove deprecated frequencyPerDay for PiisConsent
+== Removed deprecated frequencyPerDay for PiisConsent
 
 From now on, the deprecated field `frequencyPerDay` has been removed from `CreatePiisConsentRequest`,
 `PiisConsentEntity`, and `PiisConsent`.
@@ -58,11 +58,11 @@ When new AIS consent for account for one TPP and one PSU is created with reccuri
 The same works for consents with `multilevelSca`
 set to `true`: if old consents have `PARTIALLY_AUTHORISED` status - they obtain `REJECTED` status.
 
-== Remove column `tpp_info_id` from `authorisation_template` table
+== Removed column `tpp_info_id` from `authorisation_template` table
 
 From now on, `tpp_info_id` column has been removed from `authorisation_template` table.
 
-== Multilevel SCA for Establish Consent in Redirect approach
+== Provided multilevel SCA for Establish Consent in Redirect approach
 
 New method `CmsPsuAisServiceInternal::authorisePartiallyConsent` was added to CMS-PSU-API to authorise AIS Consent partially (`POST /psu-api/v1/ais/consent/{consent-id}/authorise-partially-consent`).
 
@@ -72,7 +72,7 @@ From now on, after sending the update PSU data request (PUT `/v1/consents/{conse
 with `PSU-ID` header but with no body, the response contains `updatePsuAuthentication` link. This works if you start the
 authorisation in EMBEDDED approach explicitly.
 
-== Remove deprecated TppInfo from PiisConsent
+== Removed deprecated TppInfo from PiisConsent
 
 From now on, the deprecated field `tppInfo` is removed from `PiisConsentEntity`, `PiisConsent`, and
 `CreatePiisConsentRequest`.
@@ -85,12 +85,12 @@ From now on, after sending the update PSU data request for payment cancellation 
 with `PSU-ID` header but with no body, the response contains `updatePsuAuthentication` link. This works if you start the
 authorisation for payment cancellation in EMBEDDED approach.
 
-== Update enum MessageErrorCode.
+== Updated enum MessageErrorCode
 
 From now on, enum `MessageErrorCode` contains new values: `PARAMETER_NOT_CONSISTENT`, `REFERENCE_MIX_INVALID`,
 `REFERENCE_STATUS_INVALID`, `ROLE_INVALID`.
 
-== Add indexes to the CMS database
+== Added indexes to the CMS database
 
 Several indexes were added to the CMS database to increase performance:
 
@@ -99,18 +99,18 @@ Several indexes were added to the CMS database to increase performance:
 - index on `payment_id` in `pis_payment_data` table
 - index on `tpp_info_id` in `tpp_info_role` table
 
-== Bugfix: Providing incorrect request body on PIIS consent creation in CMS-ASPSP-API results in Internal Server Error
+== Bugfix: providing incorrect request body on PIIS consent creation in CMS-ASPSP-API results in Internal Server Error
 
 From now on, when you try to create PIIS consent `POST /aspsp-api/v1/piis/consents` with incorrect
 request body, you'll get status `400 Bad request` and message `Http message is not readable`.
 
-== SupportedTransactionApplicationTypes in profile should be String
+== Bugfix: SupportedTransactionApplicationTypes in profile should be String
 
 From now on, the field `supportedTransactionApplicationTypes` is a String. Also, the endpoint
 `GET /v1/accounts/{account-id}/balances` now responds with `401 Unauthorized - CONSENT_INVALID`, if providing an empty
 `account-id`.
 
-== Extend XS2A with Austria requirements to payment products
+== Extended XS2A with Austria requirements to payment products
 
 Payment validation was extended for supporting different countries. Technically all rules for payment have been transferred to `application.properties` in the format `validation.payment.<field>.<rule>`.
 Available rules for field:
@@ -124,16 +124,16 @@ To apply new file add `<country>` to active profiles for application.
 
 By default, configuration is for Germany and configuration for Austria was added as well.
 
-== Bugfix: Incorrect error code in response for ReadAccountList for consent which was revoked by PSU
+== Bugfix: incorrect error code in response for ReadAccountList for consent which was revoked by PSU
 
 From now on, when you try to get Account List for consent which was revoked by PSU with request `GET /v1/accounts`
 you will get response code `401 'CONSENT_INVALID'` with text `Consent was revoked by PSU`
 
-== Incorrect TransactionId in read transaction details leads to internal server error
+== Bugfix: incorrect TransactionId in read transaction details leads to internal server error
 
 From now on, if TPP provides incorrect transaction ID in read transaction details `GET /v1/accounts/{account-id}/transactions/{resourceId}` it will receive 403 response code with `RESOURCE_UNKNOWN` message.
 
-== Only Pending transactions should be available in getTransactionList response when query param set to "pending"
+== Bugfix: only Pending transactions should be available in getTransactionList response when query param set to "pending"
 
 From now on, the query parameter `bookingStatus` in `GET /v1/accounts/{account-id}/transactions`
 is capable of filtering. The endpoint returns only those types of transactions, whose `bookingStatus` equals

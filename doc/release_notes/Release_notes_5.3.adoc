@@ -2,30 +2,30 @@
 
 == Table of Contents
 
-* Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
-* Provide header Authorization in ContextData
-* Feature: Extend CMS to store SCA method and TAN for Redirect approach
+* Fixed incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
+* Provided header Authorization in ContextData
+* Feature: extend CMS to store SCA method and TAN for Redirect approach
 * Bugfix: PIIS consent status is being changed on implicit revocation
-* Save payment transaction status given by ASPSP
-* When bank returns PATC status for payment, multilevel flag in CMS should be set to true
-* Support OAuth Redirect for PIS, AIS and Payment Cancellation
-* Validate access of TPP based on role's header
+* Feature: provided opportunity to save payment transaction status given by ASPSP
+* Bugfix: when bank returns PATC status for payment, multilevel flag in CMS should be set to true
+* Implemented support OAuth Redirect for PIS, AIS and Payment Cancellation
+* Added validation for access of TPP based on role's header
 * Fixed typos in PSD2 yaml file
-* Add statuses to logs
+* Added statuses to logs
 * Refactoring: consent and payment authorisation flows were refactored
-* Support pre-step and integrated OAuth modes
+* Implemented support pre-step and integrated OAuth modes
 
-== Incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
+== Fixed incorrect scaStatus for Start the authorisation request (redirect explicit PIS/AIS)
 
 From now on, if you try to start authorization process for payment or consent without PSU-ID header for  payment or
 consent which was initiated with PSU-ID header, you’ll get scaStatus psuIdentified.
 
-== Provide header Authorization in ContextData
+== Provided header Authorization in ContextData
 
 From now on, there is a possibility to use header `Authorization` in XS2A requests, which stores the OAuth2 bearer token.
 This token passes the SPI level inside the SpiContextData object.
 
-== Feature: Extend CMS to store SCA method and TAN for Redirect approach
+== Feature: extend CMS to store SCA method and TAN for Redirect approach
 
 From now on, there is a possibility for online banking to send optional SCA method and optional authentication data (e.g. TAN) in CMS-PSU-API update authorisation status request (`PUT /psu-api/v1/payment/{payment-id}/authorisation/{authorisation-id}/status/{status}`
 for payments and `PUT /psu-api/v1/ais/consent/{consent-id}/authorisation/{authorisation-id}/status/{status}` for AIS consents).
@@ -45,21 +45,21 @@ Both fields are stored in CMS in 'ais_consent_authorization' and `pis_consent_au
 
 From now on, implicit consent revocation on creating new PIIS consent will no longer change consent status to `REVOKED_BY_PSU` if its current status is finalised.
 
-== Save payment transaction status given by ASPSP
+== Feature: provided opportunity to save payment transaction status given by ASPSP
 
 From now on there is new endpoint in CMS-ASPSP-API: `PUT /aspsp-api/v1/pis/transaction-status/{payment-id}/status/{status}`,
 where you can change payment's transaction status by payment id even if it is already finalised.
 
-== When bank returns PATC status for payment, multilevel flag in CMS should be set to true
+== Bugfix: when bank returns PATC status for payment, multilevel flag in CMS should be set to true
 
 From now on, when bank returns `PATC` status for payment, multilevel flag in `pis_common_payment` table is
 set to true.
 
-== Support OAuth Redirect for PIS, AIS and Payment Cancellation
+== Implemented support OAuth Redirect for PIS, AIS and Payment Cancellation
 
 From now on, integrated OAUTH flow is supported for PIS, AIS and Payment Cancellation.
 
-== Validate access of TPP based on role's header
+== Added validation for access of TPP based on role's header
 
 From now on, TPP access to XS2A resources may be verified based on incoming `Tpp-Roles-Allowed` header, which can be set between ASPSP’s gateway and xs2a,
 but not before the ASPSP’s gateway (one can use adorsys QwacAssessor (https://adorsys-platform.de/solutions/qwac-assessor/) for it).
@@ -72,7 +72,7 @@ Since the pasportisation process in place acts without changing the TPP’s cert
 
 All typos were fixed in BerlinGroup PSD2 yaml file. Also, all `description` fields were formatted in the same style.
 
-== Add statuses to logs
+== Added statuses to logs
 
 From now on, `consentStatus`, `paymentStatus` and `scaStatus` values are being logged to `access-log`
 for all AIS and PIS endpoints, if they were involved in the request.
@@ -82,7 +82,7 @@ for all AIS and PIS endpoints, if they were involved in the request.
 Authorisation process for the consent and payment initiation and payment cancellation were refactored - chain of responsibility
 design pattern was applied. The authorisation algorithm remained the same.
 
-== Support pre-step and integrated OAuth modes
+== Implemented support pre-step and integrated OAuth modes
 
 From now on, there is a possibility to use 3 variants of SCA redirect approach:
 

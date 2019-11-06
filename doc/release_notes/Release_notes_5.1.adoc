@@ -2,22 +2,22 @@
 
 == Table of Contents
 
-* Change yaml-generator to correct model Objects equals
-* SCA exemption is supported
-* Bugfix: Wrong PSU-ID can authorise endpoints
-* Bugfix: Don't provide `creditorAddress` field in get payment response if it was absent in initiate payment request
-* Bugfix: Wrong `authorisation_id` can authorise
-* Relative links are supported
-* Optional SCA for Global Consent
-* ScaApproachResolver cleanup
-* Bugfix: Don't check the authorisation result of `AuthorisationSpi#authorisePsu`
-* Bugfix: Supported application types for getting transactions list are represented as an array
+* Changed yaml-generator to correct model Objects equals
+* Implemented support of SCA exemption
+* Bugfix: wrong PSU-ID can authorise endpoints
+* Bugfix: don't provide `creditorAddress` field in get payment response if it was absent in initiate payment request
+* Bugfix: wrong `authorisation_id` can authorise
+* Implemented support of Relative links
+* Provided optional SCA for Global Consent
+* Refactoring: ScaApproachResolver cleanup
+* Bugfix: don't check the authorisation result of `AuthorisationSpi#authorisePsu`
+* Bugfix: supported application types for getting transactions list are represented as an array
 
-== Change yaml-generator to correct model Objects equals
+== Changed yaml-generator to correct model Objects equals
 
 From now on, instances of generated models in `xs2a-server-api` module will correctly compare superclass properties in `equals` method.
 
-== SCA exemption is supported
+== Implemented support of SCA exemption
 
 From now on, SCA exemption is possible for bulk and single payment initiation in embedded approach. To support this, return type of
 `AuthorisationSpi#authorisePsu` method was changed from `SpiAuthorisationStatus` to `SpiPsuAuthorisationResponse`.
@@ -26,7 +26,7 @@ field, which is taken into account by XS2A for performing SCA exemption. If the 
 bulk or single will be successful and `scaExempted` is `true` - SCA will not be performed, 'PaymentSpi#executePaymentWithoutSca'
 will be invoked and authorisation status will be set to `EXEMPTED`. SCA exemption is supported for multilevel SCA too.
 
-== Wrong PSU-ID can authorise endpoints
+== Bugfix: wrong PSU-ID can authorise endpoints
 
 From now on, PSU that is different from the PSU in authorisation can not update data on the authorisation resource.
 This applies to the following endpoints:
@@ -35,12 +35,12 @@ This applies to the following endpoints:
 * payment `PUT /v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}`,
 * payment cancellation `PUT /v1/{payment-service}/{payment-product}/{payment-id}/cancellation-authorisations/{cancellation-id}`.
 
-== Bugfix: Don't provide `creditorAddress` field in get payment response if it was absent in initiate payment request
+== Bugfix: don't provide `creditorAddress` field in get payment response if it was absent in initiate payment request
 
 From now on, `creditorAddress` field is absent in get payment response `GET /v1/{payment-service}/{payment-product}/{paymentId}`
 if it was not provided in initiate payment request `POST /v1/{payment-service}/{payment-product}`
 
-== Bugfix: Wrong `authorisationId` can authorise
+== Bugfix: wrong `authorisationId` can authorise
 
 Fixed bug with updating authorisation by wrong `authorization_id`. From now on, endpoints below return `403 RESOURCE_UNKNOWN`:
 
@@ -48,30 +48,30 @@ Fixed bug with updating authorisation by wrong `authorization_id`. From now on, 
 * `PUT /v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}`
 * `PUT /v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}`
 
-== Relative links are supported
+== Implemented support of Relative links
 
 Before, ASPSP could set up in ASPSP profile the way, how the links are built by the XS2A (all links except `scaRedirect`).
 This mechanism allowed the usage of only absolute links (`xs2aBaseLinksUrl` property in APSPS profile). From now on, the
 relative links are supported as well. To have result links as relative ones, set in ASPSP profile `forceXs2aBaseLinksUrl`
 as `true` and `xs2aBaseLinksUrl` with a value, starting with `/` (for example `/`, `/myhost`, etc.).
 
-== Optional SCA for Global Consent
+== Provided optional SCA for Global Consent
 
 New option `scaByOneTimeGlobalConsentRequired` has been added to the profile, indicating whether SCA has be performed to validate one-time global consent.
 If `scaByOneTimeGlobalConsentRequired` is set to `false`, then SCA for one-time global consent is not needed, meaning that authorisation resource for such consent will become finalised after providing PSU password in Update PSU Data request.
 
-== ScaApproachResolver cleanup
+== Refactoring: ScaApproachResolver cleanup
 
 From now on, `ScaApproachResolver` fetches, if possible, information out of an authorisation object instead of resolving it directly.
 Furthermore, the header `Aspsp-Sca-Approach` isn't returned, if consent creation fails.
 Appropriate changes have been made to remove `ScaApproachResolver` 's reliance to an existing authorisation by a given id.
 
-== Bugfix: Don't check the authorisation result of `AuthorisationSpi#authorisePsu`
+== Bugfix: don't check the authorisation result of `AuthorisationSpi#authorisePsu`
 
 From now on, XS2A will check the authorisation result of `AuthorisationSpi#authorisePsu` and respond with 401
 `PSU_CREDENTIALS_INVALID` error code.
 
-== Bugfix: Supported application types for getting transactions list are represented as an array
+== Bugfix: supported application types for getting transactions list are represented as an array
 
 From now on, the ASPSP profile supports list of strings as supported application media types for `GET /v1/accounts/{account-id}/transactions`
 request. E.g. `application/json`, `application/xml`.

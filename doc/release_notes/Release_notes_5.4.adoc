@@ -2,18 +2,19 @@
 
 == Table of Contents
 
-* Implement support of Multicurrency Accounts
-* Improve payment type validation
-* Not possible to work with consent that was created in xs2a v.5.1 and earlier
-* Incorrect scaStatus for failed authorisation PIS/AIS/Payments-Cancellation
-* Provide creation date and time in SPI Request
-* Incorrect consent status for already used one time consent
-* Read the SCA status returns incorrect SCA status after Update PSU data request without PSU-ID in header
-* Support Get Transaction Status Response with raw format
-* Make validation of requests according to TPP roles from certificate optional
+* Implemented support of Multicurrency Accounts
+* Improved payment type validation
+* Bugfix: not possible to work with consent that was created in xs2a v.5.1 and earlier
+* Fixed incorrect scaStatus for failed authorisation PIS/AIS/Payments-Cancellation
+* Provided creation date and time in SPI Request
+* Fixed incorrect consent status for already used one time consent
+* Bugfix: read the SCA status returns incorrect SCA status after Update PSU data request without PSU-ID in header
+* Implemented support of Get Transaction Status Response with raw format
+* Added validation for Accept header on Get Transaction Status request
+* Made validation of requests according to TPP roles from certificate optional
 * Internal CMS-XS2A-API was refactored
 
-== Implement support of Multicurrency Accounts
+== Implemented support of Multicurrency Accounts
 
 From now on, XS2A supports flows for multicurrency accounts.
 A multicurrency account is an account which is a collection of different sub-accounts which are all addressed by the same account identifier like an IBAN by e.g. payment initiating parties.
@@ -21,44 +22,36 @@ The sub-accounts are legally different accounts and they all differ in their cur
 An account identifier like an IBAN together with a currency always addresses uniquely a sub-account of a multicurrency account.
 ASPSP can grant data access to multicurrency account on SUBACCOUNT, AGGREGATION or AGGREGATION_AND_SUBACCOUNT level by setting `multicurrencyAccountLevelSupported` property in ASPSP-Profile.
 
-== Improve payment type validation
+== Improved payment type validation
 
 From now on, all payment and payment cancellation requests are validated to have proper
 payment type and payment service.
 
-== Make validation of requests according to TPP roles from certificate optional
-
-TPP roles validation based on QWAC certificate has been reintroduced.
-In case of receiving `Tpp-Roles-Allowed` header, TPP roles will be validated according to this information.
-If `Tpp-Roles-Allowed` header is absent, then validation will depend on `checkTppRolesFromCertificateSupported` parameter in ASPSP Profile.
-If `checkTppRolesFromCertificateSupported` parameter is set to `true`, then TPP roles from certificate will be validated, otherwise no validation will occur.
-Parameter `checkTppRolesFromCertificateSupported` in ASPSP Profile is enabled by default.
-
-== Not possible to work with consent that was created in xs2a v.5.1 and earlier
+== Bugfix: not possible to work with consent that was created in xs2a v.5.1 and earlier
 
 From now on, it is possible to work with consent that was created in xs2a v.5.1 and earlier.
 
-== Incorrect scaStatus for failed authorisation PIS/AIS/Payments-Cancellation
+== Fixed incorrect scaStatus for failed authorisation PIS/AIS/Payments-Cancellation
 
 From now on, update PSU data and initiate endpoints for PIS, AIS and Payment-Cancellation return `scaStatus: failed` when
 encountering `PSU_CREDENTIALS_INVALID`.
 
-== Provide creation date and time in SPI Request
+== Provided creation date and time in SPI Request
 
 From now on, consent and payment in SPI level incorporate `creationTimestamp` field that represents information about when object was created.
 
-== Incorrect consent status for already used one time consent
+== Fixed incorrect consent status for already used one time consent
 
 From now on, all one-off consents (`recurringIndicator` = false and `frequencyPerDay` = 1) are being checked for
 using all possible combinations of GET endpoints (accounts, balances, transactions). If all possible GET endpoints were
 used - the consent receives the `EXPIRED` status.
 
-== Read the SCA status returns incorrect SCA status after Update PSU data request without PSU-ID in header
+== Bugfix: read the SCA status returns incorrect SCA status after Update PSU data request without PSU-ID in header
 
 From now on, if you try to update PSU data without PSU-ID in header, `scaStatus` from response will be persisted
 into database, and when you'll try to get it, the response will contain proper `scaStatus`.
 
-== Support Get Transaction Status Response with raw format
+== Implemented support of Get Transaction Status Response with raw format
 
 From now on, it's possible to return transaction statuses on Get Transaction Status request(`GET /v1/{payment-service}/{paymentId}/status`) in formats other than JSON.
 
@@ -68,11 +61,19 @@ Response body will be returned to the TPP without any additional transformation.
 
 `PaymentSpi#getPaymentById` has been extended to accept requested content-types from TPP as well.
 
-== Validate Accept header on Get Transaction Status request
+== Added validation for Accept header on Get Transaction Status request
 
 From now on, `Accept` header is being validated on Get Transaction Status request (`GET /v1/{payment-service}/{paymentId}/status`) based on new `supportedTransactionStatusFormats` property in the ASPSP profile.
 If `Accept` header doesn't contain at least one of the allowed formats, `REQUESTED_FORMATS_INVALID` error with status code `406` will be returned in the response to the TPP.
 If `supportedTransactionStatusFormats` property hasn't been configured in the profile, no validation will occur.
+
+== Made validation of requests according to TPP roles from certificate optional
+
+TPP roles validation based on QWAC certificate has been reintroduced.
+In case of receiving `Tpp-Roles-Allowed` header, TPP roles will be validated according to this information.
+If `Tpp-Roles-Allowed` header is absent, then validation will depend on `checkTppRolesFromCertificateSupported` parameter in ASPSP Profile.
+If `checkTppRolesFromCertificateSupported` parameter is set to `true`, then TPP roles from certificate will be validated, otherwise no validation will occur.
+Parameter `checkTppRolesFromCertificateSupported` in ASPSP Profile is enabled by default.
 
 == Internal CMS-XS2A-API was refactored
 From now on, all internal CMS-XS2A service methods return `CmsResponse<T>` object. This object wraps the previous
