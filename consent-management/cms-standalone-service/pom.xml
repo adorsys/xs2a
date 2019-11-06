@@ -27,6 +27,7 @@
 
 	<properties>
 		<ruleset.basedir>../..</ruleset.basedir>
+		<ci.build.number>&#8203;</ci.build.number>
 	</properties>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -185,13 +186,25 @@
 				<configuration>
 					<includeSystemScope>true</includeSystemScope>
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                        <configuration>
+                            <additionalProperties>
+                                <java.version>${java.version}</java.version>
+                                <build.number>${ci.build.number}</build.number>
+                            </additionalProperties>
+                        </configuration>
+                    </execution>
+                </executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -37,12 +37,26 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-core-web</artifactId>
-            <version>4.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-psu-api</artifactId>
-            <version>4.4-SNAPSHOT</version>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <version>${spring-boot.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- other dependencies -->
@@ -64,12 +78,6 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -103,8 +111,6 @@
                                         <exclude>de.adorsys.psd2:consent-api</exclude>
                                         <exclude>de.adorsys.psd2:consent-management-system</exclude>
                                         <exclude>de.adorsys.psd2:cms-client</exclude>
-                                        <exclude>de.adorsys.psd2:spring-boot-1.5.x-support</exclude>
-                                        <exclude>de.adorsys.psd2:spring-boot-2.x-support</exclude>
                                         <exclude>de.adorsys.psd2:xs2a-server-api</exclude>
                                         <exclude>de.adorsys.psd2:xs2a-impl</exclude>
                                         <exclude>de.adorsys.psd2:spi-api</exclude>
