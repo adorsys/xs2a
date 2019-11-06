@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PisCommonPaymentRemoteUrls;
@@ -84,10 +86,10 @@ public class PisCommonPaymentServiceRemoteTest {
         when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
             .thenReturn(ResponseEntity.ok(expected));
 
-        Optional<GetPisAuthorisationResponse> actual = service.getPisAuthorisationById(AUTHORISATION_ID);
+        CmsResponse<GetPisAuthorisationResponse> actual = service.getPisAuthorisationById(AUTHORISATION_ID);
 
-        assertTrue(actual.isPresent());
-        assertEquals(expected, actual.get());
+        assertTrue(actual.isSuccessful());
+        assertEquals(expected, actual.getPayload());
 
         verify(remotePisCommonPaymentUrls).getPisAuthorisationById();
     }
@@ -99,9 +101,9 @@ public class PisCommonPaymentServiceRemoteTest {
         when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
             .thenReturn(ResponseEntity.ok().build());
 
-        Optional<GetPisAuthorisationResponse> actual = service.getPisAuthorisationById(AUTHORISATION_ID);
+        CmsResponse<GetPisAuthorisationResponse> actual = service.getPisAuthorisationById(AUTHORISATION_ID);
 
-        assertFalse(actual.isPresent());
+        assertFalse(actual.isSuccessful());
     }
 
     @Test
@@ -111,9 +113,9 @@ public class PisCommonPaymentServiceRemoteTest {
         when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
             .thenThrow(CmsRestException.class);
 
-        Optional<GetPisAuthorisationResponse> actual = service.getPisAuthorisationById(AUTHORISATION_ID);
+        CmsResponse<GetPisAuthorisationResponse> actual = service.getPisAuthorisationById(AUTHORISATION_ID);
 
-        assertFalse(actual.isPresent());
+        assertFalse(actual.isSuccessful());
     }
 
     @Test
@@ -124,10 +126,10 @@ public class PisCommonPaymentServiceRemoteTest {
         when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
             .thenReturn(ResponseEntity.ok(expected));
 
-        Optional<GetPisAuthorisationResponse> actual = service.getPisCancellationAuthorisationById(AUTHORISATION_ID);
+        CmsResponse<GetPisAuthorisationResponse> actual = service.getPisCancellationAuthorisationById(AUTHORISATION_ID);
 
-        assertTrue(actual.isPresent());
-        assertEquals(expected, actual.get());
+        assertTrue(actual.isSuccessful());
+        assertEquals(expected, actual.getPayload());
 
         verify(remotePisCommonPaymentUrls).getPisCancellationAuthorisationById();
     }
@@ -139,9 +141,9 @@ public class PisCommonPaymentServiceRemoteTest {
         when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
             .thenReturn(ResponseEntity.ok().build());
 
-        Optional<GetPisAuthorisationResponse> actual = service.getPisCancellationAuthorisationById(AUTHORISATION_ID);
+        CmsResponse<GetPisAuthorisationResponse> actual = service.getPisCancellationAuthorisationById(AUTHORISATION_ID);
 
-        assertFalse(actual.isPresent());
+        assertFalse(actual.isSuccessful());
     }
 
     @Test
@@ -151,9 +153,9 @@ public class PisCommonPaymentServiceRemoteTest {
         when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
             .thenThrow(CmsRestException.class);
 
-        Optional<GetPisAuthorisationResponse> actual = service.getPisCancellationAuthorisationById(AUTHORISATION_ID);
+        CmsResponse<GetPisAuthorisationResponse> actual = service.getPisCancellationAuthorisationById(AUTHORISATION_ID);
 
-        assertFalse(actual.isPresent());
+        assertFalse(actual.isSuccessful());
     }
 
     @Test
@@ -161,8 +163,9 @@ public class PisCommonPaymentServiceRemoteTest {
         when(remotePisCommonPaymentUrls.updateMultilevelScaRequired()).thenReturn(UPDATE_MULTILEVEL_SCA_URL);
         when(consentRestTemplate.exchange(UPDATE_MULTILEVEL_SCA_URL, HttpMethod.PUT, null, Boolean.class, PAYMENT_ID, true)).thenReturn(ResponseEntity.ok(true));
 
-        boolean actualResponse = service.updateMultilevelSca(PAYMENT_ID, true);
+        CmsResponse<Boolean> actualResponse = service.updateMultilevelSca(PAYMENT_ID, true);
 
-        assertTrue(actualResponse);
+        assertTrue(actualResponse.isSuccessful());
+        assertTrue(actualResponse.getPayload());
     }
 }

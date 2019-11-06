@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.*;
@@ -44,7 +45,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+
+import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
 
 // TODO discuss error handling (e.g. 400 HttpCode response) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
 @Slf4j
@@ -56,173 +58,281 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
     private final PisCommonPaymentRemoteUrls remotePisCommonPaymentUrls;
 
     @Override
-    public Optional<CreatePisCommonPaymentResponse> createCommonPayment(PisPaymentInfo request) {
-        return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisCommonPaymentUrls.createPisCommonPayment(), request, CreatePisCommonPaymentResponse.class))
-                   .map(ResponseEntity::getBody);
-    }
-
-    @Override
-    public Optional<TransactionStatus> getPisCommonPaymentStatusById(String paymentId) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<PisCommonPaymentResponse> getCommonPaymentById(String paymentId) {
+    public CmsResponse<CreatePisCommonPaymentResponse> createCommonPayment(PisPaymentInfo request) {
         try {
-            return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisCommonPaymentUrls.getPisCommonPaymentById(), PisCommonPaymentResponse.class, paymentId))
-                       .map(ResponseEntity::getBody);
+            CreatePisCommonPaymentResponse body = consentRestTemplate.postForEntity(remotePisCommonPaymentUrls.createPisCommonPayment(), request, CreatePisCommonPaymentResponse.class).getBody();
+            return CmsResponse.<CreatePisCommonPaymentResponse>builder()
+                       .payload(body)
+                       .build();
         } catch (CmsRestException cmsRestException) {
-            return Optional.empty();
+            log.warn("Remote common payment creation failed");
         }
+
+        return CmsResponse.<CreatePisCommonPaymentResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<Boolean> updateCommonPaymentStatusById(String paymentId, TransactionStatus status) {
-        HttpStatus statusCode = consentRestTemplate.exchange(remotePisCommonPaymentUrls.updatePisCommonPaymentStatus(), HttpMethod.PUT,
-                                                             null, Void.class, paymentId, status.getTransactionStatus()).getStatusCode();
-
-        return Optional.of(statusCode == HttpStatus.OK);
+    public CmsResponse<TransactionStatus> getPisCommonPaymentStatusById(String paymentId) {
+        return CmsResponse.<TransactionStatus>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<String> getDecryptedId(String encryptedId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisCommonPaymentUrls.getPaymentIdByEncryptedString(), String.class, encryptedId))
-                   .map(ResponseEntity::getBody);
-    }
-
-    @Override
-    public Optional<CreatePisAuthorisationResponse> createAuthorization(String paymentId, CreatePisAuthorisationRequest request) {
+    public CmsResponse<PisCommonPaymentResponse> getCommonPaymentById(String paymentId) {
         try {
-            return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisCommonPaymentUrls.createPisAuthorisation(),
-                                                                         request, CreatePisAuthorisationResponse.class, paymentId))
-                       .map(ResponseEntity::getBody);
+            PisCommonPaymentResponse body = consentRestTemplate.getForEntity(remotePisCommonPaymentUrls.getPisCommonPaymentById(), PisCommonPaymentResponse.class, paymentId).getBody();
+            return CmsResponse.<PisCommonPaymentResponse>builder()
+                       .payload(body)
+                       .build();
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote get common payment by ID failed");
+        }
+
+        return CmsResponse.<PisCommonPaymentResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
+    }
+
+    @Override
+    public CmsResponse<Boolean> updateCommonPaymentStatusById(String paymentId, TransactionStatus status) {
+        try {
+            HttpStatus statusCode = consentRestTemplate.exchange(remotePisCommonPaymentUrls.updatePisCommonPaymentStatus(), HttpMethod.PUT,
+                                                                 null, Void.class, paymentId, status.getTransactionStatus()).getStatusCode();
+
+            return CmsResponse.<Boolean>builder()
+                       .payload(statusCode == HttpStatus.OK)
+                       .build();
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote update common payment status by ID failed");
+        }
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
+    }
+
+    @Override
+    public CmsResponse<String> getDecryptedId(String encryptedId) {
+        try {
+            String body = consentRestTemplate.getForEntity(remotePisCommonPaymentUrls.getPaymentIdByEncryptedString(), String.class, encryptedId).getBody();
+            return CmsResponse.<String>builder()
+                       .payload(body)
+                       .build();
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote decrypt encrypted common payment ID failed");
+        }
+
+        return CmsResponse.<String>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
+    }
+
+    @Override
+    public CmsResponse<CreatePisAuthorisationResponse> createAuthorization(String paymentId, CreatePisAuthorisationRequest request) {
+        try {
+            CreatePisAuthorisationResponse body = consentRestTemplate.postForEntity(remotePisCommonPaymentUrls.createPisAuthorisation(),
+                                                                                    request, CreatePisAuthorisationResponse.class, paymentId).getBody();
+            return CmsResponse.<CreatePisAuthorisationResponse>builder()
+                       .payload(body)
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.warn("No authorisation was created for the paymentId {}", paymentId);
-            return Optional.empty();
         }
+
+        return CmsResponse.<CreatePisAuthorisationResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<CreatePisAuthorisationResponse> createAuthorizationCancellation(String paymentId, CreatePisAuthorisationRequest request) {
+    public CmsResponse<CreatePisAuthorisationResponse> createAuthorizationCancellation(String paymentId, CreatePisAuthorisationRequest request) {
         try {
-            return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisCommonPaymentUrls.createPisAuthorisationCancellation(), request, CreatePisAuthorisationResponse.class, paymentId))
-                       .map(ResponseEntity::getBody);
+            CreatePisAuthorisationResponse body = consentRestTemplate.postForEntity(remotePisCommonPaymentUrls.createPisAuthorisationCancellation(), request, CreatePisAuthorisationResponse.class, paymentId).getBody();
+            return CmsResponse.<CreatePisAuthorisationResponse>builder()
+                       .payload(body)
+                       .build();
+
         } catch (CmsRestException cmsRestException) {
             log.warn("No cancellation authorisation was created for the paymentId {}", paymentId);
-            return Optional.empty();
         }
+
+        return CmsResponse.<CreatePisAuthorisationResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisAuthorisation(String authorisationId, UpdatePisCommonPaymentPsuDataRequest request) {
-        return Optional.ofNullable(consentRestTemplate.exchange(remotePisCommonPaymentUrls.updatePisAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-                                                                UpdatePisCommonPaymentPsuDataResponse.class, request.getAuthorizationId()))
-                   .map(ResponseEntity::getBody);
+    public CmsResponse<UpdatePisCommonPaymentPsuDataResponse> updatePisAuthorisation(String authorisationId, UpdatePisCommonPaymentPsuDataRequest request) {
+        try {
+            UpdatePisCommonPaymentPsuDataResponse body = consentRestTemplate.exchange(remotePisCommonPaymentUrls.updatePisAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
+                                                                                      UpdatePisCommonPaymentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+            return CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
+                       .payload(body)
+                       .build();
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote update authorisation failed for authorisation id {}", authorisationId);
+        }
+
+        return CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public boolean updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
+    public CmsResponse<Boolean> updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
         try {
             consentRestTemplate.put(remotePisCommonPaymentUrls.updatePisAuthorisationStatus(), null, authorisationId, scaStatus.getValue());
-            return true;
+            return CmsResponse.<Boolean>builder()
+                       .payload(true)
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.info("Couldn't update authorisation status by authorisationId {}", authorisationId);
         }
-        return false;
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     @Override
-    public Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisCancellationAuthorisation(String authorisationId, UpdatePisCommonPaymentPsuDataRequest request) {
-        return Optional.ofNullable(consentRestTemplate.exchange(remotePisCommonPaymentUrls.updatePisCancellationAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-                                                                UpdatePisCommonPaymentPsuDataResponse.class, request.getAuthorizationId()))
-                   .map(ResponseEntity::getBody);
-    }
-
-    @Override
-    public void updateCommonPayment(PisCommonPaymentRequest request, String paymentId) {
-        consentRestTemplate.exchange(remotePisCommonPaymentUrls.updatePisCommonPayment(), HttpMethod.PUT, new HttpEntity<>(request), Void.class, paymentId);
-    }
-
-    @Override
-    public boolean updateMultilevelSca(String paymentId, boolean multilevelScaRequired) {
+    public CmsResponse<UpdatePisCommonPaymentPsuDataResponse> updatePisCancellationAuthorisation(String authorisationId, UpdatePisCommonPaymentPsuDataRequest request) {
         try {
-            return consentRestTemplate.exchange(remotePisCommonPaymentUrls.updateMultilevelScaRequired(), HttpMethod.PUT, null, Boolean.class, paymentId, multilevelScaRequired).getBody();
+            UpdatePisCommonPaymentPsuDataResponse body = consentRestTemplate.exchange(remotePisCommonPaymentUrls.updatePisCancellationAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
+                                                                                      UpdatePisCommonPaymentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+            return CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
+                       .payload(body)
+                       .build();
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote update authorisation cancellation failed for authorisation id {}", authorisationId);
+        }
+
+        return CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
+    }
+
+    @Override
+    public CmsResponse<CmsResponse.VoidResponse> updateCommonPayment(PisCommonPaymentRequest request, String paymentId) {
+        consentRestTemplate.exchange(remotePisCommonPaymentUrls.updatePisCommonPayment(), HttpMethod.PUT, new HttpEntity<>(request), Void.class, paymentId);
+        return CmsResponse.<CmsResponse.VoidResponse>builder()
+                   .payload(CmsResponse.voidResponse())
+                   .build();
+    }
+
+    @Override
+    public CmsResponse<Boolean> updateMultilevelSca(String paymentId, boolean multilevelScaRequired) {
+        try {
+            Boolean body = consentRestTemplate.exchange(remotePisCommonPaymentUrls.updateMultilevelScaRequired(), HttpMethod.PUT, null, Boolean.class, paymentId, multilevelScaRequired).getBody();
+            return CmsResponse.<Boolean>builder()
+                       .payload(body)
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.info("Payment ID: [{}]. No payment could be found by given payment ID.", paymentId);
-            return false;
         }
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     @Override
-    public Optional<GetPisAuthorisationResponse> getPisAuthorisationById(String authorizationId) {
+    public CmsResponse<GetPisAuthorisationResponse> getPisAuthorisationById(String authorisationId) {
         try {
-            return Optional.ofNullable(consentRestTemplate.exchange(remotePisCommonPaymentUrls.getPisAuthorisationById(), HttpMethod.GET, null, GetPisAuthorisationResponse.class, authorizationId))
-                       .map(ResponseEntity::getBody);
+            GetPisAuthorisationResponse body = consentRestTemplate.exchange(remotePisCommonPaymentUrls.getPisAuthorisationById(), HttpMethod.GET, null, GetPisAuthorisationResponse.class, authorisationId).getBody();
+            return CmsResponse.<GetPisAuthorisationResponse>builder()
+                       .payload(body)
+                       .build();
         } catch (CmsRestException cmsRestException) {
-            log.info("Authorisation ID: [{}]. No initiation authorisation could be found by given authorisation ID", authorizationId);
+            log.info("Authorisation ID: [{}]. No initiation authorisation could be found by given authorisation ID", authorisationId);
         }
 
-        return Optional.empty();
+        return CmsResponse.<GetPisAuthorisationResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<GetPisAuthorisationResponse> getPisCancellationAuthorisationById(String cancellationId) {
+    public CmsResponse<GetPisAuthorisationResponse> getPisCancellationAuthorisationById(String cancellationId) {
         try {
-            return Optional.ofNullable(consentRestTemplate.exchange(remotePisCommonPaymentUrls.getPisCancellationAuthorisationById(), HttpMethod.GET, null, GetPisAuthorisationResponse.class, cancellationId))
-                       .map(ResponseEntity::getBody);
+            GetPisAuthorisationResponse body = consentRestTemplate.exchange(remotePisCommonPaymentUrls.getPisCancellationAuthorisationById(), HttpMethod.GET, null, GetPisAuthorisationResponse.class, cancellationId).getBody();
+            return CmsResponse.<GetPisAuthorisationResponse>builder()
+                       .payload(body)
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.info("Authorisation ID: [{}]. No cancellation authorisation could be found by given cancellation ID", cancellationId);
         }
 
-        return Optional.empty();
+        return CmsResponse.<GetPisAuthorisationResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, PaymentAuthorisationType authorisationType) {
+    public CmsResponse<List<String>> getAuthorisationsByPaymentId(String paymentId, PaymentAuthorisationType authorisationType) {
         String url = getAuthorisationSubResourcesUrl(authorisationType);
+
         try {
-            return Optional.ofNullable(consentRestTemplate.exchange(url, HttpMethod.GET, null,
-                                                                    new ParameterizedTypeReference<List<String>>() {
-                                                                    }, paymentId))
-                       .map(ResponseEntity::getBody);
+            List<String> body = consentRestTemplate.exchange(url, HttpMethod.GET, null,
+                                                             new ParameterizedTypeReference<List<String>>() {
+                                                             }, paymentId).getBody();
+            return CmsResponse.<List<String>>builder()
+                       .payload(body)
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.warn("No authorisation found by paymentId {}", paymentId);
         }
-        return Optional.empty();
+
+        return CmsResponse.<List<String>>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, PaymentAuthorisationType authorisationType) {
+    public CmsResponse<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, PaymentAuthorisationType authorisationType) {
         String url = getAuthorisationScaStatusUrl(authorisationType);
         try {
-            return Optional.ofNullable(consentRestTemplate.getForEntity(url, ScaStatus.class,
-                                                                        paymentId, authorisationId))
-                       .map(ResponseEntity::getBody);
+            ScaStatus body = consentRestTemplate.getForEntity(url, ScaStatus.class, paymentId, authorisationId).getBody();
+            return CmsResponse.<ScaStatus>builder()
+                       .payload(body)
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.warn("Couldn't get authorisation SCA Status by paymentId {} and authorisationId {}", paymentId, authorisationId);
         }
-        return Optional.empty();
+
+        return CmsResponse.<ScaStatus>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        return consentRestTemplate.getForEntity(remotePisCommonPaymentUrls.isAuthenticationMethodDecoupled(), Boolean.class, authorisationId, authenticationMethodId)
-                   .getBody();
+    public CmsResponse<Boolean> isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
+        Boolean body = consentRestTemplate.getForEntity(remotePisCommonPaymentUrls.isAuthenticationMethodDecoupled(), Boolean.class, authorisationId, authenticationMethodId)
+                           .getBody();
+        return CmsResponse.<Boolean>builder()
+                   .payload(body)
+                   .build();
     }
 
     @Override
-    public boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
+    public CmsResponse<Boolean> saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
         try {
             ResponseEntity<Void> responseEntity = consentRestTemplate.exchange(remotePisCommonPaymentUrls.saveAuthenticationMethods(), HttpMethod.POST, new HttpEntity<>(methods), Void.class, authorisationId);
 
             if (responseEntity.getStatusCode() == HttpStatus.NO_CONTENT) {
-                return true;
+                return CmsResponse.<Boolean>builder()
+                           .payload(true)
+                           .build();
             }
         } catch (CmsRestException cmsRestException) {
             log.warn("Couldn't save authentication methods {} by authorisationId {}", methods, authorisationId);
         }
 
-        return false;
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     private String getAuthorisationSubResourcesUrl(PaymentAuthorisationType authorisationType) {
@@ -238,32 +348,58 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
     }
 
     @Override
-    public Optional<List<PsuIdData>> getPsuDataListByPaymentId(String paymentId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisCommonPaymentUrls.getPsuDataByPaymentId(), PsuIdData[].class, paymentId))
-                   .map(ResponseEntity::getBody)
-                   .map(Arrays::asList);
+    public CmsResponse<List<PsuIdData>> getPsuDataListByPaymentId(String paymentId) {
+        try {
+            PsuIdData[] body = consentRestTemplate.getForEntity(remotePisCommonPaymentUrls.getPsuDataByPaymentId(), PsuIdData[].class, paymentId).getBody();
+            if (body != null) {
+                return CmsResponse.<List<PsuIdData>>builder()
+                           .payload(Arrays.asList(body))
+                           .build();
+            }
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote get PSU data list by paymentId {} failed", paymentId);
+        }
+
+        return CmsResponse.<List<PsuIdData>>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public boolean updateScaApproach(String authorisationId, ScaApproach scaApproach) {
-        return consentRestTemplate.exchange(remotePisCommonPaymentUrls.updateScaApproach(), HttpMethod.PUT,
-                                            null, Boolean.class, authorisationId, scaApproach)
-                   .getBody();
+    public CmsResponse<Boolean> updateScaApproach(String authorisationId, ScaApproach scaApproach) {
+        try {
+            Boolean body = consentRestTemplate.exchange(remotePisCommonPaymentUrls.updateScaApproach(), HttpMethod.PUT,
+                                                        null, Boolean.class, authorisationId, scaApproach)
+                               .getBody();
+            return CmsResponse.<Boolean>builder()
+                       .payload(body)
+                       .build();
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote update payment authorisation SCA approach for authorisationID {} failed", authorisationId);
+        }
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     @Override
-    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType) {
+    public CmsResponse<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType) {
         String url = getAuthorisationScaApproachUrl(authorisationType);
 
         try {
             ResponseEntity<AuthorisationScaApproachResponse> request = consentRestTemplate.getForEntity(
                 url, AuthorisationScaApproachResponse.class, authorisationId);
-            return Optional.ofNullable(request.getBody());
+            return CmsResponse.<AuthorisationScaApproachResponse>builder()
+                       .payload(request.getBody())
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.warn("Couldn't get authorisation SCA Approach by authorisationId {}", authorisationId);
         }
 
-        return Optional.empty();
+        return CmsResponse.<AuthorisationScaApproachResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     private String getAuthorisationScaApproachUrl(PaymentAuthorisationType authorisationType) {

@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.service.payment;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -47,7 +49,7 @@ public class Xs2AUpdatePaymentAfterSpiServiceTest {
     public void updatePaymentStatus_success() {
         //Given
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS))
-            .thenReturn(true);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         //When
         boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS);
@@ -59,6 +61,8 @@ public class Xs2AUpdatePaymentAfterSpiServiceTest {
     @Test
     public void updatePaymentStatus_failed() {
         //Given
+        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS))
+            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         //When
         boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS);
@@ -71,7 +75,7 @@ public class Xs2AUpdatePaymentAfterSpiServiceTest {
     public void updatePaymentStatus_success_shouldStoreTransactionStatusInLoggingContext() {
         //Given
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS))
-            .thenReturn(true);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         //When
         boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS);
@@ -83,6 +87,10 @@ public class Xs2AUpdatePaymentAfterSpiServiceTest {
 
     @Test
     public void updatePaymentStatus_failure_shouldNotStoreTransactionStatusInLoggingContext() {
+        //Given
+        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS))
+            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
+
         //When
         boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS);
 
@@ -94,7 +102,8 @@ public class Xs2AUpdatePaymentAfterSpiServiceTest {
     @Test
     public void updatePaymentCancellationTppRedirectUri_success() {
         TppRedirectUri tppRedirectUri = new TppRedirectUri("ok.url", "nok.url");
-        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri)).thenReturn(true);
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri))
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri);
         assertThat(actualResponse).isTrue();
@@ -103,7 +112,8 @@ public class Xs2AUpdatePaymentAfterSpiServiceTest {
     @Test
     public void updatePaymentCancellationTppRedirectUri_failed() {
         TppRedirectUri tppRedirectUri = new TppRedirectUri("ok.url", "nok.url");
-        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri)).thenReturn(false);
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri))
+            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         boolean actualResponse = xs2AUpdatePaymentAfterSpiService.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri);
         assertThat(actualResponse).isFalse();

@@ -16,10 +16,14 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +41,8 @@ public class TppController {
     @ApiOperation(value = "Updates TPP Info")
     @ApiResponse(code = 200, message = "OK")
     public ResponseEntity<Boolean> updateTppInfo(@RequestBody TppInfo tppInfo) {
-        return new ResponseEntity<>(tppService.updateTppInfo(tppInfo), HttpStatus.OK);
+        CmsResponse<Boolean> response = tppService.updateTppInfo(tppInfo);
+        return new ResponseEntity<>(response.isSuccessful() && response.getPayload(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/stop-list")
@@ -46,8 +51,7 @@ public class TppController {
     public ResponseEntity<Boolean> checkIfTppBlocked(
         @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber) {
-
-        boolean isTppBlocked = tppStopListService.checkIfTppBlocked(tppAuthorisationNumber);
-        return new ResponseEntity<>(isTppBlocked, HttpStatus.OK);
+        CmsResponse<Boolean> response = tppStopListService.checkIfTppBlocked(tppAuthorisationNumber);
+        return new ResponseEntity<>(response.isSuccessful() && response.getPayload(), HttpStatus.OK);
     }
 }

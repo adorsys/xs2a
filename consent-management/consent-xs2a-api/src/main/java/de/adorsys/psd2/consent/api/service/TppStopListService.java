@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.consent.api.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
+
 public interface TppStopListService {
 
     /**
@@ -24,5 +26,5 @@ public interface TppStopListService {
      * @param tppAuthorisationNumber information about particular TPP from TPP Certificate
      * @return <code>true</code> if TPP is found and has status BLOCKED, <code>false</code> if TPP is not found or its status is not BLOCKED
      */
-    boolean checkIfTppBlocked(String tppAuthorisationNumber);
+    CmsResponse<Boolean> checkIfTppBlocked(String tppAuthorisationNumber);
 }

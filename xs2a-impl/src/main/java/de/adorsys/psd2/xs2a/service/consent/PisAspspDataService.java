@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class PisAspspDataService {
     private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
 
     public String getInternalPaymentIdByEncryptedString(String encryptedId) {
-        return pisCommonPaymentServiceEncrypted.getDecryptedId(encryptedId).orElse(null);
+        CmsResponse<String> cmsResponse = pisCommonPaymentServiceEncrypted.getDecryptedId(encryptedId);
+        return cmsResponse.isSuccessful()
+                   ? cmsResponse.getPayload()
+                   : null;
     }
 }

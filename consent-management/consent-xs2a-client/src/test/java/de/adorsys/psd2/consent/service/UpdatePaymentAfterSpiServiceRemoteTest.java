@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.config.PisPaymentRemoteUrls;
@@ -56,7 +57,7 @@ public class UpdatePaymentAfterSpiServiceRemoteTest {
         when(consentRestTemplate.exchange(eq(URL), eq(HttpMethod.PUT), isNull(), eq(Void.class), eq(ENCRYPTED_PAYMENT_ID), eq(TransactionStatus.ACSP.name())))
             .thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
-        assertTrue(updatePaymentAfterSpiServiceRemote.updatePaymentStatus(ENCRYPTED_PAYMENT_ID, TransactionStatus.ACSP));
+        assertTrue(updatePaymentAfterSpiServiceRemote.updatePaymentStatus(ENCRYPTED_PAYMENT_ID, TransactionStatus.ACSP).getPayload());
     }
 
     @Test
@@ -67,7 +68,7 @@ public class UpdatePaymentAfterSpiServiceRemoteTest {
         when(pisPaymentRemoteUrls.updatePaymentCancellationRedirectURIs()).thenReturn(URL);
         when(consentRestTemplate.exchange(eq(URL), eq(HttpMethod.PUT), httpEntityCaptor.capture(), eq(Void.class), eq(ENCRYPTED_PAYMENT_ID))).thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
-        assertTrue(updatePaymentAfterSpiServiceRemote.updatePaymentCancellationTppRedirectUri(ENCRYPTED_PAYMENT_ID, tppRedirectUri));
+        assertTrue(updatePaymentAfterSpiServiceRemote.updatePaymentCancellationTppRedirectUri(ENCRYPTED_PAYMENT_ID, tppRedirectUri).getPayload());
 
         assertEquals(2, httpEntityCaptor.getValue().getHeaders().size());
         assertEquals("ok_url", httpEntityCaptor.getValue().getHeaders().get("tpp-redirect-uri").get(0));

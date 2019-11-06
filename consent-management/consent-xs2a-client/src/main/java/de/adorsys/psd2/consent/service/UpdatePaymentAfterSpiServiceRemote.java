@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PisPaymentRemoteUrls;
@@ -38,43 +39,60 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class UpdatePaymentAfterSpiServiceRemote implements UpdatePaymentAfterSpiServiceEncrypted {
+    public static final String PAYMENT_NOT_FOUND_MESSAGE = "Payment not found, id: {}";
+
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
     private final PisPaymentRemoteUrls pisPaymentRemoteUrls;
 
     @Override
-    public boolean updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status) {
+    public CmsResponse<Boolean> updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status) {
         try {
             consentRestTemplate.exchange(pisPaymentRemoteUrls.updatePaymentStatus(), HttpMethod.PUT, null, Void.class, encryptedPaymentId, status.name());
-            return true;
+            return CmsResponse.<Boolean>builder()
+                       .payload(true)
+                       .build();
         } catch (CmsRestException e) {
-            log.error("Payment not found, id: {}", encryptedPaymentId);
-            return false;
+            log.error(PAYMENT_NOT_FOUND_MESSAGE, encryptedPaymentId);
         }
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     @Override
-    public boolean updatePaymentCancellationTppRedirectUri(@NotNull String encryptedPaymentId, @NotNull TppRedirectUri tppRedirectUri) {
+    public CmsResponse<Boolean> updatePaymentCancellationTppRedirectUri(@NotNull String encryptedPaymentId, @NotNull TppRedirectUri tppRedirectUri) {
         try {
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add("tpp-redirect-uri", StringUtils.defaultIfBlank(tppRedirectUri.getUri(), ""));
             headers.add("tpp-nok-redirect-uri", StringUtils.defaultIfBlank(tppRedirectUri.getNokUri(), ""));
             consentRestTemplate.exchange(pisPaymentRemoteUrls.updatePaymentCancellationRedirectURIs(), HttpMethod.PUT, new HttpEntity<>(headers), Void.class, encryptedPaymentId);
-            return true;
+            return CmsResponse.<Boolean>builder()
+                       .payload(true)
+                       .build();
         } catch (CmsRestException e) {
-            log.error("Payment not found, id: {}", encryptedPaymentId);
-            return false;
+            log.error(PAYMENT_NOT_FOUND_MESSAGE, encryptedPaymentId);
         }
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     @Override
-    public boolean updatePaymentCancellationInternalRequestId(@NotNull String encryptedPaymentId, @NotNull String internalRequestId) {
+    public CmsResponse<Boolean> updatePaymentCancellationInternalRequestId(@NotNull String encryptedPaymentId, @NotNull String internalRequestId) {
         try {
             consentRestTemplate.exchange(pisPaymentRemoteUrls.updatePaymentCancellationInternalRequestId(), HttpMethod.PUT, null, Void.class, encryptedPaymentId, internalRequestId);
-            return true;
+            return CmsResponse.<Boolean>builder()
+                       .payload(true)
+                       .build();
         } catch (CmsRestException e) {
-            log.error("Payment not found, id: {}", encryptedPaymentId);
-            return false;
+            log.error(PAYMENT_NOT_FOUND_MESSAGE, encryptedPaymentId);
         }
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 }

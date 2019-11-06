@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.integration;
 
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
@@ -72,6 +74,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -99,7 +102,7 @@ public class AccountControllerIT {
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private HttpHeaders httpHeaders = new HttpHeaders();
     private HttpHeaders httpHeadersWithoutPsuIpAddress = new HttpHeaders();
-    private static final Charset UTF_8 = Charset.forName("utf-8");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String ACCESS_EXCEEDED_JSON_PATH = "/json/account/res/AccessExceededResponse.json";
     private static final UUID X_REQUEST_ID = UUID.randomUUID();
 
@@ -142,10 +145,14 @@ public class AccountControllerIT {
         given(tppService.getTppId())
             .willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
-            .willReturn(false);
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(false)
+                            .build());
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
-        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(new AisAccountConsent()));
+        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(CmsResponse.<AisAccountConsent>builder()
+                                                                                              .payload(new AisAccountConsent())
+                                                                                              .build());
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
         given(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).willReturn(aspspConsentDataProvider);
@@ -224,9 +231,13 @@ public class AccountControllerIT {
         given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
 
         AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
-        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
+        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(CmsResponse.<AisAccountConsent>builder()
+                                                                                              .payload(aisAccountConsent)
+                                                                                              .build());
         given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
-            .willReturn(Optional.of(aisAccountConsent));
+            .willReturn(CmsResponse.<AisAccountConsent>builder()
+                            .payload(aisAccountConsent)
+                            .build());
         AccountConsent accountConsent = buildAccountConsent(aisAccountConsent.getUsageCounterMap());
         given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
         given(xs2aAisConsentMapper.mapToSpiAccountConsent(accountConsent)).willReturn(spiAccountConsent);
@@ -253,9 +264,13 @@ public class AccountControllerIT {
         given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
 
         AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
-        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
+        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(CmsResponse.<AisAccountConsent>builder()
+                                                                                              .payload(aisAccountConsent)
+                                                                                              .build());
         given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
-            .willReturn(Optional.of(aisAccountConsent));
+            .willReturn(CmsResponse.<AisAccountConsent>builder()
+                            .payload(aisAccountConsent)
+                            .build());
         AccountConsent accountConsent = buildOneOffAccountConsent(aisAccountConsent.getUsageCounterMap());
         given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
         given(xs2aAisConsentMapper.mapToSpiAccountConsent(accountConsent)).willReturn(spiAccountConsent);
@@ -283,9 +298,13 @@ public class AccountControllerIT {
 
         for (int usage = 2; usage >= 0; usage--) {
             AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", usage));
-            given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
+            given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(CmsResponse.<AisAccountConsent>builder()
+                                                                                                  .payload(aisAccountConsent)
+                                                                                                  .build());
             given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
-                .willReturn(Optional.of(aisAccountConsent));
+                .willReturn(CmsResponse.<AisAccountConsent>builder()
+                                .payload(aisAccountConsent)
+                                .build());
             AccountConsent accountConsent = buildAccountConsent(aisAccountConsent.getUsageCounterMap());
             given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
             given(xs2aAisConsentMapper.mapToSpiAccountConsent(accountConsent)).willReturn(spiAccountConsent);
@@ -339,4 +358,3 @@ public class AccountControllerIT {
     }
 
 }
-

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.integration;
 
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
@@ -28,7 +30,10 @@ import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -77,7 +82,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -223,14 +227,18 @@ public class InitiatePayments_successfulIT {
         given(tppService.getTppId())
             .willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
-            .willReturn(false);
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(false)
+                            .build());
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
 
         given(pisCommonPaymentServiceEncrypted.createCommonPayment(any(PisPaymentInfo.class)))
-            .willReturn(Optional.of(new CreatePisCommonPaymentResponse(ENCRYPT_PAYMENT_ID)));
+            .willReturn(CmsResponse.<CreatePisCommonPaymentResponse>builder()
+                            .payload(new CreatePisCommonPaymentResponse(ENCRYPT_PAYMENT_ID))
+                            .build());
 
     }
 
@@ -239,60 +247,56 @@ public class InitiatePayments_successfulIT {
     @Test
     public void initiateSinglePayment_implicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersImplicit, ScaApproach.EMBEDDED, false, false);
-    }
-
-    private CreatePisAuthorisationResponse buildCreatePisAuthorisationResponse(ScaStatus scaStatus) {
-        return new CreatePisAuthorisationResponse(AUTHORISATION_ID, scaStatus, null, null);
     }
 
     @Test
     public void initiateSinglePayment_implicit_embedded_psuIdDataIsEmpty_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequestWithEmptyPsuIdData(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersImplicitNoPsuData, ScaApproach.EMBEDDED, false, true);
     }
 
     @Test
     public void initiateSinglePayment_implicit_embedded_multilevelSca_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersImplicit, ScaApproach.EMBEDDED, true, false);
     }
 
     @Test
     public void initiateSinglePayment_implicit_embedded_multilevelSca_psuIdDataIsEmpty_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersImplicitNoPsuData, ScaApproach.EMBEDDED, true, true);
     }
 
     @Test
     public void initiateSinglePayment_implicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersImplicit, ScaApproach.REDIRECT, false, false);
     }
 
     @Test
     public void initiateSinglePayment_implicit_redirect_psuIdDataIsEmpty_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequestWithEmptyPsuIdData(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersImplicitNoPsuData, ScaApproach.REDIRECT, false, true);
     }
 
     @Test
     public void initiateSinglePayment_implicit_redirect_multilevelSca_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersImplicit, ScaApproach.REDIRECT, true, false);
     }
 
     @Test
     public void initiateSinglePayment_implicit_redirect_multilevelSca_psuIdDataIsEmpty_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequestWithEmptyPsuIdData(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersImplicitNoPsuData, ScaApproach.REDIRECT, true, true);
     }
 
@@ -302,35 +306,35 @@ public class InitiatePayments_successfulIT {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithScaRedirectFlow(ScaRedirectFlow.OAUTH));
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(ScaStatus.RECEIVED)));
+            .willReturn(getCmsReponse(ScaStatus.RECEIVED));
         initiateSinglePaymentOauth_successful(httpHeadersImplicit, ScaApproach.REDIRECT);
     }
 
     @Test
     public void initiatePeriodicPayment_implicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiatePeriodicPayment_successful(httpHeadersImplicit, ScaApproach.EMBEDDED);
     }
 
     @Test
     public void initiatePeriodicPayment_implicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiatePeriodicPayment_successful(httpHeadersImplicit, ScaApproach.REDIRECT);
     }
 
     @Test
     public void initiateBulkPayment_implicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateBulkPayment_successful(httpHeadersImplicit, ScaApproach.EMBEDDED);
     }
 
     @Test
     public void initiateBulkPayment_implicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateBulkPayment_successful(httpHeadersImplicit, ScaApproach.REDIRECT);
     }
 
@@ -340,14 +344,14 @@ public class InitiatePayments_successfulIT {
     @Test
     public void initiateSinglePayment_explicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, false, false);
     }
 
     @Test
     public void initiateSinglePayment_explicit_embedded_psuIdDataIsEmpty_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequestWithEmptyPsuIdData(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersExplicitNoPsuData, ScaApproach.EMBEDDED, false, true);
     }
 
@@ -356,7 +360,7 @@ public class InitiatePayments_successfulIT {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithSigningBasketSupported(true));
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, true, false);
     }
 
@@ -364,7 +368,7 @@ public class InitiatePayments_successfulIT {
     public void initiateSinglePayment_explicit_embedded_multilevelSca_psuIdDataIsEmpty_successful() throws Exception {
 
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequestWithEmptyPsuIdData(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersExplicitNoPsuData, ScaApproach.EMBEDDED, true, true);
     }
 
@@ -373,7 +377,7 @@ public class InitiatePayments_successfulIT {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithSigningBasketSupported(true));
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequestWithEmptyPsuIdData(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersExplicitNoPsuData, ScaApproach.EMBEDDED, true, true);
     }
 
@@ -382,63 +386,63 @@ public class InitiatePayments_successfulIT {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithSigningBasketSupported(true));
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, true, false);
     }
 
     @Test
     public void initiateSinglePayment_explicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersExplicit, ScaApproach.REDIRECT, false, false);
     }
 
     @Test
     public void initiateSinglePayment_explicit_redirect_psuIdDataIsEmpty_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequestWithEmptyPsuIdData(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersExplicitNoPsuData, ScaApproach.REDIRECT, false, true);
     }
 
     @Test
     public void initiateSinglePayment_explicit_redirect_multilevelSca_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersExplicit, ScaApproach.REDIRECT, true, false);
     }
 
     @Test
     public void initiateSinglePayment_explicit_redirect_multilevelSca_psuIdDataIsEmpty_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequestWithEmptyPsuIdData(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateSinglePayment_successful(httpHeadersExplicitNoPsuData, ScaApproach.REDIRECT, true, true);
     }
 
     @Test
     public void initiatePeriodicPayment_explicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiatePeriodicPayment_successful(httpHeadersExplicit, ScaApproach.EMBEDDED);
     }
 
     @Test
     public void initiatePeriodicPayment_explicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiatePeriodicPayment_successful(httpHeadersExplicit, ScaApproach.REDIRECT);
     }
 
     @Test
     public void initiateBulkPayment_explicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateBulkPayment_successful(httpHeadersExplicit, ScaApproach.EMBEDDED);
     }
 
     @Test
     public void initiateBulkPayment_explicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(buildCreatePisAuthorisationResponse(SCA_STATUS)));
+            .willReturn(getCmsReponse(SCA_STATUS));
         initiateBulkPayment_successful(httpHeadersExplicit, ScaApproach.REDIRECT);
     }
 
@@ -459,7 +463,9 @@ public class InitiatePayments_successfulIT {
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Boolean.TRUE));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
-            .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
+            .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
+                            .payload(new AuthorisationScaApproachResponse(scaApproach))
+                            .build());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(UrlBuilder.buildInitiatePaymentUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT));
         requestBuilder.headers(headers);
@@ -489,7 +495,9 @@ public class InitiatePayments_successfulIT {
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Boolean.TRUE));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
-            .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
+            .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
+                            .payload(new AuthorisationScaApproachResponse(scaApproach))
+                            .build());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(UrlBuilder.buildInitiatePaymentUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT));
         requestBuilder.headers(headers);
@@ -513,7 +521,9 @@ public class InitiatePayments_successfulIT {
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Boolean.TRUE));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
-            .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
+            .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
+                            .payload(new AuthorisationScaApproachResponse(scaApproach))
+                            .build());
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildInitiatePaymentUrl(PERIODIC_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT));
         requestBuilder.headers(headers);
@@ -541,7 +551,9 @@ public class InitiatePayments_successfulIT {
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Boolean.TRUE));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
-            .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
+            .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
+                            .payload(new AuthorisationScaApproachResponse(scaApproach))
+                            .build());
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildInitiatePaymentUrl(BULK_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT));
         requestBuilder.headers(headers);
@@ -576,5 +588,15 @@ public class InitiatePayments_successfulIT {
     public boolean isSigningBasketModeActive(HttpHeaders headers) {
         boolean tppExplicitAuthorisationPreferred = Boolean.parseBoolean(headers.toSingleValueMap().get("TPP-Explicit-Authorisation-Preferred"));
         return tppExplicitAuthorisationPreferred && aspspProfileService.getAspspSettings().getCommon().isSigningBasketSupported();
+    }
+
+    private CmsResponse<CreatePisAuthorisationResponse> getCmsReponse(ScaStatus scaStatus) {
+        return CmsResponse.<CreatePisAuthorisationResponse>builder()
+                   .payload(buildCreatePisAuthorisationResponse(scaStatus))
+                   .build();
+    }
+
+    private CreatePisAuthorisationResponse buildCreatePisAuthorisationResponse(ScaStatus scaStatus) {
+        return new CreatePisAuthorisationResponse(AUTHORISATION_ID, scaStatus, null, null);
     }
 }

@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.integration.consent;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
-import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
@@ -50,9 +55,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -72,7 +77,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class
 })
 public class DeleteConsentTest {
-    private static final Charset UTF_8 = Charset.forName("utf-8");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String CONSENT_PATH = "json/consent/AisAccountConsentInternalResponse.json";
     private static final String WRONG_TPP_RESPONSE_PATH = "/json/consent/res/WrongTppResponse.json";
 
@@ -107,7 +112,9 @@ public class DeleteConsentTest {
         given(tppService.getTppInfo())
             .willReturn(TPP_INFO);
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
-            .willReturn(false);
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(false)
+                            .build());
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
     }
@@ -116,7 +123,13 @@ public class DeleteConsentTest {
     public void deleteConsent_successful() throws Exception {
         // Given
         given(aisConsentServiceEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID))
-            .willReturn(Optional.of(buildAisAccountConsent(TPP_INFO)));
+            .willReturn(CmsResponse.<AisAccountConsent>builder()
+                            .payload(buildAisAccountConsent(TPP_INFO))
+                            .build());
+        given(aisConsentServiceEncrypted.updateConsentStatusById(ENCRYPTED_CONSENT_ID, ConsentStatus.TERMINATED_BY_TPP))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
+                            .build());
 
         MockHttpServletRequestBuilder requestBuilder = delete(UrlBuilder.buildDeleteConsentUrl(ENCRYPTED_CONSENT_ID));
         requestBuilder.headers(httpHeaders);
@@ -133,7 +146,9 @@ public class DeleteConsentTest {
         // Given
         String wrongTppId = "Wrong TPP ID";
         given(aisConsentServiceEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID))
-            .willReturn(Optional.of(buildAisAccountConsent(TppInfoBuilder.buildTppInfo(wrongTppId))));
+            .willReturn(CmsResponse.<AisAccountConsent>builder()
+                            .payload(buildAisAccountConsent(TppInfoBuilder.buildTppInfo(wrongTppId)))
+                            .build());
 
         MockHttpServletRequestBuilder requestBuilder = delete(UrlBuilder.buildDeleteConsentUrl(ENCRYPTED_CONSENT_ID));
         requestBuilder.headers(httpHeaders);

@@ -18,6 +18,8 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
@@ -159,11 +161,12 @@ public class PisCommonPaymentServiceInternalTest {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CREATED)).thenReturn(Optional.of(pisAuthorization));
 
         // When
-        Optional<ScaStatus> actual = pisCommonPaymentService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
+        CmsResponse<ScaStatus> actual = pisCommonPaymentService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
 
         // Then
-        assertTrue(actual.isPresent());
-        assertEquals(SCA_STATUS, actual.get());
+        assertTrue(actual.isSuccessful());
+
+        assertEquals(SCA_STATUS, actual.getPayload());
     }
 
     @Test
@@ -171,10 +174,12 @@ public class PisCommonPaymentServiceInternalTest {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CREATED)).thenReturn(Optional.empty());
 
         // When
-        Optional<ScaStatus> actual = pisCommonPaymentService.getAuthorisationScaStatus(PAYMENT_ID_WRONG, AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
+        CmsResponse<ScaStatus> actual = pisCommonPaymentService.getAuthorisationScaStatus(PAYMENT_ID_WRONG, AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
     }
 
     @Test
@@ -182,10 +187,12 @@ public class PisCommonPaymentServiceInternalTest {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(WRONG_AUTHORISATION_ID, PaymentAuthorisationType.CREATED)).thenReturn(Optional.empty());
 
         // When
-        Optional<ScaStatus> actual = pisCommonPaymentService.getAuthorisationScaStatus(PAYMENT_ID, WRONG_AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
+        CmsResponse<ScaStatus> actual = pisCommonPaymentService.getAuthorisationScaStatus(PAYMENT_ID, WRONG_AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
     }
 
     @Test
@@ -194,11 +201,13 @@ public class PisCommonPaymentServiceInternalTest {
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisPaymentData.getPaymentData())).thenReturn(pisPaymentData.getPaymentData());
         //Then
-        Optional<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID, PaymentAuthorisationType.CANCELLED);
+        CmsResponse<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID, PaymentAuthorisationType.CANCELLED);
         //Assert
-        assertTrue(authorizationByPaymentId.isPresent());
-        assertEquals(1, authorizationByPaymentId.get().size());
-        assertEquals(pisAuthorizationList.get(0).getExternalId(), authorizationByPaymentId.get().get(0));
+        assertTrue(authorizationByPaymentId.isSuccessful());
+
+        List<String> payload = authorizationByPaymentId.getPayload();
+        assertEquals(1, payload.size());
+        assertEquals(pisAuthorizationList.get(0).getExternalId(), payload.get(0));
     }
 
     @Test
@@ -207,9 +216,11 @@ public class PisCommonPaymentServiceInternalTest {
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
         //Then
-        Optional<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID_WRONG, PaymentAuthorisationType.CANCELLED);
+        CmsResponse<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID_WRONG, PaymentAuthorisationType.CANCELLED);
         //Assert
-        assertFalse(authorizationByPaymentId.isPresent());
+        assertTrue(authorizationByPaymentId.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, authorizationByPaymentId.getError());
     }
 
     @Test
@@ -218,9 +229,11 @@ public class PisCommonPaymentServiceInternalTest {
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS)).thenReturn(Optional.empty());
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS)).thenReturn(Optional.empty());
         //Then
-        Optional<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS, PaymentAuthorisationType.CREATED);
+        CmsResponse<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS, PaymentAuthorisationType.CREATED);
         //Assert
-        assertFalse(authorizationByPaymentId.isPresent());
+        assertTrue(authorizationByPaymentId.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, authorizationByPaymentId.getError());
     }
 
     @Test
@@ -236,11 +249,11 @@ public class PisCommonPaymentServiceInternalTest {
             .thenReturn(Optional.of(finalisedConsentAuthorization));
 
         //When
-        Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuDataResponse = pisCommonPaymentService.updatePisAuthorisation(FINALISED_AUTHORISATION_ID, updatePisCommonPaymentPsuDataRequest);
+        CmsResponse<UpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuDataResponse = pisCommonPaymentService.updatePisAuthorisation(FINALISED_AUTHORISATION_ID, updatePisCommonPaymentPsuDataRequest);
 
         //Then
-        assertTrue(updatePisCommonPaymentPsuDataResponse.isPresent());
-        assertNotEquals(updatePisCommonPaymentPsuDataResponse.get().getScaStatus(), expectedScaStatus);
+        assertTrue(updatePisCommonPaymentPsuDataResponse.isSuccessful());
+        assertNotEquals(updatePisCommonPaymentPsuDataResponse.getPayload().getScaStatus(), expectedScaStatus);
     }
 
     @Test
@@ -260,10 +273,10 @@ public class PisCommonPaymentServiceInternalTest {
             .thenReturn(true);
 
         //When
-        Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuDataResponse = pisCommonPaymentService.updatePisAuthorisation(PAYMENT_ID, updatePisCommonPaymentPsuDataRequest);
+        CmsResponse<UpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuDataResponse = pisCommonPaymentService.updatePisAuthorisation(PAYMENT_ID, updatePisCommonPaymentPsuDataRequest);
         verify(pisAuthorisationRepository).save(argument.capture());
         //Then
-        assertTrue(updatePisCommonPaymentPsuDataResponse.isPresent());
+        assertTrue(updatePisCommonPaymentPsuDataResponse.isSuccessful());
         assertTrue(argument.getValue().getPsuData().contentEquals(expectedPsu));
     }
 
@@ -287,11 +300,11 @@ public class PisCommonPaymentServiceInternalTest {
             .thenReturn(pisAuthorization);
 
         //When
-        Optional<UpdatePisCommonPaymentPsuDataResponse> response =
+        CmsResponse<UpdatePisCommonPaymentPsuDataResponse> response =
             pisCommonPaymentService.updatePisAuthorisation(PAYMENT_ID, updatePisCommonPaymentPsuDataRequest);
 
         //Then
-        assertTrue(response.isPresent());
+        assertTrue(response.isSuccessful());
 
         verify(pisAuthorisationRepository).save(savedAuthorisationCaptor.capture());
         PisAuthorization savedAuthorisation = savedAuthorisationCaptor.getValue();
@@ -327,11 +340,11 @@ public class PisCommonPaymentServiceInternalTest {
             .thenReturn(currentAuthorisation);
 
         //When
-        Optional<UpdatePisCommonPaymentPsuDataResponse> response =
+        CmsResponse<UpdatePisCommonPaymentPsuDataResponse> response =
             pisCommonPaymentService.updatePisAuthorisation(AUTHORISATION_ID, updatePisCommonPaymentPsuDataRequest);
 
         //Then
-        assertTrue(response.isPresent());
+        assertTrue(response.isSuccessful());
 
         verify(pisAuthorisationRepository).saveAll(savedAuthorisationsCaptor.capture());
 
@@ -358,11 +371,11 @@ public class PisCommonPaymentServiceInternalTest {
             .thenReturn(Optional.of(finalisedCancellationAuthorization));
 
         //When
-        Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuDataResponse = pisCommonPaymentService.updatePisCancellationAuthorisation(FINALISED_CANCELLATION_AUTHORISATION_ID, updatePisCommonPaymentPsuDataRequest);
+        CmsResponse<UpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuDataResponse = pisCommonPaymentService.updatePisCancellationAuthorisation(FINALISED_CANCELLATION_AUTHORISATION_ID, updatePisCommonPaymentPsuDataRequest);
 
         //Then
-        assertTrue(updatePisCommonPaymentPsuDataResponse.isPresent());
-        assertNotEquals(updatePisCommonPaymentPsuDataResponse.get().getScaStatus(), expectedScaStatus);
+        assertTrue(updatePisCommonPaymentPsuDataResponse.isSuccessful());
+        assertNotEquals(updatePisCommonPaymentPsuDataResponse.getPayload().getScaStatus(), expectedScaStatus);
 
     }
 
@@ -380,16 +393,16 @@ public class PisCommonPaymentServiceInternalTest {
         when(cmsPsuService.enrichPsuData(any(), any())).thenReturn(Collections.singletonList(PSU_DATA));
 
         // When
-        Optional<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST);
+        CmsResponse<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST);
 
         // Then
-        assertTrue(actual.isPresent());
+        assertTrue(actual.isSuccessful());
         verify(pisAuthorisationRepository).save(argument.capture());
         PisAuthorization pisAuthorization = argument.getValue();
         assertSame(pisAuthorization.getScaStatus(), ScaStatus.PSUIDENTIFIED);
         assertEquals(TPP_REDIRECT_URI, pisAuthorization.getTppOkRedirectUri());
         assertEquals(TPP_NOK_REDIRECT_URI, pisAuthorization.getTppNokRedirectUri());
-        assertEquals(pisPaymentData.getPaymentData().getInternalRequestId(), actual.get().getInternalRequestId());
+        assertEquals(pisPaymentData.getPaymentData().getInternalRequestId(), actual.getPayload().getInternalRequestId());
     }
 
     @Test
@@ -411,10 +424,10 @@ public class PisCommonPaymentServiceInternalTest {
         when(cmsPsuService.enrichPsuData(any(), any())).thenReturn(Collections.singletonList(PSU_DATA));
 
         // When
-        Optional<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, createPisAuthorisationRequest);
+        CmsResponse<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, createPisAuthorisationRequest);
 
         // Then
-        assertTrue(actual.isPresent());
+        assertTrue(actual.isSuccessful());
         verify(pisAuthorisationRepository).save(argument.capture());
         PisAuthorization pisAuthorization = argument.getValue();
         assertEquals(authorisationTemplateEntity.getRedirectUri(), pisAuthorization.getTppOkRedirectUri());
@@ -439,10 +452,10 @@ public class PisCommonPaymentServiceInternalTest {
         when(cmsPsuService.definePsuDataForAuthorisation(any(), any())).thenReturn(Optional.of(PSU_DATA));
 
         // When
-        Optional<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, createPisAuthorisationRequest);
+        CmsResponse<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, createPisAuthorisationRequest);
 
         // Then
-        assertTrue(actual.isPresent());
+        assertTrue(actual.isSuccessful());
         verify(pisAuthorisationRepository).save(argument.capture());
         PisAuthorization pisAuthorization = argument.getValue();
         assertEquals(authorisationTemplateEntity.getCancelRedirectUri(), pisAuthorization.getTppOkRedirectUri());
@@ -456,11 +469,11 @@ public class PisCommonPaymentServiceInternalTest {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .thenReturn(Optional.of(pisAuthorization));
 
-        Optional<AuthorisationScaApproachResponse> actual = pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
+        CmsResponse<AuthorisationScaApproachResponse> actual = pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
 
         // Then
-        assertTrue(actual.isPresent());
-        assertEquals(ScaApproach.DECOUPLED, actual.get().getScaApproach());
+        assertTrue(actual.isSuccessful());
+        assertEquals(ScaApproach.DECOUPLED, actual.getPayload().getScaApproach());
         verify(pisAuthorisationRepository, times(1)).findByExternalIdAndAuthorizationType(eq(AUTHORISATION_ID), eq(PaymentAuthorisationType.CREATED));
     }
 
@@ -469,10 +482,12 @@ public class PisCommonPaymentServiceInternalTest {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .thenReturn(Optional.empty());
 
-        Optional<AuthorisationScaApproachResponse> actual = pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
+        CmsResponse<AuthorisationScaApproachResponse> actual = pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
         verify(pisAuthorisationRepository, times(1)).findByExternalIdAndAuthorizationType(eq(AUTHORISATION_ID), eq(PaymentAuthorisationType.CREATED));
     }
 
@@ -483,10 +498,12 @@ public class PisCommonPaymentServiceInternalTest {
         when(pisCommonPaymentDataRepository.save(pisCommonPaymentData)).thenReturn(pisCommonPaymentData);
 
         // When
-        boolean actualResponse = pisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true);
+        CmsResponse<Boolean> actualResponse = pisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true);
 
         // Then
-        assertTrue(actualResponse);
+        assertTrue(actualResponse.isSuccessful());
+
+        assertTrue(actualResponse.getPayload());
     }
 
     @Test
@@ -495,10 +512,12 @@ public class PisCommonPaymentServiceInternalTest {
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.empty());
 
         // When
-        boolean actualResponse = pisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true);
+        CmsResponse<Boolean> actualResponse = pisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true);
 
         // Then
-        assertFalse(actualResponse);
+        assertTrue(actualResponse.isSuccessful());
+
+        assertFalse(actualResponse.getPayload());
     }
 
     @NotNull
@@ -577,3 +596,4 @@ public class PisCommonPaymentServiceInternalTest {
         return authorisationTemplateEntity;
     }
 }
+

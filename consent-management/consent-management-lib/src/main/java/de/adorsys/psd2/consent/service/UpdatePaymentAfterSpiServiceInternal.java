@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiService;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -37,38 +38,57 @@ public class UpdatePaymentAfterSpiServiceInternal implements UpdatePaymentAfterS
 
     @Override
     @Transactional
-    public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
+    public CmsResponse<Boolean> updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
         Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
         if (!paymentDataOptional.isPresent() || paymentDataOptional.get().isFinalised()) {
             log.info("Payment ID [{}]. Update payment status by id failed, because pis payment data not found or payment is finalized",
                      paymentId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
 
-        return commonPaymentDataService.updateStatusInPaymentData(paymentDataOptional.get(), status);
+        boolean updated = commonPaymentDataService.updateStatusInPaymentData(paymentDataOptional.get(), status);
+        return CmsResponse.<Boolean>builder()
+                   .payload(updated)
+                   .build();
     }
 
     @Override
     @Transactional
-    public boolean updatePaymentCancellationTppRedirectUri(@NotNull String paymentId, @NotNull TppRedirectUri tppRedirectUri) {
+    public CmsResponse<Boolean> updatePaymentCancellationTppRedirectUri(@NotNull String paymentId, @NotNull TppRedirectUri tppRedirectUri) {
         Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
+
         if (!paymentDataOptional.isPresent() || paymentDataOptional.get().isFinalised()) {
             log.info("Payment ID [{}]. Update payment status by id failed, because pis payment data not found or payment is finalized",
                      paymentId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
-        return commonPaymentDataService.updateCancelTppRedirectURIs(paymentDataOptional.get(), tppRedirectUri);
+
+        boolean updated = commonPaymentDataService.updateCancelTppRedirectURIs(paymentDataOptional.get(), tppRedirectUri);
+        return CmsResponse.<Boolean>builder()
+                   .payload(updated)
+                   .build();
+
     }
 
     @Override
     @Transactional
-    public boolean updatePaymentCancellationInternalRequestId(@NotNull String paymentId, @NotNull String internalRequestId) {
+    public CmsResponse<Boolean> updatePaymentCancellationInternalRequestId(@NotNull String paymentId, @NotNull String internalRequestId) {
         Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
         if (!paymentDataOptional.isPresent() || paymentDataOptional.get().isFinalised()) {
             log.info("Payment ID [{}]. Update payment intrenal request id failed, because pis payment data not found or payment is finalized",
                      paymentId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
-        return commonPaymentDataService.updatePaymentCancellationInternalRequestId(paymentDataOptional.get(), internalRequestId);
+
+        boolean updated = commonPaymentDataService.updatePaymentCancellationInternalRequestId(paymentDataOptional.get(), internalRequestId);
+        return CmsResponse.<Boolean>builder()
+                   .payload(updated)
+                   .build();
     }
 }

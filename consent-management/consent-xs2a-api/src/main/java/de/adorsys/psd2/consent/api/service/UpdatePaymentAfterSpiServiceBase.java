@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +40,7 @@ interface UpdatePaymentAfterSpiServiceBase {
      * @param status    Status of Payment to be set
      * @return true if the status was updated, false otherwise
      */
-    boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status);
+    CmsResponse<Boolean> updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status);
 
     /**
      * Updates a Tpp Info of Payment object by its ID
@@ -48,7 +49,7 @@ interface UpdatePaymentAfterSpiServiceBase {
      * @param tppRedirectUri Tpp redirect URIs
      * @return true if the status was updated, false otherwise
      */
-    boolean updatePaymentCancellationTppRedirectUri(@NotNull String paymentId, @NotNull TppRedirectUri tppRedirectUri);
+    CmsResponse<Boolean> updatePaymentCancellationTppRedirectUri(@NotNull String paymentId, @NotNull TppRedirectUri tppRedirectUri);
 
     /**
      * Updates cancellation internal request ID of Payment object by its ID
@@ -57,5 +58,5 @@ interface UpdatePaymentAfterSpiServiceBase {
      * @param internalRequestId Internal Request ID
      * @return true if the internal request ID was updated, false otherwise
      */
-    boolean updatePaymentCancellationInternalRequestId(@NotNull String paymentId, @NotNull String internalRequestId);
+    CmsResponse<Boolean> updatePaymentCancellationInternalRequestId(@NotNull String paymentId, @NotNull String internalRequestId);
 }

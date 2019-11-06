@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
@@ -42,7 +43,7 @@ public class PiisConsentServiceInternal implements PiisConsentService {
     private final PiisConsentEntitySpecification piisConsentEntitySpecification;
 
     @Override
-    public List<PiisConsent> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountReferenceSelector) {
+    public CmsResponse<List<PiisConsent>> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountReferenceSelector) {
         Specification<PiisConsentEntity> specification;
 
         specification = currency == null
@@ -50,6 +51,8 @@ public class PiisConsentServiceInternal implements PiisConsentService {
                             : piisConsentEntitySpecification.byCurrencyAndAccountReferenceSelector(currency, accountReferenceSelector);
 
         List<PiisConsentEntity> consents = piisConsentRepository.findAll(specification);
-        return piisConsentMapper.mapToPiisConsentList(consents);
+        return CmsResponse.<List<PiisConsent>>builder()
+                   .payload(piisConsentMapper.mapToPiisConsentList(consents))
+                   .build();
     }
 }

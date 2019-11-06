@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
@@ -28,11 +29,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Optional;
+
+import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
 
 // TODO discuss error handling (e.g. 400 HttpCode response) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
 @Slf4j
@@ -44,74 +48,158 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
     private final AisConsentRemoteUrls remoteAisConsentUrls;
 
     @Override
-    public Optional<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request) {
-        CreateAisConsentResponse createAisConsentResponse = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), request, CreateAisConsentResponse.class).getBody();
-        return Optional.ofNullable(createAisConsentResponse);
+    public CmsResponse<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request) {
+        try {
+            ResponseEntity<CreateAisConsentResponse> createAisConsentResponse = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), request, CreateAisConsentResponse.class);
+            return CmsResponse.<CreateAisConsentResponse>builder()
+                       .payload(createAisConsentResponse.getBody())
+                       .build();
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote consent creation failed");
+        }
+        return CmsResponse.<CreateAisConsentResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<ConsentStatus> getConsentStatusById(String consentId) {
-        AisConsentStatusResponse response = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentStatusById(), AisConsentStatusResponse.class, consentId).getBody();
-        return Optional.ofNullable(response.getConsentStatus());
+    public CmsResponse<ConsentStatus> getConsentStatusById(String consentId) {
+        try {
+            AisConsentStatusResponse response = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentStatusById(), AisConsentStatusResponse.class, consentId).getBody();
+            if (response != null) {
+                return CmsResponse.<ConsentStatus>builder()
+                           .payload(response.getConsentStatus())
+                           .build();
+            }
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote get consent status by id failed");
+        }
+
+        return CmsResponse.<ConsentStatus>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public boolean updateConsentStatusById(String consentId, ConsentStatus status) {
+    public CmsResponse<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
         try {
             consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentStatus(), null, consentId, status);
-            return true;
+            return CmsResponse.<Boolean>builder()
+                       .payload(true)
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.warn("Cannot update consent status, the consent is already deleted or not found");
         }
-        return false;
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     @Override
-    public Optional<AisAccountConsent> getAisAccountConsentById(String consentId) {
-        AisAccountConsent accountConsent = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentById(), AisAccountConsent.class, consentId).getBody();
-        return Optional.ofNullable(accountConsent);
+    public CmsResponse<AisAccountConsent> getAisAccountConsentById(String consentId) {
+        ResponseEntity<AisAccountConsent> accountConsent = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentById(), AisAccountConsent.class, consentId);
+        if (accountConsent.getStatusCode() == HttpStatus.OK) {
+            return CmsResponse.<AisAccountConsent>builder()
+                       .payload(accountConsent.getBody())
+                       .build();
+        }
+
+        log.warn("Remote get account consent by id failed");
+        return CmsResponse.<AisAccountConsent>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
+    public CmsResponse<Boolean> findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
         consentRestTemplate.delete(remoteAisConsentUrls.findAndTerminateOldConsentsByNewConsentId(), newConsentId);
-        return true;
+        return CmsResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
     }
 
     @Override
-    public void checkConsentAndSaveActionLog(AisConsentActionRequest request) {
+    public CmsResponse<CmsResponse.VoidResponse> checkConsentAndSaveActionLog(AisConsentActionRequest request) {
         consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), request, Void.class);
+
+        return CmsResponse.<CmsResponse.VoidResponse>builder()
+                   .payload(CmsResponse.voidResponse())
+                   .build();
     }
 
     @Override
-    public Optional<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) {
+    public CmsResponse<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) {
         CreateAisConsentResponse response = consentRestTemplate.exchange(remoteAisConsentUrls.updateAisAccountAccess(), HttpMethod.PUT,
                                                                          new HttpEntity<>(request), CreateAisConsentResponse.class, consentId).getBody();
-        return Optional.ofNullable(response.getConsentId());
+        if (response != null) {
+            return CmsResponse.<String>builder()
+                       .payload(response.getConsentId())
+                       .build();
+        }
+
+        log.warn("Remote update aspsp account access failed");
+        return CmsResponse.<String>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request) {
-        UpdateAisConsentResponse response = consentRestTemplate.exchange(remoteAisConsentUrls.updateAisAccountAccess(), HttpMethod.PUT,
-                                                                         new HttpEntity<>(request), UpdateAisConsentResponse.class, consentId).getBody();
-        return Optional.ofNullable(response.getAisConsent());
+    public CmsResponse<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request) {
+        try {
+            UpdateAisConsentResponse response = consentRestTemplate.exchange(remoteAisConsentUrls.updateAisAccountAccess(), HttpMethod.PUT,
+                                                                             new HttpEntity<>(request), UpdateAisConsentResponse.class, consentId).getBody();
+            if (response != null) {
+                return CmsResponse.<AisAccountConsent>builder()
+                           .payload(response.getAisConsent())
+                           .build();
+            }
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote update aspsp account access with response failed");
+        }
+
+        return CmsResponse.<AisAccountConsent>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<List<PsuIdData>> getPsuDataByConsentId(String consentId) {
-        return Optional.ofNullable(consentRestTemplate.exchange(remoteAisConsentUrls.getPsuDataByConsentId(),
-                                                                HttpMethod.GET,
-                                                                null,
-                                                                new ParameterizedTypeReference<List<PsuIdData>>() {
-                                                                },
-                                                                consentId)
-                                       .getBody());
+    public CmsResponse<List<PsuIdData>> getPsuDataByConsentId(String consentId) {
+        try {
+            List<PsuIdData> response = consentRestTemplate.exchange(remoteAisConsentUrls.getPsuDataByConsentId(),
+                                                                    HttpMethod.GET,
+                                                                    null,
+                                                                    new ParameterizedTypeReference<List<PsuIdData>>() {
+                                                                    },
+                                                                    consentId)
+                                           .getBody();
+            return CmsResponse.<List<PsuIdData>>builder()
+                       .payload(response)
+                       .build();
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote get psu data by consent id failed");
+        }
+
+        return CmsResponse.<List<PsuIdData>>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public boolean updateMultilevelScaRequired(String encryptedConsentId, boolean multilevelScaRequired) {
-        return consentRestTemplate.exchange(remoteAisConsentUrls.updateMultilevelScaRequired(),
-                                            HttpMethod.PUT, null, Boolean.class, encryptedConsentId, multilevelScaRequired)
-                   .getBody();
+    public CmsResponse<Boolean> updateMultilevelScaRequired(String encryptedConsentId, boolean multilevelScaRequired) {
+        try {
+            Boolean updateResponse = consentRestTemplate.exchange(remoteAisConsentUrls.updateMultilevelScaRequired(),
+                                                                  HttpMethod.PUT, null, Boolean.class, encryptedConsentId, multilevelScaRequired)
+                                         .getBody();
+            return CmsResponse.<Boolean>builder()
+                       .payload(updateResponse)
+                       .build();
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote update multilevel sca required failed");
+        }
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 }

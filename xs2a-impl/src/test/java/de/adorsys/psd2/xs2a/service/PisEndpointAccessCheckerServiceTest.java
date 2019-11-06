@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
+
+
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -46,7 +48,9 @@ public class PisEndpointAccessCheckerServiceTest {
     public void isEndpointAccessible_InitiationAuthorisation_ShouldAccessible_EmptyResponse_True() {
         //When
         when(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(anyString()))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
+                            .error(CmsError.TECHNICAL_ERROR)
+                            .build());
 
         boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CREATED);
 
@@ -58,7 +62,9 @@ public class PisEndpointAccessCheckerServiceTest {
     public void isEndpointAccessible_CancellationAuthorisation_ShouldAccessible_EmptyResponse_True() {
         //When
         when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(anyString()))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
+                            .error(CmsError.TECHNICAL_ERROR)
+                            .build());
 
         boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CANCELLED);
 
@@ -114,14 +120,16 @@ public class PisEndpointAccessCheckerServiceTest {
         assertFalse(endpointAccessible);
     }
 
-    private Optional<GetPisAuthorisationResponse> buildGetPisAuthorisationResponse(ScaApproach scaApproach) {
+    private CmsResponse<GetPisAuthorisationResponse> buildGetPisAuthorisationResponse(ScaApproach scaApproach) {
         return buildGetPisAuthorisationResponse(scaApproach, null);
     }
 
-    private Optional<GetPisAuthorisationResponse> buildGetPisAuthorisationResponse(ScaApproach scaApproach, ScaStatus scaStatus) {
+    private CmsResponse<GetPisAuthorisationResponse> buildGetPisAuthorisationResponse(ScaApproach scaApproach, ScaStatus scaStatus) {
         GetPisAuthorisationResponse response = new GetPisAuthorisationResponse();
         response.setChosenScaApproach(scaApproach);
         response.setScaStatus(scaStatus);
-        return Optional.of(response);
+        return CmsResponse.<GetPisAuthorisationResponse>builder()
+                   .payload(response)
+                   .build();
     }
 }

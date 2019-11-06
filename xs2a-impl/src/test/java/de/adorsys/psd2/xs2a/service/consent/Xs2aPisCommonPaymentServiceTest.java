@@ -1,5 +1,7 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
@@ -70,7 +72,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     public void createCommonPayment_by_request_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
-            .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
+            .thenReturn(CmsResponse.<CreatePisCommonPaymentResponse>builder().payload(CREATE_PIS_COMMON_PAYMENT_RESPONSE).build());
 
         //When
         CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PIS_PAYMENT_INFO);
@@ -83,7 +85,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     public void createCommonPayment_by_request_failed() {
         //Given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<CreatePisCommonPaymentResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When
         CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PIS_PAYMENT_INFO);
@@ -96,7 +98,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     public void getPisCommonPaymentById_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
-            .thenReturn(Optional.of(PIS_COMMON_PAYMENT_RESPONSE));
+            .thenReturn(CmsResponse.<PisCommonPaymentResponse>builder().payload(PIS_COMMON_PAYMENT_RESPONSE).build());
 
         //When
         Optional<PisCommonPaymentResponse> actualResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID);
@@ -110,7 +112,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     public void getPisCommonPaymentById_failed() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<PisCommonPaymentResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When
         Optional<PisCommonPaymentResponse> actualResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID);
@@ -123,7 +125,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     public void isAuthenticationMethodDecoupled_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
-            .thenReturn(true);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         //When
         boolean actualResponse = xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
@@ -136,7 +138,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     public void isAuthenticationMethodDecoupled_failed() {
         //Given
         when(pisCommonPaymentServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
-            .thenReturn(false);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         //When
         boolean actualResponse = xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
@@ -151,7 +153,7 @@ public class Xs2aPisCommonPaymentServiceTest {
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
         when(pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
-            .thenReturn(true);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         //When
         boolean actualResponse = xs2aPisCommonPaymentService.saveAuthenticationMethods(AUTHORISATION_ID, AUTHENTICATION_OBJECT_LIST);
@@ -166,7 +168,7 @@ public class Xs2aPisCommonPaymentServiceTest {
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
         when(pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
-            .thenReturn(false);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         //When
         boolean actualResponse = xs2aPisCommonPaymentService.saveAuthenticationMethods(AUTHORISATION_ID, AUTHENTICATION_OBJECT_LIST);
@@ -178,7 +180,8 @@ public class Xs2aPisCommonPaymentServiceTest {
     @Test
     public void updateMultilevelSca() {
         // Given
-        when(pisCommonPaymentServiceEncrypted.updateMultilevelSca(PAYMENT_ID, true)).thenReturn(true);
+        when(pisCommonPaymentServiceEncrypted.updateMultilevelSca(PAYMENT_ID, true))
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         // When
         boolean actualResponse = xs2aPisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true);
@@ -191,7 +194,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     public void updatePisAuthorisationStatus_success() {
         // Given
         when(pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
-            .thenReturn(true);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         // When
         boolean result = xs2aPisCommonPaymentService.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED);
@@ -204,7 +207,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     public void updatePisAuthorisationStatus_failure() {
         // Given
         when(pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
-            .thenReturn(false);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         // When
         boolean result = xs2aPisCommonPaymentService.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED);

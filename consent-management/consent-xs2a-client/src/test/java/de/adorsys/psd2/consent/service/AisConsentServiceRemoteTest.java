@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
@@ -58,11 +60,11 @@ public class AisConsentServiceRemoteTest {
             .thenReturn(new ResponseEntity<>(controllerResponse, HttpStatus.CREATED));
 
         // When
-        Optional<CreateAisConsentResponse> actualResponse = aisConsentServiceRemote.createConsent(createRequest);
+        CmsResponse<CreateAisConsentResponse> actualResponse = aisConsentServiceRemote.createConsent(createRequest);
 
         // Then
-        assertTrue(actualResponse.isPresent());
-        assertEquals(controllerResponse, actualResponse.get());
+        assertTrue(actualResponse.isSuccessful());
+        assertEquals(controllerResponse, actualResponse.getPayload());
     }
 
     @Test
@@ -74,9 +76,9 @@ public class AisConsentServiceRemoteTest {
             .thenReturn(new ResponseEntity<>(null, HttpStatus.CREATED));
 
         // When
-        Optional<CreateAisConsentResponse> actualResponse = aisConsentServiceRemote.createConsent(createRequest);
+        CmsResponse<CreateAisConsentResponse> actualResponse = aisConsentServiceRemote.createConsent(createRequest);
 
         // Then
-        assertFalse(actualResponse.isPresent());
+        assertFalse(actualResponse.isSuccessful());
     }
 }

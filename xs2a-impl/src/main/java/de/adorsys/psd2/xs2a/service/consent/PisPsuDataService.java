@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -34,11 +35,14 @@ public class PisPsuDataService {
     private final RequestProviderService requestProviderService;
 
     public List<PsuIdData> getPsuDataByPaymentId(String paymentId) {
-        return pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(paymentId)
-                   .orElseGet(() -> {
-                       log.info("InR-ID: [{}], X-Request-ID [{}], Payment-ID [{}]. Can't get PsuData by payment ID because PsuData list not found by id at cms.",
-                                requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
-                       return Collections.emptyList();
-                   });
+        CmsResponse<List<PsuIdData>> cmsResponse = pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(paymentId);
+
+        if (cmsResponse.hasError()) {
+            log.info("InR-ID: [{}], X-Request-ID [{}], Payment-ID [{}]. Can't get PsuData by payment ID because PsuData list not found by id at cms.",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
+            return Collections.emptyList();
+        }
+
+        return cmsResponse.getPayload();
     }
 }

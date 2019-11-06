@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
@@ -47,6 +48,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
+import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 
 @Slf4j
@@ -76,11 +79,13 @@ public class AisConsentServiceInternal implements AisConsentService {
      */
     @Override
     @Transactional
-    public Optional<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request) {
+    public CmsResponse<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request) {
         if (request.getAllowedFrequencyPerDay() == null) {
             log.info("TPP ID: [{}]. Consent cannot be created, because request contains no allowed frequency per day",
                      request.getTppInfo().getAuthorisationNumber());
-            return Optional.empty();
+            return CmsResponse.<CreateAisConsentResponse>builder()
+                       .error(LOGICAL_ERROR)
+                       .build();
         }
         AisConsent consent = createConsentFromRequest(request);
         tppInfoRepository.findByAuthorisationNumber(request.getTppInfo().getAuthorisationNumber())
@@ -89,11 +94,16 @@ public class AisConsentServiceInternal implements AisConsentService {
         AisConsent savedConsent = aisConsentRepository.save(consent);
 
         if (savedConsent.getId() != null) {
-            return Optional.of(new CreateAisConsentResponse(savedConsent.getExternalId(), consentMapper.mapToAisAccountConsent(savedConsent)));
+            return CmsResponse.<CreateAisConsentResponse>builder()
+                       .payload(new CreateAisConsentResponse(savedConsent.getExternalId(), consentMapper.mapToAisAccountConsent(savedConsent)))
+                       .build();
+
         } else {
             log.info("TPP ID: [{}], External Consent ID: [{}]. AIS consent cannot be created, because when saving to DB got null ID",
                      request.getTppInfo().getAuthorisationNumber(), consent.getExternalId());
-            return Optional.empty();
+            return CmsResponse.<CreateAisConsentResponse>builder()
+                       .error(TECHNICAL_ERROR)
+                       .build();
         }
     }
 
@@ -105,15 +115,20 @@ public class AisConsentServiceInternal implements AisConsentService {
      */
     @Override
     @Transactional
-    public Optional<ConsentStatus> getConsentStatusById(String consentId) {
-        Optional<AisConsent> optionalConsentStatus = aisConsentRepository.findByExternalId(consentId);
-        if (optionalConsentStatus.isPresent()) {
-            return optionalConsentStatus.map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
-                       .map(this::checkAndUpdateOnExpiration)
-                       .map(AisConsent::getConsentStatus);
+    public CmsResponse<ConsentStatus> getConsentStatusById(String consentId) {
+        Optional<ConsentStatus> consentStatusOptional = aisConsentRepository.findByExternalId(consentId)
+                                                            .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
+                                                            .map(this::checkAndUpdateOnExpiration)
+                                                            .map(AisConsent::getConsentStatus);
+        if (consentStatusOptional.isPresent()) {
+            return CmsResponse.<ConsentStatus>builder()
+                       .payload(consentStatusOptional.get())
+                       .build();
         } else {
-            log.info("Consent ID: [{}]. Get consent failed, because consent not found", consentId);
-            return Optional.empty();
+            log.info("Consent ID: [{}]. Get consent status failed, because consent not found", consentId);
+            return CmsResponse.<ConsentStatus>builder()
+                       .error(LOGICAL_ERROR)
+                       .build();
         }
     }
 
@@ -126,14 +141,18 @@ public class AisConsentServiceInternal implements AisConsentService {
      */
     @Override
     @Transactional
-    public boolean updateConsentStatusById(String consentId, ConsentStatus status) {
-        return getActualAisConsent(consentId)
-                   .map(c -> setStatusAndSaveConsent(c, status))
-                   .orElseGet(() -> {
-                       log.info("Consent ID [{}]. Update consent status by ID failed, because consent not found",
-                                consentId);
-                       return false;
-                   });
+    public CmsResponse<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
+        Optional<Boolean> responseOptional = getActualAisConsent(consentId).map(c -> setStatusAndSaveConsent(c, status));
+        if (responseOptional.isPresent()) {
+            return CmsResponse.<Boolean>builder()
+                       .payload(responseOptional.get())
+                       .build();
+        }
+
+        log.info("Consent ID [{}]. Update consent status by ID failed, because consent not found", consentId);
+        return CmsResponse.<Boolean>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     /**
@@ -144,11 +163,22 @@ public class AisConsentServiceInternal implements AisConsentService {
      */
     @Override
     @Transactional
-    public Optional<AisAccountConsent> getAisAccountConsentById(String consentId) {
-        return aisConsentRepository.findByExternalId(consentId)
-                   .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
-                   .map(this::checkAndUpdateOnExpiration)
-                   .map(consentMapper::mapToAisAccountConsent);
+    public CmsResponse<AisAccountConsent> getAisAccountConsentById(String consentId) {
+        Optional<AisAccountConsent> consentOptional = aisConsentRepository.findByExternalId(consentId)
+                                                          .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
+                                                          .map(this::checkAndUpdateOnExpiration)
+                                                          .map(consentMapper::mapToAisAccountConsent);
+
+        if (consentOptional.isPresent()) {
+            return CmsResponse.<AisAccountConsent>builder()
+                       .payload(consentOptional.get())
+                       .build();
+        }
+
+        log.info("Consent ID [{}]. Get consent by ID failed, because consent not found", consentId);
+        return CmsResponse.<AisAccountConsent>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     /**
@@ -159,7 +189,7 @@ public class AisConsentServiceInternal implements AisConsentService {
      */
     @Override
     @Transactional
-    public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
+    public CmsResponse<Boolean> findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
         AisConsent newConsent = aisConsentRepository.findByExternalId(newConsentId)
                                     .orElseThrow(() -> {
                                         log.info("Consent ID: [{}]. Cannot find consent by ID", newConsentId);
@@ -168,7 +198,9 @@ public class AisConsentServiceInternal implements AisConsentService {
 
         if (newConsent.isOneAccessType()) {
             log.info("Consent ID: [{}]. Cannot find old consents, because consent is OneAccessType", newConsentId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
 
         if (newConsent.isWrongConsentData()) {
@@ -195,12 +227,16 @@ public class AisConsentServiceInternal implements AisConsentService {
 
         if (oldConsentsWithExactPsuDataLists.isEmpty()) {
             log.info("Consent ID: [{}]. Cannot find old consents, because consent hasn't exact PSU data lists as old consents", newConsentId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
 
         oldConsentsWithExactPsuDataLists.forEach(this::updateStatus);
         aisConsentRepository.saveAll(oldConsentsWithExactPsuDataLists);
-        return true;
+        return CmsResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
     }
 
     /**
@@ -210,7 +246,7 @@ public class AisConsentServiceInternal implements AisConsentService {
      */
     @Override
     @Transactional
-    public void checkConsentAndSaveActionLog(AisConsentActionRequest request) {
+    public CmsResponse<CmsResponse.VoidResponse> checkConsentAndSaveActionLog(AisConsentActionRequest request) {
         Optional<AisConsent> consentOpt = getActualAisConsent(request.getConsentId());
         if (consentOpt.isPresent()) {
             AisConsent consent = consentOpt.get();
@@ -222,6 +258,10 @@ public class AisConsentServiceInternal implements AisConsentService {
             updateAisConsentUsage(consent, request); //NOSONAR
             logConsentAction(consent.getExternalId(), resolveConsentActionStatus(request, consent), request.getTppId());
         }
+
+        return CmsResponse.<CmsResponse.VoidResponse>builder()
+                   .payload(CmsResponse.voidResponse())
+                   .build();
     }
 
     /**
@@ -233,47 +273,87 @@ public class AisConsentServiceInternal implements AisConsentService {
      */
     @Override
     @Transactional
-    public Optional<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) {
-        return getActualAisConsent(consentId)
-                   .map(consent -> {
-                       consent.addAspspAccountAccess(new AspspAccountAccessHolder(request)
-                                                         .getAccountAccesses());
-                       return aisConsentRepository.save(consent)
-                                  .getExternalId();
-                   });
+    public CmsResponse<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) {
+        Optional<String> consentIdOptional = getActualAisConsent(consentId)
+                                                 .map(consent -> {
+                                                     consent.addAspspAccountAccess(new AspspAccountAccessHolder(request)
+                                                                                       .getAccountAccesses());
+                                                     return aisConsentRepository.save(consent)
+                                                                .getExternalId();
+                                                 });
+
+        if (consentIdOptional.isPresent()) {
+            return CmsResponse.<String>builder()
+                       .payload(consentIdOptional.get())
+                       .build();
+        }
+
+        log.info("Consent ID [{}]. Update aspsp account access failed, because consent not found",
+                 consentId);
+        return CmsResponse.<String>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     @Override
     @Transactional
-    public Optional<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request) {
-        return getActualAisConsent(consentId)
-                   .map(consent -> {
-                       consent.addAspspAccountAccess(new AspspAccountAccessHolder(request)
-                                                         .getAccountAccesses());
-                       return consentMapper.mapToAisAccountConsent(aisConsentRepository.save(consent));
-                   });
+    public CmsResponse<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request) {
+        Optional<AisAccountConsent> consentOptional = getActualAisConsent(consentId)
+                                                          .map(consent -> {
+                                                              consent.addAspspAccountAccess(new AspspAccountAccessHolder(request)
+                                                                                                .getAccountAccesses());
+                                                              return consentMapper.mapToAisAccountConsent(aisConsentRepository.save(consent));
+                                                          });
+
+        if (consentOptional.isPresent()) {
+            return CmsResponse.<AisAccountConsent>builder()
+                       .payload(consentOptional.get())
+                       .build();
+        }
+
+        log.info("Consent ID [{}]. Update aspsp account access with response failed, because consent not found",
+                 consentId);
+        return CmsResponse.<AisAccountConsent>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<List<PsuIdData>> getPsuDataByConsentId(String consentId) {
-        return getActualAisConsent(consentId)
-                   .map(ac -> psuDataMapper.mapToPsuIdDataList(ac.getPsuDataList()));
+    public CmsResponse<List<PsuIdData>> getPsuDataByConsentId(String consentId) {
+        Optional<List<PsuIdData>> psuIdDataOptional = getActualAisConsent(consentId)
+                                                          .map(ac -> psuDataMapper.mapToPsuIdDataList(ac.getPsuDataList()));
+
+        if (psuIdDataOptional.isPresent()) {
+            return CmsResponse.<List<PsuIdData>>builder()
+                       .payload(psuIdDataOptional.get())
+                       .build();
+        }
+
+        log.info("Consent ID [{}]. Get psu data by consent id failed, because consent not found",
+                 consentId);
+        return CmsResponse.<List<PsuIdData>>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     @Override
     @Transactional
-    public boolean updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) {
+    public CmsResponse<Boolean> updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) {
         Optional<AisConsent> aisConsentOptional = aisConsentRepository.findByExternalId(consentId);
         if (!aisConsentOptional.isPresent()) {
             log.info("Consent ID: [{}]. Get update multilevel SCA required status failed, because consent authorisation is not found",
                      consentId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
         AisConsent consent = aisConsentOptional.get();
         consent.setMultilevelScaRequired(multilevelScaRequired);
         aisConsentRepository.save(consent);
 
-        return true;
+        return CmsResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
     }
 
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.AdditionalAccountInformationType;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
@@ -282,7 +283,10 @@ public class CmsPsuAisServiceTest {
     @Test
     public void confirmConsentSuccess() {
         // Given
-        when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(anyString())).thenReturn(true);
+        when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(anyString()))
+            .thenReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
+                            .build());
 
         AisConsent aisConsentValid = buildConsentByStatus(ConsentStatus.VALID);
         when(aisConsentRepository.save(aisConsentValid)).thenReturn(aisConsentValid);
@@ -526,9 +530,9 @@ public class CmsPsuAisServiceTest {
         List<AspspAccountAccess> aspspAccountAccessesChecked = aisConsent.getAspspAccountAccesses();
 
         Function<TypeAccess, Long> countAccessesByType = typeAccess -> aspspAccountAccessesChecked.stream()
-                                                             .map(AspspAccountAccess::getTypeAccess)
-                                                             .filter(type -> type.equals(typeAccess))
-                                                             .count();
+                                                                           .map(AspspAccountAccess::getTypeAccess)
+                                                                           .filter(type -> type.equals(typeAccess))
+                                                                           .count();
 
         assertEquals(0, countAccessesByType.apply(TypeAccess.OWNER_NAME).longValue());
         assertEquals(0, countAccessesByType.apply(TypeAccess.OWNER_ADDRESS).longValue());
@@ -555,9 +559,9 @@ public class CmsPsuAisServiceTest {
         List<AspspAccountAccess> aspspAccountAccessesChecked = aisConsent.getAspspAccountAccesses();
 
         Function<TypeAccess, Long> countAccessesByType = typeAccess -> aspspAccountAccessesChecked.stream()
-                                                             .map(AspspAccountAccess::getTypeAccess)
-                                                             .filter(type -> type.equals(typeAccess))
-                                                             .count();
+                                                                           .map(AspspAccountAccess::getTypeAccess)
+                                                                           .filter(type -> type.equals(typeAccess))
+                                                                           .count();
 
         assertEquals(1L, countAccessesByType.apply(TypeAccess.OWNER_NAME).longValue());
         assertEquals(1L, countAccessesByType.apply(TypeAccess.OWNER_ADDRESS).longValue());
@@ -824,3 +828,4 @@ public class CmsPsuAisServiceTest {
         return accountReference;
     }
 }
+

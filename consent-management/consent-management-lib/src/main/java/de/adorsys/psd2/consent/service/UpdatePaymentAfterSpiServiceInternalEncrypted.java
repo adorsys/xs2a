@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiService;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
@@ -27,6 +28,10 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
+import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
+
 @Slf4j
 @Service
 @Transactional(readOnly = true)
@@ -37,37 +42,49 @@ public class UpdatePaymentAfterSpiServiceInternalEncrypted implements UpdatePaym
 
     @Override
     @Transactional
-    public boolean updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status) {
-        return securityDataService.decryptId(encryptedPaymentId)
-                   .map(id -> updatePaymentStatusAfterSpiService.updatePaymentStatus(id, status))
-                   .orElseGet(() -> {
-                       log.info("Encrypted Payment ID [{}]. Update payment status by id failed, couldn't decrypt payment id",
-                                encryptedPaymentId);
-                       return false;
-                   });
+    public CmsResponse<Boolean> updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status) {
+        Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
+
+        if (!decryptIdOptional.isPresent()) {
+            log.info("Encrypted Payment ID [{}]. Update payment status by id failed, couldn't decrypt payment id",
+                     encryptedPaymentId);
+            return CmsResponse.<Boolean>builder()
+                       .error(TECHNICAL_ERROR)
+                       .build();
+        }
+
+        return updatePaymentStatusAfterSpiService.updatePaymentStatus(decryptIdOptional.get(), status);
     }
 
     @Override
     @Transactional
-    public boolean updatePaymentCancellationTppRedirectUri(@NotNull String encryptedPaymentId, @NotNull TppRedirectUri tppRedirectUri) {
-        return securityDataService.decryptId(encryptedPaymentId)
-                   .map(id -> updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(id, tppRedirectUri))
-                   .orElseGet(() -> {
-                       log.info("Encrypted Payment ID [{}]. Update cancellation payment tpp redirect URIs by id failed, couldn't decrypt payment id",
-                                encryptedPaymentId);
-                       return false;
-                   });
+    public CmsResponse<Boolean> updatePaymentCancellationTppRedirectUri(@NotNull String encryptedPaymentId, @NotNull TppRedirectUri tppRedirectUri) {
+        Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
+
+        if (!decryptIdOptional.isPresent()) {
+            log.info("Encrypted Payment ID [{}]. Update cancellation payment tpp redirect URIs by id failed, couldn't decrypt payment id",
+                     encryptedPaymentId);
+            return CmsResponse.<Boolean>builder()
+                       .error(TECHNICAL_ERROR)
+                       .build();
+        }
+
+        return updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(decryptIdOptional.get(), tppRedirectUri);
     }
 
     @Override
     @Transactional
-    public boolean updatePaymentCancellationInternalRequestId(@NotNull String encryptedPaymentId, @NotNull String internalRequestId) {
-        return securityDataService.decryptId(encryptedPaymentId)
-                   .map(id -> updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(id, internalRequestId))
-                   .orElseGet(() -> {
-                       log.info("Encrypted Payment ID [{}]. Update cancellation payment internal request ID failed, couldn't decrypt payment id",
-                                encryptedPaymentId);
-                       return false;
-                   });
+    public CmsResponse<Boolean> updatePaymentCancellationInternalRequestId(@NotNull String encryptedPaymentId, @NotNull String internalRequestId) {
+        Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
+
+        if (!decryptIdOptional.isPresent()) {
+            log.info("Encrypted Payment ID [{}]. Update cancellation payment internal request ID failed, couldn't decrypt payment id",
+                     encryptedPaymentId);
+            return CmsResponse.<Boolean>builder()
+                       .error(TECHNICAL_ERROR)
+                       .build();
+        }
+
+        return updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(decryptIdOptional.get(), internalRequestId);
     }
 }

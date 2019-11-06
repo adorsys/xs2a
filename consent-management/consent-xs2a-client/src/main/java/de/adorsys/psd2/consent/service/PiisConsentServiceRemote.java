@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PiisConsentRemoteUrls;
@@ -31,7 +32,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -42,7 +45,7 @@ public class PiisConsentServiceRemote implements PiisConsentService {
     private final PiisConsentRemoteUrls remotePiisConsentUrls;
 
     @Override
-    public List<PiisConsent> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountReferenceSelector) {
+    public CmsResponse<List<PiisConsent>> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountReferenceSelector) {
         List<PiisConsent> response = Collections.emptyList();
 
         HttpHeaders headers = new HttpHeaders();
@@ -61,9 +64,11 @@ public class PiisConsentServiceRemote implements PiisConsentService {
                 accountReferenceSelector.getAccountValue()
             ).getBody();
         } catch (CmsRestException e) {
-            log.error("Failed to retrieve piis consent validation data!");
+            log.error("Failed to retrieve piis consent validation data");
         }
 
-        return response;
+        return CmsResponse.<List<PiisConsent>>builder()
+                   .payload(response)
+                   .build();
     }
 }

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -60,9 +61,11 @@ public class TppServiceInternalTest {
         TppInfo tppInfo = buildTppInfo(null);
         when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppInfo.getAuthorisationNumber(), INSTANCE_ID)).thenReturn(Optional.empty());
         //When
-        boolean updateTppInfo = tppServiceInternal.updateTppInfo(tppInfo);
+        CmsResponse<Boolean> updateTppInfo = tppServiceInternal.updateTppInfo(tppInfo);
         //Then
-        assertFalse(updateTppInfo);
+        assertTrue(updateTppInfo.isSuccessful());
+
+        assertFalse(updateTppInfo.getPayload());
     }
 
     @Test
@@ -73,9 +76,12 @@ public class TppServiceInternalTest {
         ArgumentCaptor<TppInfoEntity> argument = ArgumentCaptor.forClass(TppInfoEntity.class);
         when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppInfo.getAuthorisationNumber(), INSTANCE_ID)).thenReturn(Optional.of(tppInfoEntity));
         //When
-        boolean updateTppInfo = tppServiceInternal.updateTppInfo(tppInfo);
+        CmsResponse<Boolean> updateTppInfo = tppServiceInternal.updateTppInfo(tppInfo);
         //Then
-        assertTrue(updateTppInfo);
+        assertTrue(updateTppInfo.isSuccessful());
+
+        assertTrue(updateTppInfo.getPayload());
+
         verify(tppInfoRepository).save(argument.capture());
         TppInfoEntity saved = argument.getValue();
         assertTrue(CollectionUtils.isEqualCollection(tppInfo.getTppRoles(), saved.getTppRoles()));

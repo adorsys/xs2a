@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -50,7 +51,7 @@ public class AisConsentBuilder {
     private final static AuthorisationTemplate AUTHORISATION_TEMPLATE = AuthorisationTemplateBuilder.buildAuthorisationTemplate();
     private final static PsuIdData PSU_DATA = PsuIdDataBuilder.buildPsuIdData();
     private final static String AUTHORISATION_ID = UUID.randomUUID().toString();
-    private static final Charset UTF_8 = Charset.forName("utf-8");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, Xs2aObjectMapper mapper, AisAccountConsentAuthorisation consentAuthorisation) throws Exception {
         CreateConsentReq consentReq = mapper.readValue(

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
@@ -117,9 +118,13 @@ public class CmsPsuPisServiceInternalTest {
             .thenReturn(cmsPayment);
 
         when(pisCommonPaymentService.getPsuDataListByPaymentId(PAYMENT_ID))
-            .thenReturn(Optional.of(Collections.singletonList(psuIdData)));
+            .thenReturn(CmsResponse.<List<PsuIdData>>builder()
+                            .payload(Collections.singletonList(psuIdData))
+                            .build());
         when(pisCommonPaymentService.getPsuDataListByPaymentId(WRONG_PAYMENT_ID))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<List<PsuIdData>>builder()
+                            .error(CmsError.LOGICAL_ERROR)
+                            .build());
 
         when(psuDataMapper.mapToPsuData(psuIdData))
             .thenReturn(psuData);
@@ -677,4 +682,3 @@ public class CmsPsuPisServiceInternalTest {
         return pisAuthorisation;
     }
 }
-

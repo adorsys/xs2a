@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
@@ -41,16 +42,20 @@ public class TppServiceInternal implements TppService {
 
     @Override
     @Transactional
-    public boolean updateTppInfo(@NotNull TppInfo tppInfo) {
+    public CmsResponse<Boolean> updateTppInfo(@NotNull TppInfo tppInfo) {
         Optional<TppInfoEntity> tppInfoEntityOptional = tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppInfo.getAuthorisationNumber(), serviceInstanceId);
         if (!tppInfoEntityOptional.isPresent()) {
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
 
         TppInfoEntity tppInfoEntity = tppInfoEntityOptional.get();
         tppInfoEntity.setTppRoles(tppInfo.getTppRoles());
         tppInfoRepository.save(tppInfoEntity);
 
-        return true;
+        return CmsResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
     }
 }

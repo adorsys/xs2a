@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
 import de.adorsys.psd2.consent.config.CmsRestException;
@@ -33,6 +35,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -77,10 +80,11 @@ public class AisConsentAuthorisationServiceRemoteTest {
             .thenReturn(ResponseEntity.ok(consentAuthorisationResponse));
 
         // When
-        Optional<AisConsentAuthorizationResponse> actualResponse = service.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
+        CmsResponse<AisConsentAuthorizationResponse> actualResponse = service.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
 
         // Then
-        assertEquals(Optional.of(consentAuthorisationResponse), actualResponse);
+        assertTrue(actualResponse.isSuccessful());
+        assertEquals(consentAuthorisationResponse, actualResponse.getPayload());
     }
 
     @Test
@@ -97,10 +101,10 @@ public class AisConsentAuthorisationServiceRemoteTest {
             .thenReturn(ResponseEntity.ok(null));
 
         // When
-        Optional<AisConsentAuthorizationResponse> actualResponse = service.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
+        CmsResponse<AisConsentAuthorizationResponse> actualResponse = service.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
 
         // Then
-        assertFalse(actualResponse.isPresent());
+        assertFalse(actualResponse.isSuccessful());
     }
 
     @Test
@@ -117,9 +121,9 @@ public class AisConsentAuthorisationServiceRemoteTest {
             .thenThrow(cmsRestException);
 
         // When
-        Optional<AisConsentAuthorizationResponse> actualResponse = service.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
+        CmsResponse<AisConsentAuthorizationResponse> actualResponse = service.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
 
         // Then
-        assertFalse(actualResponse.isPresent());
+        assertFalse(actualResponse.isSuccessful());
     }
 }

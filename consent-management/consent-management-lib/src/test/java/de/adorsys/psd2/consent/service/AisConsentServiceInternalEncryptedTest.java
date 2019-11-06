@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
@@ -33,7 +36,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,6 +45,7 @@ public class AisConsentServiceInternalEncryptedTest {
     private static final String ENCRYPTED_CONSENT_ID = "encrypted consent id";
     private static final String UNDECRYPTABLE_CONSENT_ID = "undecryptable consent id";
     private static final String DECRYPTED_CONSENT_ID = "255574b2-f115-4f3c-8d77-c1897749c060";
+    private static final String UNENCRYPTABLE_CONSENT_ID = "unencryptable consent id";
     private static final ConsentStatus CONSENT_STATUS = ConsentStatus.RECEIVED;
 
     @InjectMocks
@@ -58,20 +63,34 @@ public class AisConsentServiceInternalEncryptedTest {
             .thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID))
             .thenReturn(Optional.empty());
+        when(securityDataService.encryptId(UNENCRYPTABLE_CONSENT_ID))
+            .thenReturn(Optional.empty());
 
         when(aisConsentService.createConsent(any()))
-            .thenReturn(Optional.of(new CreateAisConsentResponse(DECRYPTED_CONSENT_ID, buildAisAccountConsent())));
+            .thenReturn(CmsResponse.<CreateAisConsentResponse>builder()
+                            .payload(new CreateAisConsentResponse(DECRYPTED_CONSENT_ID, buildAisAccountConsent()))
+                            .build());
         when(aisConsentService.getConsentStatusById(DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(CONSENT_STATUS));
+            .thenReturn(CmsResponse.<ConsentStatus>builder()
+                            .payload(CONSENT_STATUS)
+                            .build());
         when(aisConsentService.updateConsentStatusById(DECRYPTED_CONSENT_ID, CONSENT_STATUS))
-            .thenReturn(true);
+            .thenReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
+                            .build());
         when(aisConsentService.updateAspspAccountAccess(eq(DECRYPTED_CONSENT_ID), any()))
-            .thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+            .thenReturn(CmsResponse.<String>builder()
+                            .payload(DECRYPTED_CONSENT_ID)
+                            .build());
         when(aisConsentService.getAisAccountConsentById(DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(buildAisAccountConsent()));
+            .thenReturn(CmsResponse.<AisAccountConsent>builder()
+                            .payload(buildAisAccountConsent())
+                            .build());
 
         when(aisConsentService.getPsuDataByConsentId(DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(Collections.singletonList(buildPsuIdData())));
+            .thenReturn(CmsResponse.<List<PsuIdData>>builder()
+                            .payload(Collections.singletonList(buildPsuIdData()))
+                            .build());
     }
 
     @Test
@@ -81,109 +100,134 @@ public class AisConsentServiceInternalEncryptedTest {
         CreateAisConsentResponse expected = new CreateAisConsentResponse(ENCRYPTED_CONSENT_ID, buildAisAccountConsent());
 
         // When
-        Optional<CreateAisConsentResponse> actualResponse = aisConsentServiceInternalEncrypted.createConsent(request);
+        CmsResponse<CreateAisConsentResponse> actualResponse = aisConsentServiceInternalEncrypted.createConsent(request);
 
         // Then
-        assertTrue(actualResponse.isPresent());
+        assertTrue(actualResponse.isSuccessful());
 
-        CreateAisConsentResponse actual = actualResponse.get();
+        CreateAisConsentResponse actual = actualResponse.getPayload();
         assertEquals(expected, actual);
         verify(aisConsentService).createConsent(request);
     }
 
     @Test
     public void createConsent_failure_internalServiceFailed() {
-        when(aisConsentService.createConsent(any())).thenReturn(Optional.empty());
+        when(aisConsentService.createConsent(any()))
+            .thenReturn(CmsResponse.<CreateAisConsentResponse>builder()
+                            .error(CmsError.LOGICAL_ERROR)
+                            .build());
 
         // Given
         CreateAisConsentRequest request = buildCreateAisConsentRequest();
 
         // When
-        Optional<CreateAisConsentResponse> actual = aisConsentServiceInternalEncrypted.createConsent(request);
+        CmsResponse<CreateAisConsentResponse> actual = aisConsentServiceInternalEncrypted.createConsent(request);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
         verify(aisConsentService).createConsent(request);
     }
 
     @Test
     public void createConsent_failure_encryptionFailed() {
-        when(aisConsentService.createConsent(any())).thenReturn(Optional.empty());
-
         // Given
         CreateAisConsentRequest request = buildCreateAisConsentRequest();
+        when(aisConsentService.createConsent(any()))
+            .thenReturn(CmsResponse.<CreateAisConsentResponse>builder()
+                            .payload(new CreateAisConsentResponse(UNENCRYPTABLE_CONSENT_ID, buildAisAccountConsent()))
+                            .build());
 
         // When
-        Optional<CreateAisConsentResponse> actual = aisConsentServiceInternalEncrypted.createConsent(request);
+        CmsResponse<CreateAisConsentResponse> actual = aisConsentServiceInternalEncrypted.createConsent(request);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
         verify(aisConsentService).createConsent(request);
     }
 
     @Test
     public void getConsentStatusById_success() {
         // When
-        Optional<ConsentStatus> actual = aisConsentServiceInternalEncrypted.getConsentStatusById(ENCRYPTED_CONSENT_ID);
+        CmsResponse<ConsentStatus> actual = aisConsentServiceInternalEncrypted.getConsentStatusById(ENCRYPTED_CONSENT_ID);
 
         // Then
-        assertTrue(actual.isPresent());
+        assertTrue(actual.isSuccessful());
 
-        assertEquals(CONSENT_STATUS, actual.get());
+        assertEquals(CONSENT_STATUS, actual.getPayload());
         verify(aisConsentService, times(1)).getConsentStatusById(DECRYPTED_CONSENT_ID);
     }
 
     @Test
     public void getConsentStatusById_internalServiceFailed() {
-        when(aisConsentService.getConsentStatusById(any())).thenReturn(Optional.empty());
+        when(aisConsentService.getConsentStatusById(any()))
+            .thenReturn(CmsResponse.<ConsentStatus>builder()
+                            .error(CmsError.LOGICAL_ERROR)
+                            .build());
 
         // When
-        Optional<ConsentStatus> actual = aisConsentServiceInternalEncrypted.getConsentStatusById(ENCRYPTED_CONSENT_ID);
+        CmsResponse<ConsentStatus> actual = aisConsentServiceInternalEncrypted.getConsentStatusById(ENCRYPTED_CONSENT_ID);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
         verify(aisConsentService, times(1)).getConsentStatusById(DECRYPTED_CONSENT_ID);
     }
 
     @Test
     public void getConsentStatusById_decryptionFailed() {
         // When
-        Optional<ConsentStatus> actual = aisConsentServiceInternalEncrypted.getConsentStatusById(UNDECRYPTABLE_CONSENT_ID);
+        CmsResponse<ConsentStatus> actual = aisConsentServiceInternalEncrypted.getConsentStatusById(UNDECRYPTABLE_CONSENT_ID);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
         verify(aisConsentService, never()).getConsentStatusById(any());
     }
 
     @Test
     public void updateConsentStatusById_success() {
         // When
-        boolean actual = aisConsentServiceInternalEncrypted.updateConsentStatusById(ENCRYPTED_CONSENT_ID, CONSENT_STATUS);
+        CmsResponse<Boolean> actual = aisConsentServiceInternalEncrypted.updateConsentStatusById(ENCRYPTED_CONSENT_ID, CONSENT_STATUS);
 
         // Then
-        assertTrue(actual);
+        assertTrue(actual.isSuccessful());
+
+        assertTrue(actual.getPayload());
         verify(aisConsentService, times(1)).updateConsentStatusById(DECRYPTED_CONSENT_ID, CONSENT_STATUS);
     }
 
     @Test
     public void updateConsentStatusById_internalServiceFailed() {
-        when(aisConsentService.updateConsentStatusById(any(), any())).thenReturn(false);
+        when(aisConsentService.updateConsentStatusById(any(), any()))
+            .thenReturn(CmsResponse.<Boolean>builder()
+                            .error(CmsError.LOGICAL_ERROR)
+                            .build());
 
         // When
-        boolean actual = aisConsentServiceInternalEncrypted.updateConsentStatusById(ENCRYPTED_CONSENT_ID, CONSENT_STATUS);
+        CmsResponse<Boolean> actual = aisConsentServiceInternalEncrypted.updateConsentStatusById(ENCRYPTED_CONSENT_ID, CONSENT_STATUS);
 
         // Then
-        assertFalse(actual);
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
         verify(aisConsentService, times(1)).updateConsentStatusById(DECRYPTED_CONSENT_ID, CONSENT_STATUS);
     }
 
     @Test
     public void updateConsentStatusById_decryptionFailed() {
         // When
-        boolean actual = aisConsentServiceInternalEncrypted.updateConsentStatusById(UNDECRYPTABLE_CONSENT_ID, CONSENT_STATUS);
+        CmsResponse<Boolean> actual = aisConsentServiceInternalEncrypted.updateConsentStatusById(UNDECRYPTABLE_CONSENT_ID, CONSENT_STATUS);
 
         // Then
-        assertFalse(actual);
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
         verify(aisConsentService, never()).updateConsentStatusById(any(), any());
     }
 
@@ -193,34 +237,41 @@ public class AisConsentServiceInternalEncryptedTest {
         AisAccountConsent expected = buildAisAccountConsent();
 
         // When
-        Optional<AisAccountConsent> actual = aisConsentServiceInternalEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID);
+        CmsResponse<AisAccountConsent> actual = aisConsentServiceInternalEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID);
 
         // Then
-        assertTrue(actual.isPresent());
+        assertTrue(actual.isSuccessful());
 
-        assertEquals(expected, actual.get());
+        assertEquals(expected, actual.getPayload());
         verify(aisConsentService, times(1)).getAisAccountConsentById(DECRYPTED_CONSENT_ID);
     }
 
     @Test
     public void getAisAccountConsentById_internalServiceFailed() {
-        when(aisConsentService.getAisAccountConsentById(any())).thenReturn(Optional.empty());
+        when(aisConsentService.getAisAccountConsentById(any()))
+            .thenReturn(CmsResponse.<AisAccountConsent>builder()
+                            .error(CmsError.LOGICAL_ERROR)
+                            .build());
 
         // When
-        Optional<AisAccountConsent> actual = aisConsentServiceInternalEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID);
+        CmsResponse<AisAccountConsent> actual = aisConsentServiceInternalEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
         verify(aisConsentService, times(1)).getAisAccountConsentById(DECRYPTED_CONSENT_ID);
     }
 
     @Test
     public void getAisAccountConsentById_decryptionFailed() {
         // When
-        Optional<AisAccountConsent> actual = aisConsentServiceInternalEncrypted.getAisAccountConsentById(UNDECRYPTABLE_CONSENT_ID);
+        CmsResponse<AisAccountConsent> actual = aisConsentServiceInternalEncrypted.getAisAccountConsentById(UNDECRYPTABLE_CONSENT_ID);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
         verify(aisConsentService, never()).getAisAccountConsentById(any());
     }
 
@@ -255,27 +306,32 @@ public class AisConsentServiceInternalEncryptedTest {
         AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
 
         // When
-        Optional<String> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, accountAccessInfo);
+        CmsResponse<String> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, accountAccessInfo);
 
         // Then
-        assertTrue(actual.isPresent());
+        assertTrue(actual.isSuccessful());
 
-        assertEquals(ENCRYPTED_CONSENT_ID, actual.get());
+        assertEquals(ENCRYPTED_CONSENT_ID, actual.getPayload());
         verify(aisConsentService, times(1)).updateAspspAccountAccess(DECRYPTED_CONSENT_ID, accountAccessInfo);
     }
 
     @Test
     public void updateAccountAccess_internalServiceFailed() {
-        when(aisConsentService.updateAspspAccountAccess(any(), any())).thenReturn(Optional.empty());
+        when(aisConsentService.updateAspspAccountAccess(any(), any()))
+            .thenReturn(CmsResponse.<String>builder()
+                            .error(CmsError.LOGICAL_ERROR)
+                            .build());
 
         // Given
         AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
 
         // When
-        Optional<String> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, accountAccessInfo);
+        CmsResponse<String> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, accountAccessInfo);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
         verify(aisConsentService, times(1)).updateAspspAccountAccess(DECRYPTED_CONSENT_ID, accountAccessInfo);
     }
 
@@ -285,10 +341,12 @@ public class AisConsentServiceInternalEncryptedTest {
         AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
 
         // When
-        Optional<String> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(UNDECRYPTABLE_CONSENT_ID, accountAccessInfo);
+        CmsResponse<String> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(UNDECRYPTABLE_CONSENT_ID, accountAccessInfo);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
         verify(aisConsentService, never()).updateAspspAccountAccess(any(), any());
     }
 
@@ -299,34 +357,41 @@ public class AisConsentServiceInternalEncryptedTest {
         List<PsuIdData> expected = Collections.singletonList(buildPsuIdData());
 
         // When
-        Optional<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
+        CmsResponse<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
 
         // Then
-        assertTrue(actual.isPresent());
+        assertTrue(actual.isSuccessful());
 
-        assertEquals(expected, actual.get());
+        assertEquals(expected, actual.getPayload());
         verify(aisConsentService, times(1)).getPsuDataByConsentId(DECRYPTED_CONSENT_ID);
     }
 
     @Test
     public void getPsuDataByConsentId_internalServiceFailed() {
-        when(aisConsentService.getPsuDataByConsentId(any())).thenReturn(Optional.empty());
+        when(aisConsentService.getPsuDataByConsentId(any()))
+            .thenReturn(CmsResponse.<List<PsuIdData>>builder()
+                            .error(CmsError.LOGICAL_ERROR)
+                            .build());
 
         // When
-        Optional<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
+        CmsResponse<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
         verify(aisConsentService, times(1)).getPsuDataByConsentId(DECRYPTED_CONSENT_ID);
     }
 
     @Test
     public void getPsuDataByConsentId_decryptionFailed() {
         // When
-        Optional<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(UNDECRYPTABLE_CONSENT_ID);
+        CmsResponse<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(UNDECRYPTABLE_CONSENT_ID);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
         verify(aisConsentService, never()).getPsuDataByConsentId(any());
     }
 
@@ -350,3 +415,4 @@ public class AisConsentServiceInternalEncryptedTest {
         return new PsuIdData(null, null, null, null);
     }
 }
+

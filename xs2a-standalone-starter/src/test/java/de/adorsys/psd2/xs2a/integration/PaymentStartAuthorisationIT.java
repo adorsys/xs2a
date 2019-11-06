@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
@@ -29,7 +31,10 @@ import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
@@ -80,7 +85,6 @@ import org.springframework.web.client.RestTemplate;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
@@ -153,7 +157,10 @@ public class PaymentStartAuthorisationIT {
 
         given(tppService.getTppInfo()).willReturn(TPP_INFO);
         given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo())).willReturn(false);
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(false)
+                            .build());
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
     }
 
@@ -164,16 +171,24 @@ public class PaymentStartAuthorisationIT {
 
         given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
-            .willReturn(Optional.of(buildPisCommonPaymentResponse()));
+            .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
+                            .payload(buildPisCommonPaymentResponse())
+                            .build());
 
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
         given(pisCommonPaymentServiceEncrypted.createAuthorization(eq(PAYMENT_ID), createPisAuthorisationRequestCaptor.capture()))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, ScaStatus.PSUIDENTIFIED, null, null)));
+            .willReturn(CmsResponse.<CreatePisAuthorisationResponse>builder()
+                            .payload(new CreatePisAuthorisationResponse(AUTHORISATION_ID, ScaStatus.PSUIDENTIFIED, null, null))
+                            .build());
 
         given(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID))
-            .willReturn(Optional.of(buildGetPisAuthorisationResponse(ScaStatus.PSUIDENTIFIED)));
+            .willReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
+                            .payload(buildGetPisAuthorisationResponse(ScaStatus.PSUIDENTIFIED))
+                            .build());
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
-            .willReturn(Optional.of(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
+            .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
+                            .payload(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED))
+                            .build());
         given(paymentAuthorisationSpi.authorisePsu(any(SpiContextData.class), any(SpiPsuData.class), eq(PSU_PASS), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
@@ -183,6 +198,10 @@ public class PaymentStartAuthorisationIT {
         given(paymentAuthorisationSpi.requestAvailableScaMethods(any(SpiContextData.class), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                             .payload(new SpiAvailableScaMethodsResponse(Collections.singletonList(authenticationObject)))
+                            .build());
+        given(pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(eq(AUTHORISATION_ID), any()))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
                             .build());
         given(paymentAuthorisationSpi.requestAuthorisationCode(any(SpiContextData.class), eq(AUTHORISATION_METHOD_ID), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
@@ -194,7 +213,10 @@ public class PaymentStartAuthorisationIT {
             .willReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                             .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
                             .build());
-        given(updatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP)).willReturn(true);
+        given(updatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
+                            .build());
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
 

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.TppServiceRemoteUrls;
@@ -30,8 +31,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -42,13 +41,18 @@ public class TppServiceRemote implements TppService {
     private final TppServiceRemoteUrls tppServiceRemoteUrls;
 
     @Override
-    public boolean updateTppInfo(@NotNull TppInfo tppInfo) {
+    public CmsResponse<Boolean> updateTppInfo(@NotNull TppInfo tppInfo) {
         try {
             ResponseEntity<Boolean> responseEntity = consentRestTemplate.exchange(tppServiceRemoteUrls.updateTppInfo(), HttpMethod.PUT, new HttpEntity<>(tppInfo), Boolean.class);
-            return Optional.ofNullable(responseEntity.getBody()).orElse(false);
+            return CmsResponse.<Boolean>builder()
+                              .payload(responseEntity.getBody())
+                              .build();
         } catch (CmsRestException e) {
             log.error("TPP not found, id: {}", tppInfo.getAuthorisationNumber());
-            return false;
         }
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 }

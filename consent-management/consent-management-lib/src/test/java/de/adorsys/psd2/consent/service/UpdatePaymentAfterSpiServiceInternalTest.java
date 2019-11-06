@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -55,24 +56,37 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
 
     @Test
     public void updatePaymentStatus_success() {
+        // Given
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.ACCP);
 
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));
         when(commonPaymentDataService.updateStatusInPaymentData(pisCommonPaymentData, TransactionStatus.ACSP)).thenReturn(true);
 
-        assertTrue(updatePaymentAfterSpiServiceInternal.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACSP));
+        // When
+        CmsResponse<Boolean> actual = updatePaymentAfterSpiServiceInternal.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACSP);
 
+        // Then
+        assertTrue(actual.isSuccessful());
+
+        assertTrue(actual.getPayload());
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
         verify(commonPaymentDataService, times(1)).updateStatusInPaymentData(any(PisCommonPaymentData.class), eq(TransactionStatus.ACSP));
     }
 
     @Test
     public void updatePaymentStatus_transactionStatusIsFinalised() {
+        // Given
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RJCT);
 
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));
 
-        assertFalse(updatePaymentAfterSpiServiceInternal.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACSP));
+        // When
+        CmsResponse<Boolean> actual = updatePaymentAfterSpiServiceInternal.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACSP);
+
+        // Then
+        assertTrue(actual.isSuccessful());
+
+        assertFalse(actual.getPayload());
 
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
         verify(commonPaymentDataService, never()).updateStatusInPaymentData(any(PisCommonPaymentData.class), any(TransactionStatus.class));
@@ -80,58 +94,88 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
 
     @Test
     public void updatePaymentStatus_paymentDataIsEmpty() {
+        // Given
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.empty());
 
-        assertFalse(updatePaymentAfterSpiServiceInternal.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACSP));
+        // When
+        CmsResponse<Boolean> actual = updatePaymentAfterSpiServiceInternal.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACSP);
 
+        // Then
+        assertTrue(actual.isSuccessful());
+
+        assertFalse(actual.getPayload());
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
         verify(commonPaymentDataService, never()).updateStatusInPaymentData(any(PisCommonPaymentData.class), any(TransactionStatus.class));
     }
 
     @Test
     public void updatePaymentCancellationTppRedirectUri_success() {
+        // Given
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.ACCP);
 
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));
         when(commonPaymentDataService.updateCancelTppRedirectURIs(pisCommonPaymentData, tppRedirectUri)).thenReturn(true);
 
-        assertTrue(updatePaymentAfterSpiServiceInternal.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri));
+        // When
+        CmsResponse<Boolean> actual = updatePaymentAfterSpiServiceInternal.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri);
 
+        // Then
+        assertTrue(actual.isSuccessful());
+
+        assertTrue(actual.getPayload());
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
         verify(commonPaymentDataService, times(1)).updateCancelTppRedirectURIs(eq(pisCommonPaymentData), eq(tppRedirectUri));
     }
 
     @Test
     public void updatePaymentCancellationTppRedirectUri_transactionStatusIsFinalised() {
+        // Given
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RJCT);
 
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));
 
-        assertFalse(updatePaymentAfterSpiServiceInternal.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri));
+        // When
+        CmsResponse<Boolean> actual = updatePaymentAfterSpiServiceInternal.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri);
 
+        // Then
+        assertTrue(actual.isSuccessful());
+
+        assertFalse(actual.getPayload());
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
         verify(commonPaymentDataService, never()).updateCancelTppRedirectURIs(any(PisCommonPaymentData.class), eq(tppRedirectUri));
     }
 
     @Test
     public void updatePaymentCancellationTppRedirectUri_paymentDataIsEmpty() {
+        // Given
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.empty());
 
-        assertFalse(updatePaymentAfterSpiServiceInternal.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri));
+        // When
+        CmsResponse<Boolean> actual = updatePaymentAfterSpiServiceInternal.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri);
 
+        // Then
+        assertTrue(actual.isSuccessful());
+
+        assertFalse(actual.getPayload());
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
         verify(commonPaymentDataService, never()).updateCancelTppRedirectURIs(any(PisCommonPaymentData.class), eq(tppRedirectUri));
     }
 
     @Test
     public void updatePaymentCancellationInternalRequestId_success() {
+        // Given
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.ACCP);
 
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));
         when(commonPaymentDataService.updatePaymentCancellationInternalRequestId(pisCommonPaymentData, INTERNAL_REQUEST_ID)).thenReturn(true);
 
-        assertTrue(updatePaymentAfterSpiServiceInternal.updatePaymentCancellationInternalRequestId(PAYMENT_ID, INTERNAL_REQUEST_ID));
+        // When
+        CmsResponse<Boolean> actual = updatePaymentAfterSpiServiceInternal.updatePaymentCancellationInternalRequestId(PAYMENT_ID, INTERNAL_REQUEST_ID);
 
+        // Then
+        assertTrue(actual.isSuccessful());
+
+        assertTrue(actual.getPayload());
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
         verify(commonPaymentDataService, times(1)).updatePaymentCancellationInternalRequestId(eq(pisCommonPaymentData), eq(INTERNAL_REQUEST_ID));
     }

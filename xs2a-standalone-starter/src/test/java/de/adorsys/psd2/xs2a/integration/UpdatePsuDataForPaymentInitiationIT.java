@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataResponse;
@@ -27,7 +29,10 @@ import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -67,7 +72,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -125,7 +129,10 @@ public class UpdatePsuDataForPaymentInitiationIT {
 
         given(tppService.getTppInfo()).willReturn(TPP_INFO);
         given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo())).willReturn(false);
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(false)
+                            .build());
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(aspspProfileService.getScaApproaches())
             .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
@@ -134,12 +141,19 @@ public class UpdatePsuDataForPaymentInitiationIT {
     @Test
     public void updatePsuData_success() throws Exception {
         given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
-        given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID)).willReturn(Optional.of(buildPisCommonPaymentResponse(AUTHORISATION_ID)));
+        given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
+            .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
+                            .payload(buildPisCommonPaymentResponse(AUTHORISATION_ID))
+                            .build());
 
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
-            .willReturn(Optional.of(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
+            .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
+                            .payload(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED))
+                            .build());
         given(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID))
-            .willReturn(Optional.of(buildGetPisAuthorisationResponse(ScaStatus.PSUIDENTIFIED)));
+            .willReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
+                            .payload(buildGetPisAuthorisationResponse(ScaStatus.PSUIDENTIFIED))
+                            .build());
 
         given(paymentAuthorisationSpi.authorisePsu(any(SpiContextData.class), any(SpiPsuData.class), eq(PSU_PASS), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
@@ -149,13 +163,18 @@ public class UpdatePsuDataForPaymentInitiationIT {
             .willReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                             .payload(new SpiAvailableScaMethodsResponse(Collections.singletonList(new SpiAuthenticationObject())))
                             .build());
-        given(pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(eq(AUTHORISATION_ID), any())).willReturn(true);
+        given(pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(eq(AUTHORISATION_ID), any()))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
+                            .build());
         given(paymentAuthorisationSpi.requestAuthorisationCode(any(SpiContextData.class), isNull(), any(), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                             .payload(new SpiAuthorizationCodeResult())
                             .build());
         given(pisCommonPaymentServiceEncrypted.updatePisAuthorisation(eq(AUTHORISATION_ID), any(UpdatePisCommonPaymentPsuDataRequest.class)))
-            .willReturn(Optional.of(new UpdatePisCommonPaymentPsuDataResponse(ScaStatus.PSUAUTHENTICATED)));
+            .willReturn(CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
+                            .payload(new UpdatePisCommonPaymentPsuDataResponse(ScaStatus.PSUAUTHENTICATED))
+                            .build());
 
         MockHttpServletRequestBuilder requestBuilder = put(UrlBuilder.buildPaymentUpdateAuthorisationUrl(PaymentType.SINGLE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPT_PAYMENT_ID, AUTHORISATION_ID));
         requestBuilder.content(jsonReader.getStringFromFile("json/auth/req/update_password.json"));
@@ -172,7 +191,10 @@ public class UpdatePsuDataForPaymentInitiationIT {
     public void updatePsuData_wrongAuthorisationId() throws Exception {
         given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
 
-        given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID)).willReturn(Optional.of(buildPisCommonPaymentResponse(AUTHORISATION_ID)));
+        given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
+            .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
+                            .payload(buildPisCommonPaymentResponse(AUTHORISATION_ID))
+                            .build());
 
         MockHttpServletRequestBuilder requestBuilder = put(UrlBuilder.buildPaymentUpdateAuthorisationUrl(PaymentType.SINGLE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPT_PAYMENT_ID, WRONG_AUTHORISATION_ID));
         requestBuilder.content(jsonReader.getStringFromFile("json/auth/req/update_password.json"));

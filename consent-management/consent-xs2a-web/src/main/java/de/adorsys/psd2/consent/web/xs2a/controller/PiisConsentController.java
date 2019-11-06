@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
@@ -50,11 +51,10 @@ public class PiisConsentController {
         @ApiParam(name = "account-identifier", value = "The value of account identifier.", example = "DE2310010010123456789")
         @PathVariable("account-identifier") String accountIdentifier) {
         Currency nullableCurrency = StringUtils.isBlank(currency) ? null : Currency.getInstance(currency);
+        CmsResponse<List<PiisConsent>> response = piisConsentService.getPiisConsentListByAccountIdentifier(nullableCurrency, new AccountReferenceSelector(accountReferenceType, accountIdentifier));
 
-        List<PiisConsent> responseList = piisConsentService.getPiisConsentListByAccountIdentifier(nullableCurrency, new AccountReferenceSelector(accountReferenceType, accountIdentifier));
-
-        return CollectionUtils.isEmpty(responseList)
-                   ? ResponseEntity.notFound().build()
-                   : ResponseEntity.ok(responseList);
+        return response.isSuccessful() && CollectionUtils.isNotEmpty(response.getPayload())
+                   ? ResponseEntity.ok(response.getPayload())
+                   : ResponseEntity.notFound().build();
     }
 }

@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.api.service;
 
-import java.util.Optional;
+import de.adorsys.psd2.consent.api.CmsResponse;
 
 /**
  * PisCommonPaymentService with enabled encryption and decryption
@@ -31,5 +31,5 @@ public interface PisCommonPaymentServiceEncrypted extends PisCommonPaymentServic
      * @param encryptedId id to be decrypted
      * @return Response containing original decrypted Id
      */
-    Optional<String> getDecryptedId(String encryptedId);
+    CmsResponse<String> getDecryptedId(String encryptedId);
 }

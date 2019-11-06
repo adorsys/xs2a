@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import org.jetbrains.annotations.Nullable;
@@ -32,5 +33,5 @@ public interface PiisConsentService {
      * @param accountIdentifierName The name of account reference identifier
      * @return PIIS consents
      */
-    List<PiisConsent> getPiisConsentListByAccountIdentifier(@Nullable Currency currency, AccountReferenceSelector accountIdentifierName);
+    CmsResponse<List<PiisConsent>> getPiisConsentListByAccountIdentifier(@Nullable Currency currency, AccountReferenceSelector accountIdentifierName);
 }

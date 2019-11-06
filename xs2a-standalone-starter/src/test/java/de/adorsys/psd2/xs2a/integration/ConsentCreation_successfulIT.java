@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.integration;
 
 
-import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
@@ -28,7 +29,10 @@ import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
@@ -66,6 +70,7 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode.EXPLICIT;
 import static org.apache.commons.io.IOUtils.resourceToString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
@@ -152,7 +157,9 @@ public class ConsentCreation_successfulIT {
         given(tppService.getTppId())
             .willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
-            .willReturn(false);
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(false)
+                            .build());
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
     }
@@ -171,7 +178,6 @@ public class ConsentCreation_successfulIT {
 
     @Test
     public void creation_dedicated_consent_implicit_redirect_oauth_successful() throws Exception {
-        AspspSettings aspspSettings = AspspSettingsBuilder.buildAspspSettings();
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithScaRedirectFlow(ScaRedirectFlow.OAUTH));
         consentCreation_successful(httpHeadersImplicit, ScaApproach.REDIRECT, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_REDIRECT_OAUTH_RESPONSE_PATH);
@@ -290,19 +296,33 @@ public class ConsentCreation_successfulIT {
         // Given
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
         given(aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(any(String.class), any(AisConsentAuthorizationRequest.class)))
-            .willReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
+            .willReturn(CmsResponse.<CreateAisConsentAuthorizationResponse>builder()
+                            .payload(buildCreateAisConsentAuthorizationResponse())
+                            .build());
         AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, xs2aObjectMapper);
         given(aisConsentServiceEncrypted.createConsent(any(CreateAisConsentRequest.class)))
-            .willReturn(Optional.of(new CreateAisConsentResponse(ENCRYPT_CONSENT_ID, aisAccountConsent)));
+            .willReturn(CmsResponse.<CreateAisConsentResponse>builder()
+                            .payload(new CreateAisConsentResponse(ENCRYPT_CONSENT_ID, aisAccountConsent))
+                            .build());
+        given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(ENCRYPT_CONSENT_ID), any(AisAccountAccessInfo.class)))
+            .willReturn(CmsResponse.<AisAccountConsent>builder()
+                            .payload(aisAccountConsent)
+                            .build());
 
         given(aisConsentServiceEncrypted.getAisAccountConsentById(any(String.class)))
-            .willReturn(Optional.of(aisAccountConsent));
+            .willReturn(CmsResponse.<AisAccountConsent>builder()
+                            .payload(aisAccountConsent)
+                            .build());
         given(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(any(String.class), any(String.class)))
-            .willReturn(Optional.of(AisConsentAuthorizationResponseBuilder.buildAisConsentAuthorizationResponse(scaApproach)));
+            .willReturn(CmsResponse.<AisConsentAuthorizationResponse>builder()
+                            .payload(AisConsentAuthorizationResponseBuilder.buildAisConsentAuthorizationResponse(scaApproach))
+                            .build());
         given(aspspDataService.readAspspConsentData(any(String.class)))
             .willReturn(Optional.of(new AspspConsentData(null, ENCRYPT_CONSENT_ID)));
         when(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
-            .thenReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
+            .thenReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
+                            .payload(new AuthorisationScaApproachResponse(scaApproach))
+                            .build());
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildConsentCreation());
         requestBuilder.headers(headers);

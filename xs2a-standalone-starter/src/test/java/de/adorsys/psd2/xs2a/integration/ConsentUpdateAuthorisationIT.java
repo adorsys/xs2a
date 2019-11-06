@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
+import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
@@ -111,6 +114,10 @@ public class ConsentUpdateAuthorisationIT {
         given(tppService.getTppInfo()).willReturn(TPP_INFO);
         given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
+        given(tppStopListService.checkIfTppBlocked(TPP_INFO.getAuthorisationNumber()))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(false)
+                            .build());
         given(aspspProfileService.getScaApproaches())
             .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
     }
@@ -149,11 +156,17 @@ public class ConsentUpdateAuthorisationIT {
 
 
         given(aisConsentService.getAisAccountConsentById(CONSENT_ID))
-            .willReturn(Optional.of(aisAccountConsent));
+            .willReturn(CmsResponse.<AisAccountConsent>builder()
+                            .payload(aisAccountConsent)
+                            .build());
         given(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(any(String.class), any(String.class)))
-            .willReturn(Optional.of(AisConsentAuthorizationResponseBuilder.buildAisConsentAuthorizationResponse(scaApproach, psuIdDataAuthorisation)));
+            .willReturn(CmsResponse.<AisConsentAuthorizationResponse>builder()
+                            .payload(AisConsentAuthorizationResponseBuilder.buildAisConsentAuthorizationResponse(scaApproach, psuIdDataAuthorisation))
+                            .build());
         given(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(any(String.class)))
-            .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
+            .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
+                            .payload(new AuthorisationScaApproachResponse(scaApproach))
+                            .build());
 
         MockHttpServletRequestBuilder requestBuilder = put(UrlBuilder.buildConsentUpdateAuthorisationUrl(CONSENT_ID, AUTHORISATION_ID));
         requestBuilder.headers(httpHeaders);

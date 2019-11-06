@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -56,7 +58,8 @@ public class PisPaymentControllerTest {
 
     @Test
     public void updatePaymentCancellationTppRedirectUri() {
-        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(eq(PAYMENT_ID), tppRedirectUriCaptor.capture())).thenReturn(true);
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(eq(PAYMENT_ID), tppRedirectUriCaptor.capture()))
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         ResponseEntity<Void> response = pisPaymentController.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, TPP_OK_REDIRECT_ORI, TPP_NOK_REDIRECT_ORI);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -67,7 +70,8 @@ public class PisPaymentControllerTest {
 
     @Test
     public void updatePaymentCancellationTppRedirectUri_Fail() {
-        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(eq(PAYMENT_ID), tppRedirectUriCaptor.capture())).thenReturn(false);
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(eq(PAYMENT_ID), tppRedirectUriCaptor.capture()))
+            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         ResponseEntity<Void> response = pisPaymentController.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, TPP_OK_REDIRECT_ORI, TPP_NOK_REDIRECT_ORI);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -78,7 +82,8 @@ public class PisPaymentControllerTest {
 
     @Test
     public void updatePaymentCancellationInternalRequestId() {
-        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(eq(PAYMENT_ID), cancellationInternalRequestIdCaptor.capture())).thenReturn(true);
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(eq(PAYMENT_ID), cancellationInternalRequestIdCaptor.capture()))
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         ResponseEntity<Void> response = pisPaymentController.updatePaymentCancellationInternalRequestId(PAYMENT_ID, INTERNAL_REQUEST_ID);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -88,7 +93,8 @@ public class PisPaymentControllerTest {
 
     @Test
     public void updatePaymentCancellationInternalRequestId_Fail() {
-        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(eq(PAYMENT_ID), cancellationInternalRequestIdCaptor.capture())).thenReturn(false);
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(eq(PAYMENT_ID), cancellationInternalRequestIdCaptor.capture()))
+            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         ResponseEntity<Void> response = pisPaymentController.updatePaymentCancellationInternalRequestId(PAYMENT_ID, INTERNAL_REQUEST_ID);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

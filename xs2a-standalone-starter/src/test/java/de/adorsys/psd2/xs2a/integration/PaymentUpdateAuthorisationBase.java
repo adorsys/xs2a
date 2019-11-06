@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
@@ -78,6 +80,10 @@ public abstract class PaymentUpdateAuthorisationBase {
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(aspspProfileService.getScaApproaches())
             .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(false)
+                            .build());
     }
 
     protected void updatePaymentPsuData_checkForPsuCredentialsInvalidResponse(String psuIdAuthorisation, String psuIdHeader) throws Exception {
@@ -109,7 +115,9 @@ public abstract class PaymentUpdateAuthorisationBase {
         List<Authorisation> authorisationList = Collections.singletonList(buildAuthorisation(psuIdDataAuthorisation));
         PisCommonPaymentResponse pisCommonPaymentResponse = buildPisCommonPaymentResponse(authorisationList);
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
-            .willReturn(Optional.of(pisCommonPaymentResponse));
+            .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
+                            .payload(pisCommonPaymentResponse)
+                            .build());
 
         MockHttpServletRequestBuilder requestBuilder = put(buildRequestUrl());
         requestBuilder.headers(httpHeaders);

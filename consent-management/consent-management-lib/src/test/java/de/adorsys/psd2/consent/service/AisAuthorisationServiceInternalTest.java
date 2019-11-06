@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
@@ -113,11 +116,11 @@ public class AisAuthorisationServiceInternalTest {
             .thenReturn(Optional.of(consent));
 
         // When
-        Optional<ScaStatus> actual = aisAuthorisationServiceInternal.getAuthorisationScaStatus(EXTERNAL_CONSENT_ID, AUTHORISATION_ID);
+        CmsResponse<ScaStatus> actual = aisAuthorisationServiceInternal.getAuthorisationScaStatus(EXTERNAL_CONSENT_ID, AUTHORISATION_ID);
 
         // Then
-        assertTrue(actual.isPresent());
-        assertEquals(SCA_STATUS, actual.get());
+        assertTrue(actual.isSuccessful());
+        assertEquals(SCA_STATUS, actual.getPayload());
     }
 
     @Test
@@ -126,10 +129,12 @@ public class AisAuthorisationServiceInternalTest {
             .thenReturn(Optional.empty());
 
         // When
-        Optional<ScaStatus> actual = aisAuthorisationServiceInternal.getAuthorisationScaStatus(EXTERNAL_CONSENT_ID_NOT_EXIST, AUTHORISATION_ID);
+        CmsResponse<ScaStatus> actual = aisAuthorisationServiceInternal.getAuthorisationScaStatus(EXTERNAL_CONSENT_ID_NOT_EXIST, AUTHORISATION_ID);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
     }
 
     @Test
@@ -140,10 +145,12 @@ public class AisAuthorisationServiceInternalTest {
             .thenReturn(Optional.of(consent));
 
         // When
-        Optional<ScaStatus> actual = aisAuthorisationServiceInternal.getAuthorisationScaStatus(EXTERNAL_CONSENT_ID, AUTHORISATION_ID);
+        CmsResponse<ScaStatus> actual = aisAuthorisationServiceInternal.getAuthorisationScaStatus(EXTERNAL_CONSENT_ID, AUTHORISATION_ID);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
     }
 
     @Test
@@ -155,11 +162,11 @@ public class AisAuthorisationServiceInternalTest {
             .thenReturn(Optional.of(aisConsentAuthorization));
 
         // When
-        Optional<AuthorisationScaApproachResponse> actual = aisAuthorisationServiceInternal.getAuthorisationScaApproach(AUTHORISATION_ID);
+        CmsResponse<AuthorisationScaApproachResponse> actual = aisAuthorisationServiceInternal.getAuthorisationScaApproach(AUTHORISATION_ID);
 
         // Then
-        assertTrue(actual.isPresent());
-        assertEquals(SCA_APPROACH, actual.get().getScaApproach());
+        assertTrue(actual.isSuccessful());
+        assertEquals(SCA_APPROACH, actual.getPayload().getScaApproach());
     }
 
     @Test
@@ -169,10 +176,13 @@ public class AisAuthorisationServiceInternalTest {
             .thenReturn(Optional.empty());
 
         // When
-        Optional<AuthorisationScaApproachResponse> actual = aisAuthorisationServiceInternal.getAuthorisationScaApproach(WRONG_AUTHORISATION_ID);
+        CmsResponse<AuthorisationScaApproachResponse> actual = aisAuthorisationServiceInternal.getAuthorisationScaApproach(WRONG_AUTHORISATION_ID);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertTrue(actual.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
+        ;
     }
 
     @Test
@@ -195,10 +205,11 @@ public class AisAuthorisationServiceInternalTest {
         aisConsentAuthorisationRequest.setTppRedirectURIs(TPP_REDIRECT_URIs);
 
         // When
-        Optional<CreateAisConsentAuthorizationResponse> actual = aisAuthorisationServiceInternal.createAuthorizationWithResponse(EXTERNAL_CONSENT_ID, aisConsentAuthorisationRequest);
+        CmsResponse<CreateAisConsentAuthorizationResponse> actual = aisAuthorisationServiceInternal.createAuthorizationWithResponse(EXTERNAL_CONSENT_ID, aisConsentAuthorisationRequest);
 
         // Then
-        assertTrue(actual.isPresent());
+        assertTrue(actual.isSuccessful());
+
         verify(aisConsentAuthorisationRepository).save(argument.capture());
         AisConsentAuthorization aisConsentAuthorization = argument.getValue();
         assertSame(ScaStatus.PSUIDENTIFIED, aisConsentAuthorization.getScaStatus());
@@ -212,7 +223,7 @@ public class AisAuthorisationServiceInternalTest {
         assertTrue(scaStatuses.contains(ScaStatus.FAILED));
         assertEquals(TPP_REDIRECT_URIs.getUri(), aisConsentAuthorization.getTppOkRedirectUri());
         assertEquals(TPP_REDIRECT_URIs.getNokUri(), aisConsentAuthorization.getTppNokRedirectUri());
-        assertEquals(aisConsent.getInternalRequestId(), actual.get().getInternalRequestId());
+        assertEquals(aisConsent.getInternalRequestId(), actual.getPayload().getInternalRequestId());
     }
 
     @Test
@@ -237,10 +248,10 @@ public class AisAuthorisationServiceInternalTest {
         aisConsentAuthorisationRequest.setTppRedirectURIs(new TppRedirectUri("", ""));
 
         // When
-        Optional<CreateAisConsentAuthorizationResponse> actual = aisAuthorisationServiceInternal.createAuthorizationWithResponse(EXTERNAL_CONSENT_ID, aisConsentAuthorisationRequest);
+        CmsResponse<CreateAisConsentAuthorizationResponse> actual = aisAuthorisationServiceInternal.createAuthorizationWithResponse(EXTERNAL_CONSENT_ID, aisConsentAuthorisationRequest);
 
         // Then
-        assertTrue(actual.isPresent());
+        assertTrue(actual.isSuccessful());
         verify(aisConsentAuthorisationRepository).save(argument.capture());
         AisConsentAuthorization aisConsentAuthorization = argument.getValue();
         assertSame(ScaStatus.PSUIDENTIFIED, aisConsentAuthorization.getScaStatus());
@@ -264,10 +275,12 @@ public class AisAuthorisationServiceInternalTest {
             .thenReturn(Optional.of(buildAisConsentAuthorisationWithMethods(methods)));
 
         // When
-        boolean actualResult = aisAuthorisationServiceInternal.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
+        CmsResponse<Boolean> actualResult = aisAuthorisationServiceInternal.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
 
         // Then
-        assertTrue(actualResult);
+        assertTrue(actualResult.isSuccessful());
+
+        assertTrue(actualResult.getPayload());
     }
 
     @Test
@@ -278,10 +291,12 @@ public class AisAuthorisationServiceInternalTest {
             .thenReturn(Optional.of(buildAisConsentAuthorisationWithMethods(methods)));
 
         // When
-        boolean actualResult = aisAuthorisationServiceInternal.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
+        CmsResponse<Boolean> actualResult = aisAuthorisationServiceInternal.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
 
         // Then
-        assertFalse(actualResult);
+        assertTrue(actualResult.isSuccessful());
+
+        assertFalse(actualResult.getPayload());
     }
 
     @Test
@@ -292,10 +307,12 @@ public class AisAuthorisationServiceInternalTest {
             .thenReturn(Optional.of(buildAisConsentAuthorisationWithMethods(methods)));
 
         // When
-        boolean actualResult = aisAuthorisationServiceInternal.isAuthenticationMethodDecoupled(AUTHORISATION_ID, WRONG_AUTHENTICATION_METHOD_ID);
+        CmsResponse<Boolean> actualResult = aisAuthorisationServiceInternal.isAuthenticationMethodDecoupled(AUTHORISATION_ID, WRONG_AUTHENTICATION_METHOD_ID);
 
         // Then
-        assertFalse(actualResult);
+        assertTrue(actualResult.isSuccessful());
+
+        assertFalse(actualResult.getPayload());
     }
 
     @Test
@@ -304,10 +321,12 @@ public class AisAuthorisationServiceInternalTest {
         when(aisConsentAuthorisationRepository.findByExternalId(WRONG_AUTHORISATION_ID)).thenReturn(Optional.empty());
 
         // When
-        boolean actualResult = aisAuthorisationServiceInternal.isAuthenticationMethodDecoupled(WRONG_AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
+        CmsResponse<Boolean> actualResult = aisAuthorisationServiceInternal.isAuthenticationMethodDecoupled(WRONG_AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
 
         // Then
-        assertFalse(actualResult);
+        assertTrue(actualResult.isSuccessful());
+
+        assertFalse(actualResult.getPayload());
     }
 
     @Test
@@ -317,10 +336,12 @@ public class AisAuthorisationServiceInternalTest {
             .thenReturn(Optional.of(buildAisConsentAuthorisationWithMethods(Collections.emptyList())));
 
         // When
-        boolean actualResult = aisAuthorisationServiceInternal.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
+        CmsResponse<Boolean> actualResult = aisAuthorisationServiceInternal.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
 
         // Then
-        assertFalse(actualResult);
+        assertTrue(actualResult.isSuccessful());
+
+        assertFalse(actualResult.getPayload());
     }
 
     @Test
@@ -335,10 +356,12 @@ public class AisAuthorisationServiceInternalTest {
             .thenReturn(Optional.of(buildAisConsentAuthorisation(AUTHORISATION_ID, SCA_STATUS)));
 
         // When
-        boolean actualResult = aisAuthorisationServiceInternal.saveAuthenticationMethods(AUTHORISATION_ID, cmsScaMethods);
+        CmsResponse<Boolean> actualResult = aisAuthorisationServiceInternal.saveAuthenticationMethods(AUTHORISATION_ID, cmsScaMethods);
 
         // Then
-        assertTrue(actualResult);
+        assertTrue(actualResult.isSuccessful());
+
+        assertTrue(actualResult.getPayload());
         verify(aisConsentAuthorisationRepository, times(1)).save(authorisationArgumentCaptor.capture());
         assertEquals(authorisationArgumentCaptor.getValue().getAvailableScaMethods(), scaMethods);
     }
@@ -352,10 +375,12 @@ public class AisAuthorisationServiceInternalTest {
             .thenReturn(Optional.empty());
 
         // When
-        boolean actualResult = aisAuthorisationServiceInternal.saveAuthenticationMethods(WRONG_AUTHORISATION_ID, cmsScaMethods);
+        CmsResponse<Boolean> actualResult = aisAuthorisationServiceInternal.saveAuthenticationMethods(WRONG_AUTHORISATION_ID, cmsScaMethods);
 
         // Then
-        assertFalse(actualResult);
+        assertTrue(actualResult.isSuccessful());
+
+        assertFalse(actualResult.getPayload());
         verify(aisConsentAuthorisationRepository, never()).save(any(AisConsentAuthorization.class));
     }
 
@@ -432,3 +457,4 @@ public class AisAuthorisationServiceInternalTest {
         return authorisationTemplateEntity;
     }
 }
+
