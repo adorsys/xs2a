@@ -58,8 +58,8 @@ public class ReadPeriodicPaymentService extends AbstractReadPaymentService {
     }
 
     @Override
-    public SpiResponse<SpiPeriodicPayment> getSpiPaymentById(SpiContextData spiContextData, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return periodicPaymentSpi.getPaymentById(spiContextData, (SpiPeriodicPayment) spiPayment, aspspConsentDataProvider);
+    public SpiResponse<SpiPeriodicPayment> getSpiPaymentById(SpiContextData spiContextData, String acceptMediaType, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return periodicPaymentSpi.getPaymentById(spiContextData, acceptMediaType, (SpiPeriodicPayment) spiPayment, aspspConsentDataProvider);
     }
 
     @Override

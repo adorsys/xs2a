@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.payment.status;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -40,8 +41,9 @@ public class ReadPeriodicPaymentStatusService extends AbstractReadPaymentStatusS
     @Autowired
     public ReadPeriodicPaymentStatusService(PeriodicPaymentSpi periodicPaymentSpi, SpiErrorMapper spiErrorMapper,
                                             SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
-                                            SpiPaymentFactory spiPaymentFactory) {
-        super(spiPaymentFactory, spiErrorMapper, aspspConsentDataProviderFactory);
+                                            SpiPaymentFactory spiPaymentFactory,
+                                            MediaTypeMapper mediaTypeMapper) {
+        super(spiPaymentFactory, spiErrorMapper, aspspConsentDataProviderFactory, mediaTypeMapper);
         this.periodicPaymentSpi = periodicPaymentSpi;
     }
 
@@ -51,7 +53,7 @@ public class ReadPeriodicPaymentStatusService extends AbstractReadPaymentStatusS
     }
 
     @Override
-    public SpiResponse<SpiGetPaymentStatusResponse> getSpiPaymentStatusById(SpiContextData spiContextData, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return periodicPaymentSpi.getPaymentStatusById(spiContextData, (SpiPeriodicPayment) spiPayment, aspspConsentDataProvider);
+    public SpiResponse<SpiGetPaymentStatusResponse> getSpiPaymentStatusById(SpiContextData spiContextData, String acceptMediaType, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return periodicPaymentSpi.getPaymentStatusById(spiContextData, acceptMediaType, (SpiPeriodicPayment) spiPayment, aspspConsentDataProvider);
     }
 }

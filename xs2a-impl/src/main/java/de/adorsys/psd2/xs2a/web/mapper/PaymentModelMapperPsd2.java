@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,16 +117,14 @@ public class PaymentModelMapperPsd2 {
         }
     }
 
-    public static PaymentInitiationStatusResponse200Json mapToStatusResponse(GetPaymentStatusResponse response) {
+    public PaymentInitiationStatusResponse200Json mapToStatusResponseJson(GetPaymentStatusResponse response) {
         return new PaymentInitiationStatusResponse200Json()
                    .transactionStatus(mapToTransactionStatus(response.getTransactionStatus()))
                    .fundsAvailable(response.getFundsAvailable());
     }
 
-    public static TransactionStatus mapToTransactionStatus(de.adorsys.psd2.xs2a.core.pis.TransactionStatus responseObject) {
-        return Optional.ofNullable(responseObject)
-                   .map(r -> TransactionStatus.valueOf(r.name()))
-                   .orElse(null);
+    public byte[] mapToStatusResponseRaw(GetPaymentStatusResponse response) {
+        return response.getPaymentStatusRaw();
     }
 
     public PaymentInitationRequestResponse201 mapToPaymentInitiationResponse(PaymentInitiationResponse response) {
@@ -172,6 +170,12 @@ public class PaymentModelMapperPsd2 {
         response.setChallengeData(coreObjectsMapper.mapToChallengeData(cancelPaymentResponse.getChallengeData()));
         response._links(hrefLinkMapper.mapToLinksMap(cancelPaymentResponse.getLinks()));
         return response;
+    }
+
+    private TransactionStatus mapToTransactionStatus(de.adorsys.psd2.xs2a.core.pis.TransactionStatus responseObject) {
+        return Optional.ofNullable(responseObject)
+                   .map(r -> TransactionStatus.valueOf(r.name()))
+                   .orElse(null);
     }
 
     private List<PaymentInitiationBulkElementJson> mapToBulkPartList(List<SinglePayment> payments) {

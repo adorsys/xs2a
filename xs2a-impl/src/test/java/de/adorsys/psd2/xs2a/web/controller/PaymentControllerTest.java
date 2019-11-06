@@ -57,6 +57,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.util.*;
@@ -137,9 +138,9 @@ public class PaymentControllerTest {
             .thenReturn(ResponseObject.builder().body(getXs2aPayment()).build());
 
         when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(CORRECT_PAYMENT_ID)))
-            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null)).build());
+            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_JSON, null)).build());
         when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(WRONG_PAYMENT_ID)))
-            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null)).build());
+            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403)).build());
     }
 
     @Test
@@ -188,11 +189,11 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getTransactionStatusById_Success() {
+    public void getPaymentInitiationStatus_withJsonContentType_success() {
         // Given
         doReturn(new ResponseEntity<>(getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus.ACCP), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
-        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID)).thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null)).build());
+        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID)).thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_JSON, null)).build());
 
         PaymentInitiationStatusResponse200Json expectedBody = getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus.ACCP);
 
@@ -210,14 +211,30 @@ public class PaymentControllerTest {
         assertThat(actualResponse.getBody()).isEqualTo(expectedBody);
     }
 
-    private PaymentInitiationStatusResponse200Json getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus transactionStatus) {
-        PaymentInitiationStatusResponse200Json response = new PaymentInitiationStatusResponse200Json();
-        response.setTransactionStatus(transactionStatus);
-        return response;
+    @Test
+    public void getPaymentInitiationStatus_withCustomContentType_success() {
+        // Given
+        byte[] rawPaymentStatus = "some raw value".getBytes();
+        doReturn(new ResponseEntity<>(rawPaymentStatus, HttpStatus.OK))
+            .when(responseMapper).ok(any(), any());
+        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID))
+            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_XML, rawPaymentStatus)).build());
+
+        // When
+        ResponseEntity actualResponse = paymentController.getPaymentInitiationStatus(
+            PaymentType.SINGLE.getValue(), PRODUCT, CORRECT_PAYMENT_ID, null, null,
+            null, null, null, null, null,
+            null, null, null, null, null,
+            null, null);
+
+        // Then
+        HttpStatus actualHttpStatus = actualResponse.getStatusCode();
+        assertThat(actualHttpStatus).isEqualTo(OK);
+        assertThat(actualResponse.getBody()).isEqualTo(rawPaymentStatus);
     }
 
     @Test
-    public void getTransactionStatusById_WrongId() {
+    public void getPaymentInitiationStatus_WrongId() {
         // Given
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
         when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, WRONG_PAYMENT_ID)).thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().fail(createMessageError(PIS_403, RESOURCE_UNKNOWN_403)).build());
@@ -707,7 +724,6 @@ public class PaymentControllerTest {
 
         String rawRequestObject = "some body";
 
-        // noinspection unchecked
         when(xs2aPaymentService.createPayment(rawRequestObject.getBytes(), paymentInitiationParameters))
             .thenReturn(buildSuccessResponseObjectWithLinks());
 
@@ -1252,8 +1268,8 @@ public class PaymentControllerTest {
         // Given
         PaymentType paymentType = SINGLE;
         ResponseObject<Xs2aAuthorisationSubResources> responseObject = ResponseObject.<Xs2aAuthorisationSubResources>builder()
-                                                                            .body(new Xs2aAuthorisationSubResources(getAuthorisations()))
-                                                                            .build();
+                                                                           .body(new Xs2aAuthorisationSubResources(getAuthorisations()))
+                                                                           .build();
         when(paymentAuthorisationService.getPaymentInitiationAuthorisations(CORRECT_PAYMENT_ID, PRODUCT, paymentType)).thenReturn(responseObject);
         doReturn(ResponseEntity.ok(getAuthorisations()))
             .when(responseMapper).ok(eq(responseObject), any());
@@ -1306,10 +1322,10 @@ public class PaymentControllerTest {
 
         // When
         ResponseEntity actual = paymentController.startPaymentAuthorisation(REQUEST_ID, WRONG_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID, jsonRequestObject,
-                                                                            PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,  TPP_REDIRECT_PREFERRED_TRUE,
+                                                                            PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, TPP_REDIRECT_PREFERRED_TRUE,
                                                                             REDIRECT_LINK, null, null, null, null, null, null,
                                                                             null, null, null, null, null, null, null, null,
-                                                                            null,null);
+                                                                            null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
@@ -1345,10 +1361,10 @@ public class PaymentControllerTest {
 
         // When
         ResponseEntity actual = paymentController.startPaymentAuthorisation(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID, body,
-                                                                            PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,  TPP_REDIRECT_PREFERRED_TRUE,
+                                                                            PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, TPP_REDIRECT_PREFERRED_TRUE,
                                                                             REDIRECT_LINK, null, null, null, null, null, null,
                                                                             null, null, null, null, null, null, null, null,
-                                                                            null,null);
+                                                                            null, null);
 
         // Then
         assertNotNull(actual);
@@ -1367,6 +1383,12 @@ public class PaymentControllerTest {
 
     private List<String> getAuthorisations() {
         return Collections.singletonList(AUTHORISATION_ID);
+    }
+
+    private PaymentInitiationStatusResponse200Json getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus transactionStatus) {
+        PaymentInitiationStatusResponse200Json response = new PaymentInitiationStatusResponse200Json();
+        response.setTransactionStatus(transactionStatus);
+        return response;
     }
 
     private ResponseObject<CancelPaymentResponse> getCancelPaymentResponseObject(boolean startAuthorisationRequired) {

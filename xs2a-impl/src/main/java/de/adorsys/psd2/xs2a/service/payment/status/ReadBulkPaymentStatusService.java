@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.payment.status;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -40,8 +41,9 @@ public class ReadBulkPaymentStatusService extends AbstractReadPaymentStatusServi
     @Autowired
     public ReadBulkPaymentStatusService(BulkPaymentSpi bulkPaymentSpi, SpiErrorMapper spiErrorMapper,
                                         SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
-                                        SpiPaymentFactory spiPaymentFactory) {
-        super(spiPaymentFactory, spiErrorMapper, aspspConsentDataProviderFactory);
+                                        SpiPaymentFactory spiPaymentFactory,
+                                        MediaTypeMapper mediaTypeMapper) {
+        super(spiPaymentFactory, spiErrorMapper, aspspConsentDataProviderFactory, mediaTypeMapper);
         this.bulkPaymentSpi = bulkPaymentSpi;
     }
 
@@ -51,8 +53,10 @@ public class ReadBulkPaymentStatusService extends AbstractReadPaymentStatusServi
     }
 
     @Override
-    public SpiResponse<SpiGetPaymentStatusResponse> getSpiPaymentStatusById(SpiContextData spiContextData, Object spiPayment,
+    public SpiResponse<SpiGetPaymentStatusResponse> getSpiPaymentStatusById(SpiContextData spiContextData,
+                                                                            String acceptMediaType,
+                                                                            Object spiPayment,
                                                                             SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return bulkPaymentSpi.getPaymentStatusById(spiContextData, (SpiBulkPayment) spiPayment, aspspConsentDataProvider);
+        return bulkPaymentSpi.getPaymentStatusById(spiContextData, acceptMediaType, (SpiBulkPayment) spiPayment, aspspConsentDataProvider);
     }
 }

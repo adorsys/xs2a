@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +46,7 @@ public class RequestProviderService {
     private static final String PSU_CORPORATE_ID_HEADER = "psu-corporate-id";
     private static final String PSU_CORPORATE_ID_TYPE_HEADER = "psu-corporate-id-type";
     private static final String TPP_ROLES_ALLOWED_HEADER = "tpp-roles-allowed";
+    private static final String ACCEPT_HEADER = "accept";
 
     private final HttpServletRequest httpServletRequest;
     private final InternalRequestIdService internalRequestIdService;
@@ -131,6 +133,21 @@ public class RequestProviderService {
 
     public String getTppRolesAllowedHeader() {
         return getHeader(TPP_ROLES_ALLOWED_HEADER);
+    }
+
+    /**
+     * Returns Accept header from the request. If the header is absent, returns any instead(*{@literal /}*)
+     *
+     * @return accept header
+     */
+    @NotNull
+    public String getAcceptHeader() {
+        String acceptHeader = getHeader(ACCEPT_HEADER);
+        if (acceptHeader == null) {
+            return MediaType.ALL_VALUE;
+        }
+
+        return acceptHeader;
     }
 
     private String getHeader(String headerName) {

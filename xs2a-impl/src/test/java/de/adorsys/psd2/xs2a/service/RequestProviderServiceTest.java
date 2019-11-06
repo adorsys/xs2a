@@ -41,6 +41,7 @@ import static org.mockito.Mockito.when;
 public class RequestProviderServiceTest {
     private static final String URI = "http://www.adorsys.de";
     private static final String IP = "192.168.0.26";
+    private static final String ACCEPT_HEADER = "accept";
     private static PsuIdData PSU_ID_DATA;
     private static final JsonReader jsonReader = new JsonReader();
     private static final Map<String, String> HEADERS = jsonReader.getObjectFromFile("json/RequestHeaders.json", new TypeReference<Map<String, String>>() {
@@ -48,6 +49,8 @@ public class RequestProviderServiceTest {
     private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("9861d849-3302-4162-b79d-c5f8e543cdb0");
     private static final String TOKEN = "111111";
     private static final String TPP_ROLES_ALLOWED_HEADER = "AISP, PISP, PIISP, ASPSP";
+    private static final String ACCEPT_HEADER_JSON = "application/json";
+    private static final String ACCEPT_HEADER_ANY = "*/*";
 
     @InjectMocks
     private RequestProviderService requestProviderService;
@@ -124,5 +127,26 @@ public class RequestProviderServiceTest {
                              HEADERS.get(Xs2aHeaderConstant.PSU_ID_TYPE),
                              HEADERS.get(Xs2aHeaderConstant.PSU_CORPORATE_ID),
                              HEADERS.get(Xs2aHeaderConstant.PSU_CORPORATE_ID_TYPE));
+    }
+
+    @Test
+    public void getAcceptHeader() {
+        // Given
+        when(httpServletRequest.getHeader(ACCEPT_HEADER)).thenReturn(ACCEPT_HEADER_JSON);
+
+        // When
+        String actual = requestProviderService.getAcceptHeader();
+
+        // Then
+        assertEquals(ACCEPT_HEADER_JSON, actual);
+    }
+
+    @Test
+    public void getAcceptHeader_withNullValue_shouldReturnAny() {
+        // When
+        String actual = requestProviderService.getAcceptHeader();
+
+        // Then
+        assertEquals(ACCEPT_HEADER_ANY, actual);
     }
 }
