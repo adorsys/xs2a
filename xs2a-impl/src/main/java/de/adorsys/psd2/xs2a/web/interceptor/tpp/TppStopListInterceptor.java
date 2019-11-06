@@ -16,8 +16,9 @@
 
 package de.adorsys.psd2.xs2a.web.interceptor.tpp;
 
-import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -28,6 +29,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -54,8 +56,9 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         TppInfo tppInfo = tppService.getTppInfo();
+        CmsResponse<Boolean> cmsResponse = tppStopListService.checkIfTppBlocked(tppInfo.getAuthorisationNumber());
 
-        if (tppStopListService.checkIfTppBlocked(tppInfo.getAuthorisationNumber())) {
+        if (cmsResponse.isSuccessful() && BooleanUtils.isTrue(cmsResponse.getPayload())) {
             response.getWriter().write(xs2aObjectMapper.writeValueAsString(createError()));
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(CERTIFICATE_BLOCKED.getCode());

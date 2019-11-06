@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
@@ -22,6 +23,8 @@ import de.adorsys.psd2.aspsp.profile.domain.ais.ConsentTypeSetting;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
@@ -131,11 +134,11 @@ public class AisConsentServiceInternalTest {
         when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(buildSpiAccountConsent());
 
         // When
-        Optional<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
+        CmsResponse<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
 
         // Then
-        assertTrue(retrievedConsent.isPresent());
-        assertThat(retrievedConsent.get().getId(), is(equalTo(aisConsent.getId().toString())));
+        assertTrue(retrievedConsent.isSuccessful());
+        assertThat(retrievedConsent.getPayload().getId(), is(equalTo(aisConsent.getId().toString())));
     }
 
     @Test
@@ -150,10 +153,10 @@ public class AisConsentServiceInternalTest {
         doNothing().when(aisConsentConfirmationExpirationService).expireConsent(aisConsent);
 
         // When
-        Optional<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
+        CmsResponse<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
 
         // Then
-        assertTrue(retrievedConsent.isPresent());
+        assertTrue(retrievedConsent.isSuccessful());
         verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(aisConsent);
     }
 
@@ -166,10 +169,10 @@ public class AisConsentServiceInternalTest {
         when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(buildSpiAccountConsent());
 
         // When
-        Optional<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
+        CmsResponse<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
 
         // Then
-        assertTrue(retrievedConsent.isPresent());
+        assertTrue(retrievedConsent.isSuccessful());
         verify(aisConsentRepository, never()).save(any(AisConsent.class));
     }
 
@@ -204,11 +207,11 @@ public class AisConsentServiceInternalTest {
         CreateAisConsentResponse expected = new CreateAisConsentResponse(EXTERNAL_CONSENT_ID, aisAccountConsent);
 
         // When
-        Optional<CreateAisConsentResponse> actual = aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
+        CmsResponse<CreateAisConsentResponse> actual = aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
 
         // Then
-        assertTrue(actual.isPresent());
-        assertEquals(expected, actual.get());
+        assertTrue(actual.isSuccessful());
+        assertEquals(expected, actual.getPayload());
     }
 
     @Test
@@ -295,9 +298,9 @@ public class AisConsentServiceInternalTest {
             AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-1").currency(USD).build())
         );
         // When
-        Optional<String> consentId = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID, info);
+        CmsResponse<String> consentId = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Then
-        assertTrue(consentId.isPresent());
+        assertTrue(consentId.isSuccessful());
 
         // Given
         info = new AisAccountAccessInfo();
@@ -311,12 +314,12 @@ public class AisConsentServiceInternalTest {
         // When
         consentId = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Then
-        assertTrue(consentId.isPresent());
+        assertTrue(consentId.isSuccessful());
 
         // When
-        Optional<String> consentId_notExist = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
+        CmsResponse<String> consentId_notExist = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
         // Then
-        assertFalse(consentId_notExist.isPresent());
+        assertFalse(consentId_notExist.isSuccessful());
     }
 
     @Test
@@ -326,10 +329,12 @@ public class AisConsentServiceInternalTest {
         when(aisConsentRepository.findByExternalId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(finalisedConsent));
 
         // When
-        boolean result = aisConsentService.updateConsentStatusById(FINALISED_CONSENT_ID, ConsentStatus.EXPIRED);
+        CmsResponse<Boolean> result = aisConsentService.updateConsentStatusById(FINALISED_CONSENT_ID, ConsentStatus.EXPIRED);
 
         // Then
-        assertFalse(result);
+        assertTrue(result.hasError());
+
+        assertEquals(CmsError.LOGICAL_ERROR, result.getError());
     }
 
 
@@ -351,10 +356,12 @@ public class AisConsentServiceInternalTest {
             .thenReturn(true);
 
         // When
-        boolean result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
+        CmsResponse<Boolean> result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
 
         // Then
-        assertFalse(result);
+        assertTrue(result.isSuccessful());
+
+        assertFalse(result.getPayload());
         verify(aisConsentRepository, never()).findOldConsentsByNewConsentParams(any(), any(), any(), any(), any());
     }
 
@@ -390,10 +397,12 @@ public class AisConsentServiceInternalTest {
             .thenReturn(EXTERNAL_CONSENT_ID);
 
         // When
-        boolean result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
+        CmsResponse<Boolean> result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
 
         // Then
-        assertFalse(result);
+        assertTrue(result.isSuccessful());
+
+        assertFalse(result.getPayload());
     }
 
     @Test
@@ -432,10 +441,12 @@ public class AisConsentServiceInternalTest {
         when(aisConsentRepository.saveAll(oldConsents)).thenReturn(oldConsents);
 
         // When
-        boolean result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
+        CmsResponse<Boolean> result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
 
         // Then
-        assertTrue(result);
+        assertTrue(result.isSuccessful());
+
+        assertTrue(result.getPayload());
         assertEquals(ConsentStatus.REJECTED, oldConsent.getConsentStatus());
         verify(aisConsentRepository).saveAll(oldConsents);
     }
@@ -477,10 +488,12 @@ public class AisConsentServiceInternalTest {
         when(aisConsentRepository.saveAll(oldConsents)).thenReturn(oldConsents);
 
         // When
-        boolean result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
+        CmsResponse<Boolean> result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
 
         // Then
-        assertTrue(result);
+        assertTrue(result.isSuccessful());
+
+        assertTrue(result.getPayload());
         assertEquals(ConsentStatus.REJECTED, oldConsent.getConsentStatus());
         verify(aisConsentRepository).saveAll(oldConsents);
     }
@@ -506,10 +519,12 @@ public class AisConsentServiceInternalTest {
             .thenReturn(EXTERNAL_CONSENT_ID);
 
         // When
-        boolean result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
+        CmsResponse<Boolean> result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
 
         // Then
-        assertFalse(result);
+        assertTrue(result.isSuccessful());
+
+        assertFalse(result.getPayload());
         verify(aisConsentRepository, never()).save(any(AisConsent.class));
     }
 
@@ -578,10 +593,10 @@ public class AisConsentServiceInternalTest {
         doNothing().when(aisConsentConfirmationExpirationService).expireConsent(consent);
 
         // When
-        Optional<ConsentStatus> consentStatusById = aisConsentService.getConsentStatusById(EXTERNAL_CONSENT_ID);
+        CmsResponse<ConsentStatus> consentStatusById = aisConsentService.getConsentStatusById(EXTERNAL_CONSENT_ID);
 
         // Then
-        assertTrue(consentStatusById.isPresent());
+        assertTrue(consentStatusById.isSuccessful());
         verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(consent);
     }
 
@@ -713,3 +728,4 @@ public class AisConsentServiceInternalTest {
         return tppInfoEntity;
     }
 }
+

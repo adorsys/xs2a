@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
@@ -25,7 +26,6 @@ import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Base version of AisConsentAuthorisationService that contains all method declarations.
@@ -43,7 +43,7 @@ interface AisConsentAuthorisationServiceBase {
      * @param request   needed parameters for creating consent authorization
      * @return CreateAisConsentAuthorizationResponse object with authorization id and scaStatus
      */
-    Optional<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request);
+    CmsResponse<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request);
 
     /**
      * Gets consent authorization
@@ -52,7 +52,7 @@ interface AisConsentAuthorisationServiceBase {
      * @param authorizationId id of authorisation session
      * @return AisConsentAuthorizationResponse
      */
-    Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId);
+    CmsResponse<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId);
 
     /**
      * Updates consent authorization
@@ -61,7 +61,7 @@ interface AisConsentAuthorisationServiceBase {
      * @param request         needed parameters for updating consent authorization
      * @return boolean
      */
-    boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request);
+    CmsResponse<Boolean> updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request);
 
     /**
      * Updates consent authorisation status
@@ -71,7 +71,7 @@ interface AisConsentAuthorisationServiceBase {
      * @return boolean
      */
 
-    boolean updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus);
+    CmsResponse<Boolean> updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus);
 
     /**
      * Gets list of consent authorisation IDs by consent ID
@@ -79,7 +79,7 @@ interface AisConsentAuthorisationServiceBase {
      * @param consentId id of consent
      * @return list of consent authorisation IDs
      */
-    Optional<List<String>> getAuthorisationsByConsentId(String consentId);
+    CmsResponse<List<String>> getAuthorisationsByConsentId(String consentId);
 
     /**
      * Gets SCA status of the authorisation by consent ID and authorisation ID
@@ -88,7 +88,7 @@ interface AisConsentAuthorisationServiceBase {
      * @param authorisationId String representation of the authorisation identifier
      * @return SCA status of the authorisation
      */
-    Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId);
+    CmsResponse<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId);
 
     /**
      * Checks if requested authentication method is decoupled.
@@ -97,7 +97,7 @@ interface AisConsentAuthorisationServiceBase {
      * @param authenticationMethodId String representation of the available authentication method identifier
      * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
      */
-    boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId);
+    CmsResponse<Boolean> isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId);
 
     /**
      * Saves authentication methods in provided authorisation
@@ -106,7 +106,7 @@ interface AisConsentAuthorisationServiceBase {
      * @param methods         List of authentication methods to be saved
      * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
      */
-    boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods);
+    CmsResponse<Boolean> saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods);
 
     /**
      * Updates AIS SCA approach in authorisation
@@ -115,7 +115,7 @@ interface AisConsentAuthorisationServiceBase {
      * @param scaApproach     Chosen SCA approach
      * @return <code>true</code> if authorisation was found and SCA approach updated, <code>false</code> otherwise
      */
-    boolean updateScaApproach(String authorisationId, ScaApproach scaApproach);
+    CmsResponse<Boolean> updateScaApproach(String authorisationId, ScaApproach scaApproach);
 
     /**
      * Gets SCA approach from the authorisation by authorisation ID
@@ -123,5 +123,5 @@ interface AisConsentAuthorisationServiceBase {
      * @param authorisationId String representation of the authorisation identifier
      * @return SCA approach of the authorisation
      */
-    Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId);
+    CmsResponse<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId);
 }

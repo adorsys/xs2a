@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.integration;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +33,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.mockito.BDDMockito.given;
 
 @ActiveProfiles("integration-test")
 @RunWith(SpringRunner.class)
@@ -48,6 +56,10 @@ public class PaymentUpdateAuthorisationIT extends PaymentUpdateAuthorisationBase
 
     @Test
     public void updatePaymentPsuData_failed_psu_authorisation_psu_request_are_different() throws Exception {
+        given(pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
+                            .build());
         updatePaymentPsuData_checkForPsuCredentialsInvalidResponse(PSU_ID_1, PSU_ID_2);
     }
 

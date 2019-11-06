@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.consent.config.TppStopListRemoteUrls;
 import lombok.RequiredArgsConstructor;
@@ -39,13 +40,17 @@ public class TppStopListServiceRemote implements TppStopListService {
     private final TppStopListRemoteUrls tppStopListRemoteUrls;
 
     @Override
-    public boolean checkIfTppBlocked(String tppAuthorisationNumber) {
+    public CmsResponse<Boolean> checkIfTppBlocked(String tppAuthorisationNumber) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add(HttpHeaders.ACCEPT, MediaType.ALL_VALUE);
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         headers.add(TPP_AUTHORISATION_NUMBER_HEADER, tppAuthorisationNumber);
 
-        return consentRestTemplate.exchange(tppStopListRemoteUrls.checkIfTppBlocked(), HttpMethod.GET, new HttpEntity<>(headers), Boolean.class)
-                   .getBody();
+        Boolean body = consentRestTemplate.exchange(tppStopListRemoteUrls.checkIfTppBlocked(), HttpMethod.GET, new HttpEntity<>(headers), Boolean.class)
+                           .getBody();
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(body)
+                   .build();
     }
 }

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -43,9 +44,13 @@ public class PisPaymentController {
     public ResponseEntity<String> getPaymentIdByEncryptedString(
         @ApiParam(name = "payment-id", value = "The payment identification.", example = "32454656712432")
         @PathVariable("payment-id") String encryptedId) {
-        return pisCommonPaymentService.getDecryptedId(encryptedId)
-                   .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        CmsResponse<String> response = pisCommonPaymentService.getDecryptedId(encryptedId);
+
+        if (response.hasError()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
     }
 
     @PutMapping(path = "/payment/{payment-id}/status/{status}")
@@ -58,9 +63,13 @@ public class PisPaymentController {
         @PathVariable("payment-id") String paymentId,
         @ApiParam(value = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.", allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC")
         @PathVariable("status") String status) {
-        return updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status))
-                   ? ResponseEntity.ok().build()
-                   : ResponseEntity.badRequest().build();
+        CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status));
+
+        if (response.isSuccessful() && response.getPayload()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping(path = "/payment/{payment-id}/cancellation/redirects")
@@ -73,11 +82,14 @@ public class PisPaymentController {
         @PathVariable("payment-id") String paymentId,
         @RequestHeader(value = "TPP-Redirect-URI", required = false) String tpPRedirectURI,
         @RequestHeader(value = "TPP-Nok-Redirect-URI", required = false) String tpPNokRedirectURI) {
-        return updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(paymentId,
-                                                                                          new TppRedirectUri(StringUtils.defaultIfBlank(tpPRedirectURI, ""),
-                                                                                                             StringUtils.defaultIfBlank(tpPNokRedirectURI, "")))
-                   ? ResponseEntity.ok().build()
-                   : ResponseEntity.badRequest().build();
+        CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(paymentId,
+                                                                                                                   new TppRedirectUri(StringUtils.defaultIfBlank(tpPRedirectURI, ""),
+                                                                                                                                      StringUtils.defaultIfBlank(tpPNokRedirectURI, "")));
+        if (response.isSuccessful() && response.getPayload()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping(path = "/payment/{payment-id}/cancellation/internal-request-id/{internal-request-id}")
@@ -90,8 +102,12 @@ public class PisPaymentController {
         @PathVariable("payment-id") String paymentId,
         @ApiParam(name = "internal-request-id", value = "Cancellation internal request ID of payment.")
         @PathVariable("internal-request-id") String internalRequestId) {
-        return updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(paymentId, internalRequestId)
-                   ? ResponseEntity.ok().build()
-                   : ResponseEntity.badRequest().build();
+        CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(paymentId, internalRequestId);
+
+        if (response.isSuccessful() && response.getPayload()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

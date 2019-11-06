@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
@@ -136,17 +137,23 @@ public class PaymentTransactionStatusIT {
         when(tppService.getTppInfo())
             .thenReturn(TPP_INFO);
         when(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
-            .thenReturn(false);
+            .thenReturn(CmsResponse.<Boolean>builder()
+                            .payload(false)
+                            .build());
         when(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .thenReturn(true);
         when(updatePaymentStatusAfterSpiServiceEncrypted.updatePaymentStatus(eq(ENCRYPTED_PAYMENT_ID), any(TransactionStatus.class)))
-            .thenReturn(true);
+            .thenReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
+                            .build());
         when(aspspDataService.readAspspConsentData(ENCRYPTED_PAYMENT_ID))
             .thenReturn(Optional.of(ASPSP_CONSENT_DATA));
 
         PisCommonPaymentResponse pisCommonPaymentResponse = PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponseWithPayment();
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPTED_PAYMENT_ID))
-            .thenReturn(Optional.of(pisCommonPaymentResponse));
+            .thenReturn(CmsResponse.<PisCommonPaymentResponse>builder()
+                            .payload(pisCommonPaymentResponse)
+                            .build());
     }
 
     @Test

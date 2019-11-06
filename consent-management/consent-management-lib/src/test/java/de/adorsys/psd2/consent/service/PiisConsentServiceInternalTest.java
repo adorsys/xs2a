@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
@@ -84,9 +85,12 @@ public class PiisConsentServiceInternalTest {
         PiisConsent expected = buildPiisConsent();
 
         // When
-        List<PiisConsent> piisConsents = piisConsentServiceInternal.getPiisConsentListByAccountIdentifier(CURRENCY, new AccountReferenceSelector(AccountReferenceType.IBAN, IBAN));
+        CmsResponse<List<PiisConsent>> piisConsentsResponse = piisConsentServiceInternal.getPiisConsentListByAccountIdentifier(CURRENCY, new AccountReferenceSelector(AccountReferenceType.IBAN, IBAN));
 
         // Then
+        assertThat(piisConsentsResponse.isSuccessful()).isTrue();
+
+        List<PiisConsent> piisConsents = piisConsentsResponse.getPayload();
         assertThat(piisConsents.isEmpty()).isFalse();
         assertThat(piisConsents.get(0)).isEqualTo(expected);
     }
@@ -94,9 +98,12 @@ public class PiisConsentServiceInternalTest {
     @Test
     public void getPiisConsentListByAccountIdentifier_Failure_WrongIban() {
         // When
-        List<PiisConsent> piisConsents = piisConsentServiceInternal.getPiisConsentListByAccountIdentifier(CURRENCY, new AccountReferenceSelector(AccountReferenceType.IBAN, WRONG_IBAN));
+        CmsResponse<List<PiisConsent>> piisConsentsResponse = piisConsentServiceInternal.getPiisConsentListByAccountIdentifier(CURRENCY, new AccountReferenceSelector(AccountReferenceType.IBAN, WRONG_IBAN));
 
         // Then
+        assertThat(piisConsentsResponse.isSuccessful()).isTrue();
+
+        List<PiisConsent> piisConsents = piisConsentsResponse.getPayload();
         assertThat(piisConsents.isEmpty()).isTrue();
     }
 
@@ -124,3 +131,4 @@ public class PiisConsentServiceInternalTest {
         return piisConsent;
     }
 }
+

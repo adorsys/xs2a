@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.consent.api.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Base version of AisConsentService that contains all method declarations.
@@ -38,7 +38,7 @@ interface AisConsentServiceBase {
      * @param request needed parameters for creating AIS consent
      * @return create consent response, containing consent and its encrypted ID
      */
-    Optional<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request);
+    CmsResponse<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request);
 
     /**
      * Reads status of consent by id
@@ -46,7 +46,7 @@ interface AisConsentServiceBase {
      * @param consentId id of consent
      * @return ConsentStatus
      */
-    Optional<ConsentStatus> getConsentStatusById(String consentId);
+    CmsResponse<ConsentStatus> getConsentStatusById(String consentId);
 
     /**
      * Updates consent status by id
@@ -55,7 +55,7 @@ interface AisConsentServiceBase {
      * @param status    new consent status
      * @return Boolean
      */
-    boolean updateConsentStatusById(String consentId, ConsentStatus status);
+    CmsResponse<Boolean> updateConsentStatusById(String consentId, ConsentStatus status);
 
     /**
      * Reads full information of consent by id
@@ -63,7 +63,7 @@ interface AisConsentServiceBase {
      * @param consentId id of consent
      * @return AisAccountConsent
      */
-    Optional<AisAccountConsent> getAisAccountConsentById(String consentId);
+    CmsResponse<AisAccountConsent> getAisAccountConsentById(String consentId);
 
     /**
      * Finds old consents for current TPP and PSU and terminates them.
@@ -72,14 +72,14 @@ interface AisConsentServiceBase {
      * @param newConsentId id of new consent
      * @return true if any consents have been terminated, false - if none
      */
-    boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId);
+    CmsResponse<Boolean> findAndTerminateOldConsentsByNewConsentId(String newConsentId);
 
     /**
      * Saves information about uses of consent
      *
      * @param request needed parameters for logging usage AIS consent
      */
-    void checkConsentAndSaveActionLog(AisConsentActionRequest request);
+    CmsResponse<CmsResponse.VoidResponse> checkConsentAndSaveActionLog(AisConsentActionRequest request);
 
 
     /**
@@ -89,7 +89,7 @@ interface AisConsentServiceBase {
      * @param consentId id of the consent to be updated
      * @return String   consent id
      */
-    Optional<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request);
+    CmsResponse<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request);
 
     /**
      * Updates AIS consent aspsp account access by id and return consent
@@ -98,9 +98,9 @@ interface AisConsentServiceBase {
      * @param consentId id of the consent to be updated
      * @return AisAccountConsent consent
      */
-    Optional<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request);
+    CmsResponse<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request);
 
-    Optional<List<PsuIdData>> getPsuDataByConsentId(String consentId);
+    CmsResponse<List<PsuIdData>> getPsuDataByConsentId(String consentId);
 
     /**
      * Updates multilevel SCA required field
@@ -109,5 +109,5 @@ interface AisConsentServiceBase {
      * @param multilevelScaRequired multilevel SCA required indicator
      * @return <code>true</code> if authorisation was found and SCA required field updated, <code>false</code> otherwise
      */
-    boolean updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired);
+    CmsResponse<Boolean> updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired);
 }

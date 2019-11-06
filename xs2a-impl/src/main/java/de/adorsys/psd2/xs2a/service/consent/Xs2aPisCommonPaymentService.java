@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
@@ -48,16 +49,25 @@ public class Xs2aPisCommonPaymentService {
     private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
 
     public CreatePisCommonPaymentResponse createCommonPayment(PisPaymentInfo request) {
-        return pisCommonPaymentServiceEncrypted.createCommonPayment(request)
-                   .orElseGet(() -> {
-                       log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Pis common payment cannot be created, because can't save to cms DB",
-                                requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId());
-                       return null;
-                   });
+        CmsResponse<CreatePisCommonPaymentResponse> response = pisCommonPaymentServiceEncrypted.createCommonPayment(request);
+
+        if (response.hasError()) {
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Pis common payment cannot be created, because can't save to cms DB",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId());
+            return null;
+        }
+
+        return response.getPayload();
     }
 
     public Optional<PisCommonPaymentResponse> getPisCommonPaymentById(String paymentId) {
-        return pisCommonPaymentServiceEncrypted.getCommonPaymentById(paymentId);
+        CmsResponse<PisCommonPaymentResponse> response = pisCommonPaymentServiceEncrypted.getCommonPaymentById(paymentId);
+
+        if (response.hasError()) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(response.getPayload());
     }
 
     public void updateSinglePaymentInCommonPayment(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, String paymentId) {
@@ -76,7 +86,8 @@ public class Xs2aPisCommonPaymentService {
     }
 
     public boolean updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
-        return pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(authorisationId, scaStatus);
+        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(authorisationId, scaStatus);
+        return response.isSuccessful() && response.getPayload();
     }
 
     /**
@@ -87,7 +98,8 @@ public class Xs2aPisCommonPaymentService {
      * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
      */
     public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        return pisCommonPaymentServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        return response.isSuccessful() && response.getPayload();
     }
 
     /**
@@ -98,7 +110,8 @@ public class Xs2aPisCommonPaymentService {
      * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
      */
     public boolean saveAuthenticationMethods(String authorisationId, List<Xs2aAuthenticationObject> methods) {
-        return pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
+        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
+        return response.isSuccessful() && response.getPayload();
     }
 
     /**
@@ -118,6 +131,7 @@ public class Xs2aPisCommonPaymentService {
      * @param multilevelScaRequired new value for boolean multilevel sca required
      */
     public boolean updateMultilevelSca(String paymentId, boolean multilevelScaRequired) {
-        return pisCommonPaymentServiceEncrypted.updateMultilevelSca(paymentId, multilevelScaRequired);
+        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.updateMultilevelSca(paymentId, multilevelScaRequired);
+        return response.isSuccessful() && response.getPayload();
     }
 }

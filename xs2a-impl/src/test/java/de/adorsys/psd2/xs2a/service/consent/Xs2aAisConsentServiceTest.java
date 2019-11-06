@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
+
+
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
@@ -120,7 +124,7 @@ public class Xs2aAisConsentServiceTest {
         when(aisConsentMapper.mapToCreateAisConsentRequest(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1, INTERNAL_REQUEST_ID))
             .thenReturn(CREATE_AIS_CONSENT_REQUEST);
         when(aisConsentServiceEncrypted.createConsent(CREATE_AIS_CONSENT_REQUEST))
-            .thenReturn(Optional.of(new CreateAisConsentResponse(CONSENT_ID, AIS_ACCOUNT_CONSENT)));
+            .thenReturn(CmsResponse.<CreateAisConsentResponse>builder().payload(new CreateAisConsentResponse(CONSENT_ID, AIS_ACCOUNT_CONSENT)).build());
         when(aisConsentMapper.mapToAccountConsent(AIS_ACCOUNT_CONSENT))
             .thenReturn(ACCOUNT_CONSENT);
 
@@ -142,7 +146,7 @@ public class Xs2aAisConsentServiceTest {
         when(aisConsentMapper.mapToCreateAisConsentRequest(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1, INTERNAL_REQUEST_ID))
             .thenReturn(CREATE_AIS_CONSENT_REQUEST);
         when(aisConsentServiceEncrypted.createConsent(CREATE_AIS_CONSENT_REQUEST))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<CreateAisConsentResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When
         Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
@@ -156,7 +160,7 @@ public class Xs2aAisConsentServiceTest {
     public void getAccountConsentById_success() {
         //Given
         when(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(AIS_ACCOUNT_CONSENT));
+            .thenReturn(CmsResponse.<AisAccountConsent>builder().payload(AIS_ACCOUNT_CONSENT).build());
         when(aisConsentMapper.mapToAccountConsent(AIS_ACCOUNT_CONSENT))
             .thenReturn(ACCOUNT_CONSENT);
 
@@ -172,7 +176,7 @@ public class Xs2aAisConsentServiceTest {
     public void getAccountConsentById_failed() {
         //Given
         when(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<AisAccountConsent>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When
         Optional<AccountConsent> actualResponse = xs2aAisConsentService.getAccountConsentById(CONSENT_ID);
@@ -185,7 +189,7 @@ public class Xs2aAisConsentServiceTest {
     public void findAndTerminateOldConsentsByNewConsentId_success() {
         //Given
         when(aisConsentServiceEncrypted.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
-            .thenReturn(true);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         //When
         boolean actualResponse = xs2aAisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID);
@@ -198,7 +202,7 @@ public class Xs2aAisConsentServiceTest {
     public void findAndTerminateOldConsentsByNewConsentId_false() {
         //Given
         when(aisConsentServiceEncrypted.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
-            .thenReturn(false);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         //When
         boolean actualResponse = xs2aAisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID);
@@ -215,7 +219,7 @@ public class Xs2aAisConsentServiceTest {
         when(aisConsentAuthorisationMapper.mapToAisConsentAuthorization(SCA_STATUS, PSU_DATA, SCA_APPROACH, REDIRECT_URI, NOK_REDIRECT_URI))
             .thenReturn(AIS_CONSENT_AUTHORIZATION_REQUEST);
         when(aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
-            .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
+            .thenReturn(CmsResponse.<CreateAisConsentAuthorizationResponse>builder().payload(buildCreateAisConsentAuthorizationResponse()).build());
         when(requestProviderService.getTppRedirectURI())
             .thenReturn(REDIRECT_URI);
         when(requestProviderService.getTppNokRedirectURI())
@@ -234,6 +238,8 @@ public class Xs2aAisConsentServiceTest {
         //Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
+        when(aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(eq(CONSENT_ID), any()))
+            .thenReturn(CmsResponse.<CreateAisConsentAuthorizationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When
         Optional<CreateAisConsentAuthorizationResponse> actualResponse = xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA);
@@ -246,7 +252,7 @@ public class Xs2aAisConsentServiceTest {
     public void getAccountConsentAuthorizationById_success() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
-            .thenReturn(Optional.of(AIS_CONSENT_AUTHORIZATION_RESPONSE));
+            .thenReturn(CmsResponse.<AisConsentAuthorizationResponse>builder().payload(AIS_CONSENT_AUTHORIZATION_RESPONSE).build());
         when(aisConsentAuthorisationMapper.mapToAccountConsentAuthorization(AIS_CONSENT_AUTHORIZATION_RESPONSE))
             .thenReturn(ACCOUNT_CONSENT_AUTHORIZATION);
 
@@ -262,7 +268,7 @@ public class Xs2aAisConsentServiceTest {
     public void getAccountConsentAuthorizationById_failed() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<AisConsentAuthorizationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When
         Optional<AccountConsentAuthorization> actualResponse = xs2aAisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
@@ -275,7 +281,7 @@ public class Xs2aAisConsentServiceTest {
     public void getAuthorisationSubResources_success() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(CONSENT_ID))
-            .thenReturn(Optional.of(STRING_LIST));
+            .thenReturn(CmsResponse.<List<String>>builder().payload(STRING_LIST).build());
 
         //When
         Optional<List<String>> actualResponse = xs2aAisConsentService.getAuthorisationSubResources(CONSENT_ID);
@@ -289,7 +295,7 @@ public class Xs2aAisConsentServiceTest {
     public void getAuthorisationSubResources_failed() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(CONSENT_ID))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<List<String>>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When
         Optional<List<String>> actualResponse = xs2aAisConsentService.getAuthorisationSubResources(CONSENT_ID);
@@ -302,7 +308,7 @@ public class Xs2aAisConsentServiceTest {
     public void getAuthorisationScaStatus_success() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
-            .thenReturn(Optional.of(SCA_STATUS));
+            .thenReturn(CmsResponse.<ScaStatus>builder().payload(SCA_STATUS).build());
 
         //When
         Optional<ScaStatus> actualResponse = xs2aAisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
@@ -316,7 +322,7 @@ public class Xs2aAisConsentServiceTest {
     public void getAuthorisationScaStatus_failed() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<ScaStatus>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When
         Optional<ScaStatus> actualResponse = xs2aAisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID);
@@ -329,7 +335,7 @@ public class Xs2aAisConsentServiceTest {
     public void isAuthenticationMethodDecoupled_success() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
-            .thenReturn(true);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         //When
         boolean actualResponse = xs2aAisConsentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
@@ -342,7 +348,7 @@ public class Xs2aAisConsentServiceTest {
     public void isAuthenticationMethodDecoupled_failed() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
-            .thenReturn(false);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         //When
         boolean actualResponse = xs2aAisConsentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
@@ -357,7 +363,7 @@ public class Xs2aAisConsentServiceTest {
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
         when(aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
-            .thenReturn(true);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         //When
         boolean actualResponse = xs2aAisConsentService.saveAuthenticationMethods(AUTHORISATION_ID, AUTHENTICATION_OBJECT_LIST);
@@ -372,7 +378,7 @@ public class Xs2aAisConsentServiceTest {
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
         when(aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
-            .thenReturn(false);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         //When
         boolean actualResponse = xs2aAisConsentService.saveAuthenticationMethods(AUTHORISATION_ID, AUTHENTICATION_OBJECT_LIST);
@@ -385,7 +391,7 @@ public class Xs2aAisConsentServiceTest {
     public void updateConsentStatus_shouldStoreConsentStatusInLoggingContext() {
         // Given
         when(aisConsentServiceEncrypted.updateConsentStatusById(CONSENT_ID, CONSENT_STATUS))
-            .thenReturn(true);
+            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         // When
         xs2aAisConsentService.updateConsentStatus(CONSENT_ID, CONSENT_STATUS);
@@ -397,6 +403,10 @@ public class Xs2aAisConsentServiceTest {
 
     @Test
     public void updateConsentStatus_failure_shouldNotStoreConsentStatusInLoggingContext() {
+        // Given
+        when(aisConsentServiceEncrypted.updateConsentStatusById(CONSENT_ID, CONSENT_STATUS))
+            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
+
         // When
         xs2aAisConsentService.updateConsentStatus(CONSENT_ID, CONSENT_STATUS);
 
@@ -433,9 +443,13 @@ public class Xs2aAisConsentServiceTest {
         createAisConsentRequesWithInternalRequestId.setInternalRequestId(INTERNAL_REQUEST_ID);
         when(aisConsentMapper.mapToCreateAisConsentRequest(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1, INTERNAL_REQUEST_ID))
             .thenReturn(createAisConsentRequesWithInternalRequestId);
+        when(aisConsentServiceEncrypted.createConsent(any()))
+            .thenReturn(CmsResponse.<CreateAisConsentResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
+
         //When
         xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
         verify(aisConsentServiceEncrypted).createConsent(argumentCaptor.capture());
+
         //Then
         CreateAisConsentRequest createAisConsentRequest = argumentCaptor.getValue();
         assertThat(createAisConsentRequest.getInternalRequestId()).isEqualTo(INTERNAL_REQUEST_ID);

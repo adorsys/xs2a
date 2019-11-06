@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
@@ -50,6 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
@@ -130,8 +132,11 @@ public class FundsConfirmationService {
                                                        .build());
         }
 
-        List<PiisConsent> response = piisConsentService.getPiisConsentListByAccountIdentifier(accountReference.getCurrency(),
-                                                                                              selector);
+        CmsResponse<List<PiisConsent>> cmsResponse = piisConsentService.getPiisConsentListByAccountIdentifier(accountReference.getCurrency(),
+                                                                                                              selector);
+        List<PiisConsent> response = cmsResponse.isSuccessful()
+                                         ? cmsResponse.getPayload()
+                                         : Collections.emptyList();
 
         return piisConsentValidation.validatePiisConsentData(response);
     }

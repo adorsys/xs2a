@@ -11,6 +11,7 @@
 * Read the SCA status returns incorrect SCA status after Update PSU data request without PSU-ID in header
 * Support Get Transaction Status Response with raw format
 * Make validation of requests according to TPP roles from certificate optional
+* Internal CMS-XS2A-API was refactored
 
 == Implement support of Multicurrency Accounts
 
@@ -72,3 +73,7 @@ Response body will be returned to the TPP without any additional transformation.
 From now on, `Accept` header is being validated on Get Transaction Status request (`GET /v1/{payment-service}/{paymentId}/status`) based on new `supportedTransactionStatusFormats` property in the ASPSP profile.
 If `Accept` header doesn't contain at least one of the allowed formats, `REQUESTED_FORMATS_INVALID` error with status code `406` will be returned in the response to the TPP.
 If `supportedTransactionStatusFormats` property hasn't been configured in the profile, no validation will occur.
+
+== Internal CMS-XS2A-API was refactored
+From now on, all internal CMS-XS2A service methods return `CmsResponse<T>` object. This object wraps the previous
+return type of the methods and also stores error information (before null we returned). No new functionality was added.

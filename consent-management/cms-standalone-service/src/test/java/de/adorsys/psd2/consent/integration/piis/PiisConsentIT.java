@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.consent.integration.piis;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
@@ -33,7 +35,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -140,10 +141,11 @@ public class PiisConsentIT {
 
         selectors.forEach(selector -> {
             // When
-            List<PiisConsent> piisConsents = piisConsentService.getPiisConsentListByAccountIdentifier(EUR_CURRENCY, selector);
+            CmsResponse<List<PiisConsent>> cmsResponse = piisConsentService.getPiisConsentListByAccountIdentifier(EUR_CURRENCY, selector);
             // Then
-            assertEquals(1, piisConsents.size());
-            AccountReference account = piisConsents.get(0).getAccount();
+            List<PiisConsent> payload = cmsResponse.getPayload();
+            assertEquals(1, payload.size());
+            AccountReference account = payload.get(0).getAccount();
             assertNotNull(account);
             assertEquals(selector, account.getUsedAccountReferenceSelector());
         });

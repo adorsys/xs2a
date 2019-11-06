@@ -1,5 +1,7 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -12,7 +14,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,7 +42,7 @@ public class PisPsuDataServiceTest {
     public void getPsuDataByPaymentId_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(PAYMENT_ID))
-            .thenReturn(Optional.of(LIST_PSU_DATA));
+            .thenReturn(CmsResponse.<List<PsuIdData>>builder().payload(LIST_PSU_DATA).build());
 
         //When
         List<PsuIdData> actualResponse = pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID);
@@ -54,7 +55,7 @@ public class PisPsuDataServiceTest {
     public void getPsuDataByPaymentId_failed() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(WRONG_ID))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<List<PsuIdData>>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When
         List<PsuIdData> actualResponse = pisPsuDataService.getPsuDataByPaymentId(WRONG_ID);

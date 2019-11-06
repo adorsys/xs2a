@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
@@ -32,19 +33,20 @@ public class PisEndpointAccessCheckerService extends EndpointAccessChecker {
     /**
      * Checks whether endpoint is accessible for current authorisation
      *
-     * @param authorisationId ID of authorisation process
+     * @param authorisationId   ID of authorisation process
      * @param authorisationType payment initiation or cancellation
      * @return <code>true</code> if accessible. <code>false</code> otherwise.
      */
     public boolean isEndpointAccessible(String authorisationId, PaymentAuthorisationType authorisationType) {
-        Optional<GetPisAuthorisationResponse> authorisationResponse = Optional.empty();
+        CmsResponse<GetPisAuthorisationResponse> authorisationResponse = null;
         if (authorisationType == PaymentAuthorisationType.CREATED) {
             authorisationResponse = pisCommonPaymentServiceEncrypted.getPisAuthorisationById(authorisationId);
         } else if (authorisationType == PaymentAuthorisationType.CANCELLED) {
             authorisationResponse = pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(authorisationId);
         }
 
-        return authorisationResponse
+        return Optional.ofNullable(authorisationResponse)
+                   .map(CmsResponse::getPayload)
                    .map(p -> isAccessible(p.getChosenScaApproach(), p.getScaStatus()))
                    .orElse(true);
     }

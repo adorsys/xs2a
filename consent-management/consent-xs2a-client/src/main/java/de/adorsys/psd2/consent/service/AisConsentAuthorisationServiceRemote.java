@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
@@ -38,7 +39,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Optional;
+
+import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
 
 // TODO discuss error handling (e.g. 400 HttpCode response) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/498
 @Slf4j
@@ -50,108 +52,166 @@ public class AisConsentAuthorisationServiceRemote implements AisConsentAuthorisa
     private final AisConsentRemoteUrls remoteAisConsentUrls;
 
     @Override
-    public Optional<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request) {
-        CreateAisConsentAuthorizationResponse response = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsentAuthorization(),
-                                                                                           request, CreateAisConsentAuthorizationResponse.class, consentId).getBody();
+    public CmsResponse<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request) {
+        try {
+            CreateAisConsentAuthorizationResponse response = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsentAuthorization(),
+                                                                                               request, CreateAisConsentAuthorizationResponse.class, consentId).getBody();
+            return CmsResponse.<CreateAisConsentAuthorizationResponse>builder()
+                       .payload(response)
+                       .build();
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Remote create authorisation with response failed");
+        }
 
-        return Optional.ofNullable(response);
+        return CmsResponse.<CreateAisConsentAuthorizationResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
+    public CmsResponse<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
         try {
-            return Optional.ofNullable(consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentAuthorizationById(), AisConsentAuthorizationResponse.class, consentId, authorizationId)
-                                           .getBody());
+            AisConsentAuthorizationResponse response = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentAuthorizationById(), AisConsentAuthorizationResponse.class, consentId, authorizationId)
+                                                           .getBody();
+            return CmsResponse.<AisConsentAuthorizationResponse>builder()
+                       .payload(response)
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.info("Couldn't get account consent authorisation by consentId {} and authorisationId {}", consentId, authorizationId);
         }
-        return Optional.empty();
+
+        return CmsResponse.<AisConsentAuthorizationResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
+    public CmsResponse<Boolean> updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
         try {
             consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, authorizationId);
-            return true;
+            return CmsResponse.<Boolean>builder()
+                       .payload(true)
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.info("Couldn't update authorisation by authorisationId {}", authorizationId);
         }
-        return false;
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     @Override
-    public boolean updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
+    public CmsResponse<Boolean> updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
         try {
             consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorisationStatus(), null, authorisationId, scaStatus);
-            return true;
+            return CmsResponse.<Boolean>builder()
+                       .payload(true)
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.info("Couldn't update authorisation status by authorisationId {}", authorisationId);
         }
-        return false;
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     @Override
-    public Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId) {
+    public CmsResponse<List<String>> getAuthorisationsByConsentId(String encryptedConsentId) {
         try {
             ResponseEntity<List<String>> request = consentRestTemplate.exchange(
                 remoteAisConsentUrls.getAuthorisationSubResources(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
                 }, encryptedConsentId);
-            return Optional.ofNullable(request.getBody());
+            return CmsResponse.<List<String>>builder()
+                       .payload(request.getBody())
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.warn("No authorisation found by consentId {}", encryptedConsentId);
         }
-        return Optional.empty();
+
+        return CmsResponse.<List<String>>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public Optional<ScaStatus> getAuthorisationScaStatus(String encryptedConsentId, String authorisationId) {
+    public CmsResponse<ScaStatus> getAuthorisationScaStatus(String encryptedConsentId, String authorisationId) {
         try {
             ResponseEntity<ScaStatus> request = consentRestTemplate.getForEntity(
                 remoteAisConsentUrls.getAuthorisationScaStatus(), ScaStatus.class, encryptedConsentId, authorisationId);
-            return Optional.ofNullable(request.getBody());
+            return CmsResponse.<ScaStatus>builder()
+                       .payload(request.getBody())
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.info("Couldn't get authorisation SCA Status by consentId {} and authorisationId {}", encryptedConsentId, authorisationId);
         }
-        return Optional.empty();
+
+        return CmsResponse.<ScaStatus>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        return consentRestTemplate.getForEntity(remoteAisConsentUrls.isAuthenticationMethodDecoupled(), Boolean.class, authorisationId, authenticationMethodId)
-                   .getBody();
+    public CmsResponse<Boolean> isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
+        Boolean body = consentRestTemplate.getForEntity(remoteAisConsentUrls.isAuthenticationMethodDecoupled(), Boolean.class, authorisationId, authenticationMethodId)
+                           .getBody();
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(body)
+                   .build();
     }
 
     @Override
-    public boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
+    public CmsResponse<Boolean> saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
         try {
             ResponseEntity<Void> responseEntity = consentRestTemplate.exchange(remoteAisConsentUrls.saveAuthenticationMethods(), HttpMethod.POST, new HttpEntity<>(methods), Void.class, authorisationId);
 
             if (responseEntity.getStatusCode() == HttpStatus.NO_CONTENT) {
-                return true;
+                return CmsResponse.<Boolean>builder()
+                           .payload(true)
+                           .build();
             }
         } catch (CmsRestException cmsRestException) {
             log.warn("Couldn't save authentication methods {} by authorisationId {}", methods, authorisationId);
         }
 
-        return false;
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     @Override
-    public boolean updateScaApproach(String authorisationId, ScaApproach scaApproach) {
-        return consentRestTemplate.exchange(remoteAisConsentUrls.updateScaApproach(), HttpMethod.PUT, null, Boolean.class, authorisationId, scaApproach)
-                   .getBody();
+    public CmsResponse<Boolean> updateScaApproach(String authorisationId, ScaApproach scaApproach) {
+        try {
+            Boolean body = consentRestTemplate.exchange(remoteAisConsentUrls.updateScaApproach(), HttpMethod.PUT, null, Boolean.class, authorisationId, scaApproach)
+                               .getBody();
+            return CmsResponse.<Boolean>builder()
+                       .payload(body)
+                       .build();
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Couldn't update SCA approach {} by authorisationId {}", scaApproach, authorisationId);
+        }
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     @Override
-    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId) {
+    public CmsResponse<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId) {
         try {
             ResponseEntity<AuthorisationScaApproachResponse> request = consentRestTemplate.getForEntity(
                 remoteAisConsentUrls.getAuthorisationScaApproach(), AuthorisationScaApproachResponse.class, authorisationId);
-            return Optional.ofNullable(request.getBody());
+            return CmsResponse.<AuthorisationScaApproachResponse>builder()
+                       .payload(request.getBody())
+                       .build();
         } catch (CmsRestException cmsRestException) {
             log.warn("Couldn't get authorisation SCA Approach by authorisationId {}", authorisationId);
         }
 
-        return Optional.empty();
+        return CmsResponse.<AuthorisationScaApproachResponse>builder()
+                   .error(TECHNICAL_ERROR)
+                   .build();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.domain.TppStopListEntity;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
 import org.junit.Test;
@@ -50,9 +51,11 @@ public class TppStopListServiceInternalTest {
         when(tppStopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
-        boolean isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER_NOT_EXISTING);
+        CmsResponse<Boolean> isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER_NOT_EXISTING);
 
-        assertFalse(isTppBlocked);
+        assertTrue(isTppBlocked.isSuccessful());
+
+        assertFalse(isTppBlocked.getPayload());
     }
 
     @Test
@@ -63,9 +66,11 @@ public class TppStopListServiceInternalTest {
         when(tppStopListEntity.isBlocked())
             .thenReturn(false);
 
-        boolean isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER);
+        CmsResponse<Boolean> isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER);
 
-        assertFalse(isTppBlocked);
+        assertTrue(isTppBlocked.isSuccessful());
+
+        assertFalse(isTppBlocked.getPayload());
     }
 
     @Test
@@ -76,8 +81,11 @@ public class TppStopListServiceInternalTest {
         when(tppStopListEntity.isBlocked())
             .thenReturn(true);
 
-        boolean isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER_NOT_EXISTING);
+        CmsResponse<Boolean> isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER_NOT_EXISTING);
 
-        assertTrue(isTppBlocked);
+        assertTrue(isTppBlocked.isSuccessful());
+
+        assertTrue(isTppBlocked.getPayload());
     }
 }
+

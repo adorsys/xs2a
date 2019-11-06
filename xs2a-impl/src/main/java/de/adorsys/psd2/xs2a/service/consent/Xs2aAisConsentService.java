@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
@@ -67,15 +68,15 @@ public class Xs2aAisConsentService {
     public Optional<Xs2aCreateAisConsentResponse> createConsent(CreateConsentReq request, PsuIdData psuData, TppInfo tppInfo) {
         int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppInfo, allowedFrequencyPerDay, requestProviderService.getInternalRequestIdString());
-        Optional<CreateAisConsentResponse> response = aisConsentService.createConsent(createAisConsentRequest);
+        CmsResponse<CreateAisConsentResponse> response = aisConsentService.createConsent(createAisConsentRequest);
 
-        if (!response.isPresent()) {
+        if (response.hasError()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}]. Consent cannot be created, because can't save to cms DB",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
             return Optional.empty();
         }
 
-        CreateAisConsentResponse createAisConsentResponse = response.get();
+        CreateAisConsentResponse createAisConsentResponse = response.getPayload();
         AccountConsent accountConsent = aisConsentMapper.mapToAccountConsent(createAisConsentResponse.getAisAccountConsent());
         return Optional.of(new Xs2aCreateAisConsentResponse(createAisConsentResponse.getConsentId(), accountConsent));
     }
@@ -87,8 +88,15 @@ public class Xs2aAisConsentService {
      * @return Response containing AIS Consent
      */
     public Optional<AccountConsent> getAccountConsentById(String consentId) {
-        return aisConsentService.getAisAccountConsentById(consentId)
-                   .map(aisConsentMapper::mapToAccountConsent);
+        CmsResponse<AisAccountConsent> consentById = aisConsentService.getAisAccountConsentById(consentId);
+
+        if (consentById.hasError()) {
+            log.info("InR-ID: [{}], X-Request-ID: [{}]. Get consent by id failed due to CMS problems",
+                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(aisConsentMapper.mapToAccountConsent(consentById.getPayload()));
     }
 
     /**
@@ -98,7 +106,8 @@ public class Xs2aAisConsentService {
      * @return true if any consents have been terminated, false - if none
      */
     public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
-        return aisConsentService.findAndTerminateOldConsentsByNewConsentId(newConsentId);
+        CmsResponse<Boolean> response = aisConsentService.findAndTerminateOldConsentsByNewConsentId(newConsentId);
+        return response.isSuccessful() && response.getPayload();
     }
 
     /**
@@ -108,9 +117,9 @@ public class Xs2aAisConsentService {
      * @param consentStatus ConsentStatus the consent be changed to
      */
     public void updateConsentStatus(String consentId, ConsentStatus consentStatus) {
-        boolean statusUpdated = aisConsentService.updateConsentStatusById(consentId, consentStatus);
+        CmsResponse<Boolean> statusUpdated = aisConsentService.updateConsentStatusById(consentId, consentStatus);
 
-        if (statusUpdated) {
+        if (statusUpdated.isSuccessful() && statusUpdated.getPayload()) {
             loggingContextService.storeConsentStatus(consentStatus);
         }
     }
@@ -141,7 +150,13 @@ public class Xs2aAisConsentService {
         String tppRedirectURI = requestProviderService.getTppRedirectURI();
         String tppNOKRedirectURI = requestProviderService.getTppNokRedirectURI();
         AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorization(scaStatus, psuData, scaApproachResolver.resolveScaApproach(), tppRedirectURI, tppNOKRedirectURI);
-        return aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(consentId, request);
+        CmsResponse<CreateAisConsentAuthorizationResponse> authorisationResponse = aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(consentId, request);
+
+        if (authorisationResponse.hasError()) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(authorisationResponse.getPayload());
     }
 
     /**
@@ -153,8 +168,13 @@ public class Xs2aAisConsentService {
      */
 
     public Optional<AccountConsentAuthorization> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        return aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(authorizationId, consentId)
-                   .map(aisConsentAuthorisationMapper::mapToAccountConsentAuthorization);
+        CmsResponse<AisConsentAuthorizationResponse> authorisationResponse = aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(authorizationId, consentId);
+
+        if (authorisationResponse.hasError()) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(aisConsentAuthorisationMapper.mapToAccountConsentAuthorization(authorisationResponse.getPayload()));
     }
 
     /**
@@ -184,8 +204,13 @@ public class Xs2aAisConsentService {
      * @return Response containing AIS Consent
      */
     public Optional<AccountConsent> updateAspspAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
-        return aisConsentService.updateAspspAccountAccessWithResponse(consentId, aisAccountAccessInfo)
-                   .map(aisConsentMapper::mapToAccountConsent);
+        CmsResponse<AisAccountConsent> response = aisConsentService.updateAspspAccountAccessWithResponse(consentId, aisAccountAccessInfo);
+
+        if (response.hasError()) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(aisConsentMapper.mapToAccountConsent(response.getPayload()));
     }
 
     /**
@@ -195,7 +220,13 @@ public class Xs2aAisConsentService {
      * @return list of consent authorisation IDs
      */
     public Optional<List<String>> getAuthorisationSubResources(String consentId) {
-        return aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(consentId);
+        CmsResponse<List<String>> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(consentId);
+
+        if (response.hasError()) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(response.getPayload());
     }
 
     /**
@@ -206,7 +237,13 @@ public class Xs2aAisConsentService {
      * @return SCA status of the authorisation
      */
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        return aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(consentId, authorisationId);
+        CmsResponse<ScaStatus> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(consentId, authorisationId);
+
+        if (response.hasError()) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(response.getPayload());
     }
 
     /**
@@ -217,7 +254,8 @@ public class Xs2aAisConsentService {
      * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
      */
     public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        return aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        return response.isSuccessful() && response.getPayload();
     }
 
     /**
@@ -228,7 +266,8 @@ public class Xs2aAisConsentService {
      * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
      */
     public boolean saveAuthenticationMethods(String authorisationId, List<Xs2aAuthenticationObject> methods) {
-        return aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
+        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
+        return response.isSuccessful() && response.getPayload();
     }
 
     /**
@@ -258,6 +297,12 @@ public class Xs2aAisConsentService {
      * @return SCA approach
      */
     public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId) {
-        return aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId);
+        CmsResponse<AuthorisationScaApproachResponse> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId);
+
+        if (response.hasError()) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(response.getPayload());
     }
 }

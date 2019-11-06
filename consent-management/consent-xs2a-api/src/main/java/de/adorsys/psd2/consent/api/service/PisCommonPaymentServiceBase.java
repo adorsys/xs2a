@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.service;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.*;
@@ -30,7 +31,6 @@ import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Base version of PisCommonPaymentService that contains all method declarations.
@@ -41,7 +41,7 @@ import java.util.Optional;
  */
 interface PisCommonPaymentServiceBase {
 
-    Optional<CreatePisCommonPaymentResponse> createCommonPayment(PisPaymentInfo request);
+    CmsResponse<CreatePisCommonPaymentResponse> createCommonPayment(PisPaymentInfo request);
 
     /**
      * Retrieves common payment status from pis payment by payment identifier
@@ -49,7 +49,7 @@ interface PisCommonPaymentServiceBase {
      * @param paymentId String representation of pis payment identifier
      * @return Information about the status of a common payment
      */
-    Optional<TransactionStatus> getPisCommonPaymentStatusById(String paymentId);
+    CmsResponse<TransactionStatus> getPisCommonPaymentStatusById(String paymentId);
 
     /**
      * Reads full information of pis payment by payment identifier
@@ -57,7 +57,7 @@ interface PisCommonPaymentServiceBase {
      * @param paymentId String representation of pis payment identifier
      * @return Response containing full information about pis payment
      */
-    Optional<PisCommonPaymentResponse> getCommonPaymentById(String paymentId);
+    CmsResponse<PisCommonPaymentResponse> getCommonPaymentById(String paymentId);
 
     /**
      * Updates pis payment status by payment identifier
@@ -66,7 +66,7 @@ interface PisCommonPaymentServiceBase {
      * @param status    new payment status
      * @return Response containing result of status changing
      */
-    Optional<Boolean> updateCommonPaymentStatusById(String paymentId, TransactionStatus status);
+    CmsResponse<Boolean> updateCommonPaymentStatusById(String paymentId, TransactionStatus status);
 
     /**
      * Creates payment authorization
@@ -75,7 +75,7 @@ interface PisCommonPaymentServiceBase {
      * @param request   PIS authorisation request
      * @return Response containing authorization id
      */
-    Optional<CreatePisAuthorisationResponse> createAuthorization(String paymentId, CreatePisAuthorisationRequest request);
+    CmsResponse<CreatePisAuthorisationResponse> createAuthorization(String paymentId, CreatePisAuthorisationRequest request);
 
     /**
      * Creates payment authorization cancellation
@@ -84,7 +84,7 @@ interface PisCommonPaymentServiceBase {
      * @param pisAuthorisationRequest PIS authorisation request
      * @return Response containing authorization id
      */
-    Optional<CreatePisAuthorisationResponse> createAuthorizationCancellation(String paymentId, CreatePisAuthorisationRequest pisAuthorisationRequest);
+    CmsResponse<CreatePisAuthorisationResponse> createAuthorizationCancellation(String paymentId, CreatePisAuthorisationRequest pisAuthorisationRequest);
 
     /**
      * Updates payment authorisation
@@ -93,16 +93,16 @@ interface PisCommonPaymentServiceBase {
      * @param request         Incoming request for updating authorization
      * @return Response containing SCA status, available and chosen Sca method
      */
-    Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisAuthorisation(String authorisationId, UpdatePisCommonPaymentPsuDataRequest request);
+    CmsResponse<UpdatePisCommonPaymentPsuDataResponse> updatePisAuthorisation(String authorisationId, UpdatePisCommonPaymentPsuDataRequest request);
 
     /**
      * Updates a specific payment authorization's status
      *
      * @param authorisationId String representation of the authorisation identifier
      * @param scaStatus       The to be updated status
-     * @return
+     * @return boolean
      */
-    boolean updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus);
+    CmsResponse<Boolean> updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus);
 
     /**
      * Updates payment cancellation authorisation
@@ -111,7 +111,7 @@ interface PisCommonPaymentServiceBase {
      * @param request         Incoming request for updating authorization
      * @return Response containing SCA status, available and chosen Sca method
      */
-    Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisCancellationAuthorisation(String authorizationId, UpdatePisCommonPaymentPsuDataRequest request);
+    CmsResponse<UpdatePisCommonPaymentPsuDataResponse> updatePisCancellationAuthorisation(String authorizationId, UpdatePisCommonPaymentPsuDataRequest request);
 
     /**
      * Updates PIS payment data and stores it into database
@@ -119,7 +119,7 @@ interface PisCommonPaymentServiceBase {
      * @param request   PIS payment request for update payment data
      * @param paymentId Payment ID
      */
-    void updateCommonPayment(PisCommonPaymentRequest request, String paymentId);
+    CmsResponse<CmsResponse.VoidResponse> updateCommonPayment(PisCommonPaymentRequest request, String paymentId);
 
     /**
      * Updates multilevelScaRequired and stores changes into database
@@ -127,7 +127,7 @@ interface PisCommonPaymentServiceBase {
      * @param paymentId             Payment ID
      * @param multilevelScaRequired new value for boolean multilevel sca required
      */
-    boolean updateMultilevelSca(String paymentId, boolean multilevelScaRequired);
+    CmsResponse<Boolean> updateMultilevelSca(String paymentId, boolean multilevelScaRequired);
 
     /**
      * Get information about Authorisation by authorisation identifier
@@ -135,7 +135,7 @@ interface PisCommonPaymentServiceBase {
      * @param authorisationId String representation of the authorisation identifier
      * @return Response containing information about Authorisation
      */
-    Optional<GetPisAuthorisationResponse> getPisAuthorisationById(String authorisationId);
+    CmsResponse<GetPisAuthorisationResponse> getPisAuthorisationById(String authorisationId);
 
     /**
      * Get information about Authorisation by cancellation identifier
@@ -143,7 +143,7 @@ interface PisCommonPaymentServiceBase {
      * @param cancellationId String representation of the cancellation identifier
      * @return Response containing information about Authorisation
      */
-    Optional<GetPisAuthorisationResponse> getPisCancellationAuthorisationById(String cancellationId);
+    CmsResponse<GetPisAuthorisationResponse> getPisCancellationAuthorisationById(String cancellationId);
 
     /**
      * Gets list of payment authorisation IDs by payment ID and authorisation type
@@ -152,7 +152,7 @@ interface PisCommonPaymentServiceBase {
      * @param authorisationType Type of authorisation
      * @return Response containing information about authorisation IDs
      */
-    Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, PaymentAuthorisationType authorisationType);
+    CmsResponse<List<String>> getAuthorisationsByPaymentId(String paymentId, PaymentAuthorisationType authorisationType);
 
     /**
      * Gets SCA status of the authorisation by payment ID, authorisation ID and authorisation type
@@ -162,7 +162,7 @@ interface PisCommonPaymentServiceBase {
      * @param authorisationType Type of authorisation
      * @return SCA status of the authorisation
      */
-    Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, PaymentAuthorisationType authorisationType);
+    CmsResponse<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, PaymentAuthorisationType authorisationType);
 
     /**
      * Get information about PSU list by payment identifier
@@ -170,7 +170,7 @@ interface PisCommonPaymentServiceBase {
      * @param paymentId String representation of the payment identifier
      * @return Response containing information about PSU
      */
-    Optional<List<PsuIdData>> getPsuDataListByPaymentId(String paymentId);
+    CmsResponse<List<PsuIdData>> getPsuDataListByPaymentId(String paymentId);
 
     /**
      * Checks if requested authentication method is decoupled.
@@ -179,7 +179,7 @@ interface PisCommonPaymentServiceBase {
      * @param authenticationMethodId String representation of the available authentication method identifier
      * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
      */
-    boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId);
+    CmsResponse<Boolean> isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId);
 
     /**
      * Saves authentication methods in provided authorisation
@@ -188,7 +188,7 @@ interface PisCommonPaymentServiceBase {
      * @param methods         List of authentication methods to be saved
      * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
      */
-    boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods);
+    CmsResponse<Boolean> saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods);
 
     /**
      * Updates pis sca approach
@@ -197,7 +197,7 @@ interface PisCommonPaymentServiceBase {
      * @param scaApproach     chosen sca approach
      * @return <code>true</code> if authorisation was found and sca approach updated, <code>false</code> otherwise
      */
-    boolean updateScaApproach(String authorisationId, ScaApproach scaApproach);
+    CmsResponse<Boolean> updateScaApproach(String authorisationId, ScaApproach scaApproach);
 
     /**
      * Gets SCA approach from the authorisation by authorisation ID and authorisation type
@@ -206,5 +206,5 @@ interface PisCommonPaymentServiceBase {
      * @param authorisationType Type of authorisation
      * @return SCA approach of the authorisation
      */
-    Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType);
+    CmsResponse<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType);
 }

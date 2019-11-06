@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
+
+
 package de.adorsys.psd2.xs2a.service.authorization.pis;
 
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
@@ -48,6 +52,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -91,13 +96,13 @@ public class PisAuthorisationServiceTest {
     @Before
     public void setUp() {
         when(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
-            .thenReturn(Optional.of(SCA_STATUS));
+            .thenReturn(buildSuccessfulGetAuthorisationStatusResponse(SCA_STATUS));
         when(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
-            .thenReturn(Optional.empty());
+            .thenReturn(buildErrorfulGetAuthorisationStatusResponse());
         when(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
-            .thenReturn(Optional.of(SCA_STATUS));
+            .thenReturn(buildSuccessfulGetAuthorisationStatusResponse(SCA_STATUS));
         when(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_CANCELLATION_AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
-            .thenReturn(Optional.empty());
+            .thenReturn(buildErrorfulGetAuthorisationStatusResponse());
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
@@ -107,7 +112,7 @@ public class PisAuthorisationServiceTest {
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
         when(pisCommonPaymentServiceEncrypted.createAuthorization(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CREATED))
-            .thenReturn(Optional.of(CREATE_PIS_AUTHORISATION_RESPONSE));
+            .thenReturn(CmsResponse.<CreatePisAuthorisationResponse>builder().payload(CREATE_PIS_AUTHORISATION_RESPONSE).build());
         when(requestProviderService.getTppRedirectURI())
             .thenReturn(TPP_REDIRECT_URI);
         when(requestProviderService.getTppNokRedirectURI())
@@ -127,6 +132,8 @@ public class PisAuthorisationServiceTest {
         // Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
+        when(pisCommonPaymentServiceEncrypted.createAuthorization(any(), any()))
+            .thenReturn(CmsResponse.<CreatePisAuthorisationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
         when(requestProviderService.getTppRedirectURI())
             .thenReturn(TPP_REDIRECT_URI);
         when(requestProviderService.getTppNokRedirectURI())
@@ -144,7 +151,7 @@ public class PisAuthorisationServiceTest {
         ArgumentCaptor<AuthorisationProcessorRequest> authorisationProcessorRequestCaptor = ArgumentCaptor.forClass(AuthorisationProcessorRequest.class);
         // Given
         when(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID))
-            .thenReturn(Optional.of(GET_PIS_AUTHORISATION_RESPONSE));
+            .thenReturn(CmsResponse.<GetPisAuthorisationResponse>builder().payload(GET_PIS_AUTHORISATION_RESPONSE).build());
         when(authorisationChainResponsibilityService.apply(authorisationProcessorRequestCaptor.capture())).thenReturn(STAGE_RESPONSE);
 
         // When
@@ -165,7 +172,7 @@ public class PisAuthorisationServiceTest {
 
         // Given
         when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID))
-            .thenReturn(Optional.of(GET_PIS_AUTHORISATION_RESPONSE));
+            .thenReturn(CmsResponse.<GetPisAuthorisationResponse>builder().payload(GET_PIS_AUTHORISATION_RESPONSE).build());
         when(authorisationChainResponsibilityService.apply(authorisationProcessorRequestCaptor.capture())).thenReturn(STAGE_RESPONSE);
 
         // When
@@ -186,7 +193,7 @@ public class PisAuthorisationServiceTest {
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
         when(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CANCELLED))
-            .thenReturn(Optional.of(CREATE_PIS_AUTHORISATION_RESPONSE));
+            .thenReturn(CmsResponse.<CreatePisAuthorisationResponse>builder().payload(CREATE_PIS_AUTHORISATION_RESPONSE).build());
         when(requestProviderService.getTppRedirectURI())
             .thenReturn(TPP_REDIRECT_URI);
         when(requestProviderService.getTppNokRedirectURI())
@@ -206,6 +213,8 @@ public class PisAuthorisationServiceTest {
         // Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
+        when(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(any(), any()))
+            .thenReturn(CmsResponse.<CreatePisAuthorisationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
         when(requestProviderService.getTppRedirectURI())
             .thenReturn(TPP_REDIRECT_URI);
         when(requestProviderService.getTppNokRedirectURI())
@@ -222,7 +231,7 @@ public class PisAuthorisationServiceTest {
     public void getCancellationAuthorisationSubResources_success() {
         // Given
         when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(PAYMENT_ID, PaymentAuthorisationType.CANCELLED))
-            .thenReturn(Optional.of(SOME_LIST));
+            .thenReturn(CmsResponse.<List<String>>builder().payload(SOME_LIST).build());
 
         // When
         Optional<List<String>> actualResponse = pisAuthorisationService.getCancellationAuthorisationSubResources(PAYMENT_ID);
@@ -236,7 +245,7 @@ public class PisAuthorisationServiceTest {
     public void getCancellationAuthorisationSubResources_wrongPaymentId_fail() {
         // Given
         when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(WRONG_PAYMENT_ID, PaymentAuthorisationType.CANCELLED))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<List<String>>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         // When
         Optional<List<String>> actualResponse = pisAuthorisationService.getCancellationAuthorisationSubResources(WRONG_PAYMENT_ID);
@@ -249,7 +258,7 @@ public class PisAuthorisationServiceTest {
     public void getAuthorisationSubResources_success() {
         // Given
         when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(PAYMENT_ID, PaymentAuthorisationType.CREATED))
-            .thenReturn(Optional.of(SOME_LIST));
+            .thenReturn(CmsResponse.<List<String>>builder().payload(SOME_LIST).build());
 
         // When
         Optional<List<String>> actualResponse = pisAuthorisationService.getAuthorisationSubResources(PAYMENT_ID);
@@ -263,7 +272,7 @@ public class PisAuthorisationServiceTest {
     public void getAuthorisationSubResources_wrongPaymentId_fail() {
         // Given
         when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(WRONG_PAYMENT_ID, PaymentAuthorisationType.CREATED))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<List<String>>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         // When
         Optional<List<String>> actualResponse = pisAuthorisationService.getAuthorisationSubResources(WRONG_PAYMENT_ID);
@@ -328,5 +337,17 @@ public class PisAuthorisationServiceTest {
         GetPisAuthorisationResponse response = new GetPisAuthorisationResponse();
         response.setScaStatus(ScaStatus.RECEIVED);
         return response;
+    }
+
+    private CmsResponse<ScaStatus> buildSuccessfulGetAuthorisationStatusResponse(ScaStatus scaStatus) {
+        return CmsResponse.<ScaStatus>builder()
+                   .payload(scaStatus)
+                   .build();
+    }
+
+    private CmsResponse<ScaStatus> buildErrorfulGetAuthorisationStatusResponse() {
+        return CmsResponse.<ScaStatus>builder()
+                   .error(CmsError.TECHNICAL_ERROR)
+                   .build();
     }
 }

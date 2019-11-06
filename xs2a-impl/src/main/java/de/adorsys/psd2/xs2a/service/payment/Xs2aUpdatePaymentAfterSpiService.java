@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.payment;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -31,7 +32,8 @@ public class Xs2aUpdatePaymentAfterSpiService {
     private final LoggingContextService loggingContextService;
 
     public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
-        boolean statusUpdated = updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, status);
+        CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, status);
+        boolean statusUpdated = response.isSuccessful() && response.getPayload();
 
         if (statusUpdated) {
             loggingContextService.storeTransactionStatus(status);
@@ -41,10 +43,12 @@ public class Xs2aUpdatePaymentAfterSpiService {
     }
 
     public boolean updatePaymentCancellationTppRedirectUri(@NotNull String paymentId, @NotNull TppRedirectUri tppRedirectUri) {
-        return updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(paymentId, tppRedirectUri);
+        CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(paymentId, tppRedirectUri);
+        return response.isSuccessful() && response.getPayload();
     }
 
     public boolean updatePaymentCancellationInternalRequestId(@NotNull String paymentId, @NotNull String internalRequestId) {
-        return updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(paymentId, internalRequestId);
+        CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(paymentId, internalRequestId);
+        return response.isSuccessful() && response.getPayload();
     }
 }

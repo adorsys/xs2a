@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.*;
@@ -57,6 +58,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
+import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.PATC;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
 
@@ -85,7 +88,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      */
     @Override
     @Transactional
-    public Optional<CreatePisCommonPaymentResponse> createCommonPayment(PisPaymentInfo request) {
+    public CmsResponse<CreatePisCommonPaymentResponse> createCommonPayment(PisPaymentInfo request) {
         PisCommonPaymentData commonPaymentData = pisCommonPaymentMapper.mapToPisCommonPaymentData(request);
         tppInfoRepository.findByAuthorisationNumber(request.getTppInfo().getAuthorisationNumber())
             .ifPresent(commonPaymentData::setTppInfo);
@@ -95,10 +98,14 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         if (saved.getId() == null) {
             log.info("Payment ID: [{}]. Pis common payment cannot be created, because when saving to DB got null PisCommonPaymentData ID",
                      request.getPaymentId());
-            return Optional.empty();
+            return CmsResponse.<CreatePisCommonPaymentResponse>builder()
+                       .error(TECHNICAL_ERROR)
+                       .build();
         }
 
-        return Optional.of(new CreatePisCommonPaymentResponse(saved.getPaymentId()));
+        return CmsResponse.<CreatePisCommonPaymentResponse>builder()
+                   .payload(new CreatePisCommonPaymentResponse(saved.getPaymentId()))
+                   .build();
     }
 
     /**
@@ -109,10 +116,22 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      */
     @Override
     @Transactional
-    public Optional<TransactionStatus> getPisCommonPaymentStatusById(String paymentId) {
-        return pisCommonPaymentDataRepository.findByPaymentId(paymentId)
-                   .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
-                   .map(PisCommonPaymentData::getTransactionStatus);
+    public CmsResponse<TransactionStatus> getPisCommonPaymentStatusById(String paymentId) {
+        Optional<TransactionStatus> statusOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId)
+                                                         .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
+                                                         .map(PisCommonPaymentData::getTransactionStatus);
+
+        if (statusOptional.isPresent()) {
+            return CmsResponse.<TransactionStatus>builder()
+                       .payload(statusOptional.get())
+                       .build();
+        }
+
+        log.info("Payment ID: [{}]. Get common payment status by ID failed, because payment was not found by the ID",
+                 paymentId);
+        return CmsResponse.<TransactionStatus>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     /**
@@ -123,10 +142,22 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      */
     @Override
     @Transactional
-    public Optional<PisCommonPaymentResponse> getCommonPaymentById(String paymentId) {
-        return pisCommonPaymentDataRepository.findByPaymentId(paymentId)
-                   .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
-                   .flatMap(pisCommonPaymentMapper::mapToPisCommonPaymentResponse);
+    public CmsResponse<PisCommonPaymentResponse> getCommonPaymentById(String paymentId) {
+        Optional<PisCommonPaymentResponse> responseOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId)
+                                                                  .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
+                                                                  .flatMap(pisCommonPaymentMapper::mapToPisCommonPaymentResponse);
+
+        if (responseOptional.isPresent()) {
+            return CmsResponse.<PisCommonPaymentResponse>builder()
+                       .payload(responseOptional.get())
+                       .build();
+        }
+
+        log.info("Payment ID: [{}]. Get common payment by ID failed, because payment was not found by the ID",
+                 paymentId);
+        return CmsResponse.<PisCommonPaymentResponse>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     /**
@@ -138,12 +169,24 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      */
     @Override
     @Transactional
-    public Optional<Boolean> updateCommonPaymentStatusById(String paymentId, TransactionStatus status) {
-        return pisCommonPaymentDataRepository.findByPaymentId(paymentId)
-                   .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
-                   .filter(pm -> !pm.getTransactionStatus().isFinalisedStatus())
-                   .map(pmt -> setStatusAndSaveCommonPaymentData(pmt, status))
-                   .map(con -> con.getTransactionStatus() == status);
+    public CmsResponse<Boolean> updateCommonPaymentStatusById(String paymentId, TransactionStatus status) {
+        Optional<Boolean> isUpdatedOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId)
+                                                  .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
+                                                  .filter(pm -> !pm.getTransactionStatus().isFinalisedStatus())
+                                                  .map(pmt -> setStatusAndSaveCommonPaymentData(pmt, status))
+                                                  .map(con -> con.getTransactionStatus() == status);
+
+        if (isUpdatedOptional.isPresent()) {
+            return CmsResponse.<Boolean>builder()
+                       .payload(isUpdatedOptional.get())
+                       .build();
+        }
+
+        log.info("Payment ID: [{}]. Update common payment by ID failed, because payment was not found by the ID",
+                 paymentId);
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     /**
@@ -155,25 +198,49 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      */
     @Override
     @Transactional
-    public Optional<CreatePisAuthorisationResponse> createAuthorization(String paymentId, CreatePisAuthorisationRequest request) {
-        return readReceivedCommonPaymentDataByPaymentId(paymentId)
-                   .map(pmt -> {
-                       closePreviousAuthorisationsByPsu(pmt.getAuthorizations(), request.getAuthorizationType(), request.getPsuData());
-                       return saveNewAuthorisation(pmt, request);
-                   })
-                   .map(c -> new CreatePisAuthorisationResponse(c.getExternalId(), c.getScaStatus(), c.getPaymentData().getInternalRequestId(), c.getPaymentData().getCancellationInternalRequestId()));
+    public CmsResponse<CreatePisAuthorisationResponse> createAuthorization(String paymentId, CreatePisAuthorisationRequest request) {
+        Optional<CreatePisAuthorisationResponse> responseOptional = readReceivedCommonPaymentDataByPaymentId(paymentId)
+                                                                        .map(pmt -> {
+                                                                            closePreviousAuthorisationsByPsu(pmt.getAuthorizations(), request.getAuthorizationType(), request.getPsuData());
+                                                                            return saveNewAuthorisation(pmt, request);
+                                                                        })
+                                                                        .map(c -> new CreatePisAuthorisationResponse(c.getExternalId(), c.getScaStatus(), c.getPaymentData().getInternalRequestId(), c.getPaymentData().getCancellationInternalRequestId()));
+
+        if (responseOptional.isPresent()) {
+            return CmsResponse.<CreatePisAuthorisationResponse>builder()
+                       .payload(responseOptional.get())
+                       .build();
+        }
+
+        log.info("Payment ID: [{}]. Create common payment authorisation failed, because payment was not found by the ID",
+                 paymentId);
+        return CmsResponse.<CreatePisAuthorisationResponse>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     @Override
     @Transactional
-    public Optional<CreatePisAuthorisationResponse> createAuthorizationCancellation(String paymentId, CreatePisAuthorisationRequest request) {
-        return readPisCommonPaymentDataByPaymentId(paymentId)
-                   .filter(p -> p.getTransactionStatus().isNotFinalisedStatus())
-                   .map(pmt -> {
-                       closePreviousAuthorisationsByPsu(pmt.getAuthorizations(), request.getAuthorizationType(), request.getPsuData());
-                       return saveNewAuthorisation(pmt, request);
-                   })
-                   .map(c -> new CreatePisAuthorisationResponse(c.getExternalId(), c.getScaStatus(), c.getPaymentData().getInternalRequestId(), c.getPaymentData().getCancellationInternalRequestId()));
+    public CmsResponse<CreatePisAuthorisationResponse> createAuthorizationCancellation(String paymentId, CreatePisAuthorisationRequest request) {
+        Optional<CreatePisAuthorisationResponse> responseOptional = readPisCommonPaymentDataByPaymentId(paymentId)
+                                                                        .filter(p -> p.getTransactionStatus().isNotFinalisedStatus())
+                                                                        .map(pmt -> {
+                                                                            closePreviousAuthorisationsByPsu(pmt.getAuthorizations(), request.getAuthorizationType(), request.getPsuData());
+                                                                            return saveNewAuthorisation(pmt, request);
+                                                                        })
+                                                                        .map(c -> new CreatePisAuthorisationResponse(c.getExternalId(), c.getScaStatus(), c.getPaymentData().getInternalRequestId(), c.getPaymentData().getCancellationInternalRequestId()));
+
+        if (responseOptional.isPresent()) {
+            return CmsResponse.<CreatePisAuthorisationResponse>builder()
+                       .payload(responseOptional.get())
+                       .build();
+        }
+
+        log.info("Payment ID: [{}]. Create common payment authorisation cancellation failed, because payment was not found by the ID",
+                 paymentId);
+        return CmsResponse.<CreatePisAuthorisationResponse>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     /**
@@ -185,38 +252,46 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      */
     @Override
     @Transactional
-    public Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisAuthorisation(String authorisationId, UpdatePisCommonPaymentPsuDataRequest request) {
+    public CmsResponse<UpdatePisCommonPaymentPsuDataResponse> updatePisAuthorisation(String authorisationId, UpdatePisCommonPaymentPsuDataRequest request) {
         Optional<PisAuthorization> pisAuthorisationOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(
             authorisationId, PaymentAuthorisationType.CREATED);
 
         if (!pisAuthorisationOptional.isPresent()) {
             log.info("Authorisation ID: [{}]. Update pis authorisation failed, because pis authorisation with PaymentAuthorisationType.CREATED is not found by id",
                      authorisationId);
-            return Optional.empty();
+            return CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
+                       .error(TECHNICAL_ERROR)
+                       .build();
         }
 
         PisAuthorization authorisation = pisAuthorisationOptional.get();
         closePreviousAuthorisationsByPsu(authorisation, request.getPsuData());
 
         ScaStatus scaStatus = doUpdatePaymentAuthorisation(request, authorisation);
-        return Optional.of(new UpdatePisCommonPaymentPsuDataResponse(scaStatus));
+        return CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
+                   .payload(new UpdatePisCommonPaymentPsuDataResponse(scaStatus))
+                   .build();
     }
 
     @Override
     @Transactional
-    public boolean updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
+    public CmsResponse<Boolean> updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
         Optional<PisAuthorization> pisAuthorisationOptional = pisAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!pisAuthorisationOptional.isPresent()) {
             log.info("Authorisation ID: [{}]. Update pis authorisation failed, because pis authorisation with PaymentAuthorisationType.CREATED is not found by id",
                      authorisationId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
 
         PisAuthorization authorisation = pisAuthorisationOptional.get();
         authorisation.setScaStatus(scaStatus);
         pisAuthorisationRepository.save(authorisation);
-        return true;
+        return CmsResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
     }
 
     /**
@@ -228,21 +303,25 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      */
     @Override
     @Transactional
-    public Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisCancellationAuthorisation(String cancellationId, UpdatePisCommonPaymentPsuDataRequest request) {
+    public CmsResponse<UpdatePisCommonPaymentPsuDataResponse> updatePisCancellationAuthorisation(String cancellationId, UpdatePisCommonPaymentPsuDataRequest request) {
         Optional<PisAuthorization> pisAuthorisationOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(
             cancellationId, PaymentAuthorisationType.CANCELLED);
 
         if (!pisAuthorisationOptional.isPresent()) {
             log.info("Cancellation ID: [{}]. Update pis cancellation authorisation failed, because pis authorisation with PaymentAuthorisationType.CANCELLED is not found by id",
                      cancellationId);
-            return Optional.empty();
+            return CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
+                       .error(LOGICAL_ERROR)
+                       .build();
         }
 
         PisAuthorization authorisation = pisAuthorisationOptional.get();
         closePreviousAuthorisationsByPsu(authorisation, request.getPsuData());
 
         ScaStatus scaStatus = doUpdatePaymentAuthorisation(request, authorisation);
-        return Optional.of(new UpdatePisCommonPaymentPsuDataResponse(scaStatus));
+        return CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
+                   .payload(new UpdatePisCommonPaymentPsuDataResponse(scaStatus))
+                   .build();
     }
 
     /**
@@ -254,32 +333,40 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     // TODO return correct error code in case payment was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408
     @Override
     @Transactional
-    public void updateCommonPayment(PisCommonPaymentRequest request, String paymentId) {
+    public CmsResponse<CmsResponse.VoidResponse> updateCommonPayment(PisCommonPaymentRequest request, String paymentId) {
         Optional<PisCommonPaymentData> pisCommonPaymentById = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
         pisCommonPaymentById
             .ifPresent(commonPayment -> savePaymentData(commonPayment, request));
+
+        return CmsResponse.<CmsResponse.VoidResponse>builder()
+                   .payload(CmsResponse.voidResponse())
+                   .build();
     }
 
     /**
      * Updates multilevelScaRequired and stores changes into database
      *
-     * @param paymentId Payment ID
+     * @param paymentId             Payment ID
      * @param multilevelScaRequired new value for boolean multilevel sca required
      */
     @Override
     @Transactional
-    public boolean updateMultilevelSca(String paymentId, boolean multilevelScaRequired) {
+    public CmsResponse<Boolean> updateMultilevelSca(String paymentId, boolean multilevelScaRequired) {
         Optional<PisCommonPaymentData> pisCommonPaymentDataOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
         if (!pisCommonPaymentDataOptional.isPresent()) {
             log.info("Payment ID: [{}]. Update multilevel SCA required status failed, because payment is not found",
                      paymentId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
         PisCommonPaymentData payment = pisCommonPaymentDataOptional.get();
         payment.setMultilevelScaRequired(multilevelScaRequired);
         pisCommonPaymentDataRepository.save(payment);
 
-        return true;
+        return CmsResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
     }
 
     /**
@@ -289,9 +376,21 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @return response contains authorisation data
      */
     @Override
-    public Optional<GetPisAuthorisationResponse> getPisAuthorisationById(String authorisationId) {
-        return pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, PaymentAuthorisationType.CREATED)
-                   .map(pisCommonPaymentMapper::mapToGetPisAuthorizationResponse);
+    public CmsResponse<GetPisAuthorisationResponse> getPisAuthorisationById(String authorisationId) {
+        Optional<GetPisAuthorisationResponse> responseOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, PaymentAuthorisationType.CREATED)
+                                                                     .map(pisCommonPaymentMapper::mapToGetPisAuthorizationResponse);
+
+        if (responseOptional.isPresent()) {
+            return CmsResponse.<GetPisAuthorisationResponse>builder()
+                       .payload(responseOptional.get())
+                       .build();
+        }
+
+        log.info("Authorisation ID: [{}]. Get common payment authorisation by ID failed, because payment was not found by the ID",
+                 authorisationId);
+        return CmsResponse.<GetPisAuthorisationResponse>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     /**
@@ -301,9 +400,21 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @return response contains authorisation data
      */
     @Override
-    public Optional<GetPisAuthorisationResponse> getPisCancellationAuthorisationById(String cancellationId) {
-        return pisAuthorisationRepository.findByExternalIdAndAuthorizationType(cancellationId, PaymentAuthorisationType.CANCELLED)
-                   .map(pisCommonPaymentMapper::mapToGetPisAuthorizationResponse);
+    public CmsResponse<GetPisAuthorisationResponse> getPisCancellationAuthorisationById(String cancellationId) {
+        Optional<GetPisAuthorisationResponse> responseOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(cancellationId, PaymentAuthorisationType.CANCELLED)
+                                                                     .map(pisCommonPaymentMapper::mapToGetPisAuthorizationResponse);
+
+        if (responseOptional.isPresent()) {
+            return CmsResponse.<GetPisAuthorisationResponse>builder()
+                       .payload(responseOptional.get())
+                       .build();
+        }
+
+        log.info("Authorisation ID: [{}]. Get common payment cancellation authorisation by ID failed, because payment was not found by the ID",
+                 cancellationId);
+        return CmsResponse.<GetPisAuthorisationResponse>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     /**
@@ -314,21 +425,35 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @return response contains authorisation IDs
      */
     @Override
-    public Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, PaymentAuthorisationType authorisationType) {
-        return readPisCommonPaymentDataByPaymentId(paymentId)
-                   .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
-                   .map(pmt -> readAuthorisationsFromPaymentCommonData(pmt, authorisationType));
+    public CmsResponse<List<String>> getAuthorisationsByPaymentId(String paymentId, PaymentAuthorisationType authorisationType) {
+        Optional<List<String>> authorisationListOptional = readPisCommonPaymentDataByPaymentId(paymentId)
+                                                               .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
+                                                               .map(pmt -> readAuthorisationsFromPaymentCommonData(pmt, authorisationType));
+
+        if (authorisationListOptional.isPresent()) {
+            return CmsResponse.<List<String>>builder()
+                       .payload(authorisationListOptional.get())
+                       .build();
+        }
+
+        log.info("PaymentId ID: [{}]. Get payment authorisation list by ID failed, because payment was not found by the ID",
+                 paymentId);
+        return CmsResponse.<List<String>>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     @Override
     @Transactional
-    public Optional<ScaStatus> getAuthorisationScaStatus(@NotNull String paymentId, @NotNull String authorisationId, PaymentAuthorisationType authorisationType) {
+    public CmsResponse<ScaStatus> getAuthorisationScaStatus(@NotNull String paymentId, @NotNull String authorisationId, PaymentAuthorisationType authorisationType) {
         Optional<PisAuthorization> authorisationOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, authorisationType);
 
         if (!authorisationOptional.isPresent()) {
             log.info("Authorisation ID: [{}], Authorisation Type: [{}]. Get authorisation SCA status failed, because authorisation is not found",
                      authorisationId, authorisationType);
-            return Optional.empty();
+            return CmsResponse.<ScaStatus>builder()
+                       .error(LOGICAL_ERROR)
+                       .build();
         }
 
         PisCommonPaymentData paymentData = authorisationOptional.get().getPaymentData();
@@ -336,12 +461,26 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
             pisCommonPaymentConfirmationExpirationService.updatePaymentDataOnConfirmationExpiration(paymentData);
             log.info("Payment ID: [{}]. Get authorisation SCA status failed, because Payment is expired",
                      paymentId);
-            return Optional.of(ScaStatus.FAILED);
+            return CmsResponse.<ScaStatus>builder()
+                       .payload(ScaStatus.FAILED)
+                       .build();
         }
 
-        return authorisationOptional
-                   .filter(auth -> paymentId.equals(auth.getPaymentData().getPaymentId()))
-                   .map(PisAuthorization::getScaStatus);
+        Optional<ScaStatus> statusOptional = authorisationOptional
+                                                 .filter(auth -> paymentId.equals(auth.getPaymentData().getPaymentId()))
+                                                 .map(PisAuthorization::getScaStatus);
+
+        if (statusOptional.isPresent()) {
+            return CmsResponse.<ScaStatus>builder()
+                       .payload(statusOptional.get())
+                       .build();
+        }
+
+        log.info("PaymentId ID: [{}], Authorisation ID: [{}]. Get payment authorisation SCA status failed",
+                 paymentId, authorisationId);
+        return CmsResponse.<ScaStatus>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     /**
@@ -351,66 +490,103 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @return response contains data of Psu list
      */
     @Override
-    public Optional<List<PsuIdData>> getPsuDataListByPaymentId(String paymentId) {
+    public CmsResponse<List<PsuIdData>> getPsuDataListByPaymentId(String paymentId) {
+        Optional<List<PsuIdData>> psuDataListOptional = readPisCommonPaymentDataByPaymentId(paymentId)
+                                                            .map(pc -> psuDataMapper.mapToPsuIdDataList(pc.getPsuDataList()));
 
-        return readPisCommonPaymentDataByPaymentId(paymentId)
-                   .map(pc -> psuDataMapper.mapToPsuIdDataList(pc.getPsuDataList()));
+        if (psuDataListOptional.isPresent()) {
+            return CmsResponse.<List<PsuIdData>>builder()
+                       .payload(psuDataListOptional.get())
+                       .build();
+        }
+
+        log.info("PaymentId ID: [{}]. Get PSU data list by payment ID failed, because payment is not found", paymentId);
+        return CmsResponse.<List<PsuIdData>>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
+    public CmsResponse<Boolean> isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
         Optional<PisAuthorization> authorisationOptional = pisAuthorisationRepository.findByExternalId(authorisationId);
+        Optional<Boolean> booleanOptional = authorisationOptional.map(a -> a.getAvailableScaMethods()
+                                                                               .stream()
+                                                                               .filter(m -> Objects.equals(m.getAuthenticationMethodId(), authenticationMethodId))
+                                                                               .anyMatch(ScaMethod::isDecoupled));
 
-        return authorisationOptional.map(a -> a.getAvailableScaMethods()
-                                                  .stream()
-                                                  .filter(m -> Objects.equals(m.getAuthenticationMethodId(), authenticationMethodId))
-                                                  .anyMatch(ScaMethod::isDecoupled))
-                   .orElseGet(() -> {
-                       log.info("Authorisation ID: [{}]. Get authorisation method decoupled status failed, because pis authorisation is not found",
-                                authorisationId);
-                       return false;
-                   });
+        if (booleanOptional.isPresent()) {
+            return CmsResponse.<Boolean>builder()
+                       .payload(booleanOptional.get())
+                       .build();
+        }
+
+        log.info("Authorisation ID: [{}]. Get authorisation method decoupled status failed, because pis authorisation is not found",
+                 authorisationId);
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
+
     }
 
     @Override
     @Transactional
-    public boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
+    public CmsResponse<Boolean> saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
         Optional<PisAuthorization> authorisationOptional = pisAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!authorisationOptional.isPresent()) {
             log.info(" Authorisation ID: [{}]. Save authentication methods failed, because authorisation is not found", authorisationId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
 
         PisAuthorization authorisation = authorisationOptional.get();
 
         authorisation.setAvailableScaMethods(scaMethodMapper.mapToScaMethods(methods));
         pisAuthorisationRepository.save(authorisation);
-        return true;
+        return CmsResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
     }
 
     @Override
     @Transactional
-    public boolean updateScaApproach(String authorisationId, ScaApproach scaApproach) {
+    public CmsResponse<Boolean> updateScaApproach(String authorisationId, ScaApproach scaApproach) {
         Optional<PisAuthorization> authorisationOptional = pisAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!authorisationOptional.isPresent()) {
             log.info("Authorisation ID: [{}]. Update SCA approach failed, because pis authorisation is not found",
                      authorisationId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
 
         PisAuthorization authorisation = authorisationOptional.get();
 
         authorisation.setScaApproach(scaApproach);
         pisAuthorisationRepository.save(authorisation);
-        return true;
+        return CmsResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
     }
 
     @Override
-    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType) {
-        return pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, authorisationType)
-                   .map(a -> new AuthorisationScaApproachResponse(a.getScaApproach()));
+    public CmsResponse<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType) {
+        Optional<AuthorisationScaApproachResponse> responseOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, authorisationType)
+                                                                          .map(a -> new AuthorisationScaApproachResponse(a.getScaApproach()));
+
+        if (responseOptional.isPresent()) {
+            return CmsResponse.<AuthorisationScaApproachResponse>builder()
+                       .payload(responseOptional.get())
+                       .build();
+        }
+
+        log.info("Authorisation ID: [{}]. Get payment authorisation SCA approach failed, because pis authorisation is not found",
+                 authorisationId);
+        return CmsResponse.<AuthorisationScaApproachResponse>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     private PisCommonPaymentData setStatusAndSaveCommonPaymentData(PisCommonPaymentData commonPaymentData, TransactionStatus status) {

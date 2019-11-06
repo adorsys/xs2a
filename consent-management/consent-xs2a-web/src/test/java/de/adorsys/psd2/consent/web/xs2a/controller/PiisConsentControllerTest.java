@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.web.xs2a.controller.PiisConsentController;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -52,9 +54,9 @@ public class PiisConsentControllerTest {
     @Before
     public void setUp() {
         when(piisConsentService.getPiisConsentListByAccountIdentifier(CURRENCY, new AccountReferenceSelector(AccountReferenceType.IBAN, IBAN)))
-            .thenReturn(Collections.singletonList(buildPiisConsent()));
+            .thenReturn(CmsResponse.<List<PiisConsent>>builder().payload(Collections.singletonList(buildPiisConsent())).build());
         when(piisConsentService.getPiisConsentListByAccountIdentifier(CURRENCY, new AccountReferenceSelector(AccountReferenceType.IBAN, WRONG_IBAN)))
-            .thenReturn(Collections.emptyList());
+            .thenReturn(CmsResponse.<List<PiisConsent>>builder().payload(Collections.emptyList()).build());
     }
 
     @Test

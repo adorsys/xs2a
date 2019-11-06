@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
@@ -52,6 +53,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -67,23 +70,34 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
     private final CmsPsuService cmsPsuService;
 
     /**
-     * Create consent authorization
+     * Create consent authorisation
      *
      * @param consentId id of consent
-     * @param request   needed parameters for creating consent authorization
-     * @return CreateAisConsentAuthorizationResponse object with authorization id and scaStatus
+     * @param request   needed parameters for creating consent authorisation
+     * @return CreateAisConsentAuthorizationResponse object with authorisation id and scaStatus
      */
     @Override
     @Transactional
-    public Optional<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request) {
-        return aisConsentRepository.findByExternalId(consentId)
-                   .filter(con -> !con.getConsentStatus().isFinalisedStatus())
-                   .map(aisConsent -> {
-                       closePreviousAuthorisationsByPsu(aisConsent.getAuthorizations(), request.getPsuData());
-                       AisConsentAuthorization newAuthorisation = saveNewAuthorization(aisConsent, request);
+    public CmsResponse<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request) {
+        Optional<CreateAisConsentAuthorizationResponse> responseOptional = aisConsentRepository.findByExternalId(consentId)
+                                                                               .filter(con -> !con.getConsentStatus().isFinalisedStatus())
+                                                                               .map(aisConsent -> {
+                                                                                   closePreviousAuthorisationsByPsu(aisConsent.getAuthorizations(), request.getPsuData());
+                                                                                   AisConsentAuthorization newAuthorisation = saveNewAuthorization(aisConsent, request);
 
-                       return new CreateAisConsentAuthorizationResponse(newAuthorisation.getExternalId(), newAuthorisation.getScaStatus(), aisConsent.getInternalRequestId());
-                   });
+                                                                                   return new CreateAisConsentAuthorizationResponse(newAuthorisation.getExternalId(), newAuthorisation.getScaStatus(), aisConsent.getInternalRequestId());
+                                                                               });
+
+        if (responseOptional.isPresent()) {
+            return CmsResponse.<CreateAisConsentAuthorizationResponse>builder()
+                       .payload(responseOptional.get())
+                       .build();
+        }
+
+        log.info("Consent ID: [{}]. Created authorisation failed, because consent is not found", consentId);
+        return CmsResponse.<CreateAisConsentAuthorizationResponse>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     /**
@@ -94,19 +108,26 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
      * @return AisConsentAuthorizationResponse
      */
     @Override
-    public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
+    public CmsResponse<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
         boolean consentPresent = aisConsentRepository.findByExternalId(consentId)
                                      .filter(c -> !c.getConsentStatus().isFinalisedStatus())
                                      .isPresent();
 
         if (consentPresent) {
-            return aisConsentAuthorisationRepository.findByExternalId(authorizationId)
-                       .map(consentMapper::mapToAisConsentAuthorizationResponse);
+            Optional<AisConsentAuthorizationResponse> authorisationResponse = aisConsentAuthorisationRepository.findByExternalId(authorizationId)
+                                                                                  .map(consentMapper::mapToAisConsentAuthorizationResponse);
+            if (authorisationResponse.isPresent()) {
+                return CmsResponse.<AisConsentAuthorizationResponse>builder()
+                           .payload(authorisationResponse.get())
+                           .build();
+            }
         }
 
         log.info("Consent ID: [{}], Authorisation ID: [{}]. Get account consent authorisation failed, because consent is not found",
                  consentId, authorizationId);
-        return Optional.empty();
+        return CmsResponse.<AisConsentAuthorizationResponse>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     /**
@@ -116,21 +137,35 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
      * @return Gets list of consent authorisation IDs
      */
     @Override
-    public Optional<List<String>> getAuthorisationsByConsentId(String consentId) {
-        return aisConsentRepository.findByExternalId(consentId)
-                   .map(cst -> cst.getAuthorizations().stream()
-                                   .map(AisConsentAuthorization::getExternalId)
-                                   .collect(Collectors.toList()));
+    public CmsResponse<List<String>> getAuthorisationsByConsentId(String consentId) {
+        Optional<List<String>> authorisationsListOptional = aisConsentRepository.findByExternalId(consentId)
+                                                                .map(cst -> cst.getAuthorizations().stream()
+                                                                                .map(AisConsentAuthorization::getExternalId)
+                                                                                .collect(Collectors.toList()));
+
+        if (authorisationsListOptional.isPresent()) {
+            return CmsResponse.<List<String>>builder()
+                       .payload(authorisationsListOptional.get())
+                       .build();
+        }
+
+        log.info("Consent ID: [{}]. Get the list of authorisation IDs failed, because consent is not found",
+                 consentId);
+        return CmsResponse.<List<String>>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     @Override
     @Transactional
-    public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
+    public CmsResponse<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
         Optional<AisConsent> consentOptional = aisConsentRepository.findByExternalId(consentId);
         if (!consentOptional.isPresent()) {
             log.info("Consent ID: [{}], Authorisation ID: [{}]. Get authorisation SCA status failed, because consent is not found",
                      consentId, authorisationId);
-            return Optional.empty();
+            return CmsResponse.<ScaStatus>builder()
+                       .error(LOGICAL_ERROR)
+                       .build();
         }
 
         AisConsent consent = consentOptional.get();
@@ -138,43 +173,62 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
             aisConsentConfirmationExpirationService.updateConsentOnConfirmationExpiration(consent);
             log.info("Consent ID: [{}], Authorisation ID: [{}]. Get authorisation SCA status failed, because consent is expired",
                      consentId, authorisationId);
-            return Optional.of(ScaStatus.FAILED);
+            return CmsResponse.<ScaStatus>builder()
+                       .payload(ScaStatus.FAILED)
+                       .build();
         }
 
         Optional<AisConsentAuthorization> authorisation = findAuthorisationInConsent(authorisationId, consent);
-        return authorisation.map(AisConsentAuthorization::getScaStatus);
+        if (authorisation.isPresent()) {
+            return CmsResponse.<ScaStatus>builder()
+                       .payload(authorisation.get().getScaStatus())
+                       .build();
+        }
+        return CmsResponse.<ScaStatus>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     @Override
-    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
+    public CmsResponse<Boolean> isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
         Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
 
-        return authorisationOptional.map(a -> a.getAvailableScaMethods()
-                                                  .stream()
-                                                  .filter(m -> Objects.equals(m.getAuthenticationMethodId(), authenticationMethodId))
-                                                  .anyMatch(ScaMethod::isDecoupled))
-                   .orElseGet(() -> {
-                       log.info("Authorisation ID: [{}]. Get authorisation method decoupled status failed, because consent authorisation is not found",
-                                authorisationId);
-                       return false;
-                   });
+        Optional<Boolean> isDecoupledOptional = authorisationOptional.map(a -> a.getAvailableScaMethods()
+                                                                                   .stream()
+                                                                                   .filter(m -> Objects.equals(m.getAuthenticationMethodId(), authenticationMethodId))
+                                                                                   .anyMatch(ScaMethod::isDecoupled));
+        if (isDecoupledOptional.isPresent()) {
+            return CmsResponse.<Boolean>builder()
+                       .payload(isDecoupledOptional.get())
+                       .build();
+        }
+
+        log.info("Authorisation ID: [{}]. Get authorisation method decoupled status failed, because consent authorisation is not found",
+                 authorisationId);
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
     }
 
     @Override
     @Transactional
-    public boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
+    public CmsResponse<Boolean> saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
         Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!authorisationOptional.isPresent()) {
             log.info(" Authorisation ID: [{}]. Save authentication methods failed, because authorisation is not found", authorisationId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
 
         AisConsentAuthorization authorisation = authorisationOptional.get();
 
         authorisation.setAvailableScaMethods(scaMethodMapper.mapToScaMethods(methods));
         aisConsentAuthorisationRepository.save(authorisation);
-        return true;
+        return CmsResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
     }
 
     /**
@@ -186,13 +240,15 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
      */
     @Override
     @Transactional
-    public boolean updateConsentAuthorization(String authorisationId, AisConsentAuthorizationRequest request) {
+    public CmsResponse<Boolean> updateConsentAuthorization(String authorisationId, AisConsentAuthorizationRequest request) {
         Optional<AisConsentAuthorization> aisConsentAuthorizationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!aisConsentAuthorizationOptional.isPresent()) {
             log.info("Authorisation ID: [{}]. Update consent authorisation failed, because consent authorisation is not found",
                      authorisationId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
 
         AisConsentAuthorization aisConsentAuthorisation = aisConsentAuthorizationOptional.get();
@@ -202,7 +258,9 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
         if (aisConsentAuthorisation.getScaStatus().isFinalisedStatus()) {
             log.info("Authorisation ID: [{}], SCA status: [{}]. Update consent authorisation failed, because consent authorisation has finalised status",
                      authorisationId, aisConsentAuthorisation.getScaStatus().getValue());
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
 
         if (ScaStatus.RECEIVED == aisConsentAuthorisation.getScaStatus()) {
@@ -211,7 +269,9 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
             if (!cmsPsuService.isPsuDataRequestCorrect(psuRequest, aisConsentAuthorisation.getPsuData())) {
                 log.info("Authorisation ID: [{}], SCA status: [{}]. Update consent authorisation failed, because psu data request does not match stored psu data",
                          authorisationId, aisConsentAuthorisation.getScaStatus().getValue());
-                return false;
+                return CmsResponse.<Boolean>builder()
+                           .payload(false)
+                           .build();
             }
 
             AisConsent aisConsent = aisConsentAuthorisation.getConsent();
@@ -227,56 +287,75 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
         }
 
         if (ScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
-            // TODO refactor logic and don't save tan and password data in plain text https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/390
             aisConsentAuthorisation.setAuthenticationMethodId(request.getAuthenticationMethodId());
         }
 
         aisConsentAuthorisation.setScaStatus(request.getScaStatus());
         aisConsentAuthorisation = aisConsentAuthorisationRepository.save(aisConsentAuthorisation);
 
-        return aisConsentAuthorisation.getExternalId() != null;
+        return CmsResponse.<Boolean>builder()
+                   .payload(aisConsentAuthorisation.getExternalId() != null)
+                   .build();
     }
 
     @Override
     @Transactional
-    public boolean updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
+    public CmsResponse<Boolean> updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
         Optional<AisConsentAuthorization> aisConsentAuthorisationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!aisConsentAuthorisationOptional.isPresent()) {
             log.info("Authorisation ID: [{}]. Update consent authorisation failed, because consent authorisation is not found",
                      authorisationId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
 
         AisConsentAuthorization aisConsentAuthorisation = aisConsentAuthorisationOptional.get();
         aisConsentAuthorisation.setScaStatus(scaStatus);
         aisConsentAuthorisationRepository.save(aisConsentAuthorisation);
 
-        return true;
+        return CmsResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
     }
 
     @Override
     @Transactional
-    public boolean updateScaApproach(String authorisationId, ScaApproach scaApproach) {
+    public CmsResponse<Boolean> updateScaApproach(String authorisationId, ScaApproach scaApproach) {
         Optional<AisConsentAuthorization> aisConsentAuthorisationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!aisConsentAuthorisationOptional.isPresent()) {
             log.info("Authorisation ID: [{}]. Update SCA approach failed, because consent authorisation is not found",
                      authorisationId);
-            return false;
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
         }
 
         AisConsentAuthorization aisConsentAuthorisation = aisConsentAuthorisationOptional.get();
 
         aisConsentAuthorisation.setScaApproach(scaApproach);
         aisConsentAuthorisationRepository.save(aisConsentAuthorisation);
-        return true;
+        return CmsResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
     }
 
     @Override
-    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationID) {
-        return aisConsentAuthorisationRepository.findByExternalId(authorisationID)
-                   .map(a -> new AuthorisationScaApproachResponse(a.getScaApproach()));
+    public CmsResponse<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationID) {
+        Optional<AuthorisationScaApproachResponse> approachResponseOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationID)
+                                                                                  .map(a -> new AuthorisationScaApproachResponse(a.getScaApproach()));
+
+        if (approachResponseOptional.isPresent()) {
+            return CmsResponse.<AuthorisationScaApproachResponse>builder()
+                       .payload(approachResponseOptional.get())
+                       .build();
+        }
+
+        return CmsResponse.<AuthorisationScaApproachResponse>builder()
+                   .error(LOGICAL_ERROR)
+                   .build();
     }
 
     private AisConsentAuthorization saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {

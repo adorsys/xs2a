@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
@@ -50,9 +51,13 @@ public class AisConsentController {
         @ApiResponse(code = 201, message = "Created", response = String.class),
         @ApiResponse(code = 204, message = "No Content")})
     public ResponseEntity<CreateAisConsentResponse> createConsent(@RequestBody CreateAisConsentRequest request) {
-        return aisConsentService.createConsent(request)
-                   .map(response -> new ResponseEntity<>(response, HttpStatus.CREATED))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
+        CmsResponse<CreateAisConsentResponse> cmsResponse = aisConsentService.createConsent(request);
+
+        if (cmsResponse.hasError()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(cmsResponse.getPayload(), HttpStatus.CREATED);
     }
 
     @PostMapping(path = "/action")
@@ -70,9 +75,13 @@ public class AisConsentController {
     public ResponseEntity<AisAccountConsent> getConsentById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
-        return aisConsentService.getAisAccountConsentById(consentId)
-                   .map(consent -> new ResponseEntity<>(consent, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
+        CmsResponse<AisAccountConsent> consentById = aisConsentService.getAisAccountConsentById(consentId);
+
+        if (consentById.hasError()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(consentById.getPayload(), HttpStatus.OK);
     }
 
     @PutMapping(path = "/{consent-id}/access")
@@ -84,9 +93,13 @@ public class AisConsentController {
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
         @RequestBody AisAccountAccessInfo request) {
-        return aisConsentService.updateAspspAccountAccessWithResponse(consentId, request)
-                   .map(consentUpdated -> new ResponseEntity<>(new UpdateAisConsentResponse(consentUpdated), HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        CmsResponse<AisAccountConsent> response = aisConsentService.updateAspspAccountAccessWithResponse(consentId, request);
+
+        if (response.hasError()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new UpdateAisConsentResponse(response.getPayload()), HttpStatus.OK);
     }
 
     @GetMapping(path = "/{consent-id}/status")
@@ -97,9 +110,13 @@ public class AisConsentController {
     public ResponseEntity<AisConsentStatusResponse> getConsentStatusById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
-        return aisConsentService.getConsentStatusById(consentId)
-                   .map(status -> new ResponseEntity<>(new AisConsentStatusResponse(status), HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        CmsResponse<ConsentStatus> consentStatusById = aisConsentService.getConsentStatusById(consentId);
+
+        if (consentStatusById.hasError()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new AisConsentStatusResponse(consentStatusById.getPayload()), HttpStatus.OK);
     }
 
     @PutMapping(path = "/{consent-id}/status/{status}")
@@ -112,9 +129,12 @@ public class AisConsentController {
         @PathVariable("consent-id") String consentId,
         @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.", example = "VALID")
         @PathVariable("status") String status) {
-        return aisConsentService.updateConsentStatusById(consentId, ConsentStatus.valueOf(status))
-                   ? new ResponseEntity<>(HttpStatus.OK)
-                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        CmsResponse<Boolean> response = aisConsentService.updateConsentStatusById(consentId, ConsentStatus.valueOf(status));
+        if (response.isSuccessful() && response.getPayload()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping(path = "/{consent-id}/old-consents")
@@ -136,9 +156,13 @@ public class AisConsentController {
         @ApiParam(name = "consent-id", value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
         @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
-        return aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(consentId, consentAuthorization)
-                   .map(auth -> new ResponseEntity<>(auth, HttpStatus.CREATED))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        CmsResponse<CreateAisConsentAuthorizationResponse> response = aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(consentId, consentAuthorization);
+
+        if (response.hasError()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(response.getPayload(), HttpStatus.CREATED);
     }
 
     @PutMapping(path = "/authorizations/{authorization-id}")
@@ -151,9 +175,13 @@ public class AisConsentController {
         @PathVariable("authorization-id") String authorizationId,
         @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.", example = "VALID")
         @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
-        return aisConsentAuthorisationServiceEncrypted.updateConsentAuthorization(authorizationId, consentAuthorization)
-                   ? new ResponseEntity<>(HttpStatus.OK)
-                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.updateConsentAuthorization(authorizationId, consentAuthorization);
+
+        if (response.isSuccessful() && response.getPayload()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping(path = "/authorisations/{authorisation-id}/status/{status}")
@@ -166,9 +194,13 @@ public class AisConsentController {
         @PathVariable("authorisation-id") String authorisationId,
         @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.", example = "VALID")
         @PathVariable("status") String scaStatus) {
-        return aisConsentAuthorisationServiceEncrypted.updateConsentAuthorisationStatus(authorisationId, ScaStatus.fromValue(scaStatus))
-                   ? new ResponseEntity<>(HttpStatus.OK)
-                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.updateConsentAuthorisationStatus(authorisationId, ScaStatus.fromValue(scaStatus));
+
+        if (response.isSuccessful() && response.getPayload()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(path = "/{consent-id}/authorizations/{authorization-id}")
@@ -181,10 +213,13 @@ public class AisConsentController {
         @PathVariable("consent-id") String consentId,
         @ApiParam(name = "authorization-id", value = "The consent authorization identification assigned to the created authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorization-id") String authorizationId) {
+        CmsResponse<AisConsentAuthorizationResponse> response = aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(authorizationId, consentId);
 
-        return aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(authorizationId, consentId)
-                   .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        if (response.hasError()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/{consent-id}/authorisations/{authorisation-id}/status")
@@ -197,10 +232,13 @@ public class AisConsentController {
         @PathVariable("consent-id") String consentId,
         @ApiParam(name = "authorisation-id", value = "Consent authorisation identification", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorisation-id") String authorisationId) {
+        CmsResponse<ScaStatus> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(consentId, authorisationId);
 
-        return aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(consentId, authorisationId)
-                   .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        if (response.hasError()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/{consent-id}/authorisations")
@@ -211,9 +249,13 @@ public class AisConsentController {
     public ResponseEntity<List<String>> getConsentAuthorisation(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "vOHy6fj2f5IgxHk-kTlhw6sZdTXbRE3bWsu2obq54beYOChP5NvRmfh06nrwumc2R01HygQenchEcdGOlU-U0A==_=_iR74m2PdNyE")
         @PathVariable("consent-id") String consentId) {
-        return aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(consentId)
-                   .map(authorisation -> new ResponseEntity<>(authorisation, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        CmsResponse<List<String>> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(consentId);
+
+        if (response.hasError()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/authorisations/{authorisation-id}/authentication-methods/{authentication-method-id}")
@@ -224,8 +266,8 @@ public class AisConsentController {
         @PathVariable("authorisation-id") String authorisationId,
         @ApiParam(name = "authentication-method-id", value = "Authentication method identification", example = "sms")
         @PathVariable("authentication-method-id") String authenticationMethodId) {
-        boolean isMethodDecoupled = aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
-        return new ResponseEntity<>(isMethodDecoupled, HttpStatus.OK);
+        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
     }
 
     @PostMapping(path = "/authorisations/{authorisation-id}/authentication-methods")
@@ -237,9 +279,13 @@ public class AisConsentController {
         @ApiParam(name = "authorisation-id", value = "The consent authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorisation-id") String authorisationId,
         @RequestBody List<CmsScaMethod> methods) {
-        return aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, methods)
-                   ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, methods);
+
+        if (response.isSuccessful() && response.getPayload()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping(path = "/authorisations/{authorisation-id}/sca-approach/{sca-approach}")
@@ -252,9 +298,13 @@ public class AisConsentController {
         @PathVariable("authorisation-id") String authorisationId,
         @ApiParam(name = "sca-approach", value = "Chosen SCA approach.", example = "REDIRECT")
         @PathVariable("sca-approach") ScaApproach scaApproach) {
-        return aisConsentAuthorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach)
-                   ? new ResponseEntity<>(true, HttpStatus.OK)
-                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
+
+        if (response.isSuccessful() && response.getPayload()) {
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping(path = "/{consent-id}/multilevel-sca")
@@ -267,9 +317,12 @@ public class AisConsentController {
         @PathVariable("consent-id") String consentId,
         @ApiParam(name = "multilevel-sca", value = "Multilevel SCA.", example = "false")
         @RequestParam(value = "multilevel-sca", defaultValue = "false") boolean multilevelSca) {
-        return aisConsentService.updateMultilevelScaRequired(consentId, multilevelSca)
-                   ? new ResponseEntity<>(true, HttpStatus.OK)
-                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        CmsResponse<Boolean> response = aisConsentService.updateMultilevelScaRequired(consentId, multilevelSca);
+
+        if (response.isSuccessful() && response.getPayload()) {
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(path = "/authorisations/{authorisation-id}/sca-approach")
@@ -280,9 +333,13 @@ public class AisConsentController {
     public ResponseEntity<AuthorisationScaApproachResponse> getAuthorisationScaApproach(
         @ApiParam(name = "consent-id", value = "The consent authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorisation-id") String authorisationId) {
-        return aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId)
-                   .map(scaApproachResponse -> new ResponseEntity<>(scaApproachResponse, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        CmsResponse<AuthorisationScaApproachResponse> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId);
+
+        if (response.hasError()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
     }
 
     @PutMapping(path = "/{consent-id}/{resource-id}")

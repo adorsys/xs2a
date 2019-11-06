@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
@@ -44,8 +45,12 @@ public class PisPsuDataController {
     public ResponseEntity<List<PsuIdData>> getPsuDataByPaymentId(
         @ApiParam(name = "payment-id", value = "The payment identification.", example = "32454656712432")
         @PathVariable("payment-id") String paymentId) {
-        return pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(paymentId)
-                   .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        CmsResponse<List<PsuIdData>> response = pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(paymentId);
+
+        if (response.hasError()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
     }
 }

@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.service;
+package de.adorsys.psd2.consent.api;
 
-import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import org.jetbrains.annotations.NotNull;
-
-public interface TppService {
-
+public enum CmsError {
     /**
-     * Updates TPP by TPP authorisation number
-     *
-     * @param tppInfo TPP Info
-     * @return <code>true</code> if TPP was found and was updated. <code>false</code> otherwise.
+     * Describes cases, when the error is caused by 3rd party libraries, network errors, etc.
      */
-    CmsResponse<Boolean> updateTppInfo(@NotNull TppInfo tppInfo);
+    TECHNICAL_ERROR,
+    /**
+     * Describes cases, when the error is caused by the mistakes in business logic (like providing wrong payment ID)
+     */
+    LOGICAL_ERROR
 }

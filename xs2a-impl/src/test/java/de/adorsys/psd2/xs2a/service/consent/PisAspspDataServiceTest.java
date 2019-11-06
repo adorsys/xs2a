@@ -1,13 +1,13 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -28,7 +28,7 @@ public class PisAspspDataServiceTest {
     public void getInternalPaymentIdByEncryptedString_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getDecryptedId(ENCRYPTED_ID))
-            .thenReturn(Optional.of(PAYMENT_ID));
+            .thenReturn(CmsResponse.<String>builder().payload(PAYMENT_ID).build());
 
         //When
         String actualResponse = pisAspspDataService.getInternalPaymentIdByEncryptedString(ENCRYPTED_ID);
@@ -41,7 +41,7 @@ public class PisAspspDataServiceTest {
     public void getInternalPaymentIdByEncryptedString_failed() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getDecryptedId(WRONG_ID))
-            .thenReturn(Optional.empty());
+            .thenReturn(CmsResponse.<String>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When
         String actualResponse = pisAspspDataService.getInternalPaymentIdByEncryptedString(WRONG_ID);

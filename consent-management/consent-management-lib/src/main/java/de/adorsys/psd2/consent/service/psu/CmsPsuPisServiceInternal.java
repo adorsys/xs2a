@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service.psu;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
@@ -98,7 +99,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                          authorisation.getId(), instanceId);
                 changeAuthorisationStatusToFailed(authorisation);
 
-            throw new RedirectUrlIsExpiredException(authorisation.getTppNokRedirectUri());
+                throw new RedirectUrlIsExpiredException(authorisation.getTppNokRedirectUri());
             }
             return Optional.of(buildCmsPaymentResponse(authorisation));
         }
@@ -287,13 +288,14 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     }
 
     private boolean isPsuDataEquals(String paymentId, PsuIdData psuIdData) {
-        return pisCommonPaymentService.getPsuDataListByPaymentId(paymentId)
-                   .map(lst -> lst.stream()
-                                   .anyMatch(psu -> psu.contentEquals(psuIdData)))
-                   .orElseGet(() -> {
-                       log.info("Payment ID: [{}]. Cannot equal PSU data with payment ID, because PSU data list not found by ID", paymentId);
-                       return false;
-                   });
+        CmsResponse<List<PsuIdData>> psuDataResponse = pisCommonPaymentService.getPsuDataListByPaymentId(paymentId);
+
+        if (psuDataResponse.hasError()) {
+            log.info("Payment ID: [{}]. Cannot equal PSU data with payment ID, because PSU data list not found by ID", paymentId);
+            return false;
+        }
+
+        return psuDataResponse.getPayload().stream().anyMatch(psu -> psu.contentEquals(psuIdData));
     }
 
     private CmsPaymentResponse buildCmsPaymentResponse(PisAuthorization authorisation) {
@@ -301,9 +303,9 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         CmsPayment payment = cmsPsuPisMapper.mapPaymentDataToCmsPayment(commonPayment);
 
         return new CmsPaymentResponse(payment,
-            authorisation.getExternalId(),
-            authorisation.getTppOkRedirectUri(),
-            authorisation.getTppNokRedirectUri());
+                                      authorisation.getExternalId(),
+                                      authorisation.getTppOkRedirectUri(),
+                                      authorisation.getTppNokRedirectUri());
     }
 
     private void changeAuthorisationStatusToFailed(PisAuthorization authorisation) {

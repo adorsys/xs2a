@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
@@ -44,9 +45,12 @@ public class AisPsuDataController {
     public ResponseEntity<List<PsuIdData>> getPsuDataByConsentId(
         @ApiParam(name = "consent-id", value = "The consent identification.", example = "32454656712432")
         @PathVariable("consent-id") String consentId) {
-        return aisConsentService.getPsuDataByConsentId(consentId)
-                   .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
+        CmsResponse<List<PsuIdData>> psuDataResponse = aisConsentService.getPsuDataByConsentId(consentId);
 
+        if (psuDataResponse.hasError()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(psuDataResponse.getPayload(), HttpStatus.OK);
+    }
 }
