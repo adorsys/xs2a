@@ -170,9 +170,15 @@ If forceXs2aBaseLinksUrl = FALSE then links in responses (except "scaRedirect") 
 |multicurrencyAccountLevelSupported |This field defines abstract level for multicurrency accounts on which the ASPSP offered services might be implemented. |SUBACCOUNT |SUBACCOUNT, AGGREGATION, AGGREGATION_AND_SUBACCOUNT
 |aisPisSessionsSupported |This field defines if ASPSP support Combined_session.
 
-If "yes", ASPSP should logically support sessions with calls: (AIS - PIS).
+If parameter = TRUE, ASPSP should logically support sessions with calls: (AIS - PIS).
 
-If parameter = FALSE then XS2A sends the response with HTTP code 400 SESSIONS_NOT_SUPPORTED "sessions are not supported by ASPSP".|FALSE |TRUE, FALSE
+If parameter = FALSE, then XS2A sends the response with HTTP code 400 SESSIONS_NOT_SUPPORTED "sessions are not supported by ASPSP".|FALSE |TRUE, FALSE
+|checkTppRolesFromCertificateSupported |This field defines if ASPSP supports validation TPP roles from certificate.
+
+If "yes", TPP roles from certificate will be validated
+
+If parameter = FALSE, then no validation will occur.|FALSE |TRUE, FALSE
+
 |signingBasketSupported |This field indicates if an ASPSP supports signing basket or not.
 
 If parameter = FALSE then XS2A sends the response with HTTP code 400 FORMAT_ERROR "Signing basket is not supported by ASPSP" |FALSE |TRUE, FALSE

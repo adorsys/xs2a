@@ -93,6 +93,7 @@ public class AspspProfileUpdateServiceImplTest {
     private static final boolean ACCOUNT_OWNER_INFORMATION_SUPPORTED = true;
     private static final String COUNTRY_VALIDATION_SUPPORTED = "DE";
     private static final List<String> SUPPORTED_TRANSACTION_STATUS_FORMATS = Arrays.asList("application/json", "application/xml");
+    private static final boolean IS_CHECK_TPP_ROLES_FROM_CERTIFICATE = true;
 
     @InjectMocks
     private AspspProfileUpdateServiceImpl aspspProfileUpdateService;
@@ -200,7 +201,8 @@ public class AspspProfileUpdateServiceImplTest {
                                                                          SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
                                                                          MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
                                                                          AIS_PIS_SESSION_SUPPORTED,
-                                                                         SIGNING_BASKET_SUPPORTED);
+                                                                         SIGNING_BASKET_SUPPORTED,
+                                                                         IS_CHECK_TPP_ROLES_FROM_CERTIFICATE);
 
         return new AspspSettings(ais, pis, piis, common);
     }

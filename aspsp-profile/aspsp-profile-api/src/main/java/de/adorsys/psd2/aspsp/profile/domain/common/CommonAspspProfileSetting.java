@@ -46,4 +46,5 @@ public class CommonAspspProfileSetting {
     private MulticurrencyAccountLevel multicurrencyAccountLevelSupported;
     private boolean aisPisSessionsSupported;
     private boolean signingBasketSupported;
+    private boolean checkTppRolesFromCertificateSupported;
 }

@@ -27,6 +27,7 @@ setting:
   common:
     aisPisSessionsSupported: false
     authorisationExpirationTimeMs: 86400000
+    checkTppRolesFromCertificateSupported: true
     forceXs2aBaseLinksUrl: false
     multicurrencyAccountLevelSupported: SUBACCOUNT
     oauthConfigurationUrl: http://localhost:4200/idp/

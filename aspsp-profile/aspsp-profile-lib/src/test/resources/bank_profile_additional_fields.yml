@@ -58,3 +58,4 @@ setting:
     aisPisSessionsSupported: FALSE
     signingBasketSupported: FALSE
     additionalField: 1
+    checkTppRolesFromCertificateSupported: TRUE

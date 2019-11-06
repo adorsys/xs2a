@@ -91,7 +91,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
                                                                          commonBankSetting.getSupportedAccountReferenceFields(),
                                                                          commonBankSetting.getMulticurrencyAccountLevelSupported(),
                                                                          commonBankSetting.isAisPisSessionsSupported(),
-                                                                         commonBankSetting.isSigningBasketSupported());
+                                                                         commonBankSetting.isSigningBasketSupported(),
+                                                                         commonBankSetting.isCheckTppRolesFromCertificateSupported());
 
         return new AspspSettings(ais, pis, piis, common);
     }

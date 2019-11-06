@@ -10,6 +10,7 @@
 * Incorrect consent status for already used one time consent
 * Read the SCA status returns incorrect SCA status after Update PSU data request without PSU-ID in header
 * Support Get Transaction Status Response with raw format
+* Make validation of requests according to TPP roles from certificate optional
 
 == Implement support of Multicurrency Accounts
 
@@ -23,6 +24,14 @@ ASPSP can grant data access to multicurrency account on SUBACCOUNT, AGGREGATION 
 
 From now on, all payment and payment cancellation requests are validated to have proper
 payment type and payment service.
+
+== Make validation of requests according to TPP roles from certificate optional
+
+TPP roles validation based on QWAC certificate has been reintroduced.
+In case of receiving `Tpp-Roles-Allowed` header, TPP roles will be validated according to this information.
+If `Tpp-Roles-Allowed` header is absent, then validation will depend on `checkTppRolesFromCertificateSupported` parameter in ASPSP Profile.
+If `checkTppRolesFromCertificateSupported` parameter is set to `true`, then TPP roles from certificate will be validated, otherwise no validation will occur.
+Parameter `checkTppRolesFromCertificateSupported` in ASPSP Profile is enabled by default.
 
 == Not possible to work with consent that was created in xs2a v.5.1 and earlier
 

@@ -18,16 +18,17 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
+import de.adorsys.psd2.xs2a.web.mapper.Xs2aTppInfoMapper;
+import de.adorsys.psd2.xs2a.web.mapper.TppInfoRolesMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * The intend of this class is to return a mock certificate, when we don't want
@@ -40,15 +41,17 @@ import javax.servlet.http.HttpServletRequest;
 public class QwacCertificateFilterMock extends QwacCertificateFilter {
     @Value("${qwac-certificate-mock}")
     private String qwacCertificateMock;
+    private final RequestProviderService requestProviderService;
 
-    public QwacCertificateFilterMock(TppInfoHolder tppInfoHolder, RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder, TppRoleValidationService tppRoleValidationService, TppService tppService) {
-        super(tppInfoHolder, requestProviderService, tppErrorMessageBuilder, tppRoleValidationService, tppService);
+    public QwacCertificateFilterMock(TppInfoHolder tppInfoHolder, RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder,
+                                     TppRoleValidationService tppRoleValidationService, TppService tppService, AspspProfileServiceWrapper aspspProfileService,
+                                     Xs2aTppInfoMapper xs2aTppInfoMapper, TppInfoRolesMapper tppInfoRolesMapper) {
+        super(tppInfoHolder, requestProviderService, tppErrorMessageBuilder, tppRoleValidationService, tppService, aspspProfileService, xs2aTppInfoMapper, tppInfoRolesMapper);
+        this.requestProviderService = requestProviderService;
     }
 
     @Override
-    public String getEncodedTppQwacCert(HttpServletRequest httpRequest) {
-        String certificateInHeader = httpRequest.getHeader("tpp-qwac-certificate");
-
-        return StringUtils.defaultIfBlank(certificateInHeader, qwacCertificateMock);
+    public String getEncodedTppQwacCert() {
+        return StringUtils.defaultIfBlank(requestProviderService.getEncodedTppQwacCert(), qwacCertificateMock);
     }
 }
