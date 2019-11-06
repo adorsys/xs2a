@@ -149,6 +149,7 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
         assertEquals(ULTIMATE_CREDITOR, spiPeriodicPayment.getUltimateCreditor());
         assertEquals(PURPOSE_CODE, spiPeriodicPayment.getPurposeCode());
         assertEquals(remittanceMapper.mapToSpiRemittance(REMITTANCE), spiPeriodicPayment.getRemittanceInformationStructured());
+        assertEquals(periodicPayment.getCreationTimestamp(), spiPeriodicPayment.getCreationTimestamp());
     }
 
     private PeriodicPayment buildPeriodicPayment() {
@@ -176,6 +177,7 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
         periodicPayment.setUltimateCreditor(ULTIMATE_CREDITOR);
         periodicPayment.setPurposeCode(PURPOSE_CODE);
         periodicPayment.setRemittanceInformationStructured(REMITTANCE);
+        periodicPayment.setCreationTimestamp(OffsetDateTime.now());
         return periodicPayment;
     }
 

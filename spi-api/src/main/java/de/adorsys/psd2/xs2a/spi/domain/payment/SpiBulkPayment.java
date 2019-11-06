@@ -39,6 +39,7 @@ public class SpiBulkPayment implements SpiPayment {
     private String paymentProduct;
     private List<SpiPsuData> psuDataList;
     private OffsetDateTime statusChangeTimestamp;
+    private OffsetDateTime creationTimestamp;
 
     @Override
     public PaymentType getPaymentType() {

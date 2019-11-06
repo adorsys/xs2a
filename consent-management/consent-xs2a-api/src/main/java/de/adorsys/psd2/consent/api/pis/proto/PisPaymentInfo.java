@@ -64,4 +64,7 @@ public class PisPaymentInfo {
 
     @ApiModelProperty(value = "Internal request ID")
     private String internalRequestId;
+
+    @ApiModelProperty(value = "Timestamp of the payment creation")
+    private OffsetDateTime creationTimestamp;
 }

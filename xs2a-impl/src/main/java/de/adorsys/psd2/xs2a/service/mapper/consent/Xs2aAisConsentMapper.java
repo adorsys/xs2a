@@ -83,8 +83,10 @@ public class Xs2aAisConsentMapper {
                             ac.isWithBalance(),
                             ac.isTppRedirectPreferred(),
                             xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(ac.getPsuIdDataList()),
-                            ac.getTppInfo(), ac.getAisConsentRequestType(),
-                            ac.getStatusChangeTimestamp()
+                            ac.getTppInfo(),
+                            ac.getAisConsentRequestType(),
+                            ac.getStatusChangeTimestamp(),
+                            ac.getCreationTimestamp()
                         )
                    )
                    .orElse(null);
@@ -215,7 +217,8 @@ public class Xs2aAisConsentMapper {
                        ac.isMultilevelScaRequired(),
                        mapToAccountConsentAuthorisation(ais.getAccountConsentAuthorizations()),
                        ac.getStatusChangeTimestamp(),
-                       ac.getUsageCounterMap()))
+                       ac.getUsageCounterMap(),
+                       ac.getCreationTimestamp()))
                    .orElse(null);
     }
 
@@ -238,7 +241,8 @@ public class Xs2aAisConsentMapper {
                        ac.isMultilevelScaRequired(),
                        ac.getAuthorisations(),
                        ac.getStatusChangeTimestamp(),
-                       ac.getUsageCounterMap()))
+                       ac.getUsageCounterMap(),
+                       ac.getCreationTimestamp()))
                    .orElse(null);
     }
 

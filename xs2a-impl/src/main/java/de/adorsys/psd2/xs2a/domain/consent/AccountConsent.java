@@ -73,6 +73,8 @@ public class AccountConsent {
     @JsonIgnore
     private Map<String, Integer> usageCounterMap;
 
+    private final OffsetDateTime creationTimestamp;
+
     @JsonIgnore
     public boolean isExpired() {
         return consentStatus == ConsentStatus.EXPIRED;

@@ -69,6 +69,7 @@ public class CmsToXs2aPaymentMapper {
                        periodic.setUltimateCreditor(p.getUltimateCreditor());
                        periodic.setRemittanceInformationStructured(xs2aRemittanceMapper.mapToRemittance(p.getRemittanceInformationStructured()));
                        periodic.setPurposeCode(PurposeCode.fromValue(p.getPurposeCode()));
+                       periodic.setCreationTimestamp(p.getCreationTimestamp());
                        return periodic;
                    }).orElse(null);
     }
@@ -96,6 +97,7 @@ public class CmsToXs2aPaymentMapper {
                        single.setUltimateDebtor(p.getUltimateDebtor());
                        single.setRemittanceInformationStructured(xs2aRemittanceMapper.mapToRemittance(p.getRemittanceInformationStructured()));
                        single.setPurposeCode(PurposeCode.fromValue(p.getPurposeCode()));
+                       single.setCreationTimestamp(p.getCreationTimestamp());
                        return single;
                    }).orElse(null);
     }
@@ -115,6 +117,7 @@ public class CmsToXs2aPaymentMapper {
         bulk.setTransactionStatus(firstPayment.getTransactionStatus());
         bulk.setPsuDataList(firstPayment.getPsuDataList());
         bulk.setStatusChangeTimestamp(firstPayment.getStatusChangeTimestamp());
+        bulk.setCreationTimestamp(firstPayment.getCreationTimestamp());
         return bulk;
     }
 
@@ -129,6 +132,7 @@ public class CmsToXs2aPaymentMapper {
                             commonPayment.setPaymentData(r.getPaymentData());
                             commonPayment.setPsuDataList(r.getPsuData());
                             commonPayment.setStatusChangeTimestamp(r.getStatusChangeTimestamp());
+                            commonPayment.setCreationTimestamp(r.getCreationTimestamp());
                             return commonPayment;
                         }
                    )

@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service.mapper;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
@@ -34,6 +35,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -71,6 +73,9 @@ public class PisCommonPaymentMapperTest {
         GetPisAuthorisationResponse getPisAuthorisationResponse = pisCommonPaymentMapper.mapToGetPisAuthorizationResponse(pisAuthorization);
         //Then
         assertEquals(getPisAuthorisationResponse.getPsuIdData().getPsuId(), psuData.getPsuId());
+        OffsetDateTime creationTimestamp = pisAuthorization.getPaymentData().getCreationTimestamp();
+        getPisAuthorisationResponse.getPayments()
+            .forEach(pisPayment -> assertEquals(creationTimestamp, pisPayment.getCreationTimestamp()));
     }
 
     @Test
@@ -145,6 +150,25 @@ public class PisCommonPaymentMapperTest {
         assertFalse(actual.isPresent());
     }
 
+    @Test
+    public void mapToPisCommonPaymentData() {
+        //Given
+        PsuData psuDataEntity = jsonReader.getObjectFromFile("json/service/mapper/psu-data.json", PsuData.class);
+        PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
+        when(psuDataMapper.mapToPsuDataList(Collections.singletonList(psuIdData)))
+            .thenReturn(Collections.singletonList(psuDataEntity));
+        TppInfoEntity tppInfoEntity = jsonReader.getObjectFromFile("json/service/mapper/tpp-info-entity.json", TppInfoEntity.class);
+        TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
+        when(tppInfoMapper.mapToTppInfoEntity(tppInfo)).thenReturn(tppInfoEntity);
+        PisPaymentInfo pisPaymentInfo = jsonReader.getObjectFromFile("json/service/mapper/pis-common-payment-info.json", PisPaymentInfo.class);
+
+        //When
+        PisCommonPaymentData pisCommonPaymentData = pisCommonPaymentMapper.mapToPisCommonPaymentData(pisPaymentInfo);
+        PisCommonPaymentData pisCommonPaymentDataExpected = jsonReader.getObjectFromFile("json/service/mapper/pis-common-payment-data-creation.json", PisCommonPaymentData.class);
+        //Then
+        assertEquals(pisCommonPaymentDataExpected, pisCommonPaymentData);
+    }
+
     private PisAuthorization buildPisAuthorization() {
         PisAuthorization pisAuthorization = new PisAuthorization();
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
@@ -152,6 +176,7 @@ public class PisCommonPaymentMapperTest {
         pisPaymentData.setPaymentData(pisCommonPaymentData);
         pisPaymentData.setDebtorAccount(null);
         pisCommonPaymentData.setPayments(Collections.singletonList(pisPaymentData));
+        pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.now());
         pisAuthorization.setPaymentData(pisCommonPaymentData);
         return pisAuthorization;
     }

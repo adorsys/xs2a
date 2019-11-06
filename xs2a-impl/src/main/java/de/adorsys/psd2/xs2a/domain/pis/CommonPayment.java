@@ -34,4 +34,5 @@ public class CommonPayment {
     protected List<PsuIdData> psuDataList;
     protected OffsetDateTime statusChangeTimestamp;
     protected String creditorId;
+    protected OffsetDateTime creationTimestamp;
 }

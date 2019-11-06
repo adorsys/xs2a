@@ -112,4 +112,7 @@ public class PisPayment {
 
     @ApiModelProperty(value = "Batch booking preferred")
     private Boolean batchBookingPreferred;
+
+    @ApiModelProperty(value = "Timestamp of the payment creation")
+    private OffsetDateTime creationTimestamp;
 }

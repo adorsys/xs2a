@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -37,8 +39,10 @@ public class SpiPaymentInfo implements SpiPayment {
     private byte[] paymentData;
     private List<SpiPsuData> psuDataList;
     private OffsetDateTime statusChangeTimestamp;
+    private OffsetDateTime creationTimestamp;
 
-    public SpiPaymentInfo(String paymentProduct) {
+    @JsonCreator
+    public SpiPaymentInfo(@JsonProperty("paymentProduct") String paymentProduct) {
         this.paymentProduct = paymentProduct;
     }
 

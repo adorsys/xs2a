@@ -51,13 +51,21 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.*;
+import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -105,14 +113,12 @@ public class CreateSinglePaymentServiceTest {
     @Before
     public void init() {
         singlePaymentInitiationResponse = buildSinglePaymentInitiationResponse(new SpiAspspConsentDataProviderFactory(aspspDataService).getInitialAspspConsentDataProvider());
-        when(singlePaymentInitiationService.initiatePayment(buildSinglePayment(), "sepa-credit-transfers", PSU_DATA)).thenReturn(singlePaymentInitiationResponse);
-        when(singlePaymentInitiationService.initiatePayment(buildSinglePayment(), "sepa-credit-transfers", WRONG_PSU_DATA)).thenReturn(buildSpiErrorForSinglePayment());
+        when(singlePaymentInitiationService.initiatePayment(any(SinglePayment.class), eq("sepa-credit-transfers"), eq(PSU_DATA))).thenReturn(singlePaymentInitiationResponse);
+        when(singlePaymentInitiationService.initiatePayment(any(SinglePayment.class), eq("sepa-credit-transfers"), eq(WRONG_PSU_DATA))).thenReturn(buildSpiErrorForSinglePayment());
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, singlePaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(eq(PARAM), eq(TPP_INFO), eq(singlePaymentInitiationResponse), eq(null), eq(INTERNAL_REQUEST_ID), any(OffsetDateTime.class)))
             .thenReturn(PAYMENT_INFO);
-        when(singlePaymentInitiationService.initiatePayment(buildSinglePayment(), "sepa-credit-transfers", WRONG_PSU_DATA))
-            .thenReturn(buildSpiErrorForSinglePayment());
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
     }
 
@@ -125,6 +131,18 @@ public class CreateSinglePaymentServiceTest {
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
+    }
+
+    @Test
+    public void createPayment_success_checkSettingCreationTimestamp() {
+        //When
+        ArgumentCaptor<SinglePayment> argumentCaptor = ArgumentCaptor.forClass(SinglePayment.class);
+        createSinglePaymentService.createPayment(buildSinglePayment(), PARAM, TPP_INFO);
+
+        //Then
+        verify(singlePaymentInitiationService).initiatePayment(argumentCaptor.capture(), eq("sepa-credit-transfers"), eq(PSU_DATA));
+        SinglePayment singlePayment = argumentCaptor.getValue();
+        assertNotNull(singlePayment.getCreationTimestamp());
     }
 
     @Test

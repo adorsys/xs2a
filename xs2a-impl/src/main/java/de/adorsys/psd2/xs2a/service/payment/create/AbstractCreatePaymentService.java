@@ -37,6 +37,7 @@ import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PAYMENT_FAILED;
@@ -66,6 +67,8 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
         PsuIdData psuData = paymentInitiationParameters.getPsuData();
 
         P paymentRequest = getPaymentRequest(payment, paymentInitiationParameters);
+        OffsetDateTime creationTimestamp = OffsetDateTime.now();
+        paymentRequest.setCreationTimestamp(creationTimestamp);
         PaymentInitiationResponse response = paymentInitiationService.initiatePayment(paymentRequest, paymentInitiationParameters.getPaymentProduct(), psuData);
 
         if (response.hasError()) {
@@ -73,7 +76,7 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
         }
 
         String internalRequestId = requestProviderService.getInternalRequestIdString();
-        PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, paymentRequest.getPaymentData(), internalRequestId);
+        PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, paymentRequest.getPaymentData(), internalRequestId, creationTimestamp);
         response.setInternalRequestId(internalRequestId);
         Xs2aPisCommonPayment pisCommonPayment = xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(pisCommonPaymentService.createCommonPayment(pisPaymentInfo), psuData);
 

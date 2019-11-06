@@ -55,9 +55,10 @@ public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
 
         PisPaymentInfo expected = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/pis-payment-info.json", PisPaymentInfo.class);
         expected.setPaymentData(PAYMENT_DATA);
+        expected.setStatusChangeTimestamp(null);
 
         // When
-        PisPaymentInfo actual = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, PAYMENT_DATA, null);
+        PisPaymentInfo actual = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, PAYMENT_DATA, null, expected.getCreationTimestamp());
 
         // Then
         assertEquals(expected, actual);

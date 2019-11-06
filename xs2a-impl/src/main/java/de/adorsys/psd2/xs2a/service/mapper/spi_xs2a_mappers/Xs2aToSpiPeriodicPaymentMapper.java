@@ -58,6 +58,7 @@ public class Xs2aToSpiPeriodicPaymentMapper {
         periodic.setUltimateCreditor(payment.getUltimateCreditor());
         periodic.setPurposeCode(payment.getPurposeCode());
         periodic.setRemittanceInformationStructured(remittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));
+        periodic.setCreationTimestamp(payment.getCreationTimestamp());
         return periodic;
     }
 }

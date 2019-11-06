@@ -30,6 +30,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -40,10 +41,11 @@ import java.util.stream.Collectors;
 public class Xs2aToCmsPisCommonPaymentRequestMapper {
     private final Xs2aRemittanceMapper xs2aRemittanceMapper;
 
-    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response, byte[] paymentData, String internalRequestId) {
+    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response, byte[] paymentData, String internalRequestId, OffsetDateTime creationTimestamp) {
         PisPaymentInfo paymentInfo = mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response);
         paymentInfo.setInternalRequestId(internalRequestId);
         paymentInfo.setPaymentData(paymentData);
+        paymentInfo.setCreationTimestamp(creationTimestamp);
         return paymentInfo;
     }
 

@@ -16,12 +16,13 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
+import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,11 +30,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,29 +38,24 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Xs2aToSpiPaymentInfoMapperTest {
-    private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
-    private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
-    private static final String PSU_ID_1 = "First";
-    private static final String PSU_ID_2 = "Second";
-    private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
-    private static final byte [] PAYMENT_DATA = PAYMENT_ID.getBytes();
-    private static final List<PsuIdData> psuDataList = new ArrayList<>();
-    private static final List<SpiPsuData> spiPsuDataList = new ArrayList<>();
-    private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(LocalDate.now(),
-                                                                                    LocalTime.NOON,
-                                                                                    ZoneOffset.UTC);
+    private static final String PSU_ID = "psu Id";
+    private static final String PSU_ID_TYPE = "psuId Type";
+    private static final String PSU_CORPORATE_ID = "psu Corporate Id";
+    private static final String PSU_CORPORATE_ID_TYPE = "psuCorporate Id Type";
+    private static final List<PsuIdData> psuDataList = Arrays.asList(new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE));
+    private static final List<SpiPsuData> spiPsuDataList = Arrays.asList(new SpiPsuData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, null));
 
     @InjectMocks
     private Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
     @Mock
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    private Xs2aToSpiPaymentInfo xs2aToSpiPaymentInfo = new Xs2aToSpiPaymentInfo(new Xs2aToSpiPsuDataMapper());
+
+    private JsonReader jsonReader = new JsonReader();
 
     @Before
     public void setUp() {
-        psuDataList.addAll(Arrays.asList(buildPsu(PSU_ID_1), buildPsu(PSU_ID_2)));
-        spiPsuDataList.addAll(Arrays.asList(buildSpiPsu(PSU_ID_1), buildSpiPsu(PSU_ID_2)));
-        when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList))
-            .thenReturn(spiPsuDataList);
+        when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList)).thenReturn(spiPsuDataList);
     }
 
     @Test
@@ -73,33 +64,43 @@ public class Xs2aToSpiPaymentInfoMapperTest {
         CommonPayment commonPayment = buildCommonPayment();
         //When
         SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPayment);
+        SpiPaymentInfo spiPaymentInfoExpected = buildSpiPaymentInfo();
         //Then
-        assertEquals(PAYMENT_ID, spiPaymentInfo.getPaymentId());
-        assertEquals(PAYMENT_PRODUCT, spiPaymentInfo.getPaymentProduct());
-        assertEquals(PaymentType.SINGLE, spiPaymentInfo.getPaymentType());
-        assertEquals(TRANSACTION_STATUS, spiPaymentInfo.getStatus());
-        assertEquals(PAYMENT_DATA, spiPaymentInfo.getPaymentData());
-        assertEquals(spiPsuDataList, spiPaymentInfo.getPsuDataList());
-        assertEquals(STATUS_CHANGE_TIMESTAMP, spiPaymentInfo.getStatusChangeTimestamp());
+        assertEquals(spiPaymentInfoExpected, spiPaymentInfo);
+    }
+
+    @Test
+    public void mapToSpiPaymentInfo_CommonPaymentData_Success() {
+        //Given
+        CommonPaymentData commonPaymentData = buildCommonPaymentData();
+        //When
+        SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPaymentData);
+        SpiPaymentInfo spiPaymentInfoExpected = buildSpiPaymentInfo();
+        //Then
+        assertEquals(spiPaymentInfoExpected, spiPaymentInfo);
+    }
+
+    @Test
+    public void xs2aToSpiPaymentInfo_mapToSpiPaymentRequest() {
+        //Given
+        CommonPayment commonPayment = buildCommonPayment();
+        //When
+        SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfo.mapToSpiPaymentRequest(commonPayment, commonPayment.getPaymentProduct());
+        SpiPaymentInfo spiPaymentInfoExpected = buildSpiPaymentInfo();
+        //Then
+        assertEquals(spiPaymentInfoExpected, spiPaymentInfo);
+    }
+
+    private CommonPaymentData buildCommonPaymentData() {
+        return jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/pis-common-payment-response.json", PisCommonPaymentResponse.class);
     }
 
     private CommonPayment buildCommonPayment() {
-        CommonPayment commonPayment = new CommonPayment();
-        commonPayment.setPaymentId(PAYMENT_ID);
-        commonPayment.setPaymentProduct(PAYMENT_PRODUCT);
-        commonPayment.setPaymentType(PaymentType.SINGLE);
-        commonPayment.setTransactionStatus(TRANSACTION_STATUS);
-        commonPayment.setPaymentData(PAYMENT_DATA);
-        commonPayment.setPsuDataList(psuDataList);
-        commonPayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
-        return commonPayment;
+        return jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/common-payment.json", CommonPayment.class);
     }
 
-    private PsuIdData buildPsu(String psuId) {
-        return new PsuIdData(psuId, null, null, null);
-    }
-
-    private SpiPsuData buildSpiPsu(String psuId) {
-        return new SpiPsuData(psuId, null, null, null, null);
+    private SpiPaymentInfo buildSpiPaymentInfo() {
+        return jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-payment-info.json", SpiPaymentInfo.class);
     }
 }
+

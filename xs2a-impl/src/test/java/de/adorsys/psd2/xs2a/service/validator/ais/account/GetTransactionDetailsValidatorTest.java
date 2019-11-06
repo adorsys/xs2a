@@ -36,6 +36,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
@@ -147,6 +148,6 @@ public class GetTransactionDetailsValidatorTest {
         return new AccountConsent("id", accountAccess, accountAccess, false, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), tppInfo, null, false,
-                                  Collections.emptyList(), null, Collections.emptyMap());
+                                  Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
     }
 }

@@ -1,0 +1,16 @@
+{
+  "externalId": "test-id",
+  "paymentType": "payments",
+  "paymentProduct": "sepa-credit-transfers",
+  "transactionStatus": "ACCP",
+  "creationTimestamp": "2019-09-03T09:10:47.421Z",
+  "statusChangeTimestamp": "2019-09-03T09:10:47.421Z",
+  "psuData" : [
+    {
+      "psuId": "psu Id",
+      "psuIdType": "psuId Type",
+      "psuCorporateId": "psu Corporate Id",
+      "psuCorporateIdType": "psuCorporate Id Type"
+    }
+  ]
+}
