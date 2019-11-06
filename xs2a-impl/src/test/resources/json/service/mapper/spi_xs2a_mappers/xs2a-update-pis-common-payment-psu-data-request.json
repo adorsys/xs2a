@@ -1,0 +1,15 @@
+{
+  "psuData": {
+    "psuId": "psuId"
+  },
+  "paymentId": "paymentId",
+  "authorisationId": "authorisationId",
+  "scaStatus": "RECEIVED",
+  "updatePsuIdentification": "true",
+  "authenticationMethodId": "authenticationMethodId",
+  "scaAuthenticationData": "tanNumber",
+  "password": "password",
+  "paymentProduct": "paymentProduct",
+  "paymentService": "payments"
+}
+

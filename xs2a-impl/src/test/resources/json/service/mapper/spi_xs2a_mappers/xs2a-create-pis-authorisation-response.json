@@ -1,0 +1,7 @@
+{
+  "authorisationId": "authorizationId",
+  "scaStatus": "RECEIVED",
+  "paymentType": "payments",
+  "internalRequestId": "internalRequestId",
+  "links": {}
+}

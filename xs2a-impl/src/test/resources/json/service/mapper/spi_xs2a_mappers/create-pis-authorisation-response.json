@@ -1,0 +1,6 @@
+{
+  "authorizationId": "authorizationId",
+  "scaStatus": "RECEIVED",
+  "internalRequestId": "internalRequestId",
+  "cancellationInternalRequestId": "cancellationInternalRequestId"
+}

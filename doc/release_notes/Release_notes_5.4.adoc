@@ -8,6 +8,7 @@
 * Incorrect scaStatus for failed authorisation PIS/AIS/Payments-Cancellation
 * Provide creation date and time in SPI Request
 * Incorrect consent status for already used one time consent
+* Read the SCA status returns incorrect SCA status after Update PSU data request without PSU-ID in header
 
 == Implement support of Multicurrency Accounts
 
@@ -40,3 +41,8 @@ From now on, consent and payment in SPI level incorporate `creationTimestamp` fi
 From now on, all one-off consents (`recurringIndicator` = false and `frequencyPerDay` = 1) are being checked for
 using all possible combinations of GET endpoints (accounts, balances, transactions). If all possible GET endpoints were
 used - the consent receives the `EXPIRED` status.
+
+== Read the SCA status returns incorrect SCA status after Update PSU data request without PSU-ID in header
+
+From now on, if you try to update PSU data without PSU-ID in header, `scaStatus` from response will be persisted
+into database, and when you'll try to get it, the response will contain proper `scaStatus`.

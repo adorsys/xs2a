@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRespo
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
@@ -57,25 +56,11 @@ public class Xs2aPisCommonPaymentMapper {
         return new Xs2aPisCommonPayment(response.getPaymentId(), psuData);
     }
 
-    public UpdatePisCommonPaymentPsuDataRequest mapToCmsUpdateCommonPaymentPsuDataReq(Xs2aUpdatePisCommonPaymentPsuDataResponse updatePsuDataResponse) {
-        return Optional.ofNullable(updatePsuDataResponse)
-                   .map(data -> {
-                       UpdatePisCommonPaymentPsuDataRequest request = new UpdatePisCommonPaymentPsuDataRequest();
-                       request.setPsuData(data.getPsuData());
-                       request.setPaymentId(data.getPaymentId());
-                       request.setAuthorizationId(data.getAuthorisationId());
-                       request.setAuthenticationMethodId(getAuthenticationMethodId(data));
-                       request.setScaStatus(data.getScaStatus());
-                       return request;
-                   })
-                   .orElse(null);
-    }
-
-    public UpdatePisCommonPaymentPsuDataRequest mapToCmsUpdateCommonPaymentPsuDataReq(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response) {
+    public UpdatePisCommonPaymentPsuDataRequest mapToCmsUpdateCommonPaymentPsuDataReq(AuthorisationProcessorResponse response) {
         return Optional.ofNullable(response)
                    .map(data -> {
                        UpdatePisCommonPaymentPsuDataRequest req = new UpdatePisCommonPaymentPsuDataRequest();
-                       req.setPsuData(request.getPsuData());
+                       req.setPsuData(((Xs2aUpdatePisCommonPaymentPsuDataResponse) response).getPsuData());
                        req.setPaymentId(data.getPaymentId());
                        req.setAuthorizationId(data.getAuthorisationId());
                        req.setAuthenticationMethodId(Optional.ofNullable(data.getChosenScaMethod())
@@ -84,12 +69,6 @@ public class Xs2aPisCommonPaymentMapper {
                        req.setScaStatus(data.getScaStatus());
                        return req;
                    })
-                   .orElse(null);
-    }
-
-    private String getAuthenticationMethodId(Xs2aUpdatePisCommonPaymentPsuDataResponse data) {
-        return Optional.ofNullable(data.getChosenScaMethod())
-                   .map(Xs2aAuthenticationObject::getAuthenticationMethodId)
                    .orElse(null);
     }
 
