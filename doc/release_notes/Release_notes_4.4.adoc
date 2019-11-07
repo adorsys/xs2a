@@ -4,6 +4,7 @@
 
 * Improve payment type validation
 * Incorrect scaStatus for failed authorisation
+* Incorrect consent status for already used one time consent
 
 == Improve payment type validation
 
@@ -14,3 +15,9 @@ payment type and payment service.
 
 From now on, update PSU data and initiate endpoints for PIS, AIS and Payment-Cancellation return `scaStatus: failed` when
 encountering `PSU_CREDENTIALS_INVALID`.
+
+== Incorrect consent status for already used one time consent
+
+From now on, all one-off consents (`recurringIndicator` = false and `frequencyPerDay` = 1) are being checked for
+using all possible combinations of GET endpoints (accounts, balances, transactions). If all possible GET endpoints were
+used - the consent receives the `EXPIRED` status.

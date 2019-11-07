@@ -107,4 +107,6 @@
     <include relativeToChangelogFile="true" file="migration/0079-remove-foreign-key-tpp-info-id-from-piis-consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0080-add-indexes-for-external-ids.xml"/>
     <include relativeToChangelogFile="true" file="migration/0081-add-internal-request-ids.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0082-create-ais-consent-transaction-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0083-add-columns-to-ais-consent-usage-table.xml"/>
 </databaseChangeLog>

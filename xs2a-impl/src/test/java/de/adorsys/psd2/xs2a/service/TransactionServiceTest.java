@@ -37,6 +37,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ais.AccountHelperService;
 import de.adorsys.psd2.xs2a.service.ais.TransactionService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aAccountService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
@@ -173,6 +174,8 @@ public class TransactionServiceTest {
     private AccountHelperService accountHelperService;
     @Mock
     private LoggingContextService loggingContextService;
+    @Mock
+    private Xs2aAccountService xs2aAccountService;
 
     @Before
     public void setUp() {

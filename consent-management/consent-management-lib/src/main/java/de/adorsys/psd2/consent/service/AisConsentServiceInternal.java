@@ -69,6 +69,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final CmsPsuService cmsPsuService;
     private final AisConsentUsageService aisConsentUsageService;
     private final AisConsentRequestTypeService aisConsentRequestTypeService;
+    private final OneOffConsentExpirationService oneOffConsentExpirationService;
 
     /**
      * Creates AIS consent.
@@ -381,7 +382,12 @@ public class AisConsentServiceInternal implements AisConsentService {
         if (!request.isUpdateUsage()) {
             return;
         }
-        aisConsentUsageService.incrementUsage(consent, request.getRequestUri());
+        aisConsentUsageService.incrementUsage(consent, request);
+
+        if (!consent.isRecurringIndicator() && consent.getAllowedFrequencyPerDay() == 1 && oneOffConsentExpirationService.isConsentExpired(consent)) {
+            consent.setConsentStatus(EXPIRED);
+        }
+
         consent.setLastActionDate(LocalDate.now());
         aisConsentRepository.save(consent);
     }

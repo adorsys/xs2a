@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aAccountService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
@@ -82,6 +83,7 @@ public class TransactionService {
 
     private final ValueValidatorService validatorService;
     private final Xs2aAisConsentService aisConsentService;
+    private final Xs2aAccountService xs2aAccountService;
     private final Xs2aAisConsentMapper consentMapper;
     private final TppService tppService;
     private final AspspProfileServiceWrapper aspspProfileService;
@@ -116,7 +118,7 @@ public class TransactionService {
         UUID xRequestId = requestProviderService.getRequestId();
 
         if (!accountConsentOptional.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}]. Get transactions report by period failed. Account consent not found by id",
+            log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}]. Get transactions report by period failed. Account consent not found by ID",
                      internalRequestId, xRequestId, request.getAccountId(), request.getConsentId());
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(AIS_400, of(CONSENT_UNKNOWN_400))
@@ -142,6 +144,8 @@ public class TransactionService {
         }
 
         loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
+
+        xs2aAccountService.saveNumberOfTransaction(request.getConsentId(), request.getAccountId(), spiResponse.getPayload().getTransactions().size());
 
         return getXs2aTransactionsReportResponseObject(request, accountConsent, spiResponse.getPayload());
     }
@@ -190,7 +194,7 @@ public class TransactionService {
 
         loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
 
-        return getTransactionsResponseObject(consentId, requestUri, accountConsent, spiResponse.getPayload());
+        return getTransactionsResponseObject(consentId, requestUri, accountConsent, spiResponse.getPayload(), accountId);
     }
 
     /**
@@ -377,7 +381,8 @@ public class TransactionService {
                                            request.getConsentId(),
                                            accountHelperService.createActionStatus(request.isWithBalance(), TypeAccess.TRANSACTION, response),
                                            request.getRequestUri(),
-                                           accountHelperService.needsToUpdateUsage(accountConsent));
+                                           accountHelperService.needsToUpdateUsage(accountConsent),
+                                           transactionsReport.getAccountReference().getResourceId(), null);
         return response;
     }
 
@@ -412,7 +417,7 @@ public class TransactionService {
     }
 
     @NotNull
-    private ResponseObject<Transactions> getTransactionsResponseObject(String consentId, String requestUri, AccountConsent accountConsent, SpiTransaction spiTransaction) {
+    private ResponseObject<Transactions> getTransactionsResponseObject(String consentId, String requestUri, AccountConsent accountConsent, SpiTransaction spiTransaction, String accountId) {
         Transactions transactions = spiToXs2aTransactionMapper.mapToXs2aTransaction(spiTransaction);
 
         ResponseObject<Transactions> response = ResponseObject.<Transactions>builder()
@@ -422,7 +427,7 @@ public class TransactionService {
         aisConsentService.consentActionLog(tppService.getTppId(), consentId,
                                            accountHelperService.createActionStatus(false, TypeAccess.TRANSACTION, response),
                                            requestUri,
-                                           accountHelperService.needsToUpdateUsage(accountConsent));
+                                           accountHelperService.needsToUpdateUsage(accountConsent), accountId, transactions.getTransactionId());
         return response;
     }
 

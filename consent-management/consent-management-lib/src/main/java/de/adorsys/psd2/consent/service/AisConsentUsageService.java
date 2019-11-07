@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
 import de.adorsys.psd2.consent.repository.AisConsentUsageRepository;
@@ -34,10 +35,12 @@ public class AisConsentUsageService {
     private final AisConsentUsageRepository aisConsentUsageRepository;
 
     @Transactional
-    public void incrementUsage(AisConsent aisConsent, String requestUri) {
-        AisConsentUsage aisConsentUsage = getUsage(aisConsent, requestUri);
+    public void incrementUsage(AisConsent aisConsent, AisConsentActionRequest request) {
+        AisConsentUsage aisConsentUsage = getUsage(aisConsent, request.getRequestUri());
         int usage = aisConsentUsage.getUsage();
         aisConsentUsage.setUsage(++usage);
+        aisConsentUsage.setResourceId(request.getResourceId());
+        aisConsentUsage.setTransactionId(request.getTransactionId());
         aisConsentUsageRepository.save(aisConsentUsage);
     }
 
