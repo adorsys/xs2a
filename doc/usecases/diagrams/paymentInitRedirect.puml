@@ -25,7 +25,7 @@ deactivate SPI
 XS2A-->TPP:Payment initiation response
 deactivate XS2A
 |||
-TPP->XS2A: REST Call Initiate authorithation implicitly \nPOST"/v1/{payment-service }/{payment-product}/\n{paymentId}/authorisations"
+TPP->XS2A: REST Call Initiate authorisation implicitly \nPOST"/v1/{payment-service }/{payment-product}/\n{paymentId}/authorisations"
 activate XS2A
 note left
          in case of Multilevel SCA
