@@ -92,7 +92,7 @@ public class PisCommonPaymentRemoteUrls {
     }
 
     public String updatePisAuthorisationStatus() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/authorisations/status/{status}";
+        return commonPaymentServiceBaseUrl + "/pis/common-payments/authorisations/{authorisation-id}/status/{status}";
     }
 
     public String updatePisCancellationAuthorisation() {
