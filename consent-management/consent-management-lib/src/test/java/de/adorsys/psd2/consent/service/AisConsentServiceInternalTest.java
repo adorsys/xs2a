@@ -20,7 +20,10 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
@@ -100,8 +103,6 @@ public class AisConsentServiceInternalTest {
     private TppInfoEntity tppInfoMocked;
     @Mock
     private PsuData psuDataMocked;
-    @Mock
-    private PsuData anotherPsuDataMocked;
     @Mock
     private CmsPsuService cmsPsuService;
     @Mock
@@ -516,7 +517,7 @@ public class AisConsentServiceInternalTest {
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.empty());
 
         try {
-            aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true));
+            aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null));
             assertTrue("Method works without exceptions", true);
         } catch (Exception ex) {
             fail("Exception should not be appeared.");
@@ -526,17 +527,19 @@ public class AisConsentServiceInternalTest {
     @Test
     public void checkConsentAndSaveActionLog_updateUsageCounter() {
         // When
-        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true));
+        AisConsentActionRequest request = new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
+        aisConsentService.checkConsentAndSaveActionLog(request);
         // Then
-        verify(aisConsentUsageService, atLeastOnce()).incrementUsage(aisConsent, REQUEST_URI);
+        verify(aisConsentUsageService, atLeastOnce()).incrementUsage(aisConsent, request);
     }
 
     @Test
     public void checkConsentAndSaveActionLog_NotUpdateUsageCounter() {
         // When
-        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, false));
+        AisConsentActionRequest request = new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, false, null, null);
+        aisConsentService.checkConsentAndSaveActionLog(request);
         // Then
-        verify(aisConsentUsageService, never()).incrementUsage(aisConsent, REQUEST_URI);
+        verify(aisConsentUsageService, never()).incrementUsage(aisConsent, request);
     }
 
     @Test
@@ -553,7 +556,7 @@ public class AisConsentServiceInternalTest {
         doNothing().when(aisConsentConfirmationExpirationService).expireConsent(consent);
 
         // When
-        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, "/uri", false));
+        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, "/uri", false, null, null));
 
         // Then
         verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(consent);

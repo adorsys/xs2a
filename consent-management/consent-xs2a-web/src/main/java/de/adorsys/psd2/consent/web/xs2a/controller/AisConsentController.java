@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -41,6 +42,7 @@ import java.util.List;
 public class AisConsentController {
     private final AisConsentAuthorisationServiceEncrypted aisConsentAuthorisationServiceEncrypted;
     private final AisConsentServiceEncrypted aisConsentService;
+    private final AccountServiceEncrypted accountServiceEncrypted;
 
     @PostMapping(path = "/")
     @ApiOperation(value = "Create consent for given psu id and accesses.")
@@ -295,4 +297,20 @@ public class AisConsentController {
                    .map(scaApproachResponse -> new ResponseEntity<>(scaApproachResponse, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+    @PutMapping(path = "/{consent-id}/{resource-id}")
+    @ApiOperation(value = "Saves number of transactions for a definite account of the definite consent")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<Boolean> saveNumberOfTransactions(
+        @ApiParam(name = "consent-id", value = "The consent identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("consent-id") String consentId,
+        @PathVariable("resource-id") String resourceId,
+        @RequestBody Integer numberOfTransactions) {
+        return accountServiceEncrypted.saveNumberOfTransactions(consentId, resourceId, numberOfTransactions)
+                   ? new ResponseEntity<>(true, HttpStatus.OK)
+                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
 }

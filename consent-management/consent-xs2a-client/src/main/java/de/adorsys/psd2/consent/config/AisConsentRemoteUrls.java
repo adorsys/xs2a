@@ -202,4 +202,8 @@ public class AisConsentRemoteUrls {
     public String getAuthorisationScaApproach() {
         return consentServiceBaseUrl + "/ais/consent/authorisations/{authorisation-id}/sca-approach";
     }
+
+    public String saveNumberOfTransactions() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/{resource-id}";
+    }
 }
