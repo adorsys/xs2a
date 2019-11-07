@@ -25,7 +25,7 @@ deactivate SPI
 XS2A-->TPP:Payment initiation response
 deactivate XS2A
 |||
-TPP->XS2A: REST Call Initiate authorithation implicitly \nPOST"/v1/{payment-service }/{payment-product}/\n{paymentId}/authorisations"
+TPP->XS2A: REST Call Initiate authorisation implicitly \nPOST"/v1/{payment-service }/{payment-product}/\n{paymentId}/authorisations"
 activate XS2A
 note left
          in case of Multilevel SCA
@@ -47,7 +47,7 @@ activate CMS
 |||
 CMS-->Online_banking: CmsPaymentResponse
 |||
-Online_banking->CMS: REST Call UpdatePsuIdPayment\n"PUT/psu-api/v1/payment/authorithation/\n{authorisation-id}/psu-data"
+Online_banking->CMS: REST Call UpdatePsuIdPayment\n"PUT/psu-api/v1/payment/authorisation/\n{authorisation-id}/psu-data"
 |||
 CMS-->Online_banking: Response "http Codes: 200 successful or 400 error"
 deactivate CMS
@@ -152,7 +152,7 @@ CMS-->XS2A: GetAuthorisationsByPaymentId Response
 deactivate CMS
 XS2A-->TPP: Authorisation Ids List
 |||
-TPP->XS2A: REST Call Get Authorisation\n"GET/v1/{payment-service}/{payment-product}/\n{paymentId/authorisations}/{authorithationId}"
+TPP->XS2A: REST Call Get Authorisation\n"GET/v1/{payment-service}/{payment-product}/\n{paymentId/authorisations}/{authorisationId}"
 XS2A->CMS: GetAuthorisationScaStatus
 activate CMS
 |||
