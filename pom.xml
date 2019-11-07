@@ -159,7 +159,7 @@
         <pmd.plugin.version>3.10.0</pmd.plugin.version>
         <com.auth0.java-jwt.version>3.3.0</com.auth0.java-jwt.version>
         <tomitribe-http-signatures.version>1.0</tomitribe-http-signatures.version>
-        <nimbus-jose-jwt.version>5.8</nimbus-jose-jwt.version>
+        <nimbus-jose-jwt.version>7.9</nimbus-jose-jwt.version>
         <commons-certvalidator.version>2.1.1</commons-certvalidator.version>
         <bcpkix-jdk15on.version>1.59</bcpkix-jdk15on.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
@@ -181,18 +181,19 @@
         <h2.version>1.4.197</h2.version>
         <snakeyaml.version>1.23</snakeyaml.version>
         <byte-buddy.version>1.9.10</byte-buddy.version>
-        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
+        <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
         <javax.el.version>3.0.1-b09</javax.el.version>
         <javax.el-api.version>3.0.0</javax.el-api.version>
         <jaxb-api.version>2.3.0</jaxb-api.version>
-        <nimbus-jose-jwt.version>6.1.1</nimbus-jose-jwt.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+        <classmate.version>1.4.0</classmate.version>
 
         <jackson.version>2.9.9</jackson.version>
         <jackson-databind.version>2.9.10</jackson-databind.version>
+        <jackson-core.version>2.9.10</jackson-core.version>
 
         <spring.version>5.1.6.RELEASE</spring.version>
         <spring-test.version>${spring.version}</spring-test.version>
@@ -211,7 +212,7 @@
         <ruleset.basedir>${project.basedir}</ruleset.basedir>
         <archunit.version>0.9.3</archunit.version>
 
-        <org.mapstruct.version>1.3.0.Final</org.mapstruct.version>
+        <org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
         <logback-classic.version>1.2.3</logback-classic.version>
 
         <!--Sonar -->
@@ -433,6 +434,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson-core.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jdk8</artifactId>
                 <version>${jackson.version}</version>
@@ -475,6 +482,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.fasterxml</groupId>
+                <artifactId>classmate</artifactId>
+                <version>${classmate.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>javax.el</artifactId>
                 <version>${javax.el.version}</version>
@@ -484,6 +497,12 @@
                 <groupId>javax.el</groupId>
                 <artifactId>javax.el-api</artifactId>
                 <version>${javax.el-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
             </dependency>
 
             <dependency>
