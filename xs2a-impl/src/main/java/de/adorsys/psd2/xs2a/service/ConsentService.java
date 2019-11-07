@@ -18,8 +18,7 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -29,29 +28,22 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
-import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
-import de.adorsys.psd2.xs2a.service.validator.AisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
-import de.adorsys.psd2.xs2a.service.validator.ais.consent.*;
-import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
-import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -62,27 +54,22 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.function.UnaryOperator;
+import java.util.Objects;
+import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-//TODO Refactor Service: split responsibilities https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
 public class ConsentService {
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final SpiToXs2aAccountAccessMapper spiToXs2aAccountAccessMapper;
     private final Xs2aAisConsentService aisConsentService;
     private final AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver;
     private final TppService tppService;
-    private final AisEndpointAccessCheckerService endpointAccessCheckerService;
     private final SpiContextDataProvider spiContextDataProvider;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final AisConsentSpi aisConsentSpi;
@@ -90,18 +77,11 @@ public class ConsentService {
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
     private final SpiErrorMapper spiErrorMapper;
 
-    private final CreateConsentRequestValidator createConsentRequestValidator;
-    private final GetAccountConsentsStatusByIdValidator getAccountConsentsStatusByIdValidator;
-    private final GetAccountConsentByIdValidator getAccountConsentByIdValidator;
-    private final DeleteAccountConsentsByIdValidator deleteAccountConsentsByIdValidator;
-    private final CreateConsentAuthorisationValidator createConsentAuthorisationValidator;
-    private final UpdateConsentPsuDataValidator updateConsentPsuDataValidator;
-    private final GetConsentAuthorisationsValidator getConsentAuthorisationsValidator;
-    private final GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
+    private final ConsentValidationService consentValidationService;
+    private final ConsentAuthorisationService consentAuthorisationService;
     private final AisScaAuthorisationService aisScaAuthorisationService;
     private final RequestProviderService requestProviderService;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
-    private final AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
     private final LoggingContextService loggingContextService;
 
     /**
@@ -114,10 +94,11 @@ public class ConsentService {
      * @param explicitPreferred is TPP explicit authorisation preferred
      * @return CreateConsentResponse representing the complete response to create consent request
      */
-    public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred) { // NOPMD // TODO we need to refactor this method and class. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
+    public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData,
+                                                                                   boolean explicitPreferred) {
         xs2aEventService.recordTppRequest(EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, request);
 
-        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(request, psuData));
+        ValidationResult validationResult = consentValidationService.validateConsentOnCreate(request, psuData);
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}]. Create account consent with response - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), validationResult.getMessageError());
@@ -127,7 +108,7 @@ public class ConsentService {
         }
 
         if (request.isGlobalOrAllAccountsAccessConsent()) {
-            request.setAccess(getAccessForGlobalOrAllAvailableAccountsConsent(request));
+            request.setAccess(spiToXs2aAccountAccessMapper.getAccessForGlobalOrAllAvailableAccountsConsent(request));
         }
 
         TppInfo tppInfo = tppService.getTppInfo();
@@ -135,7 +116,7 @@ public class ConsentService {
 
         if (!createAisConsentResponseOptional.isPresent()) {
             return ResponseObject.<CreateConsentResponse>builder()
-                       .fail(AIS_400, of(RESOURCE_UNKNOWN_400))
+                       .fail(ErrorType.AIS_400, of(MessageErrorCode.RESOURCE_UNKNOWN_400))
                        .build();
         }
 
@@ -205,13 +186,13 @@ public class ConsentService {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Get account consents status failed: consent not found by id",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
             return responseBuilder
-                       .fail(AIS_403, of(CONSENT_UNKNOWN_403))
+                       .fail(ErrorType.AIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403))
                        .build();
         }
 
         AccountConsent validatedAccountConsent = validatedAccountConsentOptional.get();
 
-        ValidationResult validationResult = getAccountConsentsStatusByIdValidator.validate(new CommonConsentObject(validatedAccountConsent));
+        ValidationResult validationResult = consentValidationService.validateConsentOnGettingStatusById(validatedAccountConsent);
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}]. Create account consents status - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), validationResult.getMessageError());
@@ -259,7 +240,7 @@ public class ConsentService {
             // TODO this is not correct. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
 
             AccountConsent accountConsent = accountConsentOptional.get();
-            ValidationResult validationResult = deleteAccountConsentsByIdValidator.validate(new CommonConsentObject(accountConsent));
+            ValidationResult validationResult = consentValidationService.validateConsentOnDelete(accountConsent);
             if (validationResult.isNotValid()) {
                 log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Delete account consent - validation failed: {}",
                          requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), accountConsent.getId(), validationResult.getMessageError());
@@ -295,7 +276,7 @@ public class ConsentService {
         log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Delete account consent failed: consent not found by id",
                  requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
         return ResponseObject.<Void>builder()
-                   .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
+                   .fail(ErrorType.AIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403)).build();
     }
 
     /**
@@ -313,13 +294,13 @@ public class ConsentService {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Get account consent failed: initial consent not found by id",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
             return ResponseObject.<AccountConsent>builder()
-                       .fail(AIS_403, of(CONSENT_UNKNOWN_403))
+                       .fail(ErrorType.AIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403))
                        .build();
         }
 
         AccountConsent consent = consentOptional.get();
 
-        ValidationResult validationResult = getAccountConsentByIdValidator.validate(new CommonConsentObject(consent));
+        ValidationResult validationResult = consentValidationService.validateConsentOnGettingById(consent);
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Get account consent - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, validationResult.getMessageError());
@@ -328,8 +309,7 @@ public class ConsentService {
                        .build();
         }
 
-        if (Objects.nonNull(consent.getConsentStatus()) &&
-                consent.getConsentStatus().isFinalisedStatus()) {
+        if (Objects.nonNull(consent.getConsentStatus()) && consent.getConsentStatus().isFinalisedStatus()) {
             loggingContextService.storeConsentStatus(consent.getConsentStatus());
             return ResponseObject.<AccountConsent>builder()
                        .body(consent)
@@ -365,208 +345,15 @@ public class ConsentService {
      * @return authorisation response
      */
     public ResponseObject<AuthorisationResponse> createAisAuthorisation(PsuIdData psuData, String consentId, String password) {
-        ResponseObject<CreateConsentAuthorizationResponse> createAisAuthorizationResponse = createConsentAuthorizationWithResponse(psuData, consentId);
-
-        if (createAisAuthorizationResponse.hasError()) {
-            return ResponseObject.<AuthorisationResponse>builder()
-                       .fail(createAisAuthorizationResponse.getError())
-                       .build();
-        }
-
-        if (psuData.isEmpty()
-                || StringUtils.isBlank(password)) {
-            loggingContextService.storeScaStatus(createAisAuthorizationResponse.getBody().getScaStatus());
-            return ResponseObject.<AuthorisationResponse>builder()
-                       .body(createAisAuthorizationResponse.getBody())
-                       .build();
-        }
-
-        String authorisationId = createAisAuthorizationResponse.getBody().getAuthorisationId();
-
-        UpdateConsentPsuDataReq updatePsuData = new UpdateConsentPsuDataReq();
-        updatePsuData.setPsuData(psuData);
-        updatePsuData.setConsentId(consentId);
-        updatePsuData.setAuthorizationId(authorisationId);
-        updatePsuData.setPassword(password);
-
-        ResponseObject<UpdateConsentPsuDataResponse> updatePsuDataResponse = updateConsentPsuData(updatePsuData);
-        if (updatePsuDataResponse.hasError()) {
-            return ResponseObject.<AuthorisationResponse>builder()
-                       .fail(updatePsuDataResponse.getError())
-                       .build();
-        }
-
-        return ResponseObject.<AuthorisationResponse>builder()
-                   .body(updatePsuDataResponse.getBody())
-                   .build();
-    }
-
-    private ResponseObject<CreateConsentAuthorizationResponse> createConsentAuthorizationWithResponse(PsuIdData psuDataFromRequest, String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.START_AIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
-
-        // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
-        Optional<AccountConsent> accountConsent = aisConsentService.getAccountConsentById(consentId);
-
-        if (!accountConsent.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Create consent authorisation with response failed: consent not found by id",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
-            return ResponseObject.<CreateConsentAuthorizationResponse>builder()
-                       .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
-        }
-
-        boolean isMultilevel = accountConsent.get().isMultilevelScaRequired();
-
-        PsuIdData psuIdData = psuDataFromRequest;
-
-        if (psuDataFromRequest.isEmpty() && !isMultilevel) {
-            Optional<PsuIdData> psuIdDataFromDb = accountConsent.get().getPsuIdDataList().stream().findFirst();
-            if (psuIdDataFromDb.isPresent()) {
-                psuIdData = psuIdDataFromDb.get();
-            }
-        }
-
-        ValidationResult validationResult = createConsentAuthorisationValidator.validate(new CommonConsentObject(accountConsent.get()));
-        if (validationResult.isNotValid()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Create consent authorisation with response - validation failed: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, validationResult.getMessageError());
-            return ResponseObject.<CreateConsentAuthorizationResponse>builder()
-                       .fail(validationResult.getMessageError())
-                       .build();
-        }
-
-        if (accountConsent.get().isExpired()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Create consent authorisation with response failed: consent expired",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
-            return ResponseObject.<CreateConsentAuthorizationResponse>builder()
-                       .fail(AIS_401, of(CONSENT_EXPIRED))
-                       .build();
-        }
-
-        loggingContextService.storeConsentStatus(accountConsent.get().getConsentStatus());
-
-        AisAuthorizationService service = aisScaAuthorisationServiceResolver.getService();
-        return service.createConsentAuthorization(psuIdData, consentId)
-                   .map(resp -> ResponseObject.<CreateConsentAuthorizationResponse>builder().body(resp).build())
-                   .orElseGet(ResponseObject.<CreateConsentAuthorizationResponse>builder()
-                                  .fail(AIS_403, of(CONSENT_UNKNOWN_403))
-                                  ::build);
+        return consentAuthorisationService.createAisAuthorisation(psuData, consentId, password);
     }
 
     public ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData) {
-        xs2aEventService.recordAisTppRequest(updatePsuData.getConsentId(), EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED, updatePsuData);
-
-        String consentId = updatePsuData.getConsentId();
-        String authorisationId = updatePsuData.getAuthorizationId();
-
-        if (!endpointAccessCheckerService.isEndpointAccessible(authorisationId, consentId)) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data failed: update endpoint is blocked for current authorisation",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId);
-            return ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                       .fail(AIS_403, of(SERVICE_BLOCKED))
-                       .build();
-        }
-
-        // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
-        Optional<AccountConsent> accountConsent = aisConsentService.getAccountConsentById(consentId);
-
-        if (!accountConsent.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Update consent PSU data failed: consent not found by id",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
-            return ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                       .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
-        }
-
-        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent.get(), updatePsuData));
-
-        if (validationResult.isNotValid()) {
-            if (validationResult.getMessageError().getTppMessage().getMessageErrorCode() == PSU_CREDENTIALS_INVALID) {
-                aisConsentService.updateConsentAuthorisationStatus(authorisationId, ScaStatus.FAILED);
-            }
-
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data - validation failed: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, validationResult.getMessageError());
-            return ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                       .fail(validationResult.getMessageError())
-                       .build();
-        }
-
-        AccountConsent consent = accountConsent.get();
-
-        if (consent.isExpired()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Update consent PSU data failed: consent expired",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
-            return ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                       .fail(AIS_401, of(CONSENT_EXPIRED))
-                       .build();
-        }
-
-        loggingContextService.storeConsentStatus(consent.getConsentStatus());
-
-        return getUpdateConsentPsuDataResponse(updatePsuData);
-    }
-
-    private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentPsuDataResponse(UpdateConsentPsuDataReq updatePsuData) {
-        AisAuthorizationService service = aisScaAuthorisationServiceResolver.getServiceInitiation(updatePsuData.getAuthorizationId());
-
-        Optional<AccountConsentAuthorization> authorization = service.getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId());
-
-        if (!authorization.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation-ID: [{}]. Update consent PSU data failed: authorisation not found by id",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), updatePsuData.getAuthorizationId());
-            return ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                       .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
-        }
-
-        AccountConsentAuthorization consentAuthorization = authorization.get();
-        UpdateConsentPsuDataResponse response = (UpdateConsentPsuDataResponse) authorisationChainResponsibilityService.apply(
-            new AisAuthorisationProcessorRequest(consentAuthorization.getChosenScaApproach(),
-                                                 consentAuthorization.getScaStatus(),
-                                                 updatePsuData,
-                                                 consentAuthorization));
-        loggingContextService.storeScaStatus(response.getScaStatus());
-
-        return Optional.ofNullable(response)
-                   .map(s -> Optional.ofNullable(s.getErrorHolder())
-                                 .map(e -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                                               .fail(e)
-                                               .build())
-                                 .orElseGet(ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response)::build))
-                   .orElseGet(ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                                  .fail(AIS_400, of(FORMAT_ERROR))
-                                  ::build);
+        return consentAuthorisationService.updateConsentPsuData(updatePsuData);
     }
 
     public ResponseObject<Xs2aAuthorisationSubResources> getConsentInitiationAuthorisations(String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
-
-        Optional<AccountConsent> accountConsent = aisConsentService.getAccountConsentById(consentId);
-        if (!accountConsent.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Get consent initiation authorisations failed: consent not found by id",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
-            return ResponseObject.<Xs2aAuthorisationSubResources>builder()
-                       .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
-        }
-
-        ValidationResult validationResult = getConsentAuthorisationsValidator.validate(new CommonConsentObject(accountConsent.get()));
-        if (validationResult.isNotValid()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Get consent authorisations - validation failed: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, validationResult.getMessageError());
-            return ResponseObject.<Xs2aAuthorisationSubResources>builder()
-                       .fail(validationResult.getMessageError())
-                       .build();
-        }
-
-        loggingContextService.storeConsentStatus(accountConsent.get().getConsentStatus());
-
-        return getAuthorisationSubResources(consentId)
-                   .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
-                   .orElseGet(() -> {
-                       log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Get consent initiation authorisations failed: authorisation not found at CMS by consent id",
-                                requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
-                       return ResponseObject.<Xs2aAuthorisationSubResources>builder()
-                                  .fail(AIS_404, of(RESOURCE_UNKNOWN_404))
-                                  .build();
-                   });
+        return consentAuthorisationService.getConsentInitiationAuthorisations(consentId);
     }
 
     /**
@@ -577,72 +364,13 @@ public class ConsentService {
      * @return Response containing SCA status of the authorisation or corresponding error
      */
     public ResponseObject<ScaStatus> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_SCA_STATUS_REQUEST_RECEIVED);
-
-        Optional<AccountConsent> accountConsent = aisConsentService.getAccountConsentById(consentId);
-        if (!accountConsent.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Get consent authorisation SCA status failed: consent not found by id",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
-            return ResponseObject.<ScaStatus>builder()
-                       .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
-        }
-
-        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(accountConsent.get(), authorisationId));
-        if (validationResult.isNotValid()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}], Authorisation-ID [{}]. Get consent authorisation SCA status - validation failed: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, validationResult.getMessageError());
-            return ResponseObject.<ScaStatus>builder()
-                       .fail(validationResult.getMessageError())
-                       .build();
-        }
-
-        Optional<ScaStatus> scaStatusOptional = aisScaAuthorisationServiceResolver.getServiceInitiation(authorisationId)
-                                                    .getAuthorisationScaStatus(consentId, authorisationId);
-
-        if (!scaStatusOptional.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Get consent authorisation SCA status failed: consent not found at CMS by id",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
-            return ResponseObject.<ScaStatus>builder()
-                       .fail(AIS_403, of(RESOURCE_UNKNOWN_403))
-                       .build();
-        }
-
-        ScaStatus scaStatus = scaStatusOptional.get();
-
-        loggingContextService.storeConsentStatus(accountConsent.get().getConsentStatus());
-        loggingContextService.storeScaStatus(scaStatus);
-
-        return ResponseObject.<ScaStatus>builder()
-                   .body(scaStatus)
-                   .build();
+        return consentAuthorisationService.getConsentAuthorisationScaStatus(consentId, authorisationId);
     }
 
     private SpiResponse<SpiAisConsentStatusResponse> getConsentStatusFromSpi(AccountConsent accountConsent, String consentId) {
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
         SpiAspspConsentDataProvider aspspDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
         return aisConsentSpi.getConsentStatus(spiContextDataProvider.provide(), spiAccountConsent, aspspDataProvider);
-    }
-
-    private Xs2aAccountAccess getAccessForGlobalOrAllAvailableAccountsConsent(CreateConsentReq request) {
-        return new Xs2aAccountAccess(
-            new ArrayList<>(),
-            new ArrayList<>(),
-            new ArrayList<>(),
-            request.getAccess().getAvailableAccounts(),
-            request.getAccess().getAllPsd2(),
-            request.getAccess().getAvailableAccountsWithBalance(),
-            modifyAdditionalInformationAccessOnGlobalOrAllAvailableAccountsConsent(request.getAccess().getAdditionalInformationAccess())
-        );
-    }
-
-    private AdditionalInformationAccess modifyAdditionalInformationAccessOnGlobalOrAllAvailableAccountsConsent(AdditionalInformationAccess info) {
-        if (info == null || info.noAdditionalInformationAccess()) {
-            return null;
-        }
-
-        UnaryOperator<List<AccountReference>> modifier = list -> list == null ? null : Collections.emptyList();
-
-        return new AdditionalInformationAccess(modifier.apply(info.getOwnerName()), modifier.apply(info.getOwnerAddress()));
     }
 
     private void proceedImplicitCaseForCreateConsent(CreateConsentResponse response, PsuIdData psuData, String consentId) {
@@ -657,10 +385,5 @@ public class ConsentService {
         PsuIdData psuIdData = requestProviderService.getPsuIdData();
         log.info("X-Request-ID: [{}]. Corresponding PSU-ID {} was provided from request.", requestProviderService.getRequestId(), psuIdData);
         return spiContextDataProvider.provideWithPsuIdData(psuIdData);
-    }
-
-    private Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId) {
-        return aisConsentService.getAuthorisationSubResources(consentId)
-                   .map(Xs2aAuthorisationSubResources::new);
     }
 }

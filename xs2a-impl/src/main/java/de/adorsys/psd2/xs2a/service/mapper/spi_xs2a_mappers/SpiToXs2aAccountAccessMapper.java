@@ -16,14 +16,20 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.UnaryOperator;
 
 @Component
 @RequiredArgsConstructor
@@ -40,10 +46,32 @@ public class SpiToXs2aAccountAccessMapper {
                                 aa.getAvailableAccounts(),
                                 aa.getAllPsd2(),
                                 aa.getAvailableAccountsWithBalance(),
-                                maptToAdditionalInformationAccess(aa.getSpiAdditionalInformationAccess())));
+                                mapToAdditionalInformationAccess(aa.getSpiAdditionalInformationAccess())));
     }
 
-    private AdditionalInformationAccess maptToAdditionalInformationAccess(SpiAdditionalInformationAccess spiAdditionalInformationAccess) {
+    public Xs2aAccountAccess getAccessForGlobalOrAllAvailableAccountsConsent(CreateConsentReq request) {
+        return new Xs2aAccountAccess(
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            request.getAccess().getAvailableAccounts(),
+            request.getAccess().getAllPsd2(),
+            request.getAccess().getAvailableAccountsWithBalance(),
+            modifyAdditionalInformationAccessOnGlobalOrAllAvailableAccountsConsent(request.getAccess().getAdditionalInformationAccess())
+        );
+    }
+
+    private AdditionalInformationAccess modifyAdditionalInformationAccessOnGlobalOrAllAvailableAccountsConsent(AdditionalInformationAccess info) {
+        if (info == null || info.noAdditionalInformationAccess()) {
+            return null;
+        }
+
+        UnaryOperator<List<AccountReference>> modifier = list -> list == null ? null : Collections.emptyList();
+
+        return new AdditionalInformationAccess(modifier.apply(info.getOwnerName()), modifier.apply(info.getOwnerAddress()));
+    }
+
+    private AdditionalInformationAccess mapToAdditionalInformationAccess(SpiAdditionalInformationAccess spiAdditionalInformationAccess) {
         return Optional.ofNullable(spiAdditionalInformationAccess)
                    .map(info -> new AdditionalInformationAccess(
                        spiToXs2aAccountReferenceMapper.mapToXs2aAccountReferences(info.getOwnerName()),
