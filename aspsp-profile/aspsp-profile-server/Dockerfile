@@ -7,8 +7,8 @@ ENV JAVA_TOOL_OPTIONS -Xmx1024m
 
 WORKDIR /opt/profile
 
-COPY ./target/aspsp-profile*jar /opt/profile/aspsp-profile.jar
+COPY ./target/aspsp-profile-exec*jar /opt/profile/aspsp-profile-exec.jar
 
 EXPOSE 8080
 
-CMD exec $JAVA_HOME/bin/java $JAVA_OPTS -jar /opt/profile/aspsp-profile.jar
+CMD exec $JAVA_HOME/bin/java $JAVA_OPTS -jar /opt/profile/aspsp-profile-exec.jar
