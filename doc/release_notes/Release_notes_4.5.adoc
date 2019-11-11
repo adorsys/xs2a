@@ -1,3 +1,10 @@
 = Release notes v.4.5
 
 == Table of Contents
+
+* Removed deprecated columns TppRedirectUri from TppInfo
+
+== Removed deprecated columns TppRedirectUri from TppInfo
+
+From now on, deprecated columns `redirect_uri`, `nok_redirect_uri`, `cancel_redirect_uri`,
+`cancel_nok_redirect_uri` are removed from `tpp_info` table in CMS.
