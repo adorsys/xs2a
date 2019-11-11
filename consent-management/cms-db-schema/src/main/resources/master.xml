@@ -109,4 +109,5 @@
     <include relativeToChangelogFile="true" file="migration/0081-add-internal-request-ids.xml"/>
     <include relativeToChangelogFile="true" file="migration/0082-create-ais-consent-transaction-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0083-add-columns-to-ais-consent-usage-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0084-remove-tpp-redirect-uri-from-tpp-info-table.xml"/>
 </databaseChangeLog>
