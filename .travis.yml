@@ -28,6 +28,7 @@ before_script:
 
 # JavaDocs are broken in Java 11 and fixed only in Java 12 : https://bugs.openjdk.java.net/browse/JDK-8212233
 script:
+  - env BUILD_NUMBER=$TRAVIS_BUILD_ID /bin/bash ./scripts/set_xs2a_connector_version_in_swagger.sh
   - mvn -B -V clean install || travis_terminate 1
   - "if [ $TRAVIS_JDK_VERSION == oraclejdk8 ]; then mvn -B -V javadoc:javadoc; fi || travis_terminate 1"
   - mvn -B -V pmd:check || travis_terminate 1
