@@ -15,33 +15,11 @@ No backward compatibility with 4.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 4.x|version 5.x
 
-|08.11.2019|4.4|5.4
-
-a|
-
-a|* Bugfix: Incorrect scaStatus for failed authorisation PIS/AIS/Payments-Cancellation
-
-* Bugfix: Incorrect consent status for already used one time consent (All consent types)
-
-* Improve payment type validation
-
-* Describe "Configuring SCA Redirect OAuth" at SPI Developer Guide
-
-a|* All fixes from v.4.4
-
-* Refactor CMS: return ResponseObject instead of Strings, Enums, Booleans etc.
-
-* Provide creation date and time in SPIrequest
-
-* Support Get Transaction Status Response with raw format
-
-* Implement support of Multicurrency Accounts
-
 |22.11.2019|4.5|5.5
 
 a|
 
-a|* Create an opportunity to disable IBAN validation
+a|* Bugfix: Incorrect response for start authorisation request with password but without PSU-ID in header Explicit AIS/PIS
 
 * Remove MockContentCachingWrappingFilter and properly enable XS2A filters for integration tests
 
@@ -53,31 +31,33 @@ a|* Create an opportunity to disable IBAN validation
 
 a|* All fixes from v.4.5
 
+* Support Standing Orders reporting in AIS
+
 * Close all consents when account is closed
 
-* Fix syntax errors in internal CMS API
-
 * Implementation of delta access for transaction list request 
-
-* Recoverability of xs2a remote components
 
 |06.12.2019|4.6|5.6
 
 a|
 
-a|* Refactor `PisCommonPaymentServiceInternal`
+a|* Bugfix: Logging Context isn't logging correctly in case of PSU_CREDENTIALS_INVALID error
+
+* Refactor `PisCommonPaymentServiceInternal`
+
+* Create an opportunity to disable IBAN validation
 
 a|* All fixes from v.4.6
+
+* Fix syntax errors in internal CMS API
+
+* Recoverability of xs2a remote components
 
 * Validation of authorisation sub-resources
 
 * Digital signature support
 
-* Refactor ConsentService: split responsibilities
-
 * Prevent modification of an established consent
-
-* Add a new optional header TPP-Rejection-NoFunds-Preferred
 
 * Remove unused column "tan" in pis_consent_authorization
 
@@ -89,7 +69,7 @@ a|
 
 a|* All fixes from v.4.7
 
-* Update to Java 11
+* Add a new optional header TPP-Rejection-NoFunds-Preferred
 
 * Logging of RequestId/InternalRequestId via slf4j MDC
 
@@ -103,6 +83,8 @@ a|* All fixes from v.4.7
 
 * Refactoring of payment saving
 
+* Remove deprecated constructor in SpiGetPaymentStatusResponse
+
 |17.01.2020|4.8|5.8
 
 a|
@@ -111,7 +93,7 @@ a|
 
 a|* All fixes from v.4.8
 
-* Logging of RequestId/InternalRequestId via slf4j MDC
+* Update to Java 11
 
 * Prevent modification of an established consent
 
