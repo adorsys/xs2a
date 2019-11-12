@@ -241,7 +241,7 @@ public class CmsPsuAisControllerTest {
             .thenReturn(true);
 
         // When
-        ResponseEntity<Boolean> actualResponse = cmsPsuAisController.confirmConsent(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity<Boolean> actualResponse = cmsPsuAisController.confirmConsent(CONSENT_ID, INSTANCE_ID);
 
         // Then
         verify(cmsPsuAisService).confirmConsent(CONSENT_ID, INSTANCE_ID);
@@ -258,7 +258,7 @@ public class CmsPsuAisControllerTest {
             .thenReturn(false);
 
         // When
-        ResponseEntity<Boolean> actualResponse = cmsPsuAisController.confirmConsent(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity<Boolean> actualResponse = cmsPsuAisController.confirmConsent(CONSENT_ID, INSTANCE_ID);
 
         // Then
         verify(cmsPsuAisService).confirmConsent(CONSENT_ID, INSTANCE_ID);
@@ -275,7 +275,7 @@ public class CmsPsuAisControllerTest {
             .thenReturn(true);
 
         // When
-        ResponseEntity<Boolean> actualResponse = cmsPsuAisController.rejectConsent(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity<Boolean> actualResponse = cmsPsuAisController.rejectConsent(CONSENT_ID, INSTANCE_ID);
 
         // Then
         verify(cmsPsuAisService).rejectConsent(CONSENT_ID, INSTANCE_ID);
@@ -292,7 +292,7 @@ public class CmsPsuAisControllerTest {
             .thenReturn(false);
 
         // When
-        ResponseEntity<Boolean> actualResponse = cmsPsuAisController.rejectConsent(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity<Boolean> actualResponse = cmsPsuAisController.rejectConsent(CONSENT_ID, INSTANCE_ID);
 
         // Then
         verify(cmsPsuAisService).rejectConsent(CONSENT_ID, INSTANCE_ID);
@@ -342,7 +342,7 @@ public class CmsPsuAisControllerTest {
             .thenReturn(true);
 
         // When
-        ResponseEntity<Boolean> actualResponse = cmsPsuAisController.revokeConsent(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity<Boolean> actualResponse = cmsPsuAisController.revokeConsent(CONSENT_ID, INSTANCE_ID);
 
         // Then
         verify(cmsPsuAisService).revokeConsent(CONSENT_ID, INSTANCE_ID);
@@ -359,7 +359,7 @@ public class CmsPsuAisControllerTest {
             .thenReturn(false);
 
         // When
-        ResponseEntity<Boolean> actualResponse = cmsPsuAisController.revokeConsent(CONSENT_ID, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, INSTANCE_ID);
+        ResponseEntity<Boolean> actualResponse = cmsPsuAisController.revokeConsent(CONSENT_ID, INSTANCE_ID);
 
         // Then
         verify(cmsPsuAisService).revokeConsent(CONSENT_ID, INSTANCE_ID);
