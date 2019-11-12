@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -49,7 +48,7 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
     }
 
     @Override
-    public void validate(Object body, MessageError messageError) {
+    public MessageError validate(Object body, MessageError messageError) {
         try {
             doPeriodicValidation(paymentMapper.getPeriodicPayment(body), messageError);
         } catch (IllegalArgumentException e) {
@@ -59,22 +58,24 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR));
             }
         }
+
+        return messageError;
     }
 
     void doPeriodicValidation(PeriodicPayment periodicPayment, MessageError messageError) {
         super.doSingleValidation(periodicPayment, messageError);
 
-        if (Objects.isNull(periodicPayment.getStartDate())) {
+        if (periodicPayment.getStartDate() == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "startDate"));
         } else {
             validateStartDate(periodicPayment.getStartDate(), messageError);
         }
 
-        if (Objects.nonNull(periodicPayment.getExecutionRule())) {
+        if (periodicPayment.getExecutionRule() != null) {
             checkFieldForMaxLength(periodicPayment.getExecutionRule().getValue(), "executionRule", validationConfig.getExecutionRule(), messageError);
         }
 
-        if (Objects.isNull(periodicPayment.getFrequency())) {
+        if (periodicPayment.getFrequency() == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "frequency"));
         }
         if (areDatesInvalidInPeriodicPayment(periodicPayment)) {

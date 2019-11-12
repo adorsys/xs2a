@@ -38,7 +38,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -65,7 +64,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     }
 
     @Override
-    public void validate(Object body, MessageError messageError) {
+    public MessageError validate(Object body, MessageError messageError) {
         try {
             doSingleValidation(paymentMapper.getSinglePayment(body), messageError);
         } catch (IllegalArgumentException e) {
@@ -75,24 +74,26 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR));
             }
         }
+
+        return messageError;
     }
 
     void doSingleValidation(SinglePayment singlePayment, MessageError messageError) {
         checkFieldForMaxLength(singlePayment.getEndToEndIdentification(), "endToEndIdentification", validationConfig.getEndToEndIdentification(), messageError);
 
-        if (Objects.isNull(singlePayment.getDebtorAccount())) {
+        if (singlePayment.getDebtorAccount() == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "debtorAccount"));
         } else {
             validateAccount(singlePayment.getDebtorAccount(), messageError);
         }
 
-        if (Objects.isNull(singlePayment.getInstructedAmount())) {
+        if (singlePayment.getInstructedAmount() == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "instructedAmount"));
         } else {
             validateInstructedAmount(singlePayment.getInstructedAmount(), messageError);
         }
 
-        if (Objects.isNull(singlePayment.getCreditorAccount())) {
+        if (singlePayment.getCreditorAccount() == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "creditorAccount"));
         } else {
             validateAccount(singlePayment.getCreditorAccount(), messageError);
@@ -100,7 +101,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
 
         checkFieldForMaxLength(singlePayment.getCreditorName(), "creditorName", validationConfig.getCreditorName(), messageError);
 
-        if (Objects.nonNull(singlePayment.getCreditorAddress())) {
+        if (singlePayment.getCreditorAddress() != null) {
             validateAddress(singlePayment.getCreditorAddress(), messageError);
         }
 
@@ -120,7 +121,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         checkFieldForMaxLength(address.getTownName(), "townName", validationConfig.getTownName(), messageError);
         checkFieldForMaxLength(address.getPostCode(), "postCode", validationConfig.getPostCode(), messageError);
 
-        if (Objects.isNull(address.getCountry()) || StringUtils.isBlank(address.getCountry().getCode())) {
+        if (address.getCountry() == null || StringUtils.isBlank(address.getCountry().getCode())) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_VALUE_REQUIRED, "address.country"));
         } else if (!Arrays.asList(Locale.getISOCountries()).contains(address.getCountry().getCode())) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_ADDRESS_COUNTRY_INCORRECT));
@@ -128,10 +129,10 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     }
 
     private void validateInstructedAmount(Xs2aAmount instructedAmount, MessageError messageError) {
-        if (Objects.isNull(instructedAmount.getCurrency())) {
+        if (instructedAmount.getCurrency() == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, "currency"));
         }
-        if (Objects.isNull(instructedAmount.getAmount())) {
+        if (instructedAmount.getAmount() == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "amount"));
         } else {
             amountValidator.validateAmount(instructedAmount.getAmount(), messageError);

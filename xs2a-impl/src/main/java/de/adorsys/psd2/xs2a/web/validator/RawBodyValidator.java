@@ -22,6 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface RawBodyValidator {
 
-    void validate(HttpServletRequest request, MessageError messageError);
+    MessageError validate(HttpServletRequest request, MessageError messageError);
 
 }

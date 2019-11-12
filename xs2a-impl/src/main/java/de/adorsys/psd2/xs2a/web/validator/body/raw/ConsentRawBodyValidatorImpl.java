@@ -33,7 +33,7 @@ public class ConsentRawBodyValidatorImpl implements ConsentRawBodyValidator {
     }
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
-        dateFieldValidator.validateRawDataDates(request, AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError);
+    public MessageError validate(HttpServletRequest request, MessageError messageError) {
+        return dateFieldValidator.validateRawDataDates(request, AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError);
     }
 }

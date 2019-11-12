@@ -78,8 +78,9 @@ public class RequestValidationInterceptorTest {
             }
 
             @Override
-            public void validate(HttpServletRequest request, MessageError messageError) {
+            public MessageError validate(HttpServletRequest request, MessageError messageError) {
                 messageError.addTppMessage(TppMessageInformation.of(FORMAT_ERROR));
+                return messageError;
             }
         };
     }
@@ -100,6 +101,7 @@ public class RequestValidationInterceptorTest {
         Method method = getClass().getDeclaredMethod(METHOD_NAME);
         when(handler.getMethod()).thenReturn(method);
         when(methodValidatorController.getMethod(anyString())).thenReturn(defaultMethodValidator);
+        when(defaultMethodValidator.validate(any(), any())).thenReturn(new MessageError());
 
         assertTrue(interceptor.preHandle(request, response, handler));
 

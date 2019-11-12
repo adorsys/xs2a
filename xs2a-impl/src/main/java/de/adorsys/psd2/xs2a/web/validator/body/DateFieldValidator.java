@@ -44,8 +44,8 @@ public class DateFieldValidator {
     private final LocalDateConverter localDateConverter;
     private final FieldExtractor fieldExtractor;
 
-    public void validateDateFormat(HttpServletRequest request, EnumSet<Xs2aRequestBodyDateField> fields, MessageError messageError) {
-        validateRawDataDates(request, fields, messageError);
+    public MessageError validateDateFormat(HttpServletRequest request, EnumSet<Xs2aRequestBodyDateField> fields, MessageError messageError) {
+        return validateRawDataDates(request, fields, messageError);
     }
 
     public void validateDayOfExecution(HttpServletRequest request, MessageError messageError) {
@@ -53,11 +53,13 @@ public class DateFieldValidator {
             .ifPresent(day -> validateDayOfExecutionValue(day, messageError));
     }
 
-    public void validateRawDataDates(HttpServletRequest request, EnumSet<Xs2aRequestBodyDateField> fields, MessageError messageError) {
+    public MessageError validateRawDataDates(HttpServletRequest request, EnumSet<Xs2aRequestBodyDateField> fields, MessageError messageError) {
         for (Xs2aRequestBodyDateField field : fields) {
             fieldExtractor.extractField(request, field.getFieldName(), messageError)
                 .ifPresent(date -> convert(field.getFieldName(), date, field.getFormatter(), messageError));
         }
+
+        return messageError;
     }
 
     private void convert(String key, String value, Xs2aBodyDateFormatter formatter, MessageError messageError) {

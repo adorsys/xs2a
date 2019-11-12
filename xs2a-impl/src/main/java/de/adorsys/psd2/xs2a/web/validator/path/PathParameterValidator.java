@@ -22,6 +22,13 @@ import java.util.Map;
 
 public interface PathParameterValidator {
 
-    void validate(Map<String, String> queryParameterMap, MessageError messageError);
+    /**
+     * Validates path parameters from the request and populates given error with error text if parameters are invalid
+     *
+     * @param pathParameterMap path parameters from the request, with their names acting as keys
+     * @param messageError     error to be populated
+     * @return {@link MessageError} object, enriched or not.
+     */
+    MessageError validate(Map<String, String> pathParameterMap, MessageError messageError);
 
 }

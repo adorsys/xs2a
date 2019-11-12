@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Objects;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_EXTRA_FIELD;
@@ -51,7 +50,7 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
     }
 
     @Override
-    public void validate(Object body, MessageError messageError) {
+    public MessageError validate(Object body, MessageError messageError) {
         try {
             doBulkValidation(paymentMapper.getBulkPayment(body), messageError);
         } catch (IllegalArgumentException e) {
@@ -61,11 +60,13 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR));
             }
         }
+
+        return messageError;
     }
 
     void doBulkValidation(BulkPayment bulkPayment, MessageError messageError) {
 
-        if (Objects.nonNull(bulkPayment.getDebtorAccount())) {
+        if (bulkPayment.getDebtorAccount() != null) {
             validateAccount(bulkPayment.getDebtorAccount(), messageError);
         }
 

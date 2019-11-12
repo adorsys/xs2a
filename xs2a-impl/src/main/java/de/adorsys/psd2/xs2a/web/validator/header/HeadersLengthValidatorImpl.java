@@ -44,12 +44,14 @@ public class HeadersLengthValidatorImpl extends AbstractHeaderValidatorImpl
     }
 
     @Override
-    public void validate(Map<String, String> inputHeaders, MessageError messageError) {
+    public MessageError validate(Map<String, String> inputHeaders, MessageError messageError) {
         for (Map.Entry<String, String> header : inputHeaders.entrySet()) {
             if (isHeaderExceedsLength(header)) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_OVERSIZE_HEADER, header.getKey(), HEADERS_MAX_LENGTHS.get(header.getKey())));
             }
         }
+
+        return messageError;
     }
 
     private boolean isHeaderExceedsLength(Map.Entry<String, String> header) {
@@ -61,6 +63,6 @@ public class HeadersLengthValidatorImpl extends AbstractHeaderValidatorImpl
         String headerNameLowerCase = headerName.toLowerCase();
         Set<String> headersToValidate = HEADERS_MAX_LENGTHS.keySet();
         return headersToValidate.contains(headerNameLowerCase)
-                        && headerValue.length() > HEADERS_MAX_LENGTHS.get(headerNameLowerCase);
+                   && headerValue.length() > HEADERS_MAX_LENGTHS.get(headerNameLowerCase);
     }
 }
