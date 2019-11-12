@@ -17,7 +17,7 @@ To keep it simple:
 
 Normally new development version is released every two weeks, however this is not a strict rule, rather our willingness.
 
-https://adorsys.de/en/psd2[adorsys Team] guarantees general support of this XS2A library at least till 01.03.2022.
+https://adorsys.de/kontakt/[adorsys Team] guarantees general support of this XS2A library at least till 01.03.2022.
 
 [discrete]
 === Backward compatibility
@@ -31,12 +31,12 @@ but some changes may appear between APIs of version `4.25` with version `4.22`.
 
 The same is valid for the database schema.
 
-If you need extended support, please contact https://adorsys.de/en/psd2[adorsys Team].
+If you need extended support, please contact https://adorsys.de/kontakt/[adorsys Team].
 
 === Stable versions
 
 Stable versions are recommended for production usage. Normally they have support period of time at least 6 months.
-If you need additional support, please contact https://adorsys.de/en/psd2[adorsys Team].
+If you need additional support, please contact https://adorsys.de/kontakt/[adorsys Team].
 
 ==== Mainline 4.x (Planned to be supported till 01.03.2020)
 
