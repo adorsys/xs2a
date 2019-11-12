@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.aspsp.profile.web;
+package de.adorsys.psd2.aspsp.profile.web.controller;
 
 import de.adorsys.psd2.aspsp.profile.domain.migration.OldProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileConvertService;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.aspsp.profile.web;
+package de.adorsys.psd2.aspsp.profile.web.controller;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
@@ -24,30 +24,17 @@ import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
 import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField.IBAN;
 import static de.adorsys.psd2.xs2a.core.ais.BookingStatus.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AspspProfileControllerTest {
+public class AspspSettingsBuilder {
     private static final int ACCOUNT_ACCESS_FREQUENCY_PER_DAY = 5;
     private static final boolean AIS_PIS_SESSION_SUPPORTED = false;
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
@@ -70,7 +57,7 @@ public class AspspProfileControllerTest {
     private static final long NOT_CONFIRMED_CONSENT_EXPIRATION_TIME_MS = 86400000;
     private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS = 86400000;
     private static final String PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP = "https://localhost/payment/cancellation/";
-    private static Map<PaymentType, Set<String>> SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX = buildSupportedPaymentTypeAndProductMatrix();
+    private static final Map<PaymentType, Set<String>> SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX = buildSupportedPaymentTypeAndProductMatrix();
     private static final long PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final boolean AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED = false;
     private static final boolean SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED = false;
@@ -88,47 +75,10 @@ public class AspspProfileControllerTest {
     private static final List<String> SUPPORTED_TRANSACTION_STATUS_FORMATS = Arrays.asList("application/json", "application/xml");
     private static final boolean IS_CHECK_TPP_ROLES_FROM_CERTIFICATE = true;
 
-    @InjectMocks
-    private AspspProfileController aspspProfileController;
-
-    @Mock
-    private AspspProfileService aspspProfileService;
-
-    @Before
-    public void setUpAccountServiceMock() {
-        when(aspspProfileService.getAspspSettings())
-            .thenReturn(buildAspspSettings());
-        when(aspspProfileService.getScaApproaches())
-            .thenReturn(Collections.singletonList(ScaApproach.REDIRECT));
+    private AspspSettingsBuilder() {
     }
 
-    @Test
-    public void getAspspSettings() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<AspspSettings> actualResponse = aspspProfileController.getAspspSettings();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(buildAspspSettings());
-    }
-
-    @Test
-    public void getScaApproach() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<List<ScaApproach>> actualResponse = aspspProfileController.getScaApproaches();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(Collections.singletonList(ScaApproach.REDIRECT));
-    }
-
-    private static AspspSettings buildAspspSettings() {
+    static AspspSettings buildAspspSettings() {
         ConsentTypeSetting consentTypes = new ConsentTypeSetting(BANK_OFFERED_CONSENT_SUPPORTED,
                                                                  GLOBAL_CONSENT_SUPPORTED,
                                                                  AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED,
@@ -187,7 +137,7 @@ public class AspspProfileControllerTest {
     }
 
     private static Map<PaymentType, Set<String>> buildSupportedPaymentTypeAndProductMatrix() {
-        Map<PaymentType, Set<String>> matrix = new HashMap<>();
+        Map<PaymentType, Set<String>> matrix = new EnumMap<>(PaymentType.class);
         Set<String> availablePaymentProducts = Collections.singleton("sepa-credit-transfers");
         matrix.put(PaymentType.SINGLE, availablePaymentProducts);
         return matrix;

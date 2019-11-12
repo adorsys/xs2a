@@ -3,8 +3,13 @@
 == Table of Contents
 
 * Removed deprecated columns TppRedirectUri from TppInfo
+* Refactoring: Extracted ASPSP Profile web-endpoints into separate module
 
 == Removed deprecated columns TppRedirectUri from TppInfo
 
 From now on, deprecated columns `redirect_uri`, `nok_redirect_uri`, `cancel_redirect_uri`,
 `cancel_nok_redirect_uri` are removed from `tpp_info` table in CMS.
+
+== Refactoring: Extracted ASPSP Profile web-endpoints into separate module
+
+From now on, endpoints for accessing and updating ASPSP Profile are located in `aspsp-profile-web` module.

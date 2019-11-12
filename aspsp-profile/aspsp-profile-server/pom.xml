@@ -47,6 +47,12 @@
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
+            <artifactId>aspsp-profile-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-object-mapper</artifactId>
             <version>${project.version}</version>
         </dependency>
