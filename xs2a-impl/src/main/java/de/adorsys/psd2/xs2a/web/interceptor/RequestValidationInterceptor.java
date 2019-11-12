@@ -32,10 +32,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * This interceptor is used for headers and body validation of incoming HTTP requests. The main purposes: collect the
- * list of human-readable errors in case of using wrong headers or JSON fields (ex, IBAN has wrong format, some mandatory
- * header is missing etc). Each error in the incoming request (validated in accordance with the PSD2 documentation)
- * results in one text message in the response.
+ * This interceptor is used for headers, query and path parameters and body validation of incoming HTTP requests. The
+ * main purposes: collect the list of human-readable errors in case of using wrong headers, parameters or JSON fields
+ * (ex, IBAN has wrong format, some mandatory header is missing etc). Each error in the incoming request (validated in
+ * accordance with the PSD2 documentation) results in one text message in the response.
  * <p>
  * Please note, this interceptor can only return the response with the HTTP code 400 (FORMAT ERROR).
  * <p>
@@ -65,8 +65,7 @@ public class RequestValidationInterceptor extends HandlerInterceptorAdapter {
             String methodName = handlerMethod.getMethod().getName();
 
             MethodValidator methodValidator = methodValidatorController.getMethod(methodName);
-            // TODO: think about changing the chain of void methods: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/813
-            methodValidator.validate(request, initialMessageError);
+            initialMessageError = methodValidator.validate(request, initialMessageError);
 
             if (!initialMessageError.getTppMessages().isEmpty()) {
                 // Last part of all validations: if there is at least one error - we build response with HTTP code 400.

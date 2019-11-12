@@ -32,7 +32,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Objects;
 
 
 @Component
@@ -50,7 +49,7 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
     }
 
     @Override
-    public void validate(Object body, MessageError messageError, PaymentValidationConfig validationConfig) {
+    public MessageError validate(Object body, MessageError messageError, PaymentValidationConfig validationConfig) {
         try {
             doBulkValidation(paymentMapper.getBulkPayment(body), messageError, validationConfig);
         } catch (IllegalArgumentException e) {
@@ -60,11 +59,12 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR));
             }
         }
+        return messageError;
     }
 
     void doBulkValidation(BulkPayment bulkPayment, MessageError messageError, PaymentValidationConfig validationConfig) {
 
-        if (Objects.isNull(bulkPayment.getDebtorAccount())) {
+        if (bulkPayment.getDebtorAccount() == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, "debtorAccount"));
         } else {
             validateAccount(bulkPayment.getDebtorAccount(), messageError, validationConfig);

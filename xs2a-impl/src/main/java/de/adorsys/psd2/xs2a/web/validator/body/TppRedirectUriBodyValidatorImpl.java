@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -45,7 +44,7 @@ public class TppRedirectUriBodyValidatorImpl implements BodyValidator {
     private final ErrorBuildingService errorBuildingService;
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
+    public MessageError validate(HttpServletRequest request, MessageError messageError) {
         if (isRedirectScaApproach()) {
             String tppRedirectUriHeader = request.getHeader(TPP_REDIRECT_URI);
             Map<String, String> headers = Collections.list(request.getHeaderNames())
@@ -54,12 +53,14 @@ public class TppRedirectUriBodyValidatorImpl implements BodyValidator {
 
             if (!headers.containsKey(TPP_REDIRECT_URI)) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_ABSENT_HEADER, TPP_REDIRECT_URI));
-            } else if (Objects.isNull(tppRedirectUriHeader)) {
+            } else if (tppRedirectUriHeader == null) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_HEADER, TPP_REDIRECT_URI));
             } else if (StringUtils.isBlank(tppRedirectUriHeader)) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_BLANK_HEADER, TPP_REDIRECT_URI));
             }
         }
+
+        return messageError;
     }
 
     private boolean isRedirectScaApproach() {

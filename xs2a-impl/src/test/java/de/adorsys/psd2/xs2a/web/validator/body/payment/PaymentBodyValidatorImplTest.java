@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
+import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.CurrencyValidator;
@@ -114,7 +115,9 @@ public class PaymentBodyValidatorImplTest {
     private MockHttpServletRequest mockRequest;
     @Mock
     private FieldExtractor fieldExtractor;
+
     private PaymentValidationConfig validationConfig;
+    private PathParameterExtractor pathParameterExtractor;
 
     @Before
     public void setUp() {
@@ -122,12 +125,14 @@ public class PaymentBodyValidatorImplTest {
         messageError = new MessageError(ErrorType.PIS_400);
         validationConfig = new DefaultPaymentValidationConfigImpl();
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.PIS_400);
+        pathParameterExtractor = new PathParameterExtractor();
         CurrencyValidator currencyValidator = new CurrencyValidator(errorService);
         DateFieldValidator dateFieldValidator = new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor);
         validator = new PaymentBodyValidatorImpl(errorService, xs2aObjectMapper, paymentTypeValidatorContext,
                                                  standardPaymentProductsResolver, tppRedirectUriBodyValidator,
                                                  dateFieldValidator, fieldExtractor, currencyValidator,
-                                                 new CountryPaymentValidatorResolver(aspspProfileServiceWrapper));
+                                                 new CountryPaymentValidatorResolver(aspspProfileServiceWrapper),
+                                                 pathParameterExtractor);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(PAIN_PAYMENT_PRODUCT)))
             .thenReturn(true);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(JSON_PAYMENT_PRODUCT)))
@@ -141,7 +146,6 @@ public class PaymentBodyValidatorImplTest {
 
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
-        doNothing().when(tppRedirectUriBodyValidator).validate(mockRequest, messageError);
         Object paymentBody = new Object();
         when(xs2aObjectMapper.readValue(mockRequest.getInputStream(), Object.class))
             .thenReturn(paymentBody);
@@ -163,7 +167,6 @@ public class PaymentBodyValidatorImplTest {
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
-        doNothing().when(tppRedirectUriBodyValidator).validate(mockRequest, messageError);
         when(xs2aObjectMapper.readValue(mockRequest.getInputStream(), Object.class))
             .thenThrow(new IOException());
 
@@ -215,7 +218,6 @@ public class PaymentBodyValidatorImplTest {
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
-        doNothing().when(tppRedirectUriBodyValidator).validate(mockRequest, messageError);
         Object paymentBody = new Object();
         when(xs2aObjectMapper.readValue(mockRequest.getInputStream(), Object.class))
             .thenReturn(paymentBody);
@@ -342,7 +344,6 @@ public class PaymentBodyValidatorImplTest {
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, INVALID_PAYMENT_SERVICE);
         mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
 
-        doNothing().when(tppRedirectUriBodyValidator).validate(mockRequest, messageError);
         Object paymentBody = new Object();
         when(xs2aObjectMapper.readValue(mockRequest.getInputStream(), Object.class))
             .thenReturn(paymentBody);

@@ -45,11 +45,11 @@ public class BookingStatusQueryParameterParamsValidatorImpl extends AbstractQuer
     }
 
     @Override
-    public void validate(Map<String, List<String>> queryParameterMap, MessageError messageError) {
+    public MessageError validate(Map<String, List<String>> queryParameterMap, MessageError messageError) {
         ValidationResult presenceValidationResult = validateMandatoryParameterPresence(queryParameterMap);
         if (presenceValidationResult.isNotValid()) {
             errorBuildingService.enrichMessageError(messageError, presenceValidationResult.getMessageError());
-            return;
+            return messageError;
         }
 
         String bookingStatusValue = getQueryParameterValue(queryParameterMap);
@@ -57,5 +57,7 @@ public class BookingStatusQueryParameterParamsValidatorImpl extends AbstractQuer
         if (!bookingStatusOptional.isPresent()) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_PARAMETER_VALUE, getQueryParameterName()));
         }
+
+        return messageError;
     }
 }

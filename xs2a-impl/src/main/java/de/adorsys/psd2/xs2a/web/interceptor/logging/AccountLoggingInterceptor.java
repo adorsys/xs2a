@@ -20,9 +20,9 @@ import de.adorsys.psd2.xs2a.component.logger.TppLogger;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,10 +37,11 @@ public class AccountLoggingInterceptor extends HandlerInterceptorAdapter {
     private final TppService tppService;
     private final RequestProviderService requestProviderService;
     private final LoggingContextService loggingContextService;
+    private final PathParameterExtractor pathParameterExtractor;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        Map<String, String> pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        Map<String, String> pathVariables = pathParameterExtractor.extractParameters(request);
         String accountId = Optional.ofNullable(pathVariables)
                                .map(pv -> pv.get("account-id"))
                                .orElse(NOT_EXIST_IN_URI);

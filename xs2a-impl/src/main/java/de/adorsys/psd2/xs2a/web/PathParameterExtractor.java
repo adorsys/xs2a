@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.validator.query;
+package de.adorsys.psd2.xs2a.web;
 
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerMapping;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
-public interface QueryParameterValidator {
-    /**
-     * Validates query parameters from the request and populates given error with error text if parameters are invalid
-     *
-     * @param queryParameterMap query parameters from the request, with query parameter names acting as keys
-     * @param messageError      error to be populated
-     * @return {@link MessageError} object, enriched or not.
-     */
-    MessageError validate(Map<String, List<String>> queryParameterMap, MessageError messageError);
+@Component
+public class PathParameterExtractor {
+
+    public Map<String, String> extractParameters(HttpServletRequest request) {
+        return (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+    }
+
 }

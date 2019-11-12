@@ -24,5 +24,5 @@ public interface PaymentTypeValidator {
 
     PaymentType getPaymentType();
 
-    void validate(Object body, MessageError messageError, PaymentValidationConfig validationConfig);
+    MessageError validate(Object body, MessageError messageError, PaymentValidationConfig validationConfig);
 }

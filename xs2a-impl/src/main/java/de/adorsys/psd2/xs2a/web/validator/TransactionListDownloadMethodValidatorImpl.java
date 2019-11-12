@@ -16,22 +16,22 @@
 
 package de.adorsys.psd2.xs2a.web.validator;
 
-import de.adorsys.psd2.xs2a.web.validator.body.consent.TransactionListDownloadBodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.account.TransactionListDownloadHeaderValidator;
 import de.adorsys.psd2.xs2a.web.validator.path.PathParameterValidator;
-import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 
 @Component
-public class TransactionListDownloadMethodValidatorImpl extends AbstractMethodValidator<TransactionListDownloadHeaderValidator, TransactionListDownloadBodyValidator, QueryParameterValidator, PathParameterValidator> {
+public class TransactionListDownloadMethodValidatorImpl extends AbstractMethodValidator {
 
     private static final String METHOD_NAME = "downloadTransactions";
 
     public TransactionListDownloadMethodValidatorImpl(List<TransactionListDownloadHeaderValidator> headerValidators, List<PathParameterValidator> pathParameterValidators) {
-        super(headerValidators, Collections.emptyList(), Collections.emptyList(), pathParameterValidators);
+        super(ValidatorWrapper.builder()
+                  .headerValidators(headerValidators)
+                  .pathParameterValidators(pathParameterValidators)
+                  .build());
     }
 
     @Override

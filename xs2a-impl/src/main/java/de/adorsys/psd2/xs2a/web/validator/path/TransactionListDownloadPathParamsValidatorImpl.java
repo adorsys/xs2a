@@ -39,12 +39,14 @@ public class TransactionListDownloadPathParamsValidatorImpl implements Transacti
     }
 
     @Override
-    public void validate(Map<String, String> queryParameterMap, MessageError messageError) {
+    public MessageError validate(Map<String, String> queryParameterMap, MessageError messageError) {
         String downloadId = queryParameterMap.get("download-id");
 
         if (isNonValid(downloadId)) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_PATH_PARAMETER_INVALID));
         }
+
+        return messageError;
     }
 
     private boolean isNonValid(String base64) {

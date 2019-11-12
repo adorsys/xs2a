@@ -33,7 +33,8 @@ public class WebConfigTest {
         WebConfig webConfig = new WebConfig(null, null, null,
                                             null, null, null,
                                             null, null, null,
-                                            null, null, null);
+                                            null, null, null,
+                                            null);
         List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
 
         webConfig.extendMessageConverters(messageConverters);
