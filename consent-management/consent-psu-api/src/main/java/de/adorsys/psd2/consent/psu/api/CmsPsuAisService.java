@@ -185,19 +185,6 @@ public interface CmsPsuAisService {
     /**
      * Puts a Status of AIS Consent object by its ID and PSU ID to PARTIALLY_AUTHORISED
      *
-     * @param psuIdData  PSU credentials data
-     * @param consentId  ID of Consent
-     * @param instanceId optional ID of particular service instance
-     * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
-     * @deprecated since 5.2, use {@link #authorisePartiallyConsent(String, String)} instead
-     */
-    @Deprecated
-    // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1067
-    boolean authorisePartiallyConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
-
-    /**
-     * Puts a Status of AIS Consent object by its ID and PSU ID to PARTIALLY_AUTHORISED
-     *
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.

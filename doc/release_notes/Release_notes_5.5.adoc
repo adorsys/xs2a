@@ -3,8 +3,15 @@
 == Table of Contents
 
 * Removed deprecated columns TppRedirectUri from TppInfo
+* Removed deprecated `PsuIdData` from `confirmConsent`, `rejectConsent`, `revokeConsent` in `CmsPsuAisService`
 
 == Removed deprecated columns TppRedirectUri from TppInfo
 
 From now on, deprecated columns `redirect_uri`, `nok_redirect_uri`, `cancel_redirect_uri`,
 `cancel_nok_redirect_uri` are removed from `tpp_info` table in CMS.
+
+== Removed deprecated `PsuIdData` from `confirmConsent`, `rejectConsent`, `revokeConsent` in `CmsPsuAisService`
+
+From now on, deprecated method `authorisePartiallyConsent` is removed from `CmsPsuAisService`
+and deprecated headers `psuId`, `psuIdType`, `psuCorporateId`, `psuCorporateIdType` are removed from
+`authorisePartiallyConsent` method in `CmsPsuAisController`.
