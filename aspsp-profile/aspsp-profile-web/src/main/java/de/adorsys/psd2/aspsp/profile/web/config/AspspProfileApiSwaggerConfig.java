@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.aspsp.profile.config;
+package de.adorsys.psd2.aspsp.profile.web.config;
 
 import com.google.common.base.Predicates;
 import lombok.RequiredArgsConstructor;
@@ -34,14 +34,17 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 @RequiredArgsConstructor
-public class SwaggerConfig {
+public class AspspProfileApiSwaggerConfig {
     @Value("${license.url}")
     private String licenseUrl;
     private final BuildProperties buildProperties;
 
-    @Bean(name = "api")
+    // Intellij IDEA claims that Guava predicates could be replaced with Java API, but actually it is not possible
+    @SuppressWarnings("Guava")
+    @Bean(name = "aspsp-profile-api")
     public Docket apiDocklet() {
         return new Docket(DocumentationType.SWAGGER_2)
+                   .groupName("ASPSP-PROFILE-API")
                    .apiInfo(getApiInfo())
                    .select()
                    .apis(RequestHandlerSelectors.basePackage("de.adorsys.psd2.aspsp.profile"))

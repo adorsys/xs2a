@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.aspsp.profile.service;
+package de.adorsys.psd2.aspsp.profile.domain.migration;
 
-import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import lombok.Value;
 
-import java.util.List;
-
-public interface AspspProfileUpdateService {
-
-    void updateScaApproaches(List<ScaApproach> scaApproaches);
-
-    void updateAspspSettings(AspspSettings aspspSettings);
+@Value
+public class OldProfileConfiguration {
+    private OldBankProfileSetting setting;
 }

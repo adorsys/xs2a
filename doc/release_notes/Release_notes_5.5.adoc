@@ -4,6 +4,7 @@
 
 * Removed deprecated columns TppRedirectUri from TppInfo
 * Removed deprecated `PsuIdData` from `confirmConsent`, `rejectConsent`, `revokeConsent` in `CmsPsuAisService`
+* Refactoring: Extracted ASPSP Profile web-endpoints into separate module
 
 == Removed deprecated columns TppRedirectUri from TppInfo
 
@@ -15,3 +16,7 @@ From now on, deprecated columns `redirect_uri`, `nok_redirect_uri`, `cancel_redi
 From now on, deprecated method `authorisePartiallyConsent` is removed from `CmsPsuAisService`
 and deprecated headers `psuId`, `psuIdType`, `psuCorporateId`, `psuCorporateIdType` are removed from
 `authorisePartiallyConsent` method in `CmsPsuAisController`.
+
+== Refactoring: Extracted ASPSP Profile web-endpoints into separate module
+
+From now on, endpoints for accessing and updating ASPSP Profile are located in `aspsp-profile-web` module.

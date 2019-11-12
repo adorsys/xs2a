@@ -22,11 +22,10 @@
         <artifactId>aspsp-profile</artifactId>
         <groupId>de.adorsys.psd2</groupId>
         <version>5.5-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>aspsp-profile-lib</artifactId>
+    <artifactId>aspsp-profile-internal-api</artifactId>
 
     <properties>
         <ruleset.basedir>../..</ruleset.basedir>
@@ -35,71 +34,21 @@
     <dependencies>
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
-            <artifactId>aspsp-profile-api</artifactId>
+            <artifactId>xs2a-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
-            <artifactId>aspsp-profile-internal-api</artifactId>
+            <artifactId>aspsp-profile-api</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>de.adorsys.psd2</groupId>
-            <artifactId>json-reader</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

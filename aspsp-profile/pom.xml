@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@
         <module>aspsp-profile-server</module>
         <module>aspsp-profile-lib</module>
         <module>aspsp-profile-remote</module>
+        <module>aspsp-profile-web</module>
+        <module>aspsp-profile-internal-api</module>
     </modules>
     <packaging>pom</packaging>
 
