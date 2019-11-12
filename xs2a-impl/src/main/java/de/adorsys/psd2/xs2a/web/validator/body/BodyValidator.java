@@ -22,6 +22,14 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface BodyValidator {
 
-    void validate(HttpServletRequest request, MessageError messageError);
+    /**
+     * Validates HTTP requests payloads and populates given error with error text if parameters are invalid. Validates models
+     * and raw data also.
+     *
+     * @param request      incoming {@link HttpServletRequest} object
+     * @param messageError error to be populated
+     * @return {@link MessageError} object, enriched or not.
+     */
+    MessageError validate(HttpServletRequest request, MessageError messageError);
 
 }

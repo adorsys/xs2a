@@ -34,7 +34,7 @@ public class CancelPaymentBodyValidatorImpl implements CancelPaymentBodyValidato
     }
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
-        tppRedirectUriBodyValidator.validate(request, messageError);
+    public MessageError validate(HttpServletRequest request, MessageError messageError) {
+        return tppRedirectUriBodyValidator.validate(request, messageError);
     }
 }

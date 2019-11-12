@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,14 +28,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -62,6 +62,8 @@ public class AccountLoggingInterceptorTest {
     private RequestProviderService requestProviderService;
     @Mock
     private LoggingContextService loggingContextService;
+    @Mock
+    private PathParameterExtractor pathParameterExtractor;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -70,19 +72,18 @@ public class AccountLoggingInterceptorTest {
         when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
         when(response.getHeader(X_REQUEST_ID_HEADER_NAME)).thenReturn(X_REQUEST_ID_HEADER_VALUE);
         when(requestProviderService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
+        when(pathParameterExtractor.extractParameters(any(HttpServletRequest.class))).thenReturn(Collections.emptyMap());
     }
 
     @Test
     public void preHandle_success() {
-        Map<Object, Object> pathVariables = new HashMap<>();
-        when(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(pathVariables);
         when(request.getRemoteAddr()).thenReturn(TPP_IP);
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
         when(request.getHeader(CONSENT_ID_HEADER_NAME)).thenReturn(CONSENT_ID_HEADER_VALUE);
 
         interceptor.preHandle(request, response, null);
 
-        verify(request).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        verify(pathParameterExtractor).extractParameters(any(HttpServletRequest.class));
         verify(tppService).getTppInfo();
         verify(requestProviderService).getInternalRequestId();
         verify(request).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
@@ -93,7 +94,6 @@ public class AccountLoggingInterceptorTest {
 
     @Test
     public void preHandle_pathVariableIsNull() {
-        when(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(null);
         when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
         when(request.getRemoteAddr()).thenReturn(TPP_IP);
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
@@ -101,7 +101,7 @@ public class AccountLoggingInterceptorTest {
 
         interceptor.preHandle(request, response, null);
 
-        verify(request).getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        verify(pathParameterExtractor).extractParameters(any(HttpServletRequest.class));
         verify(tppService).getTppInfo();
         verify(requestProviderService).getInternalRequestId();
         verify(request).getHeader(eq(X_REQUEST_ID_HEADER_NAME));

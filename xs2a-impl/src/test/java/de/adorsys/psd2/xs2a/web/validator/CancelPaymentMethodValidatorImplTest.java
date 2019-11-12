@@ -34,8 +34,8 @@ public class CancelPaymentMethodValidatorImplTest {
         CancelPaymentMethodValidatorImpl methodValidator = new CancelPaymentMethodValidatorImpl(headerValidators, bodyValidators);
 
         assertEquals("_cancelPayment", methodValidator.getMethodName());
-        assertSame(headerValidators, methodValidator.getHeaderValidators());
-        assertSame(bodyValidators, methodValidator.getBodyValidators());
-        assertTrue(methodValidator.getQueryParameterValidators().isEmpty());
+        assertSame(headerValidators, methodValidator.getValidatorWrapper().getHeaderValidators());
+        assertSame(bodyValidators, methodValidator.getValidatorWrapper().getBodyValidators());
+        assertTrue(methodValidator.getValidatorWrapper().getQueryParameterValidators().isEmpty());
     }
 }

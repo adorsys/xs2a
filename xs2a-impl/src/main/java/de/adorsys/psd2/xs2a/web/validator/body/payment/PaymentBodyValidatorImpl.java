@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
+import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
@@ -32,7 +33,6 @@ import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -52,10 +52,11 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
 
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
     private DateFieldValidator dateFieldValidator;
-
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
+
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final FieldExtractor fieldExtractor;
+    private final PathParameterExtractor pathParameterExtractor;
 
     @Autowired
     public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
@@ -63,46 +64,49 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
                                     StandardPaymentProductsResolver standardPaymentProductsResolver,
                                     TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
                                     DateFieldValidator dateFieldValidator,
-                                    FieldExtractor fieldExtractor) {
+                                    FieldExtractor fieldExtractor, PathParameterExtractor pathParameterExtractor) {
         super(errorBuildingService, xs2aObjectMapper);
         this.paymentTypeValidatorContext = paymentTypeValidatorContext;
         this.standardPaymentProductsResolver = standardPaymentProductsResolver;
         this.dateFieldValidator = dateFieldValidator;
         this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
         this.fieldExtractor = fieldExtractor;
+        this.pathParameterExtractor = pathParameterExtractor;
     }
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
+    public MessageError validate(HttpServletRequest request, MessageError messageError) {
         if (isRawPaymentProduct(getPathParameters(request))) {
             log.info("Raw payment product is detected.");
-            return;
+            return messageError;
         }
 
-        super.validate(request, messageError);
+        return super.validate(request, messageError);
     }
 
     @Override
-    public void validateBodyFields(HttpServletRequest request, MessageError messageError) {
+    public MessageError validateBodyFields(HttpServletRequest request, MessageError messageError) {
         tppRedirectUriBodyValidator.validate(request, messageError);
 
         Optional<Object> bodyOptional = mapBodyToInstance(request, messageError, Object.class);
 
-        // In case of wrong JSON - we don't proceed the inner fields validation.
+        // In case of wrong JSON - we don't proceed to the inner fields validation.
         if (!bodyOptional.isPresent()) {
-            return;
+            return messageError;
         }
 
-        validateInitiatePaymentBody(bodyOptional.get(), getPathParameters(request), messageError);
+        return validateInitiatePaymentBody(bodyOptional.get(), getPathParameters(request), messageError);
     }
 
     @Override
-    public void validateRawData(HttpServletRequest request, MessageError messageError) {
+    public MessageError validateRawData(HttpServletRequest request, MessageError messageError) {
         dateFieldValidator.validateDayOfExecution(request, messageError);
         dateFieldValidator.validateDateFormat(request, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
 
         validateFrequencyForPeriodicPayment(request, messageError);
         validatePurposeCodes(request, messageError);
+
+        return messageError;
     }
 
     private void validateFrequencyForPeriodicPayment(HttpServletRequest request, MessageError messageError) {
@@ -117,14 +121,14 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         }
     }
 
-    private void validateInitiatePaymentBody(Object body, Map<String, String> pathParametersMap, MessageError messageError) {
+    private MessageError validateInitiatePaymentBody(Object body, Map<String, String> pathParametersMap, MessageError messageError) {
         String paymentService = pathParametersMap.get(PAYMENT_SERVICE_PATH_VAR);
 
         Optional<PaymentTypeValidator> validator = paymentTypeValidatorContext.getValidator(paymentService);
         if (!validator.isPresent()) {
             throw new IllegalArgumentException("Unsupported payment service");
         }
-        validator.get().validate(body, messageError);
+        return validator.get().validate(body, messageError);
     }
 
     private boolean isRawPaymentProduct(Map<String, String> pathParametersMap) {
@@ -135,8 +139,8 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     private void validatePurposeCodes(HttpServletRequest request, MessageError messageError) {
         List<String> purposeCodes = extractPurposeCodes(request, messageError);
         boolean isPurposeCodeInvalid = purposeCodes.stream()
-                                             .map(PurposeCode::fromValue)
-                                             .anyMatch(Objects::isNull);
+                                           .map(PurposeCode::fromValue)
+                                           .anyMatch(Objects::isNull);
 
         if (isPurposeCodeInvalid) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, PURPOSE_CODE_FIELD_NAME));
@@ -154,6 +158,6 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     }
 
     private Map<String, String> getPathParameters(HttpServletRequest request) {
-        return (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        return pathParameterExtractor.extractParameters(request);
     }
 }

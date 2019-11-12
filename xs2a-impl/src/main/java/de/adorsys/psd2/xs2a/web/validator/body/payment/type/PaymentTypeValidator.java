@@ -23,5 +23,5 @@ public interface PaymentTypeValidator {
 
     PaymentType getPaymentType();
 
-    void validate(Object body, MessageError messageError);
+    MessageError validate(Object body, MessageError messageError);
 }

@@ -34,8 +34,8 @@ public class ConsentMethodValidatorImplTest {
         ConsentMethodValidatorImpl methodValidator = new ConsentMethodValidatorImpl(headerValidators, bodyValidators);
 
         assertEquals("_createConsent", methodValidator.getMethodName());
-        assertSame(headerValidators, methodValidator.getHeaderValidators());
-        assertSame(bodyValidators, methodValidator.getBodyValidators());
-        assertTrue(methodValidator.getQueryParameterValidators().isEmpty());
+        assertSame(headerValidators, methodValidator.getValidatorWrapper().getHeaderValidators());
+        assertSame(bodyValidators, methodValidator.getValidatorWrapper().getBodyValidators());
+        assertTrue(methodValidator.getValidatorWrapper().getQueryParameterValidators().isEmpty());
     }
 }

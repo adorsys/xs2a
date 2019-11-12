@@ -40,7 +40,7 @@ public class TppExplicitAuthorisationPreferredHeaderValidatorImpl extends Abstra
     }
 
     @Override
-    public void validate(Map<String, String> headers, MessageError messageError) {
-        checkBooleanFormat(headers, messageError);
+    public MessageError validate(Map<String, String> headers, MessageError messageError) {
+        return checkBooleanFormat(headers, messageError);
     }
 }

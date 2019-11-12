@@ -31,24 +31,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractMethodValidator<H extends HeaderValidator, B extends BodyValidator, Q extends QueryParameterValidator, P extends PathParameterValidator> implements MethodValidator {
+public abstract class AbstractMethodValidator implements MethodValidator {
+
     @Getter(AccessLevel.PACKAGE)
-    private final List<H> headerValidators;
-    @Getter(AccessLevel.PACKAGE)
-    private final List<B> bodyValidators;
-    @Getter(AccessLevel.PACKAGE)
-    private final List<Q> queryParameterValidators;
-    @Getter(AccessLevel.PACKAGE)
-    private final List<P> pathParameterValidators;
+    private final ValidatorWrapper validatorWrapper;
 
     /**
-     * Common validator which validates request headers and body
+     * Common method which processes all stuff by validators provided in {@link ValidatorWrapper} class.
      *
-     * @param request      {@link javax.servlet.http.HttpServletRequest}
-     * @param messageError is populated by errors during validation
+     * @param request      {@link HttpServletRequest}
+     * @param messageError object to be populated by errors ({@link de.adorsys.psd2.xs2a.domain.TppMessageInformation}
+     *                     objects) during validation
+     * @return {@link MessageError} object, enriched or not.
      */
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
+    public MessageError validate(HttpServletRequest request, MessageError messageError) {
         Map<String, String> headers = Collections.list(request.getHeaderNames())
                                           .stream()
                                           .collect(Collectors.toMap(h -> h, request::getHeader));
@@ -57,13 +54,28 @@ public abstract class AbstractMethodValidator<H extends HeaderValidator, B exten
         TreeMap<String, String> caseInsensitiveHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         caseInsensitiveHeaders.putAll(headers);
 
+        MessageError resultingMessageError = messageError;
+
         Map<String, List<String>> queryParameters = extractQueryParameters(request);
         Map<String, String> pathParameters = extractPathParameters(request);
 
-        getPathParameterValidators().forEach(v -> v.validate(pathParameters, messageError));
-        getQueryParameterValidators().forEach(v -> v.validate(queryParameters, messageError));
-        getHeaderValidators().forEach(v -> v.validate(caseInsensitiveHeaders, messageError));
-        getBodyValidators().forEach(v -> v.validate(request, messageError));
+        for (PathParameterValidator pathParameterValidator : validatorWrapper.getPathParameterValidators()) {
+            resultingMessageError = pathParameterValidator.validate(pathParameters, resultingMessageError);
+        }
+
+        for (QueryParameterValidator queryParameterValidator : validatorWrapper.getQueryParameterValidators()) {
+            resultingMessageError = queryParameterValidator.validate(queryParameters, resultingMessageError);
+        }
+
+        for (HeaderValidator headerValidator : validatorWrapper.getHeaderValidators()) {
+            resultingMessageError = headerValidator.validate(caseInsensitiveHeaders, resultingMessageError);
+        }
+
+        for (BodyValidator bodyValidator : validatorWrapper.getBodyValidators()) {
+            resultingMessageError = bodyValidator.validate(request, resultingMessageError);
+        }
+
+        return resultingMessageError;
     }
 
     private Map<String, String> extractPathParameters(HttpServletRequest request) {

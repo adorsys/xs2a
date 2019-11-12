@@ -44,18 +44,22 @@ public class AbstractBodyValidatorImpl implements BodyValidator {
         this.xs2aObjectMapper = xs2aObjectMapper;
     }
 
-    protected void validateBodyFields(HttpServletRequest request, MessageError messageError) {
+    protected MessageError validateBodyFields(HttpServletRequest request, MessageError messageError) {
+        return messageError;
     }
 
-    protected void validateRawData(HttpServletRequest request, MessageError messageError) {
+    protected MessageError validateRawData(HttpServletRequest request, MessageError messageError) {
+        return messageError;
     }
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
-        validateRawData(request, messageError);
-        if (CollectionUtils.isEmpty(messageError.getTppMessages())) {
-            validateBodyFields(request, messageError);
+    public MessageError validate(HttpServletRequest request, MessageError messageError) {
+        MessageError result = validateRawData(request, messageError);
+        if (CollectionUtils.isEmpty(result.getTppMessages())) {
+            result = validateBodyFields(request, result);
         }
+
+        return result;
     }
 
     protected void checkFieldForMaxLength(String fieldToCheck, String fieldName, ValidationObject validationObject, MessageError messageError) {

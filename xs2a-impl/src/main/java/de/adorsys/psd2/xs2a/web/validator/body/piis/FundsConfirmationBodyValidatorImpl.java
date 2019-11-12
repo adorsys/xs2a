@@ -48,12 +48,12 @@ public class FundsConfirmationBodyValidatorImpl extends AbstractBodyValidatorImp
     }
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
+    public MessageError validate(HttpServletRequest request, MessageError messageError) {
         Optional<ConfirmationOfFunds> confirmationOfFundsOptional = mapBodyToInstance(request, messageError, ConfirmationOfFunds.class);
 
-        // In case of wrong JSON - we don't proceed the inner fields validation.
+        // In case of wrong JSON - we don't proceed to the inner fields validation.
         if (!confirmationOfFundsOptional.isPresent()) {
-            return;
+            return messageError;
         }
 
         ConfirmationOfFunds confirmationOfFunds = confirmationOfFundsOptional.get();
@@ -69,6 +69,8 @@ public class FundsConfirmationBodyValidatorImpl extends AbstractBodyValidatorImp
         } else {
             validateAmount(confirmationOfFunds.getInstructedAmount(), messageError);
         }
+
+        return messageError;
     }
 
     private void validateAmount(Amount instructedAmount, MessageError messageError) {

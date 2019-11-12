@@ -17,12 +17,8 @@
 package de.adorsys.psd2.xs2a.web.validator;
 
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
-import de.adorsys.psd2.xs2a.web.validator.header.HeaderValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.XRequestIdHeaderValidatorImpl;
-import de.adorsys.psd2.xs2a.web.validator.path.PathParameterValidator;
-import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,13 +27,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 @Component
-public class DefaultMethodValidatorImpl extends AbstractMethodValidator<HeaderValidator, BodyValidator, QueryParameterValidator, PathParameterValidator> {
+public class DefaultMethodValidatorImpl extends AbstractMethodValidator {
 
     private XRequestIdHeaderValidatorImpl xRequestIdHeaderValidator;
 
     @Autowired
     public DefaultMethodValidatorImpl(XRequestIdHeaderValidatorImpl xRequestIdHeaderValidator) {
-        super(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+        super(ValidatorWrapper.builder().build());
         this.xRequestIdHeaderValidator = xRequestIdHeaderValidator;
     }
 
@@ -47,8 +43,8 @@ public class DefaultMethodValidatorImpl extends AbstractMethodValidator<HeaderVa
     }
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
-        xRequestIdHeaderValidator.validate(Collections.singletonMap(Xs2aHeaderConstant.X_REQUEST_ID,
-                                                                    request.getHeader(Xs2aHeaderConstant.X_REQUEST_ID)), messageError);
+    public MessageError validate(HttpServletRequest request, MessageError messageError) {
+        return xRequestIdHeaderValidator.validate(Collections.singletonMap(Xs2aHeaderConstant.X_REQUEST_ID,
+                                                                           request.getHeader(Xs2aHeaderConstant.X_REQUEST_ID)), messageError);
     }
 }

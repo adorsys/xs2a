@@ -24,6 +24,14 @@ public interface MethodValidator {
 
     String getMethodName();
 
-    void validate(HttpServletRequest request, MessageError messageError);
+    /**
+     * First level of validation - by REST controller method name (for example "_createConsent",
+     * "_initiatePayment"...).
+     *
+     * @param request      {@link HttpServletRequest} object
+     * @param messageError error golder, that may be filled with errors
+     * @return {@link MessageError} object, enriched or not
+     */
+    MessageError validate(HttpServletRequest request, MessageError messageError);
 
 }
