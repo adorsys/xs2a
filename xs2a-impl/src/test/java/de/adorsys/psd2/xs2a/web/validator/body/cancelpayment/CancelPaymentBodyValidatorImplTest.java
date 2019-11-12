@@ -28,7 +28,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -50,7 +49,6 @@ public class CancelPaymentBodyValidatorImplTest {
 
     @Test
     public void validate() {
-        doNothing().when(tppRedirectUriBodyValidator).validate(request, messageError);
         cancelPaymentBodyValidator.validate(request, messageError);
         verify(tppRedirectUriBodyValidator).validate(request, messageError);
     }

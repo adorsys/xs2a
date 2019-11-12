@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -63,41 +62,43 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
     }
 
     @Override
-    public void validateBodyFields(HttpServletRequest request, MessageError messageError) {
+    public MessageError validateBodyFields(HttpServletRequest request, MessageError messageError) {
         tppRedirectUriBodyValidator.validate(request, messageError);
 
         validateRawAccess(request, messageError);
 
         Optional<Consents> consentsOptional = mapBodyToInstance(request, messageError, Consents.class);
 
-        // In case of wrong JSON - we don't proceed the inner fields validation.
+        // In case of wrong JSON - we don't proceed to the inner fields validation.
         if (!consentsOptional.isPresent()) {
-            return;
+            return messageError;
         }
 
         Consents consents = consentsOptional.get();
 
-        if (Objects.isNull(consents.getRecurringIndicator())) {
+        if (consents.getRecurringIndicator() == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "recurringIndicator"));
         }
 
-        if (Objects.isNull(consents.getValidUntil())) {
+        if (consents.getValidUntil() == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "validUntil"));
         } else {
             validateValidUntil(consents.getValidUntil(), messageError);
         }
 
-        if (Objects.isNull(consents.getFrequencyPerDay())) {
+        if (consents.getFrequencyPerDay() == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "frequencyPerDay"));
         } else {
             validateFrequencyPerDay(consents.getFrequencyPerDay(), messageError);
         }
+
+        return messageError;
     }
 
     @Override
-    public void validateRawData(HttpServletRequest request, MessageError messageError) {
+    public MessageError validateRawData(HttpServletRequest request, MessageError messageError) {
         validateRawAccess(request, messageError);
-        dateFieldValidator.validateDateFormat(request, AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError);
+        return dateFieldValidator.validateDateFormat(request, AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError);
     }
 
     private void validateValidUntil(LocalDate validUntil, MessageError messageError) {

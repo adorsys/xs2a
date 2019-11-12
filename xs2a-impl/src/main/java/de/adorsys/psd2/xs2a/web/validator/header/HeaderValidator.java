@@ -22,5 +22,12 @@ import java.util.Map;
 
 public interface HeaderValidator {
 
-    void validate(Map<String, String> headers, MessageError messageError);
+    /**
+     * Validates HTTP headers from the request and populates given error with error text if headers are invalid
+     *
+     * @param headers      headers from the request, with their names acting as keys
+     * @param messageError error to be populated
+     * @return {@link MessageError} object, enriched or not.
+     */
+    MessageError validate(Map<String, String> headers, MessageError messageError);
 }

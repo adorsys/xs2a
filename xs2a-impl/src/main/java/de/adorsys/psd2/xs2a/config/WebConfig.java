@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
+import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import de.adorsys.psd2.xs2a.web.interceptor.RequestValidationInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
@@ -75,6 +76,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final RedirectIdService redirectIdService;
     private final RequestResponseLogger requestResponseLogger;
     private final LoggingContextService loggingContextService;
+    private final PathParameterExtractor pathParameterExtractor;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -86,11 +88,11 @@ public class WebConfig implements WebMvcConfigurer {
         // Please, keep this interceptor's order, because it is important, that logging interceptors will be called before the validation ones to log all the requests (even wrong ones).
         // The interceptors are executed in the order in which they are declared for preHandle(...) and vice versa for postHandle(...).
         // Logging interceptors:
-        registry.addInterceptor(new AccountLoggingInterceptor(tppService, requestProviderService, loggingContextService)).addPathPatterns(ACCOUNTS_PATH);
-        registry.addInterceptor(new ConsentLoggingInterceptor(tppService, redirectIdService, requestProviderService, loggingContextService)).addPathPatterns(CONSENTS_PATH);
+        registry.addInterceptor(new AccountLoggingInterceptor(tppService, requestProviderService, loggingContextService, pathParameterExtractor)).addPathPatterns(ACCOUNTS_PATH);
+        registry.addInterceptor(new ConsentLoggingInterceptor(tppService, redirectIdService, requestProviderService, loggingContextService, pathParameterExtractor)).addPathPatterns(CONSENTS_PATH);
         registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService, requestProviderService)).addPathPatterns(FUNDS_CONFIRMATION_PATH);
-        registry.addInterceptor(new PaymentLoggingInterceptor(tppService, redirectIdService, requestProviderService, loggingContextService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
-        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService, redirectIdService, requestProviderService)).addPathPatterns(SIGNING_BASKETS_PATH);
+        registry.addInterceptor(new PaymentLoggingInterceptor(tppService, redirectIdService, requestProviderService, loggingContextService, pathParameterExtractor)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
+        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService, redirectIdService, requestProviderService, pathParameterExtractor)).addPathPatterns(SIGNING_BASKETS_PATH);
         registry.addInterceptor(new RequestResponseLoggingInterceptor(requestResponseLogger, requestProviderService)).addPathPatterns(getAllXs2aEndpointPaths());
         registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, xs2aObjectMapper, requestProviderService))
             .addPathPatterns(getAllXs2aEndpointPaths());

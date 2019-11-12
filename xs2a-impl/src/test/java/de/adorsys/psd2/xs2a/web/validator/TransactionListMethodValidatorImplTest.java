@@ -18,7 +18,9 @@ package de.adorsys.psd2.xs2a.web.validator;
 
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
+import de.adorsys.psd2.xs2a.web.validator.header.HeaderValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.account.TransactionListHeaderValidator;
+import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import de.adorsys.psd2.xs2a.web.validator.query.account.TransactionListQueryParamsValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -114,9 +116,9 @@ public class TransactionListMethodValidatorImplTest {
     @Test
     public void getValidators_shouldReturnValidatorsFromConstructors() {
         // When
-        List<TransactionListQueryParamsValidator> actualQueryValidators = transactionListMethodValidator.getQueryParameterValidators();
-        List<TransactionListHeaderValidator> actualHeaderValidators = transactionListMethodValidator.getHeaderValidators();
-        List<BodyValidator> actualBodyValidators = transactionListMethodValidator.getBodyValidators();
+        List<? extends QueryParameterValidator> actualQueryValidators = transactionListMethodValidator.getValidatorWrapper().getQueryParameterValidators();
+        List<? extends HeaderValidator> actualHeaderValidators = transactionListMethodValidator.getValidatorWrapper().getHeaderValidators();
+        List<? extends BodyValidator> actualBodyValidators = transactionListMethodValidator.getValidatorWrapper().getBodyValidators();
 
         // Then
         assertEquals(Collections.singletonList(transactionListHeaderValidator), actualHeaderValidators);

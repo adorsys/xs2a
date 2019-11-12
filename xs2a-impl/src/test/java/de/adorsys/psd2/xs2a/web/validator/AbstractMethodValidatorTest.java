@@ -69,10 +69,12 @@ public class AbstractMethodValidatorTest {
         request.addHeader("Content-Type", "application/json");
         request.addParameter(QUERY_PARAMETER_NAME, QUERY_PARAMETER_VALUE);
 
-        methodValidator = new AbstractMethodValidator(Collections.singletonList(headerValidator),
-                                                      Collections.singletonList(bodyValidator),
-                                                      Collections.singletonList(queryParameterValidator),
-                                                      Collections.singletonList(pathParameterValidator)) {
+        methodValidator = new AbstractMethodValidator(ValidatorWrapper.builder()
+                                                          .headerValidators(Collections.singletonList(headerValidator))
+                                                          .bodyValidators(Collections.singletonList(bodyValidator))
+                                                          .queryParameterValidators(Collections.singletonList(queryParameterValidator))
+                                                          .pathParameterValidators(Collections.singletonList(pathParameterValidator))
+                                                          .build()) {
             @Override
             public String getMethodName() {
                 return "method_name";
@@ -82,7 +84,7 @@ public class AbstractMethodValidatorTest {
 
     @Test
     public void validate() {
-        methodValidator.validate(request, messageError);
+        messageError = methodValidator.validate(request, messageError);
 
         verify(headerValidator, times(1)).validate(headersCaptor.capture(), eq(messageError));
         verify(bodyValidator, times(1)).validate(eq(request), eq(messageError));

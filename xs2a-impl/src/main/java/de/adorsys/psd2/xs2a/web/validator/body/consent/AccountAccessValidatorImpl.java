@@ -57,33 +57,35 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
     }
 
     @Override
-    public void validateBodyFields(HttpServletRequest request, MessageError messageError) {
+    public MessageError validateBodyFields(HttpServletRequest request, MessageError messageError) {
 
         Optional<Consents> consentsOptional = mapBodyToInstance(request, messageError, Consents.class);
 
-        // In case of wrong JSON - we don't proceed the inner fields validation.
+        // In case of wrong JSON - we don't proceed to the inner fields validation.
         if (!consentsOptional.isPresent()) {
-            return;
+            return messageError;
         }
 
         Consents consents = consentsOptional.get();
 
-        if (Objects.isNull(consents.getAccess())) {
+        if (consents.getAccess() == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "access"));
         } else {
             validateAccountAccess(consents, messageError);
         }
+
+        return messageError;
     }
 
     @Override
-    public void validateRawData(HttpServletRequest request, MessageError messageError) {
-        dateFieldValidator.validateDateFormat(request, AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError);
+    public MessageError validateRawData(HttpServletRequest request, MessageError messageError) {
+        return dateFieldValidator.validateDateFormat(request, AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError);
     }
 
     private void validateAccountAccess(Consents consents, MessageError messageError) {
         AccountAccess accountAccess = consents.getAccess();
 
-        if (Objects.nonNull(accountAccess.getAccounts())) {
+        if (accountAccess.getAccounts() != null) {
 
             Stream<AccountReference> allReferences = Stream.of(accountAccess.getAccounts(), accountAccess.getBalances(), accountAccess.getTransactions())
                                                          .filter(Objects::nonNull)

@@ -38,12 +38,14 @@ public abstract class AbstractHeaderValidatorImpl {
 
     protected abstract String getHeaderName();
 
-    public void validate(Map<String, String> headers, MessageError messageError) {
+    public MessageError validate(Map<String, String> headers, MessageError messageError) {
         ValidationResult validationResult = validate(headers);
 
         if (validationResult.isNotValid()) {
             errorBuildingService.enrichMessageError(messageError, validationResult.getMessageError());
         }
+
+        return messageError;
     }
 
     protected ValidationResult validate(Map<String, String> headers) {
@@ -73,7 +75,7 @@ public abstract class AbstractHeaderValidatorImpl {
         return checkHeaderContent(headers);
     }
 
-    void checkBooleanFormat(Map<String, String> headers, MessageError messageError) {
+    MessageError checkBooleanFormat(Map<String, String> headers, MessageError messageError) {
         String header = headers.get(getHeaderName());
         if (Objects.nonNull(header)) {
             Boolean checker = BooleanUtils.toBooleanObject(header);
@@ -81,6 +83,7 @@ public abstract class AbstractHeaderValidatorImpl {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_BOOLEAN_VALUE, getHeaderName()));
             }
         }
+        return messageError;
     }
 
 }

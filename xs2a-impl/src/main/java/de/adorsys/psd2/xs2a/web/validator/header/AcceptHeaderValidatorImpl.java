@@ -48,11 +48,13 @@ public class AcceptHeaderValidatorImpl extends AbstractHeaderValidatorImpl
     }
 
     @Override
-    public void validate(Map<String, String> headers, MessageError messageError) {
+    public MessageError validate(Map<String, String> headers, MessageError messageError) {
         String header = headers.get(getHeaderName());
         if (Objects.nonNull(header) && StringUtils.isBlank(header)) {
             errorBuildingService.enrichMessageError(messageError,
                                                     TppMessageInformation.of(FORMAT_ERROR_BLANK_HEADER, getHeaderName()));
         }
+
+        return messageError;
     }
 }

@@ -16,21 +16,19 @@
 
 package de.adorsys.psd2.xs2a.web.validator;
 
-import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.CreateAuthorisationHeaderValidator;
-import de.adorsys.psd2.xs2a.web.validator.path.PathParameterValidator;
-import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 
 @Component
-public class CreatePaymentAuthorisationMethodValidatorImpl extends AbstractMethodValidator<CreateAuthorisationHeaderValidator, BodyValidator, QueryParameterValidator, PathParameterValidator> {
+public class CreatePaymentAuthorisationMethodValidatorImpl extends AbstractMethodValidator {
     private static final String METHOD_NAME = "_startPaymentAuthorisation";
 
     protected CreatePaymentAuthorisationMethodValidatorImpl(List<CreateAuthorisationHeaderValidator> headerValidators) {
-        super(headerValidators, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+        super(ValidatorWrapper.builder()
+                  .headerValidators(headerValidators)
+                  .build());
     }
 
     @Override

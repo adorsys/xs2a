@@ -34,8 +34,8 @@ public class PaymentRawBodyValidatorImpl implements PaymentRawBodyValidator {
     }
 
     @Override
-    public void validate(HttpServletRequest request, MessageError messageError) {
+    public MessageError validate(HttpServletRequest request, MessageError messageError) {
         dateFieldValidator.validateDayOfExecution(request, messageError);
-        dateFieldValidator.validateRawDataDates(request, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
+        return dateFieldValidator.validateRawDataDates(request, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
     }
 }
