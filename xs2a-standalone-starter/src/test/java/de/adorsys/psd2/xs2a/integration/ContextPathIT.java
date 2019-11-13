@@ -161,7 +161,7 @@ public class ContextPathIT {
 
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
         given(aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(any(String.class), any(AisConsentAuthorizationRequest.class)))
-            .willReturn(Optional.of(new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "")));
+            .willReturn(Optional.of(new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null)));
         given(aisConsentServiceEncrypted.createConsent(any(CreateAisConsentRequest.class)))
             .willReturn(Optional.of(ENCRYPT_CONSENT_ID));
         given(aisConsentServiceEncrypted.getInitialAisAccountConsentById(any(String.class)))

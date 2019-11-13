@@ -40,6 +40,7 @@ import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -174,7 +175,7 @@ public class PaymentStartAuthorisationIT {
 
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
         given(pisCommonPaymentServiceEncrypted.createAuthorization(eq(PAYMENT_ID), createPisAuthorisationRequestCaptor.capture()))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, ScaStatus.PSUIDENTIFIED, null, null)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, ScaStatus.PSUIDENTIFIED, null, null, buildPsuIdData())));
 
         given(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID))
             .willReturn(Optional.of(buildGetPisAuthorisationResponse(ScaStatus.PSUIDENTIFIED)));
@@ -241,5 +242,9 @@ public class PaymentStartAuthorisationIT {
 
     private Authorisation buildAuthorisation() {
         return new Authorisation(AUTHORISATION_ID, ScaStatus.RECEIVED, null);
+    }
+
+    private PsuIdData buildPsuIdData() {
+        return new PsuIdData(PSU_ID, null, null, null);
     }
 }

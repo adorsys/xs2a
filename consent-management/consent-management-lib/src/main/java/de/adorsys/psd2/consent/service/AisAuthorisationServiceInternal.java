@@ -82,7 +82,7 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
                        closePreviousAuthorisationsByPsu(aisConsent.getAuthorizations(), request.getPsuData());
                        AisConsentAuthorization newAuthorisation = saveNewAuthorization(aisConsent, request);
 
-                       return new CreateAisConsentAuthorizationResponse(newAuthorisation.getExternalId(), newAuthorisation.getScaStatus(), aisConsent.getInternalRequestId());
+                       return new CreateAisConsentAuthorizationResponse(newAuthorisation.getExternalId(), newAuthorisation.getScaStatus(), aisConsent.getInternalRequestId(), request.getPsuData());
                    });
     }
 

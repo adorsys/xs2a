@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f43db481-02fe-43be-a0aa-beb5436ec0d8",
+		"_postman_id": "6a0cdd0e-4b25-44c9-a2f9-21716479ee80",
 		"name": "PIS Payment requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -6135,6 +6135,861 @@
 											""
 										]
 									}
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Single payment initiation EMBEDDED explicit start authorisation with password",
+							"item": [
+								{
+									"name": "1. Set ASPSP properties",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"frequencyPerDay\": 5,\n  \"combinedServiceIndicator\": false,\n  \"tppSignatureRequired\": false,\n  \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n  \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\",\n  \"multicurrencyAccountLevel\": \"SUBACCOUNT\",\n  \"bankOfferedConsentSupport\": true,\n  \"availableBookingStatuses\": [\n    \"both\"\n  ],\n  \"supportedAccountReferenceFields\": [\n    \"MSISDN\",\n    \"IBAN\"\n  ],\n  \"consentLifetime\": 0,\n  \"transactionLifetime\": 0,\n  \"allPsd2Support\": true,\n  \"transactionsWithoutBalancesSupported\": true,\n  \"signingBasketSupported\": true,\n  \"paymentCancellationAuthorizationMandated\": false,\n  \"piisConsentSupported\": false,\n  \"redirectUrlExpirationTimeMs\": 600000,\n  \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n  \"notConfirmedConsentExpirationPeriodMs\": 86400000,\n  \"notConfirmedPaymentExpirationPeriodMs\": 86400000,\n  \"supportedPaymentTypeAndProductMatrix\": {\n    \"payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\"\n    ],\n    \"periodic-payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\"\n    ],\n    \"bulk-payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\"\n    ]\n  },\n  \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000,\n  \"availableAccountsConsentSupported\": true,\n  \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n  \"psuInInitialRequestMandated\": false,\n  \"forceXs2aBaseUrl\": false,\n  \"deltaListSupported\": false,\n  \"entryReferenceFromSupported\": false,\n  \"supportedTransactionApplicationTypes\": [\n  \t\"application/json\"\n  ]\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_aspsp_profile}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"aspsp-profile",
+												"for-debug",
+												"aspsp-settings"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "2. Set embedded SCA approach",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_aspsp_profile}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"aspsp-profile",
+												"for-debug",
+												"sca-approaches"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "3. Payment initiation request",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 201\", function () {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"pm.test(\"Transcation status is RCVD\", () => {",
+													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+													"});",
+													"",
+													"pm.test(\"Links exist\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    ",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
+													"    pm.expect(_links).to.have.property('startAuthorisation');",
+													"    ",
+													"});",
+													"",
+													"pm.test(\"Payment ID exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('paymentId');",
+													"});",
+													"",
+													"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+												"exec": [
+													"pm.globals.unset(\"payment_id\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_multiple}}",
+												"type": "text"
+											},
+											{
+												"key": "PSU-IP-Address",
+												"value": "{{ip_address}}",
+												"type": "text"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Explicit-Authorisation-Preferred",
+												"value": "true",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Redirect-URI",
+												"value": "TPP-Redirect-URI",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Nok-Redirect-URI",
+												"value": "TPP-Nok-Redirect-URI",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"{{payment_service}}",
+												"{{payment_product}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "4. Start the authorisation process for a payment initiation",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+												"exec": [
+													"pm.globals.unset(\"authorisation_id\");"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 201\", function () {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"pm.test(\"Select scaStatus \", () => {",
+													"    pm.expect(jsonData).to.have.property('scaStatus');",
+													"    const scaStatus = jsonData.scaStatus;",
+													"    pm.expect(scaStatus).to.eql('psuAuthenticated');",
+													"});",
+													"",
+													"pm.test(\"Links exist\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    ",
+													"    pm.expect(_links).to.have.property('scaStatus');",
+													"    pm.expect(_links).to.have.property('selectAuthenticationMethod');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_multiple}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"{{payment_service}}",
+												"{{payment_product}}",
+												"{{payment_id}}",
+												"authorisations"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "5. Payment initiation request",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 201\", function () {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"pm.test(\"Transcation status is RCVD\", () => {",
+													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+													"});",
+													"",
+													"pm.test(\"Links exist\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    ",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
+													"    pm.expect(_links).to.have.property('startAuthorisation');",
+													"    ",
+													"});",
+													"",
+													"pm.test(\"Payment ID exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('paymentId');",
+													"});",
+													"",
+													"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+												"exec": [
+													"pm.globals.unset(\"payment_id\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_multiple}}",
+												"type": "text"
+											},
+											{
+												"key": "PSU-IP-Address",
+												"value": "{{ip_address}}",
+												"type": "text"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Explicit-Authorisation-Preferred",
+												"value": "true",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Redirect-URI",
+												"value": "TPP-Redirect-URI",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Nok-Redirect-URI",
+												"value": "TPP-Nok-Redirect-URI",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"{{payment_service}}",
+												"{{payment_product}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "6. Start the authorisation process for a payment initiation with wrong password",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+												"exec": [
+													"pm.globals.unset(\"authorisation_id\");"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+												"exec": [
+													"pm.test('Status code is 401', () => {",
+													"   pm.response.to.have.status(401);",
+													"});",
+													"",
+													"pm.test(\"Error code is PSU_CREDENTIALS_INVALID\", () => {",
+													"    const jsonData = pm.response.json();",
+													"    const error = jsonData.tppMessages[0];",
+													"    pm.expect(error.code).to.eql('PSU_CREDENTIALS_INVALID');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_multiple}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"wrong password\"\n\t}\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"{{payment_service}}",
+												"{{payment_product}}",
+												"{{payment_id}}",
+												"authorisations"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "7. Payment initiation request",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 201\", function () {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"pm.test(\"Transcation status is RCVD\", () => {",
+													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+													"});",
+													"",
+													"pm.test(\"Links exist\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    ",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
+													"    pm.expect(_links).to.have.property('startAuthorisation');",
+													"    ",
+													"});",
+													"",
+													"pm.test(\"Payment ID exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('paymentId');",
+													"});",
+													"",
+													"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+												"exec": [
+													"pm.globals.unset(\"payment_id\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_multiple}}",
+												"type": "text"
+											},
+											{
+												"key": "PSU-IP-Address",
+												"value": "{{ip_address}}",
+												"type": "text"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Explicit-Authorisation-Preferred",
+												"value": "true",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Redirect-URI",
+												"value": "TPP-Redirect-URI",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Nok-Redirect-URI",
+												"value": "TPP-Nok-Redirect-URI",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"{{payment_service}}",
+												"{{payment_product}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "8. Start the authorisation process for a payment initiation without PSU-ID header and with password",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+												"exec": [
+													"pm.globals.unset(\"authorisation_id\");"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 201\", function () {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"pm.test(\"Select scaStatus \", () => {",
+													"    pm.expect(jsonData).to.have.property('scaStatus');",
+													"    const scaStatus = jsonData.scaStatus;",
+													"    pm.expect(scaStatus).to.eql('psuAuthenticated');",
+													"});",
+													"",
+													"pm.test(\"Links exist\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    ",
+													"    pm.expect(_links).to.have.property('scaStatus');",
+													"    pm.expect(_links).to.have.property('selectAuthenticationMethod');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"{{payment_service}}",
+												"{{payment_product}}",
+												"{{payment_id}}",
+												"authorisations"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "9. Payment initiation request",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Status code is 201\", function () {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"pm.test(\"Transcation status is RCVD\", () => {",
+													"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+													"});",
+													"",
+													"pm.test(\"Links exist\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    ",
+													"    pm.expect(_links).to.have.property('self');",
+													"    pm.expect(_links).to.have.property('status');",
+													"    pm.expect(_links).to.have.property('startAuthorisation');",
+													"    ",
+													"});",
+													"",
+													"pm.test(\"Payment ID exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('paymentId');",
+													"});",
+													"",
+													"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+												"exec": [
+													"pm.globals.unset(\"payment_id\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_multiple}}",
+												"type": "text"
+											},
+											{
+												"key": "PSU-IP-Address",
+												"value": "{{ip_address}}",
+												"type": "text"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Explicit-Authorisation-Preferred",
+												"value": "true",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Redirect-URI",
+												"value": "TPP-Redirect-URI",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Nok-Redirect-URI",
+												"value": "TPP-Nok-Redirect-URI",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multiple}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"{{payment_service}}",
+												"{{payment_product}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "10. Start the authorisation process for a payment initiation without PSU-ID header and with wrong password",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+												"exec": [
+													"pm.globals.unset(\"authorisation_id\");"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+												"exec": [
+													"pm.test('Status code is 401', () => {",
+													"   pm.response.to.have.status(401);",
+													"});",
+													"",
+													"pm.test(\"Error code is PSU_CREDENTIALS_INVALID\", () => {",
+													"    const jsonData = pm.response.json();",
+													"    const error = jsonData.tppMessages[0];",
+													"    pm.expect(error.code).to.eql('PSU_CREDENTIALS_INVALID');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"wrong password\"\n\t}\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"{{payment_service}}",
+												"{{payment_product}}",
+												"{{payment_id}}",
+												"authorisations"
+											]
+										}
+									},
+									"response": []
 								}
 							],
 							"protocolProfileBehavior": {},

@@ -143,10 +143,11 @@ public class RedirectAisAuthorizationServiceTest {
         response.setAuthorisationId(AUTHORISATION_ID);
         response.setScaStatus(ScaStatus.RECEIVED);
         response.setInternalRequestId(INTERNAL_REQUEST_ID);
+        response.setPsuIdData(PSU_ID_DATA);
         return response;
     }
 
     private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {
-        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID);
+        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, PSU_ID_DATA);
     }
 }

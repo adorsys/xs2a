@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,4 +27,5 @@ public class CreateAisConsentAuthorizationResponse {
     private String authorizationId;
     private ScaStatus scaStatus;
     private String internalRequestId;
+    private PsuIdData psuIdData;
 }

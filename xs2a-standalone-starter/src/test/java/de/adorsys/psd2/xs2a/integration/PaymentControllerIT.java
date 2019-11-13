@@ -152,7 +152,7 @@ public class PaymentControllerIT {
             .willReturn(Optional.of(Collections.singletonList(getPsuIdData())));
 
         given(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(any(), any()))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(CANCELLATION_ID, SCA_STATUS, INTERNAL_REQUEST_ID, CANCELLATION_INTERNAL_REQUEST_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(CANCELLATION_ID, SCA_STATUS, INTERNAL_REQUEST_ID, CANCELLATION_INTERNAL_REQUEST_ID, null)));
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
 

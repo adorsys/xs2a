@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.pis.authorisation;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -35,4 +36,5 @@ public class CreatePisAuthorisationResponse {
 
     private String internalRequestId;
     private String cancellationInternalRequestId;
+    private PsuIdData psuIdData;
 }
