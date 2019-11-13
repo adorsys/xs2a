@@ -60,7 +60,7 @@ variables:
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - env BUILD_NUMBER=$CI_PIPELINE_IID ./scripts/set_xs2a_connector_version_in_swagger.sh
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp -DskipITs  -DskipTests clean install
+    - mvn -ntp -DskipITs -DskipTests -Dci.build.number=Build\:${CI_PIPELINE_ID} clean install
 
 .java_tests: &java_tests
   script:
