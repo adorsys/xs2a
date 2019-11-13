@@ -34,8 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CmsAspspTppServiceInternal implements CmsAspspTppService {
     private final TppStopListRepository stopListRepository;
     private final TppStopListMapper tppStopListMapper;
