@@ -84,7 +84,8 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                        .build();
         }
 
-        if (createRequest.getPsuData().isEmpty()
+        PsuIdData psuIdDataFromResponse = createPisAuthorisationResponse.getBody().getPsuIdData();
+        if (psuIdDataFromResponse == null || psuIdDataFromResponse.isEmpty()
                 || StringUtils.isBlank(createRequest.getPassword())) {
             return ResponseObject.<AuthorisationResponse>builder()
                        .body(createPisAuthorisationResponse.getBody())

@@ -597,6 +597,6 @@ public class InitiatePayments_successfulIT {
     }
 
     private CreatePisAuthorisationResponse buildCreatePisAuthorisationResponse(ScaStatus scaStatus) {
-        return new CreatePisAuthorisationResponse(AUTHORISATION_ID, scaStatus, null, null);
+        return new CreatePisAuthorisationResponse(AUTHORISATION_ID, scaStatus, null, null, null);
     }
 }

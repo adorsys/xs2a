@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
@@ -158,6 +174,7 @@ public class DecoupledAisAuthorizationServiceTest {
         resp.setConsentId(CONSENT_ID);
         resp.setAuthorisationId(AUTHORISATION_ID);
         resp.setScaStatus(ScaStatus.RECEIVED);
+        resp.setPsuIdData(PSU_DATA);
         return resp;
     }
 
@@ -168,10 +185,10 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     private static AccountConsent buildConsent(String id) {
-        return new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null, null, null), new Xs2aAccountAccess(null, null, null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
+        return new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null, null, null), new Xs2aAccountAccess(null, null, null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, Collections.singletonList(PSU_DATA), null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
     }
 
     private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {
-        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "");
+        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", PSU_DATA);
     }
 }

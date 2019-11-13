@@ -204,7 +204,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
                                                                             closePreviousAuthorisationsByPsu(pmt.getAuthorizations(), request.getAuthorizationType(), request.getPsuData());
                                                                             return saveNewAuthorisation(pmt, request);
                                                                         })
-                                                                        .map(c -> new CreatePisAuthorisationResponse(c.getExternalId(), c.getScaStatus(), c.getPaymentData().getInternalRequestId(), c.getPaymentData().getCancellationInternalRequestId()));
+                                                                        .map(c -> new CreatePisAuthorisationResponse(c.getExternalId(), c.getScaStatus(), c.getPaymentData().getInternalRequestId(), c.getPaymentData().getCancellationInternalRequestId(), request.getPsuData()));
 
         if (responseOptional.isPresent()) {
             return CmsResponse.<CreatePisAuthorisationResponse>builder()
@@ -228,7 +228,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
                                                                             closePreviousAuthorisationsByPsu(pmt.getAuthorizations(), request.getAuthorizationType(), request.getPsuData());
                                                                             return saveNewAuthorisation(pmt, request);
                                                                         })
-                                                                        .map(c -> new CreatePisAuthorisationResponse(c.getExternalId(), c.getScaStatus(), c.getPaymentData().getInternalRequestId(), c.getPaymentData().getCancellationInternalRequestId()));
+                                                                        .map(c -> new CreatePisAuthorisationResponse(c.getExternalId(), c.getScaStatus(), c.getPaymentData().getInternalRequestId(), c.getPaymentData().getCancellationInternalRequestId(), request.getPsuData()));
 
         if (responseOptional.isPresent()) {
             return CmsResponse.<CreatePisAuthorisationResponse>builder()

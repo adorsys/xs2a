@@ -157,7 +157,7 @@ public class PaymentControllerIT {
 
         given(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(any(), any()))
             .willReturn(CmsResponse.<CreatePisAuthorisationResponse>builder()
-                            .payload(new CreatePisAuthorisationResponse(CANCELLATION_ID, SCA_STATUS, INTERNAL_REQUEST_ID, CANCELLATION_INTERNAL_REQUEST_ID))
+                            .payload(new CreatePisAuthorisationResponse(CANCELLATION_ID, SCA_STATUS, INTERNAL_REQUEST_ID, CANCELLATION_INTERNAL_REQUEST_ID, null))
                             .build());
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
