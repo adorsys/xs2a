@@ -188,7 +188,7 @@ public class PisCommonPaymentControllerTest {
     @Test
     public void createConsentAuthorization_Success() {
         //Given
-        ResponseEntity<CreatePisAuthorisationResponse> expected = new ResponseEntity<>(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null), HttpStatus.CREATED);
+        ResponseEntity<CreatePisAuthorisationResponse> expected = new ResponseEntity<>(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null, null), HttpStatus.CREATED);
 
         //When
         ResponseEntity<CreatePisAuthorisationResponse> actual = pisCommonPaymentController.createAuthorization(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST);
@@ -414,7 +414,7 @@ public class PisCommonPaymentControllerTest {
     }
 
     private CreatePisAuthorisationResponse getCreatePisAuthorisationResponse() {
-        return new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null);
+        return new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null, null);
     }
 
     private UpdatePisCommonPaymentPsuDataRequest getUpdatePisCommonPaymentPsuDataRequest() {

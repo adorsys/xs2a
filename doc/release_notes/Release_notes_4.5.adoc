@@ -5,6 +5,7 @@
 * Removed deprecated columns TppRedirectUri from TppInfo
 * Removed deprecated `PsuIdData` from `confirmConsent`, `rejectConsent`, `revokeConsent` in `CmsPsuAisService`
 * Refactoring: Extracted ASPSP Profile web-endpoints into separate module
+* Bugfix: incorrect response for start authorisation request with password but without PSU-ID in header Explicit AIS/PIS
 
 == Removed deprecated columns TppRedirectUri from TppInfo
 
@@ -20,3 +21,8 @@ And deprecated headers `psuId`, `psuIdType`, `psuCorporateId`, `psuCorporateIdTy
 == Refactoring: Extracted ASPSP Profile web-endpoints into separate module
 
 From now on, endpoints for accessing and updating ASPSP Profile are located in `aspsp-profile-web` module.
+
+== Bugfix: incorrect response for start authorisation request with password but without PSU-ID in header Explicit AIS/PIS
+
+From now on, when you try to start authorisation for payment/consent with password and without `PSU-ID` in header,
+you'll receive the same response as it would be with `PSU-ID` in header.

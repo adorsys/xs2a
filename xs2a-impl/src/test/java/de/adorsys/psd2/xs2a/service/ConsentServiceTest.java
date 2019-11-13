@@ -1008,8 +1008,10 @@ public class ConsentServiceTest {
     public void createConsentAuthorizationWithResponse_Success_ShouldRecordEvent() {
         // Given
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
+        createConsentAuthorizationResponse.setPsuIdData(PSU_ID_DATA);
         when(redirectAisAuthorizationService.createConsentAuthorization(any(), anyString()))
-            .thenReturn(Optional.of(new CreateConsentAuthorizationResponse()));
+            .thenReturn(Optional.of(createConsentAuthorizationResponse));
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
@@ -1024,8 +1026,10 @@ public class ConsentServiceTest {
     public void createConsentAuthorizationWithResponse_Success_WithoutPsuIdHeader() {
         // Given
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
+        createConsentAuthorizationResponse.setPsuIdData(PSU_ID_DATA);
         when(redirectAisAuthorizationService.createConsentAuthorization(any(), anyString()))
-            .thenReturn(Optional.of(new CreateConsentAuthorizationResponse()));
+            .thenReturn(Optional.of(createConsentAuthorizationResponse));
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
@@ -1056,17 +1060,16 @@ public class ConsentServiceTest {
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
         createConsentAuthorizationResponse.setScaStatus(ScaStatus.RECEIVED);
+        createConsentAuthorizationResponse.setPsuIdData(PSU_ID_DATA);
         when(redirectAisAuthorizationService.createConsentAuthorization(any(), anyString()))
             .thenReturn(Optional.of(createConsentAuthorizationResponse));
         ArgumentCaptor<ConsentStatus> consentStatusArgumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
-        ArgumentCaptor<ScaStatus> scaStatusArgumentCaptor = ArgumentCaptor.forClass(ScaStatus.class);
-
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsentWithNullPsuIdData()));
         // When
         consentService.createAisAuthorisation(PSU_ID_DATA_EMPTY, CONSENT_ID, PASSWORD);
 
         // Then
-        verify(loggingContextService).storeScaStatus(scaStatusArgumentCaptor.capture());
-        assertThat(scaStatusArgumentCaptor.getValue()).isEqualTo(ScaStatus.RECEIVED);
+        verify(loggingContextService, never()).storeScaStatus(any());
         verify(loggingContextService).storeConsentStatus(consentStatusArgumentCaptor.capture());
         assertThat(consentStatusArgumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
     }
@@ -1078,6 +1081,7 @@ public class ConsentServiceTest {
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
         createConsentAuthorizationResponse.setAuthorisationId(AUTHORISATION_ID);
         createConsentAuthorizationResponse.setScaStatus(ScaStatus.RECEIVED);
+        createConsentAuthorizationResponse.setPsuIdData(PSU_ID_DATA);
         when(redirectAisAuthorizationService.createConsentAuthorization(any(), anyString()))
             .thenReturn(Optional.of(createConsentAuthorizationResponse));
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
@@ -1405,6 +1409,12 @@ public class ConsentServiceTest {
         Xs2aAccountAccess access = getXs2aAccountAccess(Collections.singletonList(getXs2aReference()));
 
         return new AccountConsent(CONSENT_ID, access, access, false, DATE, 4, null, ConsentStatus.VALID, false, false, Collections.singletonList(PSU_ID_DATA), tppInfo, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.MAX, Collections.singletonMap("/accounts", 0));
+    }
+
+    private AccountConsent getAccountConsentWithNullPsuIdData() {
+        Xs2aAccountAccess access = getXs2aAccountAccess(Collections.singletonList(getXs2aReference()));
+
+        return new AccountConsent(CONSENT_ID, access, access, false, DATE, 4, null, ConsentStatus.VALID, false, false, Collections.emptyList(), tppInfo, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.MAX, Collections.singletonMap("/accounts", 0));
     }
 
     private AccountConsent getAccountConsentFinalised(Xs2aAccountAccess access) {

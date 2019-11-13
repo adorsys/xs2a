@@ -366,7 +366,7 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     private CreatePisAuthorisationResponse buildCreatePisAuthorisationResponse() {
-        return new CreatePisAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, CANCELLATION_INTERNAL_REQUEST_ID);
+        return new CreatePisAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, CANCELLATION_INTERNAL_REQUEST_ID, null);
     }
 
     private UpdatePisCommonPaymentPsuDataRequest buildUpdatePisCommonPaymentPsuDataRequest() {

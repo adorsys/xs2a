@@ -355,7 +355,7 @@ public class AisConsentControllerTest {
     }
 
     private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {
-        return new CreateAisConsentAuthorizationResponse(AUTHORIZATION_ID, ScaStatus.RECEIVED, "");
+        return new CreateAisConsentAuthorizationResponse(AUTHORIZATION_ID, ScaStatus.RECEIVED, "", null);
     }
 
 }

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.domain.consent;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
@@ -31,12 +32,14 @@ public class Xs2aCreatePisAuthorisationResponse implements AuthorisationResponse
     private PaymentType paymentType;
     private Links links = new Links();
     private String internalRequestId;
+    private PsuIdData psuIdData;
 
     public Xs2aCreatePisAuthorisationResponse(String authorisationId, ScaStatus scaStatus, PaymentType paymentType,
-                                              String internalRequestId) {
+                                              String internalRequestId, PsuIdData psuIdData) {
         this.authorisationId = authorisationId;
         this.scaStatus = scaStatus;
         this.paymentType = paymentType;
         this.internalRequestId = internalRequestId;
+        this.psuIdData = psuIdData;
     }
 }

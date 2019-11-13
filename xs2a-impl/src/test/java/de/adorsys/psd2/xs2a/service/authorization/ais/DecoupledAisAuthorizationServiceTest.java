@@ -180,6 +180,7 @@ public class DecoupledAisAuthorizationServiceTest {
         resp.setConsentId(CONSENT_ID);
         resp.setAuthorisationId(AUTHORISATION_ID);
         resp.setScaStatus(ScaStatus.RECEIVED);
+        resp.setPsuIdData(PSU_DATA);
         return resp;
     }
 
@@ -190,10 +191,10 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     private static AccountConsent buildConsent(String id) {
-        return new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null, null), new Xs2aAccountAccess(null, null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap());
+        return new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null, null), new Xs2aAccountAccess(null, null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, Collections.singletonList(PSU_DATA), null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap());
     }
 
     private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {
-        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "");
+        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", PSU_DATA);
     }
 }
