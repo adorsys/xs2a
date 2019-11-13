@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportService {
     private final AisConsentSpecification aisConsentSpecification;
     private final AisConsentRepository aisConsentRepository;
