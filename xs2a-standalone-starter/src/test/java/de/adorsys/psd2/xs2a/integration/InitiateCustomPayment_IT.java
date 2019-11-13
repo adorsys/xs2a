@@ -180,7 +180,7 @@ public class InitiateCustomPayment_IT {
     public void initiateSinglePaymentCustom_explicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
             .willReturn(CmsResponse.<CreatePisAuthorisationResponse>builder()
-                            .payload(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null))
+                            .payload(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null, null))
                             .build());
         initiateSinglePaymentCustom_successful(httpHeadersExplicit, ScaApproach.EMBEDDED);
     }
@@ -189,7 +189,7 @@ public class InitiateCustomPayment_IT {
     public void initiateSinglePaymentCustom_explicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
             .willReturn(CmsResponse.<CreatePisAuthorisationResponse>builder()
-                            .payload(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null))
+                            .payload(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null, null))
                             .build());
         initiateSinglePaymentCustom_successful(httpHeadersExplicit, ScaApproach.REDIRECT);
     }

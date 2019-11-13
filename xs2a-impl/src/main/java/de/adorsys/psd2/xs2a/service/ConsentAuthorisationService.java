@@ -65,7 +65,8 @@ public class ConsentAuthorisationService {
                        .build();
         }
 
-        if (psuData.isEmpty() || StringUtils.isBlank(password)) {
+        PsuIdData psuIdDataFromResponse = createAisAuthorizationResponse.getBody().getPsuIdData();
+        if (psuIdDataFromResponse == null || psuIdDataFromResponse.isEmpty() || StringUtils.isBlank(password)) {
             loggingContextService.storeScaStatus(createAisAuthorizationResponse.getBody().getScaStatus());
             return ResponseObject.<AuthorisationResponse>builder()
                        .body(createAisAuthorizationResponse.getBody())

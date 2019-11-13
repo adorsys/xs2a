@@ -76,6 +76,9 @@ import java.util.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -1034,12 +1037,6 @@ public class ConsentServiceTest {
         consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
 
         verify(consentAuthorisationService).getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
-    }
-
-    @Test
-    public void createAisAuthorisation() {
-        consentService.createAisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD);
-        verify(consentAuthorisationService, times(1)).createAisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD);
     }
 
     @Test

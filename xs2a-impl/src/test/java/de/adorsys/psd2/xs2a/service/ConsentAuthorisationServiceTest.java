@@ -497,6 +497,7 @@ public class ConsentAuthorisationServiceTest {
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
         createConsentAuthorizationResponse.setAuthorisationId(AUTHORISATION_ID);
         createConsentAuthorizationResponse.setScaStatus(ScaStatus.RECEIVED);
+        createConsentAuthorizationResponse.setPsuIdData(PSU_ID_DATA);
         when(redirectAisAuthorizationService.createConsentAuthorization(any(), anyString()))
             .thenReturn(Optional.of(createConsentAuthorizationResponse));
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
@@ -544,6 +545,7 @@ public class ConsentAuthorisationServiceTest {
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
         createConsentAuthorizationResponse.setAuthorisationId(AUTHORISATION_ID);
         createConsentAuthorizationResponse.setScaStatus(ScaStatus.RECEIVED);
+        createConsentAuthorizationResponse.setPsuIdData(PSU_ID_DATA);
         when(redirectAisAuthorizationService.createConsentAuthorization(any(), anyString()))
             .thenReturn(Optional.of(createConsentAuthorizationResponse));
 
