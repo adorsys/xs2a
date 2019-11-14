@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
 import lombok.Value;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Value
@@ -35,6 +36,7 @@ public class TransactionsReportByPeriodObject implements TppInfoProvider {
     private Boolean deltaList;
     private String acceptHeader;
     private BookingStatus bookingStatus;
+    private LocalDate dateFrom;
 
     @Override
     public TppInfo getTppInfo() {

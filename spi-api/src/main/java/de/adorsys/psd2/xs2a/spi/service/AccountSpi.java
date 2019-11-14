@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -25,7 +24,6 @@ import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface AccountSpi {
@@ -56,21 +54,14 @@ public interface AccountSpi {
     /**
      * Requests a list of transactions
      *
-     * @param contextData              known Context of this call
-     * @param acceptMediaType          requested by TPP response media type e.g. text/plain. Shall be propagated to response. This string may contain several content-types according to HTTP "Accept"-Header format.
-     *                                 If desired media type is not possible to provide, NOT_SUPPORTED error to be returned. To provide formats other than JSON, use {@link SpiTransactionReport#transactionsRaw}
-     * @param withBalance              boolean representing if the responded AccountDetails should contain balance
-     * @param dateFrom                 Date representing the beginning of the search period.<br>
-     *                                 If null, transactions will not be limited by start date
-     * @param dateTo                   Date representing the ending of the search period. <br>
-     *                                 If null, transactions will not be limited by end date
-     * @param bookingStatus            booking status of the requested transations, e.g. PENDING
-     * @param accountReference         SpiAccountReference
-     * @param accountConsent           SpiAccountConsent
-     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
+     * @param contextData                    known Context of this call
+     * @param spiTransactionReportParameters Transaction report parameters (acceptMediaType, withBalance, dateFrom, dateTo, bookingStatus, entryReferenceFrom, deltaList)
+     * @param accountReference               SpiAccountReference
+     * @param accountConsent                 SpiAccountConsent
+     * @param aspspConsentDataProvider       Provides access to read/write encrypted data to be stored in the consent management system
      * @return List of transactions
      */
-    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull BookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, @NotNull SpiTransactionReportParameters spiTransactionReportParameters, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Requests an transaction by transactionId

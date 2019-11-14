@@ -128,14 +128,10 @@ account ID (obtained from the previous method) and boolean flag *withBalance*. F
 Response is the *SpiAccountDetails* object.
 
 The method *requestTransactionsForAccount* provides a possibility to retrieve the list of bank transactions filtered by the period,
-AIS consent account ID and status. Parameters are:
+AIS consent account ID, status and other parameters. Parameters are:
 
 * *spiContextData*;
-* *acceptMediaType* - media type that should be used in the response (e.g. JSON, XML etc);
-* *withBalance* - this flag specifies if the balances would be present in the response or not;
-* *dateFrom* - start period for transactions filtering;
-* *dateTo* - end period for transactions filtering;
-* *bookingStatus* - status for filtering the transactions;
+* *spiTransactionReportParameters* - additional parameters for retrieving transaction list (e.g. acceptMediaType, withBalance, dateFrom, dateFrom, bookingStatus, entryReferenceFrom, deltaList);
 * *spiAccountReference* - holder for account ID;
 * *spiAccountConsent*;
 * *spiAspspConsentDataProvider*.
