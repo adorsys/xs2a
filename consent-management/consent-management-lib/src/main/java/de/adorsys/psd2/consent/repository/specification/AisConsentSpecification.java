@@ -105,6 +105,23 @@ public class AisConsentSpecification extends GenericSpecification {
     }
 
     /**
+     * Returns specification for AisConsent entity for filtering data by ASPSP account ID and PSU ID Data and instance ID.
+     *
+     * @param aspspAccountId Bank specific account identifier
+     * @param psuIdData      mandatory PSU ID data
+     * @param instanceId     optional instance ID
+     * @return specification for AisConsent entity
+     */
+    public Specification<AisConsent> byAspspAccountIdAndPsuIdDataAndInstanceId(@Nullable String aspspAccountId,
+                                                                               @NotNull PsuIdData psuIdData,
+                                                                               @Nullable String instanceId) {
+
+        return Specification.<AisConsent>where(byAspspAccountIdInAspspAccountAccess(aspspAccountId))
+                   .and(byPsuIdDataInList(psuIdData))
+                   .and(byInstanceId(instanceId));
+    }
+
+    /**
      * Returns specification for some entity for filtering data by aspsp account id in aspsp account access list
      *
      * <p>

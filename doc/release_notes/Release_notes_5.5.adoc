@@ -7,6 +7,7 @@
 * Refactoring: Extracted ASPSP Profile web-endpoints into separate module
 * Bugfix: incorrect response for start authorisation request with password but without PSU-ID in header Explicit AIS/PIS
 * Add supporting standing order report
+* Revoke all consents when account is closed
 
 == Removed deprecated columns TppRedirectUri from TppInfo
 
@@ -38,3 +39,8 @@ The query parameters `dateFrom`, `dateTo`, `withBalance`, `deltaList` and `entry
 result.
 
 Only `application/JSON` for response content type is supported.
+
+== Revoke all consents when account is closed
+
+From now on, created endpoint in cms-aspsp-api for revocation AIS and PIIS consents of account or PSU data.
+If PSU closes an account in the bank - then ASPSP can use this endpoint. AIS and PIIS consents will change status to RevokedByPsu.

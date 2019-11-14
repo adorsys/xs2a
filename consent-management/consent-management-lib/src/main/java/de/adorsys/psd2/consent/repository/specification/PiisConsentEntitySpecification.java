@@ -151,6 +151,21 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
         };
     }
 
+    /**
+     * Returns specification for PiisConsent entity for filtering data by ASPSP account ID and by PSU ID Data.
+     *
+     * @param aspspAccountId Bank specific account identifier
+     * @param psuIdData      mandatory PSU ID data
+     * @param instanceId     optional instance ID
+     * @return specification for AisConsent entity
+     */
+    public Specification<PiisConsentEntity> byAspspAccountIdAndPsuIdDataAndInstanceId(@Nullable String aspspAccountId,
+                                                                                      @NotNull PsuIdData psuIdData,
+                                                                                      @Nullable String instanceId) {
+        return Specification.<PiisConsentEntity>where(byAspspAccountIdInAccount(aspspAccountId))
+                   .and(byPsuIdData(psuIdData))
+                   .and(byInstanceId(instanceId));
+    }
 
     /**
      * Returns specification for PiisConsentEntity for filtering data by ASPSP account ID.
