@@ -23,6 +23,8 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Objects;
+
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
@@ -57,4 +59,23 @@ class AbstractLinks extends Links {
         return scaStatus == ScaStatus.PSUIDENTIFIED;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AbstractLinks)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        AbstractLinks that = (AbstractLinks) o;
+        return httpUrl.equals(that.httpUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), httpUrl);
+    }
 }
