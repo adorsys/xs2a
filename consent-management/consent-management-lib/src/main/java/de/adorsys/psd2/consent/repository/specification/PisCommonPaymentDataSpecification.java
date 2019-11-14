@@ -21,7 +21,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,11 +30,11 @@ import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSp
 @Service
 public class PisCommonPaymentDataSpecification extends GenericSpecification {
     public Specification<PisCommonPaymentData> byPaymentId(String paymentId) {
-        return Specifications.where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId));
+        return Specification.where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId));
     }
 
     public Specification<PisCommonPaymentData> byPaymentIdAndInstanceId(String paymentId, String instanceId) {
-        return Specifications.<PisCommonPaymentData>where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId))
+        return Specification.<PisCommonPaymentData>where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId))
                    .and(provideSpecificationForEntityAttribute(EntityAttribute.INSTANCE_ID_ATTRIBUTE, instanceId));
     }
 
@@ -54,7 +53,7 @@ public class PisCommonPaymentDataSpecification extends GenericSpecification {
                                                                                                  @Nullable LocalDate createDateTo,
                                                                                                  @Nullable PsuIdData psuIdData,
                                                                                                  @Nullable String instanceId) {
-        return Specifications.<PisCommonPaymentData>where(byTppAuthorisationNumber(tppAuthorisationNumber))
+        return Specification.<PisCommonPaymentData>where(byTppAuthorisationNumber(tppAuthorisationNumber))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byPsuIdDataInList(psuIdData))
                    .and(byInstanceId(instanceId));
@@ -73,7 +72,7 @@ public class PisCommonPaymentDataSpecification extends GenericSpecification {
                                                                                          @Nullable LocalDate createDateFrom,
                                                                                          @Nullable LocalDate createDateTo,
                                                                                          @Nullable String instanceId) {
-        return Specifications.<PisCommonPaymentData>where(byPsuIdDataInList(psuIdData))
+        return Specification.<PisCommonPaymentData>where(byPsuIdDataInList(psuIdData))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byInstanceId(instanceId));
     }
@@ -91,7 +90,7 @@ public class PisCommonPaymentDataSpecification extends GenericSpecification {
                                                                                               @Nullable LocalDate createDateFrom,
                                                                                               @Nullable LocalDate createDateTo,
                                                                                               @Nullable String instanceId) {
-        return Specifications.<PisCommonPaymentData>where(byAspspAccountId(aspspAccountId))
+        return Specification.<PisCommonPaymentData>where(byAspspAccountId(aspspAccountId))
                                                  .and(byCreationTimestamp(createDateFrom, createDateTo))
                                                  .and(byInstanceId(instanceId));
     }
