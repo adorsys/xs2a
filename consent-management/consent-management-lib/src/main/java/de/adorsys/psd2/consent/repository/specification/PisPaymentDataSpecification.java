@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.repository.specification;
 
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
@@ -26,7 +25,7 @@ import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSp
 @Service
 public class PisPaymentDataSpecification extends GenericSpecification {
     public Specification<PisPaymentData> byPaymentIdAndInstanceId(String paymentId, String instanceId) {
-        return Specifications.<PisPaymentData>where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId))
+        return Specification.<PisPaymentData>where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId))
                    .and(provideSpecificationForEntityAttribute(EntityAttribute.INSTANCE_ID_ATTRIBUTE, instanceId));
     }
 }

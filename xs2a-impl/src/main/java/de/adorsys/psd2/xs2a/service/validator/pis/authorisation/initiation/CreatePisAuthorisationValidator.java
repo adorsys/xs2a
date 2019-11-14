@@ -50,7 +50,8 @@ public class CreatePisAuthorisationValidator extends AbstractPisValidator<Common
      */
     @Override
     protected ValidationResult executeBusinessValidation(CommonPaymentObject paymentObject) {
-        // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
+        // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc.,
+        //  so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1104
         PisCommonPaymentResponse pisCommonPaymentResponse = paymentObject.getPisCommonPaymentResponse();
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Creation of PIS authorisation has failed: payment has been rejected",

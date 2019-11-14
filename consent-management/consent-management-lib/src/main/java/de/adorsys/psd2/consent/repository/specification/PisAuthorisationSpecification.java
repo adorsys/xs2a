@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.repository.specification;
 
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.AUTHORISATION_EXTERNAL_ID_ATTRIBUTE;
@@ -28,7 +27,7 @@ import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSp
 @Service
 public class PisAuthorisationSpecification extends GenericSpecification {
     public Specification<PisAuthorization> byExternalIdAndInstanceId(String externalId, String instanceId) {
-        return Specifications.<PisAuthorization>where(provideSpecificationForEntityAttribute(AUTHORISATION_EXTERNAL_ID_ATTRIBUTE, externalId))
+        return Specification.<PisAuthorization>where(provideSpecificationForEntityAttribute(AUTHORISATION_EXTERNAL_ID_ATTRIBUTE, externalId))
                    .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId));
     }
 }

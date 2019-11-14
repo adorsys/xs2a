@@ -48,7 +48,6 @@ import java.util.List;
 
 import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
 
-// TODO discuss error handling (e.g. 400 HttpCode response) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
 @Slf4j
 @Service
 @RequiredArgsConstructor
