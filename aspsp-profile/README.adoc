@@ -62,7 +62,7 @@ Not confirmed during this period of time AIS consents will be considered obsolet
 |*transactionParameters:* | | |
 |availableBookingStatuses |This field contains booking statuses supported by ASPSP.
 
-Parameter is mandatory in the request "Read Transaction List". |BOOKED, PENDING |BOOKED, PENDING, BOTH
+Parameter is mandatory in the request "Read Transaction List". |BOOKED, PENDING |INFORMATION, BOOKED, PENDING, BOTH
 |transactionsWithoutBalancesSupported |This field defines if the ASPSP supports transaction lists without balances.
 
 If not  (transactionsWithoutBalancesSupported = false) then ASPSP might add balance information into list. |FALSE |TRUE, FALSE

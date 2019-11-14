@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAdditionalInformationStructured;
 import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -108,6 +109,9 @@ public class Transactions {
     @ApiModelProperty(value = "Proprietary bank transaction code as used within a community or within an ASPSP e.g. for MT94x based transaction reports", example = "12345")
     @Size(max = 35)
     private String proprietaryBankTransactionCode;
+
+    @ApiModelProperty(value = "Is used if and only if the bookingStatus entry equals \"information\". Every active standing order related to the dedicated payment account result into one entry.")
+    private Xs2aAdditionalInformationStructured additionalInformationStructured;
 
     @ApiModelProperty(value = "The following links could be used for retrieving details of a transaction")
     @JsonProperty("_links")

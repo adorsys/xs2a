@@ -72,7 +72,7 @@ public class TransactionAspectTest {
     public void getTransactionsReportByPeriod_successReport() {
         xs2aTransactionsReportByPeriodRequest = jsonReader.getObjectFromFile("json/Xs2aTransactionsReportByPeriodRequest.json", Xs2aTransactionsReportByPeriodRequest.class);
 
-        when(transactionsReport.getAccountReport()).thenReturn(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null));
+        when(transactionsReport.getAccountReport()).thenReturn(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null));
 
         responseObject = ResponseObject.<Xs2aTransactionsReport>builder()
                              .body(transactionsReport)
