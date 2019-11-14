@@ -20,30 +20,18 @@ import lombok.Data;
 
 import javax.validation.GroupSequence;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 
 @Data
 public class ValidationGroup {
     @NotNull(groups = AccountIdGroup.class)
     private String accountId;
-    @NotNull(groups = PeriodGroup.class)
-    private LocalDate dateFrom;
-    @NotNull(groups = PeriodGroup.class)
-    private LocalDate dateTo;
     @NotNull(groups = TransactionIdGroup.class)
     private String transactionId;
-
-    interface PeriodGroup {
-    }
 
     interface AccountIdGroup {
     }
 
     interface TransactionIdGroup {
-    }
-
-    @GroupSequence({AccountIdGroup.class, PeriodGroup.class})
-    public interface AccountIdAndPeriodIsValid {
     }
 
     @GroupSequence({AccountIdGroup.class, TransactionIdGroup.class})

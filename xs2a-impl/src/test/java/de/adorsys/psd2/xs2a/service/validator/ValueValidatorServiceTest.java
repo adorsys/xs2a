@@ -27,7 +27,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.validation.Validation;
 import javax.validation.ValidationException;
-import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,8 +36,6 @@ import static org.mockito.Mockito.when;
 public class ValueValidatorServiceTest {
     private static final String ACCOUNT_ID = "11111111";
     private static final String TRANSACTION_ID = "22222222";
-    private static final LocalDate DATE_FROM = LocalDate.parse("2019-03-03");
-    private static final LocalDate DATE_TO = LocalDate.parse("2019-03-03");
 
     @InjectMocks
     private ValueValidatorService valueValidatorService;
@@ -50,19 +47,6 @@ public class ValueValidatorServiceTest {
     public void setUp() {
         valueValidatorService = new ValueValidatorService(requestProviderService, Validation.buildDefaultValidatorFactory().getValidator());
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-    }
-
-
-    @Test
-    public void validate_AccountAndPeriod() {
-        //Given:
-        ValidationGroup fields = new ValidationGroup();
-        fields.setAccountId(ACCOUNT_ID);
-        fields.setDateFrom(DATE_FROM);
-        fields.setDateTo(DATE_TO);
-
-        //When Then:
-        valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.PeriodGroup.class);
     }
 
     @Test
@@ -95,18 +79,6 @@ public class ValueValidatorServiceTest {
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.TransactionIdGroup.class))
-            .isInstanceOf(ValidationException.class);
-    }
-
-    @Test
-    public void shouldFail_validate_AccountAndEmptyDataFrom() {
-        //Given:
-        ValidationGroup fields = new ValidationGroup();
-        fields.setAccountId(ACCOUNT_ID);
-        fields.setDateTo(DATE_TO);
-
-        //When Then:
-        assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.PeriodGroup.class))
             .isInstanceOf(ValidationException.class);
     }
 }

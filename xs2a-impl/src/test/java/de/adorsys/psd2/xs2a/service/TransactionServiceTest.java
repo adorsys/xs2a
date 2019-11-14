@@ -114,7 +114,7 @@ public class TransactionServiceTest {
     private static final BookingStatus BOOKING_STATUS = BookingStatus.BOTH;
     private static final MessageError VALIDATION_ERROR = buildMessageError();
     private static final String ENTRY_REFERENCE_FROM = "777";
-    private static final Boolean DELTA_LIST = Boolean.FALSE;
+    private static final Boolean DELTA_LIST = Boolean.TRUE;
     private static final Xs2aTransactionsReportByPeriodRequest XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST = buildXs2aTransactionsReportByPeriodRequest();
     private static final String BASE64_STRING_EXAMPLE = "dGVzdA==";
     private static final int DATA_SIZE_BYTES = 1000;
@@ -223,15 +223,13 @@ public class TransactionServiceTest {
     @Test
     public void getTransactionsReportByPeriod_Failure_SpiResponseHasError() {
         // Given
-        doNothing().when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
-
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
 
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
-        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildErrorSpiResponse(SPI_TRANSACTION_REPORT));
 
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(SPI_TRANSACTION_REPORT), ServiceType.AIS))
@@ -263,12 +261,10 @@ public class TransactionServiceTest {
     @Test
     public void getTransactionsReportByPeriod_With406ErrorInSpiTransactionReport() {
         // Given
-        doNothing().when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
-
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
 
-        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildErrorServiceNotSupportedSpiResponse());
 
         when(consentMapper.mapToSpiAccountConsent(any()))
@@ -284,12 +280,10 @@ public class TransactionServiceTest {
     @Test
     public void getTransactionsReportByPeriod_Success() {
         // Given
-        doNothing().when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
-
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
 
-        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
 
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),null);
@@ -303,6 +297,8 @@ public class TransactionServiceTest {
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
+        ArgumentCaptor<SpiTransactionReportParameters> argumentCaptor = ArgumentCaptor.forClass(SpiTransactionReportParameters.class);
+
         // When
         ResponseObject<Xs2aTransactionsReport> actualResponse = transactionService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
 
@@ -315,6 +311,16 @@ public class TransactionServiceTest {
         assertThat(body.getAccountReport()).isEqualTo(xs2aAccountReport);
         assertThat(body.getAccountReference()).isEqualTo(XS2A_ACCOUNT_REFERENCE);
         assertThat(CollectionUtils.isEqualCollection(body.getBalances(), Collections.emptyList())).isTrue();
+
+        verify(accountSpi).requestTransactionsForAccount(any(SpiContextData.class), argumentCaptor.capture(), any(SpiAccountReference.class), any(SpiAccountConsent.class), eq(null));
+        checkPassingParametersWithoutAnyChanges(argumentCaptor.getValue());
+    }
+
+    private void checkPassingParametersWithoutAnyChanges(SpiTransactionReportParameters parameters) {
+        assertEquals(DATE_FROM, parameters.getDateFrom());
+        assertEquals(DATE_TO, parameters.getDateTo());
+        assertEquals(ENTRY_REFERENCE_FROM, parameters.getEntryReferenceFrom());
+        assertEquals(DELTA_LIST, parameters.getDeltaList());
     }
 
     @Test
@@ -328,13 +334,10 @@ public class TransactionServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
 
-        doNothing()
-            .when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
-
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
 
-        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, SPI_ACCOUNT_REFERENCE_GLOBAL, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), SPI_ACCOUNT_REFERENCE_GLOBAL, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
 
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),null);
@@ -368,11 +371,9 @@ public class TransactionServiceTest {
     @Test
     public void getTransactionsReportByPeriod_Success_ShouldRecordEvent() {
         // Given
-        doNothing().when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
-
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
-        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),null);
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
@@ -410,11 +411,9 @@ public class TransactionServiceTest {
     @Test
     public void getTransactionsReportByPeriod_shouldRecordStatusInLoggingContext() {
         // Given
-        doNothing().when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
-
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
-        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),null);
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
@@ -740,7 +739,7 @@ public class TransactionServiceTest {
 
     @NotNull
     private TransactionsReportByPeriodObject buildTransactionsReportByPeriodObject() {
-        return new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS);
+        return new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS, DATE_FROM);
     }
 
     @NotNull
@@ -756,5 +755,9 @@ public class TransactionServiceTest {
     @NotNull
     private static SpiAccountConsent buildSpiAccountConsent() {
         return new SpiAccountConsent();
+    }
+
+    private SpiTransactionReportParameters buildSpiTransactionReportParameters() {
+        return new SpiTransactionReportParameters(MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, ENTRY_REFERENCE_FROM, DELTA_LIST);
     }
 }

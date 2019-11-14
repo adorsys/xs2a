@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
             return acceptHeaderValidationResult;
         }
 
-        ValidationResult validationResult = validateTransactionReportParameters(requestObject.getEntryReferenceFrom(), requestObject.getDeltaList());
+        ValidationResult validationResult = validateTransactionReportParameters(requestObject.getEntryReferenceFrom(), requestObject.getDeltaList(), requestObject.getDateFrom());
         if (validationResult.isNotValid()) {
             return validationResult;
         }
@@ -100,18 +101,19 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
         return accountConsentValidator.validate(accountConsent, requestObject.getRequestUri());
     }
 
-    private ValidationResult validateTransactionReportParameters(String entryReferenceFrom, Boolean deltaList) {
+    private ValidationResult validateTransactionReportParameters(String entryReferenceFrom, Boolean deltaList, LocalDate dateFrom) {
         List<TppMessageInformation> tppMessageInformationList = new ArrayList<>();
         boolean isEntryReferenceFromSupported = aspspProfileService.isEntryReferenceFromSupported();
         boolean isEntryReferenceFromPresentInRequest = StringUtils.isNotBlank(entryReferenceFrom);
+        boolean isNotSearchByPeriod = dateFrom == null;
 
-        if (isEntryReferenceFromPresentInRequest && !isEntryReferenceFromSupported) {
+        if (isDeltaAccessParameterNotSupported(isEntryReferenceFromPresentInRequest, isEntryReferenceFromSupported, isNotSearchByPeriod)) {
             tppMessageInformationList.add(TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_ENTRY_REFERENCE_FROM));
         }
         boolean isDeltaListSupported = aspspProfileService.isDeltaListSupported();
         boolean isDeltaListPresentInRequest = BooleanUtils.isTrue(deltaList);
 
-        if (isDeltaListPresentInRequest && !isDeltaListSupported) {
+        if (isDeltaAccessParameterNotSupported(isDeltaListPresentInRequest, isDeltaListSupported, isNotSearchByPeriod)) {
             tppMessageInformationList.add(TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_DELTA_LIST));
         }
 
@@ -126,6 +128,10 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
         return tppMessageInformationList.isEmpty()
                    ? ValidationResult.valid()
                    : ValidationResult.invalid(AIS_400, tppMessageInformationList.toArray(new TppMessageInformation[0]));
+    }
+
+    private boolean isDeltaAccessParameterNotSupported(boolean isParameterPresentInRequest, boolean isParameterSupportedInProfile, boolean isNotSearchByPeriod) {
+        return isParameterPresentInRequest && !isParameterSupportedInProfile && isNotSearchByPeriod;
     }
 
     private boolean isNotSupportedBookingStatus(BookingStatus bookingStatus) {

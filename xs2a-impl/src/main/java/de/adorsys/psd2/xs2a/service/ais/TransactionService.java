@@ -48,10 +48,7 @@ import de.adorsys.psd2.xs2a.service.validator.ais.account.GetTransactionsReportV
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountTransactionsRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.DownloadTransactionListRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionReport;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionsDownloadResponse;
+import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
@@ -59,7 +56,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
@@ -252,7 +248,8 @@ public class TransactionService {
                                                                                                 request.getEntryReferenceFrom(),
                                                                                                 request.getDeltaList(),
                                                                                                 request.getAcceptHeader(),
-                                                                                                request.getBookingStatus());
+                                                                                                request.getBookingStatus(),
+                                                                                                request.getDateFrom());
         return getTransactionsReportValidator.validate(validatorObject);
     }
 
@@ -272,23 +269,19 @@ public class TransactionService {
     @NotNull
     private SpiResponse<SpiTransactionReport> getSpiResponseSpiTransactionReport(Xs2aTransactionsReportByPeriodRequest request,
                                                                                  AccountConsent accountConsent) {
-        LocalDate dateFrom = request.getDateFrom();
-        LocalDate dateToChecked = Optional.ofNullable(request.getDateTo()).orElseGet(LocalDate::now);
-
-        validatorService.validateAccountIdPeriod(request.getAccountId(), dateFrom, dateToChecked);
-
-        boolean isTransactionsShouldContainBalances =
-            !aspspProfileService.isTransactionsWithoutBalancesSupported() || request.isWithBalance();
-
         return accountSpi.requestTransactionsForAccount(accountHelperService.getSpiContextData(),
-                                                        request.getAcceptHeader(),
-                                                        isTransactionsShouldContainBalances,
-                                                        dateFrom,
-                                                        dateToChecked,
-                                                        request.getBookingStatus(),
+                                                        buildSpiTransactionReportParameters(request),
                                                         getRequestedAccountReference(accountConsent, request.getAccountId()),
                                                         consentMapper.mapToSpiAccountConsent(accountConsent),
                                                         aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getConsentId()));
+    }
+
+    private SpiTransactionReportParameters buildSpiTransactionReportParameters(Xs2aTransactionsReportByPeriodRequest request) {
+        boolean isTransactionsShouldContainBalances =
+            !aspspProfileService.isTransactionsWithoutBalancesSupported() || request.isWithBalance();
+
+        return new SpiTransactionReportParameters(request.getAcceptHeader(), isTransactionsShouldContainBalances, request.getDateFrom(), request.getDateTo(),
+                                                  request.getBookingStatus(), request.getEntryReferenceFrom(), request.getDeltaList());
     }
 
     private SpiAccountReference getRequestedAccountReference(AccountConsent accountConsent, String accountId) {
