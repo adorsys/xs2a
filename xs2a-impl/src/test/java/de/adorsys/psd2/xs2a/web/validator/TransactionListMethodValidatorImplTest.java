@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.validator;
 
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.consent.TransactionListBodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.HeaderValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.account.TransactionListHeaderValidator;
 import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
@@ -48,6 +49,8 @@ public class TransactionListMethodValidatorImplTest {
     @Mock
     private TransactionListHeaderValidator transactionListHeaderValidator;
     @Mock
+    private TransactionListBodyValidator transactionListBodyValidator;
+    @Mock
     private TransactionListQueryParamsValidator transactionListQueryParamsValidator;
     @Mock
     private MessageError messageError;
@@ -56,6 +59,7 @@ public class TransactionListMethodValidatorImplTest {
     @Before
     public void setUp() {
         transactionListMethodValidator = new TransactionListMethodValidatorImpl(Collections.singletonList(transactionListHeaderValidator),
+                                                                                Collections.singletonList(transactionListBodyValidator),
                                                                                 Collections.singletonList(transactionListQueryParamsValidator));
     }
 
@@ -122,8 +126,8 @@ public class TransactionListMethodValidatorImplTest {
 
         // Then
         assertEquals(Collections.singletonList(transactionListHeaderValidator), actualHeaderValidators);
+        assertEquals(Collections.singletonList(transactionListBodyValidator), actualBodyValidators);
         assertEquals(Collections.singletonList(transactionListQueryParamsValidator), actualQueryValidators);
-        assertTrue(actualBodyValidators.isEmpty());
     }
 
     @Test

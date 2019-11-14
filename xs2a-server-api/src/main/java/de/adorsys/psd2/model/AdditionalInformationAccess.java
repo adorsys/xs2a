@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2019 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,11 +11,11 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Additional account information 
+ * Additional account information
  */
 @ApiModel(description = "Additional account information ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-19T11:57:34.922302+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-11T13:48:52.194360+02:00[Europe/Kiev]")
 
 public class AdditionalInformationAccess   {
   @JsonProperty("ownerName")
@@ -56,7 +40,7 @@ public class AdditionalInformationAccess   {
   }
 
   /**
-   * Is asking for account owner name of the accounts referenced within. 
+   * Is asking for account owner name of the accounts referenced within.
    * @return ownerName
   **/
   @ApiModelProperty(value = "Is asking for account owner name of the accounts referenced within. ")
@@ -87,7 +71,7 @@ public class AdditionalInformationAccess   {
   }
 
   /**
-   * Is asking for account owner address related to the accounts referenced within 
+   * Is asking for account owner address related to the accounts referenced within
    * @return ownerAddress
   **/
   @ApiModelProperty(value = "Is asking for account owner address related to the accounts referenced within ")
@@ -106,7 +90,7 @@ public class AdditionalInformationAccess   {
 
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -127,7 +111,7 @@ public class AdditionalInformationAccess   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class AdditionalInformationAccess {\n");
-    
+
     sb.append("    ownerName: ").append(toIndentedString(ownerName)).append("\n");
     sb.append("    ownerAddress: ").append(toIndentedString(ownerAddress)).append("\n");
     sb.append("}");
@@ -138,7 +122,7 @@ public class AdditionalInformationAccess   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }

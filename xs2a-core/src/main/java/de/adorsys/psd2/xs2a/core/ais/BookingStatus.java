@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum BookingStatus {
+    INFORMATION("information"),
     PENDING("pending"),
     BOOKED("booked"),
     BOTH("both");

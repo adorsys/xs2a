@@ -119,7 +119,7 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
-		    <classifier>exec</classifier>
+                    <classifier>exec</classifier>
                 </configuration>
                 <executions>
                     <execution>

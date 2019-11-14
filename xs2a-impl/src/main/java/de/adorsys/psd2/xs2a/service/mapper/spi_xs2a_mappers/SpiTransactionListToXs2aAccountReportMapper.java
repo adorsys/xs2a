@@ -40,27 +40,31 @@ public class SpiTransactionListToXs2aAccountReportMapper {
 
     private final SpiToXs2aTransactionMapper toXs2aTransactionMapper;
 
-    public Optional<Xs2aAccountReport> mapToXs2aAccountReport(BookingStatus queryStatus, List<SpiTransaction> spiTransactions, byte[] rawTransactionsResponse) {
+    public Optional<Xs2aAccountReport> mapToXs2aAccountReport(BookingStatus bookingStatus, List<SpiTransaction> spiTransactions, byte[] rawTransactionsResponse) {
         if (ArrayUtils.isNotEmpty(rawTransactionsResponse)) {
-            return Optional.of(new Xs2aAccountReport(null, null, rawTransactionsResponse));
+            return Optional.of(new Xs2aAccountReport(null, null, null, rawTransactionsResponse));
         }
         if (CollectionUtils.isEmpty(spiTransactions)) {
             return Optional.empty();
+        }
+
+        if (bookingStatus == BookingStatus.INFORMATION) {
+            return Optional.of(new Xs2aAccountReport(null, null, toXs2aTransactionMapper.mapToXs2aTransactionList(spiTransactions), null));
         }
 
         List<Transactions> booked = Collections.emptyList();
         List<Transactions> pending = Collections.emptyList();
 
 
-        if (queryStatus != BookingStatus.PENDING) {
+        if (bookingStatus != BookingStatus.PENDING) {
             booked = filterTransaction(spiTransactions, BOOKED_PREDICATE);
         }
 
-        if (queryStatus != BookingStatus.BOOKED) {
+        if (bookingStatus != BookingStatus.BOOKED) {
             pending = filterTransaction(spiTransactions, PENDING_PREDICATE);
         }
 
-        return Optional.of(new Xs2aAccountReport(booked, pending, null));
+        return Optional.of(new Xs2aAccountReport(booked, pending, null, null));
     }
 
     @NotNull

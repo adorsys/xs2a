@@ -37,7 +37,7 @@ public class SpiTransactionListToXs2aAccountReportMapperTest {
     public void mapToXs2aAccountReport_shouldReturnOptionalContaingRawTransactions() {
         byte[] rawTransactions = RAW_TRANSACTIONS;
         Optional<Xs2aAccountReport> accountReport = spiTransactionListToXs2aAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOOKED, null, rawTransactions);
-        Assertions.assertThat(accountReport).isEqualTo(Optional.of(new Xs2aAccountReport(null, null, rawTransactions)));
+        Assertions.assertThat(accountReport).isEqualTo(Optional.of(new Xs2aAccountReport(null, null, null, rawTransactions)));
 
         Assertions.assertThat(accountReport).isNotNull();
         Assertions.assertThat(accountReport.isPresent()).isTrue();

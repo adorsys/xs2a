@@ -25,6 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -51,4 +54,19 @@ public class SpiToXs2aTransactionMapperTest {
     public void mapToXs2aTransaction_nullValue() {
         assertNull(mapper.mapToXs2aTransaction(null));
     }
+
+    @Test
+    public void mapToXs2aTransactionList() {
+        List<Transactions> transactions = mapper.mapToXs2aTransactionList(
+            Collections.singletonList(jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-transaction.json", SpiTransaction.class)));
+
+        Transactions expectedTransactions = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/transactions.json", Transactions.class);
+        assertEquals(expectedTransactions, transactions.get(0));
+    }
+
+    @Test
+    public void mapToXs2aTransactionList_nullValue() {
+        assertNull(mapper.mapToXs2aTransactionList(null));
+    }
+
 }

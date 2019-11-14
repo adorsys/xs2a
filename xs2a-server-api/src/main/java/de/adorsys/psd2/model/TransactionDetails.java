@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2019 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,7 +17,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Transaction details.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-11T13:48:52.194360+02:00[Europe/Kiev]")
 
 public class TransactionDetails   {
   @JsonProperty("transactionId")
@@ -101,6 +85,9 @@ public class TransactionDetails   {
 
   @JsonProperty("proprietaryBankTransactionCode")
   private String proprietaryBankTransactionCode = null;
+
+  @JsonProperty("additionalInformationStructured")
+  private AdditionalInformationStructured additionalInformationStructured = null;
 
   @JsonProperty("_links")
   private Map _links = null;
@@ -597,6 +584,29 @@ public class TransactionDetails   {
     this.proprietaryBankTransactionCode = proprietaryBankTransactionCode;
   }
 
+  public TransactionDetails additionalInformationStructured(AdditionalInformationStructured additionalInformationStructured) {
+    this.additionalInformationStructured = additionalInformationStructured;
+    return this;
+  }
+
+  /**
+   * Get additionalInformationStructured
+   * @return additionalInformationStructured
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("additionalInformationStructured")
+  public AdditionalInformationStructured getAdditionalInformationStructured() {
+    return additionalInformationStructured;
+  }
+
+  public void setAdditionalInformationStructured(AdditionalInformationStructured additionalInformationStructured) {
+    this.additionalInformationStructured = additionalInformationStructured;
+  }
+
   public TransactionDetails _links(Map _links) {
     this._links = _links;
     return this;
@@ -622,7 +632,7 @@ public class TransactionDetails   {
 
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -652,12 +662,13 @@ public class TransactionDetails   {
         Objects.equals(this.purposeCode, transactionDetails.purposeCode) &&
         Objects.equals(this.bankTransactionCode, transactionDetails.bankTransactionCode) &&
         Objects.equals(this.proprietaryBankTransactionCode, transactionDetails.proprietaryBankTransactionCode) &&
+        Objects.equals(this.additionalInformationStructured, transactionDetails.additionalInformationStructured) &&
         Objects.equals(this._links, transactionDetails._links);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, transactionAmount, currencyExchange, creditorName, creditorAccount, ultimateCreditor, debtorName, debtorAccount, ultimateDebtor, remittanceInformationUnstructured, remittanceInformationStructured, additionalInformation, purposeCode, bankTransactionCode, proprietaryBankTransactionCode, _links);
+    return Objects.hash(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, transactionAmount, currencyExchange, creditorName, creditorAccount, ultimateCreditor, debtorName, debtorAccount, ultimateDebtor, remittanceInformationUnstructured, remittanceInformationStructured, additionalInformation, purposeCode, bankTransactionCode, proprietaryBankTransactionCode, additionalInformationStructured, _links);
   }
 
   @Override
@@ -687,6 +698,7 @@ public class TransactionDetails   {
     sb.append("    purposeCode: ").append(toIndentedString(purposeCode)).append("\n");
     sb.append("    bankTransactionCode: ").append(toIndentedString(bankTransactionCode)).append("\n");
     sb.append("    proprietaryBankTransactionCode: ").append(toIndentedString(proprietaryBankTransactionCode)).append("\n");
+    sb.append("    additionalInformationStructured: ").append(toIndentedString(additionalInformationStructured)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -696,7 +708,7 @@ public class TransactionDetails   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }

@@ -292,7 +292,7 @@ public class TransactionServiceTest {
         when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
 
-        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
+        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),null);
 
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
             .thenReturn(Optional.of(xs2aAccountReport));
@@ -337,7 +337,7 @@ public class TransactionServiceTest {
         when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, SPI_ACCOUNT_REFERENCE_GLOBAL, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
 
-        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
+        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),null);
 
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
             .thenReturn(Optional.of(xs2aAccountReport));
@@ -374,7 +374,7 @@ public class TransactionServiceTest {
             .thenReturn(true);
         when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
-        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
+        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),null);
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
             .thenReturn(Optional.of(xs2aAccountReport));
         when(referenceMapper.mapToXs2aAccountReference(spiAccountReference))
@@ -416,7 +416,7 @@ public class TransactionServiceTest {
             .thenReturn(true);
         when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
-        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
+        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),null);
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
             .thenReturn(Optional.of(xs2aAccountReport));
         when(referenceMapper.mapToXs2aAccountReference(spiAccountReference))
@@ -514,7 +514,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void downloadTransactions_shouldRecordStatusInLoggingContext() throws IOException {
+    public void downloadTransactions_shouldRecordStatusInLoggingContext() {
         // Given
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
         when(downloadTransactionsReportValidator.validate(any(DownloadTransactionListRequestObject.class)))

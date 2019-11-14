@@ -31,10 +31,11 @@ import java.util.List;
 @JsonRootName(value = "transactions")
 public class Xs2aAccountReport {
 
-    @NotNull
     private final List<Transactions> booked;
 
     private final List<Transactions> pending;
+
+    private final List<Transactions> information;
 
     private final byte[] transactionsRaw;
 

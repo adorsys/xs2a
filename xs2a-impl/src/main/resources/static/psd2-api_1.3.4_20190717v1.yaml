@@ -143,26 +143,26 @@ paths:
         - Payment Initiation Service (PIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/paymentService"
         - $ref: "#/components/parameters/paymentProduct"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -236,26 +236,26 @@ paths:
       tags:
         - Payment Initiation Service (PIS)
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/paymentService"
         - $ref: "#/components/parameters/paymentProduct"
         - $ref: "#/components/parameters/paymentId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -324,27 +324,27 @@ paths:
         - Payment Initiation Service (PIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/paymentService"
         - $ref: "#/components/parameters/paymentProduct"
         - $ref: "#/components/parameters/paymentId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -415,27 +415,27 @@ paths:
         - Payment Initiation Service (PIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/paymentService"
         - $ref: "#/components/parameters/paymentProduct"
         - $ref: "#/components/parameters/paymentId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -527,26 +527,26 @@ paths:
         - Payment Initiation Service (PIS)
         - Common Services
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/paymentService"
         - $ref: "#/components/parameters/paymentProduct"
         - $ref: "#/components/parameters/paymentId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #method specific header elements
@@ -628,27 +628,27 @@ paths:
         - Common Services
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/paymentService"
         - $ref: "#/components/parameters/paymentProduct"
         - $ref: "#/components/parameters/paymentId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -710,28 +710,28 @@ paths:
         - Common Services
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/paymentService"
         - $ref: "#/components/parameters/paymentProduct"
         - $ref: "#/components/parameters/paymentId"
         - $ref: "#/components/parameters/authorisationId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -827,35 +827,35 @@ paths:
         - Common Services
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/paymentService"
         - $ref: "#/components/parameters/paymentProduct"
         - $ref: "#/components/parameters/paymentId"
         - $ref: "#/components/parameters/authorisationId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
         - $ref: "#/components/parameters/Digest"
         - $ref: "#/components/parameters/Signature"
         - $ref: "#/components/parameters/TPP-Signature-Certificate"
-         #method specific header elements # Not always allowed depending on the kind of update which is ask for
+        #method specific header elements # Not always allowed depending on the kind of update which is ask for
         - $ref: "#/components/parameters/PSU-ID"
         - $ref: "#/components/parameters/PSU-ID-Type"
         - $ref: "#/components/parameters/PSU-Corporate-ID"
@@ -963,26 +963,26 @@ paths:
         - Payment Initiation Service (PIS)
         - Common Services
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/paymentService"
         - $ref: "#/components/parameters/paymentProduct"
         - $ref: "#/components/parameters/paymentId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -1013,14 +1013,14 @@ paths:
         - $ref: "#/components/parameters/PSU-Geo-Location"
 
       requestBody:
-          content:
-              application/json:
-                  schema:
-                      oneOf: #Different Authorisation Bodies
-                          - {}
-                          - $ref: "#/components/schemas/updatePsuAuthentication"
-                          - $ref: "#/components/schemas/selectPsuAuthenticationMethod"
-                          - $ref: "#/components/schemas/transactionAuthorisation"
+        content:
+          application/json:
+            schema:
+              oneOf: #Different Authorisation Bodies
+                - {}
+                - $ref: "#/components/schemas/updatePsuAuthentication"
+                - $ref: "#/components/schemas/selectPsuAuthenticationMethod"
+                - $ref: "#/components/schemas/transactionAuthorisation"
 
       responses:
         '201':
@@ -1061,27 +1061,27 @@ paths:
         - Payment Initiation Service (PIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/paymentService"
         - $ref: "#/components/parameters/paymentProduct"
         - $ref: "#/components/parameters/paymentId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -1143,28 +1143,28 @@ paths:
         - Common Services
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/paymentService"
         - $ref: "#/components/parameters/paymentProduct"
         - $ref: "#/components/parameters/paymentId"
         - $ref: "#/components/parameters/cancellationId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -1263,35 +1263,35 @@ paths:
         - Common Services
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/paymentService"
         - $ref: "#/components/parameters/paymentProduct"
         - $ref: "#/components/parameters/paymentId"
         - $ref: "#/components/parameters/cancellationId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
         - $ref: "#/components/parameters/Digest"
         - $ref: "#/components/parameters/Signature"
         - $ref: "#/components/parameters/TPP-Signature-Certificate"
-         #method specific header elements # Not always allowed depending on the kind of update which is ask for
+        #method specific header elements # Not always allowed depending on the kind of update which is ask for
         - $ref: "#/components/parameters/PSU-ID"
         - $ref: "#/components/parameters/PSU-ID-Type"
         - $ref: "#/components/parameters/PSU-Corporate-ID"
@@ -1328,7 +1328,7 @@ paths:
 
       responses:
         '200':
-            $ref: "#/components/responses/OK_200_UpdateCancellationPsuData"
+          $ref: "#/components/responses/OK_200_UpdateCancellationPsuData"
 
         '400':
           $ref: "#/components/responses/BAD_REQUEST_400_PIS"
@@ -1356,9 +1356,9 @@ paths:
           $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_PIS"
 
 
-  #####################################################
-  # Account Information Service
-  #####################################################
+      #####################################################
+      # Account Information Service
+      #####################################################
 
       #####################################################
       # Accounts
@@ -1390,25 +1390,25 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path # NO PATH PARAMETER
-      #query
+        #path # NO PATH PARAMETER
+        #query
         - $ref: "#/components/parameters/withBalanceQuery"
-      #header
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -1481,26 +1481,26 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/accountId"
-      #query
+        #query
         - $ref: "#/components/parameters/withBalanceQuery"
-      #header
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -1569,25 +1569,25 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/accountId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -1653,31 +1653,31 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/accountId"
-      #query
+        #query
         - $ref: "#/components/parameters/dateFrom"
         - $ref: "#/components/parameters/dateTo"
         - $ref: "#/components/parameters/entryReferenceFrom"
         - $ref: "#/components/parameters/bookingStatus"
         - $ref: "#/components/parameters/deltaList"
         - $ref: "#/components/parameters/withBalanceQuery"
-      #header
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -1686,7 +1686,7 @@ paths:
         - $ref: "#/components/parameters/TPP-Signature-Certificate"
           #method specific header elements
         - $ref: "#/components/parameters/consentId_HEADER_mandatory"
-        #- $ref: "#/components/parameters/Accept" #Can not defined in Open API. See general comments in the description attached to the top level of the file.
+          #- $ref: "#/components/parameters/Accept" #Can not defined in Open API. See general comments in the description attached to the top level of the file.
           #conditional elemention for AIS
         - $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
           #optional additional PSU Information in header
@@ -1745,26 +1745,26 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/accountId"
         - $ref: "#/components/parameters/transactionId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -1835,25 +1835,25 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path # NO PATH PARAMETER
-      #query # NO QUERY PARAMETER
-      #header
-          #common header parameter
+        #path # NO PATH PARAMETER
+        #query # NO QUERY PARAMETER
+        #header
+        #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
         - $ref: "#/components/parameters/Digest"
@@ -1918,25 +1918,25 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/accountId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -2007,25 +2007,25 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/accountId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -2089,31 +2089,31 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/accountId"
-      #query
+        #query
         - $ref: "#/components/parameters/dateFrom"
         - $ref: "#/components/parameters/dateTo"
         - $ref: "#/components/parameters/entryReferenceFrom"
         - $ref: "#/components/parameters/bookingStatus"
         - $ref: "#/components/parameters/deltaList"
         - $ref: "#/components/parameters/withBalanceQuery"
-      #header
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -2122,7 +2122,7 @@ paths:
         - $ref: "#/components/parameters/TPP-Signature-Certificate"
           #method specific header elements
         - $ref: "#/components/parameters/consentId_HEADER_mandatory"
-        #- $ref: "#/components/parameters/Accept" #Can not defined in Open API. See general comments in the description attached to the top level of the file.
+          #- $ref: "#/components/parameters/Accept" #Can not defined in Open API. See general comments in the description attached to the top level of the file.
           #conditional elemention for AIS
         - $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
           #optional additional PSU Information in header
@@ -2198,17 +2198,17 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
@@ -2216,7 +2216,7 @@ paths:
         #path # NO PATH PARAMETER
         #query # NO QUERY PARAMETER
         #header
-          #common header parameter
+        #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
         - $ref: "#/components/parameters/Digest"
@@ -2293,25 +2293,25 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/consentId_PATH"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -2370,25 +2370,25 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/consentId_PATH"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -2448,25 +2448,25 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/consentId_PATH"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -2559,24 +2559,24 @@ paths:
         - Account Information Service (AIS)
         - Common Services
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/consentId_PATH"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -2658,25 +2658,25 @@ paths:
         - Account Information Service (AIS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/consentId_PATH"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -2739,26 +2739,26 @@ paths:
         - Common Services
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/consentId_PATH"
         - $ref: "#/components/parameters/authorisationId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -2858,24 +2858,24 @@ paths:
         - Common Services
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #query # NO QUERY PARAMETER
-      #header
-      #path
+        #query # NO QUERY PARAMETER
+        #header
+        #path
         - $ref: "#/components/parameters/consentId_PATH"
         - $ref: "#/components/parameters/authorisationId"
           #common header parameter
@@ -2884,7 +2884,7 @@ paths:
         - $ref: "#/components/parameters/Digest"
         - $ref: "#/components/parameters/Signature"
         - $ref: "#/components/parameters/TPP-Signature-Certificate"
-         #method specific header elements # Not always allowed depending on the kind of update which is ask for
+        #method specific header elements # Not always allowed depending on the kind of update which is ask for
         - $ref: "#/components/parameters/PSU-ID"
         - $ref: "#/components/parameters/PSU-ID-Type"
         - $ref: "#/components/parameters/PSU-Corporate-ID"
@@ -2971,14 +2971,14 @@ paths:
         - Confirmation of Funds Service (PIIS)
 
       parameters:
-      #path # NO PATH PARAMETER
-      #query # NO QUERY PARAMETER
-      #header
-          #common header parameter
+        #path # NO PATH PARAMETER
+        #query # NO QUERY PARAMETER
+        #header
+        #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
         - $ref: "#/components/parameters/Authorization"
           #method specific header elements
-        #- $ref: "#/components/parameters/consentId_HEADER_optional" # Consent-Id for usage of extended services
+          #- $ref: "#/components/parameters/consentId_HEADER_optional" # Consent-Id for usage of extended services
           #header to support the signature function
         - $ref: "#/components/parameters/Digest"
         - $ref: "#/components/parameters/Signature"
@@ -3033,17 +3033,17 @@ paths:
         - Signing Baskets (SBS)
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
@@ -3051,7 +3051,7 @@ paths:
         #path # NO PATH PARAMETER
         #query # NO QUERY PARAMETER
         #header
-          #common header parameter
+        #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
         - $ref: "#/components/parameters/Digest"
@@ -3125,24 +3125,24 @@ paths:
       tags:
         - Signing Baskets (SBS)
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
       parameters:
         #path # NO PATH PARAMETER
         - $ref: "#/components/parameters/basketId_PATH"
-        #query # NO QUERY PARAMETER
-        #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -3204,24 +3204,24 @@ paths:
         - Signing Baskets (SBS)
         - Common Services
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/basketId_PATH"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -3282,24 +3282,24 @@ paths:
         - Signing Baskets (SBS)
         - Common Services
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/basketId_PATH"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -3397,24 +3397,24 @@ paths:
         - Signing Baskets (SBS)
         - Common Services
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/basketId_PATH"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -3496,25 +3496,25 @@ paths:
         - Common Services
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/basketId_PATH"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -3615,33 +3615,33 @@ paths:
         - Common Services
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/basketId_PATH"
         - $ref: "#/components/parameters/authorisationId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
         - $ref: "#/components/parameters/Digest"
         - $ref: "#/components/parameters/Signature"
         - $ref: "#/components/parameters/TPP-Signature-Certificate"
-         #method specific header elements # Not always allowed depending on the kind of update which is ask for
+        #method specific header elements # Not always allowed depending on the kind of update which is ask for
         - $ref: "#/components/parameters/PSU-ID"
         - $ref: "#/components/parameters/PSU-ID-Type"
         - $ref: "#/components/parameters/PSU-Corporate-ID"
@@ -3718,26 +3718,26 @@ paths:
         - Common Services
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      # In this file only the basic security element to transport
-      # the bearer token of an OAuth2 process, which has to
-      # be included in the HTTP header is described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommended to adjust the security schemes according to
-      # your system environments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/basketId_PATH"
         - $ref: "#/components/parameters/authorisationId"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -3788,23 +3788,23 @@ paths:
 
 
 components:
-#####################################################
-# Predefined Components
-#####################################################
+  #####################################################
+  # Predefined Components
+  #####################################################
 
   securitySchemes:
-  #####################################################
-  # Predefined Security Schemes:
-  #
-  # In this file only the basic security element to transport
-  # the bearer token of an OAuth2 process, which has to
-  # be included in the HTTP header is described.
-  #
-  # WARNING:
-  # If you want to use this file for a productive implementation,
-  # it is recommended to adjust the security schemes according to
-  # your system environments and security policies.
-  #####################################################
+    #####################################################
+    # Predefined Security Schemes:
+    #
+    # In this file only the basic security element to transport
+    # the bearer token of an OAuth2 process, which has to
+    # be included in the HTTP header is described.
+    #
+    # WARNING:
+    # If you want to use this file for a productive implementation,
+    # it is recommended to adjust the security schemes according to
+    # your system environments and security policies.
+    #####################################################
     BearerAuthOAuth:
       description: |
         Bearer Token.
@@ -3816,9 +3816,9 @@ components:
 
 
   schemas:
-  #####################################################
-  # Predefined Schemas
-  #####################################################
+    #####################################################
+    # Predefined Schemas
+    #####################################################
 
     paymentId:
       description:
@@ -3850,7 +3850,7 @@ components:
 
     authenticationMethodId:
       description: |
-            An identification provided by the ASPSP for the later identification of the authentication method selection.
+        An identification provided by the ASPSP for the later identification of the authentication method selection.
       type: string
       maxLength: 35
       example: "myAuthenticationID"
@@ -4055,8 +4055,9 @@ components:
           - 'revokedByPsu': The consent has been revoked by the PSU towards the ASPSP.
           - 'expired': The consent expired.
           - 'terminatedByTpp': The corresponding TPP has terminated the consent by applying the DELETE method to the consent resource.
+          - 'partiallyAuthorised': The consent is due to a multi-level authorisation, some but not all mandated authorisations have been performed yet.
 
-        The ASPSP might add further codes. These codes then shall be contained in the ASPSP's documentation of the XS2A interface
+        The ASPSP might add further codes. These codes then shall be contained in the ASPSP's documentation of the XS2A interface 
         and has to be added to this API definition as well.
       type: string
       enum:
@@ -4066,6 +4067,7 @@ components:
         - "revokedByPsu"
         - "expired"
         - "terminatedByTpp"
+        - "partiallyAuthorised"
 
 
     transactionFeeIndicator:
@@ -4293,69 +4295,69 @@ components:
         currency:
           $ref: "#/components/schemas/currencyCode"
 
-#    accountReferenceIban:
-#      type: object
-#      description: |
-#        Reference to an account by the Primary Account Number (PAN) of a card,
-#        can be tokenised by the ASPSP due to PCI DSS requirements.
-#      required:
-#        - iban
-#      properties:
-#        iban:
-#          $ref: "#/components/schemas/iban"
-#        currency:
-#          $ref: "#/components/schemas/currencyCode"
+    #    accountReferenceIban:
+    #      type: object
+    #      description: |
+    #        Reference to an account by the Primary Account Number (PAN) of a card,
+    #        can be tokenised by the ASPSP due to PCI DSS requirements.
+    #      required:
+    #        - iban
+    #      properties:
+    #        iban:
+    #          $ref: "#/components/schemas/iban"
+    #        currency:
+    #          $ref: "#/components/schemas/currencyCode"
 
-#    accountReferenceBban:
-#      type: object
-#      description: |
-#        Reference to an Account.
-#
-#        This data elements is used for payment accounts which have no IBAN.
-#      required:
-#        - bban
-#      properties:
-#        bban:
-#          $ref: "#/components/schemas/bban"
-#        currency:
-#          $ref: "#/components/schemas/currencyCode"
+    #    accountReferenceBban:
+    #      type: object
+    #      description: |
+    #        Reference to an Account.
+    #
+    #        This data elements is used for payment accounts which have no IBAN.
+    #      required:
+    #        - bban
+    #      properties:
+    #        bban:
+    #          $ref: "#/components/schemas/bban"
+    #        currency:
+    #          $ref: "#/components/schemas/currencyCode"
 
-#    accountReferencePan:
-#      type: object
-#      description: |
-#        Reference to an account by the Primary Account Number (PAN) of a card,
-#        can be tokenised by the ASPSP due to PCI DSS requirements.
-#      required:
-#        - pan
-#      properties:
-#        pan:
-#          $ref: "#/components/schemas/pan"
-#        currency:
-#          $ref: "#/components/schemas/currencyCode"
+    #    accountReferencePan:
+    #      type: object
+    #      description: |
+    #        Reference to an account by the Primary Account Number (PAN) of a card,
+    #        can be tokenised by the ASPSP due to PCI DSS requirements.
+    #      required:
+    #        - pan
+    #      properties:
+    #        pan:
+    #          $ref: "#/components/schemas/pan"
+    #        currency:
+    #          $ref: "#/components/schemas/currencyCode"
 
-#    accountReferenceMaskedPan:
-#      type: object
-#      description: |
-#        Reference to an account by the Primary Account Number (PAN) of a card in a masked form.
-#      required:
-#        - maskedPan
-#      properties:
-#        maskedPan:
-#          $ref: "#/components/schemas/maskedPan"
-#        currency:
-#          $ref: "#/components/schemas/currencyCode"
-#
-#    accountReferenceMsisdn:
-#      type: object
-#      description: |
-#        An alias to access a payment account via a registered mobile phone number.
-#      required:
-#        - msisdn
-#      properties:
-#        msisdn:
-#          $ref: "#/components/schemas/msisdn"
-#        currency:
-#          $ref: "#/components/schemas/currencyCode"
+    #    accountReferenceMaskedPan:
+    #      type: object
+    #      description: |
+    #        Reference to an account by the Primary Account Number (PAN) of a card in a masked form.
+    #      required:
+    #        - maskedPan
+    #      properties:
+    #        maskedPan:
+    #          $ref: "#/components/schemas/maskedPan"
+    #        currency:
+    #          $ref: "#/components/schemas/currencyCode"
+    #
+    #    accountReferenceMsisdn:
+    #      type: object
+    #      description: |
+    #        An alias to access a payment account via a registered mobile phone number.
+    #      required:
+    #        - msisdn
+    #      properties:
+    #        msisdn:
+    #          $ref: "#/components/schemas/msisdn"
+    #        currency:
+    #          $ref: "#/components/schemas/currencyCode"
 
     balanceType:
       description: |
@@ -4408,14 +4410,14 @@ components:
             Only for card accounts, to be checked yet.
       type: string
       enum:
-          - "closingBooked"
-          - "expected"
-          - "authorised"
-          - "openingBooked"
-          - "interimAvailable"
-          - "interimBooked"
-          - "forwardAvailable"
-          - "nonInvoiced"
+        - "closingBooked"
+        - "expected"
+        - "authorised"
+        - "openingBooked"
+        - "interimAvailable"
+        - "interimBooked"
+        - "forwardAvailable"
+        - "nonInvoiced"
 
     accountAccess:
       description: |
@@ -4675,6 +4677,8 @@ components:
         JSON based account report.
         This account report contains transactions resulting from the query parameters.
 
+        'information' is used if and only if the bookingStatus entry equals "information". Every active standing order related to the dedicated payment account result into one entry.
+
         'booked' shall be contained if bookingStatus parameter is set to "booked" or "both".
 
         'pending' is not contained if the bookingStatus parameter is set to "booked".
@@ -4685,6 +4689,8 @@ components:
         booked:
           $ref: "#/components/schemas/transactionList"
         pending:
+          $ref: "#/components/schemas/transactionList"
+        information:
           $ref: "#/components/schemas/transactionList"
         _links:
           $ref: "#/components/schemas/_linksAccountReport"
@@ -4798,6 +4804,8 @@ components:
           $ref: "#/components/schemas/bankTransactionCode"
         proprietaryBankTransactionCode:
           $ref: "#/components/schemas/proprietaryBankTransactionCode"
+        additionalInformationStructured:
+          $ref: "#/components/schemas/additionalInformationStructured"
         _links:
           $ref: "#/components/schemas/_linksTransactionDetails"
 
@@ -4949,13 +4957,13 @@ components:
         $ref: "#/components/schemas/cancellationId"
 
     cancellations:
-        description: An array of all cancellationIds.
-        type: object
-        required:
+      description: An array of all cancellationIds.
+      type: object
+      required:
         - cancellationIds
-        properties:
-            cancellationIds:
-                $ref: "#/components/schemas/cancellationList"
+      properties:
+        cancellationIds:
+          $ref: "#/components/schemas/cancellationList"
 
     bicfi:
       description: |
@@ -5469,8 +5477,6 @@ components:
       minLength: 4
 
 
-
-
     frequencyCode:
       description: |
         The following codes from the "EventFrequency7Code" of ISO 20022 are supported:
@@ -5482,6 +5488,7 @@ components:
         - "Quarterly"
         - "SemiAnnual"
         - "Annual"
+        - "MonthlyVariable"
       type: string
       enum:
         - "Daily"
@@ -5492,6 +5499,67 @@ components:
         - "Quarterly"
         - "SemiAnnual"
         - "Annual"
+        - "MonthlyVariable"
+
+
+    additionalInformationStructured:
+      description: Is used if and only if the bookingStatus entry equals "information". Every active standing order related to the dedicated payment account result into one entry.
+      type: object
+      required:
+        - standingOrderDetails
+      properties:
+        standingOrderDetails:
+          $ref: "#/components/schemas/standingOrderDetails"
+
+
+    standingOrderDetails:
+      description: Details of underlying standing orders.
+      type: object
+      required:
+        - startDate
+        - frequency
+      properties:
+        startDate:
+          description: The first applicable day of execution starting from this date the first payment was/will be executed.
+          type: string
+          format: date
+        endDate:
+          description: The last applicable day of execution if not given, it is an infinite standing order.
+          type: string
+          format: date
+        executionRule:
+          $ref: "#/components/schemas/executionRule"
+        withinAMonthFlag:
+          description: |
+            This element is only used in case of frequency equals "monthly".
+
+            If this element equals false it has no effect.
+            If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.
+
+            Example: executionRule equals "preceding", dayOfExecution equals "02" and the second of a month is a Sunday. In this case, the transaction date would be on the last day of the month before.
+            This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month.
+            Remark: This attribute is rarely supported in the market.
+          type: boolean
+        frequency:
+          $ref: "#/components/schemas/frequencyCode"
+        monthsOfExecution:
+          type: array
+          items:
+            $ref: "#/components/schemas/monthsOfExecution"
+        multiplicator:
+          description: |
+            This is multiplying the given frequency resulting the exact frequency,
+            e.g. Frequency=weekly and multiplicator=3 means every 3 weeks.
+            Remark: This attribute is rarely supported in the market.
+          type: integer
+        dayOfExecution:
+          $ref: "#/components/schemas/dayOfExecution"
+        limitAmount:
+          $ref: "#/components/schemas/amount"
+        standingOrderDetails:
+          description: |
+            Details of underlying standing orders.
+          type: standingOrderDetails
 
 
     frequencyPerDay:
@@ -5507,6 +5575,15 @@ components:
       minimum: 1
       exclusiveMinimum: false
 
+
+    monthsOfExecution:
+      description: |
+        The format is following the regular expression \d{1,2}. The array is restricted to 11 entries. The values contained in the array entries shall all be different and the maximum value of one entry is 12.
+        This attribute is contained if and only if the frequency equals "MonthlyVariable".
+        Example: An execution on January, April and October each year is addressed by ["1", "4", "10"].
+      type: string
+      maxLength: 2
+      example: "4"
 
     dayOfExecution:
       description: |
@@ -5674,9 +5751,9 @@ components:
       example: "2018-07-01"
 
 
-#####################################################
-# Content of Request Bodies
-#####################################################
+    #####################################################
+    # Content of Request Bodies
+    #####################################################
 
 
 
@@ -5758,16 +5835,16 @@ components:
           maxLength: 35
         debtorAccount:
           $ref: "#/components/schemas/accountReference"
-#        debtorId: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/ultimateDebtor"
+        #        debtorId: # N.A. for all, but can be used by ASPSP if needed
+        #          $ref: "#/components/schemas/ultimateDebtor"
         ultimateDebtor: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/ultimateDebtor"
         instructedAmount:
           $ref: "#/components/schemas/amount"
-#        transactionCurrency: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/currencyCode"
-#        exchangeRateInformation: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/paymentExchangeRate"
+        #        transactionCurrency: # N.A. for all, but can be used by ASPSP if needed
+        #          $ref: "#/components/schemas/currencyCode"
+        #        exchangeRateInformation: # N.A. for all, but can be used by ASPSP if needed
+        #          $ref: "#/components/schemas/paymentExchangeRate"
         creditorAccount:
           $ref: "#/components/schemas/accountReference"
         creditorAgent:
@@ -5782,26 +5859,26 @@ components:
           description: Identification of Creditors, e.g. a SEPA Creditor ID.
           type: string
           maxLength: 35
-#        creditorNameAndAddress: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/creditorNameAndAddress"
+        #        creditorNameAndAddress: # N.A. for all, but can be used by ASPSP if needed
+        #          $ref: "#/components/schemas/creditorNameAndAddress"
         ultimateCreditor: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/ultimateCreditor"
         purposeCode: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/purposeCode"
-#        chargeBearer: #In some payment product N.A. in some Optional in some conditional
-#          $ref: "#/components/schemas/chargeBearer"
+        #        chargeBearer: #In some payment product N.A. in some Optional in some conditional
+        #          $ref: "#/components/schemas/chargeBearer"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
-#        remittanceInformationUnstructuredArray:
-#          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
+        #        remittanceInformationUnstructuredArray:
+        #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/remittanceInformationStructured"
         requestedExecutionDate: # N.A. for all, but can be used by ASPSP if needed
           type: string
           format: date
-#        requestedExecutionTime: # N.A. for all, but can be used by ASPSP if needed
-#          type: string
-#          format: date-time
+    #        requestedExecutionTime: # N.A. for all, but can be used by ASPSP if needed
+    #          type: string
+    #          format: date-time
 
 
     paymentInitiationBulkElement_json:
@@ -5883,10 +5960,10 @@ components:
           $ref: "#/components/schemas/ultimateDebtor"
         instructedAmount:
           $ref: "#/components/schemas/amount"
-#        transactionCurrency: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/currencyCode"
-#        exchangeRateInformation: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/paymentExchangeRate"
+        #        transactionCurrency: # N.A. for all, but can be used by ASPSP if needed
+        #          $ref: "#/components/schemas/currencyCode"
+        #        exchangeRateInformation: # N.A. for all, but can be used by ASPSP if needed
+        #          $ref: "#/components/schemas/paymentExchangeRate"
         creditorAccount:
           $ref: "#/components/schemas/accountReference"
         creditorAgent:
@@ -5901,18 +5978,18 @@ components:
           description: Identification of Creditors, e.g. a SEPA Creditor ID.
           type: string
           maxLength: 35
-#        creditorNameAndAddress: # N.A. for all, but can be used by ASPSP if needed
-#          $ref: "#/components/schemas/creditorNameAndAddress"
+        #        creditorNameAndAddress: # N.A. for all, but can be used by ASPSP if needed
+        #          $ref: "#/components/schemas/creditorNameAndAddress"
         ultimateCreditor: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/ultimateCreditor"
         purposeCode: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/purposeCode"
-#        chargeBearer: #In some payment product N.A. in some Optional in some conditional
-#          $ref: "#/components/schemas/chargeBearer"
+        #        chargeBearer: #In some payment product N.A. in some Optional in some conditional
+        #          $ref: "#/components/schemas/chargeBearer"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
-#        remittanceInformationUnstructuredArray:
-#          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
+        #        remittanceInformationUnstructuredArray:
+        #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/remittanceInformationStructured"
 
@@ -6020,16 +6097,16 @@ components:
           $ref: "#/components/schemas/purposeCode"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
-#        remittanceInformationUnstructuredArray:
-#          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
+        #        remittanceInformationUnstructuredArray:
+        #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured:  # N.A.
           $ref: "#/components/schemas/remittanceInformationStructured"
-#        requestedExecutionDate: # N.A.
-#          type: string
-#          format: date
-#        requestedExecutionTime: # N.A.
-#          type: string
-#          format: date-time
+        #        requestedExecutionDate: # N.A.
+        #          type: string
+        #          format: date
+        #        requestedExecutionTime: # N.A.
+        #          type: string
+        #          format: date-time
         #Additional Information for periodic payments
         startDate:
           $ref: "#/components/schemas/startDate"
@@ -6060,11 +6137,11 @@ components:
           $ref: "#/components/schemas/batchBookingPreferred"
         debtorAccount:
           $ref: "#/components/schemas/accountReference"
-#        paymentInformationId:
-#          description: |
-#            Unique identification as assigned by the sending party to unambiguously identify this bulk payment.
-#          type: string
-#          maxLength: 35
+        #        paymentInformationId:
+        #          description: |
+        #            Unique identification as assigned by the sending party to unambiguously identify this bulk payment.
+        #          type: string
+        #          maxLength: 35
         requestedExecutionDate:
           type: string
           format: date
@@ -6193,9 +6270,9 @@ components:
           $ref: "#/components/schemas/scaAuthenticationData"
 
 
-    #####################################################
-    # Content of Request Bodies - XML
-    #####################################################
+      #####################################################
+      # Content of Request Bodies - XML
+      #####################################################
 
       #####################################################
       # Content of Request Bodies - Single Part
@@ -6209,37 +6286,37 @@ components:
       type: string
       example:
         <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03">
-          <CstmrCdtTrfInitn>
-            <GrpHdr>
-              <MsgId>MIPI-123456789RI-123456789</MsgId>
-              <CreDtTm>2017-02-14T20:23:34.000Z</CreDtTm>
-              <NbOfTxs>1</NbOfTxs>
-              <CtrlSum>123</CtrlSum>
-              <InitgPty>
-                <Nm>PaymentInitiator</Nm>
-                <Id><OrgId><Othr><Id>DE10000000012</Id>
-                  <SchmeNm><Prptry>PISP</Prptry></SchmeNm></Othr></OrgId></Id>
-              </InitgPty>
-            </GrpHdr>
-            <PmtInf>
-              <PmtInfId>BIPI-123456789RI-123456789</PmtInfId>
-              <PmtMtd>TRF</PmtMtd>
-              <NbOfTxs>1</NbOfTxs>
-              <CtrlSum>123</CtrlSum>
-              <PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf>
-              <ReqdExctnDt>2017-02-15</ReqdExctnDt>
-              <Dbtr><Nm>PSU Name</Nm></Dbtr>
-              <DbtrAcct><Id><IBAN>DE87200500001234567890</IBAN></Id></DbtrAcct>
-              <ChrgBr>SLEV</ChrgBr>
-              <CdtTrfTxInf>
-                <PmtId><EndToEndId>RI-123456789</EndToEndId></PmtId>
-                <Amt><InstdAmt Ccy="EUR">123</InstdAmt></Amt>
-                <Cdtr><Nm>Merchant123</Nm></Cdtr>
-                <CdtrAcct><Id><IBAN> DE23100120020123456789</IBAN></Id></CdtrAcct>
-                <RmtInf><Ustrd>Ref Number Merchant-123456</Ustrd></RmtInf>
-              </CdtTrfTxInf>
-            </PmtInf>
-          </CstmrCdtTrfInitn>
+        <CstmrCdtTrfInitn>
+        <GrpHdr>
+        <MsgId>MIPI-123456789RI-123456789</MsgId>
+        <CreDtTm>2017-02-14T20:23:34.000Z</CreDtTm>
+        <NbOfTxs>1</NbOfTxs>
+        <CtrlSum>123</CtrlSum>
+        <InitgPty>
+        <Nm>PaymentInitiator</Nm>
+        <Id><OrgId><Othr><Id>DE10000000012</Id>
+        <SchmeNm><Prptry>PISP</Prptry></SchmeNm></Othr></OrgId></Id>
+        </InitgPty>
+        </GrpHdr>
+        <PmtInf>
+        <PmtInfId>BIPI-123456789RI-123456789</PmtInfId>
+        <PmtMtd>TRF</PmtMtd>
+        <NbOfTxs>1</NbOfTxs>
+        <CtrlSum>123</CtrlSum>
+        <PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf>
+        <ReqdExctnDt>2017-02-15</ReqdExctnDt>
+        <Dbtr><Nm>PSU Name</Nm></Dbtr>
+        <DbtrAcct><Id><IBAN>DE87200500001234567890</IBAN></Id></DbtrAcct>
+        <ChrgBr>SLEV</ChrgBr>
+        <CdtTrfTxInf>
+        <PmtId><EndToEndId>RI-123456789</EndToEndId></PmtId>
+        <Amt><InstdAmt Ccy="EUR">123</InstdAmt></Amt>
+        <Cdtr><Nm>Merchant123</Nm></Cdtr>
+        <CdtrAcct><Id><IBAN> DE23100120020123456789</IBAN></Id></CdtrAcct>
+        <RmtInf><Ustrd>Ref Number Merchant-123456</Ustrd></RmtInf>
+        </CdtTrfTxInf>
+        </PmtInf>
+        </CstmrCdtTrfInitn>
         </Document>
 
     paymentInitiationSctInst_pain.001: #The same schemas are use for single an bulk payment in case of a pain.001
@@ -6267,9 +6344,9 @@ components:
 
     periodicPaymentInitiationMultipartBody:
       description: |
-       The multipart message definition for the initiation of a periodic payment initiation
-       where the information of the payment is contained in an pain.001 message (Part 1) and
-       the additional informations related to the periodic payment is an additional JSON message (Part 2).
+        The multipart message definition for the initiation of a periodic payment initiation
+        where the information of the payment is contained in an pain.001 message (Part 1) and
+        the additional informations related to the periodic payment is an additional JSON message (Part 2).
       type: object
       properties:
         xml_sct: #PART 1
@@ -6305,9 +6382,9 @@ components:
 
 
 
-#####################################################
-# Content of Response Bodies
-#####################################################
+    #####################################################
+    # Content of Response Bodies
+    #####################################################
 
 
     paymentInitiationStatusResponse-200_json:
@@ -6419,16 +6496,16 @@ components:
           $ref: "#/components/schemas/purposeCode"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
-#        remittanceInformationUnstructuredArray:
-#          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
+        #        remittanceInformationUnstructuredArray:
+        #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured: # N.A.
           $ref: "#/components/schemas/remittanceInformationStructured"
         requestedExecutionDate: # N.A.
           type: string
           format: date
-#        requestedExecutionTime: # N.A.
-#          type: string
-#          format: date-time
+        #        requestedExecutionTime: # N.A.
+        #          type: string
+        #          format: date-time
         transactionStatus:
           $ref: "#/components/schemas/transactionStatus"
 
@@ -6468,16 +6545,16 @@ components:
           $ref: "#/components/schemas/purposeCode"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
-#        remittanceInformationUnstructuredArray:
-#          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
+        #        remittanceInformationUnstructuredArray:
+        #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured: # N.A.
           $ref: "#/components/schemas/remittanceInformationStructured"
-#        requestedExecutionDate:
-#          type: string
-#          format: date
-#        requestedExecutionTime:
-#          type: string
-#          format: date-time
+        #        requestedExecutionDate:
+        #          type: string
+        #          format: date
+        #        requestedExecutionTime:
+        #          type: string
+        #          format: date-time
         #Additional Information for periodic payments
         startDate:
           $ref: "#/components/schemas/startDate"
@@ -6547,32 +6624,32 @@ components:
         challengeData:
           $ref: "#/components/schemas/challengeData"
         _links:
-           $ref: "#/components/schemas/_linksStartScaProcess"
+          $ref: "#/components/schemas/_linksStartScaProcess"
         psuMessage:
           $ref: "#/components/schemas/psuMessageText"
 
     startCancellationScaProcessResponse:
-        description: Body of the JSON response for a Start SCA authorisation request.
-        type: object
-        required:
-            - scaStatus
-            - authorisationId
-            - _links
-        properties:
-            scaStatus:
-                $ref: "#/components/schemas/scaStatus"
-            cancellationId:
-                $ref: "#/components/schemas/cancellationId"
-            scaMethods:
-                $ref: "#/components/schemas/scaMethods"
-            chosenScaMethod:
-                $ref: "#/components/schemas/chosenScaMethod"
-            challengeData:
-                $ref: "#/components/schemas/challengeData"
-            _links:
-                $ref: "#/components/schemas/_linksStartScaProcess"
-            psuMessage:
-                $ref: "#/components/schemas/psuMessageText"
+      description: Body of the JSON response for a Start SCA authorisation request.
+      type: object
+      required:
+        - scaStatus
+        - authorisationId
+        - _links
+      properties:
+        scaStatus:
+          $ref: "#/components/schemas/scaStatus"
+        cancellationId:
+          $ref: "#/components/schemas/cancellationId"
+        scaMethods:
+          $ref: "#/components/schemas/scaMethods"
+        chosenScaMethod:
+          $ref: "#/components/schemas/chosenScaMethod"
+        challengeData:
+          $ref: "#/components/schemas/challengeData"
+        _links:
+          $ref: "#/components/schemas/_linksStartScaProcess"
+        psuMessage:
+          $ref: "#/components/schemas/psuMessageText"
 
 
     updatePsuIdenticationResponse:
@@ -6614,25 +6691,25 @@ components:
           $ref: "#/components/schemas/authorisationId"
 
     updateCancellationPsuAuthenticationResponse:
-        description: Body of the JSON response for a successful update PSU authentication request.
-        type: object
-        required:
-            - scaStatus
-        properties:
-            chosenScaMethod:
-                $ref: "#/components/schemas/chosenScaMethod"
-            challengeData:
-                $ref: "#/components/schemas/challengeData"
-            scaMethods:
-                $ref: "#/components/schemas/scaMethods"
-            _links:
-                $ref: "#/components/schemas/_linksUpdatePsuAuthentication"
-            scaStatus:
-                $ref: "#/components/schemas/scaStatus"
-            psuMessage:
-                $ref: "#/components/schemas/psuMessageText"
-            cancellationId:
-                $ref: "#/components/schemas/cancellationId"
+      description: Body of the JSON response for a successful update PSU authentication request.
+      type: object
+      required:
+        - scaStatus
+      properties:
+        chosenScaMethod:
+          $ref: "#/components/schemas/chosenScaMethod"
+        challengeData:
+          $ref: "#/components/schemas/challengeData"
+        scaMethods:
+          $ref: "#/components/schemas/scaMethods"
+        _links:
+          $ref: "#/components/schemas/_linksUpdatePsuAuthentication"
+        scaStatus:
+          $ref: "#/components/schemas/scaStatus"
+        psuMessage:
+          $ref: "#/components/schemas/psuMessageText"
+        cancellationId:
+          $ref: "#/components/schemas/cancellationId"
 
 
     selectPsuAuthenticationMethodResponse:
@@ -6698,7 +6775,7 @@ components:
         basketId:
           $ref: "#/components/schemas/basketId"
         scaMethods:
-           $ref: "#/components/schemas/scaMethods"
+          $ref: "#/components/schemas/scaMethods"
         chosenScaMethod:
           $ref: "#/components/schemas/chosenScaMethod"
         challengeData:
@@ -6861,9 +6938,9 @@ components:
       type: string
 
 
-#####################################################
-# _links
-#####################################################
+    #####################################################
+    # _links
+    #####################################################
 
     _linksAll:
       description: |
@@ -7007,8 +7084,8 @@ components:
           $ref: "#/components/schemas/hrefType"
       example:
         {
-        "scaRedirect": {"href": "https://www.testbank.com/asdfasdfasdf"},
-        "self": {"href": "/v1/payments/sepa-credit-transfers/1234-wertiq-983"}
+          "scaRedirect": {"href": "https://www.testbank.com/asdfasdfasdf"},
+          "self": {"href": "/v1/payments/sepa-credit-transfers/1234-wertiq-983"}
         }
 
 
@@ -7479,14 +7556,14 @@ components:
         transactions:
           $ref: "#/components/schemas/hrefType"
 
-#####################################################
-# Tpp-Messages to Communicate Error Information
-#####################################################
+    #####################################################
+    # Tpp-Messages to Communicate Error Information
+    #####################################################
 
 
-  #####################################################
-  # Generic Elements
-  #####################################################
+    #####################################################
+    # Generic Elements
+    #####################################################
 
     tppMessageCategory:
       description: Category of the TPP message category.
@@ -7599,8 +7676,8 @@ components:
       type: string
 
     MessageCode406_PIS:
-        description: Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).
-        type: string
+      description: Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).
+      type: string
 
     MessageCode409_AIS:
       description: Message codes defined for AIS for HTTP Error code 409 (CONFLICT).
@@ -7624,9 +7701,9 @@ components:
 
 
 
-  #####################################################
-  # Next Gen propriatary Tpp-Messages
-  #####################################################
+    #####################################################
+    # Next Gen propriatary Tpp-Messages
+    #####################################################
 
 
     tppMessageText:
@@ -7642,7 +7719,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode2XX"
         path:
@@ -7658,7 +7735,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode400_AIS"
         path:
@@ -7674,7 +7751,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode400_PIS"
         path:
@@ -7690,7 +7767,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode400_PIIS"
         path:
@@ -7706,7 +7783,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode400_SBS"
         path:
@@ -7722,7 +7799,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode401_PIS"
         path:
@@ -7737,7 +7814,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode401_AIS"
         path:
@@ -7753,7 +7830,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode401_PIIS"
         path:
@@ -7769,7 +7846,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode401_SBS"
         path:
@@ -7784,7 +7861,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode403_PIS"
         path:
@@ -7800,7 +7877,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode403_AIS"
         path:
@@ -7816,7 +7893,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode403_PIIS"
         path:
@@ -7832,7 +7909,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode403_SBS"
         path:
@@ -7848,7 +7925,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode404_PIS"
         path:
@@ -7864,7 +7941,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode404_AIS"
         path:
@@ -7880,7 +7957,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode404_PIIS"
         path:
@@ -7896,7 +7973,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode404_SBS"
         path:
@@ -7912,7 +7989,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode405_PIS"
         path:
@@ -7928,7 +8005,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode405_PIS_CANC"
         path:
@@ -7944,7 +8021,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode405_AIS"
         path:
@@ -7960,7 +8037,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode405_PIIS"
         path:
@@ -7976,7 +8053,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode405_SBS"
         path:
@@ -7992,7 +8069,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode409_PIS"
         path:
@@ -8008,7 +8085,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode406_AIS"
         path:
@@ -8038,7 +8115,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode409_AIS"
         path:
@@ -8055,7 +8132,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode409_PIIS"
         path:
@@ -8071,7 +8148,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode409_SBS"
         path:
@@ -8087,7 +8164,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode429_AIS"
         path:
@@ -8096,9 +8173,9 @@ components:
           $ref: "#/components/schemas/tppMessageText"
 
 
-  #####################################################
-  # RFC7807 Messages
-  #####################################################
+    #####################################################
+    # RFC7807 Messages
+    #####################################################
 
     tppErrorTitle:
       description: |
@@ -8119,9 +8196,9 @@ components:
 
 
 
-  #####################################################
-  # RFC7807 Messages
-  #####################################################
+    #####################################################
+    # RFC7807 Messages
+    #####################################################
 
 
 
@@ -9636,7 +9713,7 @@ components:
                 $ref: "#/components/schemas/MessageCode429_AIS"
         _links:
           $ref: "#/components/schemas/_linksAll"
-      #example:
+        #example:
         #$ref: "#/components/examples/RFC7807_ErrorInfoBody"
 
 
@@ -9951,10 +10028,10 @@ components:
           $ref: "#/components/schemas/_linksAll"
       example:
         [{
-          "category": "ERROR",
-          "code": "STATUS_INVALID",
-          "text": "additional text information of the ASPSP up to 512 characters"
-        }]
+           "category": "ERROR",
+           "code": "STATUS_INVALID",
+           "text": "additional text information of the ASPSP up to 512 characters"
+         }]
 
 
     Error409_NG_AIS:
@@ -9970,10 +10047,10 @@ components:
           $ref: "#/components/schemas/_linksAll"
       example:
         [{
-          "category": "ERROR",
-          "code": "STATUS_INVALID",
-          "text": "additional text information of the ASPSP up to 512 characters"
-        }]
+           "category": "ERROR",
+           "code": "STATUS_INVALID",
+           "text": "additional text information of the ASPSP up to 512 characters"
+         }]
 
 
     Error409_NG_PIIS:
@@ -9989,10 +10066,10 @@ components:
           $ref: "#/components/schemas/_linksAll"
       example:
         [{
-          "category": "ERROR",
-          "code": "STATUS_INVALID",
-          "text": "additional text information of the ASPSP up to 512 characters"
-        }]
+           "category": "ERROR",
+           "code": "STATUS_INVALID",
+           "text": "additional text information of the ASPSP up to 512 characters"
+         }]
 
 
     Error409_NG_SBS:
@@ -10008,10 +10085,10 @@ components:
           $ref: "#/components/schemas/_linksAll"
       example:
         [{
-          "category": "ERROR",
-          "code": "STATUS_INVALID",
-          "text": "additional text information of the ASPSP up to 512 characters"
-        }]
+           "category": "ERROR",
+           "code": "STATUS_INVALID",
+           "text": "additional text information of the ASPSP up to 512 characters"
+         }]
 
 
     Error429_NG_AIS:
@@ -10027,16 +10104,16 @@ components:
           $ref: "#/components/schemas/_linksAll"
       example:
         [{
-          "category": "ERROR",
-          "code": "ACCESS_EXCEEDED",
-          "text": "additional text information of the ASPSP up to 512 characters"
-        }]
+           "category": "ERROR",
+           "code": "ACCESS_EXCEEDED",
+           "text": "additional text information of the ASPSP up to 512 characters"
+         }]
 
 
   parameters:
-  #####################################################
-  # Predefined Parameters
-  #####################################################
+    #####################################################
+    # Predefined Parameters
+    #####################################################
 
     paymentService:
       name: payment-service
@@ -10264,16 +10341,18 @@ components:
       in: query
       description: |
         Permitted codes are
+          * "information",
           * "booked",
           * "pending" and
           * "both"
         "booked" shall be supported by the ASPSP.
-        To support the "pending" and "both" feature is optional for the ASPSP,
+        To support the "information", "pending" and "both" feature is optional for the ASPSP,
         Error code if not supported in the online banking frontend
       required: true
       schema:
         type: string
         enum:
+          - "information"
           - "booked"
           - "pending"
           - "both"
@@ -10669,9 +10748,9 @@ components:
 
 
   requestBodies:
-  #####################################################
-  # Reusable Request Bodies
-  #####################################################
+    #####################################################
+    # Reusable Request Bodies
+    #####################################################
 
     paymentInitiation:
       description: |
@@ -10774,9 +10853,9 @@ components:
               $ref: "#/components/examples/consentsExample_without_Accounts"
 
   headers:
-  #####################################################
-  # Reusable Response Header Elements
-  #####################################################
+    #####################################################
+    # Reusable Response Header Elements
+    #####################################################
 
     X-Request-ID:
       description: ID of the request, unique to the call, as determined by the initiating party.
@@ -10839,9 +10918,9 @@ components:
         type: string
       required: false
   responses:
-  #####################################################
-  # Reusabale Responses
-  #####################################################
+    #####################################################
+    # Reusabale Responses
+    #####################################################
     #####################################################
     # Positive Responses
     #####################################################
@@ -10854,7 +10933,7 @@ components:
           $ref: "#/components/headers/X-Request-ID"
       content:
         application/json:
-           schema:
+          schema:
             oneOf:  #Different Payment Products with status
               - $ref: "#/components/schemas/paymentInitiationWithStatusResponse"
               - $ref: "#/components/schemas/periodicPaymentInitiationWithStatusResponse"
@@ -11205,32 +11284,32 @@ components:
               $ref: "#/components/examples/transactionAuthorisationResponseExample"
 
     OK_200_UpdateCancellationPsuData:
-        description: OK
+      description: OK
 
-        headers:
-            X-Request-ID:
-                $ref: "#/components/headers/X-Request-ID"
-            ASPSP-SCA-Approach:
-                $ref: "#/components/headers/ASPSP-SCA-Approach"
+      headers:
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+        ASPSP-SCA-Approach:
+          $ref: "#/components/headers/ASPSP-SCA-Approach"
 
-        content:
-            application/json:
-                schema:
+      content:
+        application/json:
+          schema:
 
-                    oneOf: #Different Authorisation Bodies
-                        - $ref: "#/components/schemas/updatePsuIdenticationResponse" #Update PSU Identification
-                        - $ref: "#/components/schemas/updateCancellationPsuAuthenticationResponse" #Update PSU Authentication
-                        - $ref: "#/components/schemas/selectPsuAuthenticationMethodResponse" #Select Authentication Method
-                        - $ref: "#/components/schemas/scaStatusResponse" #Transaction Authorisation
-                examples:
-                    "Update PSU Identification - Payment Initiation (Decoupled Approach)":
-                        $ref: "#/components/examples/updatePsuIdentificationResponseExample_Decoupled_payments"
-                    "Update PSU Authentication - Payment Initiation (Embedded Approach)":
-                        $ref: "#/components/examples/updatePsuAuthenticationResponseExample_Embedded_payments"
-                    "Select PSU Authentication - Payment Initiation Method (Embedded Approach)":
-                        $ref: "#/components/examples/selectPsuAuthenticationMethodResponseExample_Embedded_payments"
-                    "Transaction Authorisation (Embedded Approach)":
-                        $ref: "#/components/examples/transactionAuthorisationResponseExample"
+            oneOf: #Different Authorisation Bodies
+              - $ref: "#/components/schemas/updatePsuIdenticationResponse" #Update PSU Identification
+              - $ref: "#/components/schemas/updateCancellationPsuAuthenticationResponse" #Update PSU Authentication
+              - $ref: "#/components/schemas/selectPsuAuthenticationMethodResponse" #Select Authentication Method
+              - $ref: "#/components/schemas/scaStatusResponse" #Transaction Authorisation
+          examples:
+            "Update PSU Identification - Payment Initiation (Decoupled Approach)":
+              $ref: "#/components/examples/updatePsuIdentificationResponseExample_Decoupled_payments"
+            "Update PSU Authentication - Payment Initiation (Embedded Approach)":
+              $ref: "#/components/examples/updatePsuAuthenticationResponseExample_Embedded_payments"
+            "Select PSU Authentication - Payment Initiation Method (Embedded Approach)":
+              $ref: "#/components/examples/selectPsuAuthenticationMethodResponseExample_Embedded_payments"
+            "Transaction Authorisation (Embedded Approach)":
+              $ref: "#/components/examples/transactionAuthorisationResponseExample"
 
     OK_200_GetSigningBasket:
       description: OK
@@ -11358,24 +11437,24 @@ components:
             $ref: "#/components/schemas/startScaprocessResponse"
           examples:
             "Example 1: payments - Decoupled Approach":
-               $ref: "#/components/examples/startScaProcessResponseExample1"
+              $ref: "#/components/examples/startScaProcessResponseExample1"
 
     CREATED_201_StartCancellationScaProcess:
-        description: Created cancellation authorisation
+      description: Created cancellation authorisation
 
-        headers:
-            X-Request-ID:
-                $ref: "#/components/headers/X-Request-ID"
-            ASPSP-SCA-Approach:
-                $ref: "#/components/headers/ASPSP-SCA-Approach"
+      headers:
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+        ASPSP-SCA-Approach:
+          $ref: "#/components/headers/ASPSP-SCA-Approach"
 
-        content:
-            application/json:
-                schema:
-                    $ref: "#/components/schemas/startCancellationScaProcessResponse"
-                examples:
-                    "Example 1: payments - Decoupled Approach":
-                        $ref: "#/components/examples/startCancellationScaProcessResponseExample1"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/startCancellationScaProcessResponse"
+          examples:
+            "Example 1: payments - Decoupled Approach":
+              $ref: "#/components/examples/startCancellationScaProcessResponseExample1"
 
     CREATED_201_Consents:
       description: Created
@@ -11549,7 +11628,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error401_PIS"
+            $ref: "#/components/schemas/Error401_PIS"
 
     UNAUTHORIZED_401_AIS:
       description: Unauthorized
@@ -11567,7 +11646,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error401_AIS"
+            $ref: "#/components/schemas/Error401_AIS"
 
     UNAUTHORIZED_401_PIIS:
       description: Unauthorized
@@ -11585,7 +11664,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error401_PIIS"
+            $ref: "#/components/schemas/Error401_PIIS"
 
     UNAUTHORIZED_401_SBS:
       description: Unauthorized
@@ -11603,7 +11682,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error401_SBS"
+            $ref: "#/components/schemas/Error401_SBS"
 
 
     FORBIDDEN_403_PIS:
@@ -11622,7 +11701,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error403_PIS"
+            $ref: "#/components/schemas/Error403_PIS"
 
 
     FORBIDDEN_403_AIS:
@@ -11641,7 +11720,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error403_AIS"
+            $ref: "#/components/schemas/Error403_AIS"
 
 
     FORBIDDEN_403_PIIS:
@@ -11660,7 +11739,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error403_PIIS"
+            $ref: "#/components/schemas/Error403_PIIS"
 
 
     FORBIDDEN_403_SBS:
@@ -11679,7 +11758,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error403_SBS"
+            $ref: "#/components/schemas/Error403_SBS"
 
 
     NOT_FOUND_404_PIS:
@@ -11698,7 +11777,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error404_PIS"
+            $ref: "#/components/schemas/Error404_PIS"
 
 
     NOT_FOUND_404_AIS:
@@ -11717,7 +11796,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error404_AIS"
+            $ref: "#/components/schemas/Error404_AIS"
 
 
     NOT_FOUND_404_PIIS:
@@ -11736,7 +11815,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error404_PIIS"
+            $ref: "#/components/schemas/Error404_PIIS"
 
 
     NOT_FOUND_404_SBS:
@@ -11755,7 +11834,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error404_SBS"
+            $ref: "#/components/schemas/Error404_SBS"
 
 
     METHOD_NOT_ALLOWED_405_PIS:
@@ -11774,7 +11853,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error405_PIS"
+            $ref: "#/components/schemas/Error405_PIS"
 
 
     METHOD_NOT_ALLOWED_405_PIS_CANC:
@@ -11793,7 +11872,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error405_PIS_CANC"
+            $ref: "#/components/schemas/Error405_PIS_CANC"
 
 
     METHOD_NOT_ALLOWED_405_AIS:
@@ -11812,7 +11891,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error405_AIS"
+            $ref: "#/components/schemas/Error405_AIS"
 
 
     METHOD_NOT_ALLOWED_405_PIIS:
@@ -11831,7 +11910,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error405_PIIS"
+            $ref: "#/components/schemas/Error405_PIIS"
 
 
     METHOD_NOT_ALLOWED_405_SBS:
@@ -11850,7 +11929,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error405_SBS"
+            $ref: "#/components/schemas/Error405_SBS"
 
 
     NOT_ACCEPTABLE_406_PIS:
@@ -11880,7 +11959,7 @@ components:
             $ref: "#/components/schemas/Error406_NG_AIS"
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error406_AIS"
+            $ref: "#/components/schemas/Error406_AIS"
 
 
     NOT_ACCEPTABLE_406_PIIS:
@@ -11960,11 +12039,11 @@ components:
       content:
         application/json:
           schema:
-             $ref: "#/components/schemas/Error409_NG_PIS"
+            $ref: "#/components/schemas/Error409_NG_PIS"
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error409_PIS"
+            $ref: "#/components/schemas/Error409_PIS"
 
 
     CONFLICT_409_AIS:
@@ -11978,11 +12057,11 @@ components:
       content:
         application/json:
           schema:
-             $ref: "#/components/schemas/Error409_NG_AIS"
+            $ref: "#/components/schemas/Error409_NG_AIS"
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error409_AIS"
+            $ref: "#/components/schemas/Error409_AIS"
 
 
     CONFLICT_409_PIIS:
@@ -11996,11 +12075,11 @@ components:
       content:
         application/json:
           schema:
-             $ref: "#/components/schemas/Error409_NG_PIIS"
+            $ref: "#/components/schemas/Error409_NG_PIIS"
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error409_PIIS"
+            $ref: "#/components/schemas/Error409_PIIS"
 
 
     CONFLICT_409_SBS:
@@ -12014,11 +12093,11 @@ components:
       content:
         application/json:
           schema:
-             $ref: "#/components/schemas/Error409_NG_SBS"
+            $ref: "#/components/schemas/Error409_NG_SBS"
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error409_SBS"
+            $ref: "#/components/schemas/Error409_SBS"
 
 
     UNSUPPORTED_MEDIA_TYPE_415_AIS:
@@ -12093,7 +12172,7 @@ components:
         application/problem+json:
 
           schema:
-             $ref: "#/components/schemas/Error429_AIS"
+            $ref: "#/components/schemas/Error429_AIS"
 
 
     TOO_MANY_REQUESTS_429_PIIS:
@@ -12200,9 +12279,9 @@ components:
       #No Response body because there are no valid message codes for signing baskets in case of HTTP code 503
 
   examples:
-  #####################################################
-  # Predefined Examples
-  #####################################################
+    #####################################################
+    # Predefined Examples
+    #####################################################
 
     ibanExampleDe_01:
       value: "DE02100100109307118603"
@@ -12325,15 +12404,15 @@ components:
     paymentInitiationSctBody_periodic-payments_json:
       value:
         {
-        "instructedAmount": {"currency": "EUR", "amount": "123"},
-        "debtorAccount": {"iban": "DE40100100103307118608"},
-        "creditorName": "Merchant123",
-        "creditorAccount": {"iban": "DE23100120020123456789"},
-        "remittanceInformationUnstructured": "Ref Number Abonnement",
-        "startDate": "2018-03-01",
-        "executionRule": "preceding",
-        "frequency": "monthly",
-        "dayOfExecution": "01"
+          "instructedAmount": {"currency": "EUR", "amount": "123"},
+          "debtorAccount": {"iban": "DE40100100103307118608"},
+          "creditorName": "Merchant123",
+          "creditorAccount": {"iban": "DE23100120020123456789"},
+          "remittanceInformationUnstructured": "Ref Number Abonnement",
+          "startDate": "2018-03-01",
+          "executionRule": "preceding",
+          "frequency": "monthly",
+          "dayOfExecution": "01"
         }
 
 
@@ -12341,22 +12420,22 @@ components:
     paymentInitiationSctBody_bulk-payments_json:
       value:
         {
-        "batchBookingPreferred": "true",
-        "debtorAccount": {"iban": "DE40100100103307118608"},
-        "paymentInformationId": "my-bulk-identification-1234",
-        "requestedExecutionDate": "2018-08-01",
-        "payments":
-          [
+          "batchBookingPreferred": "true",
+          "debtorAccount": {"iban": "DE40100100103307118608"},
+          "paymentInformationId": "my-bulk-identification-1234",
+          "requestedExecutionDate": "2018-08-01",
+          "payments":
+            [
             {
-            instructedAmount": {"currency": "EUR", "amount": "123.50"},
-            "creditorName": "Merchant123",
-            "creditorAccount": {"iban": "DE02100100109307118603"},
-            "remittanceInformationUnstructured": "Ref Number Merchant 1"
+              instructedAmount": {"currency": "EUR", "amount": "123.50"},
+              "creditorName": "Merchant123",
+              "creditorAccount": {"iban": "DE02100100109307118603"},
+              "remittanceInformationUnstructured": "Ref Number Merchant 1"
             }, {
-            instructedAmount": {"currency": "EUR", "amount": "34.10"},
-            "creditorName": "Merchant456",
-            "creditorAccount": {"iban": "FR7612345987650123456789014"},
-            "remittanceInformationUnstructured": "Ref Number Merchant 2"
+              instructedAmount": {"currency": "EUR", "amount": "34.10"},
+              "creditorName": "Merchant456",
+              "creditorAccount": {"iban": "FR7612345987650123456789014"},
+              "remittanceInformationUnstructured": "Ref Number Merchant 2"
             }]
         }
 
@@ -12377,7 +12456,7 @@ components:
                 {
                   "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/balances"},
                   "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/transactions"}
-                 }
+                }
             }
         }
 
@@ -12409,26 +12488,26 @@ components:
       value:
         {"accounts":
            [
-              {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e80f",
-               "iban": "DE2310010010123456789",
-               "currency": "EUR",
-               "product": "Girokonto",
-               "cashAccountType": "CACC",
-               "name": "Main Account",
-               "_links": {
-            "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/balances"},
-            "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/transactions"}}
-              },
-              {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e81g",
-               "iban": "DE2310010010123456788",
-               "currency": "USD",
-               "product": "Fremdwährungskonto",
-               "cashAccountType": "CACC",
-               "name": "US Dollar Account",
-               "_links": {
-            "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e81g/balances" }}
-               }
-        ]}
+           {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e80f",
+            "iban": "DE2310010010123456789",
+            "currency": "EUR",
+            "product": "Girokonto",
+            "cashAccountType": "CACC",
+            "name": "Main Account",
+            "_links": {
+              "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/balances"},
+              "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/transactions"}}
+           },
+           {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e81g",
+            "iban": "DE2310010010123456788",
+            "currency": "USD",
+            "product": "Fremdwährungskonto",
+            "cashAccountType": "CACC",
+            "name": "US Dollar Account",
+            "_links": {
+              "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e81g/balances" }}
+           }
+           ]}
 
 
     accountListExample2:
@@ -12438,27 +12517,27 @@ components:
       value:
         {"accounts":
            [
-              {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e80f",
-               "iban": "DE2310010010123456788",
-               "currency": "EUR",
-               "product": "Girokonto",
-               "cashAccountType": "CACC",
-               "name": "Main Account",
-               "_links": {
-            "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/balances"},
-            "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/transactions"}}
-              },
-              {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e81g",
-               "iban": "DE2310010010123456788",
-               "currency": "USD",
-               "product": "Fremdwährungskonto",
-               "cashAccountType": "CACC",
-               "name": "US Dollar Account",
-               "_links": {
-                 "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e81g/balances"},
-                 "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e81g/transactions"} }
-               }
-        ]}
+           {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e80f",
+            "iban": "DE2310010010123456788",
+            "currency": "EUR",
+            "product": "Girokonto",
+            "cashAccountType": "CACC",
+            "name": "Main Account",
+            "_links": {
+              "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/balances"},
+              "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/transactions"}}
+           },
+           {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e81g",
+            "iban": "DE2310010010123456788",
+            "currency": "USD",
+            "product": "Fremdwährungskonto",
+            "cashAccountType": "CACC",
+            "name": "US Dollar Account",
+            "_links": {
+              "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e81g/balances"},
+              "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e81g/transactions"} }
+           }
+           ]}
 
 
     accountListExample3:
@@ -12470,37 +12549,37 @@ components:
       value:
         {"accounts":
            [
-              {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e80f",
-               "iban": "DE2310010010123456788",
-               "currency": "XXX",
-               "product": "Multi currency account",
-               "cashAccountType": "CACC",
-               "name": "Aggregation Account",
-               "_links": {
-            "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e333/balances"},
-            "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e333/transactions"}}
-              },
-        {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e80f",
-               "iban": "DE2310010010123456788",
-               "currency": "EUR",
-               "product": "Girokonto",
-               "cashAccountType": "CACC",
-               "name": "Main Account",
-               "_links": {
-            "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/balances"},
-            "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/transactions"}}
-              },
-              {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e81g",
-               "iban": "DE2310010010123456788",
-               "currency": "USD",
-               "product": "Fremdwährungskonto",
-               "cashAccountType": "CACC",
-               "name": "US Dollar Account",
-               "_links": {
-            "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e81g/balances"},
-            "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e81g/transactions"} }
-               }
-        ]}
+           {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e80f",
+            "iban": "DE2310010010123456788",
+            "currency": "XXX",
+            "product": "Multi currency account",
+            "cashAccountType": "CACC",
+            "name": "Aggregation Account",
+            "_links": {
+              "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e333/balances"},
+              "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e333/transactions"}}
+           },
+           {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e80f",
+            "iban": "DE2310010010123456788",
+            "currency": "EUR",
+            "product": "Girokonto",
+            "cashAccountType": "CACC",
+            "name": "Main Account",
+            "_links": {
+              "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/balances"},
+              "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/transactions"}}
+           },
+           {"resourceId": "3dc3d5b3-7023-4848-9853-f5400a64e81g",
+            "iban": "DE2310010010123456788",
+            "currency": "USD",
+            "product": "Fremdwährungskonto",
+            "cashAccountType": "CACC",
+            "name": "US Dollar Account",
+            "_links": {
+              "balances": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e81g/balances"},
+              "transactions": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e81g/transactions"} }
+           }
+           ]}
 
 
     cardAccountListExample1:
@@ -12509,7 +12588,7 @@ components:
         Card account list example.
       value:
         {
-        "cardAccounts": [
+          "cardAccounts": [
           {
             "resourceId": "3d9a81b3-a47d-4130-8765-a9c0ff861b99",
             "maskedPan": "525412******3241",
@@ -12519,13 +12598,13 @@ components:
             "status": "enabled",
             "creditLimit": { "currency": "EUR", "amount": "15000" },
             "balances": [
-              {
-                "balanceType": "interimBooked",
-                "balanceAmount": { "currency": "EUR", "amount": "14355.78" }
-              },{
-                "balanceType": "nonInvoiced",
-                "balanceAmount": { "currency": "EUR", "amount": "4175.86" }
-              }
+            {
+              "balanceType": "interimBooked",
+              "balanceAmount": { "currency": "EUR", "amount": "14355.78" }
+            },{
+              "balanceType": "nonInvoiced",
+              "balanceAmount": { "currency": "EUR", "amount": "4175.86" }
+            }
             ],
             "_links": {
               "transactions": {
@@ -12533,8 +12612,8 @@ components:
               }
             }
           }
-        ]
-      }
+          ]
+        }
 
 
     cardAccountDetailsExample:
@@ -12543,16 +12622,16 @@ components:
         Card account details example.
       value:
         {
-        "cardAccount":
-          {
-            "resourceId": "3d9a81b3-a47d-4130-8765-a9c0ff861b99",
-            "maskedPan": "525412******3241",
-            "currency": "EUR",
-            "name": "Main",
-            "product": "Basic Credit",
-            "status": "enabled",
-            "creditLimit": { "currency": "EUR", "amount": "15000" },
-            "balances": [
+          "cardAccount":
+            {
+              "resourceId": "3d9a81b3-a47d-4130-8765-a9c0ff861b99",
+              "maskedPan": "525412******3241",
+              "currency": "EUR",
+              "name": "Main",
+              "product": "Basic Credit",
+              "status": "enabled",
+              "creditLimit": { "currency": "EUR", "amount": "15000" },
+              "balances": [
               {
                 "balanceType": "interimBooked",
                 "balanceAmount": { "currency": "EUR", "amount": "14355.78" }
@@ -12560,23 +12639,23 @@ components:
                 "balanceType": "nonInvoiced",
                 "balanceAmount": { "currency": "EUR", "amount": "4175.86" }
               }
-            ],
-            "_links": {
-              "transactions": {
-                "href": "/v1/card-accounts/3d9a81b3-a47d-4130-8765-a9c0ff861b99/transactions"
+              ],
+              "_links": {
+                "transactions": {
+                  "href": "/v1/card-accounts/3d9a81b3-a47d-4130-8765-a9c0ff861b99/transactions"
+                }
               }
             }
-          }
-      }
+        }
 
 
     startScaProcessResponseExample1:
       value:
         {
-           "scaStatus": "received",
-           "authorisationId": "123auth456",
-           "psuMessage": "Please use your BankApp for transaction Authorisation.",
-           "_links":
+          "scaStatus": "received",
+          "authorisationId": "123auth456",
+          "psuMessage": "Please use your BankApp for transaction Authorisation.",
+          "_links":
             {
               "scaStatus":  {"href":"/v1/payments/qwer3456tzui7890/authorisations/123auth456"}
             }
@@ -12584,22 +12663,22 @@ components:
 
 
     startCancellationScaProcessResponseExample1:
-        value:
+      value:
+        {
+          "scaStatus": "received",
+          "cancellationId": "123auth456",
+          "psuMessage": "Please use your BankApp for transaction Authorisation.",
+          "_links":
             {
-                "scaStatus": "received",
-                "cancellationId": "123auth456",
-                "psuMessage": "Please use your BankApp for transaction Authorisation.",
-                "_links":
-                    {
-                        "scaStatus":  {"href":"/v1/payments/qwer3456tzui7890/cancellation-authorisations/123auth456"}
-                    }
+              "scaStatus":  {"href":"/v1/payments/qwer3456tzui7890/cancellation-authorisations/123auth456"}
             }
+        }
 
     signingBasketExample:
       description: "JSON Body of a signing basket request"
       value:
         {
-           "paymentIds": ["123qwert456789", "12345qwert7899"]
+          "paymentIds": ["123qwert456789", "12345qwert7899"]
         }
 
 
@@ -12611,11 +12690,11 @@ components:
           "transactionStatus": "RCVD",
           "basketId": "1234-basket-567",
           "_links":
-                {
-                "self": {"href": "/v1/signing-baskets/1234-basket-567"},
-                "status": {"href": "/v1/signing-baskets/1234-basket-567/status"},
-                "startAuthorisation": {"href": "/v1/signing-baskets/1234-basket-567/authorisations"}
-                }
+            {
+              "self": {"href": "/v1/signing-baskets/1234-basket-567"},
+              "status": {"href": "/v1/signing-baskets/1234-basket-567/status"},
+              "startAuthorisation": {"href": "/v1/signing-baskets/1234-basket-567/authorisations"}
+            }
         }
 
 
@@ -12631,24 +12710,24 @@ components:
       description: Consent request on dedicated accounts.
       value:
         {
-        "access":
-          {
-            "balances": [
-                { "iban": "DE40100100103307118608" },
-                { "iban": "DE02100100109307118603",
-          "currency": "USD"
-                },
-                { "iban": "DE67100100101306118605" }
+          "access":
+            {
+              "balances": [
+              { "iban": "DE40100100103307118608" },
+              { "iban": "DE02100100109307118603",
+                "currency": "USD"
+              },
+              { "iban": "DE67100100101306118605" }
               ],
-            "transactions": [
-                { "iban": "DE40100100103307118608" },
-                { "maskedPan": "123456xxxxxx1234" }
+              "transactions": [
+              { "iban": "DE40100100103307118608" },
+              { "maskedPan": "123456xxxxxx1234" }
               ]
-           },
-        "recurringIndicator": "true",
-        "validUntil": "2017-11-01",
-        "frequencyPerDay": "4"
-       }
+            },
+          "recurringIndicator": "true",
+          "validUntil": "2017-11-01",
+          "frequencyPerDay": "4"
+        }
 
 
 
@@ -12656,7 +12735,7 @@ components:
       description: Consent on account list of available accounts.
       value:
         {"access":
-          {"availableAccounts": "allAccounts"},
+           {"availableAccounts": "allAccounts"},
          "recurringIndicator": "false",
          "validUntil": "2017-08-06",
          "frequencyPerDay": "1"
@@ -12667,13 +12746,13 @@ components:
       description: Consent request on account list or without indication of accounts.
       value:
         {"access":
-        {
-          "balances": [],
-          "transactions": []
-        },
-        "recurringIndicator": "true",
-        "validUntil": "2017-11-01",
-        "frequencyPerDay": "4"
+           {
+             "balances": [],
+             "transactions": []
+           },
+         "recurringIndicator": "true",
+         "validUntil": "2017-11-01",
+         "frequencyPerDay": "4"
         }
 
 
@@ -12697,7 +12776,7 @@ components:
       description: Transaction authorisation request body for the embedded approach.
       value:
         {
-         "scaAuthenticationData": "123456"
+          "scaAuthenticationData": "123456"
         }
 
 
@@ -12707,14 +12786,14 @@ components:
         {
           "access": {
             "balances": [
-              {"iban": "DE2310010010123456789"}
-                ],
+            {"iban": "DE2310010010123456789"}
+            ],
             "transactions":
               [
               {"iban": "DE2310010010123456789"},
               {"pan": "123456xxxxxx3457"}
               ]
-            },
+          },
           "recurringIndicator": "true",
           "validUntil": "2017-11-01",
           "frequencyPerDay": "4",
@@ -12731,9 +12810,9 @@ components:
           "consentId": "1234-wertiq-983",
           "_links":
             {
-            "scaRedirect": {"href": "https://www.testbank.com/authentication/1234-wertiq-983"},
-            "status": {"href": "/v1/consents/1234-wertiq-983/status"},
-            "scaStatus": {"href": "v1/consents/1234-wertiq-983/authorisations/123auth567"}
+              "scaRedirect": {"href": "https://www.testbank.com/authentication/1234-wertiq-983"},
+              "status": {"href": "/v1/consents/1234-wertiq-983/status"},
+              "scaStatus": {"href": "v1/consents/1234-wertiq-983/authorisations/123auth567"}
             }
         }
 
@@ -12746,7 +12825,7 @@ components:
           "consentId": "1234-wertiq-983",
           "_links":
             {
-            "startAuthorisation": {"href": "v1/consents/1234-wertiq-983/authorisations"}
+              "startAuthorisation": {"href": "v1/consents/1234-wertiq-983/authorisations"}
             }
         }
 
@@ -12755,14 +12834,14 @@ components:
       description: Response in case of the OAuth2 approach with an implicit generated authorisation resource.
       value:
         {
-        "consentStatus": "received",
-        "consentId": "1234-wertiq-983",
-        "_links":
-          {
-            "self": {"href": "/v1/consents/1234-wertiq-983"},
-            "scaStatus": {"href": "v1/consents/1234-wertiq-983/authorisations/123auth567"},
-            "scaOAuth": {"href": "https://www.testbank.com/oauth/.well-known/oauth-authorization-server"}
-          }
+          "consentStatus": "received",
+          "consentId": "1234-wertiq-983",
+          "_links":
+            {
+              "self": {"href": "/v1/consents/1234-wertiq-983"},
+              "scaStatus": {"href": "v1/consents/1234-wertiq-983/authorisations/123auth567"},
+              "scaOAuth": {"href": "https://www.testbank.com/oauth/.well-known/oauth-authorization-server"}
+            }
         }
 
 
@@ -12774,7 +12853,7 @@ components:
           "consentId": "1234-wertiq-983",
           "_links":
             {
-            "startAuthorisationWithPsuIdentification": {"href": "/v1/consents/1234-wertiq-983/authorisations"}
+              "startAuthorisationWithPsuIdentification": {"href": "/v1/consents/1234-wertiq-983/authorisations"}
             }
         }
 
@@ -12787,7 +12866,7 @@ components:
           "consentId": "1234-wertiq-983",
           "_links":
             {
-            "startAuthorisationWithPsuAuthentication": {"href": "/v1/consents/1234-wertiq-983/authorisations"}
+              "startAuthorisationWithPsuAuthentication": {"href": "/v1/consents/1234-wertiq-983/authorisations"}
             }
         }
 
@@ -12808,10 +12887,10 @@ components:
           "paymentId": "1234-wertiq-983",
           "_links":
             {
-            "scaRedirect": {"href": "https://www.testbank.com/asdfasdfasdf"},
-            "self": {"href": "/v1/payments/sepa-credit-transfers/1234-wertiq-983"},
-            "status": {"href": "/v1/payments/1234-wertiq-983/status"},
-            "scaStatus": {"href": "/v1/payments/1234-wertiq-983/authorisations/123auth456"}
+              "scaRedirect": {"href": "https://www.testbank.com/asdfasdfasdf"},
+              "self": {"href": "/v1/payments/sepa-credit-transfers/1234-wertiq-983"},
+              "status": {"href": "/v1/payments/1234-wertiq-983/status"},
+              "scaStatus": {"href": "/v1/payments/1234-wertiq-983/authorisations/123auth456"}
             }
         }
 
@@ -12824,9 +12903,9 @@ components:
           "paymentId": "1234-wertiq-983",
           "_links":
             {
-            "self": {"href": "/v1/payments/1234-wertiq-983"},
-            "status": {"href": "/v1/payments/1234-wertiq-983/status"},
-            "startAuthorisation": {"href": "/v1/payments1234-wertiq-983/authorisations"}
+              "self": {"href": "/v1/payments/1234-wertiq-983"},
+              "status": {"href": "/v1/payments/1234-wertiq-983/status"},
+              "startAuthorisation": {"href": "/v1/payments1234-wertiq-983/authorisations"}
             }
         }
 
@@ -12840,10 +12919,10 @@ components:
           "paymentId": "1234-wertiq-983",
           "_links":
             {
-            "scaOAuth": {"href": "https://www.testbank.com/oauth/.well-known/oauth-authorization-server"},
-            "self": {"href": "/v1/payments/1234-wertiq-983"},
-            "status": {"href": "/v1/payments/1234-wertiq-983/status"},
-            "scaStatus": {"href": "/v1/payments/1234-wertiq-983/authorisations/123auth456"}
+              "scaOAuth": {"href": "https://www.testbank.com/oauth/.well-known/oauth-authorization-server"},
+              "self": {"href": "/v1/payments/1234-wertiq-983"},
+              "status": {"href": "/v1/payments/1234-wertiq-983/status"},
+              "scaStatus": {"href": "/v1/payments/1234-wertiq-983/authorisations/123auth456"}
             }
         }
 
@@ -12857,8 +12936,8 @@ components:
           "paymentId": "1234-wertiq-983",
           "_links":
             {
-            "startAuthorisationWithPsuIdentification": {"href":"/v1/payments/1234-wertiq-983/authorisations"},
-            "self": {"href": "/v1/payments/1234-wertiq-983"}
+              "startAuthorisationWithPsuIdentification": {"href":"/v1/payments/1234-wertiq-983/authorisations"},
+              "self": {"href": "/v1/payments/1234-wertiq-983"}
             }
         }
 
@@ -12871,8 +12950,8 @@ components:
           "paymentId": "1234-wertiq-983",
           "_links":
             {
-            "startAuthenticationWithPsuAuthentication": {"href": "/v1/payments/1234-wertiq-983/authorisations"},
-            "self": {"href": "/v1/payments/1234-wertiq-983"}
+              "startAuthenticationWithPsuAuthentication": {"href": "/v1/payments/1234-wertiq-983/authorisations"},
+              "self": {"href": "/v1/payments/1234-wertiq-983"}
             }
         }
 
@@ -12880,7 +12959,7 @@ components:
     paymentInitiationStatusResponse_json_Simple:
       value:
         {
-        "transactionStatus": "ACCP"
+          "transactionStatus": "ACCP"
         }
 
 
@@ -12890,9 +12969,9 @@ components:
           "transactionStatus": "ACTC",
           "_links":
             {
-            "self": {"href": "/v1/payments/123456scheduled789"},
-            "status": {"href": "/v1/payments/123456scheduled789/status"},
-            "startAuthorisation": {"href": "/v1/payments/123456scheduled789/cancellation-authorisations"}
+              "self": {"href": "/v1/payments/123456scheduled789"},
+              "status": {"href": "/v1/payments/123456scheduled789/status"},
+              "startAuthorisation": {"href": "/v1/payments/123456scheduled789/cancellation-authorisations"}
             }
         }
 
@@ -12924,7 +13003,7 @@ components:
         {
           "scaStatus": "psuAuthenticated",
           _links: {
-           "authoriseTransaction": {"href": "/v1/payments/1234-wertiq-983/authorisations/123auth456"}
+            "authoriseTransaction": {"href": "/v1/payments/1234-wertiq-983/authorisations/123auth456"}
           }
         }
 
@@ -12935,13 +13014,13 @@ components:
         {
           "scaStatus": "scaMethodSelected",
           "chosenScaMethod": {
-          "authenticationType": "SMS_OTP",
-          "authenticationMethodId": "myAuthenticationID"},
+            "authenticationType": "SMS_OTP",
+            "authenticationMethodId": "myAuthenticationID"},
           "challengeData": {
-          "otpMaxLength": "6",
-          "otpFormat": "integer"},
+            "otpMaxLength": "6",
+            "otpFormat": "integer"},
           "_links": {
-             "authoriseTransaction": {"href": "/v1/payments/1234-wertiq-983/authorisations/123auth456"}
+            "authoriseTransaction": {"href": "/v1/payments/1234-wertiq-983/authorisations/123auth456"}
           }
         }
 
@@ -12978,14 +13057,14 @@ components:
         {
           "account": {"iban": "FR7612345987650123456789014"},
           "balances":
-              [{"balanceType": "closingBooked",
-            "balanceAmount": {"currency": "EUR", "amount": "500.00"},
-                "referenceDate": "2017-10-25"
-                   },
-               {"balanceType": "expected",
-                "balanceAmount": {"currency": "EUR","amount": "900.00"},
-               "lastChangeDateTime": "2017-10-25T15:30:35.035Z"
-               }]
+            [{"balanceType": "closingBooked",
+              "balanceAmount": {"currency": "EUR", "amount": "500.00"},
+              "referenceDate": "2017-10-25"
+             },
+             {"balanceType": "expected",
+              "balanceAmount": {"currency": "EUR","amount": "900.00"},
+              "lastChangeDateTime": "2017-10-25T15:30:35.035Z"
+             }]
         }
 
 
@@ -12997,22 +13076,22 @@ components:
       value:
         {
           "balances":
-              [{"balanceType": "closingBooked",
-                "balanceAmount": {"currency": "EUR", "amount": "500.00"},
-                "referenceDate": "2017-10-25"
-                   },
-              {"balanceType": "expected",
+            [{"balanceType": "closingBooked",
+              "balanceAmount": {"currency": "EUR", "amount": "500.00"},
+              "referenceDate": "2017-10-25"
+             },
+             {"balanceType": "expected",
               "balanceAmount": {"currency": "EUR", "amount": "900.00"},
               "lastChangeDateTime": "2017-10-25T15:30:35.035Z"
-              },
-           {"balanceType": "closingBooked",
-                "balanceAmount": {"currency": "USD", "amount": "350.00"},
-                "referenceDate": "2017-10-25"
-                   },
-              {"balanceType": "expected",
-               "balanceAmount": {"currency": "USD", "amount": "350.00"},
-               "lastChangeDateTime": "2017-10-24T14:30:21Z"
-                   }]
+             },
+             {"balanceType": "closingBooked",
+              "balanceAmount": {"currency": "USD", "amount": "350.00"},
+              "referenceDate": "2017-10-25"
+             },
+             {"balanceType": "expected",
+              "balanceAmount": {"currency": "USD", "amount": "350.00"},
+              "lastChangeDateTime": "2017-10-24T14:30:21Z"
+             }]
         }
 
     balancesExample_CardAccount:
@@ -13022,13 +13101,13 @@ components:
         {
           "cardAccount": {"maskedPan": "525412******3241"},
           "balances":[
-            {
-              "balanceType": "interimBooked",
-              "balanceAmount": { "currency": "EUR", "amount": "14355.78" }
-            },{
-              "balanceType": "nonInvoiced",
-              "balanceAmount": { "currency": "EUR", "amount": "4175.86" }
-            }
+          {
+            "balanceType": "interimBooked",
+            "balanceAmount": { "currency": "EUR", "amount": "14355.78" }
+          },{
+            "balanceType": "nonInvoiced",
+            "balanceAmount": { "currency": "EUR", "amount": "4175.86" }
+          }
           ]
         }
 
@@ -13040,35 +13119,35 @@ components:
           "account": {"iban": "DE2310010010123456788" },
           "transactions":
             {
-            "booked":
-              [{
-              "transactionId": "1234567",
-              "creditorName": "John Miles",
-              "creditorAccount": {"iban": "DE67100100101306118605"},
-              "transactionAmount": {"currency": "EUR", "amount": "256.67"},
-              "bookingDate": "2017-10-25",
-              "valueDate": "2017-10-26",
-              "remittanceInformationUnstructured": "Example 1"
-                },{
-                 "transactionId": "1234568",
-                 "debtorName": "Paul Simpson",
-                 "debtorAccount": {"iban": "NL76RABO0359400371"},
-                 "transactionAmount": {"currency": "EUR", "amount": "343.01"},
-                 "bookingDate": "2017-10-25",
-                 "valueDate": "2017-10-26",
-                 "remittanceInformationUnstructured": "Example 2"
-                }],
-            "pending":
-              [{
-                 "transactionId": "1234569",
-                 "creditorName": "Claude Renault",
-                 "creditorAccount": {"iban": "FR7612345987650123456789014"},
-                 "transactionAmount": {"currency": "EUR", "amount": "-100.03"},
-                 "valueDate": "2017-10-26",
-                 "remittanceInformationUnstructured": "Example 3"
-                }],
-            "_links": {"account": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f"}}
-             }
+              "booked":
+                [  {
+                     "transactionId": "1234567",
+                     "creditorName": "John Miles",
+                     "creditorAccount": {"iban": "DE67100100101306118605"},
+                     "transactionAmount": {"currency": "EUR", "amount": "256.67"},
+                     "bookingDate": "2017-10-25",
+                     "valueDate": "2017-10-26",
+                     "remittanceInformationUnstructured": "Example 1"
+                   },{
+                     "transactionId": "1234568",
+                     "debtorName": "Paul Simpson",
+                     "debtorAccount": {"iban": "NL76RABO0359400371"},
+                     "transactionAmount": {"currency": "EUR", "amount": "343.01"},
+                     "bookingDate": "2017-10-25",
+                     "valueDate": "2017-10-26",
+                     "remittanceInformationUnstructured": "Example 2"
+                   }],
+              "pending":
+                [{
+                   "transactionId": "1234569",
+                   "creditorName": "Claude Renault",
+                   "creditorAccount": {"iban": "FR7612345987650123456789014"},
+                   "transactionAmount": {"currency": "EUR", "amount": "-100.03"},
+                   "valueDate": "2017-10-26",
+                   "remittanceInformationUnstructured": "Example 3"
+                 }],
+              "_links": {"account": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f"}}
+            }
         }
 
 
@@ -13084,45 +13163,45 @@ components:
       description: Response in JSON format for an access on a multicurrency account on aggregation level.
       value:
         {
-        "account": {"iban": "DE40100100103307118608"},
-         "transactions":
-           {"booked":
-             [{
-               "transactionId": "1234567",
-               "creditorName": "John Miles",
-               "creditorAccount": {"iban": "DE67100100101306118605"},
-               "transactionAmount": {"currency": "EUR", "amount": "-256.67"},
-               "bookingDate": "2017-10-25",
-               "valueDate": "2017-10-26",
-               "remittanceInformationUnstructured": "Example 1"
-              },{
-               "transactionId": "1234568",
-               "debtorName": "Paul Simpson",
-               "debtorAccount": {"iban": "NL76RABO0359400371"},
-               "transactionAmount": {"currency": "EUR", "amount": "343.01"},
-               "bookingDate": "2017-10-25",
-               "valueDate": "2017-10-26",
-               "remittanceInformationUnstructured": "Example 2"
-              },{
-               "transactionId": "1234569",
-               "debtorName": "Pepe Martin",
-               "debtorAccount": {"iban": "SE9412309876543211234567"},
-               "transactionAmount": {"currency": "USD", "amount": "100"},
-               "bookingDate": "2017-10-25",
-               "valueDate": "2017-10-26",
-               "remittanceInformationUnstructured": "Example 3"
-              }],
-           "pending":
-             [{
-               "transactionId": "1234570",
-               "creditorName": "Claude Renault",
-               "creditorAccount": {"iban": "FR7612345987650123456789014"},
-               "transactionAmount": {"currency": "EUR", "amount": "-100.03"},
-               "valueDate": "2017-10-26",
-               "remittanceInformationUnstructured": "Example 4"
-              }],
-           "_links": {"account": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f"}}
-           }
+          "account": {"iban": "DE40100100103307118608"},
+          "transactions":
+            {"booked":
+               [  {
+                    "transactionId": "1234567",
+                    "creditorName": "John Miles",
+                    "creditorAccount": {"iban": "DE67100100101306118605"},
+                    "transactionAmount": {"currency": "EUR", "amount": "-256.67"},
+                    "bookingDate": "2017-10-25",
+                    "valueDate": "2017-10-26",
+                    "remittanceInformationUnstructured": "Example 1"
+                  },{
+                    "transactionId": "1234568",
+                    "debtorName": "Paul Simpson",
+                    "debtorAccount": {"iban": "NL76RABO0359400371"},
+                    "transactionAmount": {"currency": "EUR", "amount": "343.01"},
+                    "bookingDate": "2017-10-25",
+                    "valueDate": "2017-10-26",
+                    "remittanceInformationUnstructured": "Example 2"
+                  },{
+                    "transactionId": "1234569",
+                    "debtorName": "Pepe Martin",
+                    "debtorAccount": {"iban": "SE9412309876543211234567"},
+                    "transactionAmount": {"currency": "USD", "amount": "100"},
+                    "bookingDate": "2017-10-25",
+                    "valueDate": "2017-10-26",
+                    "remittanceInformationUnstructured": "Example 3"
+                  }],
+             "pending":
+               [{
+                  "transactionId": "1234570",
+                  "creditorName": "Claude Renault",
+                  "creditorAccount": {"iban": "FR7612345987650123456789014"},
+                  "transactionAmount": {"currency": "EUR", "amount": "-100.03"},
+                  "valueDate": "2017-10-26",
+                  "remittanceInformationUnstructured": "Example 4"
+                }],
+             "_links": {"account": {"href": "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f"}}
+            }
         }
 
 
@@ -13131,20 +13210,52 @@ components:
       value:
         {
           "transactionsDetails":
-             {
-               "transactionId": "1234567",
-               "creditorName": "John Miles",
-               "creditorAccount": {"iban": "DE67100100101306118605"},
-               "mandateId": "Mandate-2018-04-20-1234",
-               "transactionAmount": {"currency": "EUR", "amount": "-256.67"},
-               "bookingDate": "2017-10-25",
-               "valueDate": "2017-10-26",
-               "remittanceInformationUnstructured": "Example 1",
-               "bankTransactionCode": "PMNT-RCVD-ESDD",
-             }
+            {
+              "transactionId": "1234567",
+              "creditorName": "John Miles",
+              "creditorAccount": {"iban": "DE67100100101306118605"},
+              "mandateId": "Mandate-2018-04-20-1234",
+              "transactionAmount": {"currency": "EUR", "amount": "-256.67"},
+              "bookingDate": "2017-10-25",
+              "valueDate": "2017-10-26",
+              "remittanceInformationUnstructured": "Example 1",
+              "bankTransactionCode": "PMNT-RCVD-ESDD",
+            }
         }
 
-
+    transactionsResponse200JsonExample:
+      description: Example for a Standing Order Report.
+      value:
+        {
+          "account": {
+            "iban": "DE2310010010123456788"
+          },
+          "transactions": {
+            "information": [
+            {
+              "creditorName": "John Miles",
+              "creditorAccount": {
+                "iban": "DE67100100101306118605"
+              },
+              "transactionAmount": {
+                "currency": "EUR",
+                "amount": "256.67"
+              },
+              "remittanceInformationUnstructured": "Example 1",
+              "bankTransactionCode": "PMNT-ICDT-STDO",
+              "additionalInformationStructured": {
+                "standingOrderDetails": {
+                  "startDate": "2018-03-01"
+                },
+                "endDate": "2020-06-31",
+                "executionRule": "preceding",
+                "frequency": "monthly",
+                "dayOfExecution": "24"
+              }
+            }
+            ]
+          }
+        }
 
     authorisationListExample:
       value:
@@ -13160,16 +13271,16 @@ components:
 
 
 security:
-#####################################################
-# Global security options
-#####################################################
+  #####################################################
+  # Global security options
+  #####################################################
   - {}
 
 
 tags:
-#####################################################
-# Predefined Tags to Group Methods
-#####################################################
+  #####################################################
+  # Predefined Tags to Group Methods
+  #####################################################
 
   - name: Payment Initiation Service (PIS)
     description: |

@@ -6,6 +6,7 @@
 * Removed deprecated `PsuIdData` from `confirmConsent`, `rejectConsent`, `revokeConsent` in `CmsPsuAisService`
 * Refactoring: Extracted ASPSP Profile web-endpoints into separate module
 * Bugfix: incorrect response for start authorisation request with password but without PSU-ID in header Explicit AIS/PIS
+* Add supporting standing order report
 
 == Removed deprecated columns TppRedirectUri from TppInfo
 
@@ -26,3 +27,14 @@ From now on, endpoints for accessing and updating ASPSP Profile are located in `
 
 From now on, when you try to start authorisation for payment/consent with password and without `PSU-ID` in header,
 you'll receive the same response as it would be with `PSU-ID` in header.
+
+== Add supporting standing order report
+
+From now on, it's possible to return standing order report on Get Transaction List request(`GET /v1/accounts/{{account_id}}/transactions`) in JSON format.
+
+This endpoint is offering a list of all standing orders related to a dedicated payment account in case of `bookingStatus` parameter equals `information`.
+The support the `information` feature is optional for the ASPSP. Error code will be responded if it is not supported.
+The query parameters `dateFrom`, `dateTo`, `withBalance`, `deltaList` and `entryReferenceFrom` will be ignored and have no effect on the
+result.
+
+Only `application/JSON` for response content type is supported.

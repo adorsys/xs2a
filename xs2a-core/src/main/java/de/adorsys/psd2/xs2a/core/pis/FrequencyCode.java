@@ -24,5 +24,6 @@ public enum FrequencyCode {
     EVERYTWOMONTHS,
     QUARTERLY,
     SEMIANNUAL,
-    ANNUAL
+    ANNUAL,
+    MONTHLYVARIABLE
 }

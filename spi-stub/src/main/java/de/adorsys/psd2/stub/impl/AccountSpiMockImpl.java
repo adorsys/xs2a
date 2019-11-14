@@ -17,6 +17,9 @@
 package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
+import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
@@ -73,8 +76,12 @@ public class AccountSpiMockImpl implements AccountSpi {
         log.info("AccountSpi#requestTransactionsForAccount: contextData {}, acceptMediaType {}, withBalance {}, dateFrom {}, dateTo {}, bookingStatus {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, acceptMediaType, withBalance, dateFrom, dateTo, bookingStatus, accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
 
 
+        List<SpiTransaction> transactions = BookingStatus.INFORMATION == bookingStatus ?
+                                                buildSpiInformationTransactionList() :
+                                                buildSpiTransactionList();
+
         return SpiResponse.<SpiTransactionReport>builder()
-                   .payload(new SpiTransactionReport("dGVzdA==", buildSpiTransactionList(), Collections.singletonList(buildSpiAccountBalance()), "application/json", null))
+                   .payload(new SpiTransactionReport("dGVzdA==", transactions, Collections.singletonList(buildSpiAccountBalance()), "application/json", null))
                    .build();
     }
 
@@ -121,6 +128,12 @@ public class AccountSpiMockImpl implements AccountSpi {
         return accountBalance;
     }
 
+    private List<SpiTransaction> buildSpiInformationTransactionList() {
+        List<SpiTransaction> transactions = new ArrayList<>();
+        transactions.add(buildInformationSpiTransaction());
+        return transactions;
+    }
+
     private List<SpiTransaction> buildSpiTransactionList() {
         List<SpiTransaction> transactions = new ArrayList<>();
         transactions.add(buildSpiTransactionById("0001"));
@@ -133,7 +146,22 @@ public class AccountSpiMockImpl implements AccountSpi {
         return new SpiTransaction(transactionId, "", "", "", "", "aspsp", LocalDate.of(2019, Month.JANUARY, 4),
                                   LocalDate.of(2019, Month.JANUARY, 4), new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)), Collections.emptyList(),
                                   "Müller", buildSpiAccountReference(), "Müller", "Müller", buildSpiAccountReference(),
-                                  "Müller", "", "", "", "", "");
+                                  "Müller", "", "", "", "", "", null);
+    }
+
+    private SpiTransaction buildInformationSpiTransaction() {
+        SpiStandingOrderDetails standingOrderDetails = new SpiStandingOrderDetails(LocalDate.of(2021, Month.JANUARY, 4),
+                                                                                   LocalDate.of(2021, Month.MARCH, 12),
+                                                                                   PisExecutionRule.PRECEDING, null,
+                                                                                   FrequencyCode.MONTHLY, null, null, PisDayOfExecution._24, null);
+
+        SpiAdditionalInformationStructured additionalInformationStructured = new SpiAdditionalInformationStructured(standingOrderDetails);
+        return new SpiTransaction(null, null, null, null, null,
+                                  null, null, null, null, null,
+                                  "John Miles", buildSpiAccountReference(), null, null,
+                                  null, null, null,
+                                  "", null, "PMNT-ICDT-STDO",
+                                  null, additionalInformationStructured);
     }
 
     private SpiAccountReference buildSpiAccountReference() {
