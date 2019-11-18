@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Join;
@@ -44,7 +43,7 @@ public class AisConsentSpecification extends GenericSpecification {
      * @return specification for AisConsent entity
      */
     public Specification<AisConsent> byConsentIdAndInstanceId(String consentId, String instanceId) {
-        return Specifications.<AisConsent>where(byInstanceId(instanceId))
+        return Specification.<AisConsent>where(byInstanceId(instanceId))
                    .and(provideSpecificationForEntityAttribute(CONSENT_EXTERNAL_ID_ATTRIBUTE, consentId));
     }
 
@@ -63,7 +62,7 @@ public class AisConsentSpecification extends GenericSpecification {
                                                                                        @Nullable LocalDate createDateTo,
                                                                                        @Nullable PsuIdData psuIdData,
                                                                                        @Nullable String instanceId) {
-        return Specifications.<AisConsent>where(byTppAuthorisationNumber(tppAuthorisationNumber))
+        return Specification.<AisConsent>where(byTppAuthorisationNumber(tppAuthorisationNumber))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byPsuIdDataInList(psuIdData))
                    .and(byInstanceId(instanceId));
@@ -82,7 +81,7 @@ public class AisConsentSpecification extends GenericSpecification {
                                                                                @Nullable LocalDate createDateFrom,
                                                                                @Nullable LocalDate createDateTo,
                                                                                @Nullable String instanceId) {
-        return Specifications.<AisConsent>where(byPsuIdDataInList(psuIdData))
+        return Specification.<AisConsent>where(byPsuIdDataInList(psuIdData))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byInstanceId(instanceId));
     }
@@ -100,7 +99,7 @@ public class AisConsentSpecification extends GenericSpecification {
                                                                                     @Nullable LocalDate createDateFrom,
                                                                                     @Nullable LocalDate createDateTo,
                                                                                     @Nullable String instanceId) {
-        return Specifications.<AisConsent>where(byAspspAccountIdInAspspAccountAccess(aspspAccountId))
+        return Specification.<AisConsent>where(byAspspAccountIdInAspspAccountAccess(aspspAccountId))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byInstanceId(instanceId));
     }
