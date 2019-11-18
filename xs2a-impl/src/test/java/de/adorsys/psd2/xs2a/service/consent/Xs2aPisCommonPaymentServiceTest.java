@@ -6,6 +6,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDa
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -55,6 +56,8 @@ public class Xs2aPisCommonPaymentServiceTest {
 
     @Mock
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    @Mock
+    private PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
     @Mock
     private Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
     @Mock
@@ -121,7 +124,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     @Test
     public void isAuthenticationMethodDecoupled_success() {
         //Given
-        when(pisCommonPaymentServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
+        when(pisAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(true);
 
         //When
@@ -134,7 +137,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     @Test
     public void isAuthenticationMethodDecoupled_failed() {
         //Given
-        when(pisCommonPaymentServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
+        when(pisAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(false);
 
         //When
@@ -149,7 +152,7 @@ public class Xs2aPisCommonPaymentServiceTest {
         //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
-        when(pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
+        when(pisAuthorisationServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
             .thenReturn(true);
 
         //When
@@ -164,7 +167,7 @@ public class Xs2aPisCommonPaymentServiceTest {
         //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
-        when(pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
+        when(pisAuthorisationServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
             .thenReturn(false);
 
         //When
@@ -189,7 +192,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     @Test
     public void updatePisAuthorisationStatus_success() {
         // Given
-        when(pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
+        when(pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
             .thenReturn(true);
 
         // When
@@ -202,7 +205,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     @Test
     public void updatePisAuthorisationStatus_failure() {
         // Given
-        when(pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
+        when(pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
             .thenReturn(false);
 
         // When

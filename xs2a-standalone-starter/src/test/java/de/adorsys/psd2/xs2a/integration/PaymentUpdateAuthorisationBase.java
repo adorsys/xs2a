@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
@@ -70,6 +71,7 @@ public abstract class PaymentUpdateAuthorisationBase {
     @MockBean protected AspspProfileService aspspProfileService;
     @MockBean protected Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean protected PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    @MockBean protected PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
 
     public void before() {
         given(tppService.getTppInfo()).willReturn(TPP_INFO);

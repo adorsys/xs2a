@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationReque
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
@@ -79,7 +80,7 @@ public class PisAuthorisationServiceTest {
     private PisAuthorisationService pisAuthorisationService;
 
     @Mock
-    private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    private PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
     @Mock
     private PisScaStageAuthorisationFactory pisScaStageAuthorisationFactory;
     @Mock
@@ -95,13 +96,13 @@ public class PisAuthorisationServiceTest {
 
     @Before
     public void setUp() {
-        when(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
+        when(pisAuthorisationServiceEncrypted.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .thenReturn(Optional.of(SCA_STATUS));
-        when(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
+        when(pisAuthorisationServiceEncrypted.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .thenReturn(Optional.empty());
-        when(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
+        when(pisAuthorisationServiceEncrypted.getAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
             .thenReturn(Optional.of(SCA_STATUS));
-        when(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_CANCELLATION_AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
+        when(pisAuthorisationServiceEncrypted.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_CANCELLATION_AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
             .thenReturn(Optional.empty());
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
@@ -111,7 +112,7 @@ public class PisAuthorisationServiceTest {
         // Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
-        when(pisCommonPaymentServiceEncrypted.createAuthorization(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CREATED))
+        when(pisAuthorisationServiceEncrypted.createAuthorization(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CREATED))
             .thenReturn(Optional.of(CREATE_PIS_AUTHORISATION_RESPONSE));
         when(requestProviderService.getTppRedirectURI())
             .thenReturn(TPP_REDIRECT_URI);
@@ -147,7 +148,7 @@ public class PisAuthorisationServiceTest {
     @Test
     public void updatePisAuthorisation_success() {
         // Given
-        when(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID))
+        when(pisAuthorisationServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(GET_PIS_AUTHORISATION_RESPONSE));
         when(pisScaStageAuthorisationFactory.getService(any(String.class)))
             .thenReturn(pisScaReceivedAuthorisationStage);
@@ -166,7 +167,7 @@ public class PisAuthorisationServiceTest {
     @Test
     public void updatePisCancellationAuthorisation_success() {
         // Given
-        when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID))
+        when(pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(GET_PIS_AUTHORISATION_RESPONSE));
         when(pisScaStageAuthorisationFactory.getService(any(String.class)))
             .thenReturn(pisScaReceivedAuthorisationStage);
@@ -187,7 +188,7 @@ public class PisAuthorisationServiceTest {
         // Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
-        when(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CANCELLED))
+        when(pisAuthorisationServiceEncrypted.createAuthorizationCancellation(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CANCELLED))
             .thenReturn(Optional.of(CREATE_PIS_AUTHORISATION_RESPONSE));
         when(requestProviderService.getTppRedirectURI())
             .thenReturn(TPP_REDIRECT_URI);
@@ -223,7 +224,7 @@ public class PisAuthorisationServiceTest {
     @Test
     public void getCancellationAuthorisationSubResources_success() {
         // Given
-        when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(PAYMENT_ID, PaymentAuthorisationType.CANCELLED))
+        when(pisAuthorisationServiceEncrypted.getAuthorisationsByPaymentId(PAYMENT_ID, PaymentAuthorisationType.CANCELLED))
             .thenReturn(Optional.of(SOME_LIST));
 
         // When
@@ -237,7 +238,7 @@ public class PisAuthorisationServiceTest {
     @Test
     public void getCancellationAuthorisationSubResources_wrongPaymentId_fail() {
         // Given
-        when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(WRONG_PAYMENT_ID, PaymentAuthorisationType.CANCELLED))
+        when(pisAuthorisationServiceEncrypted.getAuthorisationsByPaymentId(WRONG_PAYMENT_ID, PaymentAuthorisationType.CANCELLED))
             .thenReturn(Optional.empty());
 
         // When
@@ -250,7 +251,7 @@ public class PisAuthorisationServiceTest {
     @Test
     public void getAuthorisationSubResources_success() {
         // Given
-        when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(PAYMENT_ID, PaymentAuthorisationType.CREATED))
+        when(pisAuthorisationServiceEncrypted.getAuthorisationsByPaymentId(PAYMENT_ID, PaymentAuthorisationType.CREATED))
             .thenReturn(Optional.of(SOME_LIST));
 
         // When
@@ -264,7 +265,7 @@ public class PisAuthorisationServiceTest {
     @Test
     public void getAuthorisationSubResources_wrongPaymentId_fail() {
         // Given
-        when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(WRONG_PAYMENT_ID, PaymentAuthorisationType.CREATED))
+        when(pisAuthorisationServiceEncrypted.getAuthorisationsByPaymentId(WRONG_PAYMENT_ID, PaymentAuthorisationType.CREATED))
             .thenReturn(Optional.empty());
 
         // When
