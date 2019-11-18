@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
@@ -47,7 +47,7 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     private final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;
     private final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     private final Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper;
-    private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    private final PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
     private final ApplicationContext applicationContext;
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
@@ -119,7 +119,7 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
 
     private Optional<GetPisAuthorisationResponse> getGetPisAuthorisationResponse(String authorisationId, boolean paymentCancellation) {
         return paymentCancellation
-                   ? pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(authorisationId)
-                   : pisCommonPaymentServiceEncrypted.getPisAuthorisationById(authorisationId);
+                   ? pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(authorisationId)
+                   : pisAuthorisationServiceEncrypted.getPisAuthorisationById(authorisationId);
     }
 }

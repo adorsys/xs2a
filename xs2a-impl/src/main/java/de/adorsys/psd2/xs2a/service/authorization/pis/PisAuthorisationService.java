@@ -20,7 +20,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationReque
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
@@ -51,7 +51,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 // TODO this class takes low-level communication to Consent-management-system. Should be migrated to consent-services package. All XS2A business-logic should be removed from here to XS2A services. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 public class PisAuthorisationService {
-    private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    private final PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
     private final PisScaStageAuthorisationFactory pisScaStageAuthorisationFactory;
     private final Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
     private final ScaApproachResolver scaApproachResolver;
@@ -69,7 +69,7 @@ public class PisAuthorisationService {
         TppRedirectUri redirectURIs = tppRedirectUriMapper.mapToTppRedirectUri(requestProviderService.getTppRedirectURI(), requestProviderService.getTppNokRedirectURI());
 
         CreatePisAuthorisationRequest request = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, psuData, scaApproachResolver.resolveScaApproach(), redirectURIs );
-        return pisCommonPaymentServiceEncrypted.createAuthorization(paymentId, request)
+        return pisAuthorisationServiceEncrypted.createAuthorization(paymentId, request)
                    .orElseGet(() -> {
                        log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS authorisation has failed: can't save authorisation to cms DB",
                                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
@@ -86,7 +86,7 @@ public class PisAuthorisationService {
      */
     public Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisAuthorisation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, ScaApproach scaApproach) {
         String authorisationId = request.getAuthorisationId();
-        Optional<GetPisAuthorisationResponse> pisAuthorisationOptional = pisCommonPaymentServiceEncrypted.getPisAuthorisationById(authorisationId);
+        Optional<GetPisAuthorisationResponse> pisAuthorisationOptional = pisAuthorisationServiceEncrypted.getPisAuthorisationById(authorisationId);
         if (!pisAuthorisationOptional.isPresent()) {
             ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_404)
                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_AUTHORISATION))
@@ -122,7 +122,7 @@ public class PisAuthorisationService {
      */
     public Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisCancellationAuthorisation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, ScaApproach scaApproach) {
         String authorisationId = request.getAuthorisationId();
-        Optional<GetPisAuthorisationResponse> pisCancellationAuthorisationOptional = pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(request.getAuthorisationId());
+        Optional<GetPisAuthorisationResponse> pisCancellationAuthorisationOptional = pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(request.getAuthorisationId());
         if (!pisCancellationAuthorisationOptional.isPresent()) {
             log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS Payment Cancellation authorisation PSU Data has failed: authorisation is not found by id.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId());
@@ -150,11 +150,11 @@ public class PisAuthorisationService {
     }
 
     public void doUpdatePisAuthorisation(UpdatePisCommonPaymentPsuDataRequest request) {
-        pisCommonPaymentServiceEncrypted.updatePisAuthorisation(request.getAuthorizationId(), request);
+        pisAuthorisationServiceEncrypted.updatePisAuthorisation(request.getAuthorizationId(), request);
     }
 
     public void doUpdatePisCancellationAuthorisation(UpdatePisCommonPaymentPsuDataRequest request) {
-        pisCommonPaymentServiceEncrypted.updatePisCancellationAuthorisation(request.getAuthorizationId(), request);
+        pisAuthorisationServiceEncrypted.updatePisCancellationAuthorisation(request.getAuthorizationId(), request);
     }
 
     /**
@@ -168,7 +168,7 @@ public class PisAuthorisationService {
         TppRedirectUri redirectURIs = tppRedirectUriMapper.mapToTppRedirectUri(requestProviderService.getTppRedirectURI(), requestProviderService.getTppNokRedirectURI());
 
         CreatePisAuthorisationRequest request = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CANCELLED, psuData, scaApproachResolver.resolveScaApproach(), redirectURIs );
-        return pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(paymentId, request)
+        return pisAuthorisationServiceEncrypted.createAuthorizationCancellation(paymentId, request)
                    .orElseGet(() -> {
                        log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS Payment Cancellation Authorisation has failed. Can't find Payment Data by id or Payment is Finalised.",
                                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
@@ -183,7 +183,7 @@ public class PisAuthorisationService {
      * @return list of pis authorisation IDs
      */
     public Optional<List<String>> getCancellationAuthorisationSubResources(String paymentId) {
-        return pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(paymentId, PaymentAuthorisationType.CANCELLED);
+        return pisAuthorisationServiceEncrypted.getAuthorisationsByPaymentId(paymentId, PaymentAuthorisationType.CANCELLED);
     }
 
     /**
@@ -193,7 +193,7 @@ public class PisAuthorisationService {
      * @return list of pis authorisation IDs
      */
     public Optional<List<String>> getAuthorisationSubResources(String paymentId) {
-        return pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(paymentId, PaymentAuthorisationType.CREATED);
+        return pisAuthorisationServiceEncrypted.getAuthorisationsByPaymentId(paymentId, PaymentAuthorisationType.CREATED);
     }
 
     /**
@@ -204,7 +204,7 @@ public class PisAuthorisationService {
      * @return SCA status of the authorisation
      */
     public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId) {
-        return pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(paymentId, authorisationId, PaymentAuthorisationType.CREATED);
+        return pisAuthorisationServiceEncrypted.getAuthorisationScaStatus(paymentId, authorisationId, PaymentAuthorisationType.CREATED);
     }
 
     /**
@@ -215,7 +215,7 @@ public class PisAuthorisationService {
      * @return SCA status of the authorisation
      */
     public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String cancellationId) {
-        return pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(paymentId, cancellationId, PaymentAuthorisationType.CANCELLED);
+        return pisAuthorisationServiceEncrypted.getAuthorisationScaStatus(paymentId, cancellationId, PaymentAuthorisationType.CANCELLED);
     }
 
     /**
@@ -226,6 +226,6 @@ public class PisAuthorisationService {
      * @return SCA approach of the authorisation
      */
     public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType) {
-        return pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(authorisationId, authorisationType);
+        return pisAuthorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId, authorisationType);
     }
 }
