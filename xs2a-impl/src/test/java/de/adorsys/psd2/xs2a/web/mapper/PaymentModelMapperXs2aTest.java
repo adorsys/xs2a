@@ -57,11 +57,14 @@ public class PaymentModelMapperXs2aTest {
 
     @Before
     public void setUp() {
+        Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
+        xs2aObjectMapper.findAndRegisterModules();
+
         paymentInitiationParameters = new PaymentInitiationParameters();
         ValueValidatorService validatorService = new ValueValidatorService(requestProviderService,
             Validation.buildDefaultValidatorFactory().getValidator());
         paymentModelMapperXs2a = new PaymentModelMapperXs2a(validatorService,
-                                                            null, new Xs2aObjectMapper(),
+                                                            null, xs2aObjectMapper,
                                                             paymentModelMapper, standardPaymentProductsResolver);
     }
 

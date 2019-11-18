@@ -24,28 +24,20 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 
 
 @Slf4j
 public class DateTimeDeserializer extends StdDeserializer<LocalDateTime> {
-    private final DateTimeFormatter formatter;
 
     public DateTimeDeserializer() {
         super(LocalDateTime.class);
-        formatter = new DateTimeFormatterBuilder()
-                        .append(DateTimeFormatter.ofPattern(ApiDateConstants.DATE_TIME_PATTERN_LOCAL))
-                        .appendOptional(DateTimeFormatter.ofPattern(ApiDateConstants.ZONE_PART))
-                        .appendOptional(DateTimeFormatter.ofPattern(ApiDateConstants.OFFSET_PART))
-                        .toFormatter();
     }
 
     @Override
     public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) {
         try {
-            String date = jsonParser.getText();
-            return LocalDateTime.parse(date, formatter);
+            return LocalDateTime.parse(jsonParser.getValueAsString(), DateTimeFormatter.ISO_DATE_TIME);
         } catch (IOException | DateTimeParseException e) {
             log.error("Unsupported dateTime format!");
         }
