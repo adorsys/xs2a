@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
@@ -90,7 +89,7 @@ public abstract class GenericSpecification {
 
     private <T> Specification<T> byPsuDataAndInstanceId(PsuIdData psuIdData, String instanceId, String psuAttribute) {
         Specification<T> psuSpecification = byPsuIdData(psuIdData, psuAttribute);
-        return Specifications.where(psuSpecification)
+        return Specification.where(psuSpecification)
                    .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId));
     }
 
@@ -101,7 +100,7 @@ public abstract class GenericSpecification {
 
         return (root, query, cb) -> {
             Join<T, PsuData> psuDataJoin = root.join(psuAttribute);
-            return Specifications.where(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_ID_ATTRIBUTE, psuIdData.getPsuId()))
+            return Specification.where(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_ID_ATTRIBUTE, psuIdData.getPsuId()))
                        .and(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_ID_TYPE_ATTRIBUTE, psuIdData.getPsuIdType()))
                        .and(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_CORPORATE_ID_ATTRIBUTE, psuIdData.getPsuCorporateId()))
                        .and(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_CORPORATE_ID_TYPE_ATTRIBUTE, psuIdData.getPsuCorporateIdType()))
