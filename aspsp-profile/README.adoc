@@ -113,15 +113,13 @@ SINGLE:
 
  Not confirmed during this period of time payment will be considered obsolete. The default value is set to 24 hours.|86 400 000	 |milliseconds (1, 2,...)
 |paymentCancellationAuthorisationMandated |This field defines if an authorisation of the payment cancellation is mandated by the ASPSP. |FALSE |TRUE, FALSE
+|countryValidationSupported | The field defines for which country the payment will be validated. | DE| ISO 3166-1 alpha-2 code (DE, AT, UA, etc)
+|supportedTransactionStatusFormats | The field defines which transaction status formats are supported. | application/json| application/json, application/xml
 |*redirectLinkToOnlineBanking:* | | |
 |pisRedirectUrlToAspsp |Link to online-banking to authorise payment with Redirect approach. Attribute is available to be configured with custom url pattern and redirectId parameter. |http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id} |String
 |pisPaymentCancellationRedirectUrlToAspsp |	Link to online-banking to authorise payment cancellation with Redirect approach. Attribute is available to be configured with custom url pattern and redirectId parameter. |http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id} |String
 |paymentCancellationRedirectUrlExpirationTimeMs |This field contains the limit of expiration time of Payment cancellation redirect URL set in milliseconds.
-
 The value for expiration time is counted with formula "current time of authorisation creation + payment cancellation redirect URL expiration time (set in ASPSP-profile)".|600 000 |milliseconds (1, 2,...)
-|countryValidationSupported | The field defines for which country the payment will be validated. | DE| ISO 3166-1 alpha-2 code (DE, AT, UA, etc)
-|supportedTransactionStatusFormats | The field defines which transaction status formats are supported. | application/json| application/json, application/xml
-
 |*PIIS:* | | |
 |piisConsentSupported |This field indicates whether ASPSP supports storing PIIS consent in CMS.
 
@@ -175,9 +173,9 @@ If parameter = TRUE, ASPSP should logically support sessions with calls: (AIS - 
 If parameter = FALSE, then XS2A sends the response with HTTP code 400 SESSIONS_NOT_SUPPORTED "sessions are not supported by ASPSP".|FALSE |TRUE, FALSE
 |checkTppRolesFromCertificateSupported |This field defines if ASPSP supports validation TPP roles from certificate.
 
-If "yes", TPP roles from certificate will be validated
+If parameter = TRUE, then TPP roles from certificate will be validated
 
-If parameter = FALSE, then no validation will occur.|FALSE |TRUE, FALSE
+If parameter = FALSE, then no validation will occur.|TRUE |TRUE, FALSE
 
 |signingBasketSupported |This field indicates if an ASPSP supports signing basket or not.
 
