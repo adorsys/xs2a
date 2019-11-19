@@ -10,6 +10,7 @@
 * Revoke all consents when account is closed
 * Provided implementation of delta access for transaction list request
 * Bugfix: validation of authorisation sub-resources
+* Refactoring: Removed duplication and complexity for PisAuthorisationProcessorServiceImpl and PisCancellationAuthorisationProcessorServiceImpl
 
 == Removed deprecated columns TppRedirectUri from TppInfo
 
@@ -64,5 +65,6 @@ specification demands. Main ideas:
 * For one PSU SCA – only one authorisation per one initial request for one PSU-ID may be active.
 * For multilevel PSU SCA – for one initial request there may be active as many authorisations as many PSUs should make SCA, but only one authorisation for one particular PSU-ID.
 
+== Refactoring: Removed duplication and complexity for PisAuthorisationProcessorServiceImpl and PisCancellationAuthorisationProcessorServiceImpl
 
-
+Removed code duplication and allocated common parts of the mentioned services.

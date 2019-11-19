@@ -58,7 +58,6 @@ import java.util.Optional;
 
 @Service
 public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProcessorService {
-    private static final String UNSUPPORTED_ERROR_MESSAGE = "Current SCA status is not supported";
 
     private final List<AisAuthorizationService> services;
     private final Xs2aAisConsentService aisConsentService;
@@ -183,23 +182,9 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
     }
 
     @Override
-    public AuthorisationProcessorResponse doScaStarted(AuthorisationProcessorRequest authorisationProcessorRequest) {
-        throw new UnsupportedOperationException(UNSUPPORTED_ERROR_MESSAGE);
-    }
-
-    @Override
     public AuthorisationProcessorResponse doScaFinalised(AuthorisationProcessorRequest authorisationProcessorRequest) {
-        return statusResponse(ScaStatus.FINALISED, authorisationProcessorRequest);
-    }
-
-    @Override
-    public AuthorisationProcessorResponse doScaFailed(AuthorisationProcessorRequest authorisationProcessorRequest) {
-        throw new UnsupportedOperationException(UNSUPPORTED_ERROR_MESSAGE);
-    }
-
-    @Override
-    public AuthorisationProcessorResponse doScaExempted(AuthorisationProcessorRequest authorisationProcessorRequest) {
-        throw new UnsupportedOperationException(UNSUPPORTED_ERROR_MESSAGE);
+        UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
+        return new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, request.getBusinessObjectId(), request.getAuthorisationId());
     }
 
     private UpdateConsentPsuDataResponse proceedEmbeddedApproach(AuthorisationProcessorRequest authorisationProcessorRequest, String authenticationMethodId, SpiAccountConsent spiAccountConsent, PsuIdData psuData) {
@@ -301,7 +286,7 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
         if (CollectionUtils.isNotEmpty(availableScaMethods)) {
             aisConsentService.saveAuthenticationMethods(authorisationId, spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(availableScaMethods));
 
-            if (availableScaMethods.size() > 1) {
+            if (isMultipleScaMethods(availableScaMethods)) {
                 return createResponseForMultipleAvailableMethods(availableScaMethods, authorisationId, consentId);
             } else {
                 return createResponseForOneAvailableMethod(authorisationProcessorRequest, spiAccountConsent, availableScaMethods.get(0), psuData);
@@ -345,11 +330,6 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
         }
 
         return new UpdateConsentPsuDataResponse(ScaStatus.PSUIDENTIFIED, request.getBusinessObjectId(), request.getAuthorisationId());
-    }
-
-    private UpdateConsentPsuDataResponse statusResponse(ScaStatus scaStatus, AuthorisationProcessorRequest authorisationProcessorRequest) {
-        UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
-        return new UpdateConsentPsuDataResponse(scaStatus, request.getBusinessObjectId(), request.getAuthorisationId());
     }
 
     private boolean isDecoupledApproach(String authorisationId, String authenticationMethodId) {

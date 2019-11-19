@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
@@ -179,6 +180,7 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                                                                                                      .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
                                                                                                      .build());
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(any(), any(), any())).thenReturn(TEST_SPI_SINGLE_PAYMENT);
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildSingleScaMethodsResponse())
                                                                                                      .build());
@@ -332,7 +334,7 @@ public class PisAuthorisationProcessorServiceImplTest {
         pisAuthorisationProcessorService.doScaReceived(request);
 
         // Then
-        verify(pisCommonDecoupledService).proceedDecoupledInitiation(any(), any());
+        verify(pisCommonDecoupledService).proceedDecoupledInitiation(any(), any(), any());
     }
 
     @Test
@@ -601,9 +603,11 @@ public class PisAuthorisationProcessorServiceImplTest {
     @Test
     public void doScaPsuIdentified_authorisation_one_sca_success() {
         // Given
+        TEST_SPI_SINGLE_PAYMENT.setPaymentId(TEST_PAYMENT_ID);
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                                                                                                      .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
                                                                                                      .build());
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(any(), any(), any())).thenReturn(TEST_SPI_SINGLE_PAYMENT);
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildSingleScaMethodsResponse())
                                                                                                      .build());
@@ -757,7 +761,7 @@ public class PisAuthorisationProcessorServiceImplTest {
         pisAuthorisationProcessorService.doScaPsuIdentified(request);
 
         // Then
-        verify(pisCommonDecoupledService).proceedDecoupledInitiation(any(), any());
+        verify(pisCommonDecoupledService).proceedDecoupledInitiation(any(), any(), any());
     }
 
     @Test
@@ -998,12 +1002,16 @@ public class PisAuthorisationProcessorServiceImplTest {
     @Test
     public void doScaPsuAuthenticated_embedded_success() {
         // Given
+        AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest();
+
         when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment((GetPisAuthorisationResponse) processorRequest.getAuthorisation(), PaymentType.SINGLE, TEST_PAYMENT_PRODUCT))
+            .thenReturn(TEST_SPI_SINGLE_PAYMENT);
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                           .payload(buildSpiAuthorizationCodeResult())
                                                                                                           .build());
         // When
-        AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuAuthenticated(buildAuthorisationProcessorRequest());
+        AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuAuthenticated(processorRequest);
 
         // Then
         assertNotNull(actual);
@@ -1054,6 +1062,7 @@ public class PisAuthorisationProcessorServiceImplTest {
     public void doScaPsuAuthenticated_embedded_empty_result_failure() {
         // Given
         when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(any(), any(), any())).thenReturn(TEST_SPI_SINGLE_PAYMENT);
         SpiResponse<SpiAuthorizationCodeResult> spiResponse = SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                   .payload(buildEmptySpiAuthorizationCodeResult())
                                                                   .build();
@@ -1278,10 +1287,13 @@ public class PisAuthorisationProcessorServiceImplTest {
         request.setPaymentId(TEST_PAYMENT_ID);
         request.setAuthorisationId(TEST_AUTHORISATION_ID);
         request.setPsuData(TEST_PSU_DATA);
+        GetPisAuthorisationResponse authorisation = new GetPisAuthorisationResponse();
+        authorisation.setPaymentType(PaymentType.SINGLE);
+        authorisation.setPaymentProduct(TEST_PAYMENT_PRODUCT);
         return new PisAuthorisationProcessorRequest(TEST_SCA_APPROACH,
                                                     TEST_SCA_STATUS,
                                                     request,
-                                                    new GetPisAuthorisationResponse());
+                                                    authorisation);
     }
 
     private AuthorisationProcessorRequest buildIdentificationAuthorisationProcessorRequest() {
