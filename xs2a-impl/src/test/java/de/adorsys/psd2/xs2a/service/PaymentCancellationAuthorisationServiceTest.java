@@ -133,7 +133,7 @@ public class PaymentCancellationAuthorisationServiceTest {
         when(getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(buildPisCommonPaymentResponse(), CANCELLATION_AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT)))
             .thenReturn(ValidationResult.valid());
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-        when(createPisCancellationAuthorisationValidator.validate(any(CreatePisCancellationAuthorisationPO.class))).thenReturn(ValidationResult.valid());
+        when(createPisCancellationAuthorisationValidator.validate(any(CreatePisCancellationAuthorisationObject.class))).thenReturn(ValidationResult.valid());
     }
 
     @Test

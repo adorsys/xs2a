@@ -18,41 +18,72 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.PisAuthorisationStatusChecker;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
-import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_EXPIRED_403;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
+import java.util.List;
+
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
 /**
  * Validator to be used for validating create PIS authorisation request according to some business rules
  */
 @Slf4j
 @Component
-public class CreatePisAuthorisationValidator extends AbstractPisValidator<CommonPaymentObject> {
+public class CreatePisAuthorisationValidator extends AbstractPisValidator<CreatePisAuthorisationObject> {
 
-    public CreatePisAuthorisationValidator(RequestProviderService requestProviderService) {
+    private final AuthorisationPsuDataChecker authorisationPsuDataChecker;
+    private final PisAuthorisationStatusChecker pisAuthorisationStatusChecker;
+
+    public CreatePisAuthorisationValidator(RequestProviderService requestProviderService, AuthorisationPsuDataChecker authorisationPsuDataChecker,
+                                           PisAuthorisationStatusChecker pisAuthorisationStatusChecker) {
         super(requestProviderService);
+        this.authorisationPsuDataChecker = authorisationPsuDataChecker;
+        this.pisAuthorisationStatusChecker = pisAuthorisationStatusChecker;
     }
 
     /**
      * Validates create PIS authorisation request by checking whether:
      * <ul>
+     * <li>payment authorisation PSU data is the same as initial request PSU data</li>
+     * <li>payment authorisation is already finalised for this payment and for this PSU ID</li>
      * <li>payment is not expired</li>
      * </ul>
      *
-     * @param paymentObject payment information object
+     * @param createPisAuthorisationObject create payment authorisation information object
      * @return valid result if the payment is valid, invalid result with appropriate error otherwise
      */
     @Override
-    protected ValidationResult executeBusinessValidation(CommonPaymentObject paymentObject) {
+    protected ValidationResult executeBusinessValidation(CreatePisAuthorisationObject createPisAuthorisationObject) {
+
+        PsuIdData psuDataFromRequest = createPisAuthorisationObject.getPsuDataFromRequest();
+        List<PsuIdData> psuDataFromDb = createPisAuthorisationObject.getPisCommonPaymentResponse().getPsuData();
+        PisCommonPaymentResponse pisCommonPaymentResponse = createPisAuthorisationObject.getPisCommonPaymentResponse();
+
+        if (authorisationPsuDataChecker.isPsuDataWrong(
+            pisCommonPaymentResponse.isMultilevelScaRequired(),
+            psuDataFromDb,
+            psuDataFromRequest)) {
+
+            return ValidationResult.invalid(PIS_401, PSU_CREDENTIALS_INVALID);
+        }
+
+        // If the authorisation for this payment ID and for this PSU ID has status FINALISED or EXEMPTED - return error.
+        boolean isFinalised = pisAuthorisationStatusChecker.isFinalised(psuDataFromRequest, pisCommonPaymentResponse.getAuthorisations());
+
+        if (isFinalised) {
+            return ValidationResult.invalid(PIS_409, STATUS_INVALID);
+        }
+
         // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc.,
         //  so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1104
-        PisCommonPaymentResponse pisCommonPaymentResponse = paymentObject.getPisCommonPaymentResponse();
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Creation of PIS authorisation has failed: payment has been rejected",
                      getRequestProviderService().getInternalRequestId(), getRequestProviderService().getRequestId(), pisCommonPaymentResponse.getExternalId());
@@ -61,4 +92,5 @@ public class CreatePisAuthorisationValidator extends AbstractPisValidator<Common
 
         return ValidationResult.valid();
     }
+
 }

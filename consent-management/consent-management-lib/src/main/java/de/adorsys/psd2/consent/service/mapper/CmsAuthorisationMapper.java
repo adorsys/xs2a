@@ -41,6 +41,6 @@ public class CmsAuthorisationMapper {
     @NotNull
     private Authorisation mapToAuthorisation(@NotNull PisAuthorization pisAuthorisation) {
         PsuIdData psuIdData = psuDataMapper.mapToPsuIdData(pisAuthorisation.getPsuData());
-        return new Authorisation(pisAuthorisation.getExternalId(), pisAuthorisation.getScaStatus(), psuIdData);
+        return new Authorisation(pisAuthorisation.getExternalId(), pisAuthorisation.getScaStatus(), psuIdData, pisAuthorisation.getAuthorizationType());
     }
 }

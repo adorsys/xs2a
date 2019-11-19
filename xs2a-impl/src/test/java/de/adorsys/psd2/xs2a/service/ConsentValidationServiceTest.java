@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.*;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAuthorisationObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -68,11 +69,13 @@ public class ConsentValidationServiceTest {
     private JsonReader jsonReader = new JsonReader();
     private AccountConsent accountConsent;
     private ArgumentCaptor<CommonConsentObject> commonConsentObjectCaptor;
+    private ArgumentCaptor<CreateConsentAuthorisationObject> consentAuthorisationPOArgumentCaptor;
 
     @Before
     public void setUp() {
         accountConsent = jsonReader.getObjectFromFile("json/service/account-consent.json", AccountConsent.class);
         commonConsentObjectCaptor = ArgumentCaptor.forClass(CommonConsentObject.class);
+        consentAuthorisationPOArgumentCaptor = ArgumentCaptor.forClass(CreateConsentAuthorisationObject.class);
     }
 
     @Test
@@ -120,12 +123,12 @@ public class ConsentValidationServiceTest {
 
     @Test
     public void validateConsentAuthorisationOnCreate() {
-        when(createConsentAuthorisationValidator.validate(commonConsentObjectCaptor.capture())).thenReturn(ValidationResult.valid());
+        when(createConsentAuthorisationValidator.validate(consentAuthorisationPOArgumentCaptor.capture())).thenReturn(ValidationResult.valid());
 
-        service.validateConsentAuthorisationOnCreate(accountConsent);
+        service.validateConsentAuthorisationOnCreate(new CreateConsentAuthorisationObject(accountConsent, new PsuIdData(null, null, null, null)));
 
-        verify(createConsentAuthorisationValidator).validate(any(CommonConsentObject.class));
-        assertEquals(accountConsent, commonConsentObjectCaptor.getValue().getAccountConsent());
+        verify(createConsentAuthorisationValidator).validate(any(CreateConsentAuthorisationObject.class));
+        assertEquals(accountConsent, consentAuthorisationPOArgumentCaptor.getValue().getAccountConsent());
     }
 
     @Test

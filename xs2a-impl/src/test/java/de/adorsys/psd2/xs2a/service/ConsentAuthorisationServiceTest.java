@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.AisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAuthorisationObject;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,10 +95,12 @@ public class ConsentAuthorisationServiceTest {
 
     private JsonReader jsonReader = new JsonReader();
     private AccountConsent accountConsent;
+    private CreateConsentAuthorisationObject createConsentAuthorisationObject;
 
     @Before
     public void setUp() {
         accountConsent = jsonReader.getObjectFromFile("json/service/account-consent.json", AccountConsent.class);
+        createConsentAuthorisationObject = new CreateConsentAuthorisationObject(accountConsent, PSU_ID_DATA);
     }
 
     @Test
@@ -300,8 +303,6 @@ public class ConsentAuthorisationServiceTest {
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(true);
 
-        AccountConsentAuthorization authorization = new AccountConsentAuthorization();
-
         UpdateConsentPsuDataReq updateConsentPsuDataReq = buildUpdateConsentPsuDataReq(CONSENT_ID);
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
@@ -453,7 +454,7 @@ public class ConsentAuthorisationServiceTest {
     public void createConsentAuthorisationWithResponse_withInvalidConsent_shouldReturnValidationError() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
-        when(consentValidationService.validateConsentAuthorisationOnCreate(accountConsent))
+        when(consentValidationService.validateConsentAuthorisationOnCreate(any(CreateConsentAuthorisationObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
@@ -461,7 +462,7 @@ public class ConsentAuthorisationServiceTest {
 
         // Then
         verify(aisConsentService, times(1)).getAccountConsentById(CONSENT_ID);
-        verify(consentValidationService, times(1)).validateConsentAuthorisationOnCreate(accountConsent);
+        verify(consentValidationService, times(1)).validateConsentAuthorisationOnCreate(createConsentAuthorisationObject);
         assertValidationError(actualResponse);
     }
 
@@ -469,7 +470,7 @@ public class ConsentAuthorisationServiceTest {
     public void createAisAuthorisation_PSU_ID_empty_shouldRecordStatusInLoggingContext() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
-        when(consentValidationService.validateConsentAuthorisationOnCreate(accountConsent))
+        when(consentValidationService.validateConsentAuthorisationOnCreate(any(CreateConsentAuthorisationObject.class)))
             .thenReturn(ValidationResult.valid());
 
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
@@ -512,7 +513,7 @@ public class ConsentAuthorisationServiceTest {
         updateConsentPsuDataResponse.setScaStatus(ScaStatus.RECEIVED);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
-        when(consentValidationService.validateConsentAuthorisationOnCreate(accountConsent))
+        when(consentValidationService.validateConsentAuthorisationOnCreate(any(CreateConsentAuthorisationObject.class)))
             .thenReturn(ValidationResult.valid());
         when(consentValidationService.validateConsentPsuDataOnUpdate(accountConsent, updatePsuData))
             .thenReturn(ValidationResult.valid());
@@ -526,7 +527,7 @@ public class ConsentAuthorisationServiceTest {
 
         // Then
         verify(aisConsentService, times(2)).getAccountConsentById(CONSENT_ID);
-        verify(consentValidationService, times(1)).validateConsentAuthorisationOnCreate(accountConsent);
+        verify(consentValidationService, times(1)).validateConsentAuthorisationOnCreate(createConsentAuthorisationObject);
         verify(consentValidationService, times(1)).validateConsentPsuDataOnUpdate(accountConsent, updatePsuData);
         verify(loggingContextService).storeScaStatus(scaStatusArgumentCaptor.capture());
         assertThat(scaStatusArgumentCaptor.getValue()).isEqualTo(ScaStatus.RECEIVED);
@@ -538,7 +539,7 @@ public class ConsentAuthorisationServiceTest {
     public void createAisAuthorisation_updateConsentPsuDataWithError() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
-        when(consentValidationService.validateConsentAuthorisationOnCreate(accountConsent))
+        when(consentValidationService.validateConsentAuthorisationOnCreate(any(CreateConsentAuthorisationObject.class)))
             .thenReturn(ValidationResult.valid());
 
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
@@ -563,7 +564,7 @@ public class ConsentAuthorisationServiceTest {
         // Given
         AccountConsent expiredAccountConsent = mock(AccountConsent.class);
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(expiredAccountConsent));
-        when(consentValidationService.validateConsentAuthorisationOnCreate(expiredAccountConsent))
+        when(consentValidationService.validateConsentAuthorisationOnCreate(any(CreateConsentAuthorisationObject.class)))
             .thenReturn(ValidationResult.valid());
         when(expiredAccountConsent.isExpired()).thenReturn(true);
 

@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -66,13 +67,19 @@ public abstract class PaymentUpdateAuthorisationBase {
     private static final String PSU_CREDENTIALS_INVALID_RESP = "/json/payment/res/explicit/psu_credentials_invalid_response.json";
     private static final String FORMAT_ERROR_RESP = "/json/payment/res/explicit/format_error_response.json";
 
-    @Autowired protected MockMvc mockMvc;
+    @Autowired
+    protected MockMvc mockMvc;
 
-    @MockBean protected TppService tppService;
-    @MockBean protected TppStopListService tppStopListService;
-    @MockBean protected AspspProfileService aspspProfileService;
-    @MockBean protected Xs2aEventServiceEncrypted eventServiceEncrypted;
-    @MockBean protected PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    @MockBean
+    protected TppService tppService;
+    @MockBean
+    protected TppStopListService tppStopListService;
+    @MockBean
+    protected AspspProfileService aspspProfileService;
+    @MockBean
+    protected Xs2aEventServiceEncrypted eventServiceEncrypted;
+    @MockBean
+    protected PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
 
     public void before() {
         given(tppService.getTppInfo()).willReturn(TPP_INFO);
@@ -118,7 +125,10 @@ public abstract class PaymentUpdateAuthorisationBase {
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                             .payload(pisCommonPaymentResponse)
                             .build());
-
+        given(pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(Boolean.TRUE)
+                            .build());
         MockHttpServletRequestBuilder requestBuilder = put(buildRequestUrl());
         requestBuilder.headers(httpHeaders);
         requestBuilder.content(request);
@@ -142,6 +152,6 @@ public abstract class PaymentUpdateAuthorisationBase {
     }
 
     private Authorisation buildAuthorisation(PsuIdData psuIdData) {
-        return new Authorisation(AUTHORISATION_ID, ScaStatus.RECEIVED, psuIdData);
+        return new Authorisation(AUTHORISATION_ID, ScaStatus.RECEIVED, psuIdData, PaymentAuthorisationType.CREATED);
     }
 }

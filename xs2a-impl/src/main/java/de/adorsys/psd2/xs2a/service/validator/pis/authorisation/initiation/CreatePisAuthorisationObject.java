@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
+package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -24,16 +24,15 @@ import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndInfoProvider;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Payment object that contains necessary information for validating payment
- */
 @Value
-public class CreatePisCancellationAuthorisationPO implements PaymentTypeAndInfoProvider {
+public class CreatePisAuthorisationObject implements PaymentTypeAndInfoProvider {
+
     @NotNull
-    private final PisCommonPaymentResponse pisCommonPaymentResponse;
-    private final PsuIdData psuData;
+    private PisCommonPaymentResponse pisCommonPaymentResponse;
+
     private PaymentType paymentType;
     private String paymentProduct;
+    private PsuIdData psuDataFromRequest;
 
     @Override
     public TppInfo getTppInfo() {

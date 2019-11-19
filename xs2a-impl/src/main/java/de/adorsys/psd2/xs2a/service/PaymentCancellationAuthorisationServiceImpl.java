@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.event.core.model.EventType;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -41,6 +42,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.EnumSet;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -118,8 +120,11 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentResponseOptional.get();
         ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(pisCommonPaymentResponse, request));
+
         if (validationResult.isNotValid()) {
-            if (validationResult.getMessageError().getTppMessage().getMessageErrorCode() == PSU_CREDENTIALS_INVALID) {
+            MessageErrorCode messageErrorCode = validationResult.getMessageError().getTppMessage().getMessageErrorCode();
+
+            if (EnumSet.of(PSU_CREDENTIALS_INVALID, FORMAT_ERROR_NO_PSU).contains(messageErrorCode)) {
                 xs2aPisCommonPaymentService.updatePisAuthorisationStatus(request.getAuthorisationId(), ScaStatus.FAILED);
             }
 
@@ -259,10 +264,10 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
         }
 
         ValidationResult validationResult =
-            createPisCancellationAuthorisationValidator.validate(new CreatePisCancellationAuthorisationPO(pisCommonPaymentResponseOptional.get(),
-                                                                                                          psuData,
-                                                                                                          paymentType,
-                                                                                                          paymentProduct));
+            createPisCancellationAuthorisationValidator.validate(new CreatePisCancellationAuthorisationObject(pisCommonPaymentResponseOptional.get(),
+                                                                                                              psuData,
+                                                                                                              paymentType,
+                                                                                                              paymentProduct));
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS Cancellation Authorisation - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());

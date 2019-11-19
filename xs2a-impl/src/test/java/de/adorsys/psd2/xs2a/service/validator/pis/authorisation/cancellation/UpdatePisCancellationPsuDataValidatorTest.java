@@ -408,7 +408,7 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     }
 
     private List<Authorisation> buildAuthorisation(ScaStatus scaStatus, String authorisationId, PsuIdData psuIdData) {
-        return Collections.singletonList(new Authorisation(authorisationId, scaStatus, psuIdData));
+        return Collections.singletonList(new Authorisation(authorisationId, scaStatus, psuIdData, PaymentAuthorisationType.CREATED));
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataRequest buildUpdateRequest(String authoridsationId, PsuIdData psuIdData) {

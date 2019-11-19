@@ -16,25 +16,63 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAuthorisationObject;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.AisAuthorisationStatusChecker;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.STATUS_INVALID;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_409;
 
 /**
  * Validator to be used for validating create consent authorisation request according to some business rules
  */
 @Component
-public class CreateConsentAuthorisationValidator extends AbstractConsentTppValidator<CommonConsentObject> {
+@RequiredArgsConstructor
+public class CreateConsentAuthorisationValidator extends AbstractConsentTppValidator<CreateConsentAuthorisationObject> {
+
+    private final AuthorisationPsuDataChecker authorisationPsuDataChecker;
+    private final AisAuthorisationStatusChecker aisAuthorisationStatusChecker;
+
     /**
      * Validates create consent authorisation request
      *
-     * @param consentObject consent information object
-     * @return valid result if the consent is valid, invalid result with appropriate error otherwise
+     * @param createConsentAuthorisationObject create consent authorisation information object
+     * @return valid result if the create authorisation flow is correct, invalid result with appropriate error otherwise
      */
     @NotNull
     @Override
-    protected ValidationResult executeBusinessValidation(CommonConsentObject consentObject) {
+    protected ValidationResult executeBusinessValidation(CreateConsentAuthorisationObject createConsentAuthorisationObject) {
+
+        PsuIdData psuDataFromRequest = createConsentAuthorisationObject.getPsuIdDataFromRequest();
+        AccountConsent accountConsent = createConsentAuthorisationObject.getAccountConsent();
+        List<PsuIdData> psuDataFromDb = accountConsent.getPsuIdDataList();
+
+        if (authorisationPsuDataChecker.isPsuDataWrong(
+            accountConsent.isMultilevelScaRequired(),
+            psuDataFromDb,
+            psuDataFromRequest)) {
+
+            return ValidationResult.invalid(AIS_401, PSU_CREDENTIALS_INVALID);
+        }
+
+        // If the authorisation for this consent ID and for this PSU ID has status FINALISED or EXEMPTED - return error.
+        boolean isFinalised = aisAuthorisationStatusChecker.isFinalised(psuDataFromRequest, accountConsent.getAuthorisations());
+
+        if (isFinalised) {
+            return ValidationResult.invalid(AIS_409, STATUS_INVALID);
+        }
+
         return ValidationResult.valid();
     }
+
 }
