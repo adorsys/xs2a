@@ -21,13 +21,14 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Optional;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.fromController;
 
 @Slf4j
 @Component
@@ -48,7 +49,7 @@ public abstract class AbstractLinkAspect<T> {
     String getHttpUrl() {
         return aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()
                    ? aspspProfileServiceWrapper.getXs2aBaseLinksUrl()
-                   : linkTo(getControllerClass()).toString();
+                   : fromController(this.getControllerClass()).pathSegment(StringUtils.EMPTY).toUriString();
     }
 
     @SuppressWarnings("unchecked")
