@@ -16,29 +16,66 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
+import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.PisCancellationAuthorisationStatusChecker;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.STATUS_INVALID;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_401;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_409;
 
 /**
  * Validator to be used for validating create pis cancellation authorisation request according to some business rules
  */
 @Component
-public class CreatePisCancellationAuthorisationValidator extends AbstractPisValidator<CreatePisCancellationAuthorisationPO> {
+public class CreatePisCancellationAuthorisationValidator extends AbstractPisValidator<CreatePisCancellationAuthorisationObject> {
 
-    public CreatePisCancellationAuthorisationValidator(RequestProviderService requestProviderService) {
+    private final AuthorisationPsuDataChecker authorisationPsuDataChecker;
+    private final PisCancellationAuthorisationStatusChecker pisCancellationAuthorisationStatusChecker;
+
+    public CreatePisCancellationAuthorisationValidator(RequestProviderService requestProviderService, AuthorisationPsuDataChecker authorisationPsuDataChecker,
+                                                       PisCancellationAuthorisationStatusChecker pisCancellationAuthorisationStatusChecker) {
         super(requestProviderService);
+        this.authorisationPsuDataChecker = authorisationPsuDataChecker;
+        this.pisCancellationAuthorisationStatusChecker = pisCancellationAuthorisationStatusChecker;
     }
 
     /**
-     * Validates get payment cancellation authorisations request
+     * Validates create payment cancellation authorisation request
      *
-     * @param paymentObject payment information object
-     * @return valid result if the payment is valid, invalid result with appropriate error otherwise
+     * @param createPisCancellationAuthorisationObject payment cancellation authorisation object
+     * @return valid result if the payment cancellation authorisation is valid, invalid result with appropriate error otherwise
      */
     @Override
-    protected ValidationResult executeBusinessValidation(CreatePisCancellationAuthorisationPO paymentObject) {
+    protected ValidationResult executeBusinessValidation(CreatePisCancellationAuthorisationObject createPisCancellationAuthorisationObject) {
+
+        PsuIdData psuDataFromRequest = createPisCancellationAuthorisationObject.getPsuData();
+        PisCommonPaymentResponse pisCommonPaymentResponse = createPisCancellationAuthorisationObject.getPisCommonPaymentResponse();
+        List<PsuIdData> psuDataFromDb = pisCommonPaymentResponse.getPsuData();
+
+        if (authorisationPsuDataChecker.isPsuDataWrong(
+            pisCommonPaymentResponse.isMultilevelScaRequired(),
+            psuDataFromDb,
+            psuDataFromRequest)) {
+
+            return ValidationResult.invalid(PIS_401, PSU_CREDENTIALS_INVALID);
+        }
+
+        // If the cancellation authorisation for this payment ID and for this PSU ID has status FINALISED or EXEMPTED - return error.
+        boolean isFinalised = pisCancellationAuthorisationStatusChecker.isFinalised(psuDataFromRequest, pisCommonPaymentResponse.getAuthorisations());
+
+        if (isFinalised) {
+            return ValidationResult.invalid(PIS_409, STATUS_INVALID);
+        }
+
         return ValidationResult.valid();
     }
 }

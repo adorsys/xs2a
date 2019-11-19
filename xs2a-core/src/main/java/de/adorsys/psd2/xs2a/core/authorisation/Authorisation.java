@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.core.authorisation;
 
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.ApiModel;
@@ -36,4 +37,7 @@ public class Authorisation {
 
     @ApiModelProperty(value = "Corresponding PSU")
     private PsuIdData psuData;
+
+    private PaymentAuthorisationType authorizationType;
+
 }

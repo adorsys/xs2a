@@ -215,7 +215,8 @@ public class UpdatePsuDataForPaymentInitiationIT {
         pisCommonPaymentResponse.setTppInfo(TPP_INFO);
         pisCommonPaymentResponse.setAuthorisations(Collections.singletonList(new Authorisation(authorisationId,
                                                                                                ScaStatus.PSUIDENTIFIED,
-                                                                                               new PsuIdData(PSU_ID, null, null, null))));
+                                                                                               new PsuIdData(PSU_ID, null, null, null),
+                                                                                               PaymentAuthorisationType.CREATED)));
         pisCommonPaymentResponse.setTransactionStatus(TransactionStatus.ACSP);
         return pisCommonPaymentResponse;
     }

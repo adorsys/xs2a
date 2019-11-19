@@ -263,7 +263,7 @@ public class PaymentStartAuthorisationIT {
     }
 
     private Authorisation buildAuthorisation() {
-        return new Authorisation(AUTHORISATION_ID, ScaStatus.RECEIVED, null);
+        return new Authorisation(AUTHORISATION_ID, ScaStatus.RECEIVED, new PsuIdData(PSU_ID, null, null, null), PaymentAuthorisationType.CREATED);
     }
 
     private PsuIdData buildPsuIdData() {

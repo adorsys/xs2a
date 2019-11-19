@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.*;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAuthorisationObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +58,8 @@ public class ConsentValidationService {
         return getAccountConsentByIdValidator.validate(new CommonConsentObject(consent));
     }
 
-    public ValidationResult validateConsentAuthorisationOnCreate(AccountConsent consent) {
-        return createConsentAuthorisationValidator.validate(new CommonConsentObject(consent));
+    public ValidationResult validateConsentAuthorisationOnCreate(CreateConsentAuthorisationObject createConsentAuthorisationObject) {
+        return createConsentAuthorisationValidator.validate(createConsentAuthorisationObject);
     }
 
     public ValidationResult validateConsentPsuDataOnUpdate(AccountConsent consent, UpdateConsentPsuDataReq request) {

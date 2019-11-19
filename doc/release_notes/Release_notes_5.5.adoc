@@ -9,6 +9,7 @@
 * Add supporting standing order report
 * Revoke all consents when account is closed
 * Provided implementation of delta access for transaction list request
+* Bugfix: validation of authorisation sub-resources
 
 == Removed deprecated columns TppRedirectUri from TppInfo
 
@@ -54,3 +55,14 @@ Also `acceptMediaType`, `withBalance`, `dateFrom`, `dateTo`, `bookingStatus` wer
 Parameter `dateFrom` is not mandatory when TPP sends `entryReferenceFrom` or `deltaList` parameter and it is supported by ASPSP.
 When TPP sends transaction list request with period parameters (`dateFrom` and `dateTo`) and one of a delta access parameters (`entryReferenceFrom` or `deltaList`)
 and this parameter is not supported by ASPSP, then request will be processed only with period parameters.
+
+== Bugfix: validation of authorisation sub-resources
+
+From now on, while creating authorisation for PIS/AIS/PIS cancellation, some business validation occurs due to the
+specification demands. Main ideas:
+
+* For one PSU SCA – only one authorisation per one initial request for one PSU-ID may be active.
+* For multilevel PSU SCA – for one initial request there may be active as many authorisations as many PSUs should make SCA, but only one authorisation for one particular PSU-ID.
+
+
+

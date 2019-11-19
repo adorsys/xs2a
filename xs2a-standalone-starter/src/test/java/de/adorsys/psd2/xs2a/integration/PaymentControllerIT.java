@@ -18,7 +18,6 @@
 package de.adorsys.psd2.xs2a.integration;
 
 
-import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsResponse;
@@ -187,7 +186,7 @@ public class PaymentControllerIT {
                             .build());
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
-                            .payload(PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponseWithAuthorisation(new Authorisation(AUTHORISATION_ID, ScaStatus.RECEIVED, getPsuIdData())))
+                            .payload(PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponseWithAuthorisation(new Authorisation(AUTHORISATION_ID, ScaStatus.RECEIVED, getPsuIdData(), PaymentAuthorisationType.CREATED)))
                             .build());
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
@@ -238,7 +237,6 @@ public class PaymentControllerIT {
     @Test
     public void cancelPaymentAuthorisation_Redirect_OAuth_successful() throws Exception {
         // Given
-        AspspSettings aspspSettings = AspspSettingsBuilder.buildAspspSettings();
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithScaRedirectFlow(ScaRedirectFlow.OAUTH));
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
