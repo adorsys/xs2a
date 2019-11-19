@@ -265,7 +265,7 @@ After this operation the given consent's account reference data will be updated 
 
 === Implementation of PaymentSpi(s)
 
-We distinguish between following interfaces: *SinglePaymentSpi*, *BulkPaymentSpi*, *PeriodicPaymentSpi*, *PaymentAuthorisationSpi*, *PaymentCancellationSpi*.
+We distinguish between following interfaces: *SinglePaymentSpi*, *BulkPaymentSpi*, *PeriodicPaymentSpi*, *CommonPaymentSpi*, *PaymentAuthorisationSpi*, *PaymentCancellationSpi*.
 
 ==== SinglePaymentSpi
 
@@ -273,7 +273,9 @@ The Interface is used for the single payment SPI implementation. The following M
 
 * *initiatePayment*: aims to initiate a payment;
 * *getPaymentById*: aims to read the payment by ID;
-* *getPaymentStatusById*: aims to read the payment status by ID.
+* *getPaymentStatusById*: aims to read the payment status by ID;
+* *executePaymentWithoutSca*: executes payment without SCA;
+* *verifyScaAuthorisationAndExecutePayment*: verifies SCA authorisation and executes payment.
 
 The method *initiatePayment* returns a positive or negative payment initiation response (*SpiSinglePaymentInitiationResponse*
 object) as a part of SpiResponse. Method signature contains the following (description of basic fields *SpiContextData* and
@@ -287,6 +289,7 @@ Response by the method *getPaymentById* returns payment as a part of SpiResponse
  the following data:
 
 * *spiContextData*;
+* *acceptMediaType*: media type requested by the TPP;
 * *payment*: Single Payment;
 * *spiAspspConsentDataProvider*.
 
@@ -294,6 +297,22 @@ Response by the method *getPaymentStatusById* returns the *SpiGetPaymentStatusRe
 and contains the following:
 
 * *spiContextData*;
+* *acceptMediaType*: media type requested by the TPP;
+* *payment*: Single Payment;
+* *spiAspspConsentDataProvider*.
+
+*executePaymentWithoutSca* method is used for executing payment when no SCA is required.
+Returns a *SpiPaymentExecutionResponse* object with appropriate transaction status and has the following parameters:
+
+* *spiContextData*;
+* *payment*: Single Payment;
+* *spiAspspConsentDataProvider*.
+
+*verifyScaAuthorisationAndExecutePayment* is used for verifying SCA and executing payment.
+Returns a *SpiPaymentExecutionResponse* object with appropriate transaction status and has the following parameters:
+
+* *spiContextData*;
+* *spiScaConfirmation*: data for verifying SCA;
 * *payment*: Single Payment;
 * *spiAspspConsentDataProvider*.
 
@@ -303,7 +322,9 @@ The Interface is used for periodic payments for SPI implementation. The followin
 
 * *initiatePayment*;
 * *getPaymentById*;
-* *getPaymentStatusById*.
+* *getPaymentStatusById*;
+* *executePaymentWithoutSca*;
+* *verifyScaAuthorisationAndExecutePayment*.
 
 The method *initiatePayment* returns a positive or negative payment initiation response (*SpiPeriodicPaymentInitiationResponse*)
 as a part of SpiResponse and contains the following:
@@ -315,6 +336,7 @@ as a part of SpiResponse and contains the following:
 Response by the method *getPaymentById* returns payment as a part of SpiResponse (*SpiPeriodicPayment*) and contains the following data:
 
 * *spiContextData*;
+* *acceptMediaType*: media type requested by the TPP;
 * *payment*: Periodic Payment;
 * *spiAspspConsentDataProvider*.
 
@@ -322,6 +344,22 @@ Response by the method *getPaymentStatusById* returns the *SpiGetPaymentStatusRe
 contains the following:
 
 * *spiContextData*;
+* *acceptMediaType*: media type requested by the TPP;
+* *payment*: Periodic Payment;
+* *spiAspspConsentDataProvider*.
+
+*executePaymentWithoutSca* method is used for executing payment when no SCA is required.
+Returns a *SpiPaymentExecutionResponse* object with appropriate transaction status and has the following parameters:
+
+* *spiContextData*;
+* *payment*: Periodic Payment;
+* *spiAspspConsentDataProvider*.
+
+*verifyScaAuthorisationAndExecutePayment* is used for verifying SCA and executing payment.
+Returns a *SpiPaymentExecutionResponse* object with appropriate transaction status and has the following parameters:
+
+* *spiContextData*;
+* *spiScaConfirmation*: data for verifying SCA;
 * *payment*: Periodic Payment;
 * *spiAspspConsentDataProvider*.
 
@@ -331,7 +369,9 @@ The Interface is used for bulk payments for SPI implementation. The following me
 
 * *initiatePayment*;
 * *getPaymentById*;
-* *getPaymentStatusById*.
+* *getPaymentStatusById*;
+* *executePaymentWithoutSca*;
+* *verifyScaAuthorisationAndExecutePayment*.
 
 The method *initiatePayment* returns a positive or negative payment initiation response (*SpiBulkPaymentInitiationResponse*)
 as a part of SpiResponse and contains the following:
@@ -344,6 +384,7 @@ Response by the method *getPaymentById* returns payment as a part of SpiResponse
 following data:
 
 * *spiContextData*;
+* *acceptMediaType*: media type requested by the TPP;
 * *payment*: Bulk Payment;
 * *spiAspspConsentDataProvider*.
 
@@ -351,7 +392,72 @@ Response by the methods *getPaymentStatusById* returns the *SpiGetPaymentStatusR
 and contains the following:
 
 * *spiContextData*;
+* *acceptMediaType*: media type requested by the TPP;
 * *payment*: Bulk Payment;
+* *spiAspspConsentDataProvider*.
+
+*executePaymentWithoutSca* method is used for executing payment when no SCA is required.
+Returns a *SpiPaymentExecutionResponse* object with appropriate transaction status and has the following parameters:
+
+* *spiContextData*;
+* *payment*: Bulk Payment;
+* *spiAspspConsentDataProvider*.
+
+*verifyScaAuthorisationAndExecutePayment* is used for verifying SCA and executing payment.
+Returns a *SpiPaymentExecutionResponse* object with appropriate transaction status and has the following parameters:
+
+* *spiContextData*;
+* *spiScaConfirmation*: data for verifying SCA;
+* *payment*: Bulk Payment;
+* *spiAspspConsentDataProvider*.
+
+==== CommonPaymentSpi
+
+The Interface is used for common payments SPI implementation.
+This interface will be called instead of other payment SPI interfaces for any payment product that doesn't belong to the pre-defined list of standard JSON payment products, regardless of payment service or content type.
+
+The following methods should be implemented:
+
+* *initiatePayment*: initiates a payment;
+* *getPaymentById*: reads the payment by ID;
+* *getPaymentStatusById*: reads the payment status by ID;
+* *executePaymentWithoutSca*: executes payment without SCA;
+* *verifyScaAuthorisationAndExecutePayment*: verifies SCA authorisation and executes payment.
+
+The method *initiatePayment* is being called on initiating any common payment.
+Returns a positive or negative payment initiation response (*SpiPaymentInitiationResponse*) as a part of SpiResponse and has the following parameters:
+
+* *spiContextData*;
+* *payment*: common payment object;
+* *spiAspspConsentDataProvider*.
+
+*getPaymentById* method returns payment as a part of SpiResponse (*SpiPaymentInfo*) and has the following parameters:
+
+* *spiContextData*;
+* *acceptMediaType*: media type requested by the TPP;
+* *payment*: common payment object;
+* *spiAspspConsentDataProvider*.
+
+*getPaymentStatusById* method returns a *SpiGetPaymentStatusResponse* object (with the transaction status) and has the following parameters:
+
+* *spiContextData*;
+* *acceptMediaType*: media type requested by the TPP;
+* *payment*: common payment object;
+* *spiAspspConsentDataProvider*.
+
+*executePaymentWithoutSca* method is used for executing payment when no SCA is required.
+Returns a *SpiPaymentExecutionResponse* object with appropriate transaction status and has the following parameters:
+
+* *spiContextData*;
+* *payment*: common payment object;
+* *spiAspspConsentDataProvider*.
+
+*verifyScaAuthorisationAndExecutePayment* is used for verifying SCA and executing payment.
+Returns a *SpiPaymentExecutionResponse* object with appropriate transaction status and has the following parameters:
+
+* *spiContextData*;
+* *spiScaConfirmation*: data for verifying SCA;
+* *payment*: common payment object;
 * *spiAspspConsentDataProvider*.
 
 ==== PaymentAuthorisationSpi
