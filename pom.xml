@@ -202,7 +202,6 @@
         <spring-aop.version>${spring.version}</spring-aop.version>
         <spring-webmvc.version>${spring.version}</spring-webmvc.version>
         <spring-core.version>${spring.version}</spring-core.version>
-        <spring-hateoas.version>0.25.0.RELEASE</spring-hateoas.version>
         <spring-data-jpa.version>2.1.8.RELEASE</spring-data-jpa.version>
         <spring-boot.version>2.1.4.RELEASE</spring-boot.version>
 
@@ -339,12 +338,6 @@
                 <artifactId>spring-test</artifactId>
                 <version>${spring-test.version}</version>
                 <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.hateoas</groupId>
-                <artifactId>spring-hateoas</artifactId>
-                <version>${spring-hateoas.version}</version>
             </dependency>
 
             <dependency>
