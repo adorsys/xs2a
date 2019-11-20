@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5a22fe76-6ea5-4645-8991-c8a24f127e0d",
+		"_postman_id": "d534eb11-8ecf-4281-b225-3073d8f222dd",
 		"name": "AIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -12047,6 +12047,3258 @@
 									""
 								]
 							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Consent dedicated EMBEDDED validation of authorisation sub-resources",
+					"item": [
+						{
+							"name": "Explicit",
+							"item": [
+								{
+									"name": "Start authorisation with empty PSU ID",
+									"item": [
+										{
+											"name": "1. Enable signing basket support in ASPSP profile",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": true,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": true\n    }\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"aspsp-settings"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "2. Set embedded SCA approach",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"sca-approaches"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "3. Create consent dedicated",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "f1e1877d-5e93-4751-b6a1-779dbfb0e0a0",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Consent Id exists\", () => {",
+															"   pm.expect(jsonData).to.have.property('consentId');",
+															"});",
+															"",
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"",
+															"pm.test(\"Consent status is received\", () => {",
+															"    pm.expect(jsonData.consentStatus).to.eql('received');",
+															"});",
+															"",
+															"pm.globals.set(\"consent_id\", jsonData.consentId);",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "dc68bfd4-4b87-45a8-8a23-0308d8941622",
+														"exec": [
+															"pm.globals.unset(\"consent_id\");"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "accept",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}",
+														"type": "text"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "psu-ip-address",
+														"value": "{{ip_address}}",
+														"type": "text"
+													},
+													{
+														"key": "TPP-Explicit-Authorisation-Preferred",
+														"value": "true",
+														"type": "text"
+													},
+													{
+														"key": "TPP-Redirect-URI",
+														"value": "redirect URI",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2021-10-10\"\n}"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "4. Start the authorisation process for consent",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+														"exec": [
+															"pm.globals.unset(\"authorisation_id\");"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+															"",
+															"pm.globals.set(\"authorisation_id\", authorisationId);",
+															"",
+															"pm.test(\"Status code is 201\", function () {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"pm.test(\"Select scaStatus \", () => {",
+															"    pm.expect(jsonData).to.have.property('scaStatus');",
+															"    const scaStatus = jsonData.scaStatus;",
+															"    pm.expect(scaStatus).to.eql('psuIdentified');",
+															"});",
+															"",
+															"pm.test(\"Links exist\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"",
+															"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+															"    pm.expect(_links).to.have.property('scaStatus');",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										},
+										{
+											"name": "5. Start the authorisation process for consent empty PSU ID",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+															"",
+															"",
+															"pm.test(\"Status code is 201\", function () {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"pm.test(\"Select scaStatus \", () => {",
+															"    pm.expect(jsonData).to.have.property('scaStatus');",
+															"    const scaStatus = jsonData.scaStatus;",
+															"    pm.expect(scaStatus).to.eql('psuIdentified');",
+															"});",
+															"",
+															"pm.test(\"Links exist\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"",
+															"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+															"    pm.expect(_links).to.have.property('scaStatus');",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}",
+														"disabled": true
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										},
+										{
+											"name": "6. Get the status of first authorisation",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "afa1ac8d-f175-488d-861b-9658daa25d0c",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															"",
+															"pm.test(\"scaStatus of first authorisation is failed\", () => {",
+															"    pm.expect(jsonData).to.have.property('scaStatus');",
+															"    const scaStatus = jsonData.scaStatus;",
+															"    pm.expect(scaStatus).to.eql('failed');",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"protocolProfileBehavior": {
+												"disableBodyPruning": true
+											},
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_cms}}"
+													],
+													"path": [
+														"psu-api",
+														"v1",
+														"ais",
+														"consent",
+														"authorisation",
+														"{{authorisation_id}}",
+														""
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								},
+								{
+									"name": "Start authorisation with wrong PSU ID",
+									"item": [
+										{
+											"name": "1. Enable signing basket support in ASPSP profile",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": true,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": true\n    }\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"aspsp-settings"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "2. Set embedded SCA approach",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"sca-approaches"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "3. Create consent dedicated",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "f1e1877d-5e93-4751-b6a1-779dbfb0e0a0",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Consent Id exists\", () => {",
+															"   pm.expect(jsonData).to.have.property('consentId');",
+															"});",
+															"",
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"",
+															"pm.test(\"Consent status is received\", () => {",
+															"    pm.expect(jsonData.consentStatus).to.eql('received');",
+															"});",
+															"",
+															"pm.globals.set(\"consent_id\", jsonData.consentId);",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "dc68bfd4-4b87-45a8-8a23-0308d8941622",
+														"exec": [
+															"pm.globals.unset(\"consent_id\");"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "accept",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}",
+														"type": "text"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "psu-ip-address",
+														"value": "{{ip_address}}",
+														"type": "text"
+													},
+													{
+														"key": "TPP-Explicit-Authorisation-Preferred",
+														"value": "true",
+														"type": "text"
+													},
+													{
+														"key": "TPP-Redirect-URI",
+														"value": "redirect URI",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2021-10-10\"\n}"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "4. Start the authorisation process for consent",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+														"exec": [
+															"pm.globals.unset(\"authorisation_id\");"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+															"",
+															"pm.globals.set(\"authorisation_id\", authorisationId);",
+															"",
+															"pm.test(\"Status code is 201\", function () {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"pm.test(\"Select scaStatus \", () => {",
+															"    pm.expect(jsonData).to.have.property('scaStatus');",
+															"    const scaStatus = jsonData.scaStatus;",
+															"    pm.expect(scaStatus).to.eql('psuIdentified');",
+															"});",
+															"",
+															"pm.test(\"Links exist\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"",
+															"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+															"    pm.expect(_links).to.have.property('scaStatus');",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										},
+										{
+											"name": "5. Start the authorisation process for consent wrong PSU ID",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Status code is 401\", function () {",
+															"    pm.response.to.have.status(401);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}-wrong"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										},
+										{
+											"name": "6. Get the status of first authorisation",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "afa1ac8d-f175-488d-861b-9658daa25d0c",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															"",
+															"pm.test(\"scaStatus of first authorisation is psuIdentified\", () => {",
+															"    pm.expect(jsonData).to.have.property('scaStatus');",
+															"    const scaStatus = jsonData.scaStatus;",
+															"    pm.expect(scaStatus).to.eql('psuIdentified');",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"protocolProfileBehavior": {
+												"disableBodyPruning": true
+											},
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_none}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_cms}}"
+													],
+													"path": [
+														"psu-api",
+														"v1",
+														"ais",
+														"consent",
+														"authorisation",
+														"{{authorisation_id}}",
+														""
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								},
+								{
+									"name": "Start second authorisation with wrong PSU ID",
+									"item": [
+										{
+											"name": "1. Enable signing basket support in ASPSP profile",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": true\n    }\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"aspsp-settings"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "2. Set embedded SCA approach",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"sca-approaches"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "3. Create consent dedicated with empty PSU ID",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "f1e1877d-5e93-4751-b6a1-779dbfb0e0a0",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Consent Id exists\", () => {",
+															"   pm.expect(jsonData).to.have.property('consentId');",
+															"});",
+															"",
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"",
+															"pm.test(\"Consent status is received\", () => {",
+															"    pm.expect(jsonData.consentStatus).to.eql('received');",
+															"});",
+															"",
+															"pm.globals.set(\"consent_id\", jsonData.consentId);",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "dc68bfd4-4b87-45a8-8a23-0308d8941622",
+														"exec": [
+															"pm.globals.unset(\"consent_id\");"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "accept",
+														"type": "text",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"type": "text",
+														"value": "{{psu_id_single}}",
+														"disabled": true
+													},
+													{
+														"key": "X-Request-ID",
+														"type": "text",
+														"value": "{{x_request_id}}"
+													},
+													{
+														"key": "Content-Type",
+														"type": "text",
+														"value": "application/json"
+													},
+													{
+														"key": "psu-ip-address",
+														"type": "text",
+														"value": "{{ip_address}}"
+													},
+													{
+														"key": "TPP-Explicit-Authorisation-Preferred",
+														"type": "text",
+														"value": "true"
+													},
+													{
+														"key": "TPP-Redirect-URI",
+														"type": "text",
+														"value": "redirect URI"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2021-10-10\"\n}"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "4. Start the authorisation process for consent empty PSU ID",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+														"exec": [
+															"pm.globals.unset(\"authorisation_id\");"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+															"",
+															"pm.globals.set(\"authorisation_id\", authorisationId);",
+															"",
+															"pm.test(\"Status code is 201\", function () {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"pm.test(\"Links exist\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"",
+															"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+															"    pm.expect(_links).to.have.property('scaStatus');",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}",
+														"disabled": true
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										},
+										{
+											"name": "5. Start the authorisation process for consent",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Status code is 201\", function () {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										},
+										{
+											"name": "6. Start the authorisation process for consent wrong PSU ID",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Status code is 401\", function () {",
+															"    pm.response.to.have.status(401);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_multiple}}"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										},
+										{
+											"name": "7. Get the status of first authorisation",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "afa1ac8d-f175-488d-861b-9658daa25d0c",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															"",
+															"pm.test(\"scaStatus of first authorisation is received\", () => {",
+															"    pm.expect(jsonData).to.have.property('scaStatus');",
+															"    const scaStatus = jsonData.scaStatus;",
+															"    pm.expect(scaStatus).to.eql('received');",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"protocolProfileBehavior": {
+												"disableBodyPruning": true
+											},
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_none}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_cms}}"
+													],
+													"path": [
+														"psu-api",
+														"v1",
+														"ais",
+														"consent",
+														"authorisation",
+														"{{authorisation_id}}",
+														""
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Implicit",
+							"item": [
+								{
+									"name": "Start authorisation with PSU ID",
+									"item": [
+										{
+											"name": "1. Set embedded SCA approach",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"sca-approaches"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "2. Set ASPSP properties",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": true,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false\n    }\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"aspsp-settings"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "3. Create consent dedicated",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "f1e1877d-5e93-4751-b6a1-779dbfb0e0a0",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Consent Id exists\", () => {",
+															"   pm.expect(jsonData).to.have.property('consentId');",
+															"});",
+															"",
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"pm.test(\"Update PSU authentication link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    ",
+															"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+															"",
+															"    if (updatePsuAuthentication === undefined) {",
+															"       pm.expect().fail();",
+															"    }",
+															"});",
+															"",
+															"pm.test(\"Consent status is received\", () => {",
+															"    pm.expect(jsonData.consentStatus).to.eql('received');",
+															"});",
+															"",
+															"pm.globals.set(\"consent_id\", jsonData.consentId);",
+															"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);",
+															"",
+															"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+															"pm.globals.set(\"authorisation_id\", authorisationId);",
+															"",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "dc68bfd4-4b87-45a8-8a23-0308d8941622",
+														"exec": [
+															"pm.globals.unset(\"consent_id\");"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "accept",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}",
+														"type": "text"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "psu-ip-address",
+														"value": "{{ip_address}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2021-10-10\"\n}"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "4. Start the authorisation process for consent",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"",
+															"pm.test(\"Status code is 201\", function () {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"pm.test(\"Select scaStatus \", () => {",
+															"    pm.expect(jsonData).to.have.property('scaStatus');",
+															"    const scaStatus = jsonData.scaStatus;",
+															"    pm.expect(scaStatus).to.eql('psuIdentified');",
+															"});",
+															"",
+															"pm.test(\"Links exist\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"",
+															"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+															"    pm.expect(_links).to.have.property('scaStatus');",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										},
+										{
+											"name": "5. Get the status of first authorisation",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "afa1ac8d-f175-488d-861b-9658daa25d0c",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															"",
+															"pm.test(\"scaStatus of first authorisation is failed\", () => {",
+															"    pm.expect(jsonData).to.have.property('scaStatus');",
+															"    const scaStatus = jsonData.scaStatus;",
+															"    pm.expect(scaStatus).to.eql('failed');",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"protocolProfileBehavior": {
+												"disableBodyPruning": true
+											},
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_none}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_cms}}"
+													],
+													"path": [
+														"psu-api",
+														"v1",
+														"ais",
+														"consent",
+														"authorisation",
+														"{{authorisation_id}}",
+														""
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								},
+								{
+									"name": "Start authorisation with empty PSU ID",
+									"item": [
+										{
+											"name": "1. Set embedded SCA approach",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"sca-approaches"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "2. Set ASPSP properties",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": true,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false\n    }\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"aspsp-settings"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "3. Create consent dedicated",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "f1e1877d-5e93-4751-b6a1-779dbfb0e0a0",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Consent Id exists\", () => {",
+															"   pm.expect(jsonData).to.have.property('consentId');",
+															"});",
+															"",
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"pm.test(\"Update PSU authentication link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    ",
+															"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+															"",
+															"    if (updatePsuAuthentication === undefined) {",
+															"       pm.expect().fail();",
+															"    }",
+															"});",
+															"",
+															"pm.test(\"Consent status is received\", () => {",
+															"    pm.expect(jsonData.consentStatus).to.eql('received');",
+															"});",
+															"",
+															"pm.globals.set(\"consent_id\", jsonData.consentId);",
+															"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);",
+															"",
+															"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+															"pm.globals.set(\"authorisation_id\", authorisationId);",
+															"",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "dc68bfd4-4b87-45a8-8a23-0308d8941622",
+														"exec": [
+															"pm.globals.unset(\"consent_id\");"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "accept",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}",
+														"type": "text"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "psu-ip-address",
+														"value": "{{ip_address}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2021-10-10\"\n}"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "4. Start the authorisation process for consent",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"",
+															"pm.test(\"Status code is 201\", function () {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"pm.test(\"Select scaStatus \", () => {",
+															"    pm.expect(jsonData).to.have.property('scaStatus');",
+															"    const scaStatus = jsonData.scaStatus;",
+															"    pm.expect(scaStatus).to.eql('psuIdentified');",
+															"});",
+															"",
+															"pm.test(\"Links exist\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"",
+															"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+															"    pm.expect(_links).to.have.property('scaStatus');",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}",
+														"disabled": true
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										},
+										{
+											"name": "5. Get the status of first authorisation",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "afa1ac8d-f175-488d-861b-9658daa25d0c",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															"",
+															"pm.test(\"scaStatus of first authorisation is failed\", () => {",
+															"    pm.expect(jsonData).to.have.property('scaStatus');",
+															"    const scaStatus = jsonData.scaStatus;",
+															"    pm.expect(scaStatus).to.eql('failed');",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"protocolProfileBehavior": {
+												"disableBodyPruning": true
+											},
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_none}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_cms}}"
+													],
+													"path": [
+														"psu-api",
+														"v1",
+														"ais",
+														"consent",
+														"authorisation",
+														"{{authorisation_id}}",
+														""
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								},
+								{
+									"name": "Start authorisation with wrong PSU ID",
+									"item": [
+										{
+											"name": "1. Set embedded SCA approach",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"sca-approaches"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "2. Set ASPSP properties",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": true,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false\n    }\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"aspsp-settings"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "3. Create consent dedicated",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "f1e1877d-5e93-4751-b6a1-779dbfb0e0a0",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Consent Id exists\", () => {",
+															"   pm.expect(jsonData).to.have.property('consentId');",
+															"});",
+															"",
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"pm.test(\"Update PSU authentication link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    ",
+															"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+															"",
+															"    if (updatePsuAuthentication === undefined) {",
+															"       pm.expect().fail();",
+															"    }",
+															"});",
+															"",
+															"pm.test(\"Consent status is received\", () => {",
+															"    pm.expect(jsonData.consentStatus).to.eql('received');",
+															"});",
+															"",
+															"pm.globals.set(\"consent_id\", jsonData.consentId);",
+															"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);",
+															"",
+															"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+															"pm.globals.set(\"authorisation_id\", authorisationId);",
+															"",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "dc68bfd4-4b87-45a8-8a23-0308d8941622",
+														"exec": [
+															"pm.globals.unset(\"consent_id\");"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "accept",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}",
+														"type": "text"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "psu-ip-address",
+														"value": "{{ip_address}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2021-10-10\"\n}"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "4. Start the authorisation process for consent",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"",
+															"pm.test(\"Status code is 401\", function () {",
+															"    pm.response.to.have.status(401);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}-wrong"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								},
+								{
+									"name": "Start authorisation with PSU ID after finalisation",
+									"item": [
+										{
+											"name": "1. Set embedded SCA approach",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"sca-approaches"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "2. Set ASPSP properties",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": true,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false\n    }\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"aspsp-settings"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "3. Create consent dedicated",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "f1e1877d-5e93-4751-b6a1-779dbfb0e0a0",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Consent Id exists\", () => {",
+															"   pm.expect(jsonData).to.have.property('consentId');",
+															"});",
+															"",
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"pm.test(\"Update PSU authentication link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    ",
+															"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+															"",
+															"    if (updatePsuAuthentication === undefined) {",
+															"       pm.expect().fail();",
+															"    }",
+															"});",
+															"",
+															"pm.test(\"Consent status is received\", () => {",
+															"    pm.expect(jsonData.consentStatus).to.eql('received');",
+															"});",
+															"",
+															"pm.globals.set(\"consent_id\", jsonData.consentId);",
+															"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);",
+															"",
+															"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+															"pm.globals.set(\"authorisation_id\", authorisationId);",
+															"",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "dc68bfd4-4b87-45a8-8a23-0308d8941622",
+														"exec": [
+															"pm.globals.unset(\"consent_id\");"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "accept",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}",
+														"type": "text"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "psu-ip-address",
+														"value": "{{ip_address}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2021-10-10\"\n}"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "4. Update PSU data for consent",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "f8ee040e-1fd9-415f-9d19-bad3df14d8a4",
+														"exec": [
+															"pm.test('Status code is 200', () => {",
+															"   pm.response.to.have.status(200);",
+															"});",
+															"",
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test('Sca status is scaMethodSelected', () => {",
+															"   pm.expect(jsonData.scaStatus).to.eql('scaMethodSelected');",
+															"});",
+															"",
+															"pm.test(\"Select scaStatus link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    pm.expect(_links).to.have.property('scaStatus');",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations",
+														"{{authorisation_id}}"
+													]
+												},
+												"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+											},
+											"response": []
+										},
+										{
+											"name": "5. Update PSU Data for consent finalisation",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "5e30b6d6-16d6-4b78-a782-0c9caef3ea1a",
+														"exec": [
+															"pm.test('Status code is 200', () => {",
+															"   pm.response.to.have.status(200);",
+															"});",
+															"",
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test('Sca status is finalised', () => {",
+															"   pm.expect(jsonData.scaStatus).to.eql('finalised');",
+															"});",
+															"",
+															"pm.test(\"Select scaStatus link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    pm.expect(_links).to.have.property('scaStatus');",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n\t\"scaAuthenticationData\": \"{{tanNumber}}\"\n}"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations",
+														"{{authorisation_id}}"
+													]
+												},
+												"description": "This method update PSU data on the consents  resource if needed.  It may authorise a consent within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a consent request if needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+											},
+											"response": []
+										},
+										{
+											"name": "6. Get consent Authorisation Sub-Resources Request",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "24a05f20-8df4-406f-9638-7694ffe5979c",
+														"exec": [
+															"pm.test(\"Status code is 200\", function () {",
+															"    pm.response.to.have.status(200);",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Read a list of all authorisation subresources IDs which have been created.  This function returns an array of hyperlinks to all generated authorisation sub-resources. "
+											},
+											"response": []
+										},
+										{
+											"name": "7. Start the authorisation process for a consent",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"",
+															"pm.test(\"Status code is 409\", function () {",
+															"    pm.response.to.have.status(409);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								},
+								{
+									"name": "Start authorisation with PSU ID for consent with empty PSU ID",
+									"item": [
+										{
+											"name": "1. Set embedded SCA approach",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"sca-approaches"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "2. Set ASPSP properties",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false\n    }\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"aspsp-settings"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "3. Create consent dedicated",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "f1e1877d-5e93-4751-b6a1-779dbfb0e0a0",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Consent Id exists\", () => {",
+															"   pm.expect(jsonData).to.have.property('consentId');",
+															"});",
+															"",
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"pm.test(\"Update PSU authentication link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    ",
+															"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+															"",
+															"    if (updatePsuAuthentication === undefined) {",
+															"       pm.expect().fail();",
+															"    }",
+															"});",
+															"",
+															"pm.test(\"Consent status is received\", () => {",
+															"    pm.expect(jsonData.consentStatus).to.eql('received');",
+															"});",
+															"",
+															"pm.globals.set(\"consent_id\", jsonData.consentId);",
+															"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);",
+															"",
+															"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+															"pm.globals.set(\"authorisation_id\", authorisationId);",
+															"",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "dc68bfd4-4b87-45a8-8a23-0308d8941622",
+														"exec": [
+															"pm.globals.unset(\"consent_id\");"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "accept",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}",
+														"type": "text",
+														"disabled": true
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "psu-ip-address",
+														"value": "{{ip_address}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2021-10-10\"\n}"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "4. Update PSU data for consent",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "f8ee040e-1fd9-415f-9d19-bad3df14d8a4",
+														"exec": [
+															"pm.test('Status code is 200', () => {",
+															"   pm.response.to.have.status(200);",
+															"});",
+															"",
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test('Sca status is psuIdentified', () => {",
+															"   pm.expect(jsonData.scaStatus).to.eql('psuIdentified');",
+															"});",
+															"",
+															"pm.test(\"Select scaStatus link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    pm.expect(_links).to.have.property('scaStatus');",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations",
+														"{{authorisation_id}}"
+													]
+												},
+												"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+											},
+											"response": []
+										},
+										{
+											"name": "5. Start the authorisation process for a payment initiation",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"",
+															"pm.test(\"Status code is 201\", function () {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"pm.test(\"Select scaStatus \", () => {",
+															"    pm.expect(jsonData).to.have.property('scaStatus');",
+															"    const scaStatus = jsonData.scaStatus;",
+															"    pm.expect(scaStatus).to.eql('psuIdentified');",
+															"});",
+															"",
+															"pm.test(\"Links exist\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"",
+															"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+															"    pm.expect(_links).to.have.property('scaStatus');",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_single}}",
+														"disabled": true
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v1",
+														"consents",
+														"{{consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										},
+										{
+											"name": "6. Get the status of first authorisation",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "afa1ac8d-f175-488d-861b-9658daa25d0c",
+														"exec": [
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															"",
+															"pm.test(\"scaStatus of first authorisation is failed\", () => {",
+															"    pm.expect(jsonData).to.have.property('scaStatus');",
+															"    const scaStatus = jsonData.scaStatus;",
+															"    pm.expect(scaStatus).to.eql('failed');",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"protocolProfileBehavior": {
+												"disableBodyPruning": true
+											},
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_none}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": ""
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/authorisation/{{authorisation_id}}/",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_cms}}"
+													],
+													"path": [
+														"psu-api",
+														"v1",
+														"ais",
+														"consent",
+														"authorisation",
+														"{{authorisation_id}}",
+														""
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
 						}
 					],
 					"protocolProfileBehavior": {},
