@@ -22,8 +22,9 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
-import de.adorsys.psd2.xs2a.web.mapper.Xs2aTppInfoMapper;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.mapper.TppInfoRolesMapper;
+import de.adorsys.psd2.xs2a.web.mapper.Xs2aTppInfoMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -45,8 +46,8 @@ public class QwacCertificateFilterMock extends QwacCertificateFilter {
 
     public QwacCertificateFilterMock(TppInfoHolder tppInfoHolder, RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder,
                                      TppRoleValidationService tppRoleValidationService, TppService tppService, AspspProfileServiceWrapper aspspProfileService,
-                                     Xs2aTppInfoMapper xs2aTppInfoMapper, TppInfoRolesMapper tppInfoRolesMapper) {
-        super(tppInfoHolder, requestProviderService, tppErrorMessageBuilder, tppRoleValidationService, tppService, aspspProfileService, xs2aTppInfoMapper, tppInfoRolesMapper);
+                                     Xs2aTppInfoMapper xs2aTppInfoMapper, TppInfoRolesMapper tppInfoRolesMapper, TppErrorMessageWriter tppErrorMessageWriter) {
+        super(tppInfoHolder, requestProviderService, tppErrorMessageBuilder, tppRoleValidationService, tppService, aspspProfileService, xs2aTppInfoMapper, tppInfoRolesMapper, tppErrorMessageWriter);
         this.requestProviderService = requestProviderService;
     }
 

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -67,28 +68,21 @@ public class OauthModeFilter extends OncePerRequestFilter {
     private final RequestProviderService requestProviderService;
     private final TppErrorMessageBuilder tppErrorMessageBuilder;
     private final ScaApproachResolver scaApproachResolver;
+    private final TppErrorMessageWriter tppErrorMessageWriter;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH_PRE_STEP) && requestProviderService.getOAuth2Token() == null) {
-
             log.info("InR-ID: [{}], X-Request-ID: [{}], OAuth pre-step selected, no authorisation header is present in the request",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
-
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().print(tppErrorMessageBuilder.buildTppErrorMessageWithPlaceholder(ERROR, UNAUTHORIZED_NO_TOKEN, aspspProfileService.getOauthConfigurationUrl()));
-
+            tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, tppErrorMessageBuilder.buildTppErrorMessageWithPlaceholder(ERROR, UNAUTHORIZED_NO_TOKEN, aspspProfileService.getOauthConfigurationUrl()));
             return;
         }
 
         if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH) && StringUtils.isNotBlank(requestProviderService.getOAuth2Token())) {
-
             log.info("InR-ID: [{}], X-Request-ID: [{}], OAuth integrated selected, authorisation header is present in the request",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
-
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().print(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, FORBIDDEN));
-
+            tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_FORBIDDEN, tppErrorMessageBuilder.buildTppErrorMessage(ERROR, FORBIDDEN));
             return;
         }
 

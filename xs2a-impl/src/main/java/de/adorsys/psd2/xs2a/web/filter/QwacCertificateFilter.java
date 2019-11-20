@@ -22,6 +22,7 @@ import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
@@ -72,6 +73,7 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
     private final AspspProfileServiceWrapper aspspProfileService;
     private final Xs2aTppInfoMapper xs2aTppInfoMapper;
     private final TppInfoRolesMapper tppInfoRolesMapper;
+    private final TppErrorMessageWriter tppErrorMessageWriter;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -164,7 +166,6 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
     }
 
     private void setResponseStatusAndErrorCode(HttpServletResponse response, MessageErrorCode messageErrorCode) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().print(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, messageErrorCode));
+        tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, tppErrorMessageBuilder.buildTppErrorMessage(ERROR, messageErrorCode));
     }
 }

@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,6 +72,8 @@ public class OauthModeFilterTest {
     @Mock
     private TppErrorMessageBuilder tppErrorMessageBuilder;
     @Mock
+    private TppErrorMessageWriter tppErrorMessageWriter;
+    @Mock
     private AspspProfileServiceWrapper aspspProfileService;
     @Mock
     private ScaApproachResolver scaApproachResolver;
@@ -95,8 +98,6 @@ public class OauthModeFilterTest {
         // Given
         when(aspspProfileService.getOauthConfigurationUrl())
             .thenReturn(IDP_URL);
-        when(response.getWriter())
-            .thenReturn(printWriter);
         when(aspspProfileService.getScaRedirectFlow())
             .thenReturn(ScaRedirectFlow.OAUTH_PRE_STEP);
         when(tppErrorMessageBuilder.buildTppErrorMessageWithPlaceholder(MessageCategory.ERROR, UNAUTHORIZED_NO_TOKEN, IDP_URL))
@@ -109,10 +110,7 @@ public class OauthModeFilterTest {
         oauthModeFilter.doFilterInternal(request, response, chain);
 
         // Then
-        verify(response).setStatus(statusCode.capture());
-        verify(response).getWriter();
-        verify(printWriter).print(message.capture());
-
+        verify(tppErrorMessageWriter).writeError(eq(response), statusCode.capture(), message.capture());
         verify(chain, never()).doFilter(any(), any());
         assertEquals((Integer) 401, statusCode.getValue());
         assertEquals(TPP_ERROR_MESSAGE_UNAUTHORIZED, message.getValue());
@@ -123,8 +121,6 @@ public class OauthModeFilterTest {
         // Given
         when(requestProviderService.getOAuth2Token())
             .thenReturn(TOKEN);
-        when(response.getWriter())
-            .thenReturn(printWriter);
         when(aspspProfileService.getScaRedirectFlow())
             .thenReturn(ScaRedirectFlow.OAUTH);
         when(tppErrorMessageBuilder.buildTppErrorMessage(MessageCategory.ERROR, FORBIDDEN))
@@ -137,10 +133,7 @@ public class OauthModeFilterTest {
         oauthModeFilter.doFilterInternal(request, response, chain);
 
         // Then
-        verify(response).setStatus(statusCode.capture());
-        verify(response).getWriter();
-        verify(printWriter).print(message.capture());
-
+        verify(tppErrorMessageWriter).writeError(eq(response), statusCode.capture(), message.capture());
         verify(chain, never()).doFilter(any(), any());
         assertEquals((Integer) 403, statusCode.getValue());
         assertEquals(TPP_ERROR_MESSAGE_FORBIDDEN, message.getValue());
