@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
@@ -85,7 +86,9 @@ public abstract class CustomPaymentTestParent {
     @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
-    protected PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    protected PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
+    @MockBean
+    PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
     protected CommonPaymentSpi commonPaymentSpi;
     @MockBean

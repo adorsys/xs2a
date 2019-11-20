@@ -11,6 +11,7 @@
 * Provided implementation of delta access for transaction list request
 * Bugfix: validation of authorisation sub-resources
 * Refactoring: Removed duplication and complexity for PisAuthorisationProcessorServiceImpl and PisCancellationAuthorisationProcessorServiceImpl
+* Refactored `PisCommonPaymentServiceInternal`
 
 == Removed deprecated columns TppRedirectUri from TppInfo
 
@@ -68,3 +69,8 @@ specification demands. Main ideas:
 == Refactoring: Removed duplication and complexity for PisAuthorisationProcessorServiceImpl and PisCancellationAuthorisationProcessorServiceImpl
 
 Removed code duplication and allocated common parts of the mentioned services.
+
+== Refactored `PisCommonPaymentServiceInternal`
+
+From now on, `PisCommonPaymentServiceInternal` is split into two services: `PisCommonPaymentServiceInternal`
+and `PisAuthorisationServiceInternal`.

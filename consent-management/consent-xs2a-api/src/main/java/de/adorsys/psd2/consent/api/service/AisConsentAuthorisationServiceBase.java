@@ -37,36 +37,36 @@ import java.util.List;
 interface AisConsentAuthorisationServiceBase {
 
     /**
-     * Creates consent authorization and return response object
+     * Creates consent authorisation and return response object
      *
-     * @param consentId id of consent
-     * @param request   needed parameters for creating consent authorization
-     * @return CreateAisConsentAuthorizationResponse object with authorization id and scaStatus
+     * @param consentId ID of consent
+     * @param request   needed parameters for creating consent authorisation
+     * @return CreateAisConsentAuthorizationResponse object with authorisation ID and scaStatus
      */
     CmsResponse<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request);
 
     /**
-     * Gets consent authorization
+     * Gets consent authorisation
      *
-     * @param consentId       id of consent
-     * @param authorizationId id of authorisation session
+     * @param consentId       ID of consent
+     * @param authorisationId ID of authorisation session
      * @return AisConsentAuthorizationResponse
      */
-    CmsResponse<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId);
+    CmsResponse<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorisationId, String consentId);
 
     /**
-     * Updates consent authorization
+     * Updates consent authorisation
      *
-     * @param authorizationId id of authorisation session
-     * @param request         needed parameters for updating consent authorization
+     * @param authorisationId ID of authorisation session
+     * @param request         needed parameters for updating consent authorisation
      * @return boolean
      */
-    CmsResponse<Boolean> updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request);
+    CmsResponse<Boolean> updateConsentAuthorization(String authorisationId, AisConsentAuthorizationRequest request);
 
     /**
      * Updates consent authorisation status
      *
-     * @param authorisationId id of authorisation session
+     * @param authorisationId ID of authorisation session
      * @param scaStatus       to be updated status
      * @return boolean
      */
@@ -76,7 +76,7 @@ interface AisConsentAuthorisationServiceBase {
     /**
      * Gets list of consent authorisation IDs by consent ID
      *
-     * @param consentId id of consent
+     * @param consentId ID of consent
      * @return list of consent authorisation IDs
      */
     CmsResponse<List<String>> getAuthorisationsByConsentId(String consentId);

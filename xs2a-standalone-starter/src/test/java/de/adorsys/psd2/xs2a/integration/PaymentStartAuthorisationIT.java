@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRespo
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
@@ -132,6 +133,8 @@ public class PaymentStartAuthorisationIT {
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
+    private PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
+    @MockBean
     private AspspDataService aspspDataService;
     @MockBean
     private CommonPaymentSpi commonPaymentSpi;
@@ -177,16 +180,16 @@ public class PaymentStartAuthorisationIT {
                             .build());
 
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
-        given(pisCommonPaymentServiceEncrypted.createAuthorization(eq(PAYMENT_ID), createPisAuthorisationRequestCaptor.capture()))
+        given(pisAuthorisationServiceEncrypted.createAuthorization(eq(PAYMENT_ID), createPisAuthorisationRequestCaptor.capture()))
             .willReturn(CmsResponse.<CreatePisAuthorisationResponse>builder()
                             .payload(new CreatePisAuthorisationResponse(AUTHORISATION_ID, ScaStatus.PSUIDENTIFIED, null, null, buildPsuIdData()))
                             .build());
 
-        given(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID))
+        given(pisAuthorisationServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID))
             .willReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
                             .payload(buildGetPisAuthorisationResponse(ScaStatus.PSUIDENTIFIED))
                             .build());
-        given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
+        given(pisAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED))
                             .build());
@@ -200,7 +203,7 @@ public class PaymentStartAuthorisationIT {
             .willReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                             .payload(new SpiAvailableScaMethodsResponse(Collections.singletonList(authenticationObject)))
                             .build());
-        given(pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(eq(AUTHORISATION_ID), any()))
+        given(pisAuthorisationServiceEncrypted.saveAuthenticationMethods(eq(AUTHORISATION_ID), any()))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
                             .build());

@@ -18,12 +18,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
-import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PisCommonPaymentRemoteUrls;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -33,16 +28,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisCommonPaymentServiceRemoteTest {
 
-    private static final String AUTHORISATION_ID = "2400de4c-1c74-4ca0-941d-8f56b828f31d";
-    private static final String URL = "http://base.url";
     private static final String UPDATE_MULTILEVEL_SCA_URL = "http://base.url/pis/common-payments/{payment-id}/multilevel-sca?multilevel-sca={multilevel-sca}";
     private static final String PAYMENT_ID = "paymentId";
 
@@ -53,110 +44,6 @@ public class PisCommonPaymentServiceRemoteTest {
     private RestTemplate consentRestTemplate;
     @Mock
     private PisCommonPaymentRemoteUrls remotePisCommonPaymentUrls;
-
-    @Test
-    public void getAuthorisationScaApproach_created() {
-        when(remotePisCommonPaymentUrls.getAuthorisationScaApproach()).thenReturn(URL);
-        when(consentRestTemplate.getForEntity(URL, AuthorisationScaApproachResponse.class, AUTHORISATION_ID))
-            .thenReturn(ResponseEntity.ok(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
-
-        service.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
-
-        verify(remotePisCommonPaymentUrls).getAuthorisationScaApproach();
-        verify(consentRestTemplate).getForEntity(eq(URL), eq(AuthorisationScaApproachResponse.class), eq(AUTHORISATION_ID));
-    }
-
-    @Test
-    public void getAuthorisationScaApproach_cancelled() {
-        when(remotePisCommonPaymentUrls.getCancellationAuthorisationScaApproach()).thenReturn(URL);
-        when(consentRestTemplate.getForEntity(URL, AuthorisationScaApproachResponse.class, AUTHORISATION_ID))
-            .thenReturn(ResponseEntity.ok(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
-
-        service.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED);
-
-        verify(remotePisCommonPaymentUrls).getCancellationAuthorisationScaApproach();
-        verify(consentRestTemplate).getForEntity(eq(URL), eq(AuthorisationScaApproachResponse.class), eq(AUTHORISATION_ID));
-    }
-
-    @Test
-    public void getPisAuthorisationById() {
-        when(remotePisCommonPaymentUrls.getPisAuthorisationById()).thenReturn(URL);
-        GetPisAuthorisationResponse expected = new GetPisAuthorisationResponse();
-
-        when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
-            .thenReturn(ResponseEntity.ok(expected));
-
-        CmsResponse<GetPisAuthorisationResponse> actual = service.getPisAuthorisationById(AUTHORISATION_ID);
-
-        assertTrue(actual.isSuccessful());
-        assertEquals(expected, actual.getPayload());
-
-        verify(remotePisCommonPaymentUrls).getPisAuthorisationById();
-    }
-
-    @Test
-    public void getPisAuthorisationById_withNoBody_shouldReturnEmpty() {
-        when(remotePisCommonPaymentUrls.getPisAuthorisationById()).thenReturn(URL);
-
-        when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
-            .thenReturn(ResponseEntity.ok().build());
-
-        CmsResponse<GetPisAuthorisationResponse> actual = service.getPisAuthorisationById(AUTHORISATION_ID);
-
-        assertFalse(actual.isSuccessful());
-    }
-
-    @Test
-    public void getPisAuthorisationById_withCmsRestException_shouldReturnEmpty() {
-        when(remotePisCommonPaymentUrls.getPisAuthorisationById()).thenReturn(URL);
-
-        when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
-            .thenThrow(CmsRestException.class);
-
-        CmsResponse<GetPisAuthorisationResponse> actual = service.getPisAuthorisationById(AUTHORISATION_ID);
-
-        assertFalse(actual.isSuccessful());
-    }
-
-    @Test
-    public void getPisCancellationAuthorisationById() {
-        when(remotePisCommonPaymentUrls.getPisCancellationAuthorisationById()).thenReturn(URL);
-        GetPisAuthorisationResponse expected = new GetPisAuthorisationResponse();
-
-        when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
-            .thenReturn(ResponseEntity.ok(expected));
-
-        CmsResponse<GetPisAuthorisationResponse> actual = service.getPisCancellationAuthorisationById(AUTHORISATION_ID);
-
-        assertTrue(actual.isSuccessful());
-        assertEquals(expected, actual.getPayload());
-
-        verify(remotePisCommonPaymentUrls).getPisCancellationAuthorisationById();
-    }
-
-    @Test
-    public void getPisCancellationAuthorisationById_withNoBody_shouldReturnEmpty() {
-        when(remotePisCommonPaymentUrls.getPisCancellationAuthorisationById()).thenReturn(URL);
-
-        when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
-            .thenReturn(ResponseEntity.ok().build());
-
-        CmsResponse<GetPisAuthorisationResponse> actual = service.getPisCancellationAuthorisationById(AUTHORISATION_ID);
-
-        assertFalse(actual.isSuccessful());
-    }
-
-    @Test
-    public void getPisCancellationAuthorisationById_withCmsRestException_shouldReturnEmpty() {
-        when(remotePisCommonPaymentUrls.getPisCancellationAuthorisationById()).thenReturn(URL);
-
-        when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
-            .thenThrow(CmsRestException.class);
-
-        CmsResponse<GetPisAuthorisationResponse> actual = service.getPisCancellationAuthorisationById(AUTHORISATION_ID);
-
-        assertFalse(actual.isSuccessful());
-    }
 
     @Test
     public void updateMultilevelSca() {

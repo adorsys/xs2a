@@ -56,16 +56,16 @@ public class PaymentCancellationUpdateAuthorisationIT extends PaymentUpdateAutho
 
     @Test
     public void updatePaymentPsuData_failed_psu_authorisation_psu_request_are_different() throws Exception {
-        given(pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
+        given(pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
                             .build());
-        updatePaymentPsuData_checkForPsuCredentialsInvalidResponse(PSU_ID_1, PSU_ID_2);
+        updatePaymentPsuDataAndCheckForPsuCredentialsInvalidResponse(PSU_ID_1, PSU_ID_2);
     }
 
     @Test
     public void updatePaymentPsuData_failed_no_psu_authorisation_no_psu_request() throws Exception {
-        updatePaymentPsuData_checkForFormatErrorResponse(null, null);
+        updatePaymentPsuDataAndCheckForFormatErrorResponse(null, null);
     }
 
     @Override

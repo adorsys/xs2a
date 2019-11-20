@@ -17,21 +17,15 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.*;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -139,59 +133,6 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
 
     @Override
     @Transactional
-    public CmsResponse<CreatePisAuthorisationResponse> createAuthorization(String encryptedPaymentId, CreatePisAuthorisationRequest request) {
-        Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
-
-        if (!decryptIdOptional.isPresent()) {
-            log.info("Encrypted Payment ID: [{}].Create authorisation failed, couldn't decrypt consent id",
-                     encryptedPaymentId);
-            return CmsResponse.<CreatePisAuthorisationResponse>builder()
-                       .error(TECHNICAL_ERROR)
-                       .build();
-        }
-
-        return pisCommonPaymentService.createAuthorization(decryptIdOptional.get(), request);
-    }
-
-    @Override
-    @Transactional
-    public CmsResponse<CreatePisAuthorisationResponse> createAuthorizationCancellation(String encryptedPaymentId,
-                                                                                       CreatePisAuthorisationRequest request) {
-        Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
-
-        if (!decryptIdOptional.isPresent()) {
-            log.info("Encrypted Payment ID: [{}].Create authorisation cancellation failed, couldn't decrypt consent id",
-                     encryptedPaymentId);
-            return CmsResponse.<CreatePisAuthorisationResponse>builder()
-                       .error(TECHNICAL_ERROR)
-                       .build();
-        }
-
-        return pisCommonPaymentService.createAuthorizationCancellation(decryptIdOptional.get(), request);
-    }
-
-    @Override
-    @Transactional
-    public CmsResponse<UpdatePisCommonPaymentPsuDataResponse> updatePisAuthorisation(String authorisationId,
-                                                                                     UpdatePisCommonPaymentPsuDataRequest request) {
-        return pisCommonPaymentService.updatePisAuthorisation(authorisationId, request);
-    }
-
-    @Override
-    @Transactional
-    public CmsResponse<Boolean> updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
-        return pisCommonPaymentService.updatePisAuthorisationStatus(authorisationId, scaStatus);
-    }
-
-    @Override
-    @Transactional
-    public CmsResponse<UpdatePisCommonPaymentPsuDataResponse> updatePisCancellationAuthorisation(String authorisationId,
-                                                                                                 UpdatePisCommonPaymentPsuDataRequest request) {
-        return pisCommonPaymentService.updatePisCancellationAuthorisation(authorisationId, request);
-    }
-
-    @Override
-    @Transactional
     public CmsResponse<CmsResponse.VoidResponse> updateCommonPayment(PisCommonPaymentRequest request, String encryptedPaymentId) {
         securityDataService.decryptId(encryptedPaymentId)
             .ifPresent(id -> pisCommonPaymentService.updateCommonPayment(request, id));
@@ -218,49 +159,6 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     }
 
     @Override
-    public CmsResponse<GetPisAuthorisationResponse> getPisAuthorisationById(String authorisationId) {
-        return pisCommonPaymentService.getPisAuthorisationById(authorisationId);
-    }
-
-    @Override
-    public CmsResponse<GetPisAuthorisationResponse> getPisCancellationAuthorisationById(String cancellationId) {
-        return pisCommonPaymentService.getPisCancellationAuthorisationById(cancellationId);
-    }
-
-    @Override
-    public CmsResponse<List<String>> getAuthorisationsByPaymentId(String encryptedPaymentId,
-                                                                  PaymentAuthorisationType authorisationType) {
-        Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
-
-        if (!decryptIdOptional.isPresent()) {
-            log.info("Encrypted Payment ID: [{}]. Get payment authrisation list failed, couldn't decrypt consent id",
-                     encryptedPaymentId);
-            return CmsResponse.<List<String>>builder()
-                       .error(TECHNICAL_ERROR)
-                       .build();
-        }
-
-        return pisCommonPaymentService.getAuthorisationsByPaymentId(decryptIdOptional.get(), authorisationType);
-    }
-
-    @Override
-    @Transactional
-    public CmsResponse<ScaStatus> getAuthorisationScaStatus(String encryptedPaymentId, String authorisationId, PaymentAuthorisationType authorisationType) {
-        Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
-
-        if (!decryptIdOptional.isPresent()) {
-            log.info("Encrypted Payment ID: [{}]. Get common payment authorisation SCA status failed, couldn't decrypt consent id",
-                     encryptedPaymentId);
-            return CmsResponse.<ScaStatus>builder()
-                       .error(TECHNICAL_ERROR)
-                       .build();
-        }
-
-        return pisCommonPaymentService.getAuthorisationScaStatus(decryptIdOptional.get(), authorisationId, authorisationType);
-
-    }
-
-    @Override
     public CmsResponse<List<PsuIdData>> getPsuDataListByPaymentId(String encryptedPaymentId) {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
@@ -273,27 +171,5 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
         }
 
         return pisCommonPaymentService.getPsuDataListByPaymentId(decryptIdOptional.get());
-    }
-
-    @Override
-    public CmsResponse<Boolean> isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        return pisCommonPaymentService.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
-    }
-
-    @Override
-    @Transactional
-    public CmsResponse<Boolean> saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
-        return pisCommonPaymentService.saveAuthenticationMethods(authorisationId, methods);
-    }
-
-    @Override
-    @Transactional
-    public CmsResponse<Boolean> updateScaApproach(String authorisationId, ScaApproach scaApproach) {
-        return pisCommonPaymentService.updateScaApproach(authorisationId, scaApproach);
-    }
-
-    @Override
-    public CmsResponse<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType) {
-        return pisCommonPaymentService.getAuthorisationScaApproach(authorisationId, authorisationType);
     }
 }

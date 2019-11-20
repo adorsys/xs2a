@@ -203,7 +203,7 @@ public class InitiateCustomPaymentIT extends CustomPaymentTestParent {
     }
 
     private void makePreparation(ScaApproach scaApproach) {
-        given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(scaApproach)))
+        given(pisAuthorisationServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(scaApproach)))
             .willReturn(CmsResponse.<CreatePisAuthorisationResponse>builder()
                             .payload(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null, null))
                             .build());
@@ -212,7 +212,7 @@ public class InitiateCustomPaymentIT extends CustomPaymentTestParent {
             .willReturn(PisCommonPaymentResponseBuilder.buildSpiPaymentInitiationResponse());
         given(consentRestTemplate.exchange(anyString(), any(HttpMethod.class), any(), any(Class.class), anyString()))
             .willReturn(ResponseEntity.ok(Boolean.TRUE));
-        given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
+        given(pisAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(scaApproach))
                             .build());

@@ -20,6 +20,7 @@ package de.adorsys.psd2.xs2a.integration;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
@@ -80,6 +81,8 @@ public abstract class PaymentUpdateAuthorisationBase {
     protected Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
     protected PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    @MockBean
+    protected PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
 
     public void before() {
         given(tppService.getTppInfo()).willReturn(TPP_INFO);
@@ -93,7 +96,7 @@ public abstract class PaymentUpdateAuthorisationBase {
                             .build());
     }
 
-    protected void updatePaymentPsuData_checkForPsuCredentialsInvalidResponse(String psuIdAuthorisation, String psuIdHeader) throws Exception {
+    void updatePaymentPsuDataAndCheckForPsuCredentialsInvalidResponse(String psuIdAuthorisation, String psuIdHeader) throws Exception {
         //When
         ResultActions resultActions = updatePaymentPsuDataAndGetResultActions(psuIdAuthorisation, psuIdHeader);
 
@@ -103,7 +106,7 @@ public abstract class PaymentUpdateAuthorisationBase {
             .andExpect(content().json(IOUtils.resourceToString(PSU_CREDENTIALS_INVALID_RESP, UTF_8)));
     }
 
-    protected void updatePaymentPsuData_checkForFormatErrorResponse(String psuIdAuthorisation, String psuIdHeader) throws Exception {
+    void updatePaymentPsuDataAndCheckForFormatErrorResponse(String psuIdAuthorisation, String psuIdHeader) throws Exception {
         //When
         ResultActions resultActions = updatePaymentPsuDataAndGetResultActions(psuIdAuthorisation, psuIdHeader);
 
@@ -125,7 +128,7 @@ public abstract class PaymentUpdateAuthorisationBase {
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                             .payload(pisCommonPaymentResponse)
                             .build());
-        given(pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
+        given(pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(Boolean.TRUE)
                             .build());
