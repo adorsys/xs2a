@@ -1,0 +1,54 @@
+<!--
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+xml_sct=<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03">
+
+    <CstmrCdtTrfInitn>
+        <GrpHdr>
+            <MsgId>MIPI-123456789RI-123456789</MsgId> <CreDtTm>2017-02-14T20:23:34.000Z</CreDtTm> <NbOfTxs>1</NbOfTxs>
+            <CtrlSum>123</CtrlSum>
+
+            <InitgPty>
+
+                <Id><OrgId><Othr><Id>DE10000000012</Id>
+
+                    <SchmeNm><Prptry>PISP</Prptry></SchmeNm></Othr></OrgId></Id> </InitgPty>
+
+        </GrpHdr>
+        <PmtInf>
+            <PmtInfId>BIPI-123456789RI-123456789</PmtInfId> <PmtMtd>TRF</PmtMtd>
+            <NbOfTxs>1</NbOfTxs>
+            <CtrlSum>123</CtrlSum>
+
+            <PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf> <ReqdExctnDt>2017-02-15</ReqdExctnDt>
+            <Dbtr><Nm>PSU Name</Nm></Dbtr> <DbtrAcct><Id><IBAN>DE87200500001234567890</IBAN></Id></DbtrAcct>
+
+            <ChrgBr>SLEV</ChrgBr>
+            <CdtTrfTxInf>
+                <PmtId><EndToEndId>RI-123456789</EndToEndId></PmtId>
+                <Amt><InstdAmt Ccy="EUR">123</InstdAmt></Amt>
+                <Cdtr><Nm>Merchant123</Nm></Cdtr>
+                <CdtrAcct><Id><IBAN>DE23100120020123456789</IBAN></Id></CdtrAcct>
+                <RmtInf><Ustrd>Ref Number Merchant-123456</Ustrd></RmtInf>
+
+            </CdtTrfTxInf>
+        </PmtInf>
+    </CstmrCdtTrfInitn>
+</Document>&json_standingordermanagement={"startDate": "2018-03-01",
+    "frequency": "monthly",
+    "executionRule": "latest",
+    "dayOfExecution": "01"
+    }

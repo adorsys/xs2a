@@ -102,7 +102,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class InitiatePayments_successfulIT {
+public class InitiatePaymentsSuccessfulIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     private static final String SINGLE_PAYMENT_REQUEST_JSON_PATH = "/json/payment/req/SinglePaymentInitiate_request.json";
