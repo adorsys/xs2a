@@ -38,6 +38,7 @@ import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -118,6 +119,9 @@ public class AccountControllerTest {
     private ResponseErrorMapper responseErrorMapper;
     @Mock
     private TppErrorMessageBuilder tppErrorMessageBuilder;
+    @Mock
+    private TppErrorMessageWriter tppErrorMessageWriter;
+
 
     @Before
     public void setUp() {
@@ -209,7 +213,7 @@ public class AccountControllerTest {
     public void getBalances_ResultTest() throws IOException {
         // Given
         ReadAccountBalanceResponse200 expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
-                                                                              ReadAccountBalanceResponse200.class);
+                                                                                  ReadAccountBalanceResponse200.class);
 
         doReturn(new ResponseEntity<>(createReadBalances().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -245,13 +249,13 @@ public class AccountControllerTest {
     public void getTransactions_ResultTest() throws IOException {
         // Given
         AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class);
+                                                                  AccountReport.class);
 
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
 
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
-        transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),null));
+        transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null));
 
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build())
             .when(transactionService).getTransactionsReportByPeriod(any(Xs2aTransactionsReportByPeriodRequest.class));
@@ -271,12 +275,12 @@ public class AccountControllerTest {
     public void getTransactionList_success() throws IOException {
         // Given
         AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class);
+                                                                  AccountReport.class);
 
         doReturn(new ResponseEntity<>(buildAccountReportWithError().getBody(), HttpStatus.OK))
             .when(responseErrorMapper).generateErrorResponse(MESSAGE_ERROR_AIS_404);
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
-        transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),null));
+        transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null));
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().fail(MESSAGE_ERROR_AIS_404).body(transactionsReport).build())
             .when(transactionService).getTransactionsReportByPeriod(any(Xs2aTransactionsReportByPeriodRequest.class));
 
@@ -295,12 +299,12 @@ public class AccountControllerTest {
     public void getTransactionList_isRespContentTypeJSON_success() throws IOException {
         // Given
         AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class);
+                                                                  AccountReport.class);
 
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
-        transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),null));
+        transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null));
         transactionsReport.setResponseContentType("application/json");
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build())
             .when(transactionService).getTransactionsReportByPeriod(any(Xs2aTransactionsReportByPeriodRequest.class));
@@ -322,7 +326,7 @@ public class AccountControllerTest {
 
         // Given
         AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class);
+                                                                  AccountReport.class);
 
         // When
         AccountReport result = (AccountReport) accountController.getTransactionDetails(ACCOUNT_ID, null,
@@ -341,7 +345,7 @@ public class AccountControllerTest {
             .when(responseErrorMapper).generateErrorResponse(MESSAGE_ERROR_AIS_404);
 
         AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class);
+                                                                  AccountReport.class);
 
         // When
         AccountReport result = (AccountReport) accountController.getTransactionDetails(ACCOUNT_ID, null,
@@ -372,14 +376,13 @@ public class AccountControllerTest {
         TppErrorMessage tppErrorMessage = new TppErrorMessage(ERROR, CERTIFICATE_EXPIRED, "Certificate is expired");
 
         when(transactionService.downloadTransactions(CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID)).thenReturn(buildTransactionDownloadResponseError());
-        when(response.getWriter()).thenReturn(printWriter);
         when(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, FORMAT_ERROR)).thenReturn(tppErrorMessage);
 
         // When
         accountController.downloadTransactions(UUID.randomUUID(), CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
 
         // Then
-        verify(response, times(1)).setStatus(anyInt());
+        verify(response, times(1)).flushBuffer();
         assertEquals(0, response.getBufferSize());
     }
 
@@ -424,7 +427,7 @@ public class AccountControllerTest {
 
     private ResponseObject<AccountReport> createAccountReport() throws IOException {
         AccountReport accountReport = xs2aObjectMapper.readValue(IOUtils.resourceToString(AccountControllerTest.ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                             AccountReport.class);
+                                                                 AccountReport.class);
 
         return ResponseObject.<AccountReport>builder()
                    .body(accountReport).build();
@@ -432,7 +435,7 @@ public class AccountControllerTest {
 
     private ResponseObject<AccountReport> buildAccountReportWithError() throws IOException {
         AccountReport accountReport = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                             AccountReport.class);
+                                                                 AccountReport.class);
 
         return ResponseObject.<AccountReport>builder()
                    .fail(AccountControllerTest.MESSAGE_ERROR_AIS_404)
@@ -441,7 +444,7 @@ public class AccountControllerTest {
 
     private ResponseObject<ReadAccountBalanceResponse200> createReadBalances() throws IOException {
         ReadAccountBalanceResponse200 read = xs2aObjectMapper.readValue(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
-                                                                    ReadAccountBalanceResponse200.class);
+                                                                        ReadAccountBalanceResponse200.class);
         return ResponseObject.<ReadAccountBalanceResponse200>builder()
                    .body(read).build();
     }

@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class TppErrorMessageBuilder {
-
     private final MessageService messageService;
 
     public TppErrorMessage buildTppErrorMessage(MessageCategory messageCategory, MessageErrorCode messageErrorCode) {
@@ -38,5 +37,4 @@ public class TppErrorMessageBuilder {
         String text = String.format(messageService.getMessage(messageErrorCode.name()), placeholder);
         return new TppErrorMessage(messageCategory, messageErrorCode, text);
     }
-
 }

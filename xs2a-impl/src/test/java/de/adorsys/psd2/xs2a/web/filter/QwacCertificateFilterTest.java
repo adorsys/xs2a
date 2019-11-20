@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.mapper.TppInfoRolesMapper;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aTppInfoMapper;
 import org.junit.Before;
@@ -78,6 +79,8 @@ public class QwacCertificateFilterTest {
     @Mock
     private TppErrorMessageBuilder tppErrorMessageBuilder;
     @Mock
+    private TppErrorMessageWriter tppErrorMessageWriter;
+    @Mock
     private TppService tppService;
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
@@ -109,7 +112,6 @@ public class QwacCertificateFilterTest {
         when(requestProviderService.getEncodedTppQwacCert()).thenReturn(TEST_QWAC_CERTIFICATE_EXPIRED);
         ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);
-        when(response.getWriter()).thenReturn(printWriter);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, CERTIFICATE_EXPIRED)).thenReturn(TPP_ERROR_MESSAGE_EXPIRED);
 
@@ -117,10 +119,7 @@ public class QwacCertificateFilterTest {
         qwacCertificateFilter.doFilterInternal(request, response, chain);
 
         //Then
-        verify(response).setStatus(statusCode.capture());
-        verify(response).getWriter();
-        verify(printWriter).print(message.capture());
-
+        verify(tppErrorMessageWriter).writeError(eq(response), statusCode.capture(), message.capture());
         verify(chain, never()).doFilter(any(), any());
         assertEquals((Integer) 401, statusCode.getValue());
         assertEquals(TPP_ERROR_MESSAGE_EXPIRED, message.getValue());
@@ -175,7 +174,6 @@ public class QwacCertificateFilterTest {
         ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);
         when(requestProviderService.getEncodedTppQwacCert()).thenReturn(TEST_QWAC_CERTIFICATE_VALID);
-        when(response.getWriter()).thenReturn(printWriter);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(requestProviderService.getTppRolesAllowedHeader()).thenReturn("PIISP");
         when(tppInfoRolesMapper.mapToTppRoles(Arrays.asList("PIISP"))).thenReturn(Arrays.asList(TppRole.PIISP));
@@ -185,10 +183,7 @@ public class QwacCertificateFilterTest {
         qwacCertificateFilter.doFilterInternal(request, response, chain);
 
         //Then
-        verify(response).setStatus(statusCode.capture());
-        verify(response).getWriter();
-        verify(printWriter).print(message.capture());
-
+        verify(tppErrorMessageWriter).writeError(eq(response), statusCode.capture(), message.capture());
         verify(chain, never()).doFilter(any(), any());
         assertEquals((Integer) 401, statusCode.getValue());
         assertEquals(TPP_ERROR_MESSAGE_ACCESS, message.getValue());

@@ -16,10 +16,10 @@
   "creditorName": "WBG",
   "creditorAddress": {
     "buildingNumber": "56",
-    "townName": "Nürnberg",
+    "townName": "Nuernberg",
     "country": "DE",
     "postCode": "90543",
-    "streetName": "WBG Straße"
+    "streetName": "WBG Strasse"
   },
   "remittanceInformationUnstructured": "Ref. Number WBG-1222"
 }

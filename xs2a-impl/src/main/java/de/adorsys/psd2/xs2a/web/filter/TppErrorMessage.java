@@ -27,17 +27,4 @@ public class TppErrorMessage {
     @NotNull
     private MessageErrorCode code;
     private String text;
-
-    @Override
-    public String toString() {
-        return "{\n" +
-                   "  \"tppMessages\": [\n" +
-                   "    {\n" +
-                   "      \"category\": \"" + category + "\",\n" +
-                   "      \"code\": \"" + code.getName() + "\",\n" +
-                   "      \"text\": \"" + text + "\"\n" +
-                   "    }\n" +
-                   "  ]\n" +
-                   "}";
-    }
 }
