@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.*;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -44,6 +45,7 @@ import java.util.List;
 @Api(value = "api/v1/pis/common-payments", tags = "PIS, Common Payment", description = "Provides access to common payment system for PIS")
 public class PisCommonPaymentController {
     private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    private final PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
 
     @PostMapping(path = "/")
     @ApiResponses(value = {
@@ -121,7 +123,7 @@ public class PisCommonPaymentController {
         @ApiParam(name = "payment-id", value = "The payment identification assigned to the created authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId,
         @RequestBody CreatePisAuthorisationRequest request) {
-        CmsResponse<CreatePisAuthorisationResponse> response = pisCommonPaymentServiceEncrypted.createAuthorization(paymentId, request);
+        CmsResponse<CreatePisAuthorisationResponse> response = pisAuthorisationServiceEncrypted.createAuthorization(paymentId, request);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -139,7 +141,7 @@ public class PisCommonPaymentController {
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId,
         @RequestBody CreatePisAuthorisationRequest request) {
-        CmsResponse<CreatePisAuthorisationResponse> response = pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(paymentId, request);
+        CmsResponse<CreatePisAuthorisationResponse> response = pisAuthorisationServiceEncrypted.createAuthorizationCancellation(paymentId, request);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -157,7 +159,7 @@ public class PisCommonPaymentController {
         @ApiParam(name = "authorization-id", value = "The authorization identification assigned to the created authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorization-id") String authorizationId,
         @RequestBody UpdatePisCommonPaymentPsuDataRequest request) {
-        CmsResponse<UpdatePisCommonPaymentPsuDataResponse> response = pisCommonPaymentServiceEncrypted.updatePisAuthorisation(authorizationId, request);
+        CmsResponse<UpdatePisCommonPaymentPsuDataResponse> response = pisAuthorisationServiceEncrypted.updatePisAuthorisation(authorizationId, request);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -177,7 +179,7 @@ public class PisCommonPaymentController {
         @PathVariable("authorisation-id") String authorisationId,
         @ApiParam(name = "status", value = "The authorisation status.", example = "ScaStatus.FAILED")
         @PathVariable("status") String authorisationStatus) {
-        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(authorisationId, ScaStatus.fromValue(authorisationStatus));
+        CmsResponse<Boolean> response = pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(authorisationId, ScaStatus.fromValue(authorisationStatus));
 
         if (response.isSuccessful() && response.getPayload()) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -194,7 +196,7 @@ public class PisCommonPaymentController {
     public ResponseEntity<GetPisAuthorisationResponse> getAuthorization(
         @ApiParam(name = "authorization-id", value = "The authorization identification assigned to the created authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorization-id") String authorizationId) {
-        CmsResponse<GetPisAuthorisationResponse> response = pisCommonPaymentServiceEncrypted.getPisAuthorisationById(authorizationId);
+        CmsResponse<GetPisAuthorisationResponse> response = pisAuthorisationServiceEncrypted.getPisAuthorisationById(authorizationId);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -213,7 +215,7 @@ public class PisCommonPaymentController {
         @PathVariable("payment-id") String paymentId,
         @ApiParam(name = "authorisation-id", value = "The consent authorisation identification", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorisation-id") String authorisationId) {
-        CmsResponse<ScaStatus> response = pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(paymentId, authorisationId, PaymentAuthorisationType.CREATED);
+        CmsResponse<ScaStatus> response = pisAuthorisationServiceEncrypted.getAuthorisationScaStatus(paymentId, authorisationId, PaymentAuthorisationType.CREATED);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -231,7 +233,7 @@ public class PisCommonPaymentController {
         @ApiParam(name = "cancellation-id", value = "The cancellation authorisation identification assigned to the created cancellation authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("cancellation-id") String cancellationId,
         @RequestBody UpdatePisCommonPaymentPsuDataRequest request) {
-        CmsResponse<UpdatePisCommonPaymentPsuDataResponse> response = pisCommonPaymentServiceEncrypted.updatePisCancellationAuthorisation(cancellationId, request);
+        CmsResponse<UpdatePisCommonPaymentPsuDataResponse> response = pisAuthorisationServiceEncrypted.updatePisCancellationAuthorisation(cancellationId, request);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -248,7 +250,7 @@ public class PisCommonPaymentController {
     public ResponseEntity<GetPisAuthorisationResponse> getAuthorizationCancellation(
         @ApiParam(name = "cancellation-id", value = "The cancellation authorisation identification assigned to the created cancellation authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("cancellation-id") String cancellationId) {
-        CmsResponse<GetPisAuthorisationResponse> response = pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(cancellationId);
+        CmsResponse<GetPisAuthorisationResponse> response = pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(cancellationId);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -265,7 +267,7 @@ public class PisCommonPaymentController {
     public ResponseEntity<List<String>> getAuthorisationCancellation(
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId) {
-        CmsResponse<List<String>> response = pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(paymentId, PaymentAuthorisationType.CANCELLED);
+        CmsResponse<List<String>> response = pisAuthorisationServiceEncrypted.getAuthorisationsByPaymentId(paymentId, PaymentAuthorisationType.CANCELLED);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -284,7 +286,7 @@ public class PisCommonPaymentController {
         @PathVariable("payment-id") String paymentId,
         @ApiParam(name = "cancellation-id", value = "Identification of the consent cancellation authorisation", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("cancellation-id") String authorisationId) {
-        CmsResponse<ScaStatus> response = pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(paymentId, authorisationId, PaymentAuthorisationType.CANCELLED);
+        CmsResponse<ScaStatus> response = pisAuthorisationServiceEncrypted.getAuthorisationScaStatus(paymentId, authorisationId, PaymentAuthorisationType.CANCELLED);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -301,7 +303,7 @@ public class PisCommonPaymentController {
     public ResponseEntity<List<String>> getAuthorisation(
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "vOHy6fj2f5IgxHk-kTlhw6sZdTXbRE3bWsu2obq54beYOChP5NvRmfh06nrwumc2R01HygQenchEcdGOlU-U0A==_=_iR74m2PdNyE")
         @PathVariable("payment-id") String paymentId) {
-        CmsResponse<List<String>> response = pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(paymentId, PaymentAuthorisationType.CREATED);
+        CmsResponse<List<String>> response = pisAuthorisationServiceEncrypted.getAuthorisationsByPaymentId(paymentId, PaymentAuthorisationType.CREATED);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -328,7 +330,7 @@ public class PisCommonPaymentController {
         @PathVariable("authorisation-id") String authorisationId,
         @ApiParam(name = "authentication-method-id", value = "Authentication method identification", example = "sms")
         @PathVariable("authentication-method-id") String authenticationMethodId) {
-        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        CmsResponse<Boolean> response = pisAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
         return new ResponseEntity<>(response.isSuccessful() && response.getPayload(), HttpStatus.OK);
     }
 
@@ -341,7 +343,7 @@ public class PisCommonPaymentController {
         @ApiParam(name = "authorisation-id", value = "The common payment authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorisation-id") String authorisationId,
         @RequestBody List<CmsScaMethod> methods) {
-        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(authorisationId, methods);
+        CmsResponse<Boolean> response = pisAuthorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, methods);
 
         if (response.isSuccessful() && response.getPayload()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -360,7 +362,7 @@ public class PisCommonPaymentController {
         @PathVariable("authorisation-id") String authorisationId,
         @ApiParam(name = "sca-approach", value = "Chosen SCA approach.", example = "REDIRECT")
         @PathVariable("sca-approach") ScaApproach scaApproach) {
-        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
+        CmsResponse<Boolean> response = pisAuthorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
 
         if (response.isSuccessful() && response.getPayload()) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -377,7 +379,7 @@ public class PisCommonPaymentController {
     public ResponseEntity<AuthorisationScaApproachResponse> getAuthorisationScaApproach(
         @ApiParam(name = "authorisation-id", value = "Identification of the payment initiation authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorisation-id") String authorisationId) {
-        CmsResponse<AuthorisationScaApproachResponse> response = pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(authorisationId, PaymentAuthorisationType.CREATED);
+        CmsResponse<AuthorisationScaApproachResponse> response = pisAuthorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId, PaymentAuthorisationType.CREATED);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -394,7 +396,7 @@ public class PisCommonPaymentController {
     public ResponseEntity<AuthorisationScaApproachResponse> getCancellationAuthorisationScaApproach(
         @ApiParam(name = "consent-id", value = "Identification of the payment cancellation authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorisation-id") String authorisationId) {
-        CmsResponse<AuthorisationScaApproachResponse> response = pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(authorisationId, PaymentAuthorisationType.CANCELLED);
+        CmsResponse<AuthorisationScaApproachResponse> response = pisAuthorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId, PaymentAuthorisationType.CANCELLED);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

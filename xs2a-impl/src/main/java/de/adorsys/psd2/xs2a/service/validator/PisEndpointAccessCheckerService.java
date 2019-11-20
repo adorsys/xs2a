@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.service.validator;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PisEndpointAccessCheckerService extends EndpointAccessChecker {
-    private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    private final PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
 
     /**
      * Checks whether endpoint is accessible for current authorisation
@@ -40,9 +40,9 @@ public class PisEndpointAccessCheckerService extends EndpointAccessChecker {
     public boolean isEndpointAccessible(String authorisationId, PaymentAuthorisationType authorisationType) {
         CmsResponse<GetPisAuthorisationResponse> authorisationResponse = null;
         if (authorisationType == PaymentAuthorisationType.CREATED) {
-            authorisationResponse = pisCommonPaymentServiceEncrypted.getPisAuthorisationById(authorisationId);
+            authorisationResponse = pisAuthorisationServiceEncrypted.getPisAuthorisationById(authorisationId);
         } else if (authorisationType == PaymentAuthorisationType.CANCELLED) {
-            authorisationResponse = pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(authorisationId);
+            authorisationResponse = pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(authorisationId);
         }
 
         return Optional.ofNullable(authorisationResponse)

@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -44,6 +45,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class Xs2aPisCommonPaymentService {
     private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    private final PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
     private final RequestProviderService requestProviderService;
     private final Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
     private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
@@ -86,7 +88,7 @@ public class Xs2aPisCommonPaymentService {
     }
 
     public boolean updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
-        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.updatePisAuthorisationStatus(authorisationId, scaStatus);
+        CmsResponse<Boolean> response = pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(authorisationId, scaStatus);
         return response.isSuccessful() && response.getPayload();
     }
 
@@ -98,7 +100,7 @@ public class Xs2aPisCommonPaymentService {
      * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
      */
     public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        CmsResponse<Boolean> response = pisAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
         return response.isSuccessful() && response.getPayload();
     }
 
@@ -110,7 +112,7 @@ public class Xs2aPisCommonPaymentService {
      * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
      */
     public boolean saveAuthenticationMethods(String authorisationId, List<Xs2aAuthenticationObject> methods) {
-        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
+        CmsResponse<Boolean> response = pisAuthorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
         return response.isSuccessful() && response.getPayload();
     }
 
@@ -121,7 +123,7 @@ public class Xs2aPisCommonPaymentService {
      * @param scaApproach     sca approach
      */
     public void updateScaApproach(String authorisationId, ScaApproach scaApproach) {
-        pisCommonPaymentServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
+        pisAuthorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
     }
 
     /**
