@@ -105,4 +105,10 @@ public class UrlBuilder {
                    .buildAndExpand(paymentType, paymentProduct, encryptedPaymentId)
                    .toUriString();
     }
+
+    public static String buildGetPaymentUrl(String paymentType, String paymentProduct, String encryptedPaymentId) {
+        return UriComponentsBuilder.fromPath(UrlHolder.PAYMENT_LINK_URL)
+                   .buildAndExpand(paymentType, paymentProduct, encryptedPaymentId)
+                   .toUriString();
+    }
 }

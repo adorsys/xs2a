@@ -89,7 +89,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class ConsentCreation_successfulIT {
+public class ConsentCreationSuccessfulIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String DEDICATED_CONSENT_REQUEST_JSON_PATH = "/json/account/req/DedicatedConsent.json";
     private static final String BANK_OFFERED_CONSENT_REQUEST_JSON_PATH = "/json/account/req/BankOfferedConsent.json";

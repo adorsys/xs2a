@@ -24,6 +24,11 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiCommonPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -36,6 +41,8 @@ public class PisCommonPaymentResponseBuilder {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_CURRENCY_CODE = "EUR";
     private static final BigDecimal PAYMENT_AMOUNT = BigDecimal.TEN;
+    private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
+    private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
 
     public static PisCommonPaymentResponse buildPisCommonPaymentResponseWithAuthorisation(Authorisation authorisation) {
         PisCommonPaymentResponse response = buildPisCommonPaymentResponse();
@@ -69,5 +76,29 @@ public class PisCommonPaymentResponseBuilder {
         PisCommonPaymentResponse pisCommonPaymentResponse = buildPisCommonPaymentResponse();
         pisCommonPaymentResponse.setPayments(Collections.singletonList(pisPayment));
         return pisCommonPaymentResponse;
+    }
+
+    public static SpiResponse<SpiPaymentInfo> buildGetPaymentResponse(SpiPaymentInfo spiPaymentInfo) {
+        return buildSpiResponse(spiPaymentInfo);
+    }
+
+    public static SpiResponse<SpiGetPaymentStatusResponse> buildGetPaymentStatusResponse(SpiGetPaymentStatusResponse spiGetPaymentStatusResponse) {
+        return buildSpiResponse(spiGetPaymentStatusResponse);
+    }
+
+    public static SpiResponse<SpiPaymentInitiationResponse> buildSpiPaymentInitiationResponse() {
+        SpiPaymentInitiationResponse response = new SpiCommonPaymentInitiationResponse();
+        response.setPaymentId(PAYMENT_ID);
+        response.setTransactionStatus(TransactionStatus.RCVD);
+        response.setAspspAccountId(ASPSP_ACCOUNT_ID);
+        response.setSpiTransactionFeeIndicator(false);
+        response.setMultilevelScaRequired(false);
+        return buildSpiResponse(response);
+    }
+
+    private static <T> SpiResponse<T> buildSpiResponse(T payload) {
+        return SpiResponse.<T>builder()
+                   .payload(payload)
+                   .build();
     }
 }

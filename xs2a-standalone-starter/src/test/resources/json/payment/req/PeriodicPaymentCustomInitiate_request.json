@@ -1,0 +1,7 @@
+{
+  "startDate": "2018-03-01",
+  "endDate": "2030-03-01",
+  "frequency": "Monthly",
+  "executionRule": "following",
+  "dayOfExecution": "21"
+}

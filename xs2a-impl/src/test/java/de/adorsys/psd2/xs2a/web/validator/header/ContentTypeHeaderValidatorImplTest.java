@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 
 public class ContentTypeHeaderValidatorImplTest {
 
-    private static final String[] CONTENT_TYPE_HEADER_NAME = {"content-type"};
+    private static final String[] CONTENT_TYPE_HEADER_NAME = {"Content-Type"};
     private ContentTypeHeaderValidatorImpl validator;
     private MessageError messageError;
     private Map<String, String> headers;
