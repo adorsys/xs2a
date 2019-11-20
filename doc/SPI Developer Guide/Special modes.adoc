@@ -7,23 +7,36 @@
 
 === Multi-tenancy support
 
+It's possible to use CMS database in multi-tenancy mode, with multiple XS2A instances being connected to one CMS database.
+This approach is not recommended and in general multiple XS2A instances should be used with their own database instances.
+But if it's still necessary to use one database, CMS should be additionally configured to support this mode.
+
+Each record in the database that should be isolated from different XS2A instances contains `instance_id` column, which indicates particular XS2A instance that created this resource.
+To access such resource, appropriate `instanceId` value should be passed to methods and endpoints in `cms-psu-api` and `cms-aspsp-api`.
+Default value for `instanceId` is set to `UNDEFINED`.
+
+To configure CMS service to properly work with multiple XS2A instances, multiple instances of `cms-standalone-service` can be used, with `cms.service.instance-id` property set to appropriate value for each instance.
+Alternatively, some kind of an interceptor should be implemented in CMS (or in connector application in case of using CMS in embedded mode) to set `instanceId` property before saving records to the database.
+Example of Hibernate interceptor with such functionality can be found in `cms-standalone-service`: in `de.adorsys.psd2.consent.config.ServiceInstanceIdEventListener`, along with the configuration in `de.adorsys.psd2.consent.config.HibernateListenerConfig`.
+
 === Configure Event-Service in embedded mode
 
-XS2A is started as a standalone application in embedded mode (*Xs2aStandaloneStarter*). CMS does not start at all.
+XS2A is started as a standalone application in embedded mode (*Xs2aStandaloneStarter*).
+CMS does not start at all.
 
 *Xs2aStandaloneStarter* application has database configuration, event service and CMS parts inside.
 
 * Update *application.properties* of *xs2a-standalone-starter* by adding database configuration:
 
-```
+----
 spring.datasource.url=jdbc:postgresql://localhost/consent
 spring.datasource.username=cms
 spring.datasource.password=cms
-```
+----
 
 * Remove maven dependencies in *xs2a-standalone-starter* pom.xml:
 
-```
+----
  <dependency>
      <groupId>de.adorsys.psd2</groupId>
      <artifactId>consent-xs2a-client</artifactId>
@@ -35,11 +48,11 @@ spring.datasource.password=cms
      <artifactId>event-service-rest-client</artifactId>
      <version>${project.version}</version>
  </dependency>
-```
+----
 
 * Add maven dependencies in *xs2a-standalone-starter* pom.xml:
 
-```
+----
  <dependency>
      <groupId>org.springframework.boot</groupId>
      <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -80,15 +93,16 @@ spring.datasource.password=cms
       <artifactId>cms-scheduler-service</artifactId>
       <version>${project.version}</version>
  </dependency>
-```
+----
 
 * Update scan annotations in *Xs2aStandaloneStarter.java*:
-```
+
+----
    @ComponentScan(basePackages = "de.adorsys.psd2")
    @EnableTransactionManagement
    @EnableJpaRepositories(basePackages = {"de.adorsys.psd2.consent.repository", "de.adorsys.psd2.event"})
    @EntityScan({"de.adorsys.psd2.consent.domain", "de.adorsys.psd2.event.persist.entity"})
-```
+----
 
 ==== Getting events
 
@@ -109,17 +123,15 @@ Request parameters are passed as headers:
 
 Recording of events can be tweaked by using custom implementations of interfaces from *event-service-persist-api*.
 Two implementations of these interfaces are provided by default in separate modules:
- - implementation for saving events to the database, can be enabled by adding dependency to the *event-service-persist-db-impl*
- - implementation for logging events, can be enabled by adding dependency to the *event-service-persist-log-impl*
+- implementation for saving events to the database, can be enabled by adding dependency to the *event-service-persist-db-impl*
+- implementation for logging events, can be enabled by adding dependency to the *event-service-persist-log-impl*
 
-These modules doesn't provide implementation of *de.adorsys.psd2.event.persist.EventReportRepository* for generating event reports.
-This means that either default implementation for reading events from the database should be added as a dependency (*event-service-db-report-impl*),
-endpoints for retrieving events report from the *cms-aspsp-api* should be disabled, or custom implementation of the interface should be provided.
+These modules don't provide implementation of *de.adorsys.psd2.event.persist.EventReportRepository* for generating event reports.
+This means that either default implementation for reading events from the database should be added as a dependency (*event-service-db-report-impl*), endpoints for retrieving events report from the *cms-aspsp-api* should be disabled, or custom implementation of the interface should be provided.
 
 Logging implementation uses *SLF4J* for recording events, meaning that it's possible to configure and use any logging framework that's compatible with *SLF4J*.
 All events are being written to a separate logger *event-log* at *INFO* level.
 See <<SPI_Developer_Guide.adoc#configuring-logging,XS2A Logging configuring>> for more details on how to configure *SLF4J* logging.
-
 
 ==== Adjusting swagger UI
 
@@ -131,13 +143,13 @@ To disable Swagger just remove it.
 
 Adjustment Swagger UI implies updating appropriate .yaml file:
 
-* At first put PSD2 API yaml file to the resource folder of your Connector to override default PSD2 API and
-set `xs2a.swagger.psd2.api.location` property in your application.properties file e.g. `xs2a.swagger.psd.api.location=path/in/my/classpath/my_swagger_api.yml`
+* At first put PSD2 API yaml file to the resource folder of your Connector to override default PSD2 API and set `xs2a.swagger.psd2.api.location` property in your application.properties file e.g. `xs2a.swagger.psd.api.location=path/in/my/classpath/my_swagger_api.yml`
 * Next steps involve adding and changing necessary parameters in the .yaml file.
 
 The default version of PSD2 API yaml file can be found under:
-```
+
+----
 xs2a-impl->src->main->resources->static->psd2-api....yaml
-```
+----
 
 NOTE: for adding additional products e.g., it should be updated ASPSP-Profile as well.
