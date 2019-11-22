@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d4a19663-043b-4475-aaf2-78d11782e396",
+    "_postman_id": "dc7b2eb1-bf90-4297-a583-dfa6042f17c4",
 		"name": "PIS Payment requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -21237,6 +21237,418 @@
 					"response": []
 				}
 			],
+      "protocolProfileBehavior": {}
+    },
+    {
+      "name": "Common",
+      "item": [
+        {
+          "name": "Raw transaction status",
+          "item": [
+            {
+              "name": "1. Set embedded SCA approach",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+                },
+                "url": {
+                  "raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+                  "protocol": "{{protocol}}",
+                  "host": [
+                    "{{url_aspsp_profile}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "aspsp-profile",
+                    "for-debug",
+                    "sca-approaches"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "2. Enable JSON transaction status and pain in ASPSP profile settings",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "67af457a-0c1a-44da-8b16-9af106584c29",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"booked\",\n                \"pending\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\",\n                \"pain.001-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": true\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"AUTO\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false\n    }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+                  "protocol": "{{protocol}}",
+                  "host": [
+                    "{{url_aspsp_profile}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "aspsp-profile",
+                    "for-debug",
+                    "aspsp-settings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "3. Payment initiation request",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+                    "exec": [
+                      "const jsonData = pm.response.json();",
+                      "",
+                      "pm.test(\"Status code is 201\", function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test(\"Transcation status is RCVD\", () => {",
+                      "    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+                      "});",
+                      "",
+                      "pm.test(\"Links exist\", () => {",
+                      "    pm.expect(jsonData).to.have.property('_links');",
+                      "    const _links = jsonData._links;",
+                      "    ",
+                      "    pm.expect(_links).to.have.property('scaStatus');",
+                      "    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+                      "    ",
+                      "});",
+                      "",
+                      "pm.test(\"Payment ID exists\", () => {",
+                      "    pm.expect(jsonData).to.have.property('paymentId');",
+                      "});",
+                      "",
+                      "const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+                      "pm.globals.set(\"authorisation_id\", authorisationId);",
+                      "pm.globals.set(\"payment_id\", jsonData.paymentId);",
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+                    "exec": [
+                      "pm.globals.unset(\"payment_id\");"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "name": "Content-Type",
+                    "value": "application/xml",
+                    "type": "text"
+                  },
+                  {
+                    "key": "PSU-ID",
+                    "value": "{{psu_id_multiple}}"
+                  },
+                  {
+                    "key": "PSU-IP-Address",
+                    "value": "{{ip_address}}"
+                  },
+                  {
+                    "key": "X-Request-ID",
+                    "value": "{{x_request_id}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.001.001.03\"> \n<CstmrCdtTrfInitn>\n<GrpHdr> \n<MsgId>MIPI-123456789RI-123456789</MsgId> \n<CreDtTm>2017-02-14T20:23:34.000Z</CreDtTm> \n<NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum>\n<InitgPty>\n<Nm>PaymentInitiator</Nm> \n<Id><OrgId><Othr><Id>DE10000000012</Id>\n<SchmeNm><Prptry>PISP</Prptry></SchmeNm></Othr></OrgId></Id> </InitgPty>\n    </GrpHdr>\n    <PmtInf>\n<PmtInfId>BIPI-123456789RI-123456789</PmtInfId> \n<PmtMtd>TRF</PmtMtd>\n<NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum> \n<PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf> \n<ReqdExctnDt>2017-02-15</ReqdExctnDt>\n<Dbtr><Nm>PSU Name</Nm></Dbtr> \n<DbtrAcct><Id><IBAN>DE87200500001234567890</IBAN></Id></DbtrAcct> \n<ChrgBr>SLEV</ChrgBr>\n<CdtTrfTxInf>\n<PmtId><EndToEndId>RI-123456789</EndToEndId></PmtId> \n<Amt><InstdAmt Ccy=\"EUR\">123</InstdAmt></Amt> \n<Cdtr><Nm>Merchant123</Nm></Cdtr>\n<CdtrAcct><Id><IBAN> DE23100120020123456789</IBAN></Id></CdtrAcct>\n<RmtInf><Ustrd>Ref Number Merchant-123456</Ustrd></RmtInf> \n</CdtTrfTxInf>\n    </PmtInf>\n  </CstmrCdtTrfInitn>\n</Document>\n",
+                  "options": {
+                    "raw": {
+                      "language": "xml"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/pain.001-sepa-credit-transfers",
+                  "protocol": "{{protocol}}",
+                  "host": [
+                    "{{url_xs2a}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "{{payment_service}}",
+                    "pain.001-sepa-credit-transfers"
+                  ]
+                },
+                "description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+              },
+              "response": []
+            },
+            {
+              "name": "4. Payment initiation status request JSON",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "const jsonData = pm.response.json();",
+                      "",
+                      "pm.test(\"Test transaction status\", () => {",
+                      "    pm.expect(jsonData).to.have.property('transactionStatus');",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json, application/xml"
+                  },
+                  {
+                    "key": "X-Request-ID",
+                    "value": "{{x_request_id}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/pain.001-sepa-credit-transfers/{{payment_id}}/status",
+                  "protocol": "{{protocol}}",
+                  "host": [
+                    "{{url_xs2a}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "{{payment_service}}",
+                    "pain.001-sepa-credit-transfers",
+                    "{{payment_id}}",
+                    "status"
+                  ]
+                },
+                "description": "Check the transaction status of a payment initiation."
+              },
+              "response": []
+            },
+            {
+              "name": "5. Payment initiation status request XML",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
+                    "exec": [
+                      "pm.test(\"Status code is 406\", function () {",
+                      "    pm.response.to.have.status(406);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/xml"
+                  },
+                  {
+                    "key": "X-Request-ID",
+                    "value": "{{x_request_id}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/pain.001-sepa-credit-transfers/{{payment_id}}/status",
+                  "protocol": "{{protocol}}",
+                  "host": [
+                    "{{url_xs2a}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "{{payment_service}}",
+                    "pain.001-sepa-credit-transfers",
+                    "{{payment_id}}",
+                    "status"
+                  ]
+                },
+                "description": "Check the transaction status of a payment initiation."
+              },
+              "response": []
+            },
+            {
+              "name": "6. Enable XML transaction status in ASPSP profile settings",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "67af457a-0c1a-44da-8b16-9af106584c29",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"booked\",\n                \"pending\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\",\n                \"pain.001-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\",\n            \"application/xml\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": true\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"AUTO\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false\n    }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+                  "protocol": "{{protocol}}",
+                  "host": [
+                    "{{url_aspsp_profile}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "aspsp-profile",
+                    "for-debug",
+                    "aspsp-settings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "7. Payment initiation status request XML",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/xml"
+                  },
+                  {
+                    "key": "X-Request-ID",
+                    "value": "{{x_request_id}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/pain.001-sepa-credit-transfers/{{payment_id}}/status",
+                  "protocol": "{{protocol}}",
+                  "host": [
+                    "{{url_xs2a}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "{{payment_service}}",
+                    "pain.001-sepa-credit-transfers",
+                    "{{payment_id}}",
+                    "status"
+                  ]
+                },
+                "description": "Check the transaction status of a payment initiation."
+              },
+              "response": []
+            }
+          ],
+          "protocolProfileBehavior": {},
+          "_postman_isSubFolder": true
+        }
+      ],
 			"protocolProfileBehavior": {}
 		},
 		{
