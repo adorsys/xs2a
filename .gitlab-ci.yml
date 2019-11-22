@@ -388,6 +388,7 @@ Deploy to Openshift (master):
   dependencies: []
   only:
     - master
+  when: manual
   variables:
     GIT_STRATEGY: none
     DOCKER_TAG: latest # Dockerhub source tag
