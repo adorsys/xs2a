@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "48edd65f-ba89-48d6-b790-73fc79549392",
-		"name": "Multilevel SCA",
+		"_postman_id": "98c735d5-d7e5-415d-b812-3ce0d75744d5",
+		"name": "Multilevel SCA 4.x",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -167,7 +167,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers1}}",
+								"value": "{{psu_id_multilevel_1}}",
 								"type": "text"
 							},
 							{
@@ -198,7 +198,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_ledgers}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_ledgers}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+							"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multilevel}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_multilevel}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -275,7 +275,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers1}}"
+								"value": "{{psu_id_multilevel_1}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -348,7 +348,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers1}}"
+								"value": "{{psu_id_multilevel_1}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -472,7 +472,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers1}}"
+								"value": "{{psu_id_multilevel_1}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -614,7 +614,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers2}}"
+								"value": "{{psu_id_multilevel_2}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -687,7 +687,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers2}}"
+								"value": "{{psu_id_multilevel_2}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -696,7 +696,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"12345\"\n\t}\n}"
+							"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
@@ -811,7 +811,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers2}}"
+								"value": "{{psu_id_multilevel_2}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -1010,7 +1010,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers1}}",
+								"value": "{{psu_id_multilevel_1}}",
 								"type": "text"
 							},
 							{
@@ -1031,7 +1031,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_ledgers}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_ledgers}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_ledgers}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2021-10-10\"\n}"
+							"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_multilevel}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_multilevel}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_multilevel}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2021-10-10\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
@@ -1106,7 +1106,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers1}}"
+								"value": "{{psu_id_multilevel_1}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -1192,7 +1192,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers1}}"
+								"value": "{{psu_id_multilevel_1}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -1262,7 +1262,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers1}}"
+								"value": "{{psu_id_multilevel_1}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -1350,7 +1350,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers2}}"
+								"value": "{{psu_id_multilevel_2}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -1436,7 +1436,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers2}}"
+								"value": "{{psu_id_multilevel_2}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -1445,7 +1445,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"12345\"\n\t}\n}"
+							"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
@@ -1506,7 +1506,7 @@
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_ledgers2}}"
+								"value": "{{psu_id_multilevel_2}}"
 							},
 							{
 								"key": "X-Request-ID",
