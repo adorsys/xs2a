@@ -15,4 +15,6 @@ include::Read Account Data Requests.adoc[Read Account Data Requests]
 
 include::Funds Confirmation Service.adoc[Funds Confirmation Service]
 
+include::Multicurrency Accounts.adoc[Multicurrency Accounts]
+
 include::Common features.adoc[Common features]

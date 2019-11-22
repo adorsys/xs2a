@@ -52,7 +52,7 @@ for recurring access on account information for the addressed PSU and potentiall
 
 There are no expiration side effects foreseen for Consent Requests where the “recurringIndicator” equals false.
 
-When this Consent Request is a request for one access to the account data then "recurringIndicator" equals false and "frequencyPerDay" should not be more than "1".
+When this Consent Request is a request for one access to the account data then "recurringIndicator" equals false and "accountAccessFrequencyPerDay" should not be more than "1".
 
 
 ==== Consent on Account List of Available Accounts
@@ -115,7 +115,7 @@ When TPP requests Read Account Data with this consent-id, xs2a should respond ac
 
 The ability to create Bank Offered Consent depends on successful validation:
 
-* The attribute in ASPSP Profile "bankOfferedConsentSupport" should be set to "TRUE". If Bank Offered consent is not supported in Profile - respond with 405 SERVICE_INVALID;
+* The attribute in ASPSP Profile "bankOfferedConsentSupported" should be set to "TRUE". If Bank Offered consent is not supported in Profile - respond with 405 SERVICE_INVALID;
 * The call contains the "accounts", "balances" and/or "transactions" sub attribute within the "access" attribute all with an empty array;
 * For this function the Embedded SCA Approach is not supported.
 
@@ -126,7 +126,7 @@ Global consent can be recurring and one-off.
 
 The ability to create Global Consent depends on successful validation:
 
-* The attribute in ASPSP Profile "allPsd2Support" should be set to "TRUE". If Global consent is not supported in Profile - respond with 405 SERVICE_INVALID;
+* The attribute in ASPSP Profile "globalConsentSupported" should be set to "TRUE". If Global consent is not supported in Profile - respond with 405 SERVICE_INVALID;
 * The call contains the "allPsd2" sub attribute within the "access" attribute with the value "allAccounts";
 * All possible content of "accounts", "balances", "transactions", "availableAccounts" or “availableAccountsWithBalance” fields is ignored if call contains attribute "allPsd2";
 * Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP profile "scaByOneTimeGlobalConsentRequired" (true (by default), false).
@@ -142,7 +142,7 @@ The ability to create Global Consent depends on successful validation:
 .7+^.^|*Global Consent*
 
 .2+|*ASPSP Profile*
-|allPsd2Support
+|globalConsentSupported
 |TRUE
 
 |scaByOneTimeGlobalConsentRequired
@@ -157,7 +157,7 @@ The ability to create Global Consent depends on successful validation:
 .3+|two-factor authorisation(PSU-ID and password + TAN)
 .2+|*ASPSP Profile*
 
-|allPsd2Support
+|globalConsentSupported
 |TRUE
 |scaByOneTimeGlobalConsentRequired
 |TRUE
@@ -166,17 +166,17 @@ The ability to create Global Consent depends on successful validation:
 
 
 === Consent expiration date
-All requests to the CMS concerning any consentID should be validated for parameter "validUntil" (mandatory field). The parameter "validUntil" is adjusted for Consent in CMS according to parameter in ASPSP Profile "consentLifetime":
+All requests to the CMS concerning any consentID should be validated for mandatory field "validUntil". Field "validUntil" is adjusted for Consent in CMS according to parameter in ASPSP-Profile "maxConsentValidityDays":
 
-* if parameter "consentLifetime" = 0 or empty, then the maximum lifetime of Consent is infinity. Therefore no adjustment should be applied;
-* if parameter "consentLifetime" > 0, then the limit of a maximum lifetime of Consent is set in days and “ValidUntil” should be adjusted and stored in CMS with new value. For example, date of Consent request is 2019-03-01, “ValidUntil” is “9999-12-31" and "consentLifetime"=10, then adjusted value of “ValidUntil” should be 2019-03-10. And TPP will get new adjusted value by Get consent request;
-* if parameter "consentLifetime" > 0 and “ValidUntil” contains date far than it is allowed by bank, then there should be adjustment to the date according "consentLifetime". For example, date of Consent request creation is 2019-03-01, “ValidUntil” is “2019-04-20" and "consentLifetime"=10, then adjusted value of “ValidUntil” should be 2019-03-10. And TPP will get new adjusted value by Get consent request;
-* if parameter "consentLifetime" > 0 and “ValidUntil” contains date less than it could be allowed by bank, then no adjustment should be applied. For example, date of Consent request creation is 2019-03-01, “ValidUntil” is “2019-03-10" and "consentLifetime"=15, then adjusted value of “ValidUntil” should be 2019-03-10. And TPP will get "ValidUntil” =2019-03-10 by Get consent request;
+* if parameter "maxConsentValidityDays" = 0 or empty, then the maximum lifetime of Consent is infinity. Therefore no adjustment should be applied;
+* if parameter "maxConsentValidityDays" > 0, then the limit of a maximum lifetime of Consent is set in days and “validUntil” should be adjusted and stored in CMS with new value. For example, date of Consent request is 2019-03-01, “validUntil” is “9999-12-31" and "maxConsentValidityDays"=10, then adjusted value of “validUntil” should be 2019-03-10. And TPP will get new adjusted value by Get consent request;
+* if parameter "maxConsentValidityDays" > 0 and “validUntil” contains date far than it is allowed by bank, then there should be adjustment to the date according "maxConsentValidityDays". For example, date of Consent request creation is 2019-03-01, “validUntil” is “2019-04-20" and "maxConsentValidityDays"=10, then adjusted value of “validUntil” should be 2019-03-10. And TPP will get new adjusted value by Get consent request;
+* if parameter "maxConsentValidityDays" > 0 and “validUntil” contains date less than it could be allowed by bank, then no adjustment should be applied. For example, date of Consent request creation is 2019-03-01, “validUntil” is “2019-03-10" and "maxConsentValidityDays"=15, then adjusted value of “validUntil” should be 2019-03-10. And TPP will get "validUntil” =2019-03-10 by Get consent request;
 * If the date of "validUntil" is in the past, then XS2A sends the response with HTTP code 401 CONSENT_EXPIRED;
 * In case TPP tries to initiate new authorisation for expired consent, XS2A sends the response with HTTP code 403 CONSENT_EXPIRED.
 
 === Counting of frequencyPerDay
-This attribute indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to "1"."
+Attribute *"accountAccessFrequencyPerDay"* in the ASPSP-Profile indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to "1"."
 
 Number of TPP accesses is counted by every endpoint:
 
@@ -219,6 +219,34 @@ Field *lastActionDate* - is containing the date of the last action on the consen
 
 * When consent is created and gets status "Received" - lastActionDate contains date of consent creation.
 * When consent status is changed - lastActionDate also is updated with new date.
+
+=== Additional Account Information
+The following rules and requirements for the support of this service apply.
+
+An ASPSP might require an agreement with the TPP to use this service.
+
+An ASPSP might differ in rules on different additional data types due e.g. to different  regulatory requirements.
+
+An ASPSP might require an explicit consent by the PSU to deliver this service.
+
+An ASPSP might limit this service to the case where the PSU equals the legal  account owner.
+
+An ASPSP might require consent by the account owner for an PSU within the ASPSP prior to enabling consenting possibility.
+
+ASPSP may decide whether to support additional account information or not, by setting the corresponding value for parameter in the ASPSP-Profile:
+
+* *accountOwnerInformationSupported* (boolean, default value is FALSE).
+During Consent creation in request the additional account information for AIS as *owner name* and *address information* can be asking.
+
+Optional field *"additionalAccountInformation"* of type *"Additional Information Access"* in the Consent Request:
+
+* is asking for additional information as added within this structured object. This data element might be ignored by the ASPSP if it is not supported (*"accountOwnerInformationSupported" = FALSE*). In this case it will not be part of the consent model which is generated through the call where this object is contained.
+* value of this parameter can be array or empty:
+** If the array is empty in the request, the TPP is asking for the account owner name of all accessible accounts.
+** If the array is empty, also the arrays for accounts, balances or transactions shall be empty if used.
+This should be passed to SPI together with consent object. Get Consent of received consent should respond with created consent.
+
+If additional account information is supported by ASPSP, then after authorisation of consent ASPSP will indicate additional account information in Account Details or empty array in Account Details (if consent right to have additional info is not confirmed for this PSU). And this state of consent should be responded on Get consent.
 
 === Account Identifier
 *aspspAccountId* - This field is a specific unique identifier for bank accounts used in payments, AIS, and PIIS consents (known to bank and given by bank) instead of IBAN and to give all consents for account by this identifier.

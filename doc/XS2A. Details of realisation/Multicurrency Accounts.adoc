@@ -1,0 +1,41 @@
+// toc-title definition MUST follow document title without blank line!
+== Multicurrency Accounts
+:toc-title:
+:imagesdir: ../usecases/diagrams
+:toc: left
+
+toc::[]
+*Definition:* A multicurrency account is an account which is a collection of different sub-accounts which are all addressed by the same account identifier like an IBAN by e.g. payment initiating parties. The sub-accounts are legally different accounts and they all differ in their currency, balances and transactions. An account identifier like an IBAN together with a currency always addresses uniquely a sub-account of a multicurrency account.
+
+The specification supports to address multicurrency accounts either on collection or on sub-account level. The currency data attribute in the corresponding data structure "Account Reference" allows to build structures like:
+
+{"iban": "DE40100100103307118608"}
+
+or
+
+{"iban": "DE40100100103307118608",
+ "currency": "EUR"}.
+
+If the underlying account is a multicurrency account, then:
+
+* the first reference is referring to the collection of all sub-accounts addressable by this IBAN, and
+
+* the second reference is referring to the euro sub-account only.
+
+*Multicurrency Accounts in Submission of Consents*: Multicurrency accounts are addressed by just using the external account identifier in the submission of a consent on dedicated accounts, without specifying a currency. Asking for the consent to retrieve account information data of a multicurrency accounts implies getting it for all sub-accounts.
+
+*Multicurrency Accounts in Reading Accounts or Account Details*: The ASPSP will decide in its implementation whether to grant data access to a multicurrency account on aggregation level, on aggregation and sub-account level, or only on sub-account level. See examples below.
+
+*Multicurrency Accounts in Reading Balances*: The consequence for this function is that an array of balances of all sub-accounts are returned, if a multicurrency account is addressed on aggregation level. The currency of the respective sub-account is implicitly provided as the currency of the balanceAmount element within the balance.
+
+*Multicurrency Accounts in Reading Transactions*: The consequence for this function is that the list of transactions will contain all transactions of all sub-accounts, if a multicurrency account is addressed on aggregation level. In this case the payment transactions contained in the report may have different transaction currencies.
+
+To fit the requirements one more value was added to ASPSP-profile named *"multicurrencyAccountLevelSupported"* with possible options:
+
+* AGGREGATION;
+* AGGREGATION_AND_SUBACCOUNT;
+* SUBACCOUNT (by default).
+
+This interface specification is acting on sub-accounts of multicurrency accounts in exactly the same way as on regular accounts. This applies to payment initiation as well as to account information.
+
+*Remark:* The multi-currency account product is in use in some markets in Europe, e.g. in Online-Banking products within the Belgium market. The support of this functionality in the XS2A API is only applicable in these markets.

@@ -71,7 +71,7 @@ Depending on SpiPaymentCancellationResponse properties *transactionStatus* and *
 |===
 || value | value | value |value
 
-|Profile: *paymentCancellationAuthorizationMandated*
+|Profile: *paymentCancellationAuthorisationMandated*
 |false
 |true
 |false
