@@ -18,6 +18,10 @@ package de.adorsys.psd2.xs2a.config;
 
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import de.adorsys.psd2.validator.signature.DigestVerifier;
+import de.adorsys.psd2.validator.signature.SignatureVerifier;
+import de.adorsys.psd2.validator.signature.impl.DigestVerifierImpl;
+import de.adorsys.psd2.validator.signature.impl.SignatureVerifierImpl;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
 import de.adorsys.psd2.xs2a.config.converter.MappingJackson2TextMessageConverter;
@@ -156,5 +160,14 @@ public class WebConfig implements WebMvcConfigurer {
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new MappingJackson2TextMessageConverter(xs2aObjectMapper));
     }
-}
 
+    @Bean
+    public DigestVerifier digestVerifier() {
+        return new DigestVerifierImpl();
+    }
+
+    @Bean
+    public SignatureVerifier signatureVerifier() {
+        return new SignatureVerifierImpl();
+    }
+}

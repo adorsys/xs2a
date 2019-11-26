@@ -16,14 +16,13 @@
 
 package de.adorsys.psd2.validator.certificate;
 
-import java.security.cert.CertificateException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
 import no.difi.certvalidator.api.CertificateValidationException;
 import no.difi.certvalidator.util.SimpleCertificateBucket;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.security.cert.CertificateException;
 
 public class CertificateValidatorFactoryTest {
 

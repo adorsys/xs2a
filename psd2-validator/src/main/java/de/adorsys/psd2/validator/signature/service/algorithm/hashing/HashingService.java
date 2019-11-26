@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.validator.signature;
+package de.adorsys.psd2.validator.signature.service.algorithm.hashing;
 
-interface Verify {
-    boolean verify(byte[] signingStringBytes);
+import java.nio.charset.Charset;
+
+public interface HashingService {
+    byte[] hash(String data, Charset charset);
 }

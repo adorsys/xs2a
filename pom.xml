@@ -158,10 +158,10 @@
         <commons.io.version>2.6</commons.io.version>
         <pmd.plugin.version>3.10.0</pmd.plugin.version>
         <com.auth0.java-jwt.version>3.3.0</com.auth0.java-jwt.version>
-        <tomitribe-http-signatures.version>1.0</tomitribe-http-signatures.version>
+        <tomitribe-http-signatures.version>1.3</tomitribe-http-signatures.version>
         <nimbus-jose-jwt.version>7.9</nimbus-jose-jwt.version>
         <commons-certvalidator.version>2.1.1</commons-certvalidator.version>
-        <bcpkix-jdk15on.version>1.59</bcpkix-jdk15on.version>
+        <bcpkix-jdk15on.version>1.61</bcpkix-jdk15on.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <freemarker.version>2.3.28</freemarker.version>
         <liquibase.version>3.6.2</liquibase.version>
@@ -630,6 +630,13 @@
                 <artifactId>mapstruct</artifactId>
                 <version>${org.mapstruct.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.tomitribe</groupId>
+                <artifactId>tomitribe-http-signatures</artifactId>
+                <version>${tomitribe-http-signatures.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
