@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,77 +16,22 @@
 
 package de.adorsys.psd2.validator.signature;
 
-import org.tomitribe.auth.signatures.Algorithm;
-import org.tomitribe.auth.signatures.Signature;
-import org.tomitribe.auth.signatures.Signatures;
-import org.tomitribe.auth.signatures.UnsupportedAlgorithmException;
+import lombok.NonNull;
 
-import javax.crypto.Mac;
-import java.io.IOException;
-import java.security.Key;
-import java.security.Provider;
-import java.security.PublicKey;
 import java.util.Map;
 
-import static java.util.Objects.requireNonNull;
-
-/**
- * A new instance of the Verifier class needs to be created for each signature.
- */
-public class SignatureVerifier {
-
-	private final Verify verify;
-	private final Signature signature;
-
-    public SignatureVerifier(final Key key, final Signature signature) {
-		this(key, signature, null);
-	}
-
-	public SignatureVerifier(final Key key, final Signature signature, final Provider provider) {
-		requireNonNull(key, "Key cannot be null");
-		this.signature = requireNonNull(signature, "Signature cannot be null");
-        Algorithm algorithm = signature.getAlgorithm();
-
-		if (java.security.Signature.class.equals(algorithm.getType())) {
-
-			this.verify = new Asymmetric(PublicKey.class.cast(key), provider, algorithm, signature);
-
-		} else if (Mac.class.equals(algorithm.getType())) {
-
-			this.verify = new Symmetric(key, provider, algorithm, signature);
-
-		} else {
-
-			throw new UnsupportedAlgorithmException(String.format("Unknown Algorithm type %s %s",
-                                                                  algorithm.getPortableName(), algorithm.getType().getName()));
-		}
-
-		// check that the JVM really knows the algorithm we are going to use
-		try {
-
-			verify.verify("validation".getBytes());
-
-		} catch (final RuntimeException e) {
-
-			throw (RuntimeException) e;
-
-		} catch (final Exception e) {
-
-			throw new IllegalStateException("Can't initialise the Signer using the provided algorithm and key", e);
-		}
-	}
-
-	public boolean verify(final String method, final String uri, final Map<String, String> headers)
-			throws IOException {
-
-		final String signingString = createSigningString(method, uri, headers);
-
-		return verify.verify(signingString.getBytes());
-	}
-
-	public String createSigningString(final String method, final String uri, final Map<String, String> headers)
-			throws IOException {
-		return Signatures.createSigningString(signature.getHeaders(), method, uri, headers);
-	}
-
+public interface SignatureVerifier {
+    /**
+     * Verifies signature compliance with incoming headers map and TPP-SIGNATURE-CERTIFICATE
+     *
+     * @param signature  generated value according Signing HTTP Messages
+     * @see <a href="https://datatracker.ietf.org/doc/draft-cavage-http-signatures"> HTTP Signature </a>
+     *
+     * @param tppEncodedCert The certificate used for signing the request, in base64 encoding.
+     * @param headers Map with all request headers with their values
+     * @param method Name of HTTP method according to rfc1945 spec. (HTTP/1.0)
+     * @param url URL form request
+     * @return <code>true</code> if signature is compliance with other parameters. <code>false</code> otherwise.
+     */
+    boolean verify(@NonNull String signature, @NonNull String tppEncodedCert, @NonNull Map<String, String> headers, @NonNull String method, @NonNull String url);
 }
