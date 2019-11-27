@@ -15,49 +15,31 @@ No backward compatibility with 4.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 4.x|version 5.x
 
-|22.11.2019|4.5|5.5
-
-a|
-
-a|* Bugfix: Incorrect response for start authorisation request with password but without PSU-ID in header Explicit AIS/PIS
-
-* Remove MockContentCachingWrappingFilter and properly enable XS2A filters for integration tests
-
-* Refactor request validation chain
-
-* Remove deprecated `PsuIdData` from `confirmConsent`, `rejectConsent`, `revokeConsent` in `CmsPsuAisService`
-
-* Remove TppRedirectUri from TppInfo 
-
-a|* All fixes from v.4.5
-
-* Support Standing Orders reporting in AIS
-
-* Close all consents when account is closed
-
-* Implementation of delta access for transaction list request 
-
 |06.12.2019|4.6|5.6
 
 a|
 
 a|* Bugfix: Logging Context isn't logging correctly in case of PSU_CREDENTIALS_INVALID error
 
-* Refactor `PisCommonPaymentServiceInternal`
-
 * Create an opportunity to disable IBAN validation
 
-a|* All fixes from v.4.6
+* Remove MockContentCachingWrappingFilter and properly enable XS2A filters for integration tests
 
 * Fix syntax errors in internal CMS API
 
+* Add missing patch for consent status partiallyAuthorised in yaml
+
+a|* All fixes from v.4.6
+
+* Update to Java 11
+
 * Recoverability of xs2a remote components
 
-* Validation of authorisation sub-resources
-
-* Digital signature support
-
 * Prevent modification of an established consent
+
+* Update Digital Signature functionality
+
+* Support Implicit Subscription for Resource Status Notification
 
 * Remove unused column "tan" in pis_consent_authorization
 
@@ -69,7 +51,9 @@ a|
 
 a|* All fixes from v.4.7
 
-* Add a new optional header TPP-Rejection-NoFunds-Preferred
+* Update Account Owner Name Service
+
+* Support Confirmation of Authorisation
 
 * Logging of RequestId/InternalRequestId via slf4j MDC
 
@@ -81,9 +65,9 @@ a|* All fixes from v.4.7
 
 * Replace deprecated description property in swagger @Api annotation in CMS and Profile controllers
 
-* Refactoring of payment saving
-
 * Remove deprecated constructor in SpiGetPaymentStatusResponse
+
+* Bugfix: Change error code for negative response when consents aren't deleted
 
 |17.01.2020|4.8|5.8
 
@@ -93,11 +77,15 @@ a|
 
 a|* All fixes from v.4.8
 
-* Update to Java 11
+* Add a new optional header TPP-Rejection-NoFunds-Preferred
 
-* Prevent modification of an established consent
+* Create Resource Notification Push Service
+
+* SPI-API javadoc generation with lombok
 
 * Refactor applyAuthorisation methods in PisAuthorisationProcessorServiceImpl and PisCancellationAuthorisationProcessorServiceImpl
+
+* Refactoring of payment saving
 
 |Further development| |
 
@@ -105,9 +93,7 @@ a|
 
 a|
 
-a|* _Lean Push Service_
-
-* _Support of Signing Basket:_
+a|* _Support of Signing Basket:_
 
 - Create Signing Basket in CMS 
 
