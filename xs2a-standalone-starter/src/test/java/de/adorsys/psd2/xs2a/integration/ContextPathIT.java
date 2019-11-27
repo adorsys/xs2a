@@ -35,13 +35,11 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,7 +69,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("integration-test")
+@ActiveProfiles({"integration-test", "mock-qwac"})
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
@@ -92,7 +90,6 @@ public class ContextPathIT {
 
     private static final String ENCRYPT_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
-    private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
 
     private HttpHeaders httpHeadersImplicit = new HttpHeaders();
@@ -103,8 +100,6 @@ public class ContextPathIT {
     private Xs2aObjectMapper xs2aObjectMapper;
     @MockBean
     private AspspProfileService aspspProfileService;
-    @MockBean
-    private TppService tppService;
     @MockBean
     private TppStopListService tppStopListService;
     @MockBean
@@ -119,7 +114,6 @@ public class ContextPathIT {
     @Before
     public void init() {
         httpHeadersImplicit.add("Content-Type", "application/json");
-        httpHeadersImplicit.add("tpp-qwac-certificate", "qwac certificate");
         httpHeadersImplicit.add("x-request-id", "2f77a125-aa7a-45c0-b414-cea25a116035");
         httpHeadersImplicit.add("PSU-ID", "PSU-123");
         httpHeadersImplicit.add("PSU-ID-Type", "Some type");
@@ -132,10 +126,6 @@ public class ContextPathIT {
 
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(tppService.getTppInfo())
-            .willReturn(TPP_INFO);
-        given(tppService.getTppId())
-            .willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))

@@ -33,11 +33,12 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.integration.builder.*;
+import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
+import de.adorsys.psd2.xs2a.integration.builder.HttpHeadersBuilder;
+import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
+import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +64,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
-@ActiveProfiles("integration-test")
+@ActiveProfiles({"integration-test", "mock-qwac"})
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
@@ -78,7 +79,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ConsentUpdateAuthorisationIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
-    private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private static final String PSU_ID_1 = "PSU-1";
     private static final String PSU_ID_2 = "PSU-2";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
@@ -93,8 +93,6 @@ public class ConsentUpdateAuthorisationIT {
     private Xs2aObjectMapper xs2aObjectMapper;
 
     @MockBean
-    private TppService tppService;
-    @MockBean
     private TppStopListService tppStopListService;
     @MockBean
     private AspspProfileService aspspProfileService;
@@ -107,8 +105,6 @@ public class ConsentUpdateAuthorisationIT {
 
     @Before
     public void setUp() {
-        given(tppService.getTppInfo()).willReturn(TPP_INFO);
-        given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
     }
 

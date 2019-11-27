@@ -16,13 +16,11 @@
 
 package de.adorsys.psd2.xs2a.web.filter;
 
-import de.adorsys.psd2.xs2a.component.MultiReadHttpServletRequest;
-import de.adorsys.psd2.xs2a.component.MultiReadHttpServletResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -31,47 +29,41 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ContentCachingWrappingFilterTest {
-    private static final String REQUEST_PATH = "/v1/accounts";
+public class SignatureFilterTest {
+    private static final String XS2A_PATH = "/v1/accounts";
+    private static final String CUSTOM_PATH = "/custom-endpoint";
 
     @Mock
     private FilterChain filterChain;
     @Mock
     private RequestPathResolver requestPathResolver;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @InjectMocks
-    private ContentCachingWrappingFilter contentCachingWrappingFilter;
-
-    @Captor
-    private ArgumentCaptor<HttpServletRequest> capturedRequest;
-    @Captor
-    private ArgumentCaptor<HttpServletResponse> capturedResponse;
+    private SignatureFilter signatureFilter;
 
     @Test
-    public void doFilterInternal_shouldWrapRequestAndResponse() throws ServletException, IOException {
+    public void doFilter_onCustomEndpoint_shouldSkipFilter() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
         when(requestPathResolver.resolveRequestPath(mockRequest))
-            .thenReturn(REQUEST_PATH);
+            .thenReturn(CUSTOM_PATH);
 
         // When
-        contentCachingWrappingFilter.doFilter(mockRequest, mockResponse, filterChain);
+        signatureFilter.doFilter(mockRequest, mockResponse, filterChain);
 
         // Then
-        verify(filterChain).doFilter(capturedRequest.capture(), capturedResponse.capture());
-        assertTrue(capturedRequest.getValue() instanceof MultiReadHttpServletRequest);
-        assertTrue(capturedResponse.getValue() instanceof MultiReadHttpServletResponse);
+        verify(filterChain).doFilter(mockRequest, mockResponse);
+        verifyZeroInteractions(aspspProfileServiceWrapper, requestProviderService);
     }
-
 }

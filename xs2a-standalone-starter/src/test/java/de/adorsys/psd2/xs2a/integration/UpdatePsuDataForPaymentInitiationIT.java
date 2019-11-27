@@ -45,7 +45,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
@@ -109,8 +108,6 @@ public class UpdatePsuDataForPaymentInitiationIT {
     private MockMvc mockMvc;
 
     @MockBean
-    private TppService tppService;
-    @MockBean
     private TppStopListService tppStopListService;
     @MockBean
     private AspspProfileService aspspProfileService;
@@ -130,12 +127,9 @@ public class UpdatePsuDataForPaymentInitiationIT {
     @Before
     public void setUp() {
         httpHeaders.add("Content-Type", "application/json");
-        httpHeaders.add("tpp-qwac-certificate", "qwac certificate");
         httpHeaders.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         httpHeaders.add("PSU-ID", PSU_ID);
 
-        given(tppService.getTppInfo()).willReturn(TPP_INFO);
-        given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo())).willReturn(false);
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
     }
