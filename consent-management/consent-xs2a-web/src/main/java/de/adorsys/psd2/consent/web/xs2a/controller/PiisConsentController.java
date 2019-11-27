@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,9 +46,15 @@ public class PiisConsentController {
     public ResponseEntity<List<PiisConsent>> getPiisConsentListByAccountReference(
         @ApiParam(name = "currency", value = "3 capital letters of currency name.", example = "EUR")
         @RequestHeader(value = "currency") String currency,
-        @ApiParam(name = "account-reference-type", value = "Account reference type, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN.", example = "IBAN")
+        @ApiParam(name = "account-reference-type",
+            value = "Account reference type, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN.",
+            example = "IBAN",
+            required = true)
         @PathVariable("account-reference-type") AccountReferenceType accountReferenceType,
-        @ApiParam(name = "account-identifier", value = "The value of account identifier.", example = "DE2310010010123456789")
+        @ApiParam(name = "account-identifier",
+            value = "The value of account identifier.",
+            example = "DE2310010010123456789",
+            required = true)
         @PathVariable("account-identifier") String accountIdentifier) {
         Currency nullableCurrency = StringUtils.isBlank(currency) ? null : Currency.getInstance(currency);
         CmsResponse<List<PiisConsent>> response = piisConsentService.getPiisConsentListByAccountIdentifier(nullableCurrency, new AccountReferenceSelector(accountReferenceType, accountIdentifier));
