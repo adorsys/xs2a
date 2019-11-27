@@ -23,10 +23,12 @@ import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
-import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.starter.config.validation.PaymentValidationConfigImpl;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -36,8 +38,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
-import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -100,8 +100,6 @@ public class UpdatePsuDataForConsentIT {
     private MockMvc mockMvc;
 
     @MockBean
-    private TppService tppService;
-    @MockBean
     private TppStopListService tppStopListService;
     @MockBean
     private AspspProfileService aspspProfileService;
@@ -121,12 +119,9 @@ public class UpdatePsuDataForConsentIT {
     @Before
     public void setUp() {
         httpHeaders.add("Content-Type", "application/json");
-        httpHeaders.add("tpp-qwac-certificate", "qwac certificate");
         httpHeaders.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         httpHeaders.add("PSU-ID", PSU_ID);
 
-        given(tppService.getTppInfo()).willReturn(TPP_INFO);
-        given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo())).willReturn(false);
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
     }

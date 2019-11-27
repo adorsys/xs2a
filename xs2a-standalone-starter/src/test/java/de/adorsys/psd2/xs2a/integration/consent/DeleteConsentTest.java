@@ -22,15 +22,16 @@ import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
-import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.starter.config.validation.PaymentValidationConfigImpl;
-import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
+import de.adorsys.psd2.xs2a.config.WebConfig;
+import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
+import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
@@ -86,8 +87,6 @@ public class DeleteConsentTest {
     @MockBean
     private AspspProfileService aspspProfileService;
     @MockBean
-    private TppService tppService;
-    @MockBean
     private TppStopListService tppStopListService;
     @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
@@ -102,8 +101,6 @@ public class DeleteConsentTest {
 
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(tppService.getTppInfo())
-            .willReturn(TPP_INFO);
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
@@ -148,7 +145,6 @@ public class DeleteConsentTest {
     private HashMap<String, String> buildRequestHeaders() {
         HashMap<String, String> headerMap = new HashMap<>();
         headerMap.put("Content-Type", "application/json");
-        headerMap.put("tpp-qwac-certificate", "qwac certificate");
         headerMap.put("x-request-id", "2f77a125-aa7a-45c0-b414-cea25a116035");
         headerMap.put("PSU-ID", "PSU-123");
         headerMap.put("PSU-ID-Type", "Some type");

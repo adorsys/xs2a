@@ -45,7 +45,6 @@ import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponseBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -106,7 +105,6 @@ public class PaymentControllerIT {
     private static final String CANCELLATION_ID = "cancellationId";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
-    private HttpHeaders httpHeadersExplicit = new HttpHeaders();
 
     private static final String TPP_REDIRECT_URI = "request/redirect_uri";
     private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
@@ -116,13 +114,13 @@ public class PaymentControllerIT {
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
     private static final String CANCELLATION_INTERNAL_REQUEST_ID = "5b8d8b12-9363-4d9e-9b7e-2219cbcfc311";
 
+    private HttpHeaders httpHeadersExplicit = new HttpHeaders();
+
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private AspspProfileService aspspProfileService;
-    @MockBean
-    private TppService tppService;
     @MockBean
     private TppStopListService tppStopListService;
     @MockBean
@@ -144,8 +142,6 @@ public class PaymentControllerIT {
         // common actions for all tests
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(tppService.getTppInfo()).willReturn(TPP_INFO);
-        given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
@@ -160,7 +156,6 @@ public class PaymentControllerIT {
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
 
         httpHeadersExplicit.add("Content-Type", "application/json");
-        httpHeadersExplicit.add("tpp-qwac-certificate", "qwac certificate");
         httpHeadersExplicit.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         httpHeadersExplicit.add("PSU-ID", "PSU-123");
         httpHeadersExplicit.add("PSU-ID-Type", "Some type");

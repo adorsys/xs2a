@@ -32,7 +32,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@ActiveProfiles("integration-test")
+@ActiveProfiles({"integration-test", "mock-qwac"})
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
@@ -51,11 +51,15 @@ public class PaymentUpdateAuthorisationIT extends PaymentUpdateAuthorisationBase
         before();
     }
 
+    // Suppress "Tests should include assertions" Sonar rule as assertions are being performed in another method
+    @SuppressWarnings("squid:S2699")
     @Test
     public void updatePaymentPsuData_failed_psu_authorisation_psu_request_are_different() throws Exception {
         updatePaymentPsuData_checkForPsuCredentialsInvalidResponse(PSU_ID_1, PSU_ID_2);
     }
 
+    // Suppress "Tests should include assertions" Sonar rule as assertions are being performed in another method
+    @SuppressWarnings("squid:S2699")
     @Test
     public void updatePaymentPsuData_failed_no_psu_authorisation_no_psu_request() throws Exception {
         updatePaymentPsuData_checkForFormatErrorResponse(null, null);

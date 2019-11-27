@@ -22,8 +22,10 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -62,6 +64,12 @@ public class TppDomainValidatorTest {
     private ScaApproachResolver scaApproachResolver;
     @Mock
     private TppService tppService;
+
+    @Before
+    public void setUp() {
+        when(errorBuildingService.buildErrorType())
+            .thenReturn(ErrorType.AIS_400);
+    }
 
     @Test
     public void validate_NoHeader_Valid() {

@@ -26,12 +26,9 @@ import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.HttpHeadersBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
-import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -52,30 +49,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 public abstract class PaymentUpdateAuthorisationBase {
-    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     protected static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
     protected static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
     protected static final String PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
-    private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     protected static final String PSU_ID_1 = "PSU-1";
     protected static final String PSU_ID_2 = "PSU-2";
     protected static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
+
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String AUTH_REQ = "/json/payment/req/auth_request.json";
     private static final String PSU_CREDENTIALS_INVALID_RESP = "/json/payment/res/explicit/psu_credentials_invalid_response.json";
     private static final String FORMAT_ERROR_RESP = "/json/payment/res/explicit/format_error_response.json";
 
-    @Autowired protected MockMvc mockMvc;
+    @Autowired
+    protected MockMvc mockMvc;
 
-    @MockBean protected TppService tppService;
-    @MockBean protected TppStopListService tppStopListService;
-    @MockBean protected AspspProfileService aspspProfileService;
-    @MockBean protected Xs2aEventServiceEncrypted eventServiceEncrypted;
-    @MockBean protected PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
-    @MockBean protected PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
+    @MockBean
+    protected TppStopListService tppStopListService;
+    @MockBean
+    protected AspspProfileService aspspProfileService;
+    @MockBean
+    protected Xs2aEventServiceEncrypted eventServiceEncrypted;
+    @MockBean
+    protected PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    @MockBean
+    protected PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
 
     public void before() {
-        given(tppService.getTppInfo()).willReturn(TPP_INFO);
-        given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
     }
 

@@ -45,7 +45,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
@@ -108,8 +107,6 @@ public class PaymentStartCancellationAuthorisationIT {
     private MockMvc mockMvc;
 
     @MockBean
-    private TppService tppService;
-    @MockBean
     private TppStopListService tppStopListService;
     @MockBean
     private AspspProfileService aspspProfileService;
@@ -129,13 +126,11 @@ public class PaymentStartCancellationAuthorisationIT {
     @Before
     public void setUp() {
         httpHeadersExplicit.add("Content-Type", "application/json");
-        httpHeadersExplicit.add("tpp-qwac-certificate", "qwac certificate");
         httpHeadersExplicit.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         httpHeadersExplicit.add("PSU-ID", PSU_ID);
         httpHeadersExplicit.add("TPP-Redirect-URI", TPP_REDIRECT_URI);
         httpHeadersExplicit.add("TPP-Nok-Redirect-URI", TPP_NOK_REDIRECT_URI);
 
-        given(tppService.getTppInfo()).willReturn(TPP_INFO);
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo())).willReturn(false);
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
     }

@@ -33,25 +33,21 @@ import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -59,18 +55,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
 
 import static org.apache.commons.io.IOUtils.resourceToString;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -94,7 +86,6 @@ public class ConsentCreation_notSuccessfulIT {
     private static final String TPP_ERROR_MESSAGE_JSON_PATH = "/json/account/res/TppErrorMessage.json";
     private static final String PSU_IP_ADDRESS_MISSING_ERROR_MESSAGE_JSON_PATH = "/json/account/res/PsuIpAddressMissingErrorMessage.json";
     private static final String ENCRYPT_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
-    private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
 
     private HttpHeaders httpHeadersImplicit = new HttpHeaders();
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
@@ -106,8 +97,6 @@ public class ConsentCreation_notSuccessfulIT {
     private Xs2aObjectMapper xs2aObjectMapper;
     @MockBean
     private AspspProfileService aspspProfileService;
-    @MockBean
-    private TppService tppService;
     @MockBean
     private TppStopListService tppStopListService;
     @MockBean
@@ -123,7 +112,6 @@ public class ConsentCreation_notSuccessfulIT {
     public void init() {
         HashMap<String, String> headerMap = new HashMap<>();
         headerMap.put("Content-Type", "application/json");
-        headerMap.put("tpp-qwac-certificate", "qwac certificate");
         headerMap.put("x-request-id", "2f77a125-aa7a-45c0-b414-cea25a116035");
         headerMap.put("PSU-ID", "PSU-123");
         headerMap.put("PSU-ID-Type", "Some type");
@@ -144,10 +132,6 @@ public class ConsentCreation_notSuccessfulIT {
 
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(tppService.getTppInfo())
-            .willReturn(TPP_INFO);
-        given(tppService.getTppId())
-            .willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))

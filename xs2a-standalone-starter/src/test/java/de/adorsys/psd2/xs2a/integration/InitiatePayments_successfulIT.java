@@ -48,7 +48,6 @@ import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.SpiPaymentInitiationResponseBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
@@ -140,8 +139,6 @@ public class InitiatePayments_successfulIT {
     @MockBean
     private AspspProfileService aspspProfileService;
     @MockBean
-    private TppService tppService;
-    @MockBean
     private TppStopListService tppStopListService;
     @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
@@ -164,7 +161,6 @@ public class InitiatePayments_successfulIT {
     public void init() {
         HashMap<String, String> headerMap = new HashMap<>();
         headerMap.put("Content-Type", "application/json");
-        headerMap.put("tpp-qwac-certificate", "qwac certificate");
         headerMap.put("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         headerMap.put("PSU-ID", "PSU-123");
         headerMap.put("PSU-ID-Type", "Some type");
@@ -226,10 +222,6 @@ public class InitiatePayments_successfulIT {
 
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(tppService.getTppInfo())
-            .willReturn(TPP_INFO);
-        given(tppService.getTppId())
-            .willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))

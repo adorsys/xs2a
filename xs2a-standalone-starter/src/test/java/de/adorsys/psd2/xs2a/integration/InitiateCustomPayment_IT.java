@@ -141,7 +141,6 @@ public class InitiateCustomPayment_IT {
     public void init() {
         HashMap<String, String> headerMap = new HashMap<>();
         headerMap.put("Content-Type", "application/json");
-        headerMap.put("tpp-qwac-certificate", "qwac certificate");
         headerMap.put("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         headerMap.put("PSU-ID", "PSU-123");
         headerMap.put("PSU-ID-Type", "Some type");

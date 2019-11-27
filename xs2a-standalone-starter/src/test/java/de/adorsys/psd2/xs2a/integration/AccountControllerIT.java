@@ -40,7 +40,6 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountDetailsMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -110,8 +109,6 @@ public class AccountControllerIT {
     @MockBean
     private AspspProfileService aspspProfileService;
     @MockBean
-    private TppService tppService;
-    @MockBean
     private TppStopListService tppStopListService;
     @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
@@ -136,10 +133,6 @@ public class AccountControllerIT {
         // common actions for all tests
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(tppService.getTppInfo())
-            .willReturn(TPP_INFO);
-        given(tppService.getTppId())
-            .willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
@@ -150,7 +143,6 @@ public class AccountControllerIT {
         given(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).willReturn(aspspConsentDataProvider);
 
         httpHeaders.add("Content-Type", "application/json");
-        httpHeaders.add("tpp-qwac-certificate", "qwac certificate");
         httpHeaders.add("x-request-id", X_REQUEST_ID.toString());
         httpHeaders.add("consent-id", CONSENT_ID);
         httpHeaders.add("PSU-ID", "PSU-123");
@@ -332,7 +324,7 @@ public class AccountControllerIT {
 
     private AccountConsent buildOneOffAccountConsent(Map<String, Integer> usageCounter) {
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null);
-        return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess,false, LocalDate.now().plusDays(1), 10,
+        return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, false, LocalDate.now().plusDays(1), 10,
                                   null, ConsentStatus.VALID, false, false,
                                   null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter);
     }

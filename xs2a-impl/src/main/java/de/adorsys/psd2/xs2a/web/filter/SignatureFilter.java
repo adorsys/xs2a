@@ -20,7 +20,7 @@ import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
 import de.adorsys.psd2.validator.signature.TppSignatureValidator;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import lombok.RequiredArgsConstructor;
+import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -39,10 +39,17 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class SignatureFilter extends AbstractXs2aFilter {
     private final AspspProfileServiceWrapper aspspProfileService;
     private final RequestProviderService requestProviderService;
+
+    public SignatureFilter(RequestPathResolver requestPathResolver,
+                           AspspProfileServiceWrapper aspspProfileService,
+                           RequestProviderService requestProviderService) {
+        super(requestPathResolver);
+        this.aspspProfileService = aspspProfileService;
+        this.requestProviderService = requestProviderService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {

@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.filter;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
+import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -39,8 +40,9 @@ public class QwacCertificateFilterMock extends QwacCertificateFilter {
     @Value("${qwac-certificate-mock}")
     private String qwacCertificateMock;
 
-    public QwacCertificateFilterMock(TppInfoHolder tppInfoHolder, RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder) {
-        super(tppInfoHolder, requestProviderService, tppErrorMessageBuilder);
+    public QwacCertificateFilterMock(RequestPathResolver requestPathResolver, TppInfoHolder tppInfoHolder,
+                                     RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder) {
+        super(requestPathResolver, tppInfoHolder, requestProviderService, tppErrorMessageBuilder);
     }
 
     @Override

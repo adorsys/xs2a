@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
-import lombok.RequiredArgsConstructor;
+import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
 import org.apache.commons.lang3.StringUtils;
@@ -56,11 +56,20 @@ import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 @Profile("!mock-qwac")
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class QwacCertificateFilter extends AbstractXs2aFilter {
     private final TppInfoHolder tppInfoHolder;
     private final RequestProviderService requestProviderService;
     private final TppErrorMessageBuilder tppErrorMessageBuilder;
+
+    public QwacCertificateFilter(RequestPathResolver requestPathResolver,
+                                 TppInfoHolder tppInfoHolder,
+                                 RequestProviderService requestProviderService,
+                                 TppErrorMessageBuilder tppErrorMessageBuilder) {
+        super(requestPathResolver);
+        this.tppInfoHolder = tppInfoHolder;
+        this.requestProviderService = requestProviderService;
+        this.tppErrorMessageBuilder = tppErrorMessageBuilder;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
