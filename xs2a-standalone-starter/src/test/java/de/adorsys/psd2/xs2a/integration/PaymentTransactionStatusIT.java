@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
@@ -39,7 +40,6 @@ import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponseBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
@@ -85,7 +85,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class
 })
 public class PaymentTransactionStatusIT {
-    private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private static final String JSON_CONTENT_TYPE = "application/json";
     private static final String XML_CONTENT_TYPE = "application/xml";
     private static final String ACCEPT_HEADER = "accept";
@@ -123,7 +122,6 @@ public class PaymentTransactionStatusIT {
 
     @Before
     public void init() {
-        httpHeaders.add("tpp-qwac-certificate", "qwac certificate");
         httpHeaders.add("x-request-id", X_REQUEST_ID.toString());
         httpHeaders.add("PSU-ID", "PSU-123");
         httpHeaders.add("PSU-ID-Type", "Some type");
@@ -134,8 +132,6 @@ public class PaymentTransactionStatusIT {
             .thenReturn(AspspSettingsBuilder.buildAspspSettings());
         when(aspspProfileService.getScaApproaches())
             .thenReturn(Collections.singletonList(ScaApproach.REDIRECT));
-        when(tppService.getTppInfo())
-            .thenReturn(TPP_INFO);
         when(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .thenReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
@@ -153,6 +149,10 @@ public class PaymentTransactionStatusIT {
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPTED_PAYMENT_ID))
             .thenReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                             .payload(pisCommonPaymentResponse)
+                            .build());
+        when(tppService.updateTppInfo(any(TppInfo.class)))
+            .thenReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
                             .build());
     }
 

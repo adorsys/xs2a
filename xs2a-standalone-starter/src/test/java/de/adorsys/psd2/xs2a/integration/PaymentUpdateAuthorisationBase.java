@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
@@ -35,7 +36,6 @@ import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.HttpHeadersBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -51,19 +51,20 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponse;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 public abstract class PaymentUpdateAuthorisationBase {
-    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     protected static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
     protected static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
     protected static final String PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
-    private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
+    protected static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     protected static final String PSU_ID_1 = "PSU-1";
     protected static final String PSU_ID_2 = "PSU-2";
-    protected static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
+
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String AUTH_REQ = "/json/payment/req/auth_request.json";
     private static final String PSU_CREDENTIALS_INVALID_RESP = "/json/payment/res/explicit/psu_credentials_invalid_response.json";
     private static final String FORMAT_ERROR_RESP = "/json/payment/res/explicit/format_error_response.json";
@@ -85,14 +86,16 @@ public abstract class PaymentUpdateAuthorisationBase {
     protected PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
 
     public void before() {
-        given(tppService.getTppInfo()).willReturn(TPP_INFO);
-        given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(aspspProfileService.getScaApproaches())
             .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
+                            .build());
+        given(tppService.updateTppInfo(any(TppInfo.class)))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
                             .build());
     }
 

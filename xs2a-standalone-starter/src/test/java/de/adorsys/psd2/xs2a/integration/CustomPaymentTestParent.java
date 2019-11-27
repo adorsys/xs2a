@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
@@ -32,7 +33,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import org.apache.commons.collections.map.MultiKeyMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,15 +54,13 @@ import static org.mockito.BDDMockito.given;
 
 public abstract class CustomPaymentTestParent {
     protected static final Charset UTF_8 = StandardCharsets.UTF_8;
+    protected static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
+    protected static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
+
     static final String TPP_REDIRECT_URI = "request/redirect_uri";
     static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
-    HttpHeaders httpHeadersJson = new HttpHeaders();
-    HttpHeaders httpHeadersXml = new HttpHeaders();
-    MultiKeyMap responseMap = new MultiKeyMap();
-    protected static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     static final String ENCRYPT_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     static final String CUSTOM_PAYMENT_PRODUCT = "custom-payment";
-    protected static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
     static final String SINGLE_PAYMENT_CUSTOM_REQUEST_JSON_PATH = "/json/payment/req/SinglePaymentCustomInitiate_request.json";
@@ -73,6 +71,10 @@ public abstract class CustomPaymentTestParent {
     static final String BULK_PAYMENT_CUSTOM_REQUEST_JSON_PATH = "/json/payment/req/BulkPaymentCustomInitiate_request.json";
     static final String PAYMENT_CUSTOM_STATUS_RESPONSE_JSON_PATH = "/json/payment/req/SinglePaymentCustomStatus_response.json";
     static final String PAYMENT_CUSTOM_STATUS_RESPONSE_XML_PATH = "/xml/payment/spi/res/SinglePaymentCustomStatus_response.xml";
+
+    HttpHeaders httpHeadersJson = new HttpHeaders();
+    HttpHeaders httpHeadersXml = new HttpHeaders();
+    MultiKeyMap responseMap = new MultiKeyMap();
 
     @Autowired
     protected MockMvc mockMvc;
@@ -97,7 +99,6 @@ public abstract class CustomPaymentTestParent {
 
     protected void init() {
         HashMap<String, String> headerMap = new HashMap<>();
-        headerMap.put("tpp-qwac-certificate", "qwac certificate");
         headerMap.put("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         headerMap.put("PSU-ID", "PSU-123");
         headerMap.put("PSU-ID-Type", "Some type");
@@ -125,10 +126,6 @@ public abstract class CustomPaymentTestParent {
 
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(tppService.getTppInfo())
-            .willReturn(TPP_INFO);
-        given(tppService.getTppId())
-            .willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
@@ -141,6 +138,10 @@ public abstract class CustomPaymentTestParent {
         given(pisCommonPaymentServiceEncrypted.createCommonPayment(any(PisPaymentInfo.class)))
             .willReturn(CmsResponse.<CreatePisCommonPaymentResponse>builder()
                             .payload(new CreatePisCommonPaymentResponse(ENCRYPT_PAYMENT_ID))
+                            .build());
+        given(tppService.updateTppInfo(any(TppInfo.class)))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
                             .build());
     }
 

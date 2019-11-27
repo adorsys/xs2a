@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
-import lombok.RequiredArgsConstructor;
+import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -45,7 +45,6 @@ import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class SignatureFilter extends AbstractXs2aFilter {
     private static final String PATTERN_MESSAGE = "InR-ID: [{}], X-Request-ID: [{}], TPP unauthorized: {}";
     private final AspspProfileServiceWrapper aspspProfileService;
@@ -54,6 +53,22 @@ public class SignatureFilter extends AbstractXs2aFilter {
     private final TppErrorMessageBuilder tppErrorMessageBuilder;
     private final DigestVerifier digestVerifier;
     private final SignatureVerifier signatureVerifier;
+
+    public SignatureFilter(RequestPathResolver requestPathResolver,
+                           AspspProfileServiceWrapper aspspProfileService,
+                           RequestProviderService requestProviderService,
+                           TppErrorMessageWriter tppErrorMessageWriter,
+                           TppErrorMessageBuilder tppErrorMessageBuilder,
+                           DigestVerifier digestVerifier,
+                           SignatureVerifier signatureVerifier) {
+        super(requestPathResolver);
+        this.aspspProfileService = aspspProfileService;
+        this.requestProviderService = requestProviderService;
+        this.tppErrorMessageWriter = tppErrorMessageWriter;
+        this.tppErrorMessageBuilder = tppErrorMessageBuilder;
+        this.digestVerifier = digestVerifier;
+        this.signatureVerifier = signatureVerifier;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {

@@ -1,0 +1,9 @@
+= Release notes v.5.6
+
+== Table of Contents
+
+* Refactoring: Removed MockContentCachingWrappingFilter
+
+== Refactoring: Removed MockContentCachingWrappingFilter
+
+From now on, integration tests in XS2A are working properly with all XS2A filters and no longer rely on previously existing `MockContentCachingWrappingFilter`.

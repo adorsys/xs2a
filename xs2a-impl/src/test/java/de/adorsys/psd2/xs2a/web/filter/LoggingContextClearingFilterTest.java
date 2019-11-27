@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
@@ -31,17 +32,19 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import java.io.IOException;
 
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoggingContextClearingFilterTest {
-    private static final String SERVLET_PATH = "/v1/accounts";
+    private static final String XS2A_PATH = "/v1/accounts";
+    private static final String CUSTOM_PATH = "/custom-endpoint";
 
     @Mock
     private LoggingContextService loggingContextService;
     @Mock
     private FilterChain filterChain;
+    @Mock
+    private RequestPathResolver requestPathResolver;
 
     @InjectMocks
     private LoggingContextClearingFilter loggingContextClearingFilter;
@@ -50,8 +53,10 @@ public class LoggingContextClearingFilterTest {
     public void doFilter_onXs2aEndpoint_shouldClearLoggingContext() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setServletPath(SERVLET_PATH);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+
+        when(requestPathResolver.resolveRequestPath(mockRequest))
+            .thenReturn(XS2A_PATH);
 
         // When
         loggingContextClearingFilter.doFilter(mockRequest, mockResponse, filterChain);
@@ -68,6 +73,9 @@ public class LoggingContextClearingFilterTest {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+
+        when(requestPathResolver.resolveRequestPath(mockRequest))
+            .thenReturn(CUSTOM_PATH);
 
         // When
         loggingContextClearingFilter.doFilter(mockRequest, mockResponse, filterChain);

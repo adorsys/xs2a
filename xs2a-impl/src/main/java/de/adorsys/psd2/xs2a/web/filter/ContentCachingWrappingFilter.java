@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletRequest;
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletResponse;
+import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
@@ -28,6 +29,10 @@ import java.io.IOException;
 
 @Component
 public class ContentCachingWrappingFilter extends AbstractXs2aFilter {
+
+    public ContentCachingWrappingFilter(RequestPathResolver requestPathResolver) {
+        super(requestPathResolver);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

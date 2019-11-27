@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.mapper.TppInfoRolesMapper;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aTppInfoMapper;
+import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -44,10 +45,16 @@ public class QwacCertificateFilterMock extends QwacCertificateFilter {
     private String qwacCertificateMock;
     private final RequestProviderService requestProviderService;
 
-    public QwacCertificateFilterMock(TppInfoHolder tppInfoHolder, RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder,
-                                     TppRoleValidationService tppRoleValidationService, TppService tppService, AspspProfileServiceWrapper aspspProfileService,
-                                     Xs2aTppInfoMapper xs2aTppInfoMapper, TppInfoRolesMapper tppInfoRolesMapper, TppErrorMessageWriter tppErrorMessageWriter) {
-        super(tppInfoHolder, requestProviderService, tppErrorMessageBuilder, tppRoleValidationService, tppService, aspspProfileService, xs2aTppInfoMapper, tppInfoRolesMapper, tppErrorMessageWriter);
+    public QwacCertificateFilterMock(RequestPathResolver requestPathResolver, TppInfoHolder tppInfoHolder,
+                                     RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder,
+                                     TppRoleValidationService tppRoleValidationService, TppService tppService,
+                                     AspspProfileServiceWrapper aspspProfileService, Xs2aTppInfoMapper xs2aTppInfoMapper,
+                                     TppInfoRolesMapper tppInfoRolesMapper, TppErrorMessageWriter tppErrorMessageWriter) {
+        super(requestPathResolver, tppInfoHolder,
+              requestProviderService, tppErrorMessageBuilder,
+              tppRoleValidationService, tppService,
+              aspspProfileService, xs2aTppInfoMapper,
+              tppInfoRolesMapper, tppErrorMessageWriter);
         this.requestProviderService = requestProviderService;
     }
 

@@ -18,11 +18,12 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
+import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +46,6 @@ import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 @Component
 @RequiredArgsConstructor
 public class OauthModeFilter extends OncePerRequestFilter {
-
     // Map which defines XS2A endpoints, which can use OAuth2 authorisation and their POST and DELETE HTTP methods.
     private static final Map<String, List<String>> OAUTH2_ENDPOINTS_WITH_METHODS = new HashMap<>();
 
@@ -69,6 +69,7 @@ public class OauthModeFilter extends OncePerRequestFilter {
     private final TppErrorMessageBuilder tppErrorMessageBuilder;
     private final ScaApproachResolver scaApproachResolver;
     private final TppErrorMessageWriter tppErrorMessageWriter;
+    private final RequestPathResolver requestPathResolver;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -91,18 +92,17 @@ public class OauthModeFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-
-        String servletPath = request.getServletPath();
+        String requestPath = requestPathResolver.resolveRequestPath(request);
 
         if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH_PRE_STEP) && request.getMethod().equals("GET")) {
             return OAUTH2_GET_ENDPOINTS_WITH_METHODS
                        .stream()
-                       .noneMatch(servletPath::startsWith);
+                       .noneMatch(requestPath::startsWith);
         }
 
         return OAUTH2_ENDPOINTS_WITH_METHODS.entrySet()
                    .stream()
-                   .filter(entry -> servletPath.startsWith(entry.getKey()))
+                   .filter(entry -> requestPath.startsWith(entry.getKey()))
                    .noneMatch(entry -> entry.getValue().contains(request.getMethod()));
     }
 
