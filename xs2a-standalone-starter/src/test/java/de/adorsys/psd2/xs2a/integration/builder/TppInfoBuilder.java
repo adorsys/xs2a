@@ -17,11 +17,10 @@
 package de.adorsys.psd2.xs2a.integration.builder;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 
 public class TppInfoBuilder {
-    private static final String TPP_ID = "Test TppId";
-    private static final String AUTHORITY_ID = "Authority id";
+    private static final String TPP_ID = "PSDDE-FAKENCA-87B2AC";
+    private static final String AUTHORITY_ID = "DE-FAKENCA";
 
     public static TppInfo buildTppInfo() {
         return buildTppInfo(TPP_ID);

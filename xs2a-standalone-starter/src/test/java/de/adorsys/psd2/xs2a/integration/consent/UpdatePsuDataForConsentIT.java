@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
@@ -38,7 +39,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -117,12 +117,9 @@ public class UpdatePsuDataForConsentIT {
     @Before
     public void setUp() {
         httpHeaders.add("Content-Type", "application/json");
-        httpHeaders.add("tpp-qwac-certificate", "qwac certificate");
         httpHeaders.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         httpHeaders.add("PSU-ID", PSU_ID);
 
-        given(tppService.getTppInfo()).willReturn(TPP_INFO);
-        given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
@@ -130,6 +127,10 @@ public class UpdatePsuDataForConsentIT {
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(aspspProfileService.getScaApproaches())
             .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
+        given(tppService.updateTppInfo(any(TppInfo.class)))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
+                            .build());
     }
 
     @Test

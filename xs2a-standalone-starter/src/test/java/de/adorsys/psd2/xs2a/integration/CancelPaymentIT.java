@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
@@ -42,7 +43,6 @@ import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponseBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.SpiPaymentCancellationResponseBuilder;
-import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
@@ -78,7 +78,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("integration-test")
+@ActiveProfiles({"integration-test", "mock-qwac"})
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
@@ -94,7 +94,6 @@ public class CancelPaymentIT {
     private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
     private static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String ENCRYPTED_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
-    private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private static final ScaApproach REDIRECT_SCA_APPROACH = ScaApproach.REDIRECT;
     private static final ScaApproach EMBEDDED_SCA_APPROACH = ScaApproach.EMBEDDED;
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("data".getBytes(), ENCRYPTED_PAYMENT_ID);
@@ -131,7 +130,6 @@ public class CancelPaymentIT {
         // common actions for all tests
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(tppService.getTppInfo()).willReturn(TPP_INFO);
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
@@ -159,9 +157,12 @@ public class CancelPaymentIT {
                             .build());
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
+        given(tppService.updateTppInfo(any(TppInfo.class)))
+            .willReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
+                            .build());
 
         httpHeadersExplicit.add("Content-Type", "application/json");
-        httpHeadersExplicit.add("tpp-qwac-certificate", "qwac certificate");
         httpHeadersExplicit.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         httpHeadersExplicit.add("PSU-ID", "PSU-123");
         httpHeadersExplicit.add("PSU-ID-Type", "Some type");
