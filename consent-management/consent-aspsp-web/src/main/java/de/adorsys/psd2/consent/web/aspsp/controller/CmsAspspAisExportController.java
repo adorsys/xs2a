@@ -43,7 +43,7 @@ public class CmsAspspAisExportController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
     public ResponseEntity<Collection<CmsAisAccountConsent>> getConsentsByTpp(
-        @ApiParam(value = "TPP ID", example = "12345987")
+        @ApiParam(value = "TPP ID", example = "12345987", required = true)
         @PathVariable("tpp-id") String tppId,
         @ApiParam(value = "Creation start date", example = "2010-01-01")
         @RequestHeader(value = "start-date", required = false)

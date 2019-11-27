@@ -19,9 +19,9 @@ package de.adorsys.psd2.consent.web.psu.controller;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
+import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
 import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
-import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -51,7 +51,10 @@ public class CmsPsuPisController {
         @ApiResponse(code = 400, message = "Bad request"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsPaymentResponse.class)})
     public ResponseEntity updatePsuInPayment(
-        @ApiParam(name = "authorisation-id", value = "The authorisation's identifier", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "authorisation-id",
+            value = "The authorisation's identifier",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("authorisation-id") String authorisationId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
         @RequestBody PsuIdData psuIdData) {
@@ -72,7 +75,10 @@ public class CmsPsuPisController {
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsPaymentResponse.class)})
     public ResponseEntity getPaymentIdByRedirectId(
-        @ApiParam(name = "redirect-id", value = "The redirect identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "redirect-id",
+            value = "The redirect identification assigned to the created payment.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("redirect-id") String redirectId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
@@ -105,7 +111,10 @@ public class CmsPsuPisController {
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "payment-id",
+            value = "The payment identification assigned to the created payment.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("payment-id") String paymentId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
@@ -122,7 +131,10 @@ public class CmsPsuPisController {
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsPaymentResponse.class)})
     public ResponseEntity getPaymentIdByRedirectIdForCancellation(
-        @ApiParam(name = "redirect-id", value = "The redirect identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "redirect-id",
+            value = "The redirect identification assigned to the created payment.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("redirect-id") String redirectId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
@@ -154,7 +166,10 @@ public class CmsPsuPisController {
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @ApiParam(name = "payment-id", value = "The payment identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "payment-id",
+            value = "The payment identification.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("payment-id") String paymentId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
@@ -171,7 +186,10 @@ public class CmsPsuPisController {
         @ApiResponse(code = 200, message = "OK", response = CmsPsuAuthorisation.class),
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<CmsPsuAuthorisation> getAuthorisationByAuthorisationId(
-        @ApiParam(name = "authorisation-id", value = "The authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "authorisation-id",
+            value = "The authorisation identification.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("authorisation-id") String authorisationId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
@@ -195,11 +213,19 @@ public class CmsPsuPisController {
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "payment-id",
+            value = "The payment identification assigned to the created payment.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("payment-id") String paymentId,
-        @ApiParam(name = "authorisation-id", value = "The payment authorisation identification assigned to the created payment authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "authorisation-id",
+            value = "The payment authorisation identification assigned to the created payment authorisation.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("authorisation-id") String authorisationId,
-        @ApiParam(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised', 'failed', 'exempted'. These values might be extended by ASPSP by more values.", allowableValues = "RECEIVED, PSUIDENTIFIED, PSUAUTHENTICATED, SCAMETHODSELECTED,  STARTED,  FINALISED, FAILED, EXEMPTED")
+        @ApiParam(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised', 'failed', 'exempted'. These values might be extended by ASPSP by more values.",
+            allowableValues = "RECEIVED, PSUIDENTIFIED, PSUAUTHENTICATED, SCAMETHODSELECTED,  STARTED,  FINALISED, FAILED, EXEMPTED",
+            required = true)
         @PathVariable("status") String status,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         ScaStatus scaStatus = ScaStatus.fromValue(status);
@@ -223,9 +249,14 @@ public class CmsPsuPisController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not found")})
     public ResponseEntity<Void> updatePaymentStatus(
-        @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "payment-id",
+            value = "The payment identification assigned to the created payment.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("payment-id") String paymentId,
-        @ApiParam(value = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.", allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC")
+        @ApiParam(value = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.",
+            allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC",
+            required = true)
         @PathVariable("status") String status,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         return cmsPsuPisService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status), instanceId)
@@ -239,7 +270,10 @@ public class CmsPsuPisController {
         @ApiResponse(code = 200, message = "OK", response = CmsPisPsuDataAuthorisation.class, responseContainer = "List"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<List<CmsPisPsuDataAuthorisation>> psuAuthorisationStatuses(
-        @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "payment-id",
+            value = "The payment identification assigned to the created payment.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("payment-id") String paymentId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
