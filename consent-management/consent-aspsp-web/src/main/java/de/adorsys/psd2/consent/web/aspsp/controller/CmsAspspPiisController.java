@@ -85,7 +85,10 @@ public class CmsAspspPiisController {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Boolean> terminateConsent(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id",
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("consent-id") String consentId,
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {

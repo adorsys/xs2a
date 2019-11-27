@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,10 @@ public class PisPaymentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<String> getPaymentIdByEncryptedString(
-        @ApiParam(name = "payment-id", value = "The payment identification.", example = "32454656712432")
+        @ApiParam(name = "payment-id",
+            value = "The payment identification.",
+            example = "32454656712432",
+            required = true)
         @PathVariable("payment-id") String encryptedId) {
         CmsResponse<String> response = pisCommonPaymentService.getDecryptedId(encryptedId);
 
@@ -59,9 +62,13 @@ public class PisPaymentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Bad Request")})
     public ResponseEntity<Void> updatePaymentStatusAfterSpiService(
-        @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.")
+        @ApiParam(name = "payment-id",
+            value = "The payment identification assigned to the created payment.",
+            required = true)
         @PathVariable("payment-id") String paymentId,
-        @ApiParam(value = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.", allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC")
+        @ApiParam(value = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.",
+            allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC",
+            required = true)
         @PathVariable("status") String status) {
         CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status));
 
@@ -78,7 +85,9 @@ public class PisPaymentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Bad Request")})
     public ResponseEntity<Void> updatePaymentCancellationTppRedirectUri(
-        @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.")
+        @ApiParam(name = "payment-id",
+            value = "The payment identification assigned to the created payment.",
+            required = true)
         @PathVariable("payment-id") String paymentId,
         @RequestHeader(value = "TPP-Redirect-URI", required = false) String tpPRedirectURI,
         @RequestHeader(value = "TPP-Nok-Redirect-URI", required = false) String tpPNokRedirectURI) {
@@ -98,9 +107,13 @@ public class PisPaymentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Bad Request")})
     public ResponseEntity<Void> updatePaymentCancellationInternalRequestId(
-        @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.")
+        @ApiParam(name = "payment-id",
+            value = "The payment identification assigned to the created payment.",
+            required = true)
         @PathVariable("payment-id") String paymentId,
-        @ApiParam(name = "internal-request-id", value = "Cancellation internal request ID of payment.")
+        @ApiParam(name = "internal-request-id",
+            value = "Cancellation internal request ID of payment.",
+            required = true)
         @PathVariable("internal-request-id") String internalRequestId) {
         CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(paymentId, internalRequestId);
 
