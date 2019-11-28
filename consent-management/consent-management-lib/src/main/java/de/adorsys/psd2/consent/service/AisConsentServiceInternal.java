@@ -30,6 +30,7 @@ import de.adorsys.psd2.consent.domain.account.AspspAccountAccessHolder;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccessHolder;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.repository.AisConsentVerifyingRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
@@ -59,6 +60,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 // TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 public class AisConsentServiceInternal implements AisConsentService {
     private final AisConsentJpaRepository aisConsentJpaRepository;
+    private final AisConsentVerifyingRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
     private final TppInfoRepository tppInfoRepository;
     private final AisConsentMapper consentMapper;
@@ -91,7 +93,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         tppInfoRepository.findByAuthorisationNumber(request.getTppInfo().getAuthorisationNumber())
             .ifPresent(consent::setTppInfo);
 
-        AisConsent savedConsent = aisConsentJpaRepository.save(consent);
+        AisConsent savedConsent = aisConsentRepository.verifyAndSave(consent);
 
         if (savedConsent.getId() != null) {
             return CmsResponse.<CreateAisConsentResponse>builder()
@@ -274,47 +276,44 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     @Transactional
     public CmsResponse<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) {
-        Optional<String> consentIdOptional = getActualAisConsent(consentId)
-                                                 .map(consent -> {
-                                                     consent.addAspspAccountAccess(new AspspAccountAccessHolder(request)
-                                                                                       .getAccountAccesses());
-                                                     return aisConsentJpaRepository.save(consent)
-                                                                .getExternalId();
-                                                 });
+        Optional<AisConsent> consentOptional = getActualAisConsent(consentId);
 
-        if (consentIdOptional.isPresent()) {
+        if (!consentOptional.isPresent()) {
+            log.info("Consent ID [{}]. Update aspsp account access failed, because consent not found",
+                     consentId);
             return CmsResponse.<String>builder()
-                       .payload(consentIdOptional.get())
+                       .error(LOGICAL_ERROR)
                        .build();
         }
 
-        log.info("Consent ID [{}]. Update aspsp account access failed, because consent not found",
-                 consentId);
+        AisConsent consent = consentOptional.get();
+        consent.addAspspAccountAccess(new AspspAccountAccessHolder(request).getAccountAccesses());
+
+        String externalId = aisConsentRepository.verifyAndSave(consent).getExternalId();
+
         return CmsResponse.<String>builder()
-                   .error(LOGICAL_ERROR)
+                   .payload(externalId)
                    .build();
     }
 
     @Override
     @Transactional
     public CmsResponse<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request) {
-        Optional<AisAccountConsent> consentOptional = getActualAisConsent(consentId)
-                                                          .map(consent -> {
-                                                              consent.addAspspAccountAccess(new AspspAccountAccessHolder(request)
-                                                                                                .getAccountAccesses());
-                                                              return consentMapper.mapToAisAccountConsent(aisConsentJpaRepository.save(consent));
-                                                          });
+        Optional<AisConsent> consentOptional = getActualAisConsent(consentId);
 
-        if (consentOptional.isPresent()) {
+        if (!consentOptional.isPresent()) {
+            log.info("Consent ID [{}]. Update aspsp account access with response failed, because consent not found",
+                     consentId);
             return CmsResponse.<AisAccountConsent>builder()
-                       .payload(consentOptional.get())
+                       .error(LOGICAL_ERROR)
                        .build();
         }
 
-        log.info("Consent ID [{}]. Update aspsp account access with response failed, because consent not found",
-                 consentId);
+        AisConsent consent = consentOptional.get();
+        consent.addAspspAccountAccess(new AspspAccountAccessHolder(request).getAccountAccesses());
+
         return CmsResponse.<AisAccountConsent>builder()
-                   .error(LOGICAL_ERROR)
+                   .payload(consentMapper.mapToAisAccountConsent(aisConsentRepository.verifyAndUpdate(consent)))
                    .build();
     }
 
@@ -349,7 +348,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
         AisConsent consent = aisConsentOptional.get();
         consent.setMultilevelScaRequired(multilevelScaRequired);
-        aisConsentJpaRepository.save(consent);
+        aisConsentRepository.verifyAndSave(consent);
 
         return CmsResponse.<Boolean>builder()
                    .payload(true)
@@ -452,7 +451,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
-        return Optional.ofNullable(aisConsentJpaRepository.save(consent))
+        return Optional.ofNullable(aisConsentRepository.verifyAndSave(consent))
                    .isPresent();
     }
 
@@ -467,7 +466,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         consent.setLastActionDate(LocalDate.now());
-        aisConsentJpaRepository.save(consent);
+        aisConsentRepository.verifyAndSave(consent);
     }
 
     private void updateStatus(AisConsent aisConsent) {

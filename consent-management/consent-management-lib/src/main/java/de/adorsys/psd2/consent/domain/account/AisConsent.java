@@ -178,6 +178,10 @@ public class AisConsent extends InstanceDependableEntity {
     @Column(name = "int_req_id")
     private String internalRequestId;
 
+    @Lob
+    @Column(name = "checksum")
+    private byte[] checksum;
+
     @Transient
     private ConsentStatus previousConsentStatus;
 

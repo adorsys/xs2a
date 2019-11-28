@@ -32,6 +32,7 @@ import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.repository.AisConsentVerifyingRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentAuthorizationSpecification;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
@@ -72,6 +73,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 @SuppressWarnings("PMD.TooManyMethods")
 public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentJpaRepository aisConsentJpaRepository;
+    private final AisConsentVerifyingRepository aisConsentRepository;
     private final AisConsentMapper consentMapper;
     private final AisConsentAuthorisationRepository aisConsentAuthorisationRepository;
     private final AisConsentAuthorizationSpecification aisConsentAuthorizationSpecification;
@@ -241,6 +243,11 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     private boolean updateAccountAccessInConsent(AisConsent consent, CmsAisConsentAccessRequest request) {
+
+        if (consent.getConsentStatus() == VALID) {
+            return false;
+        }
+
         AisAccountAccess accountAccess = request.getAccountAccess();
         if (accountAccess == null) {
             log.info("Consent ID [{}]. Update account access in consent failed, because AIS Account Access is null",
@@ -267,8 +274,9 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
         consent.setExpireDate(request.getValidUntil());
         consent.setAllowedFrequencyPerDay(request.getFrequencyPerDay());
+
         aisConsentUsageService.resetUsage(consent);
-        aisConsentJpaRepository.save(consent);
+        aisConsentRepository.verifyAndUpdate(consent);
         return true;
     }
 
@@ -317,7 +325,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         }
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
-        return aisConsentJpaRepository.save(consent) != null;
+        return aisConsentRepository.verifyAndSave(consent) != null;
     }
 
     private boolean updatePsuData(AisConsentAuthorization authorisation, PsuIdData psuIdData) {
