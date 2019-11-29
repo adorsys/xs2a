@@ -2,9 +2,11 @@
 
 == Table of Contents
 
+
 * Refactoring: Removed MockContentCachingWrappingFilter
 * Fixed syntax errors in CMS APIs
 * Deprecated endpoint for getting information about TPP by TPP ID in CMS-ASPSP-API
+* Removed deprecated `tan` column from `pis_consent_authorization`
 
 == Refactoring: Removed MockContentCachingWrappingFilter
 
@@ -19,3 +21,7 @@ From now on, all path parameters in Swagger definitions of endpoints from `conse
 Endpoint from `cms-aspsp-api` for getting information about TPP by its authorisation number with path parameter (`GET aspsp-api/v1/tpp/{tpp-id}`) has been deprecated, as the value passed in path parameter is not being used.
 New endpoint without the path parameter (`GET aspsp-api/v1/tpp`) should be used instead.
 Both endpoints require mandatory `tpp-authorisation-number` header to be passed with proper TPP authorisation number.
+
+== Removed deprecated `tan` column from `pis_consent_authorization`
+
+Deprecated column `tan` has been removed from `pis_consent_authorization` table in CMS database.

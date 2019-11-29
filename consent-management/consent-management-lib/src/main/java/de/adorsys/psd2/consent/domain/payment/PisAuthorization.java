@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,11 +67,6 @@ public class PisAuthorization extends InstanceDependableEntity {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id", nullable = false)
     private PisCommonPaymentData paymentData;
-
-    // Will be removed in 5.6, please use new scaAuthenticationData field instead of this one.
-    // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1076
-    @Transient
-    private String tan;
 
     @Column(name = "sca_authentication_data")
     private String scaAuthenticationData;
