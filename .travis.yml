@@ -27,6 +27,8 @@ before_script:
 
 script:
   - env BUILD_NUMBER=$TRAVIS_BUILD_ID /bin/bash ./scripts/set_xs2a_connector_version_in_swagger.sh
+  - MAVEN_OPTS="-Dlogging.level.root=warn -Dlogging.level.org.springframework.boot=warn -Dlogging.level.org.springframework.test=warn -Dlogging.level.org.hibernate=warn -Dlogging.level.de.adorsys=warn"
+  - export MAVEN_OPTS
   - mvn -B -V clean install pmd:check || travis_terminate 1
   # JavaDocs are broken in Java 11 and fixed only in Java 12 : https://bugs.openjdk.java.net/browse/JDK-8212233
   - if [ $TRAVIS_JDK_VERSION == openjdk8 ]; then mvn -B -V javadoc:javadoc; fi || travis_terminate 1
@@ -42,7 +44,8 @@ before_deploy:
 deploy:
   - cleanup: false
     provider: script
-    script: mvn --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -B
+    script: mvn --settings scripts/mvn-release-settings.xml -Prelease -Dlogging.level.root=warn -Dlogging.level.org.springframework.boot=warn 
+      -Dlogging.level.org.springframework.test=warn -Dlogging.level.org.hibernate=warn -Dlogging.level.de.adorsys=warn -DskipTests -B
       -U deploy || travis_terminate 1
     on:
       repo: adorsys/xs2a
