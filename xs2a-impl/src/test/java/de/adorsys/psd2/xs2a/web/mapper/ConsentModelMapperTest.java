@@ -235,6 +235,20 @@ public class ConsentModelMapperTest {
     }
 
     @Test
+    public void mapToConsentStatusResponse200_withPartiallyAuthorised() {
+        // Given
+        ConsentStatusResponse inputData = new ConsentStatusResponse(ConsentStatus.PARTIALLY_AUTHORISED);
+        ConsentStatusResponse200 expected = jsonReader.getObjectFromFile("json/service/mapper/consent/consent-status-response-200-partially-authorised.json",
+                                                                         ConsentStatusResponse200.class);
+
+        // When
+        ConsentStatusResponse200 actual = consentModelMapper.mapToConsentStatusResponse200(inputData);
+
+        // Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void mapToConsentStatusResponse200_WithNull() {
         // When
         ConsentStatusResponse200 actual = consentModelMapper.mapToConsentStatusResponse200(null);
