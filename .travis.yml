@@ -42,7 +42,7 @@ before_deploy:
   - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust || true
 
 deploy:
-  - cleanup: false
+  - skip_cleanup: true
     provider: script
     script: mvn --settings scripts/mvn-release-settings.xml -Prelease -Dlogging.level.root=warn -Dlogging.level.org.springframework.boot=warn 
       -Dlogging.level.org.springframework.test=warn -Dlogging.level.org.hibernate=warn -Dlogging.level.de.adorsys=warn -DskipTests -q -B
@@ -55,7 +55,7 @@ deploy:
           || "$TRAVIS_BRANCH" = "develop" )
         && "$TRAVIS_JDK_VERSION" = "openjdk8" )
   - provider: pages
-    cleanup: false
+    skip_cleanup: true
     github-token: "$GITHUB_PAGES_TOKEN"
     keep-history: false
     local-dir: pages/html
