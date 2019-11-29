@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -36,10 +37,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Data
@@ -94,6 +92,15 @@ public class AisConsent extends InstanceDependableEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "authorisation_template_id", nullable = false)
     private AuthorisationTemplateEntity authorisationTemplate;
+
+    @Column(name = "tpp_ntfc_uri")
+    private String tppNotificationUri;
+
+    @ElementCollection
+    @CollectionTable(name = "ais_consent_tpp_ntfc", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "notification_mode", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private List<NotificationSupportedMode> tppNotificationContentPreferred;
 
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)

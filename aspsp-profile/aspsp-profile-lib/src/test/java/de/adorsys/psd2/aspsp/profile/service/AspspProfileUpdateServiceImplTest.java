@@ -32,10 +32,7 @@ import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
 import de.adorsys.psd2.aspsp.profile.mapper.AspspSettingsToBankProfileSettingMapper;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
+import de.adorsys.psd2.xs2a.core.profile.*;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,6 +91,7 @@ public class AspspProfileUpdateServiceImplTest {
     private static final String COUNTRY_VALIDATION_SUPPORTED = "DE";
     private static final List<String> SUPPORTED_TRANSACTION_STATUS_FORMATS = Arrays.asList("application/json", "application/xml");
     private static final boolean IS_CHECK_TPP_ROLES_FROM_CERTIFICATE = true;
+    private static final List<NotificationSupportedMode> ASPSP_NOTIFICATIONS_SUPPORTED = Collections.singletonList(NotificationSupportedMode.NONE);
 
     @InjectMocks
     private AspspProfileUpdateServiceImpl aspspProfileUpdateService;
@@ -202,7 +200,8 @@ public class AspspProfileUpdateServiceImplTest {
                                                                          MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
                                                                          AIS_PIS_SESSION_SUPPORTED,
                                                                          SIGNING_BASKET_SUPPORTED,
-                                                                         IS_CHECK_TPP_ROLES_FROM_CERTIFICATE);
+                                                                         IS_CHECK_TPP_ROLES_FROM_CERTIFICATE,
+                                                                         ASPSP_NOTIFICATIONS_SUPPORTED);
 
         return new AspspSettings(ais, pis, piis, common);
     }

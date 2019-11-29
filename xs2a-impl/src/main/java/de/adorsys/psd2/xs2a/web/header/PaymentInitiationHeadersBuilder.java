@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.header;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.domain.NotificationModeResponseHeaders;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -35,15 +36,18 @@ public class PaymentInitiationHeadersBuilder {
      * @param selfLink        link to the newly created payment
      * @return response headers
      */
-    public ResponseHeaders buildInitiatePaymentHeaders(@Nullable String authorisationId, @NotNull String selfLink) {
+    public ResponseHeaders buildInitiatePaymentHeaders(@Nullable String authorisationId, @NotNull String selfLink, @NotNull NotificationModeResponseHeaders notificationHeaders) {
+        ResponseHeaders.ResponseHeadersBuilder responseHeadersBuilder = ResponseHeaders.builder()
+                                                                            .notificationSupport(notificationHeaders.getAspspNotificationSupport())
+                                                                            .notificationContent(notificationHeaders.getAspspNotificationContent());
         if (authorisationId == null) {
-            return ResponseHeaders.builder()
+            return responseHeadersBuilder
                        .location(selfLink)
                        .build();
         }
 
         ScaApproach scaApproach = scaApproachResolver.getInitiationScaApproach(authorisationId);
-        return ResponseHeaders.builder()
+        return responseHeadersBuilder
                    .aspspScaApproach(scaApproach)
                    .location(selfLink)
                    .build();

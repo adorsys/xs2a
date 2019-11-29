@@ -95,7 +95,7 @@ public class AisConsentServiceInternal implements AisConsentService {
 
         if (savedConsent.getId() != null) {
             return CmsResponse.<CreateAisConsentResponse>builder()
-                       .payload(new CreateAisConsentResponse(savedConsent.getExternalId(), consentMapper.mapToAisAccountConsent(savedConsent)))
+                       .payload(new CreateAisConsentResponse(savedConsent.getExternalId(), consentMapper.mapToAisAccountConsent(savedConsent), consent.getTppNotificationContentPreferred()))
                        .build();
 
         } else {
@@ -386,6 +386,9 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setLastActionDate(LocalDate.now());
         setAdditionalInformationTypes(consent, request.getAccess().getAccountAdditionalInformationAccess());
         consent.setInternalRequestId(request.getInternalRequestId());
+        consent.setTppNotificationUri(request.getTppNotificationUri());
+        consent.setTppNotificationContentPreferred(request.getNotificationSupportedModes());
+
         return consent;
     }
 

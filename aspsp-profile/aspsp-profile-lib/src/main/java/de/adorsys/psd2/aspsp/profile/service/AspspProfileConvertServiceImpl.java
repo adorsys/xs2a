@@ -21,6 +21,7 @@ import de.adorsys.psd2.aspsp.profile.domain.migration.NewProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.migration.OldProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.mapper.NewProfileConfigurationMapper;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +49,7 @@ public class AspspProfileConvertServiceImpl implements AspspProfileConvertServic
         representer.addClassTag(BookingStatus.class, Tag.STR);
         representer.addClassTag(ScaApproach.class, Tag.STR);
         representer.addClassTag(SupportedAccountReferenceField.class, Tag.STR);
+        representer.addClassTag(NotificationSupportedMode.class, Tag.STR);
         return representer;
     }
 

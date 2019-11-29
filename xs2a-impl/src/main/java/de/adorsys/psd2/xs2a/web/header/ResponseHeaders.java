@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 
@@ -36,6 +37,9 @@ public class ResponseHeaders {
     public static class ResponseHeadersBuilder {
         private static final String SCA = "Aspsp-Sca-Approach";
         private static final String LOCATION = "Location";
+        private static final String NOTIFICATION_SUPPORT = "ASPSP-Notification-Support";
+        private static final String NOTIFICATION_CONTENT = "ASPSP-Notification-Content";
+
         private HttpHeaders httpHeaders = new HttpHeaders();
 
         public ResponseHeadersBuilder aspspScaApproach(@NotNull ScaApproach scaApproach) {
@@ -45,6 +49,20 @@ public class ResponseHeaders {
 
         public ResponseHeadersBuilder location(@NotNull String selfLink) {
             this.httpHeaders.add(LOCATION, selfLink);
+            return this;
+        }
+
+        public ResponseHeadersBuilder notificationSupport(Boolean notificationSupport) {
+            if (notificationSupport != null){
+                this.httpHeaders.add(NOTIFICATION_SUPPORT, notificationSupport.toString());
+            }
+            return this;
+        }
+
+        public ResponseHeadersBuilder notificationContent(String notificationContent) {
+            if (StringUtils.isNoneBlank(notificationContent)) {
+                this.httpHeaders.add(NOTIFICATION_CONTENT, notificationContent);
+            }
             return this;
         }
 

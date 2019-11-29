@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
 
@@ -70,6 +71,15 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "authorisation_template_id", nullable = false)
     private AuthorisationTemplateEntity authorisationTemplate;
+
+    @Column(name = "tpp_ntfc_uri")
+    private String tppNotificationUri;
+
+    @ElementCollection
+    @CollectionTable(name = "payment_tpp_ntfc", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "notification_mode", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private List<NotificationSupportedMode> tppNotificationContentPreferred;
 
     @OneToMany(mappedBy = "paymentData",
         cascade = CascadeType.ALL,

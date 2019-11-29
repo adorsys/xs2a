@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
@@ -140,7 +141,9 @@ public class PaymentModelMapperPsd2 {
         return response201;
     }
 
-    public PaymentInitiationParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI, String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, PsuIdData psuData) {
+    public PaymentInitiationParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI,
+                                                                     String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, PsuIdData psuData,
+                                                                     String tppNotificationUri, List<NotificationSupportedMode> notificationModes) {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
         parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")));
         parameters.setPaymentProduct(Optional.ofNullable(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
@@ -148,6 +151,9 @@ public class PaymentModelMapperPsd2 {
         parameters.setTppRedirectUri(tppRedirectUriMapper.mapToTppRedirectUri(tpPRedirectURI, tpPNokRedirectURI));
         parameters.setTppExplicitAuthorisationPreferred(tppExplicitAuthorisationPreferred);
         parameters.setPsuData(psuData);
+        parameters.setTppNotificationUri(tppNotificationUri);
+        parameters.setNotificationSupportedModes(notificationModes);
+
         return parameters;
     }
 

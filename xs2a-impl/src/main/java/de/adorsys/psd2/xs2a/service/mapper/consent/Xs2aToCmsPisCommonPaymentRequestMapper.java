@@ -46,6 +46,8 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         paymentInfo.setInternalRequestId(internalRequestId);
         paymentInfo.setPaymentData(paymentData);
         paymentInfo.setCreationTimestamp(creationTimestamp);
+        paymentInfo.setTppNotificationUri(paymentInitiationParameters.getTppNotificationUri());
+        paymentInfo.setNotificationSupportedModes(paymentInitiationParameters.getNotificationSupportedModes());
         return paymentInfo;
     }
 

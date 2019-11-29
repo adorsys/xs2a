@@ -134,6 +134,13 @@ public enum MessageErrorCode {
             return FORMAT_ERROR_NAME;
         }
     },
+    // Invalid notification content preferred mode: '%s'
+    FORMAT_ERROR_INVALID_NOTIFICATION_MODE(400) {
+        @Override
+        public String getName() {
+            return FORMAT_ERROR_NAME;
+        }
+    },
     // Header 'x-request-id' has to be represented by standard 36-char UUID representation
     FORMAT_ERROR_WRONG_HEADER(400) {
         @Override

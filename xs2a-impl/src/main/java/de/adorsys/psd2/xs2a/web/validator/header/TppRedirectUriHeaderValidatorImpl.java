@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.validator.header;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +31,13 @@ import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TP
 public class TppRedirectUriHeaderValidatorImpl extends AbstractHeaderValidatorImpl
     implements PaymentHeaderValidator, ConsentHeaderValidator, CreateAuthorisationHeaderValidator {
     private final TppDomainValidator tppDomainValidator;
+    private final ScaApproachResolver scaApproachResolver;
 
     @Autowired
-    public TppRedirectUriHeaderValidatorImpl(ErrorBuildingService errorBuildingService, TppDomainValidator tppDomainValidator) {
+    public TppRedirectUriHeaderValidatorImpl(ErrorBuildingService errorBuildingService, TppDomainValidator tppDomainValidator, ScaApproachResolver scaApproachResolver) {
         super(errorBuildingService);
         this.tppDomainValidator = tppDomainValidator;
+        this.scaApproachResolver = scaApproachResolver;
     }
 
     @Override
@@ -43,6 +47,13 @@ public class TppRedirectUriHeaderValidatorImpl extends AbstractHeaderValidatorIm
 
     @Override
     public ValidationResult validate(Map<String, String> headers) {
-        return tppDomainValidator.validate(headers.get(getHeaderName()));
+        if (isRedirectScaApproach()) {
+            return tppDomainValidator.validate(headers.get(getHeaderName()));
+        }
+        return ValidationResult.valid();
+    }
+
+    private boolean isRedirectScaApproach() {
+        return ScaApproach.REDIRECT == scaApproachResolver.resolveScaApproach();
     }
 }

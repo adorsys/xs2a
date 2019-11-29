@@ -53,7 +53,10 @@
       ],
       "tppSignatureRequired": false,
       "xs2aBaseLinksUrl": "http://myhost.com/",
-      "checkTppRolesFromCertificateSupported": true
+      "checkTppRolesFromCertificateSupported": true,
+      "aspspNotificationsSupported": [
+        "NONE"
+      ]
     },
     "piis": {
       "piisConsentSupported": false

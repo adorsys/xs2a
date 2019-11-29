@@ -151,7 +151,12 @@ public class ConsentService {
                                         accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess));
 
         ConsentStatus consentStatus = ConsentStatus.RECEIVED;
-        CreateConsentResponse createConsentResponse = new CreateConsentResponse(consentStatus.getValue(), encryptedConsentId, null, null, null, spiResponsePayload.getPsuMessage(), multilevelScaRequired, requestProviderService.getInternalRequestIdString());
+        CreateConsentResponse createConsentResponse = new CreateConsentResponse(consentStatus.getValue(), encryptedConsentId,
+                                                                                null, null, null,
+                                                                                spiResponsePayload.getPsuMessage(), multilevelScaRequired,
+                                                                                requestProviderService.getInternalRequestIdString(),
+                                                                                createAisConsentResponse.getTppNotificationContentPreferred());
+
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(createConsentResponse).build();
 
         if (authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {

@@ -31,8 +31,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +53,7 @@ public class AisConsentServiceRemoteTest {
         // Given
         when(remoteAisConsentUrls.createAisConsent()).thenReturn(URL);
         CreateAisConsentRequest createRequest = new CreateAisConsentRequest();
-        CreateAisConsentResponse controllerResponse = new CreateAisConsentResponse(CONSENT_ID, new AisAccountConsent());
+        CreateAisConsentResponse controllerResponse = new CreateAisConsentResponse(CONSENT_ID, new AisAccountConsent(), null);
         when(restTemplate.postForEntity(URL, createRequest, CreateAisConsentResponse.class))
             .thenReturn(new ResponseEntity<>(controllerResponse, HttpStatus.CREATED));
 

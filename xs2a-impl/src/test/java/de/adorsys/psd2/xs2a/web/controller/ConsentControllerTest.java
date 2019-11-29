@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ConsentService;
+import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
@@ -95,6 +96,8 @@ public class ConsentControllerTest {
     private ResponseErrorMapper responseErrorMapper;
     @Mock
     private ConsentHeadersBuilder consentHeadersBuilder;
+    @Mock
+    private NotificationSupportedModeService notificationSupportedModeService;
 
     @Before
     public void setUp() {
@@ -115,7 +118,7 @@ public class ConsentControllerTest {
         //Given:
         doReturn(new ResponseEntity<>(createConsentResponse().getBody(), HttpStatus.CREATED))
             .when(responseMapper).created(any(), any(Function.class), eq(RESPONSE_HEADERS));
-        when(consentHeadersBuilder.buildCreateConsentHeaders(any(), any())).thenReturn(RESPONSE_HEADERS);
+        when(consentHeadersBuilder.buildCreateConsentHeaders(any(), any(), any())).thenReturn(RESPONSE_HEADERS);
         Consents consents = getConsents();
 
         //When:
@@ -348,7 +351,7 @@ public class ConsentControllerTest {
         if (isEmpty(consentId)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(MESSAGE_ERROR_AIS_404).build();
         }
-        CreateConsentResponse consentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null, false, INTERNAL_REQUEST_ID);
+        CreateConsentResponse consentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null, false, INTERNAL_REQUEST_ID, null);
         Links links = new Links();
         links.setSelf(new HrefType("type"));
         consentResponse.setLinks(links);
@@ -359,7 +362,7 @@ public class ConsentControllerTest {
         if (isEmpty(CONSENT_ID)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(MESSAGE_ERROR_AIS_404).build();
         }
-        CreateConsentResponse consentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), ConsentControllerTest.CONSENT_ID, null, null, null, null, false, INTERNAL_REQUEST_ID);
+        CreateConsentResponse consentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), ConsentControllerTest.CONSENT_ID, null, null, null, null, false, INTERNAL_REQUEST_ID, null);
         return ResponseObject.<CreateConsentResponse>builder().body(consentResponse).build();
     }
 

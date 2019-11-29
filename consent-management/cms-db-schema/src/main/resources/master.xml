@@ -113,5 +113,7 @@
     <include relativeToChangelogFile="true" file="migration/0085-create-ais-consent-transaction-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0086-add-columns-to-ais-consent-usage-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0087-remove-tpp-redirect-uri-from-tpp-info-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0088-create-ais-consent-tpp-ntfc-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0089-create-payment-tpp-ntfc-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0090-remove-tan-from-pis-consent-authorization.xml"/>
 </databaseChangeLog>

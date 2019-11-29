@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.header;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.domain.NotificationModeResponseHeaders;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,9 +51,10 @@ public class PaymentInitiationHeadersBuilderTest {
         HttpHeaders expectedHttpHeaders = new HttpHeaders();
         expectedHttpHeaders.add(LOCATION_HEADER, SELF_LINK);
         expectedHttpHeaders.add(ASPSP_SCA_APPROACH_HEADER, SCA_APPROACH.name());
+        NotificationModeResponseHeaders responseHeadersModel = new NotificationModeResponseHeaders(null, null);
 
         // When
-        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildInitiatePaymentHeaders(AUTHORISATION_ID, SELF_LINK);
+        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildInitiatePaymentHeaders(AUTHORISATION_ID, SELF_LINK, responseHeadersModel);
 
         // Then
         verify(scaApproachResolver, never()).resolveScaApproach();
@@ -66,9 +68,10 @@ public class PaymentInitiationHeadersBuilderTest {
         // Given
         HttpHeaders expectedHttpHeaders = new HttpHeaders();
         expectedHttpHeaders.add(LOCATION_HEADER, SELF_LINK);
+        NotificationModeResponseHeaders responseHeadersModel = new NotificationModeResponseHeaders(null, null);
 
         // When
-        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildInitiatePaymentHeaders(null, SELF_LINK);
+        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildInitiatePaymentHeaders(null, SELF_LINK, responseHeadersModel);
 
         // Then
         verify(scaApproachResolver, never()).getInitiationScaApproach(any());

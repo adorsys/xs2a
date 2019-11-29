@@ -73,6 +73,10 @@ public class PisCommonPaymentMapper {
         commonPaymentData.setAuthorisationTemplate(authorisationTemplate);
         commonPaymentData.setInternalRequestId(paymentInfo.getInternalRequestId());
         Optional.ofNullable(paymentInfo.getCreationTimestamp()).ifPresent(commonPaymentData::setCreationTimestamp);
+
+        commonPaymentData.setTppNotificationUri(paymentInfo.getTppNotificationUri());
+        commonPaymentData.setTppNotificationContentPreferred(paymentInfo.getNotificationSupportedModes());
+
         return commonPaymentData;
     }
 

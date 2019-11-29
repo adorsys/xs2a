@@ -65,6 +65,8 @@ public class Xs2aAisConsentMapper {
                        aisRequest.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
                        aisRequest.setTppRedirectUri(r.getTppRedirectUri());
                        aisRequest.setInternalRequestId(internalRequestId);
+                       aisRequest.setTppNotificationUri(req.getTppNotificationUri());
+                       aisRequest.setNotificationSupportedModes(req.getNotificationSupportedModes());
                        return aisRequest;
                    })
                    .orElse(null);

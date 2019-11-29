@@ -21,6 +21,7 @@ import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting
 import de.adorsys.psd2.aspsp.profile.domain.migration.*;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkBankSetting;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.springframework.stereotype.Component;
 
@@ -78,7 +79,8 @@ public class NewProfileConfigurationMapper {
                                                                                  setting.getMulticurrencyAccountLevel(),
                                                                                  setting.isCombinedServiceIndicator(),
                                                                                  setting.isSigningBasketSupported(),
-                                                                                 true);
+                                                                                 true,
+                                                                                 Collections.singletonList(NotificationSupportedMode.NONE));
 
         NewProfileConfiguration result = new NewProfileConfiguration();
         result.setSetting(new NewBankProfileSetting(ais, pis, piis, common));

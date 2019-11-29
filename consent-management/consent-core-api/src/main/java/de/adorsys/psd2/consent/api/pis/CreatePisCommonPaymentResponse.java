@@ -16,9 +16,13 @@
 
 package de.adorsys.psd2.consent.api.pis;
 
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import lombok.Value;
+
+import java.util.List;
 
 @Value
 public class CreatePisCommonPaymentResponse {
     private String paymentId;
+    private List<NotificationSupportedMode> tppNotificationContentPreferred;
 }

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.api.pis.proto;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -67,4 +68,10 @@ public class PisPaymentInfo {
 
     @ApiModelProperty(value = "Timestamp of the payment creation")
     private OffsetDateTime creationTimestamp;
+
+    @ApiModelProperty(value = "Tpp notification URI")
+    private String tppNotificationUri;
+
+    @ApiModelProperty(value = "List of notification modes. It could be values: SCA, PROCESS, LAST or NONE ")
+    private List<NotificationSupportedMode> notificationSupportedModes;
 }

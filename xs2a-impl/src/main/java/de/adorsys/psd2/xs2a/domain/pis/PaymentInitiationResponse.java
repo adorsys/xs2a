@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
@@ -53,6 +54,7 @@ public abstract class PaymentInitiationResponse {
     private String aspspAccountId;
     private ErrorHolder errorHolder;
     private String internalRequestId;
+    private List<NotificationSupportedMode> tppNotificationContentPreferred;
 
     PaymentInitiationResponse(ErrorHolder errorHolder) {
         this.errorHolder = errorHolder;

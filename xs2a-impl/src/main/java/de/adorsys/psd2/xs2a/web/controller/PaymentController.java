@@ -22,10 +22,12 @@ import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import de.adorsys.psd2.model.PaymentInitiationCancelResponse202;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
+import de.adorsys.psd2.xs2a.domain.NotificationModeResponseHeaders;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
@@ -39,6 +41,7 @@ import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.domain.pis.GetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
 import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentService;
@@ -56,6 +59,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -81,6 +85,7 @@ public class PaymentController implements PaymentApi {
     private final PaymentInitiationHeadersBuilder paymentInitiationHeadersBuilder;
     private final PaymentCancellationHeadersBuilder paymentCancellationHeadersBuilder;
     private final AuthorisationModelMapper authorisationModelMapper;
+    private final NotificationSupportedModeService notificationSupportedModeService;
 
     @Override
     public ResponseEntity getPaymentInitiationStatus(String paymentService, String paymentProduct,
@@ -146,7 +151,8 @@ public class PaymentController implements PaymentApi {
         }
 
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType);
-        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData);
+        List<NotificationSupportedMode> notificationModes = notificationSupportedModeService.getProcessedNotificationModes(tpPNotificationContentPreferred);
+        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData, tpPNotificationURI, notificationModes);
         ResponseObject<PaymentInitiationResponse> serviceResponse =
             xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aPayment(body, paymentInitiationParameters), paymentInitiationParameters);
 
@@ -155,7 +161,7 @@ public class PaymentController implements PaymentApi {
         }
 
         PaymentInitiationResponse serviceResponseBody = serviceResponse.getBody();
-        ResponseHeaders responseHeaders = buildPaymentInitiationResponseHeaders(serviceResponseBody);
+        ResponseHeaders responseHeaders = buildPaymentInitiationResponseHeaders(serviceResponseBody, tpPNotificationURI);
 
         return responseMapper.created(ResponseObject
                                           .builder()
@@ -187,7 +193,9 @@ public class PaymentController implements PaymentApi {
         }
 
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType);
-        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData);
+        List<NotificationSupportedMode> notificationModes = notificationSupportedModeService.getProcessedNotificationModes(tpPNotificationContentPreferred);
+
+        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData, tpPNotificationURI, notificationModes);
         ResponseObject<PaymentInitiationResponse> serviceResponse =
             xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, xmlSct, jsonStandingorderType), paymentInitiationParameters);
 
@@ -196,7 +204,7 @@ public class PaymentController implements PaymentApi {
         }
 
         PaymentInitiationResponse serviceResponseBody = serviceResponse.getBody();
-        ResponseHeaders responseHeaders = buildPaymentInitiationResponseHeaders(serviceResponseBody);
+        ResponseHeaders responseHeaders = buildPaymentInitiationResponseHeaders(serviceResponseBody, tpPNotificationURI);
 
         return responseMapper.created(ResponseObject
                                           .builder()
@@ -227,7 +235,9 @@ public class PaymentController implements PaymentApi {
         }
 
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType);
-        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData);
+        List<NotificationSupportedMode> notificationModes = notificationSupportedModeService.getProcessedNotificationModes(tpPNotificationContentPreferred);
+
+        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData, tpPNotificationURI, notificationModes);
         ResponseObject<PaymentInitiationResponse> serviceResponse =
             xs2aPaymentService.createPayment(body.getBytes(), paymentInitiationParameters);
 
@@ -236,7 +246,7 @@ public class PaymentController implements PaymentApi {
         }
 
         PaymentInitiationResponse serviceResponseBody = serviceResponse.getBody();
-        ResponseHeaders responseHeaders = buildPaymentInitiationResponseHeaders(serviceResponseBody);
+        ResponseHeaders responseHeaders = buildPaymentInitiationResponseHeaders(serviceResponseBody, tpPNotificationURI);
 
         return responseMapper.created(ResponseObject
                                           .builder()
@@ -480,9 +490,13 @@ public class PaymentController implements PaymentApi {
         return responseMapper.ok(serviceResponse, authorisationMapper::mapToPisUpdatePsuAuthenticationResponse, responseHeaders);
     }
 
-    private ResponseHeaders buildPaymentInitiationResponseHeaders(PaymentInitiationResponse paymentInitiationResponse) {
-        return paymentInitiationHeadersBuilder.buildInitiatePaymentHeaders(paymentInitiationResponse.getAuthorizationId(), Optional.ofNullable(paymentInitiationResponse.getLinks().getSelf())
-                                                                                                                               .map(HrefType::getHref)
-                                                                                                                               .orElseThrow(() -> new IllegalArgumentException("Wrong href type in self link")));
+    private ResponseHeaders buildPaymentInitiationResponseHeaders(PaymentInitiationResponse paymentInitiationResponse, String tppNotificationURI) {
+        NotificationModeResponseHeaders notificationHeaders = notificationSupportedModeService.resolveNotificationHeaders(paymentInitiationResponse.getTppNotificationContentPreferred(), tppNotificationURI);
+
+        String selfLink = Optional.ofNullable(paymentInitiationResponse.getLinks().getSelf())
+                              .map(HrefType::getHref)
+                              .orElseThrow(() -> new IllegalArgumentException("Wrong href type in self link"));
+
+        return paymentInitiationHeadersBuilder.buildInitiatePaymentHeaders(paymentInitiationResponse.getAuthorizationId(), selfLink, notificationHeaders);
     }
 }
