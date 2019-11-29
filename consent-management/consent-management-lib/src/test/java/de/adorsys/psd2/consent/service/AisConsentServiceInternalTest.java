@@ -204,7 +204,7 @@ public class AisConsentServiceInternalTest {
         AisAccountConsent aisAccountConsent = buildSpiAccountConsent();
         when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
 
-        CreateAisConsentResponse expected = new CreateAisConsentResponse(EXTERNAL_CONSENT_ID, aisAccountConsent);
+        CreateAisConsentResponse expected = new CreateAisConsentResponse(EXTERNAL_CONSENT_ID, aisAccountConsent, null);
 
         // When
         CmsResponse<CreateAisConsentResponse> actual = aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());

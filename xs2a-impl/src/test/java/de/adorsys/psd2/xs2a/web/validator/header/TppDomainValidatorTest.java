@@ -16,11 +16,9 @@
 
 package de.adorsys.psd2.xs2a.web.validator.header;
 
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -60,8 +58,6 @@ public class TppDomainValidatorTest {
     @Mock
     private ErrorBuildingService errorBuildingService;
     @Mock
-    private ScaApproachResolver scaApproachResolver;
-    @Mock
     private TppService tppService;
 
     @Test
@@ -76,8 +72,8 @@ public class TppDomainValidatorTest {
     @Test
     public void validate_ScaEmbedded_Valid() {
         //Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.EMBEDDED);
+        when(tppService.getTppInfo())
+            .thenReturn(buildTppInfo(null, null));
         //When
         ValidationResult validate = tppDomainValidator.validate(URL_HEADER_WRONG_DOMAIN);
         //Then
@@ -87,8 +83,6 @@ public class TppDomainValidatorTest {
     @Test
     public void validate_NoDomainsInTpp_Valid() {
         //Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(null, null));
         //When
@@ -100,8 +94,6 @@ public class TppDomainValidatorTest {
     @Test
     public void validate_NotCorrectDomainsInTpp_Valid() {
         //Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo("example-TPP", "dns-example-TPP"));
         //When
@@ -113,8 +105,6 @@ public class TppDomainValidatorTest {
     @Test
     public void validate_UrlHeaderCorrect_Valid() {
         //Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
         //When
@@ -126,8 +116,6 @@ public class TppDomainValidatorTest {
     @Test
     public void validate_UrlHeaderSubdomainCorrect_Valid() {
         //Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
         //When
@@ -139,8 +127,6 @@ public class TppDomainValidatorTest {
     @Test
     public void validate_UrlHeaderSubdomainCorrectTppWildCardDomain_Valid() {
         //Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_WILDCARD_DOMAIN));
         //When
@@ -152,8 +138,6 @@ public class TppDomainValidatorTest {
     @Test
     public void validate_UrlHeaderWrong_Invalid() {
         //Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
         when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.AIS_400);
@@ -170,8 +154,6 @@ public class TppDomainValidatorTest {
     @Test
     public void validate_UrlHeaderWrongDomain_Invalid() {
         //Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
         when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.AIS_400);
@@ -188,8 +170,6 @@ public class TppDomainValidatorTest {
     @Test
     public void validate_UrlHeaderWrongTld_Invalid() {
         //Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
         when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.AIS_400);
@@ -206,8 +186,6 @@ public class TppDomainValidatorTest {
     @Test
     public void validate_nonDomainTppName_valid() {
         //Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(TPP_NAME_NON_DOMAIN, TPP_DNS_DOMAIN));
         //When
@@ -219,8 +197,6 @@ public class TppDomainValidatorTest {
     @Test
     public void validate_nonDomainTppName_invalid() {
         //Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.REDIRECT);
         when(tppService.getTppInfo())
             .thenReturn(buildTppInfo(TPP_NAME_NON_DOMAIN, TPP_DNS_DOMAIN));
         when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.AIS_400);

@@ -16,10 +16,13 @@
 
 package de.adorsys.psd2.xs2a.domain.pis;
 
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class PaymentInitiationParameters {
@@ -29,4 +32,6 @@ public class PaymentInitiationParameters {
     private TppRedirectUri tppRedirectUri;
     private boolean tppExplicitAuthorisationPreferred;
     private PsuIdData psuData;
+    private String tppNotificationUri;
+    private List<NotificationSupportedMode> notificationSupportedModes;
 }

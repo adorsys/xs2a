@@ -98,7 +98,7 @@ public class PisCommonPaymentControllerTest {
     @Test
     public void createCommonPayment_Success() {
         //Given
-        ResponseEntity<CreatePisCommonPaymentResponse> expected = new ResponseEntity<>(new CreatePisCommonPaymentResponse(PAYMENT_ID), HttpStatus.CREATED);
+        ResponseEntity<CreatePisCommonPaymentResponse> expected = new ResponseEntity<>(new CreatePisCommonPaymentResponse(PAYMENT_ID, null), HttpStatus.CREATED);
 
         //When
         ResponseEntity<CreatePisCommonPaymentResponse> actual = pisCommonPaymentController.createCommonPayment(getPisPaymentInfo());
@@ -426,7 +426,7 @@ public class PisCommonPaymentControllerTest {
     }
 
     private CreatePisCommonPaymentResponse getCreatePisCommonPaymentResponse() {
-        return new CreatePisCommonPaymentResponse(PAYMENT_ID);
+        return new CreatePisCommonPaymentResponse(PAYMENT_ID, null);
     }
 
     private PisCommonPaymentResponse getPisCommonPaymentResponse() {

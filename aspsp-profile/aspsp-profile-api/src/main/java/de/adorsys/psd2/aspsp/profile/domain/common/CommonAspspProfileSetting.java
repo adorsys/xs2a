@@ -18,6 +18,7 @@ package de.adorsys.psd2.aspsp.profile.domain.common;
 
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import lombok.AllArgsConstructor;
@@ -47,4 +48,5 @@ public class CommonAspspProfileSetting {
     private boolean aisPisSessionsSupported;
     private boolean signingBasketSupported;
     private boolean checkTppRolesFromCertificateSupported;
+    private List<NotificationSupportedMode> aspspNotificationsSupported = new ArrayList<>();
 }

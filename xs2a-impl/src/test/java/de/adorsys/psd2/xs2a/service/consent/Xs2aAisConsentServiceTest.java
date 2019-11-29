@@ -124,11 +124,11 @@ public class Xs2aAisConsentServiceTest {
         when(aisConsentMapper.mapToCreateAisConsentRequest(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1, INTERNAL_REQUEST_ID))
             .thenReturn(CREATE_AIS_CONSENT_REQUEST);
         when(aisConsentServiceEncrypted.createConsent(CREATE_AIS_CONSENT_REQUEST))
-            .thenReturn(CmsResponse.<CreateAisConsentResponse>builder().payload(new CreateAisConsentResponse(CONSENT_ID, AIS_ACCOUNT_CONSENT)).build());
+            .thenReturn(CmsResponse.<CreateAisConsentResponse>builder().payload(new CreateAisConsentResponse(CONSENT_ID, AIS_ACCOUNT_CONSENT, null)).build());
         when(aisConsentMapper.mapToAccountConsent(AIS_ACCOUNT_CONSENT))
             .thenReturn(ACCOUNT_CONSENT);
 
-        Xs2aCreateAisConsentResponse expected = new Xs2aCreateAisConsentResponse(CONSENT_ID, ACCOUNT_CONSENT);
+        Xs2aCreateAisConsentResponse expected = new Xs2aCreateAisConsentResponse(CONSENT_ID, ACCOUNT_CONSENT, null);
 
         //When
         Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);

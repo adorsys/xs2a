@@ -77,7 +77,6 @@ import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -172,7 +171,7 @@ public class ConsentServiceTest {
         accountConsent = getAccountConsent();
 
         //ByAccess
-        Xs2aCreateAisConsentResponse xs2aCreateAisConsentResponse = new Xs2aCreateAisConsentResponse(CONSENT_ID, getAccountConsent());
+        Xs2aCreateAisConsentResponse xs2aCreateAisConsentResponse = new Xs2aCreateAisConsentResponse(CONSENT_ID, getAccountConsent(), null);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(

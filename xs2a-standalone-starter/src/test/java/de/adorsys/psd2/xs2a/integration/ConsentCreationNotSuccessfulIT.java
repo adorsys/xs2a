@@ -196,7 +196,7 @@ public class ConsentCreationNotSuccessfulIT {
         AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, xs2aObjectMapper);
         given(aisConsentServiceEncrypted.createConsent(any(CreateAisConsentRequest.class)))
             .willReturn(CmsResponse.<CreateAisConsentResponse>builder()
-                            .payload(new CreateAisConsentResponse(ENCRYPT_CONSENT_ID, aisAccountConsent))
+                            .payload(new CreateAisConsentResponse(ENCRYPT_CONSENT_ID, aisAccountConsent, null))
                             .build());
         given(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(any(String.class), any(String.class)))
             .willReturn(CmsResponse.<AisConsentAuthorizationResponse>builder()

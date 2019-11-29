@@ -18,6 +18,7 @@ package de.adorsys.psd2.aspsp.profile.domain.common;
 
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import lombok.AllArgsConstructor;
@@ -107,4 +108,9 @@ public class CommonAspspProfileBankSetting {
      * Indicates whether ASPSP supports validation TPP roles from certificate
      */
     private boolean checkTppRolesFromCertificateSupported;
+
+    /**
+     * List of supported notification modes
+     */
+    private List<NotificationSupportedMode> aspspNotificationsSupported = new ArrayList<>();
 }

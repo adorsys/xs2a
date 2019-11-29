@@ -17,10 +17,8 @@
 package de.adorsys.psd2.xs2a.web.validator.header;
 
 import com.google.common.net.InternetDomainName;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
@@ -45,12 +43,11 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVA
 public class TppDomainValidator {
     private static final String PATTERN_FOR_NORMALIZE_DOMAIN = ".*\\.(?=.*\\.)";
     private final ErrorBuildingService errorBuildingService;
-    private final ScaApproachResolver scaApproachResolver;
     private final TppService tppService;
     private final RequestProviderService requestProviderService;
 
     public ValidationResult validate(String header) {
-        if (StringUtils.isNotBlank(header) && isRedirectScaApproach()) {
+        if (StringUtils.isNotBlank(header)) {
             List<URL> certificateUrls = getDomainsFromTppInfo().stream()
                                             .map(this::buildURL)
                                             .filter(Objects::nonNull)
@@ -130,9 +127,5 @@ public class TppDomainValidator {
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), host);
         }
         return null;
-    }
-
-    private boolean isRedirectScaApproach() {
-        return ScaApproach.REDIRECT == scaApproachResolver.resolveScaApproach();
     }
 }

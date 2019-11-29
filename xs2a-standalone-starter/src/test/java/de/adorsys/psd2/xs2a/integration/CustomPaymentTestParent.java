@@ -137,7 +137,7 @@ public abstract class CustomPaymentTestParent {
 
         given(pisCommonPaymentServiceEncrypted.createCommonPayment(any(PisPaymentInfo.class)))
             .willReturn(CmsResponse.<CreatePisCommonPaymentResponse>builder()
-                            .payload(new CreatePisCommonPaymentResponse(ENCRYPT_PAYMENT_ID))
+                            .payload(new CreatePisCommonPaymentResponse(ENCRYPT_PAYMENT_ID, null))
                             .build());
         given(tppService.updateTppInfo(any(TppInfo.class)))
             .willReturn(CmsResponse.<Boolean>builder()

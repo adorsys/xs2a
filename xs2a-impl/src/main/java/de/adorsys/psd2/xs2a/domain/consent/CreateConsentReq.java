@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.AccountReferenceCollector;
 import io.swagger.annotations.ApiModel;
@@ -57,6 +58,12 @@ public class CreateConsentReq implements AccountReferenceCollector {
 
     @ApiModelProperty(value = "TPP redirect URI object'")
     private TppRedirectUri tppRedirectUri;
+
+    @ApiModelProperty(value = "Tpp notification URI")
+    private String tppNotificationUri;
+
+    @ApiModelProperty(value = "List of notification modes. It could be values: SCA, PROCESS, LAST or NONE ")
+    private List<NotificationSupportedMode> notificationSupportedModes;
 
     @JsonIgnore
     @Override

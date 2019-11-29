@@ -59,3 +59,5 @@ setting:
     aisPisSessionsSupported: FALSE
     signingBasketSupported: FALSE
     checkTppRolesFromCertificateSupported: TRUE
+    aspspNotificationsSupported:
+      - NONE

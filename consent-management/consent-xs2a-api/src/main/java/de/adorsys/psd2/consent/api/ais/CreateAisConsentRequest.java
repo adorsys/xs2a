@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -24,6 +25,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @ApiModel(description = "Ais consent request", value = "AisConsentRequest")
@@ -61,4 +63,10 @@ public class CreateAisConsentRequest {
 
     @ApiModelProperty(value = "Internal request ID")
     private String internalRequestId;
+
+    @ApiModelProperty(value = "Tpp notification URI")
+    private String tppNotificationUri;
+
+    @ApiModelProperty(value = "List of notification modes. It could be values: SCA, PROCESS, LAST or NONE ")
+    private List<NotificationSupportedMode> notificationSupportedModes;
 }

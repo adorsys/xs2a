@@ -166,7 +166,7 @@ public class ContextPathIT {
                             .build());
         given(aisConsentServiceEncrypted.createConsent(any(CreateAisConsentRequest.class)))
             .willReturn(CmsResponse.<CreateAisConsentResponse>builder()
-                            .payload(new CreateAisConsentResponse(ENCRYPT_CONSENT_ID, aisAccountConsent))
+                            .payload(new CreateAisConsentResponse(ENCRYPT_CONSENT_ID, aisAccountConsent, null))
                             .build());
         given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(ENCRYPT_CONSENT_ID), any(AisAccountAccessInfo.class)))
             .willReturn(CmsResponse.<AisAccountConsent>builder()

@@ -112,7 +112,7 @@ public class AisConsentControllerTest {
     public void createConsent_success() {
         // Given
         CreateAisConsentRequest createRequest = new CreateAisConsentRequest();
-        CreateAisConsentResponse serviceResponse = new CreateAisConsentResponse(CONSENT_ID, new AisAccountConsent());
+        CreateAisConsentResponse serviceResponse = new CreateAisConsentResponse(CONSENT_ID, new AisAccountConsent(), null);
         when(aisConsentService.createConsent(createRequest))
             .thenReturn(CmsResponse.<CreateAisConsentResponse>builder().payload(serviceResponse).build());
 

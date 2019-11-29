@@ -284,7 +284,7 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     private CreatePisCommonPaymentResponse buildCreatePisCommonPaymentResponse(String id) {
-        return new CreatePisCommonPaymentResponse(id);
+        return new CreatePisCommonPaymentResponse(id, null);
     }
 
     private PisCommonPaymentResponse buildPisCommonPaymentResponse(String id) {

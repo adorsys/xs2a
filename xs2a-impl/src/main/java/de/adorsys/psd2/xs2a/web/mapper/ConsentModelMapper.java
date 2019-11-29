@@ -21,6 +21,7 @@ import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -44,7 +45,7 @@ public class ConsentModelMapper {
     private final ScaMethodsMapper scaMethodsMapper;
     private final AspspProfileServiceWrapper aspspProfileService;
 
-    public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri) {
+    public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri, String tppNotificationUri, List<NotificationSupportedMode> notificationModes) {
         return Optional.ofNullable(consent)
                    .map(cnst -> {
                        CreateConsentReq createAisConsentRequest = new CreateConsentReq();
@@ -54,6 +55,8 @@ public class ConsentModelMapper {
                        createAisConsentRequest.setFrequencyPerDay(cnst.getFrequencyPerDay());
                        createAisConsentRequest.setCombinedServiceIndicator(BooleanUtils.toBoolean(cnst.isCombinedServiceIndicator()));
                        createAisConsentRequest.setTppRedirectUri(tppRedirectUri);
+                       createAisConsentRequest.setTppNotificationUri(tppNotificationUri);
+                       createAisConsentRequest.setNotificationSupportedModes(notificationModes);
                        return createAisConsentRequest;
                    })
                    .orElse(null);

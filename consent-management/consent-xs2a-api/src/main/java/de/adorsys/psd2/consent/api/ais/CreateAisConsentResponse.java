@@ -16,12 +16,16 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 public class CreateAisConsentResponse {
     private String consentId;
     private AisAccountConsent aisAccountConsent;
+    private List<NotificationSupportedMode> tppNotificationContentPreferred;
 }

@@ -68,7 +68,7 @@ public class AisConsentServiceInternalEncryptedTest {
 
         when(aisConsentService.createConsent(any()))
             .thenReturn(CmsResponse.<CreateAisConsentResponse>builder()
-                            .payload(new CreateAisConsentResponse(DECRYPTED_CONSENT_ID, buildAisAccountConsent()))
+                            .payload(new CreateAisConsentResponse(DECRYPTED_CONSENT_ID, buildAisAccountConsent(), null))
                             .build());
         when(aisConsentService.getConsentStatusById(DECRYPTED_CONSENT_ID))
             .thenReturn(CmsResponse.<ConsentStatus>builder()
@@ -97,7 +97,7 @@ public class AisConsentServiceInternalEncryptedTest {
     public void createConsent_success() {
         // Given
         CreateAisConsentRequest request = buildCreateAisConsentRequest();
-        CreateAisConsentResponse expected = new CreateAisConsentResponse(ENCRYPTED_CONSENT_ID, buildAisAccountConsent());
+        CreateAisConsentResponse expected = new CreateAisConsentResponse(ENCRYPTED_CONSENT_ID, buildAisAccountConsent(), null);
 
         // When
         CmsResponse<CreateAisConsentResponse> actualResponse = aisConsentServiceInternalEncrypted.createConsent(request);
@@ -136,7 +136,7 @@ public class AisConsentServiceInternalEncryptedTest {
         CreateAisConsentRequest request = buildCreateAisConsentRequest();
         when(aisConsentService.createConsent(any()))
             .thenReturn(CmsResponse.<CreateAisConsentResponse>builder()
-                            .payload(new CreateAisConsentResponse(UNENCRYPTABLE_CONSENT_ID, buildAisAccountConsent()))
+                            .payload(new CreateAisConsentResponse(UNENCRYPTABLE_CONSENT_ID, buildAisAccountConsent(), null))
                             .build());
 
         // When

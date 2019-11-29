@@ -22,6 +22,7 @@ import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import de.adorsys.psd2.model.PaymentInitiationWithStatusResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
@@ -30,20 +31,25 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapperImpl;
 import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Currency;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {CoreObjectsMapper.class, TppRedirectUriMapper.class, Xs2aObjectMapper.class,
@@ -56,6 +62,7 @@ public class PaymentModelMapperPsd2Test {
     private static final boolean FUNDS_AVAILABLE = true;
     private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_JSON, null);
     private static final String AMOUNT = "100";
+    private static final List<NotificationSupportedMode> NOTIFICATION_MODES = Arrays.asList(NotificationSupportedMode.SCA, NotificationSupportedMode.LAST);
 
     private PaymentModelMapperPsd2 mapper;
     @Autowired
@@ -74,6 +81,8 @@ public class PaymentModelMapperPsd2Test {
     private RemittanceMapper remittanceMapper;
     @Autowired
     private PurposeCodeMapper purposeCodeMapper;
+    @MockBean
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     private JsonReader jsonReader = new JsonReader();
     private AccountModelMapper accountModelMapper;
@@ -86,6 +95,7 @@ public class PaymentModelMapperPsd2Test {
         mapper = new PaymentModelMapperPsd2(coreObjectsMapper, accountModelMapper, tppRedirectUriMapper,
                                             amountModelMapper, hrefLinkMapper, standardPaymentProductsResolver,
                                             scaMethodsMapper, xs2aAddressMapper, remittanceMapper, purposeCodeMapper);
+        when(aspspProfileServiceWrapper.getNotificationSupportedModes()).thenReturn(NOTIFICATION_MODES);
     }
 
     @Test
