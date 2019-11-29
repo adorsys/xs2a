@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "98c735d5-d7e5-415d-b812-3ce0d75744d5",
-		"name": "Multilevel SCA 4.x",
+		"_postman_id": "8834ac1d-64d3-474c-a8a8-214de9fbdc99",
+		"name": "Multilevel SCA",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -1292,7 +1292,59 @@
 					"response": []
 				},
 				{
-					"name": "6. Start the authorisation process for a consent Copy",
+					"name": "6. Consent status request -> partiallyAuthorised",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "28ab1dd5-91be-4d5c-8787-d15d44c4b931",
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Test consent status\", () => {",
+									"    pm.expect(jsonData).to.have.property('consentStatus');",
+									"    pm.expect(jsonData.consentStatus).to.eql('partiallyAuthorised');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/status",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"consents",
+								"{{consent_id}}",
+								"status"
+							]
+						},
+						"description": "Read the status of an account information consent resource."
+					},
+					"response": []
+				},
+				{
+					"name": "7. Start the authorisation process for a consent",
 					"event": [
 						{
 							"listen": "test",
@@ -1379,7 +1431,7 @@
 					"response": []
 				},
 				{
-					"name": "7. Update PSU Data for consents Copy",
+					"name": "8. Update PSU Data for consents",
 					"event": [
 						{
 							"listen": "test",
@@ -1466,7 +1518,7 @@
 					"response": []
 				},
 				{
-					"name": "8. Update PSU Data for consents finalization Copy",
+					"name": "9. Update PSU Data for consents finalization",
 					"event": [
 						{
 							"listen": "test",
@@ -1536,7 +1588,7 @@
 					"response": []
 				},
 				{
-					"name": "9. Consent status request",
+					"name": "10. Consent status request -> valid",
 					"event": [
 						{
 							"listen": "test",
@@ -1551,6 +1603,7 @@
 									"",
 									"pm.test(\"Test consent status\", () => {",
 									"    pm.expect(jsonData).to.have.property('consentStatus');",
+									"    pm.expect(jsonData.consentStatus).to.eql('valid');",
 									"});"
 								],
 								"type": "text/javascript"

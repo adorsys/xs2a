@@ -4055,6 +4055,7 @@ components:
           - 'revokedByPsu': The consent has been revoked by the PSU towards the ASPSP.
           - 'expired': The consent expired.
           - 'terminatedByTpp': The corresponding TPP has terminated the consent by applying the DELETE method to the consent resource.
+          - 'partiallyAuthorised': The consent is due to a multi-level authorisation, some but not all mandated authorisations have been performed yet.
 
         The ASPSP might add further codes. These codes then shall be contained in the ASPSP's documentation of the XS2A interface
         and has to be added to this API definition as well.
@@ -4066,6 +4067,7 @@ components:
         - "revokedByPsu"
         - "expired"
         - "terminatedByTpp"
+        - "partiallyAuthorised"
 
 
     transactionFeeIndicator:
@@ -5436,8 +5438,6 @@ components:
       type: string
       maxLength: 4
       minLength: 4
-
-
 
 
     frequencyCode:
