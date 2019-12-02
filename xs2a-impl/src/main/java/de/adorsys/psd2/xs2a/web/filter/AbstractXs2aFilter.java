@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.filter;
 
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Abstract filter that will be executed only once and will be applied only to XS2A endpoints.
  */
-public abstract class AbstractXs2aFilter extends OncePerRequestFilter {
+public abstract class AbstractXs2aFilter extends GlobalAbstractExceptionFilter {
     private static final List<String> XS2A_ENDPOINTS = Arrays.asList("/v1/accounts",
                                                                      "/v1/consents",
                                                                      "/v1/funds-confirmations",
@@ -36,7 +36,8 @@ public abstract class AbstractXs2aFilter extends OncePerRequestFilter {
                                                                      "/v1/signing-baskets");
     private final RequestPathResolver requestPathResolver;
 
-    protected AbstractXs2aFilter(RequestPathResolver requestPathResolver) {
+    protected AbstractXs2aFilter(TppErrorMessageWriter tppErrorMessageWriter, RequestPathResolver requestPathResolver) {
+        super(tppErrorMessageWriter);
         this.requestPathResolver = requestPathResolver;
     }
 

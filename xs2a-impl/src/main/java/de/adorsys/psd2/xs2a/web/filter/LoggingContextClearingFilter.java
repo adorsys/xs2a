@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import org.springframework.stereotype.Component;
 
@@ -33,14 +34,13 @@ import java.io.IOException;
 public class LoggingContextClearingFilter extends AbstractXs2aFilter {
     private final LoggingContextService loggingContextService;
 
-    public LoggingContextClearingFilter(RequestPathResolver requestPathResolver,
-                                        LoggingContextService loggingContextService) {
-        super(requestPathResolver);
+    public LoggingContextClearingFilter(TppErrorMessageWriter tppErrorMessageWriter, RequestPathResolver requestPathResolver, LoggingContextService loggingContextService) {
+        super(tppErrorMessageWriter, requestPathResolver);
         this.loggingContextService = loggingContextService;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternalCustom(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             doFilter(request, response, filterChain);
         } finally {

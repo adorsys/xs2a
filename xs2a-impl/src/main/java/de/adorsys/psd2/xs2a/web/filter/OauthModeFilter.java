@@ -24,11 +24,9 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -44,8 +42,7 @@ import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class OauthModeFilter extends OncePerRequestFilter {
+public class OauthModeFilter extends GlobalAbstractExceptionFilter {
     // Map which defines XS2A endpoints, which can use OAuth2 authorisation and their POST and DELETE HTTP methods.
     private static final Map<String, List<String>> OAUTH2_ENDPOINTS_WITH_METHODS = new HashMap<>();
 
@@ -71,27 +68,43 @@ public class OauthModeFilter extends OncePerRequestFilter {
     private final TppErrorMessageWriter tppErrorMessageWriter;
     private final RequestPathResolver requestPathResolver;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH_PRE_STEP) && requestProviderService.getOAuth2Token() == null) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], OAuth pre-step selected, no authorisation header is present in the request",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
-            tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, tppErrorMessageBuilder.buildTppErrorMessageWithPlaceholder(ERROR, UNAUTHORIZED_NO_TOKEN, aspspProfileService.getOauthConfigurationUrl()));
-            return;
-        }
+    public OauthModeFilter(TppErrorMessageWriter tppErrorMessageWriter, AspspProfileServiceWrapper aspspProfileService, RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder, ScaApproachResolver scaApproachResolver, TppErrorMessageWriter tppErrorMessageWriter1, RequestPathResolver requestPathResolver) {
+        super(tppErrorMessageWriter);
+        this.aspspProfileService = aspspProfileService;
+        this.requestProviderService = requestProviderService;
+        this.tppErrorMessageBuilder = tppErrorMessageBuilder;
+        this.scaApproachResolver = scaApproachResolver;
+        this.tppErrorMessageWriter = tppErrorMessageWriter1;
+        this.requestPathResolver = requestPathResolver;
+    }
 
-        if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH) && StringUtils.isNotBlank(requestProviderService.getOAuth2Token())) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], OAuth integrated selected, authorisation header is present in the request",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
-            tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_FORBIDDEN, tppErrorMessageBuilder.buildTppErrorMessage(ERROR, FORBIDDEN));
-            return;
+    @Override
+    protected void doFilterInternalCustom(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        if (shouldFilterInternal(request)) {
+            if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH_PRE_STEP) && requestProviderService.getOAuth2Token() == null) {
+                log.info("InR-ID: [{}], X-Request-ID: [{}], OAuth pre-step selected, no authorisation header is present in the request",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+                tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, tppErrorMessageBuilder.buildTppErrorMessageWithPlaceholder(ERROR, UNAUTHORIZED_NO_TOKEN, aspspProfileService.getOauthConfigurationUrl()));
+                return;
+            }
+
+            if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH) && StringUtils.isNotBlank(requestProviderService.getOAuth2Token())) {
+                log.info("InR-ID: [{}], X-Request-ID: [{}], OAuth integrated selected, authorisation header is present in the request",
+                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+                tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_FORBIDDEN, tppErrorMessageBuilder.buildTppErrorMessage(ERROR, FORBIDDEN));
+                return;
+            }
         }
 
         chain.doFilter(request, response);
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
+    private boolean shouldFilterInternal(HttpServletRequest request) {
+        return !shouldNotFilterInternal(request);
+    }
+
+    private boolean shouldNotFilterInternal(HttpServletRequest request) {
+
         String requestPath = requestPathResolver.resolveRequestPath(request);
 
         if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH_PRE_STEP) && request.getMethod().equals("GET")) {

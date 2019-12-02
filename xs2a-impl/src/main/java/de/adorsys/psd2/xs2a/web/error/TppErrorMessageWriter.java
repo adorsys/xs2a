@@ -10,7 +10,9 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TppErrorMessageWriter {
@@ -39,5 +42,16 @@ public class TppErrorMessageWriter {
         MessageError messageError = new MessageError(byServiceTypeAndErrorCode.get(), TppMessageInformation.of(tppErrorMessage.getCategory(), messageErrorCode));
         ErrorMapperContainer.ErrorBody errorBody = errorMapperContainer.getErrorBody(messageError);
         xs2aObjectMapper.writeValue(response.getWriter(), errorBody.getBody());
+    }
+
+    public void writeServiceUnavailableError(HttpServletResponse response, String message) {
+        try {
+            log.warn("ResourceAccessException handled with message: {}", message);
+            response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
+            response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
+            xs2aObjectMapper.writeValue(response.getWriter(), new ServiceUnavailableError());
+        } catch (IOException e) {
+            log.info(" Writing to the httpServletResponse failed.");
+        }
     }
 }

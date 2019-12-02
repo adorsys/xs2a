@@ -54,24 +54,18 @@ public class SignatureFilter extends AbstractXs2aFilter {
     private final DigestVerifier digestVerifier;
     private final SignatureVerifier signatureVerifier;
 
-    public SignatureFilter(RequestPathResolver requestPathResolver,
-                           AspspProfileServiceWrapper aspspProfileService,
-                           RequestProviderService requestProviderService,
-                           TppErrorMessageWriter tppErrorMessageWriter,
-                           TppErrorMessageBuilder tppErrorMessageBuilder,
-                           DigestVerifier digestVerifier,
-                           SignatureVerifier signatureVerifier) {
-        super(requestPathResolver);
+    public SignatureFilter(TppErrorMessageWriter tppErrorMessageWriter, RequestPathResolver requestPathResolver, AspspProfileServiceWrapper aspspProfileService, RequestProviderService requestProviderService, TppErrorMessageWriter tppErrorMessageWriter1, TppErrorMessageBuilder tppErrorMessageBuilder, DigestVerifier digestVerifier, SignatureVerifier signatureVerifier) {
+        super(tppErrorMessageWriter, requestPathResolver);
         this.aspspProfileService = aspspProfileService;
         this.requestProviderService = requestProviderService;
-        this.tppErrorMessageWriter = tppErrorMessageWriter;
+        this.tppErrorMessageWriter = tppErrorMessageWriter1;
         this.tppErrorMessageBuilder = tppErrorMessageBuilder;
         this.digestVerifier = digestVerifier;
         this.signatureVerifier = signatureVerifier;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternalCustom(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         if (!aspspProfileService.getTppSignatureRequired()) {
             chain.doFilter(request, response);
             return;
