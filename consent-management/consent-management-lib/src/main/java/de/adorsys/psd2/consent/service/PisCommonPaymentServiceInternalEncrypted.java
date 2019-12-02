@@ -64,7 +64,7 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
         }
 
         return CmsResponse.<CreatePisCommonPaymentResponse>builder()
-                   .payload(new CreatePisCommonPaymentResponse(encryptIdOptional.get()))
+                   .payload(new CreatePisCommonPaymentResponse(encryptIdOptional.get(), payment.getTppNotificationContentPreferred()))
                    .build();
     }
 

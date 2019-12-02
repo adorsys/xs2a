@@ -1,0 +1,9 @@
+{
+  "tppMessages": [
+    {
+      "category": "WARNING",
+      "code": "SERVICE_UNAVAILABLE",
+      "text": "Service Unavailable"
+    }
+  ]
+}

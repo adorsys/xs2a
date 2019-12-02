@@ -18,10 +18,12 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletRequest;
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletResponse;
+import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -35,13 +37,19 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ContentCachingWrappingFilterTest {
-    private static final String SERVLET_PATH = "/v1/accounts";
+    private static final String REQUEST_PATH = "/v1/accounts";
 
     @Mock
     private FilterChain filterChain;
+    @Mock
+    private RequestPathResolver requestPathResolver;
+
+    @InjectMocks
+    private ContentCachingWrappingFilter contentCachingWrappingFilter;
 
     @Captor
     private ArgumentCaptor<HttpServletRequest> capturedRequest;
@@ -52,9 +60,10 @@ public class ContentCachingWrappingFilterTest {
     public void doFilterInternal_shouldWrapRequestAndResponse() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setServletPath(SERVLET_PATH);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        ContentCachingWrappingFilter contentCachingWrappingFilter = new ContentCachingWrappingFilter();
+
+        when(requestPathResolver.resolveRequestPath(mockRequest))
+            .thenReturn(REQUEST_PATH);
 
         // When
         contentCachingWrappingFilter.doFilter(mockRequest, mockResponse, filterChain);

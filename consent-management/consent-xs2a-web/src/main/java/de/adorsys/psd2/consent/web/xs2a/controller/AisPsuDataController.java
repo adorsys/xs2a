@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,10 @@ public class AisPsuDataController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<List<PsuIdData>> getPsuDataByConsentId(
-        @ApiParam(name = "consent-id", value = "The consent identification.", example = "32454656712432")
+        @ApiParam(name = "consent-id",
+            value = "The consent identification.",
+            example = "32454656712432",
+            required = true)
         @PathVariable("consent-id") String consentId) {
         CmsResponse<List<PsuIdData>> psuDataResponse = aisConsentService.getPsuDataByConsentId(consentId);
 

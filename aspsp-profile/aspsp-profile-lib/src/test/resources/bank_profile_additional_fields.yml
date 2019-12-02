@@ -59,3 +59,6 @@ setting:
     signingBasketSupported: FALSE
     additionalField: 1
     checkTppRolesFromCertificateSupported: TRUE
+    aspspNotificationsSupported:
+      - NONE
+

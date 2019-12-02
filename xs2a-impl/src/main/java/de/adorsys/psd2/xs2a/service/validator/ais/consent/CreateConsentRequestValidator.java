@@ -118,7 +118,7 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
                    && request.getAccess().getAllPsd2() == ALL_ACCOUNTS;
     }
 
-    private Boolean isNotEmptyAccess(Xs2aAccountAccess access) {
+    private boolean isNotEmptyAccess(Xs2aAccountAccess access) {
         return Optional.ofNullable(access)
                    .map(Xs2aAccountAccess::isNotEmpty)
                    .orElse(false);

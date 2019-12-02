@@ -22,10 +22,7 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CmsAspspTppInfoController {
     private final CmsAspspTppService cmsAspspTppService;
 
-    @GetMapping(path = "/{tpp-id}")
+    @GetMapping
     @ApiOperation(value = "Returns TPP info by TPP ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -47,5 +44,27 @@ public class CmsAspspTppInfoController {
         return cmsAspspTppService.getTppInfo(tppAuthorisationNumber, instanceId)
                    .map(record -> new ResponseEntity<>(record, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    /**
+     * @param tppId                  unused TPP ID
+     * @param tppAuthorisationNumber TPP authorisation number
+     * @param instanceId             instance ID
+     * @return TPP record if it was found
+     * @deprecated since 4.6, use {@link CmsAspspTppInfoController#getTppInfo(String, String) instead}
+     */
+    @Deprecated // TODO remove deprecated method in 4.9 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1114
+    @GetMapping(path = "/{tpp-id}")
+    @ApiOperation(value = "Returns TPP info by TPP ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<TppInfo> getTppInfoWithPath(
+        @PathVariable("tpp-id") String tppId,
+        @ApiParam(value = "ID of TPP", required = true, example = "12345987")
+        @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
+        @ApiParam(value = "Service instance id", example = "instance id")
+        @RequestHeader(value = "instance-id", required = false, defaultValue = "UNDEFINED") String instanceId) {
+        return getTppInfo(tppAuthorisationNumber, instanceId);
     }
 }

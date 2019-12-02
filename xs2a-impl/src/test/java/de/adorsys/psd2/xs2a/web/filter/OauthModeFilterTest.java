@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
+import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +32,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpMethod;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -48,13 +50,14 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OauthModeFilterTest {
-
     private static final String TOKEN = "Bearer 111111";
     private static final String IDP_URL = "http://localhost:4200/idp/";
+    private static final String XS2A_PATH = "/v1/payments";
+    private static final String CUSTOM_PATH = "/custom-endpoint";
 
     private static final TppErrorMessage TPP_ERROR_MESSAGE_UNAUTHORIZED = new TppErrorMessage(ERROR, UNAUTHORIZED_NO_TOKEN, String.format("Please retrieve token first from %s", IDP_URL));
-
     private static final TppErrorMessage TPP_ERROR_MESSAGE_FORBIDDEN = new TppErrorMessage(ERROR, FORBIDDEN, "Token is not valid for the addressed service/resource");
+    private static final String HTTP_METHOD = HttpMethod.POST.name();
 
     @InjectMocks
     private OauthModeFilter oauthModeFilter;
@@ -77,24 +80,30 @@ public class OauthModeFilterTest {
     private AspspProfileServiceWrapper aspspProfileService;
     @Mock
     private ScaApproachResolver scaApproachResolver;
+    @Mock
+    private RequestPathResolver requestPathResolver;
 
     @Before
     public void init() {
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(ScaApproach.REDIRECT);
+        when(requestPathResolver.resolveRequestPath(request))
+            .thenReturn(XS2A_PATH);
+        when(request.getMethod())
+            .thenReturn(HTTP_METHOD);
     }
 
     @Test
-    public void doFilterInternal_success() throws IOException, ServletException {
+    public void doFilter_success() throws IOException, ServletException {
         // When
-        oauthModeFilter.doFilterInternal(request, response, chain);
+        oauthModeFilter.doFilter(request, response, chain);
 
         // Then
         verify(chain).doFilter(any(), any());
     }
 
     @Test
-    public void doFilterInternal_preStepWithoutToken_shouldReturnUnauthorised() throws IOException, ServletException {
+    public void doFilter_preStepWithoutToken_shouldReturnUnauthorised() throws IOException, ServletException {
         // Given
         when(aspspProfileService.getOauthConfigurationUrl())
             .thenReturn(IDP_URL);
@@ -107,7 +116,7 @@ public class OauthModeFilterTest {
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);
 
         // When
-        oauthModeFilter.doFilterInternal(request, response, chain);
+        oauthModeFilter.doFilter(request, response, chain);
 
         // Then
         verify(tppErrorMessageWriter).writeError(eq(response), statusCode.capture(), message.capture());
@@ -117,7 +126,7 @@ public class OauthModeFilterTest {
     }
 
     @Test
-    public void doFilterInternal_integratedWithToken_shouldReturnForbidden() throws IOException, ServletException {
+    public void doFilter_integratedWithToken_shouldReturnForbidden() throws IOException, ServletException {
         // Given
         when(requestProviderService.getOAuth2Token())
             .thenReturn(TOKEN);
@@ -130,7 +139,7 @@ public class OauthModeFilterTest {
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);
 
         // When
-        oauthModeFilter.doFilterInternal(request, response, chain);
+        oauthModeFilter.doFilter(request, response, chain);
 
         // Then
         verify(tppErrorMessageWriter).writeError(eq(response), statusCode.capture(), message.capture());
@@ -139,4 +148,35 @@ public class OauthModeFilterTest {
         assertEquals(TPP_ERROR_MESSAGE_FORBIDDEN, message.getValue());
     }
 
+    @Test
+    public void doFilter_onCustomEndpointAndRedirectFlow_shouldSkipFilter() throws ServletException, IOException {
+        // Given
+        when(requestPathResolver.resolveRequestPath(request))
+            .thenReturn(CUSTOM_PATH);
+
+        // When
+        oauthModeFilter.doFilter(request, response, chain);
+
+        // Then
+        verify(chain).doFilter(request, response);
+        verifyZeroInteractions(tppErrorMessageWriter, requestProviderService);
+    }
+
+    @Test
+    public void doFilter_onCustomEndpointAndOauthPreStepFlow_shouldSkipFilter() throws ServletException, IOException {
+        // Given
+        when(requestPathResolver.resolveRequestPath(request))
+            .thenReturn(CUSTOM_PATH);
+        when(aspspProfileService.getScaRedirectFlow())
+            .thenReturn(ScaRedirectFlow.OAUTH_PRE_STEP);
+        when(request.getMethod())
+            .thenReturn(HttpMethod.GET.name());
+
+        // When
+        oauthModeFilter.doFilter(request, response, chain);
+
+        // Then
+        verify(chain).doFilter(request, response);
+        verifyZeroInteractions(tppErrorMessageWriter, requestProviderService);
+    }
 }

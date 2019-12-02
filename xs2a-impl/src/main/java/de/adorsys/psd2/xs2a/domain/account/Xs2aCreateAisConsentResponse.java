@@ -16,11 +16,15 @@
 
 package de.adorsys.psd2.xs2a.domain.account;
 
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import lombok.Value;
+
+import java.util.List;
 
 @Value
 public class Xs2aCreateAisConsentResponse {
     private String consentId;
     private AccountConsent accountConsent;
+    private List<NotificationSupportedMode> tppNotificationContentPreferred;
 }

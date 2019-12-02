@@ -22,7 +22,6 @@ public class HttpHeadersBuilder {
     public static HttpHeadersIT buildHttpHeaders() {
         HttpHeadersIT httpHeaders = new HttpHeadersIT();
         httpHeaders.add("Content-Type", "application/json");
-        httpHeaders.add("tpp-qwac-certificate", "qwac certificate");
         httpHeaders.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
 
         return httpHeaders;

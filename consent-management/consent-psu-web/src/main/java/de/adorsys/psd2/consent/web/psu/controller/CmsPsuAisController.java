@@ -80,11 +80,19 @@ public class CmsPsuAisController {
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsAisConsentResponse.class)})
     @PsuHeadersDescription
     public ResponseEntity updateAuthorisationStatus(
-        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
-        @ApiParam(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised', 'failed', 'exempted'. These values might be extended by ASPSP by more values.", allowableValues = "RECEIVED, PSUIDENTIFIED, PSUAUTHENTICATED, SCAMETHODSELECTED,  STARTED,  FINALISED, FAILED, EXEMPTED")
+        @ApiParam(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised', 'failed', 'exempted'. These values might be extended by ASPSP by more values.",
+            allowableValues = "RECEIVED, PSUIDENTIFIED, PSUAUTHENTICATED, SCAMETHODSELECTED,  STARTED,  FINALISED, FAILED, EXEMPTED",
+            required = true)
         @PathVariable(CmsConstant.PATH.STATUS) String status,
-        @ApiParam(name = CmsConstant.PATH.AUTHORISATION_ID, value = "The consent authorisation identification assigned to the created authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = CmsConstant.PATH.AUTHORISATION_ID,
+            value = "The consent authorisation identification assigned to the created authorisation.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable(CmsConstant.PATH.AUTHORISATION_ID) String authorisationId,
         @RequestHeader(value = CmsConstant.HEADERS.PSU_ID, required = false) String psuId,
         @RequestHeader(value = CmsConstant.HEADERS.PSU_ID_TYPE, required = false) String psuIdType,
@@ -114,7 +122,10 @@ public class CmsPsuAisController {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Boolean> confirmConsent(
-        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         return new ResponseEntity<>(cmsPsuAisService.confirmConsent(consentId, instanceId), HttpStatus.OK);
@@ -126,7 +137,10 @@ public class CmsPsuAisController {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Boolean> rejectConsent(
-        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         return new ResponseEntity<>(cmsPsuAisService.rejectConsent(consentId, instanceId), HttpStatus.OK);
@@ -154,7 +168,10 @@ public class CmsPsuAisController {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Boolean> revokeConsent(
-        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         return new ResponseEntity<>(cmsPsuAisService.revokeConsent(consentId, instanceId), HttpStatus.OK);
@@ -167,7 +184,10 @@ public class CmsPsuAisController {
         @ApiResponse(code = 404, message = "Not Found")})
     @PsuHeadersDescription
     public ResponseEntity<Boolean> authorisePartiallyConsent(
-        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         return new ResponseEntity<>(cmsPsuAisService.authorisePartiallyConsent(consentId, instanceId), HttpStatus.OK);
@@ -205,7 +225,10 @@ public class CmsPsuAisController {
         @ApiResponse(code = 404, message = "Not Found")})
     @PsuHeadersDescription
     public ResponseEntity<CmsAisAccountConsent> getConsentByConsentId(
-        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @RequestHeader(value = CmsConstant.HEADERS.PSU_ID, required = false) String psuId,
         @RequestHeader(value = CmsConstant.HEADERS.PSU_ID_TYPE, required = false) String psuIdType,
@@ -224,7 +247,10 @@ public class CmsPsuAisController {
         @ApiResponse(code = 200, message = "OK", response = CmsPsuAuthorisation.class),
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<CmsPsuAuthorisation> getAuthorisationByAuthorisationId(
-        @ApiParam(name = CmsConstant.PATH.AUTHORISATION_ID, value = "The authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = CmsConstant.PATH.AUTHORISATION_ID,
+            value = "The authorisation identification.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable(CmsConstant.PATH.AUTHORISATION_ID) String authorisationId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
@@ -239,7 +265,10 @@ public class CmsPsuAisController {
         @ApiResponse(code = 200, message = "OK", reference = "Access saved"),
         @ApiResponse(code = 404, message = "Not Found", reference = "Consent not found or not active")})
     public ResponseEntity<Void> putAccountAccessInConsent(
-        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @RequestBody CmsAisConsentAccessRequest accountAccessRequest,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
@@ -262,7 +291,10 @@ public class CmsPsuAisController {
         @ApiResponse(code = 200, message = "OK", response = CmsAisPsuDataAuthorisation.class, responseContainer = "List"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<List<CmsAisPsuDataAuthorisation>> psuDataAuthorisations(
-        @ApiParam(name = CmsConstant.PATH.CONSENT_ID, value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
+            value = "The consent identification assigned to the created consent authorization.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 

@@ -30,6 +30,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -105,6 +106,14 @@ public class GlobalExceptionHandlerController {
             handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         log.debug("Stacktrace: {}", ex);
         return responseErrorMapper.generateErrorResponse(createMessageError(INTERNAL_SERVER_ERROR));
+    }
+
+    @ExceptionHandler(value = ResourceAccessException.class)
+    public ResponseEntity resourceAccessException(ResourceAccessException ex, HandlerMethod handlerMethod) {
+        log.warn("ResourceAccessException handled in service: {}, message: {}",
+                 handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        log.debug("Stacktrace: {}", ex);
+        return responseErrorMapper.generateServiceUnavailableErrorResponse(ex.getMessage());
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)

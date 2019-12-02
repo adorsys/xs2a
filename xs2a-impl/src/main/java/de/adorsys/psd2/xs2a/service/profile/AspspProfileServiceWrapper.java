@@ -20,10 +20,7 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
+import de.adorsys.psd2.xs2a.core.profile.*;
 import de.adorsys.psd2.xs2a.domain.account.SupportedAccountReferenceField;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -366,5 +363,14 @@ public class AspspProfileServiceWrapper {
      */
     public boolean isCheckTppRolesFromCertificateSupported() {
         return readAspspSettings().getCommon().isCheckTppRolesFromCertificateSupported();
+    }
+
+    /**
+     * Reads the supported modes of notification status services. Default and only value is 'NONE'.
+     *
+     * @return list of supported modes
+     */
+    public List<NotificationSupportedMode> getNotificationSupportedModes() {
+        return readAspspSettings().getCommon().getAspspNotificationsSupported();
     }
 }

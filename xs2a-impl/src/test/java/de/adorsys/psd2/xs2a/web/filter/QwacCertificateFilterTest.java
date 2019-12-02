@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.mapper.TppInfoRolesMapper;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aTppInfoMapper;
+import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +36,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -59,6 +62,9 @@ public class QwacCertificateFilterTest {
     private static final String TEST_QWAC_CERTIFICATE_EXPIRED = "-----BEGIN CERTIFICATE-----MIIEBjCCAu6gAwIBAgIEAmCHWTANBgkqhkiG9w0BAQsFADCBlDELMAkGA1UEBhMCREUxDzANBgNVBAgMBkhlc3NlbjESMBAGA1UEBwwJRnJhbmtmdXJ0MRUwEwYDVQQKDAxBdXRob3JpdHkgQ0ExCzAJBgNVBAsMAklUMSEwHwYDVQQDDBhBdXRob3JpdHkgQ0EgRG9tYWluIE5hbWUxGTAXBgkqhkiG9w0BCQEWCmNhQHRlc3QuZGUwHhcNMTgwODE3MDcxNzAyWhcNMTgwOTAzMDc1NzMxWjB6MRMwEQYDVQQDDApUUFAgU2FtcGxlMQwwCgYDVQQKDANvcmcxCzAJBgNVBAsMAm91MRAwDgYDVQQGEwdHZXJtYW55MQ8wDQYDVQQIDAZCYXllcm4xEjAQBgNVBAcMCU51cmVtYmVyZzERMA8GA1UEYQwIMTIzNDU5ODcwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCMMnLvNLvqxkHbxdcWRcyUrZ4oy++R/7hWMiWH4U+5kLTLICnlFofN3EgIuP5hZz9Zm8aPoJkr8Y1xEyP8X4a5YTFtMmrXwAOgW6BVTaBeO7eV6Me1yc2NawzWMNp0Zz/Lsnrmj2h7/dRYaYofFHjWPFRW+gjVwv95NFhcD9+H5rr+fMwoci0ERFvy70TYnLfuRrG1BpYOwEV+wVFRIciXE3CKjEh2wbz1Yr4DhD+6FtOElU8VPkWqGRZmr1n54apuLrxL9vIbt7qsaQirsUp5ez2SFGFTydUv+WqZaPGzONVptAymOfTcIsgcxDWx/liKlpdqwyXpJaOIrrXcEnQ1AgMBAAGjeTB3MHUGCCsGAQUFBwEDBGkwZwYGBACBmCcCMF0wTDARBgcEAIGYJwEBDAZQU1BfQVMwEQYHBACBmCcBAgwGUFNQX1BJMBEGBwQAgZgnAQMMBlBTUF9BSTARBgcEAIGYJwEEDAZQU1BfSUMMBEF1dGgMBzEyMTkwODgwDQYJKoZIhvcNAQELBQADggEBAKrHWMriNquiC1vfNKkJFPINi2T2J5FmRQfamrkzS3AI5zPPXx32MzbrTkQb+Zl7qTvClmIFpDG45YC+JVYz+4/gMSJChJfW+JYtyW/Am6eeIYZ1sk+VPvXgxuTA0aZLQsVHsaeTHnQ7lZzN3S0Ao5O35AGKqBITu6Mo1t4WglNJLZHZ0iFL92yfezfV7LF9JYAD/6JFVTeuBwKKHNjPupjeVBku/C7qVDbogo1Ubiowt+hMMPLVLPjxe6Xo9SUtkGj3+5ID4Z8NGHDaaF2IGVGaJkHK9+PYTYEBRDsbc1GwgzTzbds5lao6eMyepL/Kl7iUNtn3Vox/XiSymunGCmQ=-----END CERTIFICATE-----";
     private static final TppErrorMessage TPP_ERROR_MESSAGE_ACCESS = new TppErrorMessage(ERROR, ROLE_INVALID, "You don`t have the correct PSD2 role to access this service.");
     private static final TppErrorMessage TPP_ERROR_MESSAGE_EXPIRED = new TppErrorMessage(ERROR, CERTIFICATE_EXPIRED, "Certificate is expired");
+
+    private static final String XS2A_PATH = "/v1/accounts";
+    private static final String CUSTOM_PATH = "/custom-endpoint";
 
     @InjectMocks
     private QwacCertificateFilter qwacCertificateFilter;
@@ -88,26 +94,29 @@ public class QwacCertificateFilterTest {
     private Xs2aTppInfoMapper xs2aTppInfoMapper;
     @Mock
     private TppInfoRolesMapper tppInfoRolesMapper;
+    @Mock
+    private RequestPathResolver requestPathResolver;
 
     @Before
     public void setUp() {
         when(xs2aTppInfoMapper.mapToTppInfo(any(TppCertificateData.class))).thenReturn(new TppInfo());
+        when(requestPathResolver.resolveRequestPath(request)).thenReturn(XS2A_PATH);
     }
 
     @Test
-    public void doFilterInternal_success() throws IOException, ServletException {
+    public void doFilter_success() throws IOException, ServletException {
         //Given
         when(requestProviderService.getEncodedTppQwacCert()).thenReturn(TEST_QWAC_CERTIFICATE_VALID);
 
         //When
-        qwacCertificateFilter.doFilterInternal(request, response, chain);
+        qwacCertificateFilter.doFilter(request, response, chain);
 
         //Then
         verify(chain).doFilter(any(), any());
     }
 
     @Test
-    public void doFilterInternal_failure_expired_certificate() throws IOException, ServletException {
+    public void doFilter_failure_expired_certificate() throws IOException, ServletException {
         //Given
         when(requestProviderService.getEncodedTppQwacCert()).thenReturn(TEST_QWAC_CERTIFICATE_EXPIRED);
         ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
@@ -116,7 +125,7 @@ public class QwacCertificateFilterTest {
         when(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, CERTIFICATE_EXPIRED)).thenReturn(TPP_ERROR_MESSAGE_EXPIRED);
 
         //When
-        qwacCertificateFilter.doFilterInternal(request, response, chain);
+        qwacCertificateFilter.doFilter(request, response, chain);
 
         //Then
         verify(tppErrorMessageWriter).writeError(eq(response), statusCode.capture(), message.capture());
@@ -126,7 +135,7 @@ public class QwacCertificateFilterTest {
     }
 
     @Test
-    public void doFilterInternal_success_check_tpp_roles_from_certificate() throws IOException, ServletException {
+    public void doFilter_success_check_tpp_roles_from_certificate() throws IOException, ServletException {
         //Given
         ArgumentCaptor<TppInfo> tppInfoArgumentCaptor = ArgumentCaptor.forClass(TppInfo.class);
         when(requestProviderService.getEncodedTppQwacCert()).thenReturn(TEST_QWAC_CERTIFICATE_VALID);
@@ -135,7 +144,7 @@ public class QwacCertificateFilterTest {
         when(aspspProfileService.isCheckTppRolesFromCertificateSupported()).thenReturn(true);
 
         //When
-        qwacCertificateFilter.doFilterInternal(request, response, chain);
+        qwacCertificateFilter.doFilter(request, response, chain);
 
         //Then
         verify(chain).doFilter(any(), any());
@@ -146,7 +155,7 @@ public class QwacCertificateFilterTest {
     }
 
     @Test
-    public void doFilterInternal_success_check_tpp_roles_from_header() throws IOException, ServletException {
+    public void doFilter_success_check_tpp_roles_from_header() throws IOException, ServletException {
         //Given
         ArgumentCaptor<TppInfo> tppInfoArgumentCaptor = ArgumentCaptor.forClass(TppInfo.class);
         when(requestProviderService.getEncodedTppQwacCert()).thenReturn(TEST_QWAC_CERTIFICATE_VALID);
@@ -157,7 +166,7 @@ public class QwacCertificateFilterTest {
         when(requestProviderService.getTppRolesAllowedHeader()).thenReturn(rolesRepresentation);
 
         //When
-        qwacCertificateFilter.doFilterInternal(request, response, chain);
+        qwacCertificateFilter.doFilter(request, response, chain);
 
         //Then
         verify(chain).doFilter(any(), any());
@@ -168,7 +177,7 @@ public class QwacCertificateFilterTest {
     }
 
     @Test
-    public void doFilterInternal_failure_wrong_tpp_roles() throws IOException, ServletException {
+    public void doFilter_failure_wrong_tpp_roles() throws IOException, ServletException {
         //Given
         when(tppRoleValidationService.hasAccess(any(), any())).thenReturn(false);
         ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
@@ -180,7 +189,7 @@ public class QwacCertificateFilterTest {
         when(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, ROLE_INVALID)).thenReturn(TPP_ERROR_MESSAGE_ACCESS);
 
         //When
-        qwacCertificateFilter.doFilterInternal(request, response, chain);
+        qwacCertificateFilter.doFilter(request, response, chain);
 
         //Then
         verify(tppErrorMessageWriter).writeError(eq(response), statusCode.capture(), message.capture());
@@ -190,18 +199,35 @@ public class QwacCertificateFilterTest {
     }
 
     @Test
-    public void doFilterInternal_success_no_check_tpp_roles() throws IOException, ServletException {
+    public void doFilter_success_no_check_tpp_roles() throws IOException, ServletException {
         //Given
         ArgumentCaptor<TppInfo> tppInfoArgumentCaptor = ArgumentCaptor.forClass(TppInfo.class);
         when(requestProviderService.getEncodedTppQwacCert()).thenReturn(TEST_QWAC_CERTIFICATE_VALID);
         when(aspspProfileService.isCheckTppRolesFromCertificateSupported()).thenReturn(false);
         //When
-        qwacCertificateFilter.doFilterInternal(request, response, chain);
+        qwacCertificateFilter.doFilter(request, response, chain);
         //Then
         verify(chain).doFilter(any(), any());
         verify(tppInfoHolder).setTppInfo(tppInfoArgumentCaptor.capture());
         TppInfo tppInfo = tppInfoArgumentCaptor.getValue();
         verify(tppService, never()).updateTppInfo(tppInfo);
         assertNull(tppInfo.getTppRoles());
+    }
+
+    @Test
+    public void doFilter_onCustomEndpoint_shouldSkipFilter() throws ServletException, IOException {
+        // Given
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+
+        when(requestPathResolver.resolveRequestPath(mockRequest))
+            .thenReturn(CUSTOM_PATH);
+
+        // When
+        qwacCertificateFilter.doFilter(mockRequest, mockResponse, chain);
+
+        // Then
+        verify(chain).doFilter(mockRequest, mockResponse);
+        verifyZeroInteractions(requestProviderService, tppService, tppInfoHolder);
     }
 }

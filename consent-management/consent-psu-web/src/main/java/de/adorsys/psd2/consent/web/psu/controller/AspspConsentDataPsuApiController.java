@@ -44,7 +44,8 @@ public class AspspConsentDataPsuApiController {
         @ApiParam(
             name = "consent-id",
             value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",
-            example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI")
+            example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI",
+            required = true)
         @PathVariable("consent-id") String encryptedConsentId) {
         return aspspDataService.readAspspConsentData(encryptedConsentId)
                    .map(AspspConsentData::getAspspConsentData)
@@ -63,7 +64,8 @@ public class AspspConsentDataPsuApiController {
         @ApiParam(
             name = "consent-id",
             value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",
-            example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI")
+            example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI",
+            required = true)
         @PathVariable("consent-id") String encryptedConsentId,
         @RequestBody CmsAspspConsentDataBase64 request) {
         byte[] data = Optional.ofNullable(request.getAspspConsentDataBase64())
@@ -89,7 +91,8 @@ public class AspspConsentDataPsuApiController {
         @ApiParam(
             name = "consent-id",
             value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",
-            example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI")
+            example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI",
+            required = true)
         @PathVariable("consent-id") String encryptedConsentId) {
         boolean deleted = aspspDataService.deleteAspspConsentData(encryptedConsentId);
         if (!deleted) {

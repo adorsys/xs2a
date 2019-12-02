@@ -27,10 +27,7 @@ import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkBankSetting;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
+import de.adorsys.psd2.xs2a.core.profile.*;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -87,7 +84,7 @@ public class AspspProfileServiceTest {
     private static final String COUNTRY_VALIDATION_SUPPORTED = "DE";
     private static final List<String> SUPPORTED_TRANSACTION_STATUS_FORMATS = Arrays.asList("application/json", "application/xml");
     private static final boolean IS_CHECK_TPP_ROLES_FROM_CERTIFICATE = true;
-
+    private static final List<NotificationSupportedMode> ASPSP_NOTIFICATIONS_SUPPORTED = Collections.singletonList(NotificationSupportedMode.NONE);
 
     @InjectMocks
     private AspspProfileServiceImpl aspspProfileService;
@@ -248,7 +245,8 @@ public class AspspProfileServiceTest {
                                                                                  MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
                                                                                  AIS_PIS_SESSION_SUPPORTED,
                                                                                  SIGNING_BASKET_SUPPORTED,
-                                                                                 IS_CHECK_TPP_ROLES_FROM_CERTIFICATE);
+                                                                                 IS_CHECK_TPP_ROLES_FROM_CERTIFICATE,
+                                                                                 ASPSP_NOTIFICATIONS_SUPPORTED);
         return new BankProfileSetting(ais, pis, piis, common);
     }
 

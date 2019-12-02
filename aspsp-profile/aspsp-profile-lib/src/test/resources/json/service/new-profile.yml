@@ -26,6 +26,8 @@ setting:
       transactionsWithoutBalancesSupported: true
   common:
     aisPisSessionsSupported: false
+    aspspNotificationsSupported:
+    - NONE
     authorisationExpirationTimeMs: 86400000
     checkTppRolesFromCertificateSupported: true
     forceXs2aBaseLinksUrl: false

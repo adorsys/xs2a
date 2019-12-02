@@ -73,7 +73,10 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK", response = AisAccountConsent.class),
         @ApiResponse(code = 204, message = "No Content")})
     public ResponseEntity<AisAccountConsent> getConsentById(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id",
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("consent-id") String consentId) {
         CmsResponse<AisAccountConsent> consentById = aisConsentService.getAisAccountConsentById(consentId);
 
@@ -90,7 +93,10 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<UpdateAisConsentResponse> updateAccountAccess(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id",
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("consent-id") String consentId,
         @RequestBody AisAccountAccessInfo request) {
         CmsResponse<AisAccountConsent> response = aisConsentService.updateAspspAccountAccessWithResponse(consentId, request);
@@ -108,7 +114,10 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK", response = ConsentStatus.class),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<AisConsentStatusResponse> getConsentStatusById(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id",
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("consent-id") String consentId) {
         CmsResponse<ConsentStatus> consentStatusById = aisConsentService.getConsentStatusById(consentId);
 
@@ -125,9 +134,14 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Void> updateConsentStatus(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id",
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("consent-id") String consentId,
-        @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.", example = "VALID")
+        @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.",
+            example = "VALID",
+            required = true)
         @PathVariable("status") String status) {
         CmsResponse<Boolean> response = aisConsentService.updateConsentStatusById(consentId, ConsentStatus.valueOf(status));
         if (response.isSuccessful() && response.getPayload()) {
@@ -141,7 +155,10 @@ public class AisConsentController {
     @ApiOperation(value = "Find old consents for current TPP and PSU and terminates them")
     @ApiResponse(code = 204, message = "No Content")
     public ResponseEntity<Void> findAndTerminateOldConsentsByNewConsentId(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the new account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id",
+            value = "The account consent identification assigned to the new account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("consent-id") String consentId) {
         aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
         return ResponseEntity.noContent().build();
@@ -153,7 +170,10 @@ public class AisConsentController {
         @ApiResponse(code = 201, message = "Created"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<CreateAisConsentAuthorizationResponse> createConsentAuthorization(
-        @ApiParam(name = "consent-id", value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id",
+            value = "The consent identification assigned to the created consent authorization.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("consent-id") String consentId,
         @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
         CmsResponse<CreateAisConsentAuthorizationResponse> response = aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(consentId, consentAuthorization);
@@ -171,7 +191,10 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Void> updateConsentAuthorization(
-        @ApiParam(name = "authorization-id", value = "The consent authorization identification assigned to the created authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "authorization-id",
+            value = "The consent authorization identification assigned to the created authorization.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("authorization-id") String authorizationId,
         @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.", example = "VALID")
         @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
@@ -190,9 +213,14 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Void> updateConsentAuthorisationStatus(
-        @ApiParam(name = "authorisation-id", value = "The consent authorisation identification assigned to the created authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "authorisation-id",
+            value = "The consent authorisation identification assigned to the created authorisation.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("authorisation-id") String authorisationId,
-        @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.", example = "VALID")
+        @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.",
+            example = "VALID",
+            required = true)
         @PathVariable("status") String scaStatus) {
         CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.updateConsentAuthorisationStatus(authorisationId, ScaStatus.fromValue(scaStatus));
 
@@ -209,9 +237,15 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<AisConsentAuthorizationResponse> getConsentAuthorization(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id",
+            value = "The account consent identification assigned to the created account consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("consent-id") String consentId,
-        @ApiParam(name = "authorization-id", value = "The consent authorization identification assigned to the created authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "authorization-id",
+            value = "The consent authorization identification assigned to the created authorization.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("authorization-id") String authorizationId) {
         CmsResponse<AisConsentAuthorizationResponse> response = aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(authorizationId, consentId);
 
@@ -228,9 +262,15 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<ScaStatus> getConsentAuthorizationScaStatus(
-        @ApiParam(name = "consent-id", value = "Account consent identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id",
+            value = "Account consent identification.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("consent-id") String consentId,
-        @ApiParam(name = "authorisation-id", value = "Consent authorisation identification", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "authorisation-id",
+            value = "Consent authorisation identification",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("authorisation-id") String authorisationId) {
         CmsResponse<ScaStatus> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(consentId, authorisationId);
 
@@ -247,7 +287,10 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<List<String>> getConsentAuthorisation(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "vOHy6fj2f5IgxHk-kTlhw6sZdTXbRE3bWsu2obq54beYOChP5NvRmfh06nrwumc2R01HygQenchEcdGOlU-U0A==_=_iR74m2PdNyE")
+        @ApiParam(name = "consent-id",
+            value = "The account consent identification assigned to the created account consent.",
+            example = "vOHy6fj2f5IgxHk-kTlhw6sZdTXbRE3bWsu2obq54beYOChP5NvRmfh06nrwumc2R01HygQenchEcdGOlU-U0A==_=_iR74m2PdNyE",
+            required = true)
         @PathVariable("consent-id") String consentId) {
         CmsResponse<List<String>> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(consentId);
 
@@ -262,9 +305,15 @@ public class AisConsentController {
     @ApiOperation(value = "Checks if requested authentication method is decoupled")
     @ApiResponse(code = 200, message = "OK")
     public ResponseEntity<Boolean> isAuthenticationMethodDecoupled(
-        @ApiParam(name = "authorisation-id", value = "Consent authorisation identification", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "authorisation-id",
+            value = "Consent authorisation identification",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("authorisation-id") String authorisationId,
-        @ApiParam(name = "authentication-method-id", value = "Authentication method identification", example = "sms")
+        @ApiParam(name = "authentication-method-id",
+            value = "Authentication method identification",
+            example = "sms",
+            required = true)
         @PathVariable("authentication-method-id") String authenticationMethodId) {
         CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
         return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
@@ -276,7 +325,10 @@ public class AisConsentController {
         @ApiResponse(code = 204, message = "No Content"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Void> saveAuthenticationMethods(
-        @ApiParam(name = "authorisation-id", value = "The consent authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "authorisation-id",
+            value = "The consent authorisation identification.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("authorisation-id") String authorisationId,
         @RequestBody List<CmsScaMethod> methods) {
         CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, methods);
@@ -294,9 +346,15 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Boolean> updateScaApproach(
-        @ApiParam(name = "authorisation-id", value = "The consent authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "authorisation-id",
+            value = "The consent authorisation identification.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("authorisation-id") String authorisationId,
-        @ApiParam(name = "sca-approach", value = "Chosen SCA approach.", example = "REDIRECT")
+        @ApiParam(name = "sca-approach",
+            value = "Chosen SCA approach.",
+            example = "REDIRECT",
+            required = true)
         @PathVariable("sca-approach") ScaApproach scaApproach) {
         CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
 
@@ -313,7 +371,7 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Boolean> updateMultilevelScaRequired(
-        @ApiParam(name = "consent-id", value = "The consent identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id", value = "The consent identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
         @PathVariable("consent-id") String consentId,
         @ApiParam(name = "multilevel-sca", value = "Multilevel SCA.", example = "false")
         @RequestParam(value = "multilevel-sca", defaultValue = "false") boolean multilevelSca) {
@@ -331,7 +389,10 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<AuthorisationScaApproachResponse> getAuthorisationScaApproach(
-        @ApiParam(name = "consent-id", value = "The consent authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "authorisation-id",
+            value = "The consent authorisation identification.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("authorisation-id") String authorisationId) {
         CmsResponse<AuthorisationScaApproachResponse> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId);
 
@@ -348,7 +409,10 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Boolean> saveNumberOfTransactions(
-        @ApiParam(name = "consent-id", value = "The consent identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id",
+            value = "The consent identification.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
         @PathVariable("consent-id") String consentId,
         @PathVariable("resource-id") String resourceId,
         @RequestBody Integer numberOfTransactions) {

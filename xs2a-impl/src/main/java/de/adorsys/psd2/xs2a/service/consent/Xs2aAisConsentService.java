@@ -78,7 +78,7 @@ public class Xs2aAisConsentService {
 
         CreateAisConsentResponse createAisConsentResponse = response.getPayload();
         AccountConsent accountConsent = aisConsentMapper.mapToAccountConsent(createAisConsentResponse.getAisAccountConsent());
-        return Optional.of(new Xs2aCreateAisConsentResponse(createAisConsentResponse.getConsentId(), accountConsent));
+        return Optional.of(new Xs2aCreateAisConsentResponse(createAisConsentResponse.getConsentId(), accountConsent, createAisConsentRequest.getNotificationSupportedModes()));
     }
 
     /**

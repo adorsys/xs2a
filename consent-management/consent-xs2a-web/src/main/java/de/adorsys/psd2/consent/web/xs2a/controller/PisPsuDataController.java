@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,10 @@ public class PisPsuDataController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<List<PsuIdData>> getPsuDataByPaymentId(
-        @ApiParam(name = "payment-id", value = "The payment identification.", example = "32454656712432")
+        @ApiParam(name = "payment-id",
+            value = "The payment identification.",
+            example = "32454656712432",
+            required = true)
         @PathVariable("payment-id") String paymentId) {
         CmsResponse<List<PsuIdData>> response = pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(paymentId);
 

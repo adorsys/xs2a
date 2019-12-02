@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.domain.Links;
 import lombok.Data;
@@ -50,4 +51,5 @@ public class CreateConsentResponse {
     @JsonIgnore
     private final String internalRequestId;
 
+    private final List<NotificationSupportedMode> tppNotificationContentPreferred;
 }

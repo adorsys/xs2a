@@ -377,6 +377,7 @@ Push to DockerHub (release):
   stage: "Package"
   only:
     - tags
+  when: manual
   variables:
     DOCKER_TAG: ${CI_COMMIT_TAG}
   <<: *build_dockerhub_image

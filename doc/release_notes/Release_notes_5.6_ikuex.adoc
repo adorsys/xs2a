@@ -1,0 +1,10 @@
+= Release notes v.5.6
+
+== Table of Contents
+
+* Bugfix: Incorrect response when XS2A remote components are unavailable
+
+== Bugfix: Incorrect response when XS2A remote components are unavailable
+
+From now on, when TPP sends request and some XS2A remote component (CMS, ASPSP Profile or Connector) is unavailable,
+TPP will receive `503 Service Unavailable` error with `SERVICE_UNAVAILABLE` code.

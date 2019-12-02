@@ -78,7 +78,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         }
 
         return CmsResponse.<CreatePisCommonPaymentResponse>builder()
-                   .payload(new CreatePisCommonPaymentResponse(saved.getPaymentId()))
+                   .payload(new CreatePisCommonPaymentResponse(saved.getPaymentId(), saved.getTppNotificationContentPreferred()))
                    .build();
     }
 

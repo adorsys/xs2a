@@ -33,6 +33,8 @@ public class Xs2aHeaderConstant {
     public static final String TPP_REDIRECT_PREFERRED = "tpp-redirect-preferred";
     public static final String TPP_REDIRECT_URI = "tpp-redirect-uri";
 
+    public static final String TPP_NOTIFICATION_CONTENT_PREFERRED = "tpp-notification-content-preferred";
+
     public static final String TPP_NOK_REDIRECT_URI = "tpp-nok-redirect-uri";
     public static final String TPP_EXPLICIT_AUTHORISATION_PREFERRED = "tpp-explicit-authorisation-preferred";
 

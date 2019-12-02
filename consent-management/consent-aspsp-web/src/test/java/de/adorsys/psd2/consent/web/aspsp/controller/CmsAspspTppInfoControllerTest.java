@@ -43,7 +43,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(MockitoJUnitRunner.class)
 public class CmsAspspTppInfoControllerTest {
     private final String tppAuthorisationNumber = "PSDDE-FAKENCA-87B2AC";
-    private final String GET_TPP_INFO_URL = "/aspsp-api/v1/tpp/1";
+    private final String GET_TPP_INFO_URL_PATH_PARAM = "/aspsp-api/v1/tpp/1";
+    private final String GET_TPP_INFO_URL = "/aspsp-api/v1/tpp";
     private final String INSTANCE_ID = "UNDEFINED";
     private final String TPP_INFO_PATH = "json/tpp-info.json";
 
@@ -92,6 +93,32 @@ public class CmsAspspTppInfoControllerTest {
             .thenReturn(Optional.empty());
 
         mockMvc.perform(get(GET_TPP_INFO_URL)
+                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .headers(httpHeaders))
+            .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+        verify(cmsAspspTppService, times(1)).getTppInfo(tppAuthorisationNumber, INSTANCE_ID);
+    }
+
+    @Test
+    public void getTppInfo_withPathParameter_Success() throws Exception {
+        when(cmsAspspTppService.getTppInfo(tppAuthorisationNumber, INSTANCE_ID))
+            .thenReturn(Optional.of(tppInfo));
+
+        mockMvc.perform(get(GET_TPP_INFO_URL_PATH_PARAM)
+                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .headers(httpHeaders))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().json(jsonReader.getStringFromFile(TPP_INFO_PATH)));
+
+        verify(cmsAspspTppService, times(1)).getTppInfo(tppAuthorisationNumber, INSTANCE_ID);
+    }
+
+    @Test
+    public void getTppInfo_withPathParameter_404() throws Exception {
+        when(cmsAspspTppService.getTppInfo(tppAuthorisationNumber, INSTANCE_ID))
+            .thenReturn(Optional.empty());
+
+        mockMvc.perform(get(GET_TPP_INFO_URL_PATH_PARAM)
                             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
