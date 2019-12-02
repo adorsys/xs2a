@@ -18,9 +18,11 @@ package de.adorsys.psd2.xs2a.service.mapper.psd2;
 
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.web.error.ServiceUnavailableError;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -56,5 +58,11 @@ public class ResponseErrorMapper {
         log.info("InR-ID: [{}], X-Request-ID: [{}]. Generate error: [{}]",
                  requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), error);
         return new ResponseEntity<>(errorBody.getBody(), responseHeaders.getHttpHeaders(), errorBody.getStatus());
+    }
+
+    public ResponseEntity generateServiceUnavailableErrorResponse(String error) {
+        log.info("InR-ID: [{}], X-Request-ID: [{}]. Generate error: [{}]",
+                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), error);
+        return new ResponseEntity<>(new ServiceUnavailableError(), HttpStatus.SERVICE_UNAVAILABLE);
     }
 }

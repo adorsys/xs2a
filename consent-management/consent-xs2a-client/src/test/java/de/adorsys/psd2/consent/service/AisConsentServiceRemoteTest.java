@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -30,6 +31,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
@@ -53,7 +56,7 @@ public class AisConsentServiceRemoteTest {
         // Given
         when(remoteAisConsentUrls.createAisConsent()).thenReturn(URL);
         CreateAisConsentRequest createRequest = new CreateAisConsentRequest();
-        CreateAisConsentResponse controllerResponse = new CreateAisConsentResponse(CONSENT_ID, new AisAccountConsent(), null);
+        CreateAisConsentResponse controllerResponse = new CreateAisConsentResponse(CONSENT_ID, new AisAccountConsent(), Arrays.asList(NotificationSupportedMode.LAST, NotificationSupportedMode.SCA));
         when(restTemplate.postForEntity(URL, createRequest, CreateAisConsentResponse.class))
             .thenReturn(new ResponseEntity<>(controllerResponse, HttpStatus.CREATED));
 

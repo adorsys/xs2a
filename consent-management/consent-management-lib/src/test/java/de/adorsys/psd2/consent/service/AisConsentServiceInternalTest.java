@@ -40,6 +40,7 @@ import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -79,6 +80,7 @@ public class AisConsentServiceInternalTest {
     private static final String TPP_ID = "tppId";
     private static final String EUR = "EUR";
     private static final String USD = "USD";
+    private static final List<NotificationSupportedMode> MODES = Arrays.asList(NotificationSupportedMode.LAST, NotificationSupportedMode.SCA);
 
     private AisConsent aisConsent;
     private List<AisConsentAuthorization> aisConsentAuthorisationList = new ArrayList<>();
@@ -204,7 +206,7 @@ public class AisConsentServiceInternalTest {
         AisAccountConsent aisAccountConsent = buildSpiAccountConsent();
         when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
 
-        CreateAisConsentResponse expected = new CreateAisConsentResponse(EXTERNAL_CONSENT_ID, aisAccountConsent, null);
+        CreateAisConsentResponse expected = new CreateAisConsentResponse(EXTERNAL_CONSENT_ID, aisAccountConsent, MODES);
 
         // When
         CmsResponse<CreateAisConsentResponse> actual = aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
@@ -674,6 +676,7 @@ public class AisConsentServiceInternalTest {
         request.setTppInfo(buildTppInfo());
         request.setValidUntil(validUntil);
         request.setTppRedirectPreferred(true);
+        request.setNotificationSupportedModes(MODES);
         return request;
     }
 

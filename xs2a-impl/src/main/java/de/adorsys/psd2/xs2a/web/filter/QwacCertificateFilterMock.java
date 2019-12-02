@@ -45,17 +45,9 @@ public class QwacCertificateFilterMock extends QwacCertificateFilter {
     private String qwacCertificateMock;
     private final RequestProviderService requestProviderService;
 
-    public QwacCertificateFilterMock(RequestPathResolver requestPathResolver, TppInfoHolder tppInfoHolder,
-                                     RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder,
-                                     TppRoleValidationService tppRoleValidationService, TppService tppService,
-                                     AspspProfileServiceWrapper aspspProfileService, Xs2aTppInfoMapper xs2aTppInfoMapper,
-                                     TppInfoRolesMapper tppInfoRolesMapper, TppErrorMessageWriter tppErrorMessageWriter) {
-        super(requestPathResolver, tppInfoHolder,
-              requestProviderService, tppErrorMessageBuilder,
-              tppRoleValidationService, tppService,
-              aspspProfileService, xs2aTppInfoMapper,
-              tppInfoRolesMapper, tppErrorMessageWriter);
-        this.requestProviderService = requestProviderService;
+    public QwacCertificateFilterMock(TppErrorMessageWriter tppErrorMessageWriter, RequestPathResolver requestPathResolver, TppInfoHolder tppInfoHolder, RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder, TppRoleValidationService tppRoleValidationService, TppService tppService, AspspProfileServiceWrapper aspspProfileService, Xs2aTppInfoMapper xs2aTppInfoMapper, TppInfoRolesMapper tppInfoRolesMapper, TppErrorMessageWriter tppErrorMessageWriter1, RequestProviderService requestProviderService1) {
+        super(tppErrorMessageWriter, requestPathResolver, tppInfoHolder, requestProviderService, tppErrorMessageBuilder, tppRoleValidationService, tppService, aspspProfileService, xs2aTppInfoMapper, tppInfoRolesMapper, tppErrorMessageWriter1);
+        this.requestProviderService = requestProviderService1;
     }
 
     @Override

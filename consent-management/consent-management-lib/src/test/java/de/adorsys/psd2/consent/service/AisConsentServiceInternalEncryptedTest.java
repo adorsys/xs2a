@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -47,6 +49,7 @@ public class AisConsentServiceInternalEncryptedTest {
     private static final String DECRYPTED_CONSENT_ID = "255574b2-f115-4f3c-8d77-c1897749c060";
     private static final String UNENCRYPTABLE_CONSENT_ID = "unencryptable consent id";
     private static final ConsentStatus CONSENT_STATUS = ConsentStatus.RECEIVED;
+    private static final List<NotificationSupportedMode> MODES = Arrays.asList(NotificationSupportedMode.LAST, NotificationSupportedMode.SCA);
 
     @InjectMocks
     private AisConsentServiceInternalEncrypted aisConsentServiceInternalEncrypted;
@@ -68,7 +71,7 @@ public class AisConsentServiceInternalEncryptedTest {
 
         when(aisConsentService.createConsent(any()))
             .thenReturn(CmsResponse.<CreateAisConsentResponse>builder()
-                            .payload(new CreateAisConsentResponse(DECRYPTED_CONSENT_ID, buildAisAccountConsent(), null))
+                            .payload(new CreateAisConsentResponse(DECRYPTED_CONSENT_ID, buildAisAccountConsent(), MODES))
                             .build());
         when(aisConsentService.getConsentStatusById(DECRYPTED_CONSENT_ID))
             .thenReturn(CmsResponse.<ConsentStatus>builder()
@@ -97,7 +100,7 @@ public class AisConsentServiceInternalEncryptedTest {
     public void createConsent_success() {
         // Given
         CreateAisConsentRequest request = buildCreateAisConsentRequest();
-        CreateAisConsentResponse expected = new CreateAisConsentResponse(ENCRYPTED_CONSENT_ID, buildAisAccountConsent(), null);
+        CreateAisConsentResponse expected = new CreateAisConsentResponse(ENCRYPTED_CONSENT_ID, buildAisAccountConsent(), MODES);
 
         // When
         CmsResponse<CreateAisConsentResponse> actualResponse = aisConsentServiceInternalEncrypted.createConsent(request);
@@ -136,7 +139,7 @@ public class AisConsentServiceInternalEncryptedTest {
         CreateAisConsentRequest request = buildCreateAisConsentRequest();
         when(aisConsentService.createConsent(any()))
             .thenReturn(CmsResponse.<CreateAisConsentResponse>builder()
-                            .payload(new CreateAisConsentResponse(UNENCRYPTABLE_CONSENT_ID, buildAisAccountConsent(), null))
+                            .payload(new CreateAisConsentResponse(UNENCRYPTABLE_CONSENT_ID, buildAisAccountConsent(), MODES))
                             .build());
 
         // When

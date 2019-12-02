@@ -25,7 +25,9 @@ page.
 These 3 services are basic configuration and to integrate them into whole ASPSP system one should use SPI implementation
 (connector between XS2A and ASPSP system) and ASPSP system.
 
-
+When XS2A services are deployed as microservices there is risk of getting error (e.g. service unavailable) when we interacting with them.
+In this case the request should be protected against unavailability of remote services by catching `ResourceAccessException` error.
+When writing custom filters it's recommended to extend `GlobalAbstractExceptionFilter` class and write code in `doFilterInternalCustom` method that handles this error.
 
 === Embedded Deployment
 

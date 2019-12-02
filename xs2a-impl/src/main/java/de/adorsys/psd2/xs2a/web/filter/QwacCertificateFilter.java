@@ -74,17 +74,8 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
     private final TppInfoRolesMapper tppInfoRolesMapper;
     private final TppErrorMessageWriter tppErrorMessageWriter;
 
-    public QwacCertificateFilter(RequestPathResolver requestPathResolver,
-                                 TppInfoHolder tppInfoHolder,
-                                 RequestProviderService requestProviderService,
-                                 TppErrorMessageBuilder tppErrorMessageBuilder,
-                                 TppRoleValidationService tppRoleValidationService,
-                                 TppService tppService,
-                                 AspspProfileServiceWrapper aspspProfileService,
-                                 Xs2aTppInfoMapper xs2aTppInfoMapper,
-                                 TppInfoRolesMapper tppInfoRolesMapper,
-                                 TppErrorMessageWriter tppErrorMessageWriter) {
-        super(requestPathResolver);
+    public QwacCertificateFilter(TppErrorMessageWriter tppErrorMessageWriter, RequestPathResolver requestPathResolver, TppInfoHolder tppInfoHolder, RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder, TppRoleValidationService tppRoleValidationService, TppService tppService, AspspProfileServiceWrapper aspspProfileService, Xs2aTppInfoMapper xs2aTppInfoMapper, TppInfoRolesMapper tppInfoRolesMapper, TppErrorMessageWriter tppErrorMessageWriter1) {
+        super(tppErrorMessageWriter, requestPathResolver);
         this.tppInfoHolder = tppInfoHolder;
         this.requestProviderService = requestProviderService;
         this.tppErrorMessageBuilder = tppErrorMessageBuilder;
@@ -93,11 +84,11 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
         this.aspspProfileService = aspspProfileService;
         this.xs2aTppInfoMapper = xs2aTppInfoMapper;
         this.tppInfoRolesMapper = tppInfoRolesMapper;
-        this.tppErrorMessageWriter = tppErrorMessageWriter;
+        this.tppErrorMessageWriter = tppErrorMessageWriter1;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternalCustom(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String encodedTppQwacCert = getEncodedTppQwacCert();
 
         if (StringUtils.isNotBlank(encodedTppQwacCert)) {
