@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
@@ -53,7 +53,7 @@ public class CmsAspspPsuAccountServiceInternalTest {
     @Mock
     private AisConsentSpecification aisConsentSpecification;
     @Mock
-    private AisConsentRepository aisConsentRepository;
+    private AisConsentJpaRepository aisConsentJpaRepository;
     @Mock
     private PiisConsentRepository piisConsentRepository;
     @Mock
@@ -70,7 +70,7 @@ public class CmsAspspPsuAccountServiceInternalTest {
         // given
         when(aisConsentSpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(aisConsentRepository.findAll((any()))).thenReturn(Collections.singletonList(aisConsent));
+        when(aisConsentJpaRepository.findAll((any()))).thenReturn(Collections.singletonList(aisConsent));
 
         when(piisConsentEntitySpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
@@ -81,7 +81,7 @@ public class CmsAspspPsuAccountServiceInternalTest {
 
         //then
         assertThat(actualResult).isTrue();
-        verify(aisConsentRepository, times(1)).save(aisConsent);
+        verify(aisConsentJpaRepository, times(1)).save(aisConsent);
         verify(piisConsentRepository, times(1)).save(piisConsentEntity);
     }
 
@@ -90,7 +90,7 @@ public class CmsAspspPsuAccountServiceInternalTest {
         // given
         when(aisConsentSpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(aisConsentRepository.findAll((any()))).thenReturn(Collections.singletonList(aisConsent));
+        when(aisConsentJpaRepository.findAll((any()))).thenReturn(Collections.singletonList(aisConsent));
 
         when(piisConsentEntitySpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
@@ -101,7 +101,7 @@ public class CmsAspspPsuAccountServiceInternalTest {
 
         //then
         assertThat(actualResult).isTrue();
-        verify(aisConsentRepository, times(1)).save(aisConsent);
+        verify(aisConsentJpaRepository, times(1)).save(aisConsent);
         verify(piisConsentRepository, never()).save(any());
     }
 
@@ -110,7 +110,7 @@ public class CmsAspspPsuAccountServiceInternalTest {
         // given
         when(aisConsentSpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(aisConsentRepository.findAll((any()))).thenReturn(Collections.emptyList());
+        when(aisConsentJpaRepository.findAll((any()))).thenReturn(Collections.emptyList());
 
         when(piisConsentEntitySpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
@@ -121,7 +121,7 @@ public class CmsAspspPsuAccountServiceInternalTest {
 
         //then
         assertThat(actualResult).isTrue();
-        verify(aisConsentRepository, never()).save(any());
+        verify(aisConsentJpaRepository, never()).save(any());
         verify(piisConsentRepository, times(1)).save(piisConsentEntity);
     }
 
@@ -130,7 +130,7 @@ public class CmsAspspPsuAccountServiceInternalTest {
         // given
         when(aisConsentSpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(aisConsentRepository.findAll((any()))).thenReturn(Collections.emptyList());
+        when(aisConsentJpaRepository.findAll((any()))).thenReturn(Collections.emptyList());
 
         when(piisConsentEntitySpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
@@ -141,7 +141,7 @@ public class CmsAspspPsuAccountServiceInternalTest {
 
         //then
         assertThat(actualResult).isFalse();
-        verify(aisConsentRepository, never()).save(any());
+        verify(aisConsentJpaRepository, never()).save(any());
         verify(piisConsentRepository, never()).save(any());
     }
 }

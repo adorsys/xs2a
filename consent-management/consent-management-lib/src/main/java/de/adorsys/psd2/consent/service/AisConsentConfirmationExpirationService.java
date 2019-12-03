@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AisConsentConfirmationExpirationService {
-    private final AisConsentRepository aisConsentRepository;
+    private final AisConsentJpaRepository aisConsentJpaRepository;
     private final AspspProfileService aspspProfileService;
 
     @Transactional
@@ -64,17 +64,17 @@ public class AisConsentConfirmationExpirationService {
         consent.setConsentStatus(ConsentStatus.EXPIRED);
         consent.setExpireDate(LocalDate.now());
         consent.setLastActionDate(LocalDate.now());
-        aisConsentRepository.save(consent);
+        aisConsentJpaRepository.save(consent);
     }
 
     @Transactional
     public AisConsent updateConsentOnConfirmationExpiration(AisConsent consent) {
-        return aisConsentRepository.save(obsoleteConsent(consent));
+        return aisConsentJpaRepository.save(obsoleteConsent(consent));
     }
 
     @Transactional
     public List<AisConsent> updateConsentListOnConfirmationExpiration(List<AisConsent> consents) {
-        return IterableUtils.toList(aisConsentRepository.saveAll(obsoleteConsentList(consents)));
+        return IterableUtils.toList(aisConsentJpaRepository.saveAll(obsoleteConsentList(consents)));
     }
 
     private List<AisConsent> obsoleteConsentList(List<AisConsent> consents) {

@@ -19,14 +19,13 @@ package de.adorsys.psd2.consent.integration.ais;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.integration.config.IntegrationTestConfiguration;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -66,7 +65,7 @@ public class AisConsentIT {
     @Autowired
     private EntityManager entityManager;
     @Autowired
-    private AisConsentRepository aisConsentRepository;
+    private AisConsentJpaRepository aisConsentJpaRepository;
     @Autowired
     private CmsPsuAisService cmsPsuAisService;
 
@@ -89,7 +88,7 @@ public class AisConsentIT {
         // When
         aisConsentService.createConsent(createAisConsentRequest);
         flushAndClearPersistenceContext();
-        Iterable<AisConsent> entities = aisConsentRepository.findAll();
+        Iterable<AisConsent> entities = aisConsentJpaRepository.findAll();
         AisConsent savedEntity = entities.iterator().next();
 
         // Then
@@ -102,7 +101,7 @@ public class AisConsentIT {
 
         // Then
         // Second, we update the status and check it and the updated timestamp
-        entities = aisConsentRepository.findAll();
+        entities = aisConsentJpaRepository.findAll();
         AisConsent updatedEntity = entities.iterator().next();
         assertEquals(ConsentStatus.EXPIRED, updatedEntity.getConsentStatus());
         assertTrue(updatedEntity.getStatusChangeTimestamp().isAfter(updatedEntity.getCreationTimestamp()));
@@ -116,7 +115,7 @@ public class AisConsentIT {
         // When
         aisConsentService.createConsent(createAisConsentRequest);
         flushAndClearPersistenceContext();
-        Iterable<AisConsent> entities = aisConsentRepository.findAll();
+        Iterable<AisConsent> entities = aisConsentJpaRepository.findAll();
         AisConsent savedEntity = entities.iterator().next();
 
         // Then
@@ -129,7 +128,7 @@ public class AisConsentIT {
 
         // Then
         // Second, we update the status for the same and check it and the updated timestamp
-        entities = aisConsentRepository.findAll();
+        entities = aisConsentJpaRepository.findAll();
         AisConsent updatedEntity = entities.iterator().next();
         assertEquals(ConsentStatus.RECEIVED, updatedEntity.getConsentStatus());
         assertTrue(updatedEntity.getStatusChangeTimestamp().equals(updatedEntity.getCreationTimestamp()));
@@ -143,7 +142,7 @@ public class AisConsentIT {
         // When
         aisConsentService.createConsent(createAisConsentRequest);
         flushAndClearPersistenceContext();
-        Iterable<AisConsent> entities = aisConsentRepository.findAll();
+        Iterable<AisConsent> entities = aisConsentJpaRepository.findAll();
         AisConsent savedEntity = entities.iterator().next();
 
         // Then

@@ -22,7 +22,7 @@ import de.adorsys.psd2.aspsp.profile.domain.ais.ConsentTypeSetting;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,7 +52,7 @@ public class AisConsentConfirmationExpirationServiceTest {
     private AisConsentConfirmationExpirationService expirationService;
 
     @Mock
-    private AisConsentRepository aisConsentRepository;
+    private AisConsentJpaRepository aisConsentJpaRepository;
     @Mock
     private AspspProfileService aspspProfileService;
 
@@ -63,7 +63,7 @@ public class AisConsentConfirmationExpirationServiceTest {
         // When
         expirationService.expireConsent(new AisConsent());
         // Then
-        verify(aisConsentRepository).save(aisConsentCaptor.capture());
+        verify(aisConsentJpaRepository).save(aisConsentCaptor.capture());
 
         AisConsent aisConsent = aisConsentCaptor.getValue();
         assertEquals(ConsentStatus.EXPIRED, aisConsent.getConsentStatus());
@@ -97,7 +97,7 @@ public class AisConsentConfirmationExpirationServiceTest {
         expirationService.updateConsentOnConfirmationExpiration(buildAisConsent(ConsentStatus.RECEIVED, TOMORROW));
 
         // Then
-        verify(aisConsentRepository).save(aisConsentCaptor.capture());
+        verify(aisConsentJpaRepository).save(aisConsentCaptor.capture());
         assertEquals(ConsentStatus.REJECTED, aisConsentCaptor.getValue().getConsentStatus());
     }
 
@@ -114,7 +114,7 @@ public class AisConsentConfirmationExpirationServiceTest {
         expirationService.checkAndUpdateOnConfirmationExpiration(consent);
 
         // Then
-        verify(aisConsentRepository).save(aisConsentCaptor.capture());
+        verify(aisConsentJpaRepository).save(aisConsentCaptor.capture());
         assertEquals(ConsentStatus.REJECTED, aisConsentCaptor.getValue().getConsentStatus());
     }
 
@@ -140,7 +140,7 @@ public class AisConsentConfirmationExpirationServiceTest {
         expirationService.updateConsentListOnConfirmationExpiration(Collections.singletonList(buildAisConsent(ConsentStatus.RECEIVED, TOMORROW)));
 
         // Then
-        verify(aisConsentRepository).saveAll(aisConsentListCaptor.capture());
+        verify(aisConsentJpaRepository).saveAll(aisConsentListCaptor.capture());
         assertEquals(ConsentStatus.REJECTED, aisConsentListCaptor.getValue().get(0).getConsentStatus());
     }
 

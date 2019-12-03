@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentTransaction;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.AisConsentTransactionRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,12 +46,12 @@ public class AccountServiceInternalTest {
     private AisConsentTransactionRepository aisConsentTransactionRepository;
 
     @Mock
-    private AisConsentRepository aisConsentRepository;
+    private AisConsentJpaRepository aisConsentJpaRepository;
 
     @Test
     public void saveNumberOfTransactions_shouldFail() {
         // Given
-        when(aisConsentRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.empty());
+        when(aisConsentJpaRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.empty());
 
         // When
         boolean result = accountServiceInternal.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10);
@@ -64,7 +64,7 @@ public class AccountServiceInternalTest {
     @Test
     public void saveNumberOfTransactions_success() {
         // Given
-        when(aisConsentRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.of(new AisConsent()));
+        when(aisConsentJpaRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.of(new AisConsent()));
 
         // When
         boolean result = accountServiceInternal.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10);

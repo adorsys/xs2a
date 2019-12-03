@@ -17,7 +17,7 @@
 package de.adorsys.psd2.scheduler;
 
 import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class ConsentScheduleTaskTest {
     private ConsentScheduleTask scheduleTask;
 
     @Mock
-    private AisConsentRepository aisConsentRepository;
+    private AisConsentJpaRepository aisConsentJpaRepository;
 
     @Captor
     private ArgumentCaptor<ArrayList<AisConsent>> consentCaptor;
@@ -52,17 +52,17 @@ public class ConsentScheduleTaskTest {
         List<AisConsent> availableConsents = new ArrayList<>();
         availableConsents.add(createConsent(RECEIVED));
         availableConsents.add(createConsent(VALID));
-        when(aisConsentRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID))).thenReturn(availableConsents);
+        when(aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID))).thenReturn(availableConsents);
 
-        when(aisConsentRepository.saveAll(consentCaptor.capture())).thenReturn(Collections.emptyList());
+        when(aisConsentJpaRepository.saveAll(consentCaptor.capture())).thenReturn(Collections.emptyList());
 
         scheduleTask.checkConsentStatus();
 
         assertEquals(2, consentCaptor.getValue().size());
         consentCaptor.getValue().forEach(c -> assertEquals(EXPIRED, c.getConsentStatus()));
 
-        verify(aisConsentRepository, times(1)).findByConsentStatusIn(EnumSet.of(RECEIVED, VALID));
-        verify(aisConsentRepository, times(1)).saveAll(anyList());
+        verify(aisConsentJpaRepository, times(1)).findByConsentStatusIn(EnumSet.of(RECEIVED, VALID));
+        verify(aisConsentJpaRepository, times(1)).saveAll(anyList());
     }
 
     @Test
@@ -72,9 +72,9 @@ public class ConsentScheduleTaskTest {
         AisConsent consent = createConsent(VALID);
         consent.setExpireDate(LocalDate.now().plusDays(1));
         availableConsents.add(consent);
-        when(aisConsentRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID))).thenReturn(availableConsents);
+        when(aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID))).thenReturn(availableConsents);
 
-        when(aisConsentRepository.saveAll(consentCaptor.capture())).thenReturn(Collections.emptyList());
+        when(aisConsentJpaRepository.saveAll(consentCaptor.capture())).thenReturn(Collections.emptyList());
 
         scheduleTask.checkConsentStatus();
 
@@ -82,21 +82,21 @@ public class ConsentScheduleTaskTest {
         assertEquals("RECEIVED", consentCaptor.getValue().get(0).getExternalId());
         consentCaptor.getValue().forEach(c -> assertEquals(EXPIRED, c.getConsentStatus()));
 
-        verify(aisConsentRepository, times(1)).findByConsentStatusIn(EnumSet.of(RECEIVED, VALID));
-        verify(aisConsentRepository, times(1)).saveAll(anyList());
+        verify(aisConsentJpaRepository, times(1)).findByConsentStatusIn(EnumSet.of(RECEIVED, VALID));
+        verify(aisConsentJpaRepository, times(1)).saveAll(anyList());
     }
 
     @Test
     public void checkConsentStatus_nullValue() {
 
-        when(aisConsentRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID))).thenReturn(null);
+        when(aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID))).thenReturn(null);
 
-        when(aisConsentRepository.saveAll(Collections.emptyList())).thenReturn(Collections.emptyList());
+        when(aisConsentJpaRepository.saveAll(Collections.emptyList())).thenReturn(Collections.emptyList());
 
         scheduleTask.checkConsentStatus();
 
-        verify(aisConsentRepository, times(1)).findByConsentStatusIn(EnumSet.of(RECEIVED, VALID));
-        verify(aisConsentRepository, times(1)).saveAll(Collections.emptyList());
+        verify(aisConsentJpaRepository, times(1)).findByConsentStatusIn(EnumSet.of(RECEIVED, VALID));
+        verify(aisConsentJpaRepository, times(1)).saveAll(Collections.emptyList());
     }
 
     @NotNull

@@ -29,7 +29,7 @@ import de.adorsys.psd2.consent.domain.account.AisConsentAction;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccessHolder;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccessHolder;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
@@ -58,7 +58,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 @Transactional(readOnly = true)
 // TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 public class AisConsentServiceInternal implements AisConsentService {
-    private final AisConsentRepository aisConsentRepository;
+    private final AisConsentJpaRepository aisConsentJpaRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
     private final TppInfoRepository tppInfoRepository;
     private final AisConsentMapper consentMapper;
@@ -91,7 +91,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         tppInfoRepository.findByAuthorisationNumber(request.getTppInfo().getAuthorisationNumber())
             .ifPresent(consent::setTppInfo);
 
-        AisConsent savedConsent = aisConsentRepository.save(consent);
+        AisConsent savedConsent = aisConsentJpaRepository.save(consent);
 
         if (savedConsent.getId() != null) {
             return CmsResponse.<CreateAisConsentResponse>builder()
@@ -116,7 +116,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     @Transactional
     public CmsResponse<ConsentStatus> getConsentStatusById(String consentId) {
-        Optional<ConsentStatus> consentStatusOptional = aisConsentRepository.findByExternalId(consentId)
+        Optional<ConsentStatus> consentStatusOptional = aisConsentJpaRepository.findByExternalId(consentId)
                                                             .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                                                             .map(this::checkAndUpdateOnExpiration)
                                                             .map(AisConsent::getConsentStatus);
@@ -164,7 +164,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     @Transactional
     public CmsResponse<AisAccountConsent> getAisAccountConsentById(String consentId) {
-        Optional<AisAccountConsent> consentOptional = aisConsentRepository.findByExternalId(consentId)
+        Optional<AisAccountConsent> consentOptional = aisConsentJpaRepository.findByExternalId(consentId)
                                                           .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                                                           .map(this::checkAndUpdateOnExpiration)
                                                           .map(consentMapper::mapToAisAccountConsent);
@@ -190,7 +190,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     @Transactional
     public CmsResponse<Boolean> findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
-        AisConsent newConsent = aisConsentRepository.findByExternalId(newConsentId)
+        AisConsent newConsent = aisConsentJpaRepository.findByExternalId(newConsentId)
                                     .orElseThrow(() -> {
                                         log.info("Consent ID: [{}]. Cannot find consent by ID", newConsentId);
                                         return new IllegalArgumentException("Wrong consent ID: " + newConsentId);
@@ -215,11 +215,11 @@ public class AisConsentServiceInternal implements AisConsentService {
                                  .collect(Collectors.toSet());
         TppInfoEntity tppInfo = newConsent.getTppInfo();
 
-        List<AisConsent> oldConsents = aisConsentRepository.findOldConsentsByNewConsentParams(psuIds,
-                                                                                              tppInfo.getAuthorisationNumber(),
-                                                                                              newConsent.getInstanceId(),
-                                                                                              newConsent.getExternalId(),
-                                                                                              EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID));
+        List<AisConsent> oldConsents = aisConsentJpaRepository.findOldConsentsByNewConsentParams(psuIds,
+                                                                                                 tppInfo.getAuthorisationNumber(),
+                                                                                                 newConsent.getInstanceId(),
+                                                                                                 newConsent.getExternalId(),
+                                                                                                 EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID));
 
         List<AisConsent> oldConsentsWithExactPsuDataLists = oldConsents.stream()
                                                                 .filter(c -> cmsPsuService.isPsuDataListEqual(c.getPsuDataList(), psuDataList))
@@ -233,7 +233,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         oldConsentsWithExactPsuDataLists.forEach(this::updateStatus);
-        aisConsentRepository.saveAll(oldConsentsWithExactPsuDataLists);
+        aisConsentJpaRepository.saveAll(oldConsentsWithExactPsuDataLists);
         return CmsResponse.<Boolean>builder()
                    .payload(true)
                    .build();
@@ -278,7 +278,7 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                  .map(consent -> {
                                                      consent.addAspspAccountAccess(new AspspAccountAccessHolder(request)
                                                                                        .getAccountAccesses());
-                                                     return aisConsentRepository.save(consent)
+                                                     return aisConsentJpaRepository.save(consent)
                                                                 .getExternalId();
                                                  });
 
@@ -302,7 +302,7 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                           .map(consent -> {
                                                               consent.addAspspAccountAccess(new AspspAccountAccessHolder(request)
                                                                                                 .getAccountAccesses());
-                                                              return consentMapper.mapToAisAccountConsent(aisConsentRepository.save(consent));
+                                                              return consentMapper.mapToAisAccountConsent(aisConsentJpaRepository.save(consent));
                                                           });
 
         if (consentOptional.isPresent()) {
@@ -339,7 +339,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     @Transactional
     public CmsResponse<Boolean> updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) {
-        Optional<AisConsent> aisConsentOptional = aisConsentRepository.findByExternalId(consentId);
+        Optional<AisConsent> aisConsentOptional = aisConsentJpaRepository.findByExternalId(consentId);
         if (!aisConsentOptional.isPresent()) {
             log.info("Consent ID: [{}]. Get update multilevel SCA required status failed, because consent authorisation is not found",
                      consentId);
@@ -349,7 +349,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
         AisConsent consent = aisConsentOptional.get();
         consent.setMultilevelScaRequired(multilevelScaRequired);
-        aisConsentRepository.save(consent);
+        aisConsentJpaRepository.save(consent);
 
         return CmsResponse.<Boolean>builder()
                    .payload(true)
@@ -433,7 +433,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private Optional<AisConsent> getActualAisConsent(String consentId) {
-        return aisConsentRepository.findByExternalId(consentId)
+        return aisConsentJpaRepository.findByExternalId(consentId)
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
     }
 
@@ -452,7 +452,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
-        return Optional.ofNullable(aisConsentRepository.save(consent))
+        return Optional.ofNullable(aisConsentJpaRepository.save(consent))
                    .isPresent();
     }
 
@@ -467,7 +467,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         consent.setLastActionDate(LocalDate.now());
-        aisConsentRepository.save(consent);
+        aisConsentJpaRepository.save(consent);
     }
 
     private void updateStatus(AisConsent aisConsent) {

@@ -17,7 +17,7 @@
 package de.adorsys.psd2.scheduler;
 
 import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class NonRecurringConsentExpirationScheduleTaskTest {
     private NonRecurringConsentExpirationScheduleTask scheduleTask;
 
     @Mock
-    private AisConsentRepository aisConsentRepository;
+    private AisConsentJpaRepository aisConsentJpaRepository;
 
     @Captor
     private ArgumentCaptor<ArrayList<AisConsent>> consentsCaptor;
@@ -58,14 +58,14 @@ public class NonRecurringConsentExpirationScheduleTaskTest {
         aisConsents.add(createConsent(RECEIVED));
         aisConsents.add(createConsent(VALID));
 
-        when(aisConsentRepository.findUsedNonRecurringConsents(eq(EnumSet.of(RECEIVED, VALID)), any(LocalDate.class)))
+        when(aisConsentJpaRepository.findUsedNonRecurringConsents(eq(EnumSet.of(RECEIVED, VALID)), any(LocalDate.class)))
             .thenReturn(aisConsents);
-        when(aisConsentRepository.saveAll(consentsCaptor.capture())).thenReturn(Collections.emptyList());
+        when(aisConsentJpaRepository.saveAll(consentsCaptor.capture())).thenReturn(Collections.emptyList());
 
         scheduleTask.expireUsedNonRecurringConsent();
 
-        verify(aisConsentRepository, times(1)).findUsedNonRecurringConsents(eq(EnumSet.of(RECEIVED, VALID)), any(LocalDate.class));
-        verify(aisConsentRepository, times(1)).saveAll(anyList());
+        verify(aisConsentJpaRepository, times(1)).findUsedNonRecurringConsents(eq(EnumSet.of(RECEIVED, VALID)), any(LocalDate.class));
+        verify(aisConsentJpaRepository, times(1)).saveAll(anyList());
 
         assertEquals(2, consentsCaptor.getValue().size());
         consentsCaptor.getValue().forEach(c -> assertEquals(EXPIRED, c.getConsentStatus()));
