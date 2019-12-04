@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface AisConsentRepository extends CrudRepository<AisConsent, Long>, JpaSpecificationExecutor<AisConsent> {
+public interface AisConsentJpaRepository extends CrudRepository<AisConsent, Long>, JpaSpecificationExecutor<AisConsent> {
     List<AisConsent> findByConsentStatusIn(Set<ConsentStatus> statuses);
 
     Optional<AisConsent> findByExternalId(String externalId);

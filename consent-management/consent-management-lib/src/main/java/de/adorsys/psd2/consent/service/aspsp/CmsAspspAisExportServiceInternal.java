@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportService {
     private final AisConsentSpecification aisConsentSpecification;
-    private final AisConsentRepository aisConsentRepository;
+    private final AisConsentJpaRepository aisConsentJpaRepository;
     private final AisConsentMapper aisConsentMapper;
 
     @Override
@@ -54,7 +54,7 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
             return Collections.emptyList();
         }
 
-        return aisConsentRepository.findAll(aisConsentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(
+        return aisConsentJpaRepository.findAll(aisConsentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(
             tppAuthorisationNumber,
             createDateFrom,
             createDateTo,
@@ -76,10 +76,10 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
             return Collections.emptyList();
         }
 
-        return aisConsentRepository.findAll(aisConsentSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
-                                                                                                              createDateFrom,
-                                                                                                              createDateTo,
-                                                                                                              instanceId
+        return aisConsentJpaRepository.findAll(aisConsentSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
+                                                                                                                 createDateFrom,
+                                                                                                                 createDateTo,
+                                                                                                                 instanceId
         ))
                    .stream()
                    .map(aisConsentMapper::mapToCmsAisAccountConsent)
@@ -98,10 +98,10 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
             return Collections.emptyList();
         }
 
-        return aisConsentRepository.findAll(aisConsentSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId,
-                                                                                                                   createDateFrom,
-                                                                                                                   createDateTo,
-                                                                                                                   instanceId
+        return aisConsentJpaRepository.findAll(aisConsentSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId,
+                                                                                                                      createDateFrom,
+                                                                                                                      createDateTo,
+                                                                                                                      instanceId
         ))
                    .stream()
                    .map(aisConsentMapper::mapToCmsAisAccountConsent)

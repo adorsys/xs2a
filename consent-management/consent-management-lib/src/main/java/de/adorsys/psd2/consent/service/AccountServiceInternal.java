@@ -19,7 +19,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.service.AccountService;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentTransaction;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.AisConsentTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +34,13 @@ import java.util.Optional;
 public class AccountServiceInternal implements AccountService {
 
     private final AisConsentTransactionRepository aisConsentTransactionRepository;
-    private final AisConsentRepository aisConsentRepository;
+    private final AisConsentJpaRepository aisConsentJpaRepository;
 
     @Override
     @Transactional
     public boolean saveNumberOfTransactions(String consentId, String resourceId, int numberOfTransactions) {
 
-        Optional<AisConsent> optionalAisConsent = aisConsentRepository.findByExternalId(consentId);
+        Optional<AisConsent> optionalAisConsent = aisConsentJpaRepository.findByExternalId(consentId);
 
         if (optionalAisConsent.isPresent()) {
 

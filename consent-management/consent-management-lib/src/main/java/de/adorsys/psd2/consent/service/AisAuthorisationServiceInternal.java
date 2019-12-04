@@ -29,7 +29,7 @@ import de.adorsys.psd2.consent.domain.ScaMethod;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
@@ -60,7 +60,7 @@ import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AisAuthorisationServiceInternal implements AisConsentAuthorisationService {
-    private final AisConsentRepository aisConsentRepository;
+    private final AisConsentJpaRepository aisConsentJpaRepository;
     private final AisConsentAuthorisationRepository aisConsentAuthorisationRepository;
     private final AisConsentMapper consentMapper;
     private final PsuDataMapper psuDataMapper;
@@ -79,7 +79,7 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
     @Override
     @Transactional
     public CmsResponse<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request) {
-        Optional<CreateAisConsentAuthorizationResponse> responseOptional = aisConsentRepository.findByExternalId(consentId)
+        Optional<CreateAisConsentAuthorizationResponse> responseOptional = aisConsentJpaRepository.findByExternalId(consentId)
                                                                                .filter(con -> !con.getConsentStatus().isFinalisedStatus())
                                                                                .map(aisConsent -> {
                                                                                    closePreviousAuthorisationsByPsu(aisConsent.getAuthorizations(), request.getPsuData());
@@ -109,7 +109,7 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
      */
     @Override
     public CmsResponse<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        boolean consentPresent = aisConsentRepository.findByExternalId(consentId)
+        boolean consentPresent = aisConsentJpaRepository.findByExternalId(consentId)
                                      .filter(c -> !c.getConsentStatus().isFinalisedStatus())
                                      .isPresent();
 
@@ -138,7 +138,7 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
      */
     @Override
     public CmsResponse<List<String>> getAuthorisationsByConsentId(String consentId) {
-        Optional<List<String>> authorisationsListOptional = aisConsentRepository.findByExternalId(consentId)
+        Optional<List<String>> authorisationsListOptional = aisConsentJpaRepository.findByExternalId(consentId)
                                                                 .map(cst -> cst.getAuthorizations().stream()
                                                                                 .map(AisConsentAuthorization::getExternalId)
                                                                                 .collect(Collectors.toList()));
@@ -159,7 +159,7 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
     @Override
     @Transactional
     public CmsResponse<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        Optional<AisConsent> consentOptional = aisConsentRepository.findByExternalId(consentId);
+        Optional<AisConsent> consentOptional = aisConsentJpaRepository.findByExternalId(consentId);
         if (!consentOptional.isPresent()) {
             log.info("Consent ID: [{}], Authorisation ID: [{}]. Get authorisation SCA status failed, because consent is not found",
                      consentId, authorisationId);

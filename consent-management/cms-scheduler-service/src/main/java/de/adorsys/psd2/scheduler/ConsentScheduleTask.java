@@ -17,7 +17,7 @@
 package de.adorsys.psd2.scheduler;
 
 import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,15 +39,15 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 @Component
 @RequiredArgsConstructor
 public class ConsentScheduleTask {
-    private final AisConsentRepository aisConsentRepository;
+    private final AisConsentJpaRepository aisConsentJpaRepository;
 
     @Scheduled(cron = "${consent.cron.expression}")
     @Transactional
     public void checkConsentStatus() {
         log.info("Consent schedule task is run!");
-        List<AisConsent> availableConsents = Optional.ofNullable(aisConsentRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID)))
+        List<AisConsent> availableConsents = Optional.ofNullable(aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID)))
                                                  .orElse(Collections.emptyList());
-        aisConsentRepository.saveAll(updateConsent(availableConsents));
+        aisConsentJpaRepository.saveAll(updateConsent(availableConsents));
     }
 
     private List<AisConsent> updateConsent(List<AisConsent> availableConsents) {
