@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.ObjectValidator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.IBANValidator;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -39,12 +38,12 @@ public class AccountReferenceValidator implements ObjectValidator<AccountReferen
     private final ErrorBuildingService errorBuildingService;
     private final OptionalFieldMaxLengthValidator optionalFieldMaxLengthValidator;
     private final CurrencyValidator currencyValidator;
+    private final IbanValidator ibanValidator;
 
     @Override
     public void validate(@NotNull AccountReference accountReference, @NotNull MessageError messageError) {
-        if (StringUtils.isNotBlank(accountReference.getIban()) && !isValidIban(accountReference.getIban())) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_FIELD, "IBAN"));
-        }
+        ibanValidator.validate(accountReference.getIban(), messageError);
+
         if (StringUtils.isNotBlank(accountReference.getBban()) && !isValidBban(accountReference.getBban())) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_FIELD, "BBAN"));
         }
@@ -58,14 +57,6 @@ public class AccountReferenceValidator implements ObjectValidator<AccountReferen
         if (Objects.nonNull(accountReference.getCurrency())) {
             currencyValidator.validateCurrency(accountReference.getCurrency(), messageError);
         }
-    }
-
-    // TODO: create an opportunity to disable this IBAN validation for test purposes.
-    // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/839
-    // Example, implement it as separate bean and inject it here.
-    private boolean isValidIban(String iban) {
-        IBANValidator validator = IBANValidator.getInstance();
-        return validator.isValid(iban);
     }
 
     private boolean isValidBban(String bban) {

@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment.type;
 
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.AccountReference;
 import de.adorsys.psd2.model.Amount;
 import de.adorsys.psd2.model.BulkPaymentInitiationJson;
 import de.adorsys.psd2.model.PaymentInitiationBulkElementJson;
-import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.IbanValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.config.DefaultPaymentValidationConfigImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.config.PaymentValidationConfig;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
@@ -83,7 +84,8 @@ public class BulkPaymentTypeValidatorImplTest {
         validator = new BulkPaymentTypeValidatorImpl(errorBuildingServiceMock,
                                                      xs2aObjectMapper,
                                                      new PaymentMapper(xs2aObjectMapper, purposeCodeMapper, remittanceMapper),
-                                                     new AmountValidator(errorBuildingServiceMock));
+                                                     new AmountValidator(errorBuildingServiceMock),
+                                                     new IbanValidator(errorBuildingServiceMock));
     }
 
     @Test

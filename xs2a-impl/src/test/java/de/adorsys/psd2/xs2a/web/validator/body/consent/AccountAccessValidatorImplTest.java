@@ -81,7 +81,8 @@ public class AccountAccessValidatorImplTest {
         dateFieldValidator = new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor);
         currencyValidator = new CurrencyValidator(errorService);
         OptionalFieldMaxLengthValidator stringValidator = new OptionalFieldMaxLengthValidator(new StringMaxLengthValidator(errorService));
-        accountReferenceValidator = new AccountReferenceValidator(errorService, stringValidator, currencyValidator);
+        accountReferenceValidator =
+            new AccountReferenceValidator(errorService, stringValidator, currencyValidator, new IbanValidator(errorService));
 
         validator = createValidator(consents);
     }
