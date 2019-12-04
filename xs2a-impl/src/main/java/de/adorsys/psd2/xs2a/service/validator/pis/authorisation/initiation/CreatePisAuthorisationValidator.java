@@ -82,8 +82,6 @@ public class CreatePisAuthorisationValidator extends AbstractPisValidator<Create
             return ValidationResult.invalid(PIS_409, STATUS_INVALID);
         }
 
-        // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc.,
-        //  so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1104
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Creation of PIS authorisation has failed: payment has been rejected",
                      getRequestProviderService().getInternalRequestId(), getRequestProviderService().getRequestId(), pisCommonPaymentResponse.getExternalId());

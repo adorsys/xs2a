@@ -65,8 +65,6 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractUpdatePisPsu
 
     @Override
     protected ValidationResult validateTransactionStatus(UpdatePisPsuDataPO paymentObject) {
-        // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc.,
-        //  so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1104
         if (paymentObject.getPisCommonPaymentResponse().getTransactionStatus() == TransactionStatus.RJCT) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: payment has been rejected",
                      getRequestProviderService().getInternalRequestId(), getRequestProviderService().getRequestId(),
