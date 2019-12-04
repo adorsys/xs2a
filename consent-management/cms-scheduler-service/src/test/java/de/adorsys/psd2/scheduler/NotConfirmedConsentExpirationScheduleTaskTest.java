@@ -17,7 +17,7 @@
 package de.adorsys.psd2.scheduler;
 
 import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class NotConfirmedConsentExpirationScheduleTaskTest {
     @Mock
     private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
     @Mock
-    private AisConsentRepository aisConsentRepository;
+    private AisConsentJpaRepository aisConsentJpaRepository;
 
     @Captor
     private ArgumentCaptor<ArrayList<AisConsent>> consentsCaptor;
@@ -57,7 +57,7 @@ public class NotConfirmedConsentExpirationScheduleTaskTest {
         aisConsents.add(new AisConsent());
         aisConsents.add(new AisConsent());
 
-        when(aisConsentRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED)))
+        when(aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED)))
             .thenReturn(aisConsents);
         when(aisConsentConfirmationExpirationService.isConsentConfirmationExpired(any(AisConsent.class))).thenReturn(true, false);
         when(aisConsentConfirmationExpirationService.updateConsentListOnConfirmationExpiration(consentsCaptor.capture()))
@@ -65,7 +65,7 @@ public class NotConfirmedConsentExpirationScheduleTaskTest {
 
         scheduleTask.obsoleteNotConfirmedConsentIfExpired();
 
-        verify(aisConsentRepository, times(1)).findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED));
+        verify(aisConsentJpaRepository, times(1)).findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED));
         verify(aisConsentConfirmationExpirationService, times(2)).isConsentConfirmationExpired(any(AisConsent.class));
         verify(aisConsentConfirmationExpirationService, times(1)).updateConsentListOnConfirmationExpiration(anyList());
 
@@ -74,12 +74,12 @@ public class NotConfirmedConsentExpirationScheduleTaskTest {
 
     @Test
     public void obsoleteNotConfirmedConsentIfExpired_emptyList() {
-        when(aisConsentRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED)))
+        when(aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED)))
             .thenReturn(Collections.emptyList());
 
         scheduleTask.obsoleteNotConfirmedConsentIfExpired();
 
-        verify(aisConsentRepository, times(1)).findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED));
+        verify(aisConsentJpaRepository, times(1)).findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED));
         verify(aisConsentConfirmationExpirationService, never()).isConsentConfirmationExpired(any(AisConsent.class));
         verify(aisConsentConfirmationExpirationService, never()).updateConsentListOnConfirmationExpiration(anyList());
     }

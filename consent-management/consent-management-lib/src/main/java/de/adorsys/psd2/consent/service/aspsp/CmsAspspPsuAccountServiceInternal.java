@@ -19,7 +19,7 @@ package de.adorsys.psd2.consent.service.aspsp;
 import de.adorsys.psd2.consent.aspsp.api.psu.CmsAspspPsuAccountService;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
@@ -40,14 +40,14 @@ import java.util.stream.Collectors;
 @Service
 public class CmsAspspPsuAccountServiceInternal implements CmsAspspPsuAccountService {
     private final AisConsentSpecification aisConsentSpecification;
-    private final AisConsentRepository aisConsentRepository;
+    private final AisConsentJpaRepository aisConsentJpaRepository;
     private final PiisConsentRepository piisConsentRepository;
     private final PiisConsentEntitySpecification piisConsentEntitySpecification;
 
     @Override
     @Transactional
     public boolean revokeAllConsents(@Nullable String aspspAccountId, @NotNull PsuIdData psuIdData, @Nullable String instanceId) {
-        List<AisConsent> aisConsents = aisConsentRepository.findAll(aisConsentSpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(aspspAccountId, psuIdData, instanceId));
+        List<AisConsent> aisConsents = aisConsentJpaRepository.findAll(aisConsentSpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(aspspAccountId, psuIdData, instanceId));
         List<PiisConsentEntity> piisConsents = piisConsentRepository.findAll(piisConsentEntitySpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(aspspAccountId, psuIdData, instanceId));
 
         List<AisConsent> filteredAisConsents = aisConsents.stream()
@@ -66,7 +66,7 @@ public class CmsAspspPsuAccountServiceInternal implements CmsAspspPsuAccountServ
         filteredAisConsents.forEach(cst -> {
             cst.setLastActionDate(LocalDate.now());
             cst.setConsentStatus(ConsentStatus.REVOKED_BY_PSU);
-            aisConsentRepository.save(cst);
+            aisConsentJpaRepository.save(cst);
         });
 
         filteredPiisConsents.forEach(cst -> {

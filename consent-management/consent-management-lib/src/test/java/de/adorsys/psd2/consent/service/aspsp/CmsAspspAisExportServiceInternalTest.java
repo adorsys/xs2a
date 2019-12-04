@@ -19,7 +19,7 @@ package de.adorsys.psd2.consent.service.aspsp;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -66,7 +66,7 @@ public class CmsAspspAisExportServiceInternalTest {
     @Mock
     private AisConsentSpecification aisConsentSpecification;
     @Mock
-    private AisConsentRepository aisConsentRepository;
+    private AisConsentJpaRepository aisConsentJpaRepository;
     @Mock
     private AisConsentMapper aisConsentMapper;
 
@@ -90,7 +90,7 @@ public class CmsAspspAisExportServiceInternalTest {
             DEFAULT_SERVICE_INSTANCE_ID
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(aisConsentRepository.findAll(any(Specification.class)))
+        when(aisConsentJpaRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildAisConsent()));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
 
@@ -143,7 +143,7 @@ public class CmsAspspAisExportServiceInternalTest {
                                                                                CREATION_DATE_TO,
                                                                                DEFAULT_SERVICE_INSTANCE_ID
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(aisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
+        when(aisConsentJpaRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
 
         // When
@@ -208,7 +208,7 @@ public class CmsAspspAisExportServiceInternalTest {
                                                                                     CREATION_DATE_TO,
                                                                                     DEFAULT_SERVICE_INSTANCE_ID
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(aisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
+        when(aisConsentJpaRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
 
         // When
