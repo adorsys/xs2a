@@ -90,7 +90,7 @@ public class CmsAspspPsuConsentManagementControllerTest {
 
         mockMvc.perform(delete(GET_TPP_INFO_URL)
                             .headers(httpHeaders))
-            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
             .andExpect(content().string("false"));
     }
 
