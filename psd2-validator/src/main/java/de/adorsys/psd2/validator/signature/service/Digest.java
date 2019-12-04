@@ -29,18 +29,12 @@ import java.nio.charset.StandardCharsets;
  */
 public class Digest {
     private String headerValue;
-    private static final String HEADER_NAME = "Digest";
-
     private Digest(String headerValue) {
         this.headerValue = headerValue;
     }
 
     public static DigestBuilder builder() {
         return new DigestBuilder();
-    }
-
-    public String getHeaderName() {
-        return HEADER_NAME;
     }
 
     public String getHeaderValue() {

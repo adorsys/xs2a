@@ -6,6 +6,7 @@
 
 == Added signature and digest verifier
 
-From now on, `psd2-validator` module contains validators for signature and digest.
+From now on, `psd2-validator` module contains validators for signature and digest headers.
+A keyID check was also added, it is located in signature header.
 When an ASPSP requires the TPP to send a digital signature then required headers are checked by new verification services.
 To use this check, ASPSP has to set 'TRUE' in `tppSignatureRequired` property in the ASPSP profile.

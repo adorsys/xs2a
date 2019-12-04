@@ -54,7 +54,6 @@ public class DigestTest {
                             .build();
 
         // then
-        assertThat(digest.getHeaderName()).isEqualTo(RequestHeaders.DIGEST);
         assertThat(digest.getHeaderValue()).isEqualTo(EXPECTED_DIGEST_HEADER_256_VALUE);
     }
 
@@ -73,7 +72,6 @@ public class DigestTest {
                             .build();
 
         // then
-        assertThat(digest.getHeaderName()).isEqualTo(RequestHeaders.DIGEST);
         assertThat(digest.getHeaderValue()).isEqualTo(EXPECTED_DIGEST_HEADER_512_VALUE);
     }
 }
