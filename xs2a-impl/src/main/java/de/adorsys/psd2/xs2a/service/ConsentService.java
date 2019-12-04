@@ -476,7 +476,9 @@ public class ConsentService {
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
 
-        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent.get(), updatePsuData));
+        AccountConsent consent = accountConsent.get();
+        loggingContextService.storeConsentStatus(consent.getConsentStatus());
+        ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(consent, updatePsuData));
 
         if (validationResult.isNotValid()) {
             if (validationResult.getMessageError().getTppMessage().getMessageErrorCode() == PSU_CREDENTIALS_INVALID) {
@@ -490,8 +492,6 @@ public class ConsentService {
                        .build();
         }
 
-        AccountConsent consent = accountConsent.get();
-
         if (consent.isExpired()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Update consent PSU data failed: consent expired",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
@@ -499,8 +499,6 @@ public class ConsentService {
                        .fail(AIS_401, of(CONSENT_EXPIRED))
                        .build();
         }
-
-        loggingContextService.storeConsentStatus(consent.getConsentStatus());
 
         return getUpdateConsentPsuDataResponse(updatePsuData);
     }
