@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.IbanValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.config.DefaultPaymentValidationConfigImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.config.PaymentValidationConfig;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
@@ -73,7 +74,8 @@ public class SinglePaymentTypeValidatorImplTest {
         validator = new SinglePaymentTypeValidatorImpl(errorBuildingServiceMock,
                                                        xs2aObjectMapper,
                                                        new PaymentMapper(xs2aObjectMapper, purposeCodeMapper, remittanceMapper),
-                                                       new AmountValidator(errorBuildingServiceMock), paymentValidationConfig);
+                                                       new AmountValidator(errorBuildingServiceMock), paymentValidationConfig,
+                                                       new IbanValidator(errorBuildingServiceMock));
     }
 
     @Test
