@@ -1,0 +1,10 @@
+= Release notes v.4.6
+
+== Table of Contents
+
+* Bugfix: Logging Context isn't logging correctly in case of PSU_CREDENTIALS_INVALID error
+
+== Bugfix: Logging Context isn't logging correctly in case of PSU_CREDENTIALS_INVALID error
+
+From now on, authorisation status will be correctly written to Logging Context during the failing `Update PSU data` process for payment initiation/payment cancellation.
+

@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisatio
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
@@ -117,6 +116,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
         }
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentResponseOptional.get();
+        loggingContextService.storeTransactionStatus(pisCommonPaymentResponse.getTransactionStatus());
         ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(pisCommonPaymentResponse, request));
         if (validationResult.isNotValid()) {
             if (validationResult.getMessageError().getTppMessage().getMessageErrorCode() == PSU_CREDENTIALS_INVALID) {
@@ -130,22 +130,17 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                        .build();
         }
 
-        loggingContextService.storeTransactionStatus(pisCommonPaymentResponse.getTransactionStatus());
-
         PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getServiceCancellation(request.getAuthorisationId());
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisScaAuthorisationService.updateCommonPaymentCancellationPsuData(request);
-
-        if (response.hasError()) {
-            return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
-                       .fail(new MessageError(response.getErrorHolder()))
-                       .build();
-        }
-
         loggingContextService.storeScaStatus(response.getScaStatus());
 
-        return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
-                   .body(response)
-                   .build();
+        return response.hasError()
+                   ? ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
+                         .fail(response.getErrorHolder())
+                         .build()
+                   : ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
+                         .body(response)
+                         .build();
     }
 
     /**

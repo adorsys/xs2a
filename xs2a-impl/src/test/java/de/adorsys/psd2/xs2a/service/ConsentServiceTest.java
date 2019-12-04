@@ -1235,6 +1235,28 @@ public class ConsentServiceTest {
         assertThat(scaStatusArgumentCaptor.getValue()).isEqualTo(ScaStatus.RECEIVED);
     }
 
+    @Test
+    public void updateConsentPsuData_shouldStoreConsentStatusInLoggingContextWhenUpdateConsentRequestInvalid() {
+        // Given
+        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
+            .thenReturn(true);
+
+        UpdateConsentPsuDataReq updateConsentPsuDataReq = buildUpdateConsentPsuDataReq(CONSENT_ID);
+        MessageError messageError = new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID));
+        when(updateConsentPsuDataValidator.validate(any(UpdateConsentPsuDataRequestObject.class)))
+            .thenReturn(ValidationResult.invalid(messageError));
+
+        ArgumentCaptor<ConsentStatus> consentStatusArgumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
+
+        // When
+        ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuDataResponseResponseObject = consentService.updateConsentPsuData(updateConsentPsuDataReq);
+
+        // Then
+        assertEquals(messageError, updateConsentPsuDataResponseResponseObject.getError());
+        verify(loggingContextService).storeConsentStatus(consentStatusArgumentCaptor.capture());
+        assertThat(consentStatusArgumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
+    }
+
     public void getConsentInitiationAuthorisation() {
         // Given
         when(aisConsentService.getAuthorisationSubResources(anyString()))
