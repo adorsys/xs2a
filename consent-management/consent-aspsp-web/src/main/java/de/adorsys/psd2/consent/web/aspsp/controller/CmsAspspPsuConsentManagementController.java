@@ -23,7 +23,10 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,7 +44,7 @@ public class CmsAspspPsuConsentManagementController {
         @ApiResponse(code = 400, message = "Bad Request")})
     public ResponseEntity<Boolean> closeAllConsents(
         @ApiParam(value = "Bank specific account identifier.", example = "11111-99999")
-        @RequestHeader(value ="account-id", required = false) String aspspAccountId,
+        @RequestHeader(value = "account-id", required = false) String aspspAccountId,
         @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
         @RequestHeader(value = "psu-id", required = false) String psuId,
         @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
@@ -60,7 +63,8 @@ public class CmsAspspPsuConsentManagementController {
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(cmsAspspPsuAccountService.revokeAllConsents(aspspAccountId, psuIdData, instanceId), HttpStatus.OK);
+        boolean result = cmsAspspPsuAccountService.revokeAllConsents(aspspAccountId, psuIdData, instanceId);
+        return new ResponseEntity<>(result, result ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
     private PsuIdData getPsuIdData(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType) {
