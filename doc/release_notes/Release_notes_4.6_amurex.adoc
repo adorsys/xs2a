@@ -1,0 +1,10 @@
+= Release notes v.4.6
+
+== Table of Contents
+
+* IBAN validator refactoring
+
+== IBAN validator refactoring
+
+From now on, IBAN validator is separate class. Added opportunity to disable it on demand for test purposes.
+To disable IBAN validation set flag `iban.validation.enabled` as FALSE in application.properties (by default validator is enabled).

@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.IbanValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.config.PaymentValidationConfig;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,9 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
 
     @Autowired
     public BulkPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
-                                        PaymentMapper paymentMapper, AmountValidator amountValidator) {
-        super(errorBuildingService, xs2aObjectMapper, paymentMapper, amountValidator);
+                                        PaymentMapper paymentMapper, AmountValidator amountValidator,
+                                        IbanValidator ibanValidator) {
+        super(errorBuildingService, xs2aObjectMapper, paymentMapper, amountValidator, ibanValidator);
     }
 
     @Override

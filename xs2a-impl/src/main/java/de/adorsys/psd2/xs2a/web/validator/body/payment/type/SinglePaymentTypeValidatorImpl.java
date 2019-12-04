@@ -28,10 +28,10 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.IbanValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.config.PaymentValidationConfig;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.IBANValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,15 +45,19 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 @Component
 public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl implements PaymentTypeValidator {
 
-    PaymentMapper paymentMapper;
+    protected PaymentMapper paymentMapper;
     private AmountValidator amountValidator;
+    protected PaymentValidationConfig validationConfig;
+    private IbanValidator ibanValidator;
 
     @Autowired
     public SinglePaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
-                                          PaymentMapper paymentMapper, AmountValidator amountValidator) {
+                                          PaymentMapper paymentMapper, AmountValidator amountValidator,
+                                          IbanValidator ibanValidator) {
         super(errorBuildingService, xs2aObjectMapper);
         this.paymentMapper = paymentMapper;
         this.amountValidator = amountValidator;
+        this.ibanValidator = ibanValidator;
     }
 
     @Override
@@ -138,9 +142,8 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     }
 
     void validateAccount(AccountReference accountReference, MessageError messageError, PaymentValidationConfig validationConfig) {
-        if (StringUtils.isNotBlank(accountReference.getIban()) && !isValidIban(accountReference.getIban())) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_FIELD, "IBAN"));
-        }
+        ibanValidator.validate(accountReference.getIban(), messageError);
+
         if (StringUtils.isNotBlank(accountReference.getBban()) && !isValidBban(accountReference.getBban())) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_FIELD, "BBAN"));
         }
@@ -148,11 +151,6 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         checkFieldForMaxLength(accountReference.getPan(), "PAN", validationConfig.getPan(), messageError);
         checkFieldForMaxLength(accountReference.getMaskedPan(), "Masked PAN", validationConfig.getMaskedPan(), messageError);
         checkFieldForMaxLength(accountReference.getMsisdn(), "MSISDN", validationConfig.getMsisdn(), messageError);
-    }
-
-    private boolean isValidIban(String iban) {
-        IBANValidator validator = IBANValidator.getInstance();
-        return validator.isValid(iban);
     }
 
     private boolean isValidBban(String bban) {
