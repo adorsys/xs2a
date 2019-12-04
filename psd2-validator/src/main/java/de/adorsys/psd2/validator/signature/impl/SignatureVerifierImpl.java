@@ -21,11 +21,14 @@ import com.nimbusds.jose.util.X509CertUtils;
 import de.adorsys.psd2.validator.signature.SignatureVerifier;
 import de.adorsys.psd2.validator.signature.service.RequestHeaders;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Verifier;
 
 import java.security.cert.X509Certificate;
 import java.util.Map;
+
+import static de.adorsys.psd2.validator.signature.service.CertificateConstants.*;
 
 @Slf4j
 public class SignatureVerifierImpl implements SignatureVerifier {
@@ -39,8 +42,13 @@ public class SignatureVerifierImpl implements SignatureVerifier {
             return false;
         }
 
-        Map<String, String> headersMap = RequestHeaders.fromMap(headers).toMap();
         Signature signatureData = Signature.fromString(signature);
+        if (!isKeyIdValid(certificate, signatureData.getKeyId())) {
+            log.warn("Key ID is invalid!");
+            return false;
+        }
+
+        Map<String, String> headersMap = RequestHeaders.fromMap(headers).toMap();
 
         try {
             Verifier verifier = new Verifier(certificate.getPublicKey(), signatureData);
@@ -50,5 +58,21 @@ public class SignatureVerifierImpl implements SignatureVerifier {
             log.warn("Signature verification has an error: {}", e.getMessage());
             return false;
         }
+    }
+
+    private boolean isKeyIdValid(X509Certificate certificate, String keyId) {
+        return StringUtils.equals(keyId, getKeyIdFromCertificate(certificate));
+    }
+
+    private String getKeyIdFromCertificate(X509Certificate certificate) {
+        return CERTIFICATE_SERIAL_NUMBER_ATTRIBUTE
+                   + EQUALS_SIGN_SEPARATOR
+                   + certificate.getSerialNumber().toString(16) // toString(16) is used to provide hexadecimal coding as mentioned in specification
+                   + COMMA_SEPARATOR
+                   + CERTIFICATION_AUTHORITY_ATTRIBUTE
+                   + EQUALS_SIGN_SEPARATOR
+                   + certificate.getIssuerX500Principal()
+                         .getName()
+                         .replaceAll(SPACE_SEPARATOR, HEXADECIMAL_SPACE_SEPARATOR);
     }
 }

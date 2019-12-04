@@ -88,6 +88,15 @@ public class SignatureVerifierImplTest {
     }
 
     @Test
+    public void verify_wrongSignatureKeyId() {
+        // when
+        boolean actualResult = signatureVerifier.verify(signatureWrongKeyId(), certificate(), headerMap, POST_METHOD, URI);
+
+        // then
+        assertThat(actualResult).isFalse();
+    }
+
+    @Test
     public void verify_wrongTppCertificate() {
         // when
         boolean actualResult = signatureVerifier.verify(signature(), wrong_certificate(), headerMap, POST_METHOD, URI);
@@ -114,6 +123,10 @@ public class SignatureVerifierImplTest {
 
     private String signature() {
         return jsonReader.getStringFromFile("signature/correct_signature.txt");
+    }
+
+    private String signatureWrongKeyId() {
+        return jsonReader.getStringFromFile("signature/signature_wrong_keyid.txt");
     }
 
     private String signatureWrongHeaders() {

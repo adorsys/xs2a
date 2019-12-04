@@ -17,6 +17,7 @@
 package de.adorsys.psd2.validator.signature.impl;
 
 import de.adorsys.psd2.validator.signature.DigestVerifier;
+import de.adorsys.psd2.validator.signature.service.CertificateConstants;
 import de.adorsys.psd2.validator.signature.service.Digest;
 import de.adorsys.psd2.validator.signature.service.algorithm.HashingAlgorithm;
 import org.apache.commons.lang3.StringUtils;
@@ -24,8 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Optional;
 
 public class DigestVerifierImpl implements DigestVerifier {
-    private static final String EQUALS_SIGN_SEPARATOR = "=";
-
     @Override
     public boolean verify(String digestFromRequest, String body) {
         if (StringUtils.isBlank(digestFromRequest)) {
@@ -46,7 +45,7 @@ public class DigestVerifierImpl implements DigestVerifier {
     }
 
     private Optional<HashingAlgorithm> handleHashAlgorithm(String digestFromRequest) {
-        String[] digestContent = digestFromRequest.split(EQUALS_SIGN_SEPARATOR);
+        String[] digestContent = digestFromRequest.split(CertificateConstants.EQUALS_SIGN_SEPARATOR);
         if (digestContent.length < 2) {
             return Optional.empty();
         }
