@@ -196,6 +196,7 @@ public class ConsentAuthorisationService {
         }
         AccountConsent accountConsent = accountConsentOptional.get();
 
+        loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
         ValidationResult validationResult = consentValidationService.validateConsentPsuDataOnUpdate(accountConsent, updatePsuData);
 
         if (validationResult.isNotValid()) {
@@ -219,8 +220,6 @@ public class ConsentAuthorisationService {
                        .fail(AIS_401, of(CONSENT_EXPIRED))
                        .build();
         }
-
-        loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
 
         return getUpdateConsentPsuDataResponse(updatePsuData);
     }

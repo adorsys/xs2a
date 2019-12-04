@@ -365,6 +365,44 @@ public class PaymentCancellationAuthorisationServiceTest {
     }
 
     @Test
+    public void updatePisCancellationPsuData_shouldStorePaymentTransactionStatusInLoggingContextWhenUpdatePaymentCancellationRequestInvalid() {
+        // Given
+        Xs2aUpdatePisCommonPaymentPsuDataRequest updatePisPsuDataRequest = buildXs2aUpdatePisPsuDataRequest();
+        when(updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(PIS_COMMON_PAYMENT_RESPONSE, updatePisPsuDataRequest)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ArgumentCaptor<TransactionStatus> transactionStatusArgumentCaptor = ArgumentCaptor.forClass(TransactionStatus.class);
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> actualResponse =
+            paymentCancellationAuthorisationService.updatePisCancellationPsuData(updatePisPsuDataRequest);
+
+        // Then
+        assertTrue(actualResponse.hasError());
+        verify(loggingContextService).storeTransactionStatus(transactionStatusArgumentCaptor.capture());
+        assertThat(transactionStatusArgumentCaptor.getValue()).isEqualTo(TransactionStatus.RCVD);
+    }
+
+    @Test
+    public void updatePisCancellationPsuData_shouldStoreAuthorisationScaStatusInLoggingContextWhenUpdatePaymentCancellationRequestInvalid() {
+        // Given:
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
+        ErrorHolder errorHolder = ErrorHolder.builder(AUTHORISATION_SERVICE_ERROR.getErrorType())
+                                      .tppMessages(AUTHORISATION_SERVICE_ERROR.getTppMessage())
+                                      .build();
+        when(pisScaAuthorisationService.updateCommonPaymentCancellationPsuData(any(Xs2aUpdatePisCommonPaymentPsuDataRequest.class)))
+            .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, PSU_ID_DATA));
+        ArgumentCaptor<ScaStatus> scaStatusArgumentCaptor = ArgumentCaptor.forClass(ScaStatus.class);
+
+        // When
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> response = paymentCancellationAuthorisationService.updatePisCancellationPsuData(request);
+
+        // Then
+        assertTrue(response.hasError());
+        verify(loggingContextService).storeScaStatus(scaStatusArgumentCaptor.capture());
+        assertThat(scaStatusArgumentCaptor.getValue()).isEqualTo(ScaStatus.FAILED);
+    }
+
+    @Test
     public void getPaymentInitiationCancellationAuthorisationInformation_Success_ShouldRecordEvent() {
         // Given:
         when(pisScaAuthorisationService.getCancellationAuthorisationSubResources(anyString()))

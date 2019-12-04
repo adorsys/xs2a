@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
@@ -37,6 +38,7 @@ import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation.*;
@@ -353,6 +355,52 @@ public class PaymentAuthorisationServiceTest {
         inOrder.verify(loggingContextService).storeTransactionStatus(TRANSACTION_STATUS);
         inOrder.verify(pisScaAuthorisationService).updateCommonPaymentPsuData(request);
         inOrder.verify(loggingContextService).storeScaStatus(SCA_STATUS);
+    }
+
+    @Test
+    public void updatePisPsuData_shouldStorePaymentTransactionStatusInLoggingContextWhenUpdatePaymentRequestInvalid() {
+        // Given:
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
+
+        when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.of(commonPaymentResponse));
+
+        when(updatePisCommonPaymentPsuDataValidator.validate(any(UpdatePisCommonPaymentPsuDataPO.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
+
+        ArgumentCaptor<TransactionStatus> transactionStatusArgumentCaptor = ArgumentCaptor.forClass(TransactionStatus.class);
+        // When
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> response = paymentAuthorisationService.updatePisCommonPaymentPsuData(request);
+
+        // Then
+        assertTrue(response.hasError());
+        verify(loggingContextService).storeTransactionStatus(transactionStatusArgumentCaptor.capture());
+        assertThat(transactionStatusArgumentCaptor.getValue()).isEqualTo(TransactionStatus.ACCP);
+    }
+
+    @Test
+    public void updatePisPsuData_shouldStoreAuthorisationScaStatusInLoggingContextWhenUpdatePaymentRequestInvalid() {
+        // Given:
+        ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400).tppMessages(VALIDATION_ERROR.getTppMessage()).build();
+        when(pisScaAuthorisationService.updateCommonPaymentPsuData(any()))
+            .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA));
+
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
+        when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.of(commonPaymentResponse));
+
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
+
+        ArgumentCaptor<ScaStatus> scaStatusArgumentCaptor = ArgumentCaptor.forClass(ScaStatus.class);
+        // When
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> response = paymentAuthorisationService.updatePisCommonPaymentPsuData(request);
+
+        // Then
+        assertTrue(response.hasError());
+        verify(loggingContextService).storeScaStatus(scaStatusArgumentCaptor.capture());
+        assertThat(scaStatusArgumentCaptor.getValue()).isEqualTo(ScaStatus.FAILED);
     }
 
     @Test

@@ -1,15 +1,10 @@
-= Release notes v.5.6
+= Release notes v.4.6
 
 == Table of Contents
 
-* Bugfix: Incorrect response when XS2A remote components are unavailable
 * Bugfix: Logging Context isn't logging correctly in case of PSU_CREDENTIALS_INVALID error
-
-== Bugfix: Incorrect response when XS2A remote components are unavailable
-
-From now on, when TPP sends request and some XS2A remote component (CMS, ASPSP Profile or Connector) is unavailable,
-TPP will receive `503 Service Unavailable` error with `SERVICE_UNAVAILABLE` code.
 
 == Bugfix: Logging Context isn't logging correctly in case of PSU_CREDENTIALS_INVALID error
 
 From now on, authorisation status will be correctly written to Logging Context during the failing `Update PSU data` process for payment initiation/payment cancellation.
+
