@@ -19,6 +19,7 @@ package de.adorsys.psd2.validator.signature.impl;
 
 import com.nimbusds.jose.util.X509CertUtils;
 import de.adorsys.psd2.validator.signature.SignatureVerifier;
+import de.adorsys.psd2.validator.signature.service.CertificateConstants;
 import de.adorsys.psd2.validator.signature.service.RequestHeaders;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,8 +28,6 @@ import org.tomitribe.auth.signatures.Verifier;
 
 import java.security.cert.X509Certificate;
 import java.util.Map;
-
-import static de.adorsys.psd2.validator.signature.service.CertificateConstants.*;
 
 @Slf4j
 public class SignatureVerifierImpl implements SignatureVerifier {
@@ -65,14 +64,14 @@ public class SignatureVerifierImpl implements SignatureVerifier {
     }
 
     private String getKeyIdFromCertificate(X509Certificate certificate) {
-        return CERTIFICATE_SERIAL_NUMBER_ATTRIBUTE
-                   + EQUALS_SIGN_SEPARATOR
+        return CertificateConstants.CERTIFICATE_SERIAL_NUMBER_ATTRIBUTE
+                   + CertificateConstants.EQUALS_SIGN_SEPARATOR
                    + certificate.getSerialNumber().toString(16) // toString(16) is used to provide hexadecimal coding as mentioned in specification
-                   + COMMA_SEPARATOR
-                   + CERTIFICATION_AUTHORITY_ATTRIBUTE
-                   + EQUALS_SIGN_SEPARATOR
+                   + CertificateConstants.COMMA_SEPARATOR
+                   + CertificateConstants.CERTIFICATION_AUTHORITY_ATTRIBUTE
+                   + CertificateConstants.EQUALS_SIGN_SEPARATOR
                    + certificate.getIssuerX500Principal()
                          .getName()
-                         .replaceAll(SPACE_SEPARATOR, HEXADECIMAL_SPACE_SEPARATOR);
+                         .replaceAll(CertificateConstants.SPACE_SEPARATOR, CertificateConstants.HEXADECIMAL_SPACE_SEPARATOR);
     }
 }
