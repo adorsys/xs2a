@@ -81,7 +81,7 @@ public class AisConsentRepositoryImplTest {
         verify(aisConsentRepository, times(1)).save(aisConsent);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void verifyAndSave_failedSha() {
         // given
         AisConsent aisConsent = buildConsent(ConsentStatus.VALID, ConsentStatus.VALID);
@@ -125,7 +125,7 @@ public class AisConsentRepositoryImplTest {
         verify(aisConsentRepository, times(1)).save(aisConsent);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void verifyAndUpdate_failedSha() {
         // given
         AisConsent aisConsent = buildConsent(ConsentStatus.VALID, ConsentStatus.VALID);

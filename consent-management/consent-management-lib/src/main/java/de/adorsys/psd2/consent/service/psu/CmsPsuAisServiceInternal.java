@@ -245,6 +245,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private boolean updateAccountAccessInConsent(AisConsent consent, CmsAisConsentAccessRequest request) {
 
         if (consent.getConsentStatus() == VALID) {
+            log.warn("Checksum verification failed!");
             return false;
         }
 
