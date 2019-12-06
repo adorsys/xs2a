@@ -1,9 +1,0 @@
-= Release notes v.5.6
-
-== Table of Contents
-* Changed error code for negative response when consents are not revoked
-
-== Changed error code for negative response when consents are not revoked
-
-From now on, when consents are not revoked on calling `DELETE aspsp-api/v1/psu/consent/all`, due to some error
-or not finding appropriate consents, the returning status will be 400 instead of 200.
