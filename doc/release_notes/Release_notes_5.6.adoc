@@ -1,3 +1,92 @@
 = Release notes v.5.6
 
 == Table of Contents
+* IBAN validator refactoring
+* Added support of implicit subscription for resource status notifications
+* Feature: Prevent modification of an established consent
+* Bugfix: Incorrect response when XS2A remote components are unavailable
+* Bugfix: Logging Context isn't logging correctly in case of PSU_CREDENTIALS_INVALID error
+* Added signature and digest verifier
+* Changed error code for negative response when consents are not revoked
+* Refactoring: Removed MockContentCachingWrappingFilter
+* Fixed syntax errors in CMS APIs
+* Deprecated endpoint for getting information about TPP by TPP ID in CMS-ASPSP-API
+* Removed deprecated `tan` column from `pis_consent_authorization`
+
+
+== IBAN validator refactoring
+
+From now on, IBAN validator is separate class. Added opportunity to disable it on demand for test purposes.
+To disable IBAN validation set flag `iban.validation.enabled` as FALSE in application.properties (by default validator is enabled).
+
+== Added support of implicit subscription for resource status notifications
+
+From now on, ASPSP profile has new property - `aspspNotificationsSupported` represented by list of possible values:
+
+* SCA;
+* PROCESS;
+* LAST;
+* NONE.
+
+There is a possibility to set from 1 to 3 values simultaneously, or to set NONE if ASPSP doesn't support status
+notifications. POST requests for initiating payment and creating AIS consent may use new headers: `TPP-Notification-URI`
+(URI for notifications) and `TPP-Notification-Content-Preferred` (the list of desired notification modes).
+The list of supported notification modes for AIS consents and payments are stored in CMS in new SQL tables - `ais_consent_tpp_ntfc`
+and `payment_tpp_ntfc`. XS2A internal logic is able to provide response headers for upper mentioned POST requests:
+
+* `ASPSP-Notification-Support` - boolean flag used to show if support of notification is enabled;
+* `ASPSP-Notification-Content` - string with a list of used notification modes.
+
+== Feature: Prevent modification of an established consent
+
+From now on, when AIS consent changes status to `VALID`, all further modifications of these fields are rejected by CMS checksum
+validation service:
+
+* TPP account accesses;
+* ASPSP account accesses;
+* recurringIndicator;
+* validUntil;
+* frequencyPerDay;
+* combinedServiceIndicator.
+
+In other words, after AIS consent is in finalised status, its fields are not allowed to be changed in CMS anymore.
+Neither by TPP nor by ASPSP side.
+
+== Bugfix: Incorrect response when XS2A remote components are unavailable
+
+From now on, when TPP sends request and some XS2A remote component (CMS, ASPSP Profile or Connector) is unavailable,
+TPP will receive `503 Service Unavailable` error with `SERVICE_UNAVAILABLE` code.
+
+== Bugfix: Logging Context isn't logging correctly in case of PSU_CREDENTIALS_INVALID error
+
+From now on, authorisation status will be correctly written to Logging Context during the failing `Update PSU data` process for payment initiation/payment cancellation.
+
+== Added signature and digest verifier
+
+From now on, `psd2-validator` module contains validators for signature and digest headers.
+A keyID check was also added, it is located in signature header.
+When an ASPSP requires the TPP to send a digital signature then required headers are checked by new verification services.
+To use this check, ASPSP has to set 'TRUE' in `tppSignatureRequired` property in the ASPSP profile.
+
+== Changed error code for negative response when consents are not revoked
+
+From now on, when consents are not revoked on calling `DELETE aspsp-api/v1/psu/consent/all`, due to some error
+or not finding appropriate consents, the returning status will be 400 instead of 200.
+
+== Refactoring: Removed MockContentCachingWrappingFilter
+
+From now on, integration tests in XS2A are working properly with all XS2A filters and no longer rely on previously existing `MockContentCachingWrappingFilter`.
+
+== Fixed syntax errors in CMS APIs
+
+From now on, all path parameters in Swagger definitions of endpoints from `consent-aspsp-web`, `consent-psu-web` and `consent-xs2a-web` modules are correctly marked as required.
+
+== Deprecated endpoint for getting information about TPP by TPP ID in CMS-ASPSP-API
+
+Endpoint from `cms-aspsp-api` for getting information about TPP by its authorisation number with path parameter (`GET aspsp-api/v1/tpp/{tpp-id}`) has been deprecated, as the value passed in path parameter is not being used.
+New endpoint without the path parameter (`GET aspsp-api/v1/tpp`) should be used instead.
+Both endpoints require mandatory `tpp-authorisation-number` header to be passed with proper TPP authorisation number.
+
+== Removed deprecated `tan` column from `pis_consent_authorization`
+
+Deprecated column `tan` has been removed from `pis_consent_authorization` table in CMS database.
