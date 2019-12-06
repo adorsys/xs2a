@@ -28,6 +28,7 @@ import de.adorsys.psd2.consent.domain.sha.TppAccountAccessSha;
 
 import java.nio.charset.Charset;
 import java.util.Base64;
+import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -118,7 +119,8 @@ public class ChecksumCalculatingServiceV1 implements ChecksumCalculatingService 
     private List<TppAccountAccessSha> mapToTppAccessSha(List<TppAccountAccess> accountAccesses) {
         return accountAccesses.stream()
                    .map(acc -> new TppAccountAccessSha(acc.getAccountIdentifier(),
-                                                       acc.getCurrency().toString(),
+                                                       Optional.ofNullable(acc.getCurrency())
+                                                           .map(Currency::toString).orElse(null),
                                                        Optional.ofNullable(acc.getTypeAccess())
                                                            .map(Enum::name).orElse(null),
                                                        Optional.ofNullable(acc.getAccountReferenceType())
@@ -130,7 +132,8 @@ public class ChecksumCalculatingServiceV1 implements ChecksumCalculatingService 
         return accountAccesses.stream()
                    .map(acc -> new AspspAccountAccessSha(
                        acc.getAccountIdentifier(),
-                       acc.getCurrency().toString(),
+                       Optional.ofNullable(acc.getCurrency())
+                           .map(Currency::toString).orElse(null),
                        Optional.ofNullable(acc.getTypeAccess())
                            .map(Enum::name).orElse(null),
                        Optional.ofNullable(acc.getAccountReferenceType())
