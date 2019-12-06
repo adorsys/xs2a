@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "51577ae1-eb5c-4a45-a8d6-aaad7b93c04b",
+		"_postman_id": "1f732330-5414-43e4-b6ab-edd32a2aca4a",
 		"name": "AIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -9915,7 +9915,7 @@
 									},
 									{
 										"key": "PSU-ID",
-										"value": "{{psu_id_none}}",
+										"value": "{{psu_id_single}}",
 										"type": "text"
 									},
 									{
@@ -10012,7 +10012,7 @@
 									},
 									{
 										"key": "PSU-ID",
-										"value": "{{psu_id_none}}"
+										"value": "{{psu_id_single}}"
 									},
 									{
 										"key": "X-Request-ID",
@@ -10112,68 +10112,21 @@
 							"response": []
 						},
 						{
-							"name": "6. Update PSU Data in consent",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "5617cad6-99fb-4e1f-bbb7-07a468117230",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"psuId\": \"{{psu_id_none}}\"\n}"
-								},
-								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/authorisation/{{authorisation_id}}/psu-data",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_cms}}"
-									],
-									"path": [
-										"psu-api",
-										"v1",
-										"ais",
-										"consent",
-										"{{internal_consent_id}}",
-										"authorisation",
-										"{{authorisation_id}}",
-										"psu-data"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "7. Create authorisation code",
+							"name": "6.  Login for consent",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"id": "567d8970-9b9e-4f83-99c2-5c4d0b6c8242",
 										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
 											"const jsonData = pm.response.json();",
 											"",
-											"const parts = jsonData.redirectUri.split(\"=\");",
-											"const authorisationCode = parts[1];",
-											"pm.globals.set(\"authorisation_code\", authorisationCode);"
+											"pm.globals.set(\"bearer\", jsonData.bearerToken.access_token);",
+											"pm.globals.set(\"ledgersBearerToken\", JSON.stringify(jsonData));"
 										],
 										"type": "text/javascript"
 									}
@@ -10185,13 +10138,13 @@
 									{
 										"key": "Content-Type",
 										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"value": "application/json"
 									},
 									{
 										"key": "Accept",
-										"value": "application/json",
-										"type": "text"
+										"type": "text",
+										"value": "application/json"
 									}
 								],
 								"body": {
@@ -10204,90 +10157,35 @@
 									}
 								},
 								"url": {
-									"raw": "{{protocol}}://{{url_ledgers}}/oauth/authorise?login={{psu_id_none}}&pin={{psu_id_password}}&redirect_uri=random",
+									"raw": "{{protocol}}://{{url_ledgers}}/users/loginForConsent?login={{psu_id_single}}&pin={{psu_id_password}}&consentId={{internal_consent_id}}&authorisationId={{authorisation_id}}&opType=CONSENT",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_ledgers}}"
 									],
 									"path": [
-										"oauth",
-										"authorise"
+										"users",
+										"loginForConsent"
 									],
 									"query": [
 										{
 											"key": "login",
-											"value": "{{psu_id_none}}"
+											"value": "{{psu_id_single}}"
 										},
 										{
 											"key": "pin",
 											"value": "{{psu_id_password}}"
 										},
 										{
-											"key": "redirect_uri",
-											"value": "random"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "8. Create access token",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "0bcdc87a-d000-4992-b529-085873992bf2",
-										"exec": [
-											"const jsonData = pm.response.json();",
-											"pm.globals.set(\"bearer\", jsonData.access_token);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{protocol}}://{{url_ledgers}}/oauth/token?grant_type=AUTHORISATION_CODE&code={{authorisation_code}}",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_ledgers}}"
-									],
-									"path": [
-										"oauth",
-										"token"
-									],
-									"query": [
-										{
-											"key": "grant_type",
-											"value": "AUTHORISATION_CODE"
+											"key": "consentId",
+											"value": "{{internal_consent_id}}"
 										},
 										{
-											"key": "code",
-											"value": "{{authorisation_code}}"
+											"key": "authorisationId",
+											"value": "{{authorisation_id}}"
+										},
+										{
+											"key": "opType",
+											"value": "CONSENT"
 										}
 									]
 								}
@@ -10295,16 +10193,19 @@
 							"response": []
 						},
 						{
-							"name": "9. Start SCA in ledgers",
+							"name": "7.  Create consent in Ledgers",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"id": "6d46dd29-7221-40fc-a33a-b2bea5b448f3",
 										"exec": [
-											"const jsonData = pm.response.json();",
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
 											"",
-											"pm.globals.set(\"ledgersBearerToken\", JSON.stringify(jsonData));"
+											"const jsonData = pm.response.json();",
+											"pm.globals.set(\"scaMethod\", jsonData.scaMethods[0].id);"
 										],
 										"type": "text/javascript"
 									}
@@ -10332,7 +10233,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"id\": \"{{consent_id}}\",\n\t\"tppId\": \"{{tpp_id}}\",\n\t\"frequencyPerDay\": 4,\n\t\"access\": {\n    \t\"accounts\": [],\n    \t\"balances\": [],\n    \t\"availableAccounts\": \"ALL_ACCOUNTS\",\n    \t\"transactions\": []\n\t},\n\t\"validUntil\": \"2021-10-10\",\n\t\"recurringIndicator\": true\n}",
+									"raw": "{\n\t\"id\": \"{{internal_consent_id}}\",\n\t\"tppId\": \"{{tpp_id}}\",\n\t\"frequencyPerDay\": 4,\n\t\"access\": {\n    \t\"accounts\": [\"{{iban_single}}\"],\n    \t\"balances\": [\"{{iban_single}}\"],\n    \t\"transactions\": [\"{{iban_single}}\"],\n    \t\"availableAccounts\": \"ALL_ACCOUNTS\"\n\t},\n\t\"validUntil\": \"2021-10-10\",\n\t\"recurringIndicator\": true\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -10340,14 +10241,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{protocol}}://{{url_ledgers}}/consents/{{consent_id}}/authorisations",
+									"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_ledgers}}"
 									],
 									"path": [
 										"consents",
-										"{{consent_id}}",
+										"{{internal_consent_id}}",
 										"authorisations"
 									]
 								}
@@ -10355,7 +10256,188 @@
 							"response": []
 						},
 						{
-							"name": "10. Update ASPSP consent data for the given AIS consent in CMS-PSU-API",
+							"name": "8. Select SCA method",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6d46dd29-7221-40fc-a33a-b2bea5b448f3",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearer}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations/{{authorisation_id}}/scaMethods/{{scaMethod}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_ledgers}}"
+									],
+									"path": [
+										"consents",
+										"{{internal_consent_id}}",
+										"authorisations",
+										"{{authorisation_id}}",
+										"scaMethods",
+										"{{scaMethod}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "9. Send an authentication code for validation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6d46dd29-7221-40fc-a33a-b2bea5b448f3",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearer}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_ledgers}}"
+									],
+									"path": [
+										"consents",
+										"{{internal_consent_id}}",
+										"authorisations",
+										"{{authorisation_id}}",
+										"authCode"
+									],
+									"query": [
+										{
+											"key": "authCode",
+											"value": "{{tan}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "10. Update PSU Data in consent",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5617cad6-99fb-4e1f-bbb7-07a468117230",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"psuId\": \"{{psu_id_single}}\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/authorisation/{{authorisation_id}}/psu-data",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_cms}}"
+									],
+									"path": [
+										"psu-api",
+										"v1",
+										"ais",
+										"consent",
+										"{{internal_consent_id}}",
+										"authorisation",
+										"{{authorisation_id}}",
+										"psu-data"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "11. Update ASPSP consent data for the given AIS consent in CMS-PSU-API",
 							"event": [
 								{
 									"listen": "test",
@@ -10416,7 +10498,7 @@
 							"response": []
 						},
 						{
-							"name": "11. Update a status of AIS consent authorisation",
+							"name": "12. Update a status of AIS consent authorisation",
 							"event": [
 								{
 									"listen": "test",
@@ -10436,7 +10518,7 @@
 								"header": [
 									{
 										"key": "PSU-ID",
-										"value": "{{psu_id_none}}",
+										"value": "{{psu_id_single}}",
 										"type": "text"
 									}
 								],
@@ -10466,7 +10548,7 @@
 							"response": []
 						},
 						{
-							"name": "12. Confirm AIS consent",
+							"name": "13. Confirm AIS consent",
 							"event": [
 								{
 									"listen": "test",
@@ -10486,7 +10568,7 @@
 								"header": [
 									{
 										"key": "PSU-ID",
-										"value": "{{psu_id_none}}",
+										"value": "{{psu_id_single}}",
 										"type": "text"
 									}
 								],
@@ -10513,7 +10595,7 @@
 							"response": []
 						},
 						{
-							"name": "13. Read Account List",
+							"name": "14. Read Account List",
 							"event": [
 								{
 									"listen": "test",
@@ -10615,7 +10697,7 @@
 							"response": []
 						},
 						{
-							"name": "14. Read Account Details",
+							"name": "15. Read Account Details",
 							"event": [
 								{
 									"listen": "test",
@@ -10699,7 +10781,7 @@
 							"response": []
 						},
 						{
-							"name": "15. Read Balance",
+							"name": "16. Read Balance",
 							"event": [
 								{
 									"listen": "test",
@@ -10775,7 +10857,7 @@
 							"response": []
 						},
 						{
-							"name": "16. Read Transaction List",
+							"name": "17. Read Transaction List",
 							"event": [
 								{
 									"listen": "test",
@@ -10952,7 +11034,7 @@
 							"response": []
 						},
 						{
-							"name": "17. Download transactions",
+							"name": "18. Download transactions",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -10975,7 +11057,7 @@
 							"response": []
 						},
 						{
-							"name": "18 Read Transaction Details",
+							"name": "19 Read Transaction Details",
 							"event": [
 								{
 									"listen": "test",
