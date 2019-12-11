@@ -75,6 +75,8 @@ public class AspspSettingsBuilder {
     private static final String COUNTRY_VALIDATION_SUPPORTED = "DE";
     private static final List<String> SUPPORTED_TRANSACTION_STATUS_FORMATS = Arrays.asList("application/json", "application/xml");
     private static final List<NotificationSupportedMode> ASPSP_NOTIFICATIONS_SUPPORTED = Collections.singletonList(NotificationSupportedMode.NONE);
+    private static final boolean AUTHORISATION_CONFIRMATION_REQUEST_MANDATED = false;
+    private static final boolean AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A = false;
 
     public static AspspSettings buildAspspSettings() {
         return buildCustomAspspSettings(null, null, null, null);
@@ -140,7 +142,9 @@ public class AspspSettingsBuilder {
                                                                          AIS_PIS_SESSION_SUPPORTED,
                                                                          signingBasketSupported == null ? SIGNING_BASKET_SUPPORTED : signingBasketSupported,
                                                                          true,
-                                                                         ASPSP_NOTIFICATIONS_SUPPORTED);
+                                                                         ASPSP_NOTIFICATIONS_SUPPORTED,
+                                                                         AUTHORISATION_CONFIRMATION_REQUEST_MANDATED,
+                                                                         AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A);
 
         return new AspspSettings(ais, pis, piis, common);
     }

@@ -373,4 +373,22 @@ public class AspspProfileServiceWrapper {
     public List<NotificationSupportedMode> getNotificationSupportedModes() {
         return readAspspSettings().getCommon().getAspspNotificationsSupported();
     }
+
+    /**
+     * Shows if the confirmation of authorisation supported.
+     *
+     * @return true if ASPSP supports confirmation of authorisation, false otherwise.
+     */
+    public boolean isAuthorisationConfirmationRequestMandated() {
+        return readAspspSettings().getCommon().isAuthorisationConfirmationRequestMandated();
+    }
+
+    /**
+     * Shows if the authentication data should be checked by XS2A.
+     *
+     * @return true if XS2A must check the authentication data, false if it is ASPSP duty.
+     */
+    public boolean isAuthorisationConfirmationCheckByXs2a() {
+        return readAspspSettings().getCommon().isAuthorisationConfirmationCheckByXs2a();
+    }
 }

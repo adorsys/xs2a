@@ -113,4 +113,14 @@ public class CommonAspspProfileBankSetting {
      * List of supported notification modes
      */
     private List<NotificationSupportedMode> aspspNotificationsSupported = new ArrayList<>();
+
+    /**
+     * Shows if the confirmation of authorisation supported
+     */
+    private boolean authorisationConfirmationRequestMandated;
+
+    /**
+     * Shows if the authentication data should be checked by XS2A.
+     */
+    private boolean authorisationConfirmationCheckByXs2a;
 }

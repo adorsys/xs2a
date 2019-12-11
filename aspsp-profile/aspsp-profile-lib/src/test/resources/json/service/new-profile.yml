@@ -28,6 +28,8 @@ setting:
     aisPisSessionsSupported: false
     aspspNotificationsSupported:
     - NONE
+    authorisationConfirmationCheckByXs2a: false
+    authorisationConfirmationRequestMandated: false
     authorisationExpirationTimeMs: 86400000
     checkTppRolesFromCertificateSupported: true
     forceXs2aBaseLinksUrl: false
