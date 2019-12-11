@@ -16,8 +16,12 @@
 
 package de.adorsys.psd2.consent.service.sha;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
@@ -37,13 +41,16 @@ public class ChecksumCalculatingServiceV1 implements ChecksumCalculatingService 
     private static final String VERSION = "001";
     private static final Charset CHARSET = Charset.defaultCharset();
     private final Sha512HashingService hashingService = new Sha512HashingService();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = buildObjectMapper();
 
     @Override
     public boolean verifyConsentWithChecksum(AisConsent consent, byte[] checksum) {
         String checksumStr = new String(checksum);
-
         String[] elements = checksumStr.split(ChecksumConstant.DELIMITER);
+
+        if (elements.length == 1) {
+            return false;
+        }
 
         boolean aisConsentValid = true;
         boolean aspspAccessValid = true;
@@ -86,7 +93,6 @@ public class ChecksumCalculatingServiceV1 implements ChecksumCalculatingService 
 
         return sb.toString().getBytes();
     }
-
 
     private String calculateChecksumForConsentStr(AisConsent consent) {
         byte[] aisConsentAsBytes = getBytesFromObject(mapToShaModel(consent));
@@ -154,5 +160,14 @@ public class ChecksumCalculatingServiceV1 implements ChecksumCalculatingService 
         } catch (JsonProcessingException e) {
             return new byte[0];
         }
+    }
+
+    private ObjectMapper buildObjectMapper() {
+        ObjectMapper localObjectMapper = new ObjectMapper();
+        localObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+        localObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        localObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        localObjectMapper.registerModule(new JavaTimeModule()); // add support for java.time types
+        return localObjectMapper;
     }
 }
