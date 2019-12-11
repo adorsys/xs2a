@@ -82,5 +82,5 @@ function build_release_modules {
 # Should set version numbers in your modules
 # Parameter $1 - version as text
 function set_modules_version {
-  mvn versions:set -DnewVersion=$1
+  mvn versions:set -DnewVersion="$1"
 }
