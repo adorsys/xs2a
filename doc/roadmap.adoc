@@ -15,13 +15,15 @@ No backward compatibility with 4.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 4.x|version 5.x
 
-|20.12.2019|-|5.7
+|20.12.2019|4.7|5.7
 
 a|
 
-a|
+a|* Bugfix: Domain Validation failure on certificate compare
 
-a|* Update Account Owner Name Service
+a|* All fixes from v.4.7
+
+* Update Account Owner Name Service
 
 * Support Confirmation of Authorisation
 
@@ -29,23 +31,21 @@ a|* Update Account Owner Name Service
 
 * Remove deprecated constructor in SpiGetPaymentStatusResponse
 
-|17.01.2020|-|5.8
+|17.01.2020|4.8|5.8
 
 a|
 
-a|
+a|* Update xs2a according to BG Specification V1_3_4Errata_20191206
 
-a|* Logging of RequestId/InternalRequestId via slf4j MDC
+a|* All fixes and updates from v.4.8
+
+* Logging of RequestId/InternalRequestId via slf4j MDC
 
 * Move tests for aspsp consent data to AspspConsentDataServiceTest
 
 * Move AuthenticationObject to xs2a-core
 
-* Handle errors only for XS2A endpoints
-
-* Replace deprecated description property in swagger @Api annotation in CMS and Profile controllers
-
-|31.01.2020|-|5.9
+|31.01.2020|4.9|5.9
 
 a|
 
@@ -53,15 +53,25 @@ a|
 
 a|* Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
 
-* Add a new optional header TPP-Rejection-NoFunds-Preferred
+* Handle errors only for XS2A endpoints
 
-* Create Resource Notification Push Service
+* Replace deprecated description property in swagger @Api annotation in CMS and Profile controllers
 
 * SPI-API javadoc generation with lombok
 
 * Refactor applyAuthorisation methods in PisAuthorisationProcessorServiceImpl and PisCancellationAuthorisationProcessorServiceImpl
 
 * Refactoring of payment saving
+
+|14.02.2020|4.10|5.10
+
+a|
+
+a|
+
+a|* Add a new optional header TPP-Rejection-NoFunds-Preferred
+
+* Create Resource Notification Push Service
 
 |Further development| |
 
@@ -70,6 +80,8 @@ a|
 a|
 
 a|* Update to Java 11
+
+* Support of Card Accounts.
 
 * _Support of Signing Basket:_
 
