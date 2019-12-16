@@ -56,17 +56,4 @@ public class SpiGetPaymentStatusResponse {
      */
     @Nullable
     private final byte[] paymentStatusRaw;
-
-    /**
-     * Constructs new instance of SpiGetPaymentStatusResponse
-     *
-     * @param transactionStatus current transaction status of the requested payment
-     * @param fundsAvailable    whether funds are available for the customer
-     * @deprecated since 5.4, use all arguments constructor instead
-     */
-    @Deprecated
-    // TODO Remove deprecated constructor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1094
-    public SpiGetPaymentStatusResponse(TransactionStatus transactionStatus, Boolean fundsAvailable) {
-        this(transactionStatus, fundsAvailable, RESPONSE_TYPE_JSON, null);
-    }
 }
