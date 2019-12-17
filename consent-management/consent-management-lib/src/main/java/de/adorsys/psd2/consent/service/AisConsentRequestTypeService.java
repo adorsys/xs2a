@@ -23,6 +23,9 @@ import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Service
 public class AisConsentRequestTypeService {
 
@@ -51,11 +54,13 @@ public class AisConsentRequestTypeService {
                                                  AccountAccessType availableAccountsWithBalance,
                                                  boolean isAccessesEmpty) {
 
-        if (AccountAccessType.ALL_ACCOUNTS == allPsd2) {
+        List<AccountAccessType> allAccountsType = Arrays.asList(AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME);
+
+        if (allAccountsType.contains(allPsd2)) {
             return AisConsentRequestType.GLOBAL;
-        } else if (AccountAccessType.ALL_ACCOUNTS == availableAccounts) {
+        } else if (allAccountsType.contains(availableAccounts)) {
             return AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
-        } else if (AccountAccessType.ALL_ACCOUNTS == availableAccountsWithBalance) {
+        } else if (allAccountsType.contains(availableAccountsWithBalance)) {
             return AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
         } else if (isAccessesEmpty) {
             return AisConsentRequestType.BANK_OFFERED;

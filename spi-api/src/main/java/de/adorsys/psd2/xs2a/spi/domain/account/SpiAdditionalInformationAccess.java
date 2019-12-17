@@ -24,5 +24,4 @@ import java.util.List;
 @Value
 public class SpiAdditionalInformationAccess {
     @Nullable private List<SpiAccountReference> ownerName;
-    @Nullable private List<SpiAccountReference> ownerAddress;
 }

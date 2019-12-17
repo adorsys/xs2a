@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Requested access services for a consent. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-11T13:48:52.194360+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-11T13:12:30.656354+02:00[Europe/Kiev]")
 
 public class AccountAccess   {
   @JsonProperty("accounts")
@@ -36,7 +36,9 @@ public class AccountAccess   {
    * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted.
    */
   public enum AvailableAccountsEnum {
-    ALLACCOUNTS("allAccounts");
+    ALLACCOUNTS("allAccounts"),
+
+    ALLACCOUNTSWITHOWNERNAME("allAccountsWithOwnerName");
 
     private String value;
 
@@ -68,7 +70,9 @@ public class AccountAccess   {
    * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted.
    */
   public enum AvailableAccountsWithBalanceEnum {
-    ALLACCOUNTS("allAccounts");
+    ALLACCOUNTS("allAccounts"),
+
+    ALLACCOUNTSWITHOWNERNAME("allAccountsWithOwnerName");
 
     private String value;
 
@@ -100,7 +104,9 @@ public class AccountAccess   {
    * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted.
    */
   public enum AllPsd2Enum {
-    ALLACCOUNTS("allAccounts");
+    ALLACCOUNTS("allAccounts"),
+
+    ALLACCOUNTSWITHOWNERNAME("allAccountsWithOwnerName");
 
     private String value;
 
@@ -128,8 +134,8 @@ public class AccountAccess   {
   @JsonProperty("allPsd2")
   private AllPsd2Enum allPsd2 = null;
 
-  @JsonProperty("additionalAccountInformation")
-  private AdditionalInformationAccess additionalAccountInformation = null;
+  @JsonProperty("additionalInformation")
+  private AdditionalInformationAccess additionalInformation = null;
 
   public AccountAccess accounts(List<AccountReference> accounts) {
     this.accounts = accounts;
@@ -290,32 +296,32 @@ public class AccountAccess   {
     this.allPsd2 = allPsd2;
   }
 
-  public AccountAccess additionalAccountInformation(AdditionalInformationAccess additionalAccountInformation) {
-    this.additionalAccountInformation = additionalAccountInformation;
+  public AccountAccess additionalInformation(AdditionalInformationAccess additionalInformation) {
+    this.additionalInformation = additionalInformation;
     return this;
   }
 
   /**
-   * Get additionalAccountInformation
-   * @return additionalAccountInformation
+   * Get additionalInformation
+   * @return additionalInformation
   **/
   @ApiModelProperty(value = "")
 
   @Valid
 
 
-  @JsonProperty("additionalAccountInformation")
-  public AdditionalInformationAccess getAdditionalAccountInformation() {
-    return additionalAccountInformation;
+  @JsonProperty("additionalInformation")
+  public AdditionalInformationAccess getAdditionalInformation() {
+    return additionalInformation;
   }
 
-  public void setAdditionalAccountInformation(AdditionalInformationAccess additionalAccountInformation) {
-    this.additionalAccountInformation = additionalAccountInformation;
+  public void setAdditionalInformation(AdditionalInformationAccess additionalInformation) {
+    this.additionalInformation = additionalInformation;
   }
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -329,12 +335,12 @@ public class AccountAccess   {
         Objects.equals(this.availableAccounts, accountAccess.availableAccounts) &&
         Objects.equals(this.availableAccountsWithBalance, accountAccess.availableAccountsWithBalance) &&
         Objects.equals(this.allPsd2, accountAccess.allPsd2) &&
-        Objects.equals(this.additionalAccountInformation, accountAccess.additionalAccountInformation);
+        Objects.equals(this.additionalInformation, accountAccess.additionalInformation);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(accounts, balances, transactions, availableAccounts, availableAccountsWithBalance, allPsd2, additionalAccountInformation);
+    return Objects.hash(accounts, balances, transactions, availableAccounts, availableAccountsWithBalance, allPsd2, additionalInformation);
   }
 
   @Override
@@ -348,7 +354,7 @@ public class AccountAccess   {
     sb.append("    availableAccounts: ").append(toIndentedString(availableAccounts)).append("\n");
     sb.append("    availableAccountsWithBalance: ").append(toIndentedString(availableAccountsWithBalance)).append("\n");
     sb.append("    allPsd2: ").append(toIndentedString(allPsd2)).append("\n");
-    sb.append("    additionalAccountInformation: ").append(toIndentedString(additionalAccountInformation)).append("\n");
+    sb.append("    additionalInformation: ").append(toIndentedString(additionalInformation)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -357,7 +363,7 @@ public class AccountAccess   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

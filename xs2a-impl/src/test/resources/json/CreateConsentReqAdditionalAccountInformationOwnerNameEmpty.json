@@ -15,12 +15,7 @@
     "balances": [],
     "transactions": [],
     "additionalInformationAccess": {
-      "ownerName": [],
-      "ownerAddress": [
-        {
-          "iban": "Test IBAN"
-        }
-      ]
+      "ownerName": []
     }
   },
   "frequencyPerDay": "1",

@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -43,10 +44,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Currency;
+import java.util.List;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SESSIONS_NOT_SUPPORTED;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -103,7 +105,7 @@ public class CreateConsentRequestValidatorTest {
         when(supportedAccountReferenceValidator.validate(anyCollection()))
             .thenReturn(ValidationResult.invalid(SUPPORTED_ACCOUNT_REFERENCE_VALIDATION_ERROR));
 
-        AccountReference accountReference = new AccountReference(AccountReferenceType.IBAN, "some iban", Currency.getInstance("EUR"));
+        AccountReference accountReference = buildAccountReference();
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
         CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(xs2aAccountAccess);
 
@@ -217,6 +219,116 @@ public class CreateConsentRequestValidatorTest {
         assertThat(validationResult.getMessageError()).isEqualTo(COMBINED_SERVICE_VALIDATION_ERROR);
     }
 
+    @Test
+    public void validate_consentWithAdditionalInformationAccess_shouldReturnConsentInvalid() {
+        //Given
+        AccountReference accountReference = buildAccountReference();
+        List<AccountReference> accountReferences = Collections.singletonList(accountReference);
+        AdditionalInformationAccess additionalInformationAccess = new AdditionalInformationAccess(accountReferences);
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(accountReferences, Collections.emptyList(), Collections.emptyList(),
+                                                                    null, null, null, additionalInformationAccess);
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(xs2aAccountAccess);
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+        //Then
+        assertValidationResultConsentInvalid(validationResult);
+    }
+
+    @Test
+    public void validate_consentWithAdditionalInformationAccess_shouldReturnConsentValid() {
+        //Given
+        when(aspspProfileService.isAccountOwnerInformationSupported()).thenReturn(true);
+        AccountReference accountReference = buildAccountReference();
+        List<AccountReference> accountReferences = Collections.singletonList(accountReference);
+        AdditionalInformationAccess additionalInformationAccess = new AdditionalInformationAccess(accountReferences);
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(accountReferences, Collections.emptyList(), Collections.emptyList(),
+                                                                    null, null, null, additionalInformationAccess);
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(xs2aAccountAccess);
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+        //Then
+        assertValidationResultValid(validationResult);
+    }
+
+    @Test
+    public void validate_availableAccountWithOwnerName_shouldReturnConsentInvalid() {
+        //Given
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
+                                                                    AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, null, null, null);
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(xs2aAccountAccess);
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+        //Then
+        assertValidationResultConsentInvalid(validationResult);
+    }
+
+    @Test
+    public void validate_availableAccountWithOwnerName_shouldReturnConsentValid() {
+        //Given
+        when(aspspProfileService.isAccountOwnerInformationSupported()).thenReturn(true);
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
+                                                                    AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, null, null, null);
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(xs2aAccountAccess);
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+        //Then
+        assertValidationResultValid(validationResult);
+    }
+
+    @Test
+    public void validate_allPsd2WithOwnerName_shouldReturnConsentInvalid() {
+        //Given
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
+                                                                    null, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, null, null);
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(xs2aAccountAccess);
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+        //Then
+        assertValidationResultConsentInvalid(validationResult);
+    }
+
+    @Test
+    public void validate_allPsd2WithOwnerName_shouldReturnConsentValid() {
+        //Given
+        when(aspspProfileService.isAccountOwnerInformationSupported()).thenReturn(true);
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
+                                                                    null, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, null, null);
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(xs2aAccountAccess);
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+        //Then
+        assertValidationResultValid(validationResult);
+    }
+
+    @Test
+    public void validate_availableAccountWithBalanceWithOwnerName_shouldReturnConsentInvalid() {
+        //Given
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
+                                                                    null, null, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, null);
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(xs2aAccountAccess);
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+        //Then
+        assertValidationResultConsentInvalid(validationResult);
+    }
+
+    @Test
+    public void validate_availableAccountWithBalanceWithOwnerName_shouldReturnConsentValid() {
+        //Given
+        when(aspspProfileService.isAccountOwnerInformationSupported()).thenReturn(true);
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
+                                                                    null, null, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, null);
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(xs2aAccountAccess);
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+        //Then
+        assertValidationResultValid(validationResult);
+    }
+
+    private AccountReference buildAccountReference() {
+        return new AccountReference(AccountReferenceType.IBAN, "some iban", Currency.getInstance("EUR"));
+    }
+
     private CreateConsentReq buildCreateConsentReqWithAccess(Xs2aAccountAccess xs2aAccountAccess) {
         CreateConsentReq createConsentReq = buildCreateConsentReqWithCombinedServiceIndicator(false);
         createConsentReq.setAccess(xs2aAccountAccess);
@@ -254,5 +366,12 @@ public class CreateConsentRequestValidatorTest {
     private void assertValidationResultValid(ValidationResult validationResult) {
         assertThat(validationResult.isValid()).isTrue();
         assertThat(validationResult.getMessageError()).isNull();
+    }
+
+    private void assertValidationResultConsentInvalid(ValidationResult validationResult) {
+        assertThat(validationResult.isValid()).isFalse();
+        MessageError messageError = validationResult.getMessageError();
+        assertNotNull(messageError);
+        assertThat(messageError.getTppMessage().getMessageErrorCode()).isEqualTo(CONSENT_INVALID);
     }
 }

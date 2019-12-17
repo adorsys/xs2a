@@ -70,7 +70,6 @@ public class AccountReferenceInConsentUpdater {
         List<AccountReference> transactions = new ArrayList<>();
         List<AccountReference> balances = new ArrayList<>();
         List<AccountReference> ownerName = new ArrayList<>();
-        List<AccountReference> ownerAddress = new ArrayList<>();
         AdditionalInformationAccess additionalInformationAccess = existingAccess.getAdditionalInformationAccess();
 
         if (existingAccess.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
@@ -86,19 +85,14 @@ public class AccountReferenceInConsentUpdater {
         }
 
         for (Xs2aAccountDetails accountDetail : accountDetails) {
-            if (additionalInformationAccess != null) {
-                if (additionalInformationAccess.getOwnerName() != null) {
-                    ownerName.addAll(enrichAccountReferences(accountDetail, additionalInformationAccess.getOwnerName()));
-                }
-                if (additionalInformationAccess.getOwnerAddress() != null) {
-                    ownerAddress.addAll(enrichAccountReferences(accountDetail, additionalInformationAccess.getOwnerAddress()));
-                }
+            if (additionalInformationAccess != null && additionalInformationAccess.getOwnerName() != null) {
+                ownerName.addAll(enrichAccountReferences(accountDetail, additionalInformationAccess.getOwnerName()));
             }
         }
 
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(accounts, balances, transactions, existingAccess.getAvailableAccounts(),
                                                                     existingAccess.getAllPsd2(), existingAccess.getAvailableAccountsWithBalance(),
-                                                                    Optional.ofNullable(additionalInformationAccess).map(info -> new AdditionalInformationAccess(ownerName, ownerAddress)).orElse(null));
+                                                                    Optional.ofNullable(additionalInformationAccess).map(info -> new AdditionalInformationAccess(ownerName)).orElse(null));
 
         return aisConsentService.updateAspspAccountAccess(consentId, consentMapper.mapToAisAccountAccessInfo(xs2aAccountAccess));
     }

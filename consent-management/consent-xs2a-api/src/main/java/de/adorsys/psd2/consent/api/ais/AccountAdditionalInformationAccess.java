@@ -24,5 +24,4 @@ import java.util.List;
 @Value
 public class AccountAdditionalInformationAccess {
     private List<AccountInfo> ownerName;
-    private List<AccountInfo> ownerAddress;
 }

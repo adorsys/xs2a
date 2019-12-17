@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \"currency\" is set to \"XXX\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-11T13:48:52.194360+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-11T13:12:30.656354+02:00[Europe/Kiev]")
 
 public class AccountDetails   {
   @JsonProperty("resourceId")
@@ -100,9 +100,6 @@ public class AccountDetails   {
 
   @JsonProperty("ownerName")
   private String ownerName = null;
-
-  @JsonProperty("ownerAddress")
-  private Address ownerAddress = null;
 
   public AccountDetails resourceId(String resourceId) {
     this.resourceId = resourceId;
@@ -449,7 +446,7 @@ public class AccountDetails   {
   **/
   @ApiModelProperty(value = "Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.")
 
-@Size(max=70)
+@Size(max=140)
 
   @JsonProperty("ownerName")
   public String getOwnerName() {
@@ -460,32 +457,9 @@ public class AccountDetails   {
     this.ownerName = ownerName;
   }
 
-  public AccountDetails ownerAddress(Address ownerAddress) {
-    this.ownerAddress = ownerAddress;
-    return this;
-  }
-
-  /**
-   * Get ownerAddress
-   * @return ownerAddress
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("ownerAddress")
-  public Address getOwnerAddress() {
-    return ownerAddress;
-  }
-
-  public void setOwnerAddress(Address ownerAddress) {
-    this.ownerAddress = ownerAddress;
-  }
-
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -508,13 +482,12 @@ public class AccountDetails   {
         Objects.equals(this.details, accountDetails.details) &&
         Objects.equals(this.balances, accountDetails.balances) &&
         Objects.equals(this._links, accountDetails._links) &&
-        Objects.equals(this.ownerName, accountDetails.ownerName) &&
-        Objects.equals(this.ownerAddress, accountDetails.ownerAddress);
+        Objects.equals(this.ownerName, accountDetails.ownerName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(resourceId, iban, bban, msisdn, currency, name, product, cashAccountType, status, bic, linkedAccounts, usage, details, balances, _links, ownerName, ownerAddress);
+    return Objects.hash(resourceId, iban, bban, msisdn, currency, name, product, cashAccountType, status, bic, linkedAccounts, usage, details, balances, _links, ownerName);
   }
 
   @Override
@@ -538,7 +511,6 @@ public class AccountDetails   {
     sb.append("    balances: ").append(toIndentedString(balances)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("    ownerName: ").append(toIndentedString(ownerName)).append("\n");
-    sb.append("    ownerAddress: ").append(toIndentedString(ownerAddress)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -547,7 +519,7 @@ public class AccountDetails   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

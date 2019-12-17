@@ -540,7 +540,6 @@ public class CmsPsuAisServiceTest {
         assertEquals(0, countAccessesByType.apply(TypeAccess.OWNER_NAME).longValue());
         assertEquals(0, countAccessesByType.apply(TypeAccess.OWNER_ADDRESS).longValue());
         assertEquals(aisConsent.getOwnerNameType(), AdditionalAccountInformationType.NONE);
-        assertEquals(aisConsent.getOwnerAddressType(), AdditionalAccountInformationType.NONE);
         assertTrue(saved);
     }
 
@@ -567,9 +566,7 @@ public class CmsPsuAisServiceTest {
                                                                            .count();
 
         assertEquals(1L, countAccessesByType.apply(TypeAccess.OWNER_NAME).longValue());
-        assertEquals(1L, countAccessesByType.apply(TypeAccess.OWNER_ADDRESS).longValue());
         assertEquals(aisConsent.getOwnerNameType(), AdditionalAccountInformationType.DEDICATED_ACCOUNTS);
-        assertEquals(aisConsent.getOwnerAddressType(), AdditionalAccountInformationType.DEDICATED_ACCOUNTS);
         assertTrue(saved);
     }
 
@@ -598,7 +595,6 @@ public class CmsPsuAisServiceTest {
         assertEquals(0, count.apply(TypeAccess.OWNER_NAME).longValue());
         assertEquals(0, count.apply(TypeAccess.OWNER_ADDRESS).longValue());
         assertEquals(aisConsent.getOwnerNameType(), AdditionalAccountInformationType.ALL_AVAILABLE_ACCOUNTS);
-        assertEquals(aisConsent.getOwnerAddressType(), AdditionalAccountInformationType.ALL_AVAILABLE_ACCOUNTS);
         assertTrue(saved);
     }
 
@@ -692,10 +688,6 @@ public class CmsPsuAisServiceTest {
             List<AccountReference> ownerName = info.getOwnerName();
             if (!ownerName.isEmpty()) {
                 aspspAccountAccesses.add(mapToAccountInfo(ownerName.get(0), TypeAccess.OWNER_NAME));
-            }
-            List<AccountReference> ownerAddress = info.getOwnerAddress();
-            if (!ownerAddress.isEmpty()) {
-                aspspAccountAccesses.add(mapToAccountInfo(ownerAddress.get(0), TypeAccess.OWNER_ADDRESS));
             }
         }
         return aspspAccountAccesses;
@@ -810,7 +802,7 @@ public class CmsPsuAisServiceTest {
             null,
             null,
             null,
-            new AdditionalInformationAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference)));
+            new AdditionalInformationAccess(Collections.singletonList(accountReference)));
     }
 
     private AisAccountAccess getAisAccountAccessWithAdditionalAccountInformationAllAvailableAccounts(AccountReference accountReference) {
@@ -821,7 +813,7 @@ public class CmsPsuAisServiceTest {
             null,
             null,
             null,
-            new AdditionalInformationAccess(Collections.emptyList(), Collections.emptyList()));
+            new AdditionalInformationAccess(Collections.emptyList()));
     }
 
     private AccountReference getAccountReference(String iban, Currency currency) {

@@ -143,7 +143,6 @@ public class AisConsentMapper {
                 }
             };
             updateAccesses.accept(info.getOwnerName(), TypeAccess.OWNER_NAME);
-            updateAccesses.accept(info.getOwnerAddress(), TypeAccess.OWNER_ADDRESS);
         }
         return accesses;
     }
@@ -182,8 +181,7 @@ public class AisConsentMapper {
     private AdditionalInformationAccess mapToInitialAdditionalInformationAccess(List<TppAccountAccess> accesses, AisConsent consent) {
         return consent.checkNoneAdditionalAccountInformation()
                    ? null
-                   : new AdditionalInformationAccess(mapToAdditionalInformationInitialAccountReferences(consent.getOwnerNameType(), TypeAccess.OWNER_NAME, accesses),
-                                                     mapToAdditionalInformationInitialAccountReferences(consent.getOwnerAddressType(), TypeAccess.OWNER_ADDRESS, accesses));
+                   : new AdditionalInformationAccess(mapToAdditionalInformationInitialAccountReferences(consent.getOwnerNameType(), TypeAccess.OWNER_NAME, accesses));
     }
 
     private List<AccountReference> mapToAdditionalInformationInitialAccountReferences(AdditionalAccountInformationType type, TypeAccess typeAccess, List<TppAccountAccess> accesses) {
@@ -195,8 +193,7 @@ public class AisConsentMapper {
     private AdditionalInformationAccess mapToAspspAdditionalInformationAccess(List<AspspAccountAccess> accesses, AisConsent consent) {
         return consent.checkNoneAdditionalAccountInformation()
                    ? null
-                   : new AdditionalInformationAccess(mapToAdditionalInformationAspspAccountReferences(consent.getOwnerNameType(), TypeAccess.OWNER_NAME, accesses),
-                                                     mapToAdditionalInformationAspspAccountReferences(consent.getOwnerAddressType(), TypeAccess.OWNER_ADDRESS, accesses));
+                   : new AdditionalInformationAccess(mapToAdditionalInformationAspspAccountReferences(consent.getOwnerNameType(), TypeAccess.OWNER_NAME, accesses));
     }
 
     private List<AccountReference> mapToAdditionalInformationAspspAccountReferences(AdditionalAccountInformationType type, TypeAccess typeAccess, List<AspspAccountAccess> accesses) {
