@@ -44,6 +44,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class TppDomainValidatorTest {
     private static final String URL_HEADER_CORRECT = "www.example-TPP.com/xs2a-client/v1/ASPSPidentifcation/mytransaction-id";
+    private static final String URL_HEADER_CORRECT_WITH_PAGE = "www.example-TPP.com/xs2a-client/super.html";
     private static final String URL_HEADER_CORRECT_DE = "www.example-TPP.de/xs2a-client/v1/ASPSPidentifcation/mytransaction-id";
     private static final String URL_HEADER_SUBDOMAIN_CORRECT = "redirections.example-TPP.com/xs2a-client/v1/ASPSPidentifcation/mytransaction-id";
     private static final String URL_HEADER_WRONG_DOMAIN = "www.bad-example-TPP.com/xs2a-client/v1/ASPSPidentifcation/mytransaction-id";
@@ -126,6 +127,19 @@ public class TppDomainValidatorTest {
             .thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
         //When
         ValidationResult validate = tppDomainValidator.validate(URL_HEADER_CORRECT);
+        //Then
+        assertEquals(ValidationResult.valid(), validate);
+    }
+
+    @Test
+    public void validate_UrlHeaderCorrect_withPage_Valid() {
+        //Given
+        when(scaApproachResolver.resolveScaApproach())
+            .thenReturn(ScaApproach.REDIRECT);
+        when(tppService.getTppInfo())
+            .thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
+        //When
+        ValidationResult validate = tppDomainValidator.validate(URL_HEADER_CORRECT_WITH_PAGE);
         //Then
         assertEquals(ValidationResult.valid(), validate);
     }
