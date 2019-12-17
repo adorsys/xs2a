@@ -19,11 +19,6 @@
         {
           "iban": "Test IBAN"
         }
-      ],
-      "ownerAddress": [
-        {
-          "iban": "Test IBAN"
-        }
       ]
     }
   },

@@ -6,7 +6,6 @@
   "allPsd2": "allAccounts",
   "availableAccountsWithBalance": "allAccounts",
   "additionalInformationAccess": {
-    "ownerName": [],
-    "ownerAddress": []
+    "ownerName": []
   }
 }

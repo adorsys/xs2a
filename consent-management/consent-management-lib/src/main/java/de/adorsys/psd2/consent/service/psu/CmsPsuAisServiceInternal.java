@@ -282,13 +282,10 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     private void setAdditionalInformationTypes(AisConsent consent, AdditionalInformationAccess info) {
-        if (info == null) {
-            consent.setOwnerNameType(AdditionalAccountInformationType.NONE);
-            consent.setOwnerAddressType(AdditionalAccountInformationType.NONE);
-        } else {
-            consent.setOwnerNameType(AdditionalAccountInformationType.findTypeByList(info.getOwnerName()));
-            consent.setOwnerAddressType(AdditionalAccountInformationType.findTypeByList(info.getOwnerAddress()));
-        }
+        AdditionalAccountInformationType ownerNameType = info == null
+                                                             ? AdditionalAccountInformationType.NONE
+                                                             : AdditionalAccountInformationType.findTypeByList(info.getOwnerName());
+        consent.setOwnerNameType(ownerNameType);
     }
 
     private boolean changeConsentStatus(String consentId, ConsentStatus status, String instanceId) {

@@ -170,9 +170,7 @@ public class Xs2aAisConsentMapper {
     }
 
     private AccountAdditionalInformationAccess mapToAccountAdditionalInformationAccess(AdditionalInformationAccess info) {
-        return new AccountAdditionalInformationAccess(
-            mapToListAccountInfoOrDefault(info.getOwnerName(), null),
-            mapToListAccountInfoOrDefault(info.getOwnerAddress(), null));
+        return new AccountAdditionalInformationAccess(mapToListAccountInfoOrDefault(info.getOwnerName(), null));
     }
 
     private List<AccountInfo> mapToListAccountInfo(List<AccountReference> refs) {
@@ -282,7 +280,7 @@ public class Xs2aAisConsentMapper {
 
     private AdditionalInformationAccess mapToAdditionalInformationAccess(AdditionalInformationAccess accountAdditionalInformationAccess) {
         return  Optional.ofNullable(accountAdditionalInformationAccess)
-                       .map(info -> new AdditionalInformationAccess(info.getOwnerName(), info.getOwnerAddress()))
+                       .map(info -> new AdditionalInformationAccess(info.getOwnerName()))
                        .orElse(null);
     }
 

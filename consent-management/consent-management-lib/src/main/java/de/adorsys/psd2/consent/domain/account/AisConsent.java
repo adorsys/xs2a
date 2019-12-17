@@ -37,8 +37,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Data
 @ToString(exclude = {"accesses", "authorizations", "usages"})
@@ -171,6 +173,7 @@ public class AisConsent extends InstanceDependableEntity {
     @Enumerated(value = EnumType.STRING)
     private AdditionalAccountInformationType ownerNameType = AdditionalAccountInformationType.NONE;
 
+    @Deprecated //TODO remove this column in 5.10 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1124
     @Column(name = "owner_address_type")
     @Enumerated(value = EnumType.STRING)
     private AdditionalAccountInformationType ownerAddressType = AdditionalAccountInformationType.NONE;
@@ -265,6 +268,6 @@ public class AisConsent extends InstanceDependableEntity {
     }
 
     public boolean checkNoneAdditionalAccountInformation() {
-        return Stream.of(getOwnerNameType(), getOwnerAddressType()).allMatch(type -> type.equals(AdditionalAccountInformationType.NONE));
+        return getOwnerNameType() == AdditionalAccountInformationType.NONE;
     }
 }

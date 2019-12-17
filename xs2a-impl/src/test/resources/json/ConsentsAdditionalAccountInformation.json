@@ -10,13 +10,8 @@
         "currency": "EUR"
       }
     ],
-    "additionalAccountInformation": {
+    "additionalInformation": {
       "ownerName": [
-        {
-          "iban": "Test IBAN"
-        }
-      ],
-      "ownerAddress": [
         {
           "iban": "Test IBAN"
         }

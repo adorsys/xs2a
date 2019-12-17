@@ -91,10 +91,9 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
                                                          .filter(Objects::nonNull)
                                                          .flatMap(Collection::stream);
 
-            Stream<AccountReference> additionalReferences = Optional.ofNullable(accountAccess.getAdditionalAccountInformation())
-                                                                .map(info -> Stream.of(info.getOwnerName(), info.getOwnerAddress())
-                                                                                 .filter(Objects::nonNull)
-                                                                                 .flatMap(Collection::stream))
+            Stream<AccountReference> additionalReferences = Optional.ofNullable(accountAccess.getAdditionalInformation())
+                                                                .map(de.adorsys.psd2.model.AdditionalInformationAccess::getOwnerName)
+                                                                .map(Collection::stream)
                                                                 .orElseGet(Stream::empty);
 
             Stream.concat(allReferences, additionalReferences)
@@ -143,7 +142,7 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
                                 mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
                                 mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2()),
                                 mapToAccountAccessTypeFromAvailableAccountsWithBalance(acs.getAvailableAccountsWithBalance()),
-                                mapToAdditionalInformationAccess(acs.getAdditionalAccountInformation(), messageError)
+                                mapToAdditionalInformationAccess(acs.getAdditionalInformation(), messageError)
                             ))
                    .orElse(null);
     }
@@ -153,9 +152,7 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
             return null;
         }
 
-        return new AdditionalInformationAccess(
-            mapToXs2aAccountReferences(additionalInformationAccess.getOwnerName(), messageError),
-            mapToXs2aAccountReferences(additionalInformationAccess.getOwnerAddress(), messageError));
+        return new AdditionalInformationAccess(mapToXs2aAccountReferences(additionalInformationAccess.getOwnerName(), messageError));
     }
 
     private List<de.adorsys.psd2.xs2a.core.profile.AccountReference> mapToXs2aAccountReferences(List<de.adorsys.psd2.model.AccountReference> references, MessageError messageError) { // NOPMD
