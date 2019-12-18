@@ -45,6 +45,7 @@ public class RequestProviderService {
     private static final String PSU_ID_TYPE_HEADER = "psu-id-type";
     private static final String PSU_CORPORATE_ID_HEADER = "psu-corporate-id";
     private static final String PSU_CORPORATE_ID_TYPE_HEADER = "psu-corporate-id-type";
+    private static final String PSU_IP_ADDRESS = "psu-ip-address";
     private static final String TPP_ROLES_ALLOWED_HEADER = "tpp-roles-allowed";
     private static final String ACCEPT_HEADER = "accept";
     private static final String TPP_QWAC_CERTIFICATE_HEADER = "tpp-qwac-certificate";
@@ -76,7 +77,8 @@ public class RequestProviderService {
         return new PsuIdData(getHeader(PSU_ID_HEADER),
                              getHeader(PSU_ID_TYPE_HEADER),
                              getHeader(PSU_CORPORATE_ID_HEADER),
-                             getHeader(PSU_CORPORATE_ID_TYPE_HEADER));
+                             getHeader(PSU_CORPORATE_ID_TYPE_HEADER),
+                             getHeader(PSU_IP_ADDRESS));
     }
 
     /**

@@ -1,0 +1,18 @@
+{
+  "psuId": "PSU ID",
+  "psuIdType": "PSU ID TYPE",
+  "psuCorporateId": "PSU CORPORATE ID",
+  "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+  "psuIpAddress": "PSU IP ADDRESS",
+  "additionalPsuIdData": {
+    "psuIpPort": "PSU IP PORT",
+    "psuUserAgent": "PSU USER AGENT",
+    "psuGeoLocation": "PSU GEO LOCATION",
+    "psuAccept": "PSU ACCEPT",
+    "psuAcceptCharset": "PSU ACCEPT CHARSET",
+    "psuAcceptEncoding": "PSU ACCEPT ENCODING",
+    "psuAcceptLanguage": "PSU ACCEPT LANGUAGE",
+    "psuHttpMethod": "PSU HTTP METHOD",
+    "psuDeviceId": "8fe5277b-f080-4ea9-bfe0-22ccfae3671a"
+  }
+}

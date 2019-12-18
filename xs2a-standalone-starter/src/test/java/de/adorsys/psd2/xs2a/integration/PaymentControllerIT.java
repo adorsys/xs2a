@@ -298,6 +298,6 @@ public class PaymentControllerIT {
     }
 
     private PsuIdData getPsuIdData() {
-        return new PsuIdData("PSU-123", "Some type", "Some corporate id", "Some corporate id type");
+        return new PsuIdData("PSU-123", "Some type", "Some corporate id", "Some corporate id type", "Some IP Address");
     }
 }

@@ -45,11 +45,24 @@ public class PsuData extends InstanceDependableEntity {
     @Column(name = "psu_corporate_id_type")
     private String psuCorporateIdType;
 
-    public PsuData(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType) {
+    @Column(name = "psu_ip_address")
+    private String psuIpAddress;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "additional_psu_data_id")
+    private AdditionalPsuData additionalPsuData;
+
+    public PsuData(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String psuIpAddress) {
         this.psuId = psuId;
         this.psuIdType = psuIdType;
         this.psuCorporateId = psuCorporateId;
         this.psuCorporateIdType = psuCorporateIdType;
+        this.psuIpAddress = psuIpAddress;
+    }
+
+    public PsuData(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String psuIpAddress, AdditionalPsuData additionalPsuData) {
+        this(psuId, psuIdType, psuCorporateId, psuCorporateIdType, psuIpAddress);
+        this.additionalPsuData = additionalPsuData;
     }
 
     public boolean contentEquals(@NotNull PsuData otherPsuData) {

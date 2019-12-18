@@ -72,7 +72,7 @@ public class PaymentCancellationAuthorisationServiceTest {
     private static final String NOT_EXISTING_PAYMENT_ID = "not existing payment id";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String INVALID_AUTHORISATION_ID = "invalid authorisation id";
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
     private static final String WRONG_CANCELLATION_AUTHORISATION_ID = "wrong cancellation authorisation id";
     private static final String CANCELLATION_AUTHORISATION_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;

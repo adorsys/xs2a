@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator.header;
 
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.header.account.TransactionListDownloadHeaderValidator;
@@ -52,7 +53,7 @@ public class XRequestIdHeaderValidatorImpl extends AbstractHeaderValidatorImpl
         String header = headers.get(getHeaderName());
         if (isNonValid(header)) {
             return ValidationResult.invalid(
-                errorBuildingService.buildErrorType(),FORMAT_ERROR_WRONG_HEADER);
+                errorBuildingService.buildErrorType(), TppMessageInformation.of(FORMAT_ERROR_WRONG_HEADER, getHeaderName()));
         }
 
         return super.checkHeaderContent(headers);

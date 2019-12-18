@@ -89,10 +89,10 @@ public class CmsAspspPisExportServiceInternalTest {
     public void exportPaymentsByTpp_success() {
         // Given
         when(pisCommonPaymentDataSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER,
-            CREATION_DATE_FROM,
-            CREATION_DATE_TO,
-            psuIdData,
-            DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+                                                                                                 CREATION_DATE_FROM,
+                                                                                                 CREATION_DATE_TO,
+                                                                                                 psuIdData,
+                                                                                                 DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
@@ -147,9 +147,9 @@ public class CmsAspspPisExportServiceInternalTest {
     public void exportPaymentsByPsu_success() {
         // Given
         when(pisCommonPaymentDataSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
-            CREATION_DATE_FROM,
-            CREATION_DATE_TO,
-            DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+                                                                                         CREATION_DATE_FROM,
+                                                                                         CREATION_DATE_TO,
+                                                                                         DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
@@ -217,9 +217,9 @@ public class CmsAspspPisExportServiceInternalTest {
     public void exportPaymentsByAccountId_success() {
         // Given
         when(pisCommonPaymentDataSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
-            CREATION_DATE_FROM,
-            CREATION_DATE_TO,
-            DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+                                                                                              CREATION_DATE_FROM,
+                                                                                              CREATION_DATE_TO,
+                                                                                              DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
@@ -268,15 +268,15 @@ public class CmsAspspPisExportServiceInternalTest {
     }
 
     private PsuIdData buildPsuIdData(String psuId) {
-        return new PsuIdData(psuId, null, null, null);
+        return new PsuIdData(psuId, null, null, null, null);
     }
 
     private PsuIdData buildEmptyPsuIdData() {
-        return new PsuIdData(null, null, null, null);
+        return new PsuIdData(null, null, null, null, null);
     }
 
     private PsuData buildPsuData() {
-        return new PsuData(PSU_ID, null, null, null);
+        return new PsuData(PSU_ID, null, null, null, null);
     }
 
     private CmsPayment buildCmsPayment() {

@@ -62,7 +62,7 @@ public class CmsAspspAisExportController {
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
-        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
         Collection<CmsAisAccountConsent> consents = cmsAspspAisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }
@@ -88,7 +88,7 @@ public class CmsAspspAisExportController {
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
-        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
         Collection<CmsAisAccountConsent> consents = cmsAspspAisExportService.exportConsentsByPsu(psuIdData, start, end, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }

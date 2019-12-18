@@ -516,7 +516,8 @@ public class CmsPsuPisServiceInternalTest {
             "psuId",
             "psuIdType",
             "psuCorporateId",
-            "psuCorporateIdType"
+            "psuCorporateIdType",
+            "psuIpAddress"
         );
     }
 
@@ -525,7 +526,8 @@ public class CmsPsuPisServiceInternalTest {
             "wrong psuId",
             "psuIdType",
             "wrong psuCorporateId",
-            "psuCorporateIdType"
+            "psuCorporateIdType",
+            "psuIpAddress"
         );
     }
 
@@ -607,7 +609,8 @@ public class CmsPsuPisServiceInternalTest {
             psuIdData.getPsuId(),
             psuIdData.getPsuIdType(),
             psuIdData.getPsuCorporateId(),
-            psuIdData.getPsuCorporateIdType()
+            psuIdData.getPsuCorporateIdType(),
+            psuIdData.getPsuIpAddress()
         );
         psuData.setId(1L);
 

@@ -34,10 +34,11 @@ public class CmsPsuServiceTest {
     private static final String PSU_ID_TYPE = "psu type";
     private static final String PSU_CORPORATE_ID = "corp id";
     private static final String PSU_CORPORATE_ID_TYPE = "corp type";
+    private static final String PSU_IP_ADDRESS = "ip address";
 
-    private final PsuData PSU_DATA_1 = new PsuData(PSU_ID_1, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
-    private final PsuData PSU_DATA_2 = new PsuData(PSU_ID_2, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
-    private final PsuData PSU_DATA_3 = new PsuData(PSU_ID_3, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+    private final PsuData PSU_DATA_1 = new PsuData(PSU_ID_1, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS);
+    private final PsuData PSU_DATA_2 = new PsuData(PSU_ID_2, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS);
+    private final PsuData PSU_DATA_3 = new PsuData(PSU_ID_3, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS);
     private final List<PsuData> PSU_DATA_LIST = new ArrayList<>(Arrays.asList(PSU_DATA_1, PSU_DATA_2));
 
     @InjectMocks
@@ -138,7 +139,7 @@ public class CmsPsuServiceTest {
     }
 
     private PsuData buildPsuDataWithId(String psuId, Long databaseId) {
-        PsuData newPsuData = new PsuData(psuId, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        PsuData newPsuData = new PsuData(psuId, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS);
         newPsuData.setId(databaseId);
         return newPsuData;
     }

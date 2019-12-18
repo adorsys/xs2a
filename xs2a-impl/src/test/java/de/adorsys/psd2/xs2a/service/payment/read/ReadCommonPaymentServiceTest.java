@@ -57,7 +57,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReadCommonPaymentServiceTest {
-    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null, null);
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final CommonPaymentData COMMON_PAYMENT = buildCommonPaymentData();
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = new SpiPaymentInfo(PRODUCT);

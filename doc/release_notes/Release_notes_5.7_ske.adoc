@@ -1,0 +1,12 @@
+= Release notes v.5.7
+
+== Table of Contents
+* Store and export data from CMS for PSU related headers
+
+== Store and export data from CMS for PSU related headers
+
+From now on, xs2a supports a new table `additional_psu_data` which saves additional,
+psu-related, fields, such as `psu-ip-port`, `psu-user-agent`, `psu-geo-location`, `psu-accept`,
+`psu-accept-charset`, `psu-accept-encoding`, `psu-accept-language`, `psu-http-method` and `psu-device-id`.
+These fields are provided through initiating endpoints for AIS or PIS. Also, `psu-ip-address` is now persisted as well,
+and saved inside of the `psu_data` table.

@@ -173,7 +173,7 @@ public class PaymentStartCancellationAuthorisationIT {
 
         CreatePisAuthorisationRequest expectedCreatePisAuthorisationRequest =
             new CreatePisAuthorisationRequest(PaymentAuthorisationType.CANCELLED,
-                                              new PsuIdData(PSU_ID, null, null, null),
+                                              new PsuIdData(PSU_ID, null, null, null, null),
                                               ScaApproach.EMBEDDED, TPP_REDIRECT_URIs);
 
         //When

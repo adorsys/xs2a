@@ -60,7 +60,7 @@ public class CmsAspspPiisExportController {
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false) String instanceId) {
-        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
         Collection<PiisConsent> consents = cmsAspspPiisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }
@@ -86,7 +86,7 @@ public class CmsAspspPiisExportController {
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false) String instanceId) {
-        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType,null);
         Collection<PiisConsent> consents = cmsAspspPiisExportService.exportConsentsByPsu(psuIdData, start, end, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }

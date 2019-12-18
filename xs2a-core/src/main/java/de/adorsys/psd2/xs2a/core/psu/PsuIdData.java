@@ -41,6 +41,29 @@ public class PsuIdData {
     @Nullable
     private String psuCorporateIdType;
 
+    @Nullable
+    private String psuIpAddress;
+
+    @Nullable
+    private AdditionalPsuIdData additionalPsuIdData;
+
+    public PsuIdData() {
+        this(null, null, null, null, null);
+    }
+
+    public PsuIdData(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String psuIpAddress) {
+        this(psuId, psuIdType, psuCorporateId, psuCorporateIdType, psuIpAddress, null);
+    }
+
+    public PsuIdData(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String psuIpAddress, AdditionalPsuIdData additionalPsuIdData) {
+        this.psuId = psuId;
+        this.psuIdType = psuIdType;
+        this.psuCorporateId = psuCorporateId;
+        this.psuCorporateIdType = psuCorporateIdType;
+        this.psuIpAddress = psuIpAddress;
+        this.additionalPsuIdData = additionalPsuIdData;
+    }
+
     public boolean contentEquals(PsuIdData otherPsuIdData) {
         if (Objects.isNull(otherPsuIdData)) {
             return false;

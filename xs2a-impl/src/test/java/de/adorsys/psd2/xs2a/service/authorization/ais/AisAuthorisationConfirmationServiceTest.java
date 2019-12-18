@@ -327,6 +327,6 @@ public class AisAuthorisationConfirmationServiceTest {
     }
 
     private PsuIdData buildPsuIdData() {
-        return new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
+        return new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType","psuIpAddress");
     }
 }

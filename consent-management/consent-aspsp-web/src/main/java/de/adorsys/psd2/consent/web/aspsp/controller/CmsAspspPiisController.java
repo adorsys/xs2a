@@ -96,6 +96,6 @@ public class CmsAspspPiisController {
     }
 
     private PsuIdData getPsuIdData(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType) {
-        return new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
+        return new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
     }
 }

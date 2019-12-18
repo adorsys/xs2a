@@ -25,7 +25,7 @@ public class OauthPisScaAuthorisationServiceTest {
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String CANCELLATION_AUTHORISATION_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
     private static final PaymentType PAYMENT_TYPE = PaymentType.SINGLE;
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null,null);
     private static final Xs2aUpdatePisCommonPaymentPsuDataRequest XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
 
     @InjectMocks

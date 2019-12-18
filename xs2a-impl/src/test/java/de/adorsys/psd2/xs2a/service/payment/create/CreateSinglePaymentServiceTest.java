@@ -73,8 +73,8 @@ public class CreateSinglePaymentServiceTest {
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String IBAN = "DE123456789";
-    private static final PsuIdData PSU_DATA = new PsuIdData("correct_psu", null, null, null);
-    private static final PsuIdData WRONG_PSU_DATA = new PsuIdData("wrong_psu", null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData("correct_psu", null, null, null, null);
+    private static final PsuIdData WRONG_PSU_DATA = new PsuIdData("wrong_psu", null, null, null, null);
     private static final TppInfo TPP_INFO = buildTppInfo();
     private static final TppInfo WRONG_TPP_INFO = new TppInfo();
     private static final String DEB_ACCOUNT_ID = "11111_debtorAccount";

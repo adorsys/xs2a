@@ -415,7 +415,7 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     private PsuIdData buildPsuIdData() {
-        return new PsuIdData(null, null, null, null);
+        return new PsuIdData(null, null, null, null, null);
     }
 }
 

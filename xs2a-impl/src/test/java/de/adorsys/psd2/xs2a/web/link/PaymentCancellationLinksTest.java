@@ -53,8 +53,8 @@ public class PaymentCancellationLinksTest {
     private static final HrefType SELF_LINK = new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111");
     private static final HrefType STATUS_LINK = new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
     private static final String CONFIRMATION_LINK = "confirmation_link";
-    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
-    private static final PsuIdData PSU_DATA_EMPTY = new PsuIdData(null, null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
+    private static final PsuIdData PSU_DATA_EMPTY = new PsuIdData(null, null, null, null, null);
     private PaymentCancellationLinks links;
     private Links expectedLinks;
     private CancelPaymentResponse response;

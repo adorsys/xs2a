@@ -117,4 +117,5 @@
     <include relativeToChangelogFile="true" file="migration/0089-create-payment-tpp-ntfc-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0090-remove-tan-from-pis-consent-authorization.xml"/>
     <include relativeToChangelogFile="true" file="migration/0091-add-column-checksum-to-ais-consent-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0092-create-additional-psu-data-table.xml"/>
 </databaseChangeLog>

@@ -62,6 +62,7 @@ public class AisConsentMapperTest {
     private static final String PSU_ID_TYPE = "PSU_ID_TYPE";
     private static final String PSU_CORPORATE_ID = "PSU_CORPORATE_ID";
     private static final String PSU_CORPORATE_ID_TYPE = "PSU_CORPORATE_ID_TYPE";
+    private static final String PSU_IP_ADDRESS = "PSU_IP_ADDRESS";
     private static final String TPP_AUTHORISATION_NUMBER = "TPP_AUTHORISATION_NUMBER";
     private static final String TPP_AUTHORITY_ID = "TPP_AUTHORITY_ID";
     private static final String REDIRECT_URI = "REDIRECT_URI";
@@ -275,6 +276,6 @@ public class AisConsentMapperTest {
     }
 
     private static PsuIdData buildPsuIdData() {
-        return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS);
     }
 }

@@ -33,7 +33,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Collections;
 import java.util.List;
@@ -57,7 +56,7 @@ public class CmsPsuPiisServiceInternalTest {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
     @InjectMocks
-    CmsPsuPiisServiceInternal cmsPsuPiisServiceInternal;
+    private CmsPsuPiisServiceInternal cmsPsuPiisServiceInternal;
     @Mock
     private PiisConsentRepository piisConsentRepository;
     @Mock
@@ -70,8 +69,8 @@ public class CmsPsuPiisServiceInternalTest {
 
     @Before
     public void setUp() {
-        psuIdData = new PsuIdData("777", null, null, null);
-        psuIdDataNotExist = new PsuIdData("000", null, null, null);
+        psuIdData = new PsuIdData("777", null, null, null, null);
+        psuIdDataNotExist = new PsuIdData("000", null, null, null, null);
         psuData = psuDataMapper.mapToPsuData(psuIdData);
         piisConsentEntity = buildPiisConsentEntity(ConsentStatus.VALID);
         piisConsent = buildConsent();

@@ -768,11 +768,11 @@ public class CmsPsuAisServiceTest {
     }
 
     private PsuData buildPsuData(String psuId) {
-        return new PsuData(psuId, "", "", "");
+        return new PsuData(psuId, "", "", "", "");
     }
 
     private PsuIdData buildPsuIdData(String psuId) {
-        return new PsuIdData(psuId, "", "", "");
+        return new PsuIdData(psuId, "", "", "", "");
     }
 
     private CmsAisAccountConsent buildSpiAccountConsent() {

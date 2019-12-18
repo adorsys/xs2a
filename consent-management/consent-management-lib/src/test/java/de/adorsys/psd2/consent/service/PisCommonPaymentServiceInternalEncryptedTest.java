@@ -46,7 +46,7 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
     private static final String ENCRYPTED_PAYMENT_ID = "encrypted payment id";
     private static final String DECRYPTED_PAYMENT_ID = "1856e4fa-8af8-427b-85ec-4caf515ce074";
-    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null, null);
 
     @InjectMocks
     private PisCommonPaymentServiceInternalEncrypted pisCommonPaymentServiceInternalEncrypted;

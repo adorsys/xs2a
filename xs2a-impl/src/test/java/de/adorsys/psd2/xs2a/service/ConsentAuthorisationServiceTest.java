@@ -66,8 +66,8 @@ public class ConsentAuthorisationServiceTest {
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final String CORRECT_PSU_ID = "123456789";
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
-    private static final PsuIdData PSU_ID_DATA_EMPTY = new PsuIdData(null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA_EMPTY = new PsuIdData(null, null, null, null, null);
     private static final MessageError VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(MessageErrorCode.CONSENT_INVALID));
     private static final MessageError CONSENT_UNKNOWN_403_ERROR =

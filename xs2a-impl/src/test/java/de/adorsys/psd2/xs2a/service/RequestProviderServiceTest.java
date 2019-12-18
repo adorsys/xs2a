@@ -136,7 +136,8 @@ public class RequestProviderServiceTest {
         return new PsuIdData(HEADERS.get(Xs2aHeaderConstant.PSU_ID),
                              HEADERS.get(Xs2aHeaderConstant.PSU_ID_TYPE),
                              HEADERS.get(Xs2aHeaderConstant.PSU_CORPORATE_ID),
-                             HEADERS.get(Xs2aHeaderConstant.PSU_CORPORATE_ID_TYPE));
+                             HEADERS.get(Xs2aHeaderConstant.PSU_CORPORATE_ID_TYPE),
+                             HEADERS.get(Xs2aHeaderConstant.PSU_IP_ADDRESS));
     }
 
     @Test

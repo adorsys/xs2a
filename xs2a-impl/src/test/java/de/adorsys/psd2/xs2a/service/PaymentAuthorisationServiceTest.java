@@ -70,8 +70,8 @@ public class PaymentAuthorisationServiceTest {
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
-    private static final PsuIdData PSU_ID_DATA_EMPTY = new PsuIdData(null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA_EMPTY = new PsuIdData(null, null, null, null, null);
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final String WRONG_PAYMENT_ID = "wrong payment id";
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACCP;

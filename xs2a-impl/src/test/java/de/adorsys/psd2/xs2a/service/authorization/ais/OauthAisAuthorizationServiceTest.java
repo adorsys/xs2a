@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OauthAisAuthorizationServiceTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null, null);
 
     @InjectMocks
     private OauthAisAuthorizationService oauthAisAuthorizationService;

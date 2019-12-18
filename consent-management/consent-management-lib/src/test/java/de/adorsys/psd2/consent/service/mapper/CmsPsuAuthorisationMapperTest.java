@@ -90,7 +90,7 @@ public class CmsPsuAuthorisationMapperTest {
         PisAuthorization pisAuthorization = new PisAuthorization();
         pisAuthorization.setExternalId(EXTERNAL_ID);
         pisAuthorization.setScaStatus(ScaStatus.RECEIVED);
-        pisAuthorization.setPsuData(new PsuData(PSU_ID, PSU_ID_TYPE, "", ""));
+        pisAuthorization.setPsuData(new PsuData(PSU_ID, PSU_ID_TYPE, "", "", ""));
         pisAuthorization.setAuthorizationType(PaymentAuthorisationType.CREATED);
         pisAuthorization.setAuthorisationExpirationTimestamp(EXPIRATION_TIMESTAMP);
         pisAuthorization.setScaApproach(ScaApproach.EMBEDDED);
@@ -104,7 +104,7 @@ public class CmsPsuAuthorisationMapperTest {
         AisConsentAuthorization authorization = new AisConsentAuthorization();
         authorization.setExternalId(EXTERNAL_ID);
         authorization.setScaStatus(ScaStatus.RECEIVED);
-        authorization.setPsuData(new PsuData("PSU ID", "PSU ID type", "", ""));
+        authorization.setPsuData(new PsuData("PSU ID", "PSU ID type", "", "", ""));
         authorization.setAuthorisationExpirationTimestamp(EXPIRATION_TIMESTAMP);
         authorization.setScaApproach(ScaApproach.EMBEDDED);
         authorization.setTppOkRedirectUri(OK_REDIRECT_URI);

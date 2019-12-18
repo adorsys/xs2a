@@ -66,7 +66,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CreateCommonPaymentServiceTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
-    private static final PsuIdData PSU_DATA = new PsuIdData("aspsp", null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData("aspsp", null, null, null, null);
     private static final TppInfo TPP_INFO = buildTppInfo();
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final byte[] PAYMENT_DATA_IN_BYTES = "payment_data".getBytes();
@@ -76,7 +76,7 @@ public class CreateCommonPaymentServiceTest {
     private static final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID, null);
     private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
     private static final Xs2aPisCommonPayment PIS_COMMON_PAYMENT_FAIL = new Xs2aPisCommonPayment(null, PSU_DATA);
-    private static final PsuIdData WRONG_PSU_DATA = new PsuIdData("wrong_psu", null, null, null);
+    private static final PsuIdData WRONG_PSU_DATA = new PsuIdData("wrong_psu", null, null, null, null);
     private static final TppInfo WRONG_TPP_INFO = new TppInfo();
     private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null, null, null, null);
     private CommonPaymentInitiationResponse commonPaymentInitiationResponse;

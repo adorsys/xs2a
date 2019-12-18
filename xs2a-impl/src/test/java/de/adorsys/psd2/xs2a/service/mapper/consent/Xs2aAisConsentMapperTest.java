@@ -103,7 +103,7 @@ public class Xs2aAisConsentMapperTest {
 
     @Test
     public void mapToSpiScaConfirmation() {
-        PsuIdData psuIdData = new PsuIdData("psuId", "", "", "");
+        PsuIdData psuIdData = new PsuIdData("psuId", "", "", "", "");
         UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
         request.setConsentId(CONSENT_ID);
         request.setScaAuthenticationData("123456");
@@ -130,7 +130,7 @@ public class Xs2aAisConsentMapperTest {
         response.setChosenScaMethod(chosenScaMethod);
 
         UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
-        PsuIdData psuData = new PsuIdData("1", "2", "3", "4");
+        PsuIdData psuData = new PsuIdData("1", "2", "3", "4", "5");
         request.setPsuData(psuData);
         request.setScaAuthenticationData("123456");
         request.setConsentId(CONSENT_ID);
@@ -153,7 +153,7 @@ public class Xs2aAisConsentMapperTest {
 
     @Test
     public void mapToCreateAisConsentRequest() {
-        PsuIdData psuData = new PsuIdData("1", "2", "3", "4");
+        PsuIdData psuData = new PsuIdData("1", "2", "3", "4", "5");
         TppInfo tppInfo = new TppInfo();
         CreateConsentReq request = new CreateConsentReq();
         request.setFrequencyPerDay(3);
@@ -183,7 +183,7 @@ public class Xs2aAisConsentMapperTest {
 
     @Test
     public void mapToCreateAisConsentRequest_nullValue() {
-        PsuIdData psuData = new PsuIdData("1", "2", "3", "4");
+        PsuIdData psuData = new PsuIdData("1", "2", "3", "4", "5");
         TppInfo tppInfo = new TppInfo();
 
         CreateAisConsentRequest createAisConsentRequest = mapper.mapToCreateAisConsentRequest(null, psuData, tppInfo, 34, INTERNAL_REQUEST_ID);

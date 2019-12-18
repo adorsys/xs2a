@@ -370,7 +370,7 @@ public class AisConsentControllerTest {
 
     private static AisConsentAuthorizationRequest getConsentAuthorisationRequest() {
         AisConsentAuthorizationRequest request = new AisConsentAuthorizationRequest();
-        request.setPsuData(new PsuIdData(PSU_ID, null, null, null));
+        request.setPsuData(new PsuIdData(PSU_ID, null, null, null, null));
         request.setPassword("zzz");
 
         return request;
@@ -378,7 +378,7 @@ public class AisConsentControllerTest {
 
     private static AisConsentAuthorizationRequest getWrongConsentAuthorisationRequest() {
         AisConsentAuthorizationRequest request = new AisConsentAuthorizationRequest();
-        request.setPsuData(new PsuIdData(WRONG_PSU_ID, null, null, null));
+        request.setPsuData(new PsuIdData(WRONG_PSU_ID, null, null, null, null));
         request.setPassword("zzz");
 
         return request;
@@ -388,7 +388,7 @@ public class AisConsentControllerTest {
         AisConsentAuthorizationResponse authorizationResponse = new AisConsentAuthorizationResponse();
         authorizationResponse.setAuthorizationId(AUTHORISATION_ID);
         authorizationResponse.setConsentId(CONSENT_ID);
-        authorizationResponse.setPsuIdData(new PsuIdData(PSU_ID, null, null, null));
+        authorizationResponse.setPsuIdData(new PsuIdData(PSU_ID, null, null, null, null));
 
         return authorizationResponse;
     }

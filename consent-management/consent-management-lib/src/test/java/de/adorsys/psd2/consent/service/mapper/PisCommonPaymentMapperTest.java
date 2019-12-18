@@ -64,7 +64,7 @@ public class PisCommonPaymentMapperTest {
     public void mapToGetPisAuthorizationResponse() {
         //Given
         when(psuDataMapper.mapToPsuIdDataList(any())).thenReturn(null);
-        when(psuDataMapper.mapToPsuIdData(any())).thenReturn(new PsuIdData(PSU_ID, null, null, null));
+        when(psuDataMapper.mapToPsuIdData(any())).thenReturn(new PsuIdData(PSU_ID, null, null, null, null));
         PisAuthorization pisAuthorization = buildPisAuthorization();
         PsuData psuData = new PsuData();
         psuData.setPsuId(PSU_ID);

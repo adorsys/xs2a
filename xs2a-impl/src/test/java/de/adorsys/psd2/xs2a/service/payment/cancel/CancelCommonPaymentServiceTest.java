@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapp
 import de.adorsys.psd2.xs2a.service.payment.CancelPaymentService;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.xs2a.reader.JsonReader;
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,7 +75,7 @@ public class CancelCommonPaymentServiceTest {
                                                                            eq(paymentCancellationRequest.getEncryptedPaymentId()),
                                                                            eq(paymentCancellationRequest.getTppExplicitAuthorisationPreferred()),
                                                                            eq(paymentCancellationRequest.getTppRedirectUri()));
-        Assert.assertEquals(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPaymentResponse), spiPaymentInfoCaptor.getValue());
+        Assertions.assertThat(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPaymentResponse)).isEqualToComparingFieldByFieldRecursively(spiPaymentInfoCaptor.getValue());
     }
 
     @Test

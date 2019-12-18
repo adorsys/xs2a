@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentValidationServiceTest {
     private static final String PSU_ID = "123456789";
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null, null);
     private static final String AUTHORISATION_ID = "authorisation id";
 
     @InjectMocks
@@ -125,7 +125,7 @@ public class ConsentValidationServiceTest {
     public void validateConsentAuthorisationOnCreate() {
         when(createConsentAuthorisationValidator.validate(consentAuthorisationPOArgumentCaptor.capture())).thenReturn(ValidationResult.valid());
 
-        service.validateConsentAuthorisationOnCreate(new CreateConsentAuthorisationObject(accountConsent, new PsuIdData(null, null, null, null)));
+        service.validateConsentAuthorisationOnCreate(new CreateConsentAuthorisationObject(accountConsent, new PsuIdData(null, null, null, null, null)));
 
         verify(createConsentAuthorisationValidator).validate(any(CreateConsentAuthorisationObject.class));
         assertEquals(accountConsent, consentAuthorisationPOArgumentCaptor.getValue().getAccountConsent());

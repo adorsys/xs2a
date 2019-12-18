@@ -54,6 +54,7 @@ public class CmsPsuPisControllerTest {
     private static final String PSU_ID_TYPE = "psu id type";
     private static final String PSU_CORPORATE_ID = "psu corporate id";
     private static final String PSU_CORPORATE_ID_TYPE = "psu corporate id type";
+    private static final String PSU_IP_ADDRESS = "psu ip address";
     private static final String INSTANCE_ID = "instance id";
     private static final String SCA_STATUS_RECEIVED = "RECEIVED";
     private static final String TPP_NOK_REDIRECT_URI = "tpp nok redirect uri";
@@ -78,7 +79,7 @@ public class CmsPsuPisControllerTest {
     @Test
     public void updateAuthorisationStatus_withValidRequest_shouldReturnOk() throws AuthorisationIsExpiredException {
         // Given
-        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, null);
         when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder))
             .thenReturn(true);
 
@@ -94,7 +95,7 @@ public class CmsPsuPisControllerTest {
     @Test
     public void updateAuthorisationStatus_withValidRequestAndLowercaseScaStatus_shouldReturnOk() throws AuthorisationIsExpiredException {
         // Given
-        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, null);
         when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder))
             .thenReturn(true);
         String lowercaseScaStatus = SCA_STATUS_RECEIVED.toLowerCase();
@@ -111,7 +112,7 @@ public class CmsPsuPisControllerTest {
     @Test
     public void updateAuthorisationStatus_withFalseFromService_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
         // Given
-        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, null);
         when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder))
             .thenReturn(false);
 
@@ -127,7 +128,7 @@ public class CmsPsuPisControllerTest {
     @Test
     public void updateAuthorisationStatus_AuthorisationIsExpired_requestTimeout() throws AuthorisationIsExpiredException {
         // Given
-        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, null);
         when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder))
             .thenThrow(new AuthorisationIsExpiredException(TPP_NOK_REDIRECT_URI));
 
@@ -303,7 +304,8 @@ public class CmsPsuPisControllerTest {
             "psuId",
             "psuIdType",
             "psuCorporateId",
-            "psuCorporateIdType"
+            "psuCorporateIdType",
+            "psuIpAddress"
         );
     }
 }

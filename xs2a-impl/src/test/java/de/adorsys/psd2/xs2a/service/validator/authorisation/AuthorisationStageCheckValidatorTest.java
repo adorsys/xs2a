@@ -46,8 +46,8 @@ public class AuthorisationStageCheckValidatorTest {
     private static final MessageErrorCode SERVICE_INVALID = SERVICE_INVALID_400;
     private static final ErrorType AIS_400_ERROR = ErrorType.AIS_400;
     private static final ErrorType PIS_400_ERROR = ErrorType.PIS_400;
-    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
-    private static final PsuIdData NON_EMPTY_PSU_DATA = new PsuIdData("Test", null, null, null);
+    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null, null);
+    private static final PsuIdData NON_EMPTY_PSU_DATA = new PsuIdData("Test", null, null, null, null);
 
     private AuthorisationStageCheckValidator checkValidator;
 

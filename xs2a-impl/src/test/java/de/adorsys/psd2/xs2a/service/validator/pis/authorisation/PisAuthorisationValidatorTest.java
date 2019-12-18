@@ -42,7 +42,7 @@ public class PisAuthorisationValidatorTest {
     private static final String AUTHORISATION_ID = "62561aa4-5d69-4bac-9483-09376188eb78";
     private static final String UNKNOWN_AUTHORISATION_ID = "unknown id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu-id", null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu-id", null, null, null, null);
 
     private static final MessageError UNKNOWN_AUTHORISATION_ERROR =
         new MessageError(ErrorType.PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403));

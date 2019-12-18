@@ -54,6 +54,7 @@ public class PiisConsentIT {
     private static final String PSU_ID_TYPE = "TYPE";
     private static final String PSU_CORPORATE_ID = "CORPORATE_ID";
     private static final String PSU_CORPORATE_ID_TYPE = "CORPORATE_ID_TYPE";
+    private static final String PSU_IP_ADDRESS = "IP_ADDRESS";
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String ACCOUNT_ID = UUID.randomUUID().toString();
@@ -64,7 +65,7 @@ public class PiisConsentIT {
     private static final String MSISDN = "Test MSISDN";
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu", null, "corpId", null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu", null, "corpId", null, null);
 
     @Autowired
     private CmsAspspPiisService cmsAspspPiisServiceInternal;
@@ -174,11 +175,11 @@ public class PiisConsentIT {
     }
 
     private PsuIdData buildPsuIdData() {
-        return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS);
     }
 
     private PsuIdData buildPsuIdData(String psuId, String psuCorporateId) {
-        return new PsuIdData(psuId, null, psuCorporateId, null);
+        return new PsuIdData(psuId, null, psuCorporateId, null, null);
     }
 
     private AccountReference buildAccountReference() {

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class Xs2aToSpiPsuDataMapper {
-
     public List<SpiPsuData> mapToSpiPsuDataList(List<PsuIdData> psuIdDataList) {
         if (psuIdDataList == null) {
             return Collections.emptyList();
@@ -39,14 +39,34 @@ public class Xs2aToSpiPsuDataMapper {
     }
 
     public SpiPsuData mapToSpiPsuData(PsuIdData psuIdData) {
-        return mapToSpiPsuData(psuIdData, null);
-    }
-
-    public SpiPsuData mapToSpiPsuData(PsuIdData psuIdData, String psuIpAddress) {
         return Optional.ofNullable(psuIdData)
-                   .map(psu -> new SpiPsuData(psu.getPsuId(), psu.getPsuIdType(), psu.getPsuCorporateId(), psu.getPsuCorporateIdType(), psuIpAddress))
-                   .orElseGet(() -> new SpiPsuData(null, null, null, null, psuIpAddress));
+                   .map(this::builderWithPsuData)
+                   .orElseGet(SpiPsuData::builder)
+                   .build();
     }
 
+    private SpiPsuData.SpiPsuDataBuilder builderWithPsuData(PsuIdData psuIdData) {
+        SpiPsuData.SpiPsuDataBuilder builder = SpiPsuData.builder()
+                                                   .psuId(psuIdData.getPsuId())
+                                                   .psuIdType(psuIdData.getPsuIdType())
+                                                   .psuCorporateId(psuIdData.getPsuCorporateId())
+                                                   .psuCorporateIdType(psuIdData.getPsuCorporateIdType())
+                                                   .psuIpAddress(psuIdData.getPsuIpAddress());
 
+        return Optional.ofNullable(psuIdData.getAdditionalPsuIdData())
+                   .map(dta -> addAdditionalPsuIdData(builder, dta))
+                   .orElse(builder);
+    }
+
+    private SpiPsuData.SpiPsuDataBuilder addAdditionalPsuIdData(SpiPsuData.SpiPsuDataBuilder builder, AdditionalPsuIdData data) {
+        return builder.psuIpPort(data.getPsuIpPort())
+                   .psuUserAgent(data.getPsuUserAgent())
+                   .psuGeoLocation(data.getPsuGeoLocation())
+                   .psuAccept(data.getPsuAccept())
+                   .psuAcceptCharset(data.getPsuAcceptCharset())
+                   .psuAcceptEncoding(data.getPsuAcceptEncoding())
+                   .psuAcceptLanguage(data.getPsuAcceptLanguage())
+                   .psuHttpMethod(data.getPsuHttpMethod())
+                   .psuDeviceId(data.getPsuDeviceId());
+    }
 }

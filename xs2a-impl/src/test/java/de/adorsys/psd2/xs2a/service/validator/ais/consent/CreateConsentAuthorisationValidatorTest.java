@@ -59,9 +59,9 @@ public class CreateConsentAuthorisationValidatorTest {
     private static final MessageError STATUS_INVALID_ERROR =
         new MessageError(ErrorType.AIS_409, TppMessageInformation.of(STATUS_INVALID));
 
-    private static final PsuIdData PSU_DATA = new PsuIdData("111", null, null, null);
-    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
-    private static final PsuIdData NEW_PSU_DATA = new PsuIdData("new PSU data", null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData("111", null, null, null, null);
+    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null, null);
+    private static final PsuIdData NEW_PSU_DATA = new PsuIdData("new PSU data", null, null, null, null);
 
     @Mock
     private AisConsentTppInfoValidator aisConsentTppInfoValidator;

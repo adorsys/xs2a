@@ -59,7 +59,7 @@ public class CreateConsentRequestValidatorTest {
         new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR));
     private static final MessageError SUPPORTED_ACCOUNT_REFERENCE_VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR));
-    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
+    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null, null);
 
     @InjectMocks
     private CreateConsentRequestValidator createConsentRequestValidator;

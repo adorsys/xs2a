@@ -46,7 +46,7 @@ public class RedirectAisAuthorizationServiceTest {
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null, null);
     private static final CreateConsentAuthorizationResponse CREATE_CONSENT_AUTHORIZATION_RESPONSE = buildCreateConsentAuthResponse();
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 

@@ -40,8 +40,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PsuDataInInitialRequestValidatorTest {
-    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
-    private static final PsuIdData PSU_DATA = new PsuIdData("some psu id", null, null, null);
+    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData("some psu id", null, null, null, null);
     private static final MessageError BLANK_PSU_ID_ERROR =
         new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR_PSU_ID_BLANK));
     private static final MessageError NULL_PSU_ID_ERROR =
@@ -92,7 +92,7 @@ public class PsuDataInInitialRequestValidatorTest {
         //Given
         when(aspspProfileService.isPsuInInitialRequestMandated()).thenReturn(true);
 
-        PsuIdData psuIdData = new PsuIdData(" ", null, null, null);
+        PsuIdData psuIdData = new PsuIdData(" ", null, null, null, null);
 
         //When
         ValidationResult validationResult = psuDataInInitialRequestValidator.validate(psuIdData);
@@ -109,7 +109,7 @@ public class PsuDataInInitialRequestValidatorTest {
     public void validate_withPsuDataMandatedAndNullPsuId_shouldReturnFormatError() {
         //Given
         when(aspspProfileService.isPsuInInitialRequestMandated()).thenReturn(true);
-        PsuIdData psuIdData = new PsuIdData(null, null, null, null);
+        PsuIdData psuIdData = new PsuIdData(null, null, null, null, null);
 
         //When
         ValidationResult validationResult = psuDataInInitialRequestValidator.validate(psuIdData);

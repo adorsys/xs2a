@@ -65,6 +65,6 @@ public class PisPsuDataServiceTest {
     }
 
     private static List<PsuIdData> getListPisPayment() {
-        return Collections.singletonList(new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"));
+        return Collections.singletonList(new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress"));
     }
 }
