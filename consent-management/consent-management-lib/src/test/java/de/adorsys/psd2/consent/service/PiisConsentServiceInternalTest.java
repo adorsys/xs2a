@@ -53,6 +53,7 @@ public class PiisConsentServiceInternalTest {
     private static final String PSU_ID_TYPE = "Some type";
     private static final String PSU_CORPORATE_ID = "Some corporate id";
     private static final String PSU_CORPORATE_ID_TYPE = "Some corporate id type";
+    private static final String PSU_IP_ADDRESS = "Some ip address";
     private static final OffsetDateTime CREATION_TIMESTAMP = OffsetDateTime.of(2019, 2, 4, 12, 0, 0, 0, ZoneOffset.UTC);
     private static final AccountReferenceSelector SELECTOR_IBAN = new AccountReferenceSelector(AccountReferenceType.IBAN, IBAN);
     private static final AccountReferenceSelector SELECTOR_WRONG_IBAN = new AccountReferenceSelector(AccountReferenceType.IBAN, WRONG_IBAN);
@@ -116,11 +117,11 @@ public class PiisConsentServiceInternalTest {
     }
 
     private PsuData buildPsuData() {
-        return new PsuData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        return new PsuData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS);
     }
 
     private PsuIdData buildPsuIdData() {
-        return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS);
     }
 
     private PiisConsent buildPiisConsent() {

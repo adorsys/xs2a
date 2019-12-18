@@ -73,6 +73,7 @@ public class CmsPsuPisMapperTest {
     private static final String PSU_ID_TYPE = "PSU_ID_TYPE";
     private static final String PSU_CORPORATE_ID = "PSU_CORPORATE_ID";
     private static final String PSU_CORPORATE_ID_TYPE = "PSU_CORPORATE_ID_TYPE";
+    private static final String PSU_IP_ADDRESS = "PSU_IP_ADDRESS";
     private static final PsuData PSU_DATA = buildPsuData();
     private static final PsuIdData PSU_ID_DATA = buildPsuIdData();
     private static final List<PsuData> PSU_DATA_LIST = Collections.singletonList(PSU_DATA);
@@ -336,7 +337,7 @@ public class CmsPsuPisMapperTest {
     }
 
     private static PsuIdData buildPsuIdData() {
-        return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS);
     }
 
     private static List<TppRole> buildTppRoles() {

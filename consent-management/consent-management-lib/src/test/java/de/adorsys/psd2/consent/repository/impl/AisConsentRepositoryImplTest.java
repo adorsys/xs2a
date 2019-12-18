@@ -170,6 +170,6 @@ public class AisConsentRepositoryImplTest {
     }
 
     private PsuData buildPsuData(String psuId) {
-        return new PsuData(psuId, "", "", "");
+        return new PsuData(psuId, "", "", "", "");
     }
 }

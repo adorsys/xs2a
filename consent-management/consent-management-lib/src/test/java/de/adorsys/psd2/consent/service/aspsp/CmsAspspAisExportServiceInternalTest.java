@@ -238,15 +238,15 @@ public class CmsAspspAisExportServiceInternalTest {
     }
 
     private PsuIdData buildPsuIdData(String psuId) {
-        return new PsuIdData(psuId, null, null, null);
+        return new PsuIdData(psuId, null, null, null, null);
     }
 
     private PsuIdData buildEmptyPsuIdData() {
-        return new PsuIdData(null, null, null, null);
+        return new PsuIdData(null, null, null, null, null);
     }
 
     private PsuData buildPsuData() {
-        return new PsuData(PSU_ID, null, null, null);
+        return new PsuData(PSU_ID, null, null, null, null);
     }
 
     private CmsAisAccountConsent buildAisAccountConsent() {

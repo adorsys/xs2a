@@ -10,7 +10,8 @@
       "psuId": "PSU ID",
       "psuIdType": "PSU ID TYPE",
       "psuCorporateId": "PSU CORPORATE ID",
-      "psuCorporateIdType": "PSU CORPORATE ID TYPE"
+      "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+      "psuIpAddress": "PSU IP ADDRESS"
     }
   ],
   "tppInfo": {
@@ -27,9 +28,9 @@
     "city": "Nuremberg",
     "state": "Bayern"
   },
-  "authorisationTemplate" : {
-    "redirectUri" : "uri",
-    "nokRedirectUri" : "nokUri"
+  "authorisationTemplate": {
+    "redirectUri": "uri",
+    "nokRedirectUri": "nokUri"
   },
   "creationTimestamp": "2019-08-22T11:00:00Z",
   "multilevelScaRequired": false,

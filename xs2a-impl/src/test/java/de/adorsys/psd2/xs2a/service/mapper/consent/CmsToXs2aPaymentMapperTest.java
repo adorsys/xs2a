@@ -100,7 +100,7 @@ public class CmsToXs2aPaymentMapperTest {
     private static final PisExecutionRule EXECUTION_RULE = PisExecutionRule.FOLLOWING;
     private static final String FREQUENCY = "ANNUAL";
     private static final PisDayOfExecution DAY_OF_EXECUTION = PisDayOfExecution._2;
-    private static final List<PsuIdData> PSU_ID_DATA_LIST = Collections.singletonList(new PsuIdData("psu id", null, null, null));
+    private static final List<PsuIdData> PSU_ID_DATA_LIST = Collections.singletonList(new PsuIdData("psu id", null, null, null, null));
 
     private static final String PAYMENT_PRODUCT = "payment product";
     private static final PaymentType PAYMENT_TYPE = PaymentType.SINGLE;

@@ -59,8 +59,8 @@ public class CommonDecoupledAisServiceTest {
     private static final String AUTHORISATION_ID = "Test authorisationId";
     private static final String PSU_SUCCESS_MESSAGE = "Test psuSuccessMessage";
     private static final ScaStatus FAILED_SCA_STATUS = ScaStatus.FAILED;
-    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null, null);
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
+    private static final SpiPsuData SPI_PSU_DATA = SpiPsuData.builder().build();
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
     private static final String PSU_ERROR_MESSAGE = "Test psuErrorMessage";
     private static final ScaStatus METHOD_SELECTED_SCA_STATUS = ScaStatus.SCAMETHODSELECTED;

@@ -119,7 +119,7 @@ public class CmsPsuPisController {
         @PathVariable("payment-id") String paymentId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
-        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
         return cmsPsuPisService.getPayment(psuIdData, paymentId, instanceId)
                    .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
@@ -174,7 +174,7 @@ public class CmsPsuPisController {
         @PathVariable("payment-id") String paymentId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
-        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
         return cmsPsuPisService.getPayment(psuIdData, paymentId, instanceId)
                    .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
@@ -236,7 +236,7 @@ public class CmsPsuPisController {
             return ResponseEntity.badRequest().build();
         }
 
-        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
         try {
             return cmsPsuPisService.updateAuthorisationStatus(psuIdData, paymentId, authorisationId, scaStatus, instanceId, authenticationDataHolder)
                        ? ResponseEntity.ok().build()

@@ -42,7 +42,7 @@ public class CmsAspspPsuAccountServiceInternalTest {
     private static final String PSU_ID = "PSU-ID-1";
     private final String INSTANCE_ID = "Instance id";
     private static final String ASPSP_ACCOUNT_ID = "aspsp account id";
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null, null);
     private AisConsent aisConsent;
     private PiisConsentEntity piisConsentEntity;
 

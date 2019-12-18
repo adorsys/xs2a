@@ -30,6 +30,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -54,7 +55,22 @@ public class SpiToXs2aPaymentInfoMapperTest {
         spiPaymentInfo.setPaymentType(PaymentType.SINGLE);
         spiPaymentInfo.setStatus(TransactionStatus.ACSP);
         spiPaymentInfo.setStatusChangeTimestamp(OFFSET_DATE_TIME);
-        spiPaymentInfo.setPsuDataList(Collections.singletonList(new SpiPsuData("psuId", "", "", "", "")));
+        spiPaymentInfo.setPsuDataList(Collections.singletonList(SpiPsuData.builder()
+                                                                    .psuId("psuId")
+                                                                    .psuIdType("")
+                                                                    .psuCorporateId("")
+                                                                    .psuCorporateIdType("")
+                                                                    .psuIpAddress("")
+                                                                    .psuIpPort("")
+                                                                    .psuUserAgent("")
+                                                                    .psuGeoLocation("")
+                                                                    .psuAccept("")
+                                                                    .psuAcceptCharset("")
+                                                                    .psuAcceptEncoding("")
+                                                                    .psuAcceptLanguage("")
+                                                                    .psuHttpMethod("")
+                                                                    .psuDeviceId(UUID.randomUUID())
+                                                                    .build()));
         spiPaymentInfo.setPaymentData(PAYMENT_DATA);
 
         CommonPayment commonPayment = mapper.mapToXs2aPaymentInfo(spiPaymentInfo);

@@ -56,11 +56,11 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FundsConfirmationServiceTest {
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null, null);
     private static final String AUTHORISATION = "Bearer 1111111";
 
     private static final SpiContextData SPI_CONTEXT_DATA =
-        new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
+        new SpiContextData(SpiPsuData.builder().build(), new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;

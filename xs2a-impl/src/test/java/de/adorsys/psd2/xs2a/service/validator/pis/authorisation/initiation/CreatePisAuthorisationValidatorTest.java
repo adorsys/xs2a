@@ -70,8 +70,8 @@ public class CreatePisAuthorisationValidatorTest {
 
     private static final String CORRECT_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String WRONG_PAYMENT_PRODUCT = "sepa-credit-transfers111";
-    private static final PsuIdData PSU_DATA_1 = new PsuIdData("FIRST PSU ID", null, null, null);
-    private static final PsuIdData PSU_DATA_2 = new PsuIdData("SECOND PSU ID", null, null, null);
+    private static final PsuIdData PSU_DATA_1 = new PsuIdData("FIRST PSU ID", null, null, null, null);
+    private static final PsuIdData PSU_DATA_2 = new PsuIdData("SECOND PSU ID", null, null, null, null);
 
     @Mock
     private PisTppInfoValidator pisTppInfoValidator;

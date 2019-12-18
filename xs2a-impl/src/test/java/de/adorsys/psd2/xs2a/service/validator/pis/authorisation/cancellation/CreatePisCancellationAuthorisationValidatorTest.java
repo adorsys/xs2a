@@ -27,7 +27,6 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
-import de.adorsys.psd2.xs2a.service.validator.authorisation.PisAuthorisationStatusChecker;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.PisCancellationAuthorisationStatusChecker;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
 import org.junit.Before;
@@ -177,7 +176,7 @@ public class CreatePisCancellationAuthorisationValidatorTest {
     }
 
     private static PsuIdData buildPsuIdData() {
-        return new PsuIdData("psuId", null, null, null);
+        return new PsuIdData("psuId", null, null, null, null);
     }
 
     private PisCommonPaymentResponse buildPisCommonPaymentResponse(TppInfo tppInfo) {

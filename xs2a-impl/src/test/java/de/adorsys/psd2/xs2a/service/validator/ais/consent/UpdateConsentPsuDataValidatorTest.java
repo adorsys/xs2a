@@ -59,8 +59,8 @@ public class UpdateConsentPsuDataValidatorTest {
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
 
-    private static final PsuIdData PSU_ID_DATA_1 = new PsuIdData("psu-id", null, null, null);
-    private static final PsuIdData PSU_ID_DATA_2 = new PsuIdData("psu-id-2", null, null, null);
+    private static final PsuIdData PSU_ID_DATA_1 = new PsuIdData("psu-id", null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA_2 = new PsuIdData("psu-id-2", null, null, null, null);
 
     private static final String AUTHORISATION_ID = "random";
     private static final String INVALID_AUTHORISATION_ID = "random but invalid";
@@ -202,7 +202,7 @@ public class UpdateConsentPsuDataValidatorTest {
     public void validate_withBothPsusAbsent_shouldReturnFormatError() {
         //Given
         AccountConsent consent = buildAccountConsent(TPP_INFO, ScaStatus.RECEIVED, AUTHORISATION_ID);
-        PsuIdData psuIdData = new PsuIdData(null, null, null, null);
+        PsuIdData psuIdData = new PsuIdData(null, null, null, null, null);
 
         when(aisAuthorisationValidator.validate(AUTHORISATION_ID, consent))
             .thenReturn(ValidationResult.valid());

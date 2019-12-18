@@ -99,8 +99,8 @@ public class PisAuthorisationServiceInternalTest {
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData("id", "type", "corporate ID", "corporate type");
-    private final static PsuData PSU_DATA = new PsuData("id", "type", "corporate ID", "corporate type");
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("id", "type", "corporate ID", "corporate type", "psu ip address");
+    private final static PsuData PSU_DATA = new PsuData("id", "type", "corporate ID", "corporate type", "ip address");
     private static final String TPP_REDIRECT_URI = "request/redirect_uri";
     private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
     private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
@@ -408,7 +408,7 @@ public class PisAuthorisationServiceInternalTest {
     @Test
     public void updateConsentAuthorisation_Success() {
         //Given
-        PsuIdData psuIdData = new PsuIdData("new id", "new type", "new corporate ID", "new corporate type");
+        PsuIdData psuIdData = new PsuIdData("new id", "new type", "new corporate ID", "new corporate type", "new psu ip address");
         ArgumentCaptor<PisAuthorization> argument = ArgumentCaptor.forClass(PisAuthorization.class);
         UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest = buildUpdatePisCommonPaymentPsuDataRequest(ScaStatus.RECEIVED);
         updatePisCommonPaymentPsuDataRequest.setPsuData(psuIdData);

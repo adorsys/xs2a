@@ -63,8 +63,8 @@ public class AisAuthorisationServiceInternalTest {
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
     private static final String PSU_ID = "psu-id-1";
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
-    private static final PsuData PSU_DATA = new PsuData(PSU_ID, null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null, null);
+    private static final PsuData PSU_DATA = new PsuData(PSU_ID, null, null, null, null);
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
     private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;

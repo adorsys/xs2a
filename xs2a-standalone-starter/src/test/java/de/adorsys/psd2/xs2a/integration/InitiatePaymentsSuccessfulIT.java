@@ -169,6 +169,15 @@ public class InitiatePaymentsSuccessfulIT {
         headerMap.put("PSU-Corporate-ID", "Some corporate id");
         headerMap.put("PSU-Corporate-ID-Type", "Some corporate id type");
         headerMap.put("PSU-IP-Address", "1.1.1.1");
+        headerMap.put("PSU-IP-Port", "1111");
+        headerMap.put("PSU-User-Agent", "Some user agent");
+        headerMap.put("PSU-Geo-Location", "Some geo location");
+        headerMap.put("PSU-Accept", "Some accept");
+        headerMap.put("PSU-Accept-Charset", "Some accept-charset");
+        headerMap.put("PSU-Accept-Encoding", "Some accept-encoding");
+        headerMap.put("PSU-Accept-Language", "Some accept-language");
+        headerMap.put("PSU-Http-Method", "Some http method");
+        headerMap.put("PSU-Device-ID", "d7d369a9-898d-4682-b586-0a63ffe43a2c");
         headerMap.put("TPP-Redirect-URI", TPP_REDIRECT_URI);
         headerMap.put("TPP-NOK-Redirect-URI", TPP_NOK_REDIRECT_URI);
 
@@ -181,6 +190,15 @@ public class InitiatePaymentsSuccessfulIT {
         httpHeadersImplicitNoPsuData.remove("PSU-ID-Type");
         httpHeadersImplicitNoPsuData.remove("PSU-Corporate-ID");
         httpHeadersImplicitNoPsuData.remove("PSU-Corporate-ID-Type");
+        httpHeadersImplicitNoPsuData.remove("PSU-IP-Port");
+        httpHeadersImplicitNoPsuData.remove("PSU-User-Agent");
+        httpHeadersImplicitNoPsuData.remove("PSU-Geo-Location");
+        httpHeadersImplicitNoPsuData.remove("PSU-Accept");
+        httpHeadersImplicitNoPsuData.remove("PSU-Accept-Charset");
+        httpHeadersImplicitNoPsuData.remove("PSU-Accept-Encoding");
+        httpHeadersImplicitNoPsuData.remove("PSU-Accept-Language");
+        httpHeadersImplicitNoPsuData.remove("PSU-Http-Method");
+        httpHeadersImplicitNoPsuData.remove("PSU-Device-ID");
 
         httpHeadersExplicit.setAll(headerMap);
         // when we use Explicit auth mode we need to set 'true' and value 'signingBasketSupported' in profile also should be 'true'
@@ -191,6 +209,15 @@ public class InitiatePaymentsSuccessfulIT {
         httpHeadersExplicitNoPsuData.remove("PSU-ID-Type");
         httpHeadersExplicitNoPsuData.remove("PSU-Corporate-ID");
         httpHeadersExplicitNoPsuData.remove("PSU-Corporate-ID-Type");
+        httpHeadersExplicitNoPsuData.remove("PSU-IP-Port");
+        httpHeadersExplicitNoPsuData.remove("PSU-User-Agent");
+        httpHeadersExplicitNoPsuData.remove("PSU-Geo-Location");
+        httpHeadersExplicitNoPsuData.remove("PSU-Accept");
+        httpHeadersExplicitNoPsuData.remove("PSU-Accept-Charset");
+        httpHeadersExplicitNoPsuData.remove("PSU-Accept-Encoding");
+        httpHeadersExplicitNoPsuData.remove("PSU-Accept-Language");
+        httpHeadersExplicitNoPsuData.remove("PSU-Http-Method");
+        httpHeadersExplicitNoPsuData.remove("PSU-Device-ID");
 
         responseMap.put(false, PaymentType.SINGLE, ScaApproach.REDIRECT, "", "", "/json/payment/res/implicit/SinglePaymentInitiate_redirect_implicit_response.json");
         responseMap.put(false, PaymentType.SINGLE, ScaApproach.REDIRECT, "", "psuIdDataIsEmpty", "/json/payment/res/implicit/SinglePaymentInitiate_redirect_implicit_psuIdDataIsEmpty_response.json");
@@ -452,7 +479,7 @@ public class InitiatePaymentsSuccessfulIT {
     }
 
     private CreatePisAuthorisationRequest getPisAuthorisationRequestWithEmptyPsuIdData(ScaApproach scaApproach) {
-        return new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PsuIdDataBuilder.buildEmptyPsuIdData(), scaApproach, TPP_REDIRECT_URIs);
+        return new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PsuIdDataBuilder.buildPsuIdDataWithIpAddress(), scaApproach, TPP_REDIRECT_URIs);
     }
 
     private void initiateSinglePayment_successful(HttpHeaders headers, ScaApproach scaApproach, boolean multilevelSca, boolean isPsuIdDataEmpty) throws Exception {
@@ -480,6 +507,7 @@ public class InitiatePaymentsSuccessfulIT {
                               ? (String) responseMapSigningBasketMode.get(isExplicitMethod(headers, multilevelSca), PaymentType.SINGLE, scaApproach, multilevelScaKey(multilevelSca), psuIdDataEmptyKey(isPsuIdDataEmpty))
                               : (String) responseMap.get(isExplicitMethod(headers, multilevelSca), PaymentType.SINGLE, scaApproach, multilevelScaKey(multilevelSca), psuIdDataEmptyKey(isPsuIdDataEmpty));
 
+        System.out.println(content());
         //Then
         resultActions.andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))

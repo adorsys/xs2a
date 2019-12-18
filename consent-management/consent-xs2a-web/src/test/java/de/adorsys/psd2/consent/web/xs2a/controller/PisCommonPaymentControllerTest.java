@@ -67,7 +67,7 @@ public class PisCommonPaymentControllerTest {
     private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
     private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
 
-    private static final PsuIdData PSU_DATA = new PsuIdData(PSU_ID, null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData(PSU_ID, null, null, null, null);
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_DATA, ScaApproach.REDIRECT, TPP_REDIRECT_URIs);
 
@@ -412,7 +412,7 @@ public class PisCommonPaymentControllerTest {
 
     private GetPisAuthorisationResponse getGetPisAuthorisationResponse() {
         GetPisAuthorisationResponse response = new GetPisAuthorisationResponse();
-        response.setPsuIdData(new PsuIdData(PSU_ID, null, null, null));
+        response.setPsuIdData(new PsuIdData(PSU_ID, null, null, null, null));
         response.setScaStatus(ScaStatus.RECEIVED);
         response.setPaymentId(PAYMENT_ID);
         response.setPassword(PASSWORD);

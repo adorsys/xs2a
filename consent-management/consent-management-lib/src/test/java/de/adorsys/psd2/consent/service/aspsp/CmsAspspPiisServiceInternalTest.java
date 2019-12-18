@@ -22,7 +22,6 @@ import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
-import de.adorsys.psd2.consent.service.aspsp.CmsAspspPiisServiceInternal;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
@@ -223,7 +222,7 @@ public class CmsAspspPiisServiceInternalTest {
     @Test
     public void createConsent_withEmptyPsuIdDate_shouldFail() {
         // Given
-        PsuIdData emptyPsuIdData = new PsuIdData(null, null, null, null);
+        PsuIdData emptyPsuIdData = new PsuIdData(null, null, null, null, null);
         CreatePiisConsentRequest request = buildCreatePiisConsentRequest(null, EXPIRE_DATE);
 
         // When
@@ -395,7 +394,7 @@ public class CmsAspspPiisServiceInternalTest {
     }
 
     private PsuData buildPsuData() {
-        return new PsuData(PSU_ID, null, null, null);
+        return new PsuData(PSU_ID, null, null, null, null);
     }
 
     private PsuIdData buildPsuIdData() {
@@ -403,7 +402,7 @@ public class CmsAspspPiisServiceInternalTest {
     }
 
     private PsuIdData buildPsuIdData(String psuId) {
-        return new PsuIdData(psuId, null, null, null);
+        return new PsuIdData(psuId, null, null, null, null);
     }
 
     private AccountReference buildAccountReference() {

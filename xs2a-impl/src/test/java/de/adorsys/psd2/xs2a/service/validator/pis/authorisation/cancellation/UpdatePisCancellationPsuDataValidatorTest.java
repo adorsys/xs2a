@@ -80,9 +80,11 @@ public class UpdatePisCancellationPsuDataValidatorTest {
 
     private static final String CORRECT_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String WRONG_PAYMENT_PRODUCT = "sepa-credit-transfers111";
-    private static final PsuIdData PSU_ID_DATA_1 = new PsuIdData("psu-id", null, null, null);
-    private static final PsuIdData PSU_ID_DATA_2 = new PsuIdData("psu-id-2", null, null, null);
+
     private static final boolean CONFIRMATION_CODE_RECEIVED_FALSE = false;
+
+    private static final PsuIdData PSU_ID_DATA_1 = new PsuIdData("psu-id", null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA_2 = new PsuIdData("psu-id-2", null, null, null, null);
 
     @Mock
     private PisTppInfoValidator pisTppInfoValidator;
@@ -265,7 +267,7 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     public void validate_withBothPsusAbsent_shouldReturnFormatError() {
         //Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO, ScaStatus.RECEIVED, AUTHORISATION_ID, null);
-        PsuIdData psuIdData = new PsuIdData(null, null, null, null);
+        PsuIdData psuIdData = new PsuIdData(null, null, null, null, null);
 
         when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
             .thenReturn(ValidationResult.valid());

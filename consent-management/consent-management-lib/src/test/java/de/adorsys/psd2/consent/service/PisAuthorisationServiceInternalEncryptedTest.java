@@ -49,7 +49,7 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     private static final String DECRYPTED_PAYMENT_ID = "1856e4fa-8af8-427b-85ec-4caf515ce074";
     private static final String AUTHORISATION_METHOD_ID = "33346cb3-a01b-4196-a6b9-40b0e4cd2639";
     private static final String AUTHORISATION_ID = "46f2e3a7-1855-4815-8755-5ca76769a1a4";
-    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null, null);
     private static final String TPP_REDIRECT_URI = "request/redirect_uri";
     private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
     private static final TppRedirectUri TPP_REDIRECT_URIs = new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
@@ -192,6 +192,7 @@ public class PisAuthorisationServiceInternalEncryptedTest {
         verify(pisAuthorisationService, times(1))
             .updatePisCancellationAuthorisation(AUTHORISATION_ID, request);
     }
+
     @Test
     public void getPisAuthorisationById_success() {
         // Given

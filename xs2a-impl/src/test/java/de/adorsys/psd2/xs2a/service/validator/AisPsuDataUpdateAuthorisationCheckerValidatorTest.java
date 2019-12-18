@@ -28,9 +28,9 @@ public class AisPsuDataUpdateAuthorisationCheckerValidatorTest {
     @InjectMocks
     private AisPsuDataUpdateAuthorisationCheckerValidator aisPsuDataUpdateAuthorisationCheckerValidator;
 
-    private static final PsuIdData EMPTY_PSU = new PsuIdData(null, null, null, null);
-    private static final PsuIdData PSU_ID_DATA_1 = new PsuIdData("psu-id", null, null, null);
-    private static final PsuIdData PSU_ID_DATA_2 = new PsuIdData("psu-id-2", null, null, null);
+    private static final PsuIdData EMPTY_PSU = new PsuIdData(null, null, null, null,null);
+    private static final PsuIdData PSU_ID_DATA_1 = new PsuIdData("psu-id", null, null, null,null);
+    private static final PsuIdData PSU_ID_DATA_2 = new PsuIdData("psu-id-2", null, null, null,null);
 
     private static final MessageError FORMAT_BOTH_PSUS_ABSENT_ERROR = new MessageError(ErrorType.AIS_400, of(FORMAT_ERROR_NO_PSU));
     private static final MessageError CREDENTIALS_INVALID_ERROR = new MessageError(ErrorType.AIS_401, of(PSU_CREDENTIALS_INVALID));

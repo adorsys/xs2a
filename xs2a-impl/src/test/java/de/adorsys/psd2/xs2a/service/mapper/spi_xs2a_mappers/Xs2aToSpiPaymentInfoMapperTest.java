@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.xs2a.reader.JsonReader;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +34,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,8 +42,15 @@ public class Xs2aToSpiPaymentInfoMapperTest {
     private static final String PSU_ID_TYPE = "psuId Type";
     private static final String PSU_CORPORATE_ID = "psu Corporate Id";
     private static final String PSU_CORPORATE_ID_TYPE = "psuCorporate Id Type";
-    private static final List<PsuIdData> psuDataList = Arrays.asList(new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE));
-    private static final List<SpiPsuData> spiPsuDataList = Arrays.asList(new SpiPsuData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, null));
+    private static final String PSU_IP_ADDRESS = "psuIp Address";
+    private static final List<PsuIdData> psuDataList = Arrays.asList(new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS));
+    private static final List<SpiPsuData> spiPsuDataList = Arrays.asList(SpiPsuData.builder()
+                                                                             .psuId(PSU_ID)
+                                                                             .psuIdType(PSU_ID_TYPE)
+                                                                             .psuCorporateId(PSU_CORPORATE_ID)
+                                                                             .psuCorporateIdType(PSU_CORPORATE_ID_TYPE)
+                                                                             .psuIpAddress(PSU_IP_ADDRESS)
+                                                                             .build());
 
     @InjectMocks
     private Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
@@ -66,7 +73,7 @@ public class Xs2aToSpiPaymentInfoMapperTest {
         SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPayment);
         SpiPaymentInfo spiPaymentInfoExpected = buildSpiPaymentInfo();
         //Then
-        assertEquals(spiPaymentInfoExpected, spiPaymentInfo);
+        Assertions.assertThat(spiPaymentInfo).isEqualToComparingFieldByFieldRecursively(spiPaymentInfoExpected);
     }
 
     @Test
@@ -77,7 +84,7 @@ public class Xs2aToSpiPaymentInfoMapperTest {
         SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPaymentData);
         SpiPaymentInfo spiPaymentInfoExpected = buildSpiPaymentInfo();
         //Then
-        assertEquals(spiPaymentInfoExpected, spiPaymentInfo);
+        Assertions.assertThat(spiPaymentInfo).isEqualToComparingFieldByFieldRecursively(spiPaymentInfoExpected);
     }
 
     @Test
@@ -88,7 +95,7 @@ public class Xs2aToSpiPaymentInfoMapperTest {
         SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfo.mapToSpiPaymentRequest(commonPayment, commonPayment.getPaymentProduct());
         SpiPaymentInfo spiPaymentInfoExpected = buildSpiPaymentInfo();
         //Then
-        assertEquals(spiPaymentInfoExpected, spiPaymentInfo);
+        Assertions.assertThat(spiPaymentInfo).isEqualToComparingFieldByFieldRecursively(spiPaymentInfoExpected);
     }
 
     private CommonPaymentData buildCommonPaymentData() {

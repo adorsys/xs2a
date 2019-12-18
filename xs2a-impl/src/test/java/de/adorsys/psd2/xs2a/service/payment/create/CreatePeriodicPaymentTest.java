@@ -57,7 +57,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,12 +73,12 @@ public class CreatePeriodicPaymentTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String IBAN = "DE123456789";
     private static final TppInfo TPP_INFO = buildTppInfo();
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData("correct_psu", null, null, null);
-    private static final PsuIdData WRONG_PSU_DATA = new PsuIdData("wrong_psu", null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("correct_psu", null, null, null, null);
+    private static final PsuIdData WRONG_PSU_DATA = new PsuIdData("wrong_psu", null, null, null, null);
     private static final TppInfo WRONG_TPP_INFO = new TppInfo();
     private static final Xs2aPisCommonPayment PIS_COMMON_PAYMENT = buildXs2aPisCommonPayment();
     private static final PaymentInitiationParameters PARAM = buildPaymentInitiationParameters();
-    private static final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID,null);
+    private static final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID, null);
     private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
     private final Xs2aPisCommonPayment PIS_COMMON_PAYMENT_FAIL = new Xs2aPisCommonPayment(null, PSU_ID_DATA);
     private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null, null, null, null);

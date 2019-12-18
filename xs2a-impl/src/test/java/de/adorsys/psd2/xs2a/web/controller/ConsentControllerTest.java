@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
@@ -71,8 +72,9 @@ public class ConsentControllerTest {
     private static final String WRONG_CONSENT_ID = "YYYY-YYYY-YYYY-YYYY";
     private static final String PSU_MESSAGE_RESPONSE = "test psu message";
     private static final boolean EXPLICIT_PREFERRED = true;
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
-    private static final PsuIdData PSU_ID_DATA_WRONG = new PsuIdData(WRONG_PSU_ID, null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA_WITH_EMPTY_ADDITIONAL_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null, buildEmptyAdditionalPsuIdData());
+    private static final PsuIdData PSU_ID_DATA_WRONG_WITH_EMPTY_ADDITIONAL_DATA = new PsuIdData(WRONG_PSU_ID, null, null, null, null, buildEmptyAdditionalPsuIdData());
     private static final UUID REQUEST_ID = UUID.fromString("ddd36e05-d67a-4830-93ad-9462f71ae1e6");
     private static final MessageError MESSAGE_ERROR_AIS_400 = new MessageError(ErrorType.AIS_400, of(MessageErrorCode.CONSENT_UNKNOWN_400));
     private static final MessageError MESSAGE_ERROR_AIS_403 = new MessageError(ErrorType.AIS_403, of(MessageErrorCode.RESOURCE_UNKNOWN_403));
@@ -101,8 +103,8 @@ public class ConsentControllerTest {
 
     @Before
     public void setUp() {
-        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(CONSENT_ID));
-        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA_WRONG), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(null));
+        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA_WITH_EMPTY_ADDITIONAL_DATA), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(CONSENT_ID));
+        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA_WRONG_WITH_EMPTY_ADDITIONAL_DATA), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(null));
         when(consentService.getAccountConsentsStatusById(eq(CONSENT_ID))).thenReturn(ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(ConsentStatus.RECEIVED)).build());
         when(consentService.getAccountConsentsStatusById(eq(WRONG_CONSENT_ID))).thenReturn(ResponseObject.<ConsentStatusResponse>builder().fail(MESSAGE_ERROR_AIS_404).build());
         when(consentService.getAccountConsentById(eq(CONSENT_ID))).thenReturn(getConsent(CONSENT_ID));
@@ -140,7 +142,7 @@ public class ConsentControllerTest {
     @Test(expected = IllegalArgumentException.class)
     public void createAccountConsent_WithNullInLinks() {
         //Given:
-        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponseWithoutLinks());
+        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA_WITH_EMPTY_ADDITIONAL_DATA), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponseWithoutLinks());
         Consents consents = getConsents();
 
         //When:
@@ -416,5 +418,9 @@ public class ConsentControllerTest {
         return ResponseObject.<ScaStatus>builder()
                    .fail(MESSAGE_ERROR_AIS_403)
                    .build();
+    }
+
+    private static AdditionalPsuIdData buildEmptyAdditionalPsuIdData() {
+        return new AdditionalPsuIdData(null, null, null, null, null, null, null, null, null);
     }
 }

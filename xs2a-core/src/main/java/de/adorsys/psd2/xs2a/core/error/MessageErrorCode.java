@@ -141,7 +141,7 @@ public enum MessageErrorCode {
             return FORMAT_ERROR_NAME;
         }
     },
-    // Header 'x-request-id' has to be represented by standard 36-char UUID representation
+    // Header 'x-request-id'/'psu-device-id' has to be represented by standard 36-char UUID representation
     FORMAT_ERROR_WRONG_HEADER(400) {
         @Override
         public String getName() {

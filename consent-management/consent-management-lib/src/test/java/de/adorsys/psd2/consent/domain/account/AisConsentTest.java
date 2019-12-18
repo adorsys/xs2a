@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AisConsentTest {
-    private static final PsuData PSU_DATA = new PsuData("psu", null, null, null);
+    private static final PsuData PSU_DATA = new PsuData("psu", null, null, null, null);
     private static final TppInfoEntity TPP_INFO = new TppInfoEntity();
 
     @Test

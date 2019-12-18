@@ -53,9 +53,9 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class CreatePaymentValidatorTest {
     private static final PsuIdData PSU_DATA =
-        new PsuIdData("psu id", null, null, null);
+        new PsuIdData("psu id", null, null, null,null);
     private static final PsuIdData EMPTY_PSU_DATA =
-        new PsuIdData(null, null, null, null);
+        new PsuIdData(null, null, null, null,null);
     private static final MessageError PSU_DATA_VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR));
     private static final MessageError SUPPORTED_ACCOUNT_REFERENCE_VALIDATION_ERROR =

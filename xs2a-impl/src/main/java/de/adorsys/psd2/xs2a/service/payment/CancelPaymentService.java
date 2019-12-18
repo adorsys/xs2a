@@ -134,7 +134,7 @@ public class CancelPaymentService {
         // in payment cancellation case 'multilevelScaRequired' is always false
         boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(tppExplicitAuthorisationPreferred, false);
         if (implicitMethod) {
-            Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(encryptedPaymentId, new PsuIdData(null, null, null, null), payment.getPaymentProduct(), payment.getPaymentType(), null);
+            Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(encryptedPaymentId, new PsuIdData(null, null, null, null, null), payment.getPaymentProduct(), payment.getPaymentType(), null);
             ResponseObject<CancellationAuthorisationResponse> authorisationResponse = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(request);
 
             if (authorisationResponse.hasError()) {
