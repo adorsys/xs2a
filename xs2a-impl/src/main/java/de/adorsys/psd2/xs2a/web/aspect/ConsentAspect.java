@@ -69,7 +69,8 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
             body.setLinks(new CreateConsentLinks(getHttpUrl(), scaApproachResolver, body, redirectLinkBuilder,
                                                  redirectIdService,
                                                  explicitMethod, signingBasketModeActive,
-                                                 getScaRedirectFlow()));
+                                                 getScaRedirectFlow(),
+                                                 isAuthorisationConfirmationRequestMandated()));
         }
         return result;
     }
@@ -82,7 +83,7 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
                 body.setLinks(buildLinksForUpdateConsentResponse(body));
             } else if (result.getBody() instanceof CreateConsentAuthorizationResponse) {
                 CreateConsentAuthorizationResponse body = (CreateConsentAuthorizationResponse) result.getBody();
-                body.setLinks(new CreateAisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder, redirectIdService, getScaRedirectFlow()));
+                body.setLinks(new CreateAisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder, redirectIdService, getScaRedirectFlow(), isAuthorisationConfirmationRequestMandated()));
             }
         }
         return result;

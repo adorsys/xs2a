@@ -19,10 +19,12 @@ package de.adorsys.psd2.xs2a.spi.service;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAisConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +37,8 @@ public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
     /**
      * Initiates AIS consent
      *
-     * @param contextData             holder of call's context data (e.g. about PSU and TPP)
-     * @param accountConsent          Account consent
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param accountConsent           Account consent
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return Returns account access with Account's reference IDs. If Accounts/ReferenceIDs not know, returns empty Response object
      */
@@ -46,22 +48,22 @@ public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
      * This call is invoked inside of Get Consent request to give the bank ability to provide consent status, if it was not saved in CMS before.
      * If consent status is already final one, this call will be not performed.
      *
-     * @param contextData             holder of call's context data (e.g. about PSU and TPP)
-     * @param accountConsent          Account consent from CMS
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param accountConsent           Account consent from CMS
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return Consent Status to be saved in CMS and provided back to TPP.
      */
     default SpiResponse<SpiAisConsentStatusResponse> getConsentStatus(@NotNull SpiContextData contextData, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiAisConsentStatusResponse>builder()
-            .payload(new SpiAisConsentStatusResponse(accountConsent.getConsentStatus()))
-            .build();
+                   .payload(new SpiAisConsentStatusResponse(accountConsent.getConsentStatus()))
+                   .build();
     }
 
     /**
      * Revokes AIS consent
      *
-     * @param contextData      holder of call's context data (e.g. about PSU and TPP)
-     * @param accountConsent   Account consent
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param accountConsent           Account consent
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return void response
      */
@@ -70,12 +72,25 @@ public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
     /**
      * Sends authorisation confirmation information (secure code or such) to ASPSP and if case of successful returns success response. Used only with embedded SCA Approach.
      *
-     * @param contextData        holder of call's context data (e.g. about PSU and TPP)
-     * @param spiScaConfirmation payment confirmation information
-     * @param accountConsent     Account consent
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param spiScaConfirmation       payment confirmation information
+     * @param accountConsent           Account consent
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return Return a positive or negative response as part of SpiResponse
      */
     @NotNull
     SpiResponse<SpiVerifyScaAuthorisationResponse> verifyScaAuthorisation(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+
+    /**
+     * Checks confirmation data at the ASPSP side in case of XS2A not supporting validation of this data. Used only with redirect SCA Approach.
+     *
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param spiConfirmationCode      object with confirmation code
+     * @param accountConsent           Account consent
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
+     * @return Returns a response object, which contains checking result - if the confirmation data was correct or not
+     */
+    @NotNull
+    SpiResponse<SpiConfirmationCodeCheckingResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiConfirmationCode spiConfirmationCode, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+
 }

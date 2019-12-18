@@ -20,9 +20,14 @@ import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -50,6 +55,14 @@ public class RedirectAisAuthorizationServiceTest {
 
     @Mock
     private Xs2aAisConsentService xs2aAisConsentService;
+
+    @Mock
+    private Xs2aAisConsentMapper xs2aAisConsentMapper;
+
+    @Mock
+    private AisAuthorisationConfirmationService aisAuthorisationConfirmationService;
+
+    private JsonReader jsonReader = new JsonReader();
 
     @Test
     public void createConsentAuthorization_success() {
@@ -136,5 +149,15 @@ public class RedirectAisAuthorizationServiceTest {
 
     private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {
         return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, PSU_ID_DATA);
+    }
+
+    private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentResponseObject() {
+        return ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                   .body((new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID))).build();
+    }
+
+    private UpdateConsentPsuDataReq buildUpdateConsentPsuDataRequest() {
+        return jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-with-password.json",
+                                            UpdateConsentPsuDataReq.class);
     }
 }

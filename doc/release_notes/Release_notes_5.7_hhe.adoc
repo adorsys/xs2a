@@ -1,0 +1,12 @@
+* Support confirmation of authorisation
+
+== Support confirmation of authorisation
+
+New feature is added - ability to confirm authorisations for payment (initiation and
+cancellation) and for AIS consent. The feature is enabled by setting the new property in ASPSP profile: `authorisationConfirmationRequestMandated = true`. This works only for Redirect approach and also new status of authorisation appears - `UNCONFIRMED`. First, the authorisation confirmation data should be provided through CMS-PSU-API for the definite authorisation. Then it is stored in CMS and to finalise this authorisation one should provide the same data to XS2A endpoints depending on the flow (AIS/PIS/PIS cancellation):
+
+* PUT `/v1/consents/{consent_id}/authorisations/{authorisation_id}`;
+* PUT `/v1/{payment_service}/{payment_product}/{payment_id}/authorisations/{authorisation_id}`;
+* PUT `/v1/{payment_service}/{payment_product}/{payment_id}/cancellation-authorisations/{authorisation_id}`).
+
+If the authorisation confirmation data differs - authorisation receives status `FAILED`. In case of the same confirmation data - authorisation becomes `FINALISED`. Data comparison can be implemented on XS2A side (ASPSP profile property `authorisationConfirmationCheckByXs2a` must be `true`) or at the ASPSP side (`authorisationConfirmationCheckByXs2a` must be `false`).

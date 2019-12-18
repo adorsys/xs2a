@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.validator;
+package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import lombok.Value;
 
-public class EndpointAccessChecker {
+@Value
+public class SpiConfirmationCodeCheckingResponse {
 
-    protected boolean isAccessible(ScaApproach chosenScaApproach, ScaStatus scaStatus, boolean confirmationCodeCase) {
-        if (ScaApproach.REDIRECT == chosenScaApproach) {
-            return ScaStatus.UNCONFIRMED == scaStatus && confirmationCodeCase;
-        } else if (ScaApproach.DECOUPLED == chosenScaApproach) {
-            return ScaStatus.SCAMETHODSELECTED != scaStatus;
-        }
-        return true;
-    }
+    private ScaStatus scaStatus;
+
 }

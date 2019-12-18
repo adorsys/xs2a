@@ -124,6 +124,7 @@ public class PisCommonPaymentMapper {
         response.setScaStatus(pis.getScaStatus());
         response.setPsuIdData(psuDataMapper.mapToPsuIdData(pis.getPsuData()));
         response.setChosenScaApproach(pis.getScaApproach());
+        response.setScaAuthenticationData(pis.getScaAuthenticationData());
         return response;
     }
 

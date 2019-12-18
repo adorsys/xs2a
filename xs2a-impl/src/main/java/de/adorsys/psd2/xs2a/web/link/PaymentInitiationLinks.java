@@ -38,18 +38,21 @@ public class PaymentInitiationLinks extends AbstractLinks {
     private RedirectIdService redirectIdService;
     private boolean explicitMethod;
     private ScaRedirectFlow scaRedirectFlow;
+    private boolean authorisationConfirmationRequestMandated;
 
     public PaymentInitiationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
                                   RedirectIdService redirectIdService,
                                   PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body,
                                   boolean explicitMethod, boolean signingBasketModeActive,
-                                  ScaRedirectFlow scaRedirectFlow) {
+                                  ScaRedirectFlow scaRedirectFlow,
+                                  boolean authorisationConfirmationRequestMandated) {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.redirectIdService = redirectIdService;
         this.explicitMethod = explicitMethod;
         this.scaRedirectFlow = scaRedirectFlow;
+        this.authorisationConfirmationRequestMandated = authorisationConfirmationRequestMandated;
 
         buildPaymentLinks(paymentRequestParameters, body, signingBasketModeActive);
     }
@@ -108,6 +111,10 @@ public class PaymentInitiationLinks extends AbstractLinks {
             setScaRedirectOAuthLink(scaRedirectFlow, paymentOauthLink);
             setScaStatus(
                 buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
+
+            if (authorisationConfirmationRequestMandated) {
+                setConfirmation(buildPath(redirectLinkBuilder.buildPisConfirmationLink(paymentService, paymentProduct, paymentId, redirectId)));
+            }
         }
     }
 }

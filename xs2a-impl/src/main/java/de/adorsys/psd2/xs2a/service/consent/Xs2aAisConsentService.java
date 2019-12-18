@@ -139,12 +139,12 @@ public class Xs2aAisConsentService {
     }
 
     /**
-     * Sends a POST request to CMS to store created consent authorization
+     * Sends a POST request to CMS to store created consent authorisation
      *
      * @param consentId String representation of identifier of stored consent
      * @param scaStatus Enum for status of the SCA method applied
      * @param psuData   authorisation data about PSU
-     * @return CreateAisConsentAuthorizationResponse object with authorization id and scaStatus
+     * @return CreateAisConsentAuthorizationResponse object with authorisation ID and scaStatus
      */
     public Optional<CreateAisConsentAuthorizationResponse> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
         String tppRedirectURI = requestProviderService.getTppRedirectURI();
@@ -160,11 +160,11 @@ public class Xs2aAisConsentService {
     }
 
     /**
-     * Requests CMS to retrieve AIS consent authorization by its identifier
+     * Requests CMS to retrieve AIS consent authorisation by its identifier
      *
-     * @param authorizationId String representation of identifier of stored consent authorization
+     * @param authorizationId String representation of identifier of stored consent authorisation
      * @param consentId       ID of the consent
-     * @return Response containing AIS Consent Authorization
+     * @return Response containing AIS Consent Authorisation
      */
 
     public Optional<AccountConsentAuthorization> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
@@ -178,9 +178,9 @@ public class Xs2aAisConsentService {
     }
 
     /**
-     * Sends a PUT request to CMS to update created AIS consent authorization
+     * Sends a PUT request to CMS to update created AIS consent authorisation
      *
-     * @param updatePsuData Consent psu data
+     * @param updatePsuData Consent PSU data
      */
     public void updateConsentAuthorization(UpdateConsentPsuDataReq updatePsuData) {
         Optional.ofNullable(updatePsuData)
@@ -192,6 +192,12 @@ public class Xs2aAisConsentService {
             });
     }
 
+    /**
+     * Sends a PUT request to CMS to update status in consent authorisation
+     *
+     * @param authorisationId String representation of authorisation identifier
+     * @param scaStatus       Enum for status of the SCA method applied
+     */
     public void updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
         aisConsentAuthorisationServiceEncrypted.updateConsentAuthorisationStatus(authorisationId, scaStatus);
     }

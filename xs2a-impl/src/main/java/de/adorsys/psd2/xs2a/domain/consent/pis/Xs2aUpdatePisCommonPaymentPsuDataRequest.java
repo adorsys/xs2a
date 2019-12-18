@@ -35,6 +35,7 @@ public class Xs2aUpdatePisCommonPaymentPsuDataRequest implements UpdateAuthorisa
     private boolean updatePsuIdentification;
     private String authenticationMethodId;
     private String scaAuthenticationData;
+    private String confirmationCode;
     private String password;
     private String paymentProduct;
     private PaymentType paymentService;

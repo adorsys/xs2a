@@ -17,14 +17,13 @@
 package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiCommonPaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.*;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import lombok.extern.slf4j.Slf4j;
@@ -93,4 +92,15 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
                    .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
                    .build();
     }
+
+    @Override
+    @NotNull
+    public SpiResponse<SpiConfirmationCodeCheckingResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiConfirmationCode spiConfirmationCode, @NotNull SpiPaymentInfo payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("CommonPaymentSpi#checkConfirmationCode: contextData {}, spiConfirmationCode{}, spiPaymentInfo {}, aspspConsentData {}", contextData, spiConfirmationCode.getConfirmationCode(), payment, aspspConsentDataProvider.loadAspspConsentData());
+
+        return SpiResponse.<SpiConfirmationCodeCheckingResponse>builder()
+                   .payload(new SpiConfirmationCodeCheckingResponse(ScaStatus.FINALISED))
+                   .build();
+    }
+
 }

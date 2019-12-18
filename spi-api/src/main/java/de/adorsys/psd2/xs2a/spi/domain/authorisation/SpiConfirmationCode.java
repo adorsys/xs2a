@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.validator;
+package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import lombok.Value;
 
-public class EndpointAccessChecker {
+/**
+ * Class that stores authorisation confirmation data in case when it is checked at the ASPSP side.
+ */
+@Value
+public class SpiConfirmationCode {
 
-    protected boolean isAccessible(ScaApproach chosenScaApproach, ScaStatus scaStatus, boolean confirmationCodeCase) {
-        if (ScaApproach.REDIRECT == chosenScaApproach) {
-            return ScaStatus.UNCONFIRMED == scaStatus && confirmationCodeCase;
-        } else if (ScaApproach.DECOUPLED == chosenScaApproach) {
-            return ScaStatus.SCAMETHODSELECTED != scaStatus;
-        }
-        return true;
-    }
+    private String confirmationCode;
+
 }

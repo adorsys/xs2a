@@ -660,7 +660,8 @@ public enum MessageErrorCode {
     CANCELLATION_INVALID(405), // Payment initiation cannot be cancelled due to legal or other operational reasons
     SERVICE_UNAVAILABLE(503), // Service is unavailable
     STATUS_INVALID(409), // The addressed resource does not allow additional authorisation
-    FUNDS_CONFIRMATION_FAILED(400); // The funds confirmation request failed
+    FUNDS_CONFIRMATION_FAILED(400), // The funds confirmation request failed
+    ERROR_SCA_CONFIRMATION_CODE(400); // Confirmation code is wrong
 
     private static final String CERTIFICATE_INVALID_NAME = "CERTIFICATE_INVALID";
     private static final String FORMAT_ERROR_NAME = "FORMAT_ERROR";

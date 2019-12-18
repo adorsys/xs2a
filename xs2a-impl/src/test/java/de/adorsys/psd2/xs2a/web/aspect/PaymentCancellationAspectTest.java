@@ -121,7 +121,7 @@ public class PaymentCancellationAspectTest {
 
     @Test
     public void cancelPayment_success() {
-        PaymentCancellationLinks links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, false, ScaRedirectFlow.REDIRECT);
+        PaymentCancellationLinks links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, false, ScaRedirectFlow.REDIRECT, false);
 
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
                              .body(response)

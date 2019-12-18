@@ -18,6 +18,7 @@ package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -26,6 +27,7 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
@@ -76,6 +78,15 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
 
         return SpiResponse.<SpiVerifyScaAuthorisationResponse>builder()
                    .payload(new SpiVerifyScaAuthorisationResponse(ConsentStatus.VALID))
+                   .build();
+    }
+
+    @Override
+    public @NotNull SpiResponse<SpiConfirmationCodeCheckingResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiConfirmationCode spiConfirmationCode, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("AisConsentSpi#checkConfirmationCode: contextData {}, spiConfirmationCode{}, accountConsent-id {}", contextData, spiConfirmationCode.getConfirmationCode(), accountConsent.getId());
+
+        return SpiResponse.<SpiConfirmationCodeCheckingResponse>builder()
+                   .payload(new SpiConfirmationCodeCheckingResponse(ScaStatus.FINALISED))
                    .build();
     }
 

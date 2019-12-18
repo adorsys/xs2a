@@ -80,7 +80,7 @@ public class PisCommonDecoupledServiceTest {
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
-    RequestProviderService requestProviderService;
+    private RequestProviderService requestProviderService;
     @Mock
     private SpiErrorMapper spiErrorMapper;
     @Mock

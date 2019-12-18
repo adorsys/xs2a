@@ -94,6 +94,9 @@ public class Links {
     @ApiModelProperty(value = "The link to the authorisation or cancellation authorisation sub-resource, where the authorisation data has to be uploaded, e.g. the TOP received by SMS.")
     private HrefType authoriseTransaction;
 
+    @ApiModelProperty(value = "The link, which should be used by for storing the confirmation code in CMS.")
+    private HrefType confirmation;
+
     public void setScaRedirectOAuthLink(ScaRedirectFlow scaRedirectFlow, String path) {
         if (ScaRedirectFlow.OAUTH == scaRedirectFlow) {
             setScaOAuth(new HrefType(path));

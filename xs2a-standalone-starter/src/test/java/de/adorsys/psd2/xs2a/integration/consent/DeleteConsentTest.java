@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
+import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationConfirmationService;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
@@ -98,6 +99,8 @@ public class DeleteConsentTest {
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
     private AisConsentServiceEncrypted aisConsentServiceEncrypted;
+    @MockBean
+    private PisAuthorisationConfirmationService pisAuthorisationConfirmationService;
 
     private JsonReader jsonReader = new JsonReader();
 

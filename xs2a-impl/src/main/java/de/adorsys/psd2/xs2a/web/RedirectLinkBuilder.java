@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web;
 
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +28,11 @@ public class RedirectLinkBuilder {
     private static final String ENCRYPTED_CONSENT_ID = "{encrypted-consent-id}";
     private static final String ENCRYPTED_PAYMENT_ID = "{encrypted-payment-id}";
     private static final String INTERNAL_REQUEST_ID = "{inr-id}";
+    private static final String PAYMENT_SERVICE = "{payment-service}";
+    private static final String PAYMENT_PRODUCT = "{payment-product}";
+    private static final String PAYMENT_ID = "{payment-id}";
+    private static final String CONSENT_ID = "{consentId}";
+    private static final String AUTHORISATION_ID = "{authorisation-id}";
 
     private final AspspProfileServiceWrapper aspspProfileService;
 
@@ -126,4 +132,49 @@ public class RedirectLinkBuilder {
                    .replace(INTERNAL_REQUEST_ID, internalRequestId);
     }
 
+    /**
+     * Builds confirmation link for payments.
+     *
+     * @param paymentService     - Payment service (ex. "payments")
+     * @param paymentProduct     - Payment product (ex. "sepa-credit-transfers")
+     * @param encryptedPaymentId - Encrypted Payment ID provided to TPP
+     * @param redirectId         - Redirect ID
+     * @return confirmation link
+     */
+    public String buildPisConfirmationLink(String paymentService, String paymentProduct, String encryptedPaymentId, String redirectId) {
+        return UrlHolder.PIS_AUTHORISATION_LINK_URL
+                   .replace(PAYMENT_SERVICE, paymentService)
+                   .replace(PAYMENT_PRODUCT, paymentProduct)
+                   .replace(PAYMENT_ID, encryptedPaymentId)
+                   .replace(AUTHORISATION_ID, redirectId);
+    }
+
+    /**
+     * Builds confirmation link for payment cancellations.
+     *
+     * @param paymentService     - Payment service (ex. "payments")
+     * @param paymentProduct     - Payment product (ex. "sepa-credit-transfers")
+     * @param encryptedPaymentId - Encrypted Payment ID provided to TPP
+     * @param redirectId         - Redirect ID
+     * @return confirmation link
+     */
+    public String buildPisCancellationConfirmationLink(String paymentService, String paymentProduct, String encryptedPaymentId, String redirectId) {
+        return UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL
+                   .replace(PAYMENT_SERVICE, paymentService)
+                   .replace(PAYMENT_PRODUCT, paymentProduct)
+                   .replace(PAYMENT_ID, encryptedPaymentId)
+                   .replace(AUTHORISATION_ID, redirectId);
+    }
+
+    /**
+     * Builds confirmation link for consents.
+     *
+     * @param redirectId - Redirect ID
+     * @return confirmation link
+     */
+    public String buildAisConfirmationLink(String consentId, String redirectId) {
+        return UrlHolder.AIS_AUTHORISATION_URL
+                   .replace(CONSENT_ID, consentId)
+                   .replace(AUTHORISATION_ID, redirectId);
+    }
 }

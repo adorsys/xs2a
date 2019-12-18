@@ -39,6 +39,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisEndpointAccessCheckerServiceTest {
+    private static final boolean CONFIRMATION_CODE_RECEIVED_FALSE = false;
+
     @InjectMocks
     private PisEndpointAccessCheckerService pisEndpointAccessCheckerService;
     @Mock
@@ -52,7 +54,7 @@ public class PisEndpointAccessCheckerServiceTest {
                             .error(CmsError.TECHNICAL_ERROR)
                             .build());
 
-        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CREATED);
+        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE);
 
         //Then
         assertTrue(endpointAccessible);
@@ -66,7 +68,7 @@ public class PisEndpointAccessCheckerServiceTest {
                             .error(CmsError.TECHNICAL_ERROR)
                             .build());
 
-        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CANCELLED);
+        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CANCELLED, CONFIRMATION_CODE_RECEIVED_FALSE);
 
         //Then
         assertTrue(endpointAccessible);
@@ -78,7 +80,7 @@ public class PisEndpointAccessCheckerServiceTest {
         when(pisAuthorisationServiceEncrypted.getPisAuthorisationById(anyString()))
             .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.REDIRECT));
 
-        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CREATED);
+        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE);
 
         //Then
         assertFalse(endpointAccessible);
@@ -90,7 +92,7 @@ public class PisEndpointAccessCheckerServiceTest {
         when(pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(anyString()))
             .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.REDIRECT));
 
-        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CANCELLED);
+        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CANCELLED, CONFIRMATION_CODE_RECEIVED_FALSE);
 
         //Then
         assertFalse(endpointAccessible);
@@ -102,7 +104,7 @@ public class PisEndpointAccessCheckerServiceTest {
         when(pisAuthorisationServiceEncrypted.getPisAuthorisationById(anyString()))
             .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.DECOUPLED));
 
-        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CREATED);
+        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE);
 
         //Then
         assertTrue(endpointAccessible);
@@ -114,7 +116,7 @@ public class PisEndpointAccessCheckerServiceTest {
         when(pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(anyString()))
             .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.DECOUPLED, ScaStatus.SCAMETHODSELECTED));
 
-        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CANCELLED);
+        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CANCELLED, CONFIRMATION_CODE_RECEIVED_FALSE);
 
         //Then
         assertFalse(endpointAccessible);
