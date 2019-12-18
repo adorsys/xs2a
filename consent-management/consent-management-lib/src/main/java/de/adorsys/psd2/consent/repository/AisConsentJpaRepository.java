@@ -34,7 +34,7 @@ public interface AisConsentJpaRepository extends CrudRepository<AisConsent, Long
     Optional<AisConsent> findByExternalId(String externalId);
 
     @Query(
-        "select distinct c from ais_consent c " +
+        "select c from ais_consent c " +
             "join c.psuDataList psuList " +
             "where psuList.psuId in :psuIds " +
             "and c.tppInfo.authorisationNumber = :authorisationNumber " +
@@ -49,7 +49,7 @@ public interface AisConsentJpaRepository extends CrudRepository<AisConsent, Long
                                                        @Param("consentStatuses") Set<ConsentStatus> consentStatuses);
 
     @Query(
-        "select distinct c from ais_consent c " +
+        "select c from ais_consent c " +
             "join c.usages u " +
             "where c.recurringIndicator = false " +
             "and c.consentStatus in :consentStatuses " +
