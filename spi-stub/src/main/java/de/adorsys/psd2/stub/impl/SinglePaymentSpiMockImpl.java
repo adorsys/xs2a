@@ -17,10 +17,13 @@
 package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
@@ -69,7 +72,7 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
 
         return SpiResponse.<SpiGetPaymentStatusResponse>builder()
                    .payload(new SpiGetPaymentStatusResponse(payment.getPaymentStatus(), true, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null))
-            .build();
+                   .build();
     }
 
     @Override
@@ -89,6 +92,15 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
 
         return SpiResponse.<SpiPaymentExecutionResponse>builder()
                    .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
+                   .build();
+    }
+
+    @Override
+    public @NotNull SpiResponse<SpiConfirmationCodeCheckingResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiConfirmationCode spiConfirmationCode, @NotNull SpiSinglePayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("SinglePaymentSpi#checkConfirmationCode: contextData {}, spiConfirmationCode{}, spiSinglePayment {}, aspspConsentData {}", contextData, spiConfirmationCode.getConfirmationCode(), payment, aspspConsentDataProvider.loadAspspConsentData());
+
+        return SpiResponse.<SpiConfirmationCodeCheckingResponse>builder()
+                   .payload(new SpiConfirmationCodeCheckingResponse(ScaStatus.FINALISED))
                    .build();
     }
 }

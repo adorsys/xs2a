@@ -32,6 +32,7 @@ public class UpdateConsentPsuDataReq implements UpdateAuthorisationRequest {
     private boolean updatePsuIdentification;
     private String authenticationMethodId;
     private String scaAuthenticationData;
+    private String confirmationCode;
     private String password;
 
     @Override

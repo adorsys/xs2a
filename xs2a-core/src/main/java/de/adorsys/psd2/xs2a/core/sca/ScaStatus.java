@@ -63,7 +63,12 @@ public enum ScaStatus {
      * SCA was exempted for the related transaction,
      * the related authorisation is successful.
      */
-    EXEMPTED("exempted", true);
+    EXEMPTED("exempted", true),
+    /**
+     * Authorisation is technically successfully finalised by the PSU,
+     * but the authorisation resource needs a confirmation command by the TPP yet
+     */
+    UNCONFIRMED("unconfirmed", false);
 
     private static final Map<String, ScaStatus> HOLDER = new HashMap<>();
 

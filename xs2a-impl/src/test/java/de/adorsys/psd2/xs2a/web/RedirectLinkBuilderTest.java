@@ -90,4 +90,27 @@ public class RedirectLinkBuilderTest {
 
         assertEquals("cancellation/Authorisation123/{encrypted-consent-id}/Payment123/{encrypted-consent-id}/Authorisation123/Payment123/something-else/" + INTERNAL_REQUEST_ID, redirectLink);
     }
+
+    @Test
+    public void buildPisConfirmationLink() {
+        String confirmationLink = redirectLinkBuilder.buildPisConfirmationLink("paymentService", "paymentProduct", "paymentID", "redirectID");
+
+        assertEquals("/v1/paymentService/paymentProduct/paymentID/authorisations/redirectID", confirmationLink);
+    }
+
+    @Test
+    public void buildPisCancellationConfirmationLink() {
+        String confirmationLink = redirectLinkBuilder.buildPisCancellationConfirmationLink("paymentService", "paymentProduct", "paymentID", "redirectID");
+
+        assertEquals("/v1/paymentService/paymentProduct/paymentID/cancellation-authorisations/redirectID", confirmationLink);
+    }
+
+    @Test
+    public void buildAisConfirmationLink() {
+        String confirmationLink = redirectLinkBuilder.buildAisConfirmationLink("consentID", "redirectID");
+
+        assertEquals("/v1/consents/consentID/authorisations/redirectID", confirmationLink);
+    }
+
+
 }

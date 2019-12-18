@@ -52,6 +52,10 @@ public abstract class AbstractLinkAspect<T> {
                    : fromController(this.getControllerClass()).pathSegment(StringUtils.EMPTY).toUriString();
     }
 
+    boolean isAuthorisationConfirmationRequestMandated() {
+        return aspspProfileServiceWrapper.isAuthorisationConfirmationRequestMandated();
+    }
+
     @SuppressWarnings("unchecked")
     private Class<T> getControllerClass() {
         try {

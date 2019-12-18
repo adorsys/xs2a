@@ -32,7 +32,8 @@ public class CreateConsentLinks extends AbstractLinks {
                               CreateConsentResponse response, RedirectLinkBuilder redirectLinkBuilder,
                               RedirectIdService redirectIdService,
                               boolean explicitMethod, boolean signingBasketModeActive,
-                              ScaRedirectFlow scaRedirectFlow) {
+                              ScaRedirectFlow scaRedirectFlow,
+                              boolean authorisationConfirmationRequestMandated) {
         super(httpUrl);
 
         String consentId = response.getConsentId();
@@ -58,6 +59,10 @@ public class CreateConsentLinks extends AbstractLinks {
 
                 setScaRedirectOAuthLink(scaRedirectFlow, consentOauthLink);
                 setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
+
+                if (authorisationConfirmationRequestMandated) {
+                    setConfirmation(buildPath(redirectLinkBuilder.buildAisConfirmationLink(consentId, redirectId)));
+                }
             }
         }
     }

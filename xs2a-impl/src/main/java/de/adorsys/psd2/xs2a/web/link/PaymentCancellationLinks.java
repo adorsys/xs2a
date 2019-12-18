@@ -36,16 +36,19 @@ public class PaymentCancellationLinks extends AbstractLinks {
     private RedirectIdService redirectIdService;
     private boolean isExplicitMethod;
     private ScaRedirectFlow scaRedirectFlow;
+    private boolean authorisationConfirmationRequestMandated;
 
     public PaymentCancellationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
                                     RedirectIdService redirectIdService, CancelPaymentResponse response,
-                                    boolean isExplicitMethod, ScaRedirectFlow scaRedirectFlow) {
+                                    boolean isExplicitMethod, ScaRedirectFlow scaRedirectFlow,
+                                    boolean authorisationConfirmationRequestMandated) {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.redirectIdService = redirectIdService;
         this.isExplicitMethod = isExplicitMethod;
         this.scaRedirectFlow = scaRedirectFlow;
+        this.authorisationConfirmationRequestMandated = authorisationConfirmationRequestMandated;
 
         buildCancellationLinks(response);
     }
@@ -99,6 +102,10 @@ public class PaymentCancellationLinks extends AbstractLinks {
 
             setScaStatus(
                 buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
+
+            if (authorisationConfirmationRequestMandated) {
+                setConfirmation(buildPath(redirectLinkBuilder.buildPisCancellationConfirmationLink(paymentService, paymentProduct, paymentId, redirectId)));
+            }
         }
     }
 }

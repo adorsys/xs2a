@@ -39,4 +39,5 @@ public class GetPisAuthorisationResponse {
     private List<PisPayment> payments;
     private String paymentProduct;
     private PisPaymentInfo paymentInfo;
+    private String scaAuthenticationData;
 }

@@ -56,7 +56,7 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
             if (result.getBody() instanceof Xs2aCreatePisAuthorisationResponse) {
                 Xs2aCreatePisAuthorisationResponse response = (Xs2aCreatePisAuthorisationResponse) result.getBody();
 
-                response.setLinks(new CreatePisAuthorisationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder, redirectIdService, createRequest, response.getAuthorisationId(), getScaRedirectFlow(), response.getInternalRequestId()));
+                response.setLinks(new CreatePisAuthorisationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder, redirectIdService, createRequest, response.getAuthorisationId(), getScaRedirectFlow(), response.getInternalRequestId(), isAuthorisationConfirmationRequestMandated()));
             } else if (result.getBody() instanceof Xs2aUpdatePisCommonPaymentPsuDataResponse) {
                 Xs2aUpdatePisCommonPaymentPsuDataResponse response = (Xs2aUpdatePisCommonPaymentPsuDataResponse) result.getBody();
                 response.setLinks(new UpdatePisAuthorisationLinks(getHttpUrl(), scaApproachResolver, response, createRequest));

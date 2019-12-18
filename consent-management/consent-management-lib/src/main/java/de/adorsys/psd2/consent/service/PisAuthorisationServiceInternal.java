@@ -550,7 +550,7 @@ public class PisAuthorisationServiceInternal implements PisAuthorisationService 
                 pisAuthorisation.setPsuData(psuData);
             }
 
-        } else {
+        } else if (pisAuthorisation.getAuthorizationType() == PaymentAuthorisationType.CREATED) {
             boolean isPsuCorrect = Objects.nonNull(psuDataInAuthorisation)
                                        && Objects.nonNull(psuDataInRequest)
                                        && psuDataInAuthorisation.contentEquals(psuDataInRequest);

@@ -4023,6 +4023,8 @@ components:
             The SCA routine failed
           * 'exempted':
             SCA was exempted for the related transaction, the related authorisation is successful.
+          * 'unconfirmed':
+            Authorisation is technically successfully finalised by the PSU, but the authorisation resource needs a confirmation command by the TPP yet.
       type: string
       enum:
         - "received"
@@ -4033,6 +4035,7 @@ components:
         - "finalised"
         - "failed"
         - "exempted"
+        - "unconfirmed"
 
       example: "psuAuthenticated"
 
@@ -7076,6 +7079,9 @@ components:
           $ref: "#/components/schemas/hrefType"
         scaStatus:
           $ref: "#/components/schemas/hrefType"
+        confirmation:
+          $ref: "#/components/schemas/hrefType"
+
       example:
         {
           "scaRedirect": {"href": "https://www.testbank.com/asdfasdfasdf"},
@@ -7306,6 +7312,8 @@ components:
           $ref: "#/components/schemas/hrefType"
         scaStatus:
           $ref: "#/components/schemas/hrefType"
+        confirmation:
+          $ref: "#/components/schemas/hrefType"
 
 
     _linksDownload:
@@ -7395,6 +7403,8 @@ components:
         status:
           $ref: "#/components/schemas/hrefType"
         scaStatus:
+          $ref: "#/components/schemas/hrefType"
+        confirmation:
           $ref: "#/components/schemas/hrefType"
 
 
