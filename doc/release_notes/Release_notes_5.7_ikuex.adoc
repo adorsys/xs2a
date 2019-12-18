@@ -2,6 +2,7 @@
 
 == Table of Contents
 * Update Account Owner Name Service
+* Bugfix: Oracle incompatibility in AisConsentJpaRepository
 
 == Update Account Owner Name Service
 
@@ -13,3 +14,7 @@ From now on, Account Owner Name Service has several changes:
 
 Also if TPP creates consent with additional information and the ASPSP doesn't support it (accountOwnerInformationSupported=false)
 then TPP will receive HTTP 401 response code with message code "CONSENT_INVALID" and text message "An explicit consent of ownerName is not supported."
+
+== Bugfix: Oracle incompatibility in AisConsentJpaRepository
+
+From now on, database queries in AisConsentJpaRepository are fixed and don't throw any exception.

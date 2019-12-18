@@ -224,6 +224,7 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                                                                  EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID));
 
         List<AisConsent> oldConsentsWithExactPsuDataLists = oldConsents.stream()
+                                                                .distinct()
                                                                 .filter(c -> cmsPsuService.isPsuDataListEqual(c.getPsuDataList(), psuDataList))
                                                                 .collect(Collectors.toList());
 
