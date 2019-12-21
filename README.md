@@ -23,7 +23,7 @@ regulated by PSD2.
 [adorsys](https://adorsys.de/en/index.html) is a company who works ever since the very beginning of PSD2 with its requirements and implicit tasks.
 We help banks to be PSD2 complaint (technical and legal terms). To speed up the process we provide this open source XS2A interface, specified by Berlin Group,
 that can be connected to your middleware system.
-You can check your readiness for PSD2 Compliance and other information via [our Web-site](https://adorsys.de/en/psd2).
+You can check your readiness for PSD2 Compliance and other information via [our Web-site](https://adorsys-platform.de/solutions/).
 
 ## Features of adorsys/XS2A
 
@@ -93,7 +93,7 @@ Please read [CONTRIBUTING](doc/CONTRIBUTING.md) for details on our code of condu
 
 See also the list of [contributors](doc/contributors.md) who participated in this project.
 
-For commercial support please contact **[adorsys Team](https://adorsys.de/en/psd2)**.
+For commercial support please contact **[adorsys Team](https://adorsys-platform.de/solutions/)**.
 
 ## License
 
