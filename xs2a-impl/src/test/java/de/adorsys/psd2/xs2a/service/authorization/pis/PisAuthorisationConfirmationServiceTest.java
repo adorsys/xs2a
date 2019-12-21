@@ -210,7 +210,7 @@ public class PisAuthorisationConfirmationServiceTest {
         request.setConfirmationCode("wrong_code");
 
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)
-                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.ERROR_SCA_CONFIRMATION_CODE))
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.SCA_INVALID))
                                       .build();
         Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
 
@@ -241,7 +241,7 @@ public class PisAuthorisationConfirmationServiceTest {
                                                                            .build();
 
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)
-                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.ERROR_SCA_CONFIRMATION_CODE))
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.SCA_INVALID))
                                       .build();
         Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
         GetPisAuthorisationResponse authorisationResponse = buildGetPisAuthorisationResponse();

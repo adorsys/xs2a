@@ -203,7 +203,7 @@ public class AisAuthorisationConfirmationServiceTest {
 
         AisConsentAuthorizationResponse aisConsentAuthorizationResponse = getConsentAuthorisationResponse();
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_400)
-                                      .tppMessages(of(ERROR_SCA_CONFIRMATION_CODE))
+                                      .tppMessages(of(SCA_INVALID))
                                       .build();
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                                                           .fail(errorHolder)
