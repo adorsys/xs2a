@@ -167,7 +167,7 @@ public class AisAuthorisationConfirmationService {
 
     private UpdateConsentPsuDataResponse buildScaConfirmationCodeErrorResponse(String consentId, String authorisationId) {
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_400)
-                                      .tppMessages(of(ERROR_SCA_CONFIRMATION_CODE))
+                                      .tppMessages(of(SCA_INVALID))
                                       .build();
 
         log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation-ID: [{}]. Update consent PSU data failed: confirmation code is wrong.",

@@ -172,7 +172,7 @@ public class PisAuthorisationConfirmationService {
         PsuIdData psuData = request.getPsuData();
 
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)
-                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.ERROR_SCA_CONFIRMATION_CODE))
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.SCA_INVALID))
                                       .build();
         log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed: confirmation code is wrong.",
                  requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authorisationId);
