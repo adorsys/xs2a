@@ -80,9 +80,11 @@ public class UpdatePisCancellationPsuDataValidatorTest {
 
     private static final String CORRECT_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String WRONG_PAYMENT_PRODUCT = "sepa-credit-transfers111";
-    private static final PsuIdData PSU_ID_DATA_1 = new PsuIdData("psu-id", null, null, null);
-    private static final PsuIdData PSU_ID_DATA_2 = new PsuIdData("psu-id-2", null, null, null);
 
+    private static final boolean CONFIRMATION_CODE_RECEIVED_FALSE = false;
+
+    private static final PsuIdData PSU_ID_DATA_1 = new PsuIdData("psu-id", null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA_2 = new PsuIdData("psu-id-2", null, null, null, null);
 
     @Mock
     private PisTppInfoValidator pisTppInfoValidator;
@@ -112,9 +114,9 @@ public class UpdatePisCancellationPsuDataValidatorTest {
         when(pisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
             .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
 
-        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED, CONFIRMATION_CODE_RECEIVED_FALSE))
             .thenReturn(true);
-        when(pisEndpointAccessCheckerService.isEndpointAccessible(INVALID_AUTHORISATION_ID_FOR_ENDPOINT, PaymentAuthorisationType.CANCELLED))
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(INVALID_AUTHORISATION_ID_FOR_ENDPOINT, PaymentAuthorisationType.CANCELLED, CONFIRMATION_CODE_RECEIVED_FALSE))
             .thenReturn(false);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(pisPsuDataUpdateAuthorisationCheckerValidator.validate(PSU_ID_DATA_1, PSU_ID_DATA_1))
@@ -208,7 +210,7 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     @Test
     public void validate_withInvalidAuthorisation_shouldReturnAuthorisationValidationError() {
         // Given
-        when(pisEndpointAccessCheckerService.isEndpointAccessible(INVALID_AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(INVALID_AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED, CONFIRMATION_CODE_RECEIVED_FALSE))
             .thenReturn(true);
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO, ScaStatus.RECEIVED);
         when(pisAuthorisationValidator.validate(INVALID_AUTHORISATION_ID, commonPaymentResponse))
@@ -265,7 +267,7 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     public void validate_withBothPsusAbsent_shouldReturnFormatError() {
         //Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO, ScaStatus.RECEIVED, AUTHORISATION_ID, null);
-        PsuIdData psuIdData = new PsuIdData(null, null, null, null);
+        PsuIdData psuIdData = new PsuIdData(null, null, null, null, null);
 
         when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
             .thenReturn(ValidationResult.valid());

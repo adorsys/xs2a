@@ -180,4 +180,13 @@ If parameter = FALSE, then no validation will occur.|TRUE |TRUE, FALSE
 |signingBasketSupported |This field indicates if an ASPSP supports signing basket or not.
 
 If parameter = FALSE then XS2A sends the response with HTTP code 400 FORMAT_ERROR "Signing basket is not supported by ASPSP" |FALSE |TRUE, FALSE
+
+|authorisationConfirmationRequestMandated |This field indicates if the authorisation confirmation is mandated.
+
+If parameter = FALSE then authorisation is supported by usual flow. if it is TRUE - each authorisation should be confirmed. |FALSE |TRUE, FALSE
+
+|authorisationConfirmationCheckByXs2a |This field indicates which part of application is responsible for authentication data checking in the authorisation process.
+
+If parameter = FALSE then it is SPI developer's duty to verify the authentication data. If it is TRUE then verification of this data is processed on XS2A side. |FALSE |TRUE, FALSE
+
 |===

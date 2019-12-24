@@ -124,6 +124,6 @@ public class PsuDataUpdateAuthorisationCheckerTest {
     }
 
     private PsuIdData buildPSU(String id) {
-        return new PsuIdData(id, null, null, null);
+        return new PsuIdData(id, null, null, null, null);
     }
 }

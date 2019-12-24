@@ -4023,6 +4023,8 @@ components:
             The SCA routine failed
           * 'exempted':
             SCA was exempted for the related transaction, the related authorisation is successful.
+          * 'unconfirmed':
+            Authorisation is technically successfully finalised by the PSU, but the authorisation resource needs a confirmation command by the TPP yet.
       type: string
       enum:
         - "received"
@@ -4033,6 +4035,7 @@ components:
         - "finalised"
         - "failed"
         - "exempted"
+        - "unconfirmed"
 
       example: "psuAuthenticated"
 
@@ -4057,7 +4060,7 @@ components:
           - 'terminatedByTpp': The corresponding TPP has terminated the consent by applying the DELETE method to the consent resource.
           - 'partiallyAuthorised': The consent is due to a multi-level authorisation, some but not all mandated authorisations have been performed yet.
 
-        The ASPSP might add further codes. These codes then shall be contained in the ASPSP's documentation of the XS2A interface 
+        The ASPSP might add further codes. These codes then shall be contained in the ASPSP's documentation of the XS2A interface
         and has to be added to this API definition as well.
       type: string
       enum:
@@ -4462,6 +4465,7 @@ components:
           type: string
           enum:
             - "allAccounts"
+            - "allAccountsWithOwnerName"
         availableAccountsWithBalance:
           description: |
             Optional if supported by API provider.
@@ -4470,6 +4474,7 @@ components:
           type: string
           enum:
             - "allAccounts"
+            - "allAccountsWithOwnerName"
         allPsd2:
           description: |
             Optional if supported by API provider.
@@ -4478,7 +4483,8 @@ components:
           type: string
           enum:
             - "allAccounts"
-        additionalAccountInformation:
+            - "allAccountsWithOwnerName"
+        additionalInformation:
           description: |
             Is asking for additional information as added within
             this structured object
@@ -4493,13 +4499,6 @@ components:
           description: |
             Is asking for account owner name of the accounts
             referenced within.
-          type: array
-          items:
-            $ref: "#/components/schemas/accountReference"
-        ownerAddress:
-          description: |
-            Is asking for account owner address related to the
-            accounts referenced within
           type: array
           items:
             $ref: "#/components/schemas/accountReference"
@@ -4589,9 +4588,7 @@ components:
         ownerName:
           description: Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.
           type: string
-          maxLength: 70
-        ownerAddress:
-          $ref: "#/components/schemas/address"
+          maxLength: 140
 
 
     cardAccountDetails:
@@ -7082,6 +7079,9 @@ components:
           $ref: "#/components/schemas/hrefType"
         scaStatus:
           $ref: "#/components/schemas/hrefType"
+        confirmation:
+          $ref: "#/components/schemas/hrefType"
+
       example:
         {
           "scaRedirect": {"href": "https://www.testbank.com/asdfasdfasdf"},
@@ -7312,6 +7312,8 @@ components:
           $ref: "#/components/schemas/hrefType"
         scaStatus:
           $ref: "#/components/schemas/hrefType"
+        confirmation:
+          $ref: "#/components/schemas/hrefType"
 
 
     _linksDownload:
@@ -7401,6 +7403,8 @@ components:
         status:
           $ref: "#/components/schemas/hrefType"
         scaStatus:
+          $ref: "#/components/schemas/hrefType"
+        confirmation:
           $ref: "#/components/schemas/hrefType"
 
 

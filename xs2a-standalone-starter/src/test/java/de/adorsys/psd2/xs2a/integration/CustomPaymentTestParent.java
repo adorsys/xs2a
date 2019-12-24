@@ -105,6 +105,15 @@ public abstract class CustomPaymentTestParent {
         headerMap.put("PSU-Corporate-ID", "Some corporate id");
         headerMap.put("PSU-Corporate-ID-Type", "Some corporate id type");
         headerMap.put("PSU-IP-Address", "1.1.1.1");
+        headerMap.put("PSU-IP-Port", "1111");
+        headerMap.put("PSU-User-Agent", "Some user agent");
+        headerMap.put("PSU-Geo-Location", "Some geo location");
+        headerMap.put("PSU-Accept", "Some accept");
+        headerMap.put("PSU-Accept-Charset", "Some accept-charset");
+        headerMap.put("PSU-Accept-Encoding", "Some accept-encoding");
+        headerMap.put("PSU-Accept-Language", "Some accept-language");
+        headerMap.put("PSU-Http-Method", "Some http method");
+        headerMap.put("PSU-Device-ID", "d7d369a9-898d-4682-b586-0a63ffe43a2c");
         headerMap.put("TPP-Redirect-URI", TPP_REDIRECT_URI);
         headerMap.put("TPP-NOK-Redirect-URI", TPP_NOK_REDIRECT_URI);
 

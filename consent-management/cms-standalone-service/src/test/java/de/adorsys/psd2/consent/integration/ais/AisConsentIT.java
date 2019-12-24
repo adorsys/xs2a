@@ -188,7 +188,7 @@ public class AisConsentIT {
     }
 
     private PsuIdData buildPsuIdData(String psuId, String psuCorporateId) {
-        return new PsuIdData(psuId, null, psuCorporateId, null);
+        return new PsuIdData(psuId, null, psuCorporateId, null, null);
     }
 
     private CreateAisConsentRequest buildCreateAisConsentRequestWithPsuData(PsuIdData psuIdData) {

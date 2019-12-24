@@ -100,7 +100,7 @@ public class Xs2aAisConsentMapper {
                    .map(data -> {
                        PsuIdData psuIdDataFromRequest = updatePsuDataRequest.getPsuData();
                        UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
-                       request.setPsuData(new PsuIdData(psuIdDataFromRequest.getPsuId(), psuIdDataFromRequest.getPsuIdType(), psuIdDataFromRequest.getPsuCorporateId(), psuIdDataFromRequest.getPsuCorporateIdType()));
+                       request.setPsuData(new PsuIdData(psuIdDataFromRequest.getPsuId(), psuIdDataFromRequest.getPsuIdType(), psuIdDataFromRequest.getPsuCorporateId(), psuIdDataFromRequest.getPsuCorporateIdType(), psuIdDataFromRequest.getPsuIpAddress()));
                        request.setConsentId(updatePsuDataRequest.getConsentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
                        request.setAuthenticationMethodId(getAuthenticationMethodId(data));
@@ -117,7 +117,7 @@ public class Xs2aAisConsentMapper {
                    .map(data -> {
                        PsuIdData psuIdDataFromRequest = request.getPsuData();
                        UpdateConsentPsuDataReq req = new UpdateConsentPsuDataReq();
-                       req.setPsuData(new PsuIdData(psuIdDataFromRequest.getPsuId(), psuIdDataFromRequest.getPsuIdType(), psuIdDataFromRequest.getPsuCorporateId(), psuIdDataFromRequest.getPsuCorporateIdType()));
+                       req.setPsuData(new PsuIdData(psuIdDataFromRequest.getPsuId(), psuIdDataFromRequest.getPsuIdType(), psuIdDataFromRequest.getPsuCorporateId(), psuIdDataFromRequest.getPsuCorporateIdType(), psuIdDataFromRequest.getPsuIpAddress()));
                        req.setConsentId(request.getBusinessObjectId());
                        req.setAuthorizationId(request.getAuthorisationId());
                        req.setAuthenticationMethodId(Optional.ofNullable(data.getChosenScaMethod())
@@ -170,9 +170,7 @@ public class Xs2aAisConsentMapper {
     }
 
     private AccountAdditionalInformationAccess mapToAccountAdditionalInformationAccess(AdditionalInformationAccess info) {
-        return new AccountAdditionalInformationAccess(
-            mapToListAccountInfoOrDefault(info.getOwnerName(), null),
-            mapToListAccountInfoOrDefault(info.getOwnerAddress(), null));
+        return new AccountAdditionalInformationAccess(mapToListAccountInfoOrDefault(info.getOwnerName(), null));
     }
 
     private List<AccountInfo> mapToListAccountInfo(List<AccountReference> refs) {
@@ -282,7 +280,7 @@ public class Xs2aAisConsentMapper {
 
     private AdditionalInformationAccess mapToAdditionalInformationAccess(AdditionalInformationAccess accountAdditionalInformationAccess) {
         return  Optional.ofNullable(accountAdditionalInformationAccess)
-                       .map(info -> new AdditionalInformationAccess(info.getOwnerName(), info.getOwnerAddress()))
+                       .map(info -> new AdditionalInformationAccess(info.getOwnerName()))
                        .orElse(null);
     }
 

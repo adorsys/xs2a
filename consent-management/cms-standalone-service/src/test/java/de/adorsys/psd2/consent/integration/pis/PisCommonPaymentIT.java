@@ -27,7 +27,6 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +56,7 @@ public class PisCommonPaymentIT {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final PaymentType PAYMENT_SERVICE = PaymentType.SINGLE;
     private static final String AUTHORITY_ID = "test authority ID";
-    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null, null);
     private static final String PAYMENT_ID = "payment id";
 
     @Autowired

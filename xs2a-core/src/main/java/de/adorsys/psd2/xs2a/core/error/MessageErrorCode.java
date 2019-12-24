@@ -141,7 +141,7 @@ public enum MessageErrorCode {
             return FORMAT_ERROR_NAME;
         }
     },
-    // Header 'x-request-id' has to be represented by standard 36-char UUID representation
+    // Header 'x-request-id'/'psu-device-id' has to be represented by standard 36-char UUID representation
     FORMAT_ERROR_WRONG_HEADER(400) {
         @Override
         public String getName() {
@@ -660,7 +660,8 @@ public enum MessageErrorCode {
     CANCELLATION_INVALID(405), // Payment initiation cannot be cancelled due to legal or other operational reasons
     SERVICE_UNAVAILABLE(503), // Service is unavailable
     STATUS_INVALID(409), // The addressed resource does not allow additional authorisation
-    FUNDS_CONFIRMATION_FAILED(400); // The funds confirmation request failed
+    FUNDS_CONFIRMATION_FAILED(400), // The funds confirmation request failed
+    SCA_INVALID(400); // SCA of the resource failed during confirmation of authorisation
 
     private static final String CERTIFICATE_INVALID_NAME = "CERTIFICATE_INVALID";
     private static final String FORMAT_ERROR_NAME = "FORMAT_ERROR";

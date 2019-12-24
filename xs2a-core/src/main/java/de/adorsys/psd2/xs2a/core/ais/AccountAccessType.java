@@ -25,7 +25,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public enum AccountAccessType {
-    ALL_ACCOUNTS("allAccounts");
+    ALL_ACCOUNTS("allAccounts"),
+    ALL_ACCOUNTS_WITH_OWNER_NAME("allAccountsWithOwnerName");
 
     private static Map<String, AccountAccessType> container = new HashMap<>();
 

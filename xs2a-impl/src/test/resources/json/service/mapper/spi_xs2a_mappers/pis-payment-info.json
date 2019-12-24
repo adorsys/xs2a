@@ -15,7 +15,8 @@
       "psuId": "psu Id",
       "psuIdType": "psuId Type",
       "psuCorporateId": "psu Corporate Id",
-      "psuCorporateIdType": "psuCorporate Id Type"
+      "psuCorporateIdType": "psuCorporate Id Type",
+      "psuIpAddress": "psuIp Address"
     }
   ],
   "multilevelScaRequired": false,

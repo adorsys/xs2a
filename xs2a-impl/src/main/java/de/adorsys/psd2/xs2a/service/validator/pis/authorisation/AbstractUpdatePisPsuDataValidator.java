@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -79,7 +80,9 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
     protected ValidationResult executeBusinessValidation(UpdatePisPsuDataPO paymentObject) {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = paymentObject.getUpdateRequest();
         String authorisationId = request.getAuthorisationId();
-        if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, getPaymentAuthorisationType())) {
+        boolean confirmationCodeReceived = StringUtils.isNotBlank(request.getConfirmationCode());
+
+        if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, getPaymentAuthorisationType(), confirmationCodeReceived)) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data  has failed: endpoint is not accessible for authorisation",
                      getRequestProviderService().getInternalRequestId(), getRequestProviderService().getRequestId(), authorisationId);
             return ValidationResult.invalid(ErrorType.PIS_403, SERVICE_BLOCKED);

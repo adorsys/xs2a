@@ -21,9 +21,9 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 
 public class EndpointAccessChecker {
 
-    protected boolean isAccessible(ScaApproach chosenScaApproach, ScaStatus scaStatus){
+    protected boolean isAccessible(ScaApproach chosenScaApproach, ScaStatus scaStatus, boolean confirmationCodeCase) {
         if (ScaApproach.REDIRECT == chosenScaApproach) {
-            return false;
+            return ScaStatus.UNCONFIRMED == scaStatus && confirmationCodeCase;
         } else if (ScaApproach.DECOUPLED == chosenScaApproach) {
             return ScaStatus.SCAMETHODSELECTED != scaStatus;
         }

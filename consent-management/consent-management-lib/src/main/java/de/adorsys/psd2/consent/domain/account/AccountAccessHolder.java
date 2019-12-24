@@ -43,7 +43,6 @@ public abstract class AccountAccessHolder<T extends AccountAccess> {
         AccountAdditionalInformationAccess accountAdditionalInformationAccess = accountAccessInfo.getAccountAdditionalInformationAccess();
         if (accountAdditionalInformationAccess != null) {
             doFillAccess(accountAdditionalInformationAccess.getOwnerName(), OWNER_NAME);
-            doFillAccess(accountAdditionalInformationAccess.getOwnerAddress(), OWNER_ADDRESS);
         }
     }
 

@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationReque
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
@@ -56,7 +55,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 // TODO this class takes low-level communication to Consent-management-system. Should be migrated to consent-services package. All XS2A business-logic should be removed from here to XS2A services. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 public class PisAuthorisationService {
-    private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     private final PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
     private final Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
     private final ScaApproachResolver scaApproachResolver;
@@ -142,14 +140,6 @@ public class PisAuthorisationService {
                                                              response.getScaStatus(),
                                                              request,
                                                              response));
-    }
-
-    public void doUpdatePisAuthorisation(UpdatePisCommonPaymentPsuDataRequest request) {
-        pisAuthorisationServiceEncrypted.updatePisAuthorisation(request.getAuthorizationId(), request);
-    }
-
-    public void doUpdatePisCancellationAuthorisation(UpdatePisCommonPaymentPsuDataRequest request) {
-        pisAuthorisationServiceEncrypted.updatePisCancellationAuthorisation(request.getAuthorizationId(), request);
     }
 
     /**
@@ -275,5 +265,13 @@ public class PisAuthorisationService {
         } else {
             doUpdatePisCancellationAuthorisation(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(response));
         }
+    }
+
+    private void doUpdatePisAuthorisation(UpdatePisCommonPaymentPsuDataRequest request) {
+        pisAuthorisationServiceEncrypted.updatePisAuthorisation(request.getAuthorizationId(), request);
+    }
+
+    private void doUpdatePisCancellationAuthorisation(UpdatePisCommonPaymentPsuDataRequest request) {
+        pisAuthorisationServiceEncrypted.updatePisCancellationAuthorisation(request.getAuthorizationId(), request);
     }
 }

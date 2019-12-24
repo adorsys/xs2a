@@ -17,10 +17,13 @@
 package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
@@ -69,7 +72,7 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
 
         return SpiResponse.<SpiGetPaymentStatusResponse>builder()
                    .payload(new SpiGetPaymentStatusResponse(payment.getPaymentStatus(), null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null))
-            .build();
+                   .build();
     }
 
     @Override
@@ -91,4 +94,15 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
                    .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
                    .build();
     }
+
+    @Override
+    @NotNull
+    public SpiResponse<SpiConfirmationCodeCheckingResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiConfirmationCode spiConfirmationCode, @NotNull SpiPeriodicPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("PeriodicPaymentSpi#checkConfirmationCode: contextData {}, spiConfirmationCode{}, spiPeriodicPayment {}, aspspConsentData {}", contextData, spiConfirmationCode.getConfirmationCode(), payment, aspspConsentDataProvider.loadAspspConsentData());
+
+        return SpiResponse.<SpiConfirmationCodeCheckingResponse>builder()
+                   .payload(new SpiConfirmationCodeCheckingResponse(ScaStatus.FINALISED))
+                   .build();
+    }
+
 }

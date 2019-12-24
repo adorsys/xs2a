@@ -68,15 +68,12 @@ public class SpiToXs2aAccountAccessMapper {
 
         UnaryOperator<List<AccountReference>> modifier = list -> list == null ? null : Collections.emptyList();
 
-        return new AdditionalInformationAccess(modifier.apply(info.getOwnerName()), modifier.apply(info.getOwnerAddress()));
+        return new AdditionalInformationAccess(modifier.apply(info.getOwnerName()));
     }
 
     private AdditionalInformationAccess mapToAdditionalInformationAccess(SpiAdditionalInformationAccess spiAdditionalInformationAccess) {
         return Optional.ofNullable(spiAdditionalInformationAccess)
-                   .map(info -> new AdditionalInformationAccess(
-                       spiToXs2aAccountReferenceMapper.mapToXs2aAccountReferences(info.getOwnerName()),
-                       spiToXs2aAccountReferenceMapper.mapToXs2aAccountReferences(info.getOwnerAddress())
-                   ))
+                   .map(info -> new AdditionalInformationAccess(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReferences(info.getOwnerName())))
                    .orElse(null);
     }
 }

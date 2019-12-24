@@ -83,10 +83,10 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     public void exportConsentsByTpp_success() {
         // Given
         when(piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER,
-            CREATION_DATE_FROM,
-            CREATION_DATE_TO,
-            psuIdData,
-            SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+                                                                                              CREATION_DATE_FROM,
+                                                                                              CREATION_DATE_TO,
+                                                                                              psuIdData,
+                                                                                              SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
@@ -109,10 +109,10 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     public void exportConsentsByTpp_success_nullInstanceId() {
         // Given
         when(piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER,
-            CREATION_DATE_FROM,
-            CREATION_DATE_TO,
-            psuIdData,
-            DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+                                                                                              CREATION_DATE_FROM,
+                                                                                              CREATION_DATE_TO,
+                                                                                              psuIdData,
+                                                                                              DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
@@ -177,9 +177,9 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     public void exportConsentsByPsu_success() {
         // Given
         when(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
-            CREATION_DATE_FROM,
-            CREATION_DATE_TO,
-            SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+                                                                                      CREATION_DATE_FROM,
+                                                                                      CREATION_DATE_TO,
+                                                                                      SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
@@ -202,9 +202,9 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     public void exportConsentsByPsu_success_nullInstanceId() {
         // Given
         when(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
-            CREATION_DATE_FROM,
-            CREATION_DATE_TO,
-            DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+                                                                                      CREATION_DATE_FROM,
+                                                                                      CREATION_DATE_TO,
+                                                                                      DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
@@ -269,9 +269,9 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     public void exportConsentsByAccountId_success() {
         // Given
         when(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
-            CREATION_DATE_FROM,
-            CREATION_DATE_TO,
-            SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+                                                                                           CREATION_DATE_FROM,
+                                                                                           CREATION_DATE_TO,
+                                                                                           SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
@@ -294,9 +294,9 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     public void exportConsentsByAccountId__success_nullInstanceId() {
         // Given
         when(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
-            CREATION_DATE_FROM,
-            CREATION_DATE_TO,
-            DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+                                                                                           CREATION_DATE_FROM,
+                                                                                           CREATION_DATE_TO,
+                                                                                           DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
@@ -359,15 +359,15 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     private PsuIdData buildPsuIdData(String psuId) {
-        return new PsuIdData(psuId, null, null, null);
+        return new PsuIdData(psuId, null, null, null, null);
     }
 
     private PsuIdData buildEmptyPsuIdData() {
-        return new PsuIdData(null, null, null, null);
+        return new PsuIdData(null, null, null, null, null);
     }
 
     private PsuData buildPsuData() {
-        return new PsuData(PSU_ID, null, null, null);
+        return new PsuData(PSU_ID, null, null, null, null);
     }
 
 

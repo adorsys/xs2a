@@ -105,16 +105,14 @@ public class ConsentModelMapper {
                                 mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
                                 mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2()),
                                 mapToAccountAccessTypeFromAvailableAccountsWithBalance(acs.getAvailableAccountsWithBalance()),
-                                mapToAdditionalInformationAccess(acs.getAdditionalAccountInformation())
+                                mapToAdditionalInformationAccess(acs.getAdditionalInformation())
                             ))
                    .orElse(null);
     }
 
     private de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess mapToAdditionalInformationAccess(AdditionalInformationAccess additionalInformationAccess) {
         return Optional.ofNullable(additionalInformationAccess)
-                   .filter(info -> aspspProfileService.isAccountOwnerInformationSupported())
-                   .map(info -> new de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess(mapToXs2aAccountReferencesOrDefault(info.getOwnerName(), null),
-                                                                                                  mapToXs2aAccountReferencesOrDefault(info.getOwnerAddress(), null)))
+                   .map(info -> new de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess(mapToXs2aAccountReferencesOrDefault(info.getOwnerName(), null)))
                    .orElse(null);
     }
 
@@ -147,7 +145,7 @@ public class ConsentModelMapper {
                                 )
                             );
 
-                            mappedAccountAccess.setAdditionalAccountInformation(mapToAdditionalInformationAccess(access.getAdditionalInformationAccess()));
+                            mappedAccountAccess.setAdditionalInformation(mapToAdditionalInformationAccess(access.getAdditionalInformationAccess()));
 
                             return mappedAccountAccess;
                         }
@@ -163,7 +161,6 @@ public class ConsentModelMapper {
                        }
                        AdditionalInformationAccess informationAccess = new AdditionalInformationAccess();
                        informationAccess.setOwnerName(accountModelMapper.mapToAccountReferences(info.getOwnerName()));
-                       informationAccess.setOwnerAddress(accountModelMapper.mapToAccountReferences(info.getOwnerAddress()));
                        return informationAccess;
                    })
                    .orElse(null);
@@ -220,6 +217,11 @@ public class ConsentModelMapper {
             Optional.ofNullable(body.get("scaAuthenticationData"))
                 .map(o -> (String) o)
                 .ifPresent(updatePsuData::setScaAuthenticationData);
+
+            Optional.ofNullable(body.get("confirmationCode"))
+                .map(o -> (String) o)
+                .ifPresent(updatePsuData::setConfirmationCode);
+
         } else {
             updatePsuData.setUpdatePsuIdentification(true);
         }
@@ -251,6 +253,9 @@ public class ConsentModelMapper {
 
             Optional.ofNullable(body.get("scaAuthenticationData"))
                 .ifPresent(authData -> request.setScaAuthenticationData((String) authData));
+
+            Optional.ofNullable(body.get("confirmationCode"))
+                .ifPresent(code -> request.setConfirmationCode((String) code));
         } else {
             request.setUpdatePsuIdentification(true);
         }

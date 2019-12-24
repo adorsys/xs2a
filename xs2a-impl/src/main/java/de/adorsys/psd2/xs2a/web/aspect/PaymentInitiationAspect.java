@@ -58,7 +58,7 @@ public class PaymentInitiationAspect extends AbstractLinkAspect<PaymentControlle
 
             body.setLinks(new PaymentInitiationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
                                                      redirectIdService,
-                                                     requestParameters, body, explicitMethod, signingBasketModeActive, getScaRedirectFlow()));
+                                                     requestParameters, body, explicitMethod, signingBasketModeActive, getScaRedirectFlow(), isAuthorisationConfirmationRequestMandated()));
         }
         return result;
     }

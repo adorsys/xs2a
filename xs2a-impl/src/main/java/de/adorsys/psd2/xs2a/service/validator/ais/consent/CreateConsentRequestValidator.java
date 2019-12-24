@@ -16,6 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -27,11 +30,13 @@ import de.adorsys.psd2.xs2a.service.validator.SupportedAccountReferenceValidator
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.BooleanUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -92,6 +97,9 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
         if (isNotSupportedCombinedServiceIndicator(request)) {
             return ValidationResult.invalid(ErrorType.AIS_400, SESSIONS_NOT_SUPPORTED);
         }
+        if (isNotSupportedAccountOwnerInformation(request)) {
+            return ValidationResult.invalid(ErrorType.AIS_401, TppMessageInformation.buildWithCustomError(CONSENT_INVALID, "An explicit consent of ownerName is not supported."));
+        }
 
         return ValidationResult.valid();
     }
@@ -135,5 +143,24 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
     private boolean isNotSupportedCombinedServiceIndicator(CreateConsentReq request) {
         return request.isCombinedServiceIndicator()
                    && !aspspProfileService.isAisPisSessionsSupported();
+    }
+
+    private boolean isNotSupportedAccountOwnerInformation(CreateConsentReq request) {
+        Xs2aAccountAccess access = request.getAccess();
+
+        AccountAccessType allAccountsWithOwnerName = AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME;
+        boolean isConsentWithAdditionalInformation = Stream.of(isConsentWithAdditionalInformationAccess(access),
+                                                               access.getAvailableAccounts() == allAccountsWithOwnerName,
+                                                               access.getAvailableAccountsWithBalance() == allAccountsWithOwnerName,
+                                                               access.getAllPsd2() == allAccountsWithOwnerName)
+                                                         .anyMatch(BooleanUtils::isTrue);
+
+        return isConsentWithAdditionalInformation && !aspspProfileService.isAccountOwnerInformationSupported();
+    }
+
+    private boolean isConsentWithAdditionalInformationAccess(Xs2aAccountAccess access) {
+        return Optional.ofNullable(access.getAdditionalInformationAccess())
+                   .map(AdditionalInformationAccess::getOwnerName)
+                   .isPresent();
     }
 }

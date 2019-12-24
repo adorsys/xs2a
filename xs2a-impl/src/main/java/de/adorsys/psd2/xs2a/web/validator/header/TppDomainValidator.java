@@ -41,7 +41,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVA
 @AllArgsConstructor
 @Slf4j
 public class TppDomainValidator {
-    private static final String PATTERN_FOR_NORMALIZE_DOMAIN = ".*\\.(?=.*\\.)";
+    private static final String PATTERN_FOR_NORMALIZE_DOMAIN = "\\*.";
     private final ErrorBuildingService errorBuildingService;
     private final TppService tppService;
     private final RequestProviderService requestProviderService;
@@ -83,7 +83,7 @@ public class TppDomainValidator {
         try {
             String normalizedDomain = normalizeDomain(domain);
             URL url = new URL(getDomainWithProtocol(normalizedDomain));
-            if (InternetDomainName.from(url.getHost()).isUnderPublicSuffix()) {
+            if (InternetDomainName.from(url.getHost()).hasPublicSuffix()) {
                 return url;
             }
         } catch (MalformedURLException e) {

@@ -224,6 +224,7 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                                                                  EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID));
 
         List<AisConsent> oldConsentsWithExactPsuDataLists = oldConsents.stream()
+                                                                .distinct()
                                                                 .filter(c -> cmsPsuService.isPsuDataListEqual(c.getPsuDataList(), psuDataList))
                                                                 .collect(Collectors.toList());
 
@@ -392,13 +393,10 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private void setAdditionalInformationTypes(AisConsent consent, AccountAdditionalInformationAccess info) {
-        if (info == null) {
-            consent.setOwnerNameType(AdditionalAccountInformationType.NONE);
-            consent.setOwnerAddressType(AdditionalAccountInformationType.NONE);
-        } else {
-            consent.setOwnerNameType(AdditionalAccountInformationType.findTypeByList(info.getOwnerName()));
-            consent.setOwnerAddressType(AdditionalAccountInformationType.findTypeByList(info.getOwnerAddress()));
-        }
+        AdditionalAccountInformationType ownerNameType = info == null
+                                                             ? AdditionalAccountInformationType.NONE
+                                                             : AdditionalAccountInformationType.findTypeByList(info.getOwnerName());
+        consent.setOwnerNameType(ownerNameType);
     }
 
     private LocalDate adjustExpireDate(LocalDate validUntil) {

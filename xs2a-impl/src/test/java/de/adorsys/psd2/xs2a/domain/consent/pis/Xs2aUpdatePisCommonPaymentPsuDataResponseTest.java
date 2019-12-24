@@ -27,7 +27,7 @@ public class Xs2aUpdatePisCommonPaymentPsuDataResponseTest {
     @Test
     public void getAuthorisationResponseType_shouldReturnUPDATE() {
         // Given
-        PsuIdData psuData = new PsuIdData(null, null, null, null);
+        PsuIdData psuData = new PsuIdData(null, null, null, null, null);
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.RECEIVED, "some payment id", "some cancellation id", psuData);
 
         // When

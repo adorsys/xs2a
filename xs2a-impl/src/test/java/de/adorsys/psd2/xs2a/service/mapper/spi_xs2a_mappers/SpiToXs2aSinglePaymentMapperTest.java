@@ -36,6 +36,7 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 
@@ -108,7 +109,22 @@ public class SpiToXs2aSinglePaymentMapperTest {
         payment.setRemittanceInformationUnstructured("Ref. Number TELEKOM-1222");
         payment.setRequestedExecutionDate(OFFSET_DATE_TIME.toLocalDate());
         payment.setRequestedExecutionTime(OFFSET_DATE_TIME);
-        payment.setPsuDataList(Collections.singletonList(new SpiPsuData("psuId", "", "", "", "")));
+        payment.setPsuDataList(Collections.singletonList(SpiPsuData.builder()
+                                                             .psuId("psuId")
+                                                             .psuIdType("")
+                                                             .psuCorporateId("")
+                                                             .psuCorporateIdType("")
+                                                             .psuIpAddress("")
+                                                             .psuIpPort("")
+                                                             .psuUserAgent("")
+                                                             .psuGeoLocation("")
+                                                             .psuAccept("")
+                                                             .psuAcceptCharset("")
+                                                             .psuAcceptEncoding("")
+                                                             .psuAcceptLanguage("")
+                                                             .psuHttpMethod("")
+                                                             .psuDeviceId(UUID.randomUUID())
+                                                             .build()));
         payment.setStatusChangeTimestamp(OFFSET_DATE_TIME);
         return payment;
     }

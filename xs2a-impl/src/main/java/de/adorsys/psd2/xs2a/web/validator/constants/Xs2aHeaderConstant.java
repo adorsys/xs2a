@@ -29,6 +29,7 @@ public class Xs2aHeaderConstant {
     public static final String PSU_ID_TYPE = "psu-id-type";
     public static final String PSU_CORPORATE_ID = "psu-corporate-id";
     public static final String PSU_CORPORATE_ID_TYPE = "psu-corporate-id-type";
+    public static final String PSU_DEVICE_ID = "psu-device-id";
 
     public static final String TPP_REDIRECT_PREFERRED = "tpp-redirect-preferred";
     public static final String TPP_REDIRECT_URI = "tpp-redirect-uri";

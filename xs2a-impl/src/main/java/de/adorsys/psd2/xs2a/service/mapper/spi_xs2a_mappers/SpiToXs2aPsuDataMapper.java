@@ -28,7 +28,8 @@ public class SpiToXs2aPsuDataMapper {
             spiPsuData.getPsuId(),
             spiPsuData.getPsuIdType(),
             spiPsuData.getPsuCorporateId(),
-            spiPsuData.getPsuCorporateIdType()
+            spiPsuData.getPsuCorporateIdType(),
+            spiPsuData.getPsuIpAddress()
         );
     }
 }

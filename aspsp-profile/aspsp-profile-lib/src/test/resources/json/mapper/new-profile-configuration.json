@@ -56,7 +56,9 @@
       "checkTppRolesFromCertificateSupported": true,
       "aspspNotificationsSupported": [
         "NONE"
-      ]
+      ],
+      "authorisationConfirmationRequestMandated": false,
+      "authorisationConfirmationCheckByXs2a": false
     },
     "piis": {
       "piisConsentSupported": false

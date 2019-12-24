@@ -45,7 +45,7 @@ public class CmsAspspPsuConsentManagementControllerTest {
 
     private MockMvc mockMvc;
     private HttpHeaders httpHeaders = new HttpHeaders();
-    private PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null);
+    private PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
 
     @InjectMocks
     private CmsAspspPsuConsentManagementController cmsAspspPsuConsentManagementController;

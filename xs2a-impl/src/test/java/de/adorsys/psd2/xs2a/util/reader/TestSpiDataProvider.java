@@ -32,10 +32,33 @@ public class TestSpiDataProvider {
     private static final String PSU_CORPORATE_ID = "psuCorporateId";
     private static final String PSU_CORPORATE_ID_TYPE = "psuCorporateIdType";
     private static final String PSU_IP_ADDRESS = "psuIpAddress";
+    private static final String PSU_IP_PORT = "psuIpPort";
+    private static final String PSU_USER_AGENT = "psuUserAgent";
+    private static final String PSU_GEO_LOCATION = "psuGeoLocation";
+    private static final String PSU_ACCEPT = "psuAccept";
+    private static final String PSU_ACCEPT_CHARSET = "psuAcceptCharset";
+    private static final String PSU_ACCEPT_ENCODING = "psuAcceptEncoding";
+    private static final String PSU_ACCEPT_LANGUAGE = "psuAcceptLanguage";
+    private static final String PSU_HTTP_METHOD = "psuHttpMethod";
+    private static final UUID PSU_DEVICE_ID = UUID.randomUUID();
 
     public static SpiContextData getSpiContextData() {
         return new SpiContextData(
-            new SpiPsuData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS),
+            SpiPsuData.builder()
+                .psuId(PSU_ID)
+                .psuIdType(PSU_ID_TYPE)
+                .psuCorporateId(PSU_CORPORATE_ID)
+                .psuCorporateIdType(PSU_CORPORATE_ID_TYPE)
+                .psuIpAddress(PSU_IP_ADDRESS)
+                .psuIpPort(PSU_IP_PORT)
+                .psuUserAgent(PSU_USER_AGENT)
+                .psuGeoLocation(PSU_GEO_LOCATION)
+                .psuAccept(PSU_ACCEPT)
+                .psuAcceptCharset(PSU_ACCEPT_CHARSET)
+                .psuAcceptEncoding(PSU_ACCEPT_ENCODING)
+                .psuAcceptLanguage(PSU_ACCEPT_LANGUAGE)
+                .psuHttpMethod(PSU_HTTP_METHOD)
+                .psuDeviceId(PSU_DEVICE_ID).build(),
             new TppInfo(),
             X_REQUEST_ID,
             INTERNAL_REQUEST_ID,

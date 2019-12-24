@@ -49,7 +49,7 @@ public class CreatePisAuthorisationCancellationAspectTest {
 
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
-    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
+    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null, null);
     private static final Xs2aCreatePisAuthorisationRequest REQUEST =
         new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, EMPTY_PSU_DATA, PAYMENT_PRODUCT, SINGLE, null);
 

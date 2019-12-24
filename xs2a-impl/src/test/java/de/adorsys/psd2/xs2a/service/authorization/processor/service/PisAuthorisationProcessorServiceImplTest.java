@@ -82,7 +82,7 @@ import static org.mockito.Mockito.when;
 public class PisAuthorisationProcessorServiceImplTest {
     private static final String TEST_PAYMENT_ID = "12345676";
     private static final String TEST_AUTHORISATION_ID = "assddsff";
-    private static final PsuIdData TEST_PSU_DATA = new PsuIdData("test-user", null, null, null);
+    private static final PsuIdData TEST_PSU_DATA = new PsuIdData("test-user", null, null, null, null);
     private static final ScaApproach TEST_SCA_APPROACH = ScaApproach.EMBEDDED;
     private static final ScaStatus TEST_SCA_STATUS = ScaStatus.RECEIVED;
     private static final String TEST_PAYMENT_PRODUCT = "sepa- credit-transfers";

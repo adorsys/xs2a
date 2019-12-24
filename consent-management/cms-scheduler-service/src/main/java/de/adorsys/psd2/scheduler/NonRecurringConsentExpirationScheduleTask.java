@@ -44,6 +44,7 @@ public class NonRecurringConsentExpirationScheduleTask {
         List<AisConsent> consents = aisConsentJpaRepository.findUsedNonRecurringConsents(EnumSet.of(RECEIVED, VALID),
                                                                                          LocalDate.now())
                                         .stream()
+                                        .distinct()
                                         .map(this::expireConsent)
                                         .collect(Collectors.toList());
 

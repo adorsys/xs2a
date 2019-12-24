@@ -48,10 +48,7 @@ public class Xs2aToSpiAccountAccessMapper {
 
     private SpiAdditionalInformationAccess mapToSpiAdditionalInformationAccess(AdditionalInformationAccess additionalInformationAccess) {
         return Optional.ofNullable(additionalInformationAccess)
-                   .map(info -> new SpiAdditionalInformationAccess(
-                       xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferencesOrDefault(info.getOwnerName(), null),
-                       xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferencesOrDefault(info.getOwnerAddress(), null)
-                   ))
+                   .map(info -> new SpiAdditionalInformationAccess(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferencesOrDefault(info.getOwnerName(), null)))
                    .orElse(null);
     }
 }

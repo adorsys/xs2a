@@ -15,7 +15,6 @@
  */
 
 
-
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
@@ -75,7 +74,7 @@ public class Xs2aAisConsentServiceTest {
     private static final ScaApproach SCA_APPROACH = ScaApproach.DECOUPLED;
     private static final CreateConsentReq CREATE_CONSENT_REQ = buildCreateConsentReq();
     private static final CreateAisConsentRequest CREATE_AIS_CONSENT_REQUEST = new CreateAisConsentRequest();
-    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
+    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
     private static final TppInfo TPP_INFO = buildTppInfo();
     private static final AisAccountConsent AIS_ACCOUNT_CONSENT = new AisAccountConsent();
     private static final AccountConsent ACCOUNT_CONSENT = createConsent(CONSENT_ID);

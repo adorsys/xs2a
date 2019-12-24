@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,15 +30,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PisEndpointAccessCheckerService extends EndpointAccessChecker {
     private final PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
-
+    private final AspspProfileServiceWrapper aspspProfileService;
     /**
      * Checks whether endpoint is accessible for current authorisation
      *
      * @param authorisationId   ID of authorisation process
      * @param authorisationType payment initiation or cancellation
+     * @param confirmationCodeReceived   true if confirmationCode was received in request body
      * @return <code>true</code> if accessible. <code>false</code> otherwise.
      */
-    public boolean isEndpointAccessible(String authorisationId, PaymentAuthorisationType authorisationType) {
+    public boolean isEndpointAccessible(String authorisationId, PaymentAuthorisationType authorisationType, boolean confirmationCodeReceived) {
+        boolean confirmationCodeCase = confirmationCodeReceived
+                                           && aspspProfileService.isAuthorisationConfirmationRequestMandated();
+
         CmsResponse<GetPisAuthorisationResponse> authorisationResponse = null;
         if (authorisationType == PaymentAuthorisationType.CREATED) {
             authorisationResponse = pisAuthorisationServiceEncrypted.getPisAuthorisationById(authorisationId);
@@ -47,7 +52,7 @@ public class PisEndpointAccessCheckerService extends EndpointAccessChecker {
 
         return Optional.ofNullable(authorisationResponse)
                    .map(CmsResponse::getPayload)
-                   .map(p -> isAccessible(p.getChosenScaApproach(), p.getScaStatus()))
+                   .map(p -> isAccessible(p.getChosenScaApproach(), p.getScaStatus(), confirmationCodeCase))
                    .orElse(true);
     }
 }

@@ -44,7 +44,7 @@ public class EmbeddedAisAuthorizationServiceTest {
     private static final ScaStatus STARTED_SCA_STATUS = ScaStatus.RECEIVED;
     private static final ScaStatus STARTED_XS2A_SCA_STATUS = ScaStatus.RECEIVED;
     private static final String PSU_ID = "Test psuId";
-    private static final PsuIdData PSU_DATA = new PsuIdData(PSU_ID, null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData(PSU_ID, null, null, null, null);
     private static final String CONSENT_ID = "Test consentId";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final String AUTHORISATION_ID = "Test authorisationId";
@@ -178,7 +178,7 @@ public class EmbeddedAisAuthorizationServiceTest {
 
     @Test
     public void createConsentAuthorizationNoPsuIdentification_Success() {
-        PsuIdData psuIdData = new PsuIdData(null, null, null, null);
+        PsuIdData psuIdData = new PsuIdData(null, null, null, null, null);
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, psuIdData))
             .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));

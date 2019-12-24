@@ -49,6 +49,7 @@ public class CmsPsuAisControllerTest {
     private static final String PSU_ID_TYPE = "psu id type";
     private static final String PSU_CORPORATE_ID = "psu corporate id";
     private static final String PSU_CORPORATE_ID_TYPE = "psu corporate id type";
+    private static final String PSU_IP_ADDRESS = "psu ip address";
     private static final String INSTANCE_ID = "instance id";
     private static final String SCA_STATUS_RECEIVED = "RECEIVED";
     private static final String NOK_REDIRECT_URI = "http://everything_is_bad.html";
@@ -66,7 +67,8 @@ public class CmsPsuAisControllerTest {
 
     @Before
     public void init() {
-        psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+        //TODO:#1115 Ask team what to do
+        psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, null);
         authenticationDataHolder = new AuthenticationDataHolder(METHOD_ID, AUTHENTICATION_DATA);
     }
 

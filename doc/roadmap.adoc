@@ -15,39 +15,11 @@ No backward compatibility with 4.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 4.x|version 5.x
 
-|06.12.2019|4.6|5.6
-
-a|
-
-a|* Bugfix: Logging Context isn't logging correctly in case of PSU_CREDENTIALS_INVALID error
-
-* Create an opportunity to disable IBAN validation
-
-* Remove MockContentCachingWrappingFilter and properly enable XS2A filters for integration tests
-
-* Fix syntax errors in internal CMS API
-
-* Add missing patch for consent status partiallyAuthorised in yaml
-
-a|* All fixes from v.4.6
-
-* Update to Java 11
-
-* Recoverability of xs2a remote components
-
-* Prevent modification of an established consent
-
-* Update Digital Signature functionality
-
-* Support Implicit Subscription for Resource Status Notification
-
-* Remove unused column "tan" in pis_consent_authorization
-
 |20.12.2019|4.7|5.7
 
 a|
 
-a|
+a|* Bugfix: Domain Validation failure on certificate compare
 
 a|* All fixes from v.4.7
 
@@ -55,31 +27,35 @@ a|* All fixes from v.4.7
 
 * Support Confirmation of Authorisation
 
+* Store and export from CMS PSU-related headers
+
+* Remove deprecated constructor in SpiGetPaymentStatusResponse
+
+|17.01.2020|4.8|5.8
+
+a|
+
+a|* Update xs2a according to BG Specification V1_3_4Errata_20191206
+
+a|* All fixes and updates from v.4.8
+
 * Logging of RequestId/InternalRequestId via slf4j MDC
 
 * Move tests for aspsp consent data to AspspConsentDataServiceTest
 
 * Move AuthenticationObject to xs2a-core
 
+|31.01.2020|4.9|5.9
+
+a|
+
+a|
+
+a|* Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
+
 * Handle errors only for XS2A endpoints
 
 * Replace deprecated description property in swagger @Api annotation in CMS and Profile controllers
-
-* Remove deprecated constructor in SpiGetPaymentStatusResponse
-
-* Bugfix: Change error code for negative response when consents aren't deleted
-
-|17.01.2020|4.8|5.8
-
-a|
-
-a|
-
-a|* All fixes from v.4.8
-
-* Add a new optional header TPP-Rejection-NoFunds-Preferred
-
-* Create Resource Notification Push Service
 
 * SPI-API javadoc generation with lombok
 
@@ -87,13 +63,27 @@ a|* All fixes from v.4.8
 
 * Refactoring of payment saving
 
+|14.02.2020|4.10|5.10
+
+a|
+
+a|
+
+a|* Add a new optional header TPP-Rejection-NoFunds-Preferred
+
+* Create Resource Notification Push Service
+
 |Further development| |
 
 a|
 
 a|
 
-a|* _Support of Signing Basket:_
+a|* Update to Java 11
+
+* Support of Card Accounts.
+
+* _Support of Signing Basket:_
 
 - Create Signing Basket in CMS
 

@@ -55,7 +55,7 @@ public class AspspApiSwaggerConfig {
     private ApiInfo getApiInfo() {
         return new ApiInfoBuilder()
                    .title("XS2A CMS ASPSP REST API")
-                   .contact(new Contact("adorsys GmbH & Co. KG", "https://adorsys.de/en/psd2", "psd2@adorsys.de"))
+                   .contact(new Contact("adorsys GmbH & Co. KG", "https://adorsys-platform.de/solutions/", "psd2@adorsys.de"))
                    .version(buildProperties.getVersion() + " " + buildProperties.get("build.number"))
                    .license("Apache License 2.0")
                    .licenseUrl(licenseUrl)

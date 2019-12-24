@@ -79,8 +79,8 @@ public class PaymentServiceTest {
     private static final String WRONG_PAYMENT_ID = "777";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String AUTHORISATION = "Bearer 1111111";
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
-    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null, null);
+    private static final SpiPsuData SPI_PSU_DATA = SpiPsuData.builder().build();
     private static final MessageError VALIDATION_ERROR = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
     private static final String JSON_MEDIA_TYPE = ContentType.JSON.getType();
@@ -689,7 +689,7 @@ public class PaymentServiceTest {
 
     private PaymentInitiationParameters buildInvalidPaymentInitiationParameters() {
         PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
-        requestParameters.setPsuData(new PsuIdData(null, null, null, null));
+        requestParameters.setPsuData(new PsuIdData(null, null, null, null, null));
         return requestParameters;
     }
 

@@ -162,8 +162,6 @@ public class ConsentModelMapperTest {
     @Test
     public void mapToCreateConsentReq_AdditionalAccountInformation() {
         //Given
-        when(aspspProfileService.isAccountOwnerInformationSupported())
-            .thenReturn(true);
         when(xs2aObjectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
         when(xs2aObjectMapper.convertValue(buildAdditionalInformationAccountReference(), AccountReference.class)).thenReturn(buildAdditionalInformationXs2aAccountReference());
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
@@ -175,44 +173,11 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToCreateConsentReq_AdditionalAccountInformationNotSupported() {
-        //Given
-        when(aspspProfileService.isAccountOwnerInformationSupported())
-            .thenReturn(false);
-        when(xs2aObjectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
-        Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
-        CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqNoAdditionalAccountInformation.json", CreateConsentReq.class);
-        //When
-        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null, null);
-        //Then
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void mapToCreateConsentReq_AdditionalAccountInformationNoOwnerName() {
-        //Given
-        when(aspspProfileService.isAccountOwnerInformationSupported())
-            .thenReturn(true);
-        when(xs2aObjectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
-        when(xs2aObjectMapper.convertValue(buildAdditionalInformationAccountReference(), AccountReference.class)).thenReturn(buildAdditionalInformationXs2aAccountReference());
-        Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
-        consent.getAccess().getAdditionalAccountInformation().setOwnerName(null);
-        CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAdditionalAccountInformationNoOwnerName.json", CreateConsentReq.class);
-        //When
-        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null, null);
-        //Then
-        assertEquals(expected, actual);
-    }
-
-    @Test
     public void mapToCreateConsentReq_AdditionalAccountInformationOwnerNameEmpty() {
         //Given
-        when(aspspProfileService.isAccountOwnerInformationSupported())
-            .thenReturn(true);
         when(xs2aObjectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
-        when(xs2aObjectMapper.convertValue(buildAdditionalInformationAccountReference(), AccountReference.class)).thenReturn(buildAdditionalInformationXs2aAccountReference());
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
-        consent.getAccess().getAdditionalAccountInformation().setOwnerName(Collections.emptyList());
+        consent.getAccess().getAdditionalInformation().setOwnerName(Collections.emptyList());
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAdditionalAccountInformationOwnerNameEmpty.json", CreateConsentReq.class);
         //When
         CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null, null);
