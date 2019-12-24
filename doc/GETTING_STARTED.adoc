@@ -106,9 +106,6 @@ See some test scripts [for Postman](../scripts/tests/postman) or [Insomnia](../s
 
 - Free disk space 6GB*.
 
-[small]
-
-
 NOTE: for all components that need to build install and run application
 
 
