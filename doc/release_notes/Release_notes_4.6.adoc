@@ -1,3 +1,38 @@
 = Release notes v.4.6
 
 == Table of Contents
+* IBAN validator refactoring
+* Bugfix: Logging Context isn't logging correctly in case of PSU_CREDENTIALS_INVALID error
+* Refactoring: Removed MockContentCachingWrappingFilter
+* Refactoring: Fixed syntax errors in CMS APIs
+* Deprecated endpoint for getting information about TPP by TPP ID in CMS-ASPSP-API
+* Bugfix: added missing `partiallyAuthorised` consent status
+
+
+== IBAN validator refactoring
+
+From now on, IBAN validator is separate class. Added opportunity to disable it on demand for test purposes.
+To disable IBAN validation set flag `iban.validation.enabled` as FALSE in application.properties (by default validator is enabled).
+
+== Bugfix: Logging Context isn't logging correctly in case of PSU_CREDENTIALS_INVALID error
+
+From now on, authorisation status will be correctly written to Logging Context during the failing `Update PSU data` process for payment initiation/payment cancellation.
+
+
+== Refactoring: Removed MockContentCachingWrappingFilter
+
+From now on, integration tests in XS2A are working properly with all XS2A filters and no longer rely on previously existing `MockContentCachingWrappingFilter`.
+
+== Refactoring: Fixed syntax errors in CMS APIs
+
+From now on, all path parameters in Swagger definitions of endpoints from `consent-aspsp-web`, `consent-psu-web` and `consent-xs2a-web` modules are correctly marked as required.
+
+== Deprecated endpoint for getting information about TPP by TPP ID in CMS-ASPSP-API
+
+Endpoint from `cms-aspsp-api` for getting information about TPP by its authorisation number with path parameter (`GET aspsp-api/v1/tpp/{tpp-id}`) has been deprecated, as the value passed in path parameter is not being used.
+New endpoint without the path parameter (`GET aspsp-api/v1/tpp`) should be used instead.
+Both endpoints require mandatory `tpp-authorisation-number` header to be passed with proper TPP authorisation number.
+
+== Bugfix: added missing `partiallyAuthorised` consent status
+
+From now on, `partiallyAuthorised` consent status will be correctly returned to the TPP in Get consent (`GET /v1/consents/{consentId}`) and Get consent status (`GET /v1/consents/{consentId}/status`) responses.
