@@ -1,3 +1,10 @@
 = Release notes v.4.7
 
 == Table of Contents
+* Bugfix: Domain Validation failure on certificate compare
+
+
+== Bugfix: Domain Validation failure on certificate compare
+
+From now on, it is possible to use links to pages in TPP URI headers,
+for example: http:\\test-bank.com\page.html. In this URI test-bank.com will be validated.
