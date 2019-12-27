@@ -44,17 +44,16 @@ public class AspspDataServiceInternalTest {
     @Mock
     private AspspConsentDataRepository aspspConsentDataRepository;
 
-    private AspspConsentDataEntity aspspConsentDataEntity;
-    private final String EXTERNAL_CONSENT_ID = "UjXVCgkxoLmfueAWXkT4dZrAMdaZMBMUFckGwTgY4sV_ZSG9MeQUuGwve3cT85V5sAD6jPgqqholJCbEQmjZIQ==_=_bS6p6XvTWI";
-    private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "5o5Wldx-YSWcc2l9iWBmTFQA5W5RGQocLAiyj2W6dRwuTkoi-tFw54Sv5qXjLeHd0gdfoYGRQSQPzXco-i5-YQ==_=_bS6p6XvTWI";
-    private final String CONSENT_ID_NOT_ENCRYPTED = "4b112130-6a96-4941-a220-2da8a4af2c63";
+    private static final String EXTERNAL_CONSENT_ID = "UjXVCgkxoLmfueAWXkT4dZrAMdaZMBMUFckGwTgY4sV_ZSG9MeQUuGwve3cT85V5sAD6jPgqqholJCbEQmjZIQ==_=_bS6p6XvTWI";
+    private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "5o5Wldx-YSWcc2l9iWBmTFQA5W5RGQocLAiyj2W6dRwuTkoi-tFw54Sv5qXjLeHd0gdfoYGRQSQPzXco-i5-YQ==_=_bS6p6XvTWI";
+    private static final String CONSENT_ID_NOT_ENCRYPTED = "4b112130-6a96-4941-a220-2da8a4af2c63";
     private static final String CONSENT_DATA = "test data";
     private static final byte[] ENCRYPTED_CONSENT_DATA = CONSENT_DATA.getBytes();
-    VerificationMode once = times(1);
+    private VerificationMode once = times(1);
 
     @Before
     public void setUp() {
-        aspspConsentDataEntity = buildApspConsentDataEntity();
+        AspspConsentDataEntity aspspConsentDataEntity = buildApspConsentDataEntity();
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
         when(securityDataService.encryptConsentData(EXTERNAL_CONSENT_ID, ENCRYPTED_CONSENT_DATA)).thenReturn(Optional.of(new EncryptedData(ENCRYPTED_CONSENT_DATA)));
@@ -70,22 +69,30 @@ public class AspspDataServiceInternalTest {
 
     @Test
     public void checkIsConsentIdEncryptedRead() {
+        // Given
         aspspDataServiceInternal.readAspspConsentData(EXTERNAL_CONSENT_ID);
         verify(securityDataService, once).decryptConsentData(EXTERNAL_CONSENT_ID, ENCRYPTED_CONSENT_DATA);
         verify(securityDataService, once).decryptId(EXTERNAL_CONSENT_ID);
 
+        // When
         aspspDataServiceInternal.readAspspConsentData(CONSENT_ID_NOT_ENCRYPTED);
+
+        // Then
         verify(securityDataService, never()).decryptConsentData(CONSENT_ID_NOT_ENCRYPTED, ENCRYPTED_CONSENT_DATA);
         verify(securityDataService, never()).decryptId(CONSENT_ID_NOT_ENCRYPTED);
     }
 
     @Test
     public void checkIsConsentIdEncryptedUpdate() {
+        // Given
         aspspDataServiceInternal.updateAspspConsentData(buildAspspConsentData(ENCRYPTED_CONSENT_DATA, EXTERNAL_CONSENT_ID));
         verify(securityDataService, once).decryptId(EXTERNAL_CONSENT_ID);
         verify(securityDataService, once).encryptConsentData(EXTERNAL_CONSENT_ID, ENCRYPTED_CONSENT_DATA);
 
+        // When
         aspspDataServiceInternal.updateAspspConsentData(buildAspspConsentData(ENCRYPTED_CONSENT_DATA, CONSENT_ID_NOT_ENCRYPTED));
+
+        // Then
         verify(securityDataService, never()).decryptId(CONSENT_ID_NOT_ENCRYPTED);
         verify(securityDataService, never()).encryptConsentData(CONSENT_ID_NOT_ENCRYPTED, ENCRYPTED_CONSENT_DATA);
     }
@@ -93,9 +100,9 @@ public class AspspDataServiceInternalTest {
     @Test
     public void readAspspConsentDataSuccess() {
         // When
-        // Then
         Optional<AspspConsentData> aspspConsentData = aspspDataServiceInternal.readAspspConsentData(EXTERNAL_CONSENT_ID);
-        // Assert
+
+        // Then
         assertTrue(aspspConsentData.isPresent());
         assertEquals(aspspConsentData.get().getConsentId(), EXTERNAL_CONSENT_ID);
         assertEquals(aspspConsentData.get().getAspspConsentData(), ENCRYPTED_CONSENT_DATA);
@@ -104,28 +111,107 @@ public class AspspDataServiceInternalTest {
     @Test
     public void readAspspConsentDataFail() {
         // When
-        // Then
         Optional<AspspConsentData> aspspConsentData = aspspDataServiceInternal.readAspspConsentData(EXTERNAL_CONSENT_ID_NOT_EXIST);
-        // Assert
+
+        // Then
         assertFalse(aspspConsentData.isPresent());
     }
 
     @Test
     public void updateAspspConsentDataSuccess() {
         // When
-        // Then
         boolean updated = aspspDataServiceInternal.updateAspspConsentData(buildAspspConsentData(ENCRYPTED_CONSENT_DATA, EXTERNAL_CONSENT_ID));
-        // Assert
+
+        // Then
         assertTrue(updated);
     }
 
     @Test
     public void updateAspspConsentDataFail() {
         // When
-        // Then
         boolean updated = aspspDataServiceInternal.updateAspspConsentData(buildAspspConsentData(null, EXTERNAL_CONSENT_ID));
-        // Assert
+
+        // Then
         assertFalse(updated);
+    }
+
+    @Test
+    public void updateAspspConsentDataFail_emptyData() {
+        // When
+        boolean updated = aspspDataServiceInternal.updateAspspConsentData(buildAspspConsentData(null, ""));
+
+        // Then
+        assertFalse(updated);
+    }
+
+    @Test
+    public void updateAspspConsentDataFail_cant_decrypt_consent_id() {
+        // Given
+        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.empty());
+
+        // When
+        boolean updated = aspspDataServiceInternal.updateAspspConsentData(buildAspspConsentData(ENCRYPTED_CONSENT_DATA, EXTERNAL_CONSENT_ID));
+
+        // Then
+        assertFalse(updated);
+    }
+
+    @Test
+    public void updateAspspConsentDataFail_cant_encrypt_aspspConsentData() {
+        // Given
+        when(securityDataService.encryptConsentData(EXTERNAL_CONSENT_ID, ENCRYPTED_CONSENT_DATA)).thenReturn(Optional.empty());
+
+        // When
+        boolean updated = aspspDataServiceInternal.updateAspspConsentData(buildAspspConsentData(ENCRYPTED_CONSENT_DATA, EXTERNAL_CONSENT_ID));
+
+        // Then
+        assertFalse(updated);
+    }
+
+    @Test
+    public void deleteAspspConsentDataSuccess() {
+        // Given
+        when(aspspConsentDataRepository.existsById(EXTERNAL_CONSENT_ID)).thenReturn(true);
+
+        // When
+        boolean deleted = aspspDataServiceInternal.deleteAspspConsentData(EXTERNAL_CONSENT_ID);
+
+        // Then
+        assertTrue(deleted);
+    }
+
+    @Test
+    public void deleteAspspConsentDataFail_no_aspspConsentData() {
+        // When
+        boolean deleted = aspspDataServiceInternal.deleteAspspConsentData(EXTERNAL_CONSENT_ID);
+
+        // Then
+        assertFalse(deleted);
+    }
+
+
+    @Test
+    public void deleteAspspConsentDataFail_no_decrypted_id() {
+        // Given
+        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.empty());
+
+        // When
+        boolean deleted = aspspDataServiceInternal.deleteAspspConsentData(EXTERNAL_CONSENT_ID);
+
+        // Then
+        assertFalse(deleted);
+    }
+
+    @Test
+    public void deleteAspspConsentDataFail_consentId_not_encrypted() {
+        // Given
+        when(securityDataService.isConsentIdEncrypted(EXTERNAL_CONSENT_ID)).thenReturn(false);
+
+        // When
+        boolean deleted = aspspDataServiceInternal.deleteAspspConsentData(EXTERNAL_CONSENT_ID);
+
+        // Then
+        assertFalse(deleted);
     }
 
     private AspspConsentDataEntity buildApspConsentDataEntity() {
