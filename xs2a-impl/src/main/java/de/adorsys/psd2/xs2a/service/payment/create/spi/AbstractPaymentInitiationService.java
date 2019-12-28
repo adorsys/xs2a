@@ -16,14 +16,14 @@
 
 package de.adorsys.psd2.xs2a.service.payment.create.spi;
 
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.ErrorPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -62,8 +62,8 @@ public abstract class AbstractPaymentInitiationService<T extends CommonPayment, 
         return mapToXs2aResponse(spiResponse.getPayload(), aspspConsentDataProvider, payment.getPaymentType());
     }
 
-    abstract SpiResponse<R> initiateSpiPayment(SpiContextData spiContextData, T payment, String paymentProduct,
-                                               InitialSpiAspspConsentDataProvider aspspConsentDataProvider);
+    protected abstract SpiResponse<R> initiateSpiPayment(SpiContextData spiContextData, T payment, String paymentProduct,
+                                                         InitialSpiAspspConsentDataProvider aspspConsentDataProvider);
 
-    abstract PaymentInitiationResponse mapToXs2aResponse(R spiResponse, InitialSpiAspspConsentDataProvider provider, PaymentType paymentType);
+    protected abstract PaymentInitiationResponse mapToXs2aResponse(R spiResponse, InitialSpiAspspConsentDataProvider provider, PaymentType paymentType);
 }

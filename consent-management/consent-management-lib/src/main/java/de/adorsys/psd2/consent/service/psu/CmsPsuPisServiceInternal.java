@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service.psu;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.pis.CmsCommonPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
@@ -32,6 +33,7 @@ import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.specification.PisAuthorisationSpecification;
 import de.adorsys.psd2.consent.repository.specification.PisPaymentDataSpecification;
 import de.adorsys.psd2.consent.service.CommonPaymentDataService;
+import de.adorsys.psd2.consent.service.CorePaymentsConvertService;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
@@ -69,6 +71,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private final PisPaymentDataSpecification pisPaymentDataSpecification;
     private final CmsPsuService cmsPsuService;
     private final CmsPsuAuthorisationMapper cmsPsuPisAuthorisationMapper;
+    private final CorePaymentsConvertService corePaymentsConvertService;
 
     @Override
     @Transactional
@@ -120,7 +123,9 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                 return Optional.of(cmsPsuPisMapper.mapToCmsPayment(list));
             } else {
                 return commonPaymentDataService.getPisCommonPaymentData(paymentId, instanceId)
-                           .map(cmsPsuPisMapper::mapToCmsPayment);
+                           .map(cmsPsuPisMapper::mapToCmsPayment)
+                           .map(payment -> (CmsCommonPayment)payment)
+                           .map(corePaymentsConvertService::expandCommonPaymentWithCorePayment);
             }
         }
         log.info("Payment ID: [{}], Instance ID: [{}]. Get payment failed, because given PSU data and PSU data stored in payment are not equal",

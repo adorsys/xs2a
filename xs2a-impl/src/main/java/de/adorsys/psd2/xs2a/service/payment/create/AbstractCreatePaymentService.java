@@ -41,9 +41,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PAYMENT_FAILED;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 
 @RequiredArgsConstructor
 public abstract class AbstractCreatePaymentService<P extends CommonPayment, S extends PaymentInitiationService<P>> implements CreatePaymentService {
@@ -64,7 +64,7 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
      * @return Response containing information about created common payment or corresponding error
      */
     @Override
-    public ResponseObject<PaymentInitiationResponse> createPayment(Object payment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
+    public ResponseObject<PaymentInitiationResponse> createPayment(byte[] payment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
         PsuIdData psuData = paymentInitiationParameters.getPsuData();
 
         P paymentRequest = getPaymentRequest(payment, paymentInitiationParameters);
@@ -95,8 +95,6 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
         InitialSpiAspspConsentDataProvider aspspConsentDataProvider = response.getAspspConsentDataProvider();
         aspspConsentDataProvider.saveWith(externalPaymentId);
 
-        updateCommonPayment(paymentRequest, paymentInitiationParameters, response, pisCommonPayment.getPaymentId());
-
         response.setPaymentId(externalPaymentId);
 
         boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred(), response.isMultilevelScaRequired());
@@ -119,8 +117,5 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
                    .build();
     }
 
-    protected abstract P getPaymentRequest(Object payment, PaymentInitiationParameters paymentInitiationParameters);
-
-    protected abstract P updateCommonPayment(P paymentRequest, PaymentInitiationParameters paymentInitiationParameters,
-                                             PaymentInitiationResponse response, String paymentId);
+    protected abstract P getPaymentRequest(byte[] payment, PaymentInitiationParameters paymentInitiationParameters);
 }

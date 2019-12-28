@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.pis.CmsCommonPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
@@ -103,6 +104,8 @@ public class CmsPsuPisServiceInternalTest {
     private PisAuthorisationSpecification pisAuthorisationSpecification;
     @Mock
     private PisPaymentDataSpecification pisPaymentDataSpecification;
+    @Mock
+    private CorePaymentsConvertService corePaymentsConvertService;
 
     private CmsPayment cmsPayment;
     private AuthenticationDataHolder authenticationDataHolder;
@@ -209,7 +212,12 @@ public class CmsPsuPisServiceInternalTest {
         when(pisPaymentDataRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(Optional.of(pisCommonPaymentData));
+
+        CmsCommonPayment cmsPayment = new CmsCommonPayment(PAYMENT_PRODUCT);
+        cmsPayment.setPaymentId(PAYMENT_ID);
+
         when(cmsPsuPisMapper.mapToCmsPayment(pisCommonPaymentData)).thenReturn(cmsPayment);
+        when(corePaymentsConvertService.expandCommonPaymentWithCorePayment(cmsPayment)).thenReturn(cmsPayment);
 
         // When
         Optional<CmsPayment> actualResult = cmsPsuPisServiceInternal.getPayment(PSU_ID_DATA, PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);

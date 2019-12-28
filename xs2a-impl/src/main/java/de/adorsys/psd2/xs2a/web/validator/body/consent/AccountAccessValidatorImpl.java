@@ -21,15 +21,16 @@ import de.adorsys.psd2.model.AccountAccess;
 import de.adorsys.psd2.model.AccountReference;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,21 +46,23 @@ import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFi
 @Component
 public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implements ConsentBodyValidator {
 
-    private final AccountReferenceValidator accountReferenceValidator;
-
+    private AccountReferenceValidator accountReferenceValidator;
     private DateFieldValidator dateFieldValidator;
-
+    private FieldExtractor fieldExtractor;
     @Autowired
-    public AccountAccessValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper, AccountReferenceValidator accountReferenceValidator, DateFieldValidator dateFieldValidator) {
+    public AccountAccessValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
+                                      AccountReferenceValidator accountReferenceValidator, DateFieldValidator dateFieldValidator,
+                                      FieldExtractor fieldExtractor) {
         super(errorBuildingService, xs2aObjectMapper);
         this.accountReferenceValidator = accountReferenceValidator;
         this.dateFieldValidator = dateFieldValidator;
+        this.fieldExtractor = fieldExtractor;
     }
 
     @Override
     public MessageError validateBodyFields(HttpServletRequest request, MessageError messageError) {
 
-        Optional<Consents> consentsOptional = mapBodyToInstance(request, messageError, Consents.class);
+        Optional<Consents> consentsOptional = fieldExtractor.mapBodyToInstance(request, messageError, Consents.class);
 
         // In case of wrong JSON - we don't proceed to the inner fields validation.
         if (!consentsOptional.isPresent()) {

@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.RemittanceInformationStructured;
-import de.adorsys.psd2.xs2a.domain.pis.Remittance;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Test;

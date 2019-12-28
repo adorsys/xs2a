@@ -4,6 +4,7 @@
   "endToEndIdentification": "RI-123456789",
   "currency": "EUR",
   "amount": 1000.00,
+  "ultimateDebtor": "Mueller",
   "creditorAgent": "BCENECEQ",
   "creditorName": "Telekom",
   "creditorAddress": {
@@ -13,6 +14,18 @@
     "postalCode": "90543",
     "country": "DE"
   },
-  "purposeCode": "",
-  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222"
+  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+  "remittanceInformationStructured": {
+    "reference": "Ref Number Merchant",
+    "referenceType": "reference type",
+    "referenceIssuer": "reference issuer"
+  },
+  "purposeCode": "BCENECEQ",
+  "executionRule": "following",
+  "frequency": "ANNUAL",
+  "dayOfExecution": "14",
+  "requestedExecutionDate": "2020-01-01",
+  "requestedExecutionTime": "2020-01-01T15:30:35.035Z",
+  "startDate": "2020-01-01",
+  "endDate": "2020-03-03"
 }

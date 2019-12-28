@@ -20,12 +20,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.AccountAccess;
 import de.adorsys.psd2.model.Consents;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -50,15 +51,17 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
 
     private TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator;
     private DateFieldValidator dateFieldValidator;
+    private FieldExtractor fieldExtractor;
 
     @Autowired
     public ConsentBodyFieldsValidatorImpl(ErrorBuildingService errorBuildingService,
                                           Xs2aObjectMapper xs2aObjectMapper,
                                           TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
-                                          DateFieldValidator dateFieldValidator) {
+                                          DateFieldValidator dateFieldValidator, FieldExtractor fieldExtractor) {
         super(errorBuildingService, xs2aObjectMapper);
         this.dateFieldValidator = dateFieldValidator;
         this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
+        this.fieldExtractor = fieldExtractor;
     }
 
     @Override
@@ -67,7 +70,7 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
 
         validateRawAccess(request, messageError);
 
-        Optional<Consents> consentsOptional = mapBodyToInstance(request, messageError, Consents.class);
+        Optional<Consents> consentsOptional = fieldExtractor.mapBodyToInstance(request, messageError, Consents.class);
 
         // In case of wrong JSON - we don't proceed to the inner fields validation.
         if (!consentsOptional.isPresent()) {

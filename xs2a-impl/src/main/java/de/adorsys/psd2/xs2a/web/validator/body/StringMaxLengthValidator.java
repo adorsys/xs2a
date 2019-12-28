@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body;
 
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.ObjectValidator;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class StringMaxLengthValidator implements ObjectValidator<StringMaxLength
     @Override
     public void validate(@NotNull MaxLengthRequirement object, @NotNull MessageError messageError) {
         if (object.getField() != null && object.getField().length() > object.getMaxLength()) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_OVERSIZE_FIELD,  object.getFieldName(), object.getMaxLength()));
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_OVERSIZE_FIELD, object.getFieldName(), object.getMaxLength()));
         }
     }
 

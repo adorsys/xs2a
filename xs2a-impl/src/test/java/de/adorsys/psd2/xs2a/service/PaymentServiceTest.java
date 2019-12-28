@@ -20,8 +20,12 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.event.core.model.EventType;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -29,17 +33,14 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ContentType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.*;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.payment.PaymentServiceResolver;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
-import de.adorsys.psd2.xs2a.service.payment.cancel.CancelCertainPaymentService;
+import de.adorsys.psd2.xs2a.service.payment.cancel.CancelPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.create.CreatePaymentService;
 import de.adorsys.psd2.xs2a.service.payment.read.ReadPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.status.AbstractReadPaymentStatusService;
@@ -64,11 +65,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_CANC_405;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_CANC_405;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
@@ -84,6 +85,9 @@ public class PaymentServiceTest {
     private static final MessageError VALIDATION_ERROR = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
     private static final String JSON_MEDIA_TYPE = ContentType.JSON.getType();
+    private static final String XS2A_SINGLE_PAYMENT_JSON_PATH = "json/service/mapper/spi_xs2a_mappers/xs2a-single-payment.json";
+    private static final String XS2A_BULK_PAYMNENT_JSON_PATH = "json/service/mapper/spi_xs2a_mappers/xs2a-bulk-payment.json";
+    private static final String XS2A_PERIODIC_PAYMENT_JSON_PATH = "json/service/mapper/spi_xs2a_mappers/xs2a-periodic-payment.json";
 
     @InjectMocks
     private PaymentService paymentService;
@@ -123,23 +127,31 @@ public class PaymentServiceTest {
     @Mock
     private ReadPaymentService readPaymentService;
     @Mock
-    private CancelCertainPaymentService cancelCertainPaymentService;
+    private CancelPaymentService cancelPaymentService;
     @Mock
     private LoggingContextService loggingContextService;
+    @Mock
+    private ScaApproachResolver scaApproachResolver;
 
     private JsonReader jsonReader;
 
     private SinglePayment singlePayment;
+    private byte[] singlePaymentBytes;
     private BulkPayment bulkPayment;
+    private byte[] bulkPaymentBytes;
     private PeriodicPayment periodicPayment;
+    private byte[] periodicPaymentBytes;
 
     @Before
     public void setUp() {
         jsonReader = new JsonReader();
 
-        singlePayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-single-payment.json", SinglePayment.class);
-        bulkPayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-bulk-payment.json", BulkPayment.class);
-        periodicPayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-periodic-payment.json", PeriodicPayment.class);
+        singlePayment = jsonReader.getObjectFromFile(XS2A_SINGLE_PAYMENT_JSON_PATH, SinglePayment.class);
+        singlePaymentBytes = jsonReader.getBytesFromFile(XS2A_SINGLE_PAYMENT_JSON_PATH);
+        bulkPayment = jsonReader.getObjectFromFile(XS2A_BULK_PAYMNENT_JSON_PATH, BulkPayment.class);
+        bulkPaymentBytes = jsonReader.getBytesFromFile(XS2A_BULK_PAYMNENT_JSON_PATH);
+        periodicPayment = jsonReader.getObjectFromFile(XS2A_PERIODIC_PAYMENT_JSON_PATH, PeriodicPayment.class);
+        periodicPaymentBytes = jsonReader.getBytesFromFile(XS2A_PERIODIC_PAYMENT_JSON_PATH);
 
         when(tppService.getTppInfo()).thenReturn(getTppInfo());
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
@@ -153,6 +165,7 @@ public class PaymentServiceTest {
         when(cancelPaymentValidator.validate(any(CancelPaymentPO.class)))
             .thenReturn(ValidationResult.valid());
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
     }
 
     @Test
@@ -181,7 +194,7 @@ public class PaymentServiceTest {
                             .body(buildSinglePaymentInitiationResponse())
                             .build());
         // When
-        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(singlePayment, paymentInitiationParameters);
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(singlePaymentBytes, paymentInitiationParameters);
 
         // Then
         assertThatPaymentWasCreated(actualResponse);
@@ -197,7 +210,7 @@ public class PaymentServiceTest {
                             .body(buildPeriodicPaymentInitiationResponse())
                             .build());
         // When
-        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(periodicPayment, paymentInitiationParameters);
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(periodicPaymentBytes, paymentInitiationParameters);
 
         // Then
         assertThatPaymentWasCreated(actualResponse);
@@ -210,7 +223,7 @@ public class PaymentServiceTest {
             .thenReturn(ValidationResult.invalid(new MessageError()));
 
         // When
-        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(singlePayment, buildPaymentInitiationParameters(PaymentType.SINGLE));
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(singlePaymentBytes, buildPaymentInitiationParameters(PaymentType.SINGLE));
 
         // Then
         assertThatErrorIs(actualResponse, new MessageError());
@@ -221,12 +234,12 @@ public class PaymentServiceTest {
         // Given
         PaymentInitiationParameters invalidPaymentInitiationParameters = buildInvalidPaymentInitiationParameters();
 
-        CreatePaymentRequestObject createPaymentRequestObject = new CreatePaymentRequestObject(singlePayment, invalidPaymentInitiationParameters);
+        CreatePaymentRequestObject createPaymentRequestObject = new CreatePaymentRequestObject(singlePaymentBytes, invalidPaymentInitiationParameters);
         when(createPaymentValidator.validate(createPaymentRequestObject))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(singlePayment, invalidPaymentInitiationParameters);
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(singlePaymentBytes, invalidPaymentInitiationParameters);
 
         // Then
         verify(createPaymentValidator).validate(createPaymentRequestObject);
@@ -240,7 +253,7 @@ public class PaymentServiceTest {
             .thenReturn(ValidationResult.invalid(new MessageError()));
 
         // When
-        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(periodicPayment, buildPaymentInitiationParameters(PaymentType.PERIODIC));
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(periodicPaymentBytes, buildPaymentInitiationParameters(PaymentType.PERIODIC));
 
         // Then
         assertThat(actualResponse.hasError()).isTrue();
@@ -251,12 +264,12 @@ public class PaymentServiceTest {
         // Given
         PaymentInitiationParameters invalidPaymentInitiationParameters = buildInvalidPaymentInitiationParameters();
 
-        CreatePaymentRequestObject createPaymentRequestObject = new CreatePaymentRequestObject(periodicPayment, invalidPaymentInitiationParameters);
+        CreatePaymentRequestObject createPaymentRequestObject = new CreatePaymentRequestObject(periodicPaymentBytes, invalidPaymentInitiationParameters);
         when(createPaymentValidator.validate(createPaymentRequestObject))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(periodicPayment, invalidPaymentInitiationParameters);
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(periodicPaymentBytes, invalidPaymentInitiationParameters);
 
         // Then
         verify(createPaymentValidator).validate(createPaymentRequestObject);
@@ -268,9 +281,9 @@ public class PaymentServiceTest {
         // When
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PaymentType.BULK);
         when(paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters)).thenReturn(createPaymentService);
-        when(createPaymentService.createPayment(bulkPayment, paymentInitiationParameters, getTppInfoServiceModified()))
+        when(createPaymentService.createPayment(bulkPaymentBytes, paymentInitiationParameters, getTppInfoServiceModified()))
             .thenReturn(getValidResponse());
-        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(bulkPayment, paymentInitiationParameters);
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(bulkPaymentBytes, paymentInitiationParameters);
 
         // Then
         assertThatPaymentWasCreated(actualResponse);
@@ -281,12 +294,12 @@ public class PaymentServiceTest {
         // Given
         PaymentInitiationParameters invalidPaymentInitiationParameters = buildInvalidPaymentInitiationParameters();
 
-        CreatePaymentRequestObject createPaymentRequestObject = new CreatePaymentRequestObject(bulkPayment, invalidPaymentInitiationParameters);
+        CreatePaymentRequestObject createPaymentRequestObject = new CreatePaymentRequestObject(bulkPaymentBytes, invalidPaymentInitiationParameters);
         when(createPaymentValidator.validate(createPaymentRequestObject))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(bulkPayment, invalidPaymentInitiationParameters);
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(bulkPaymentBytes, invalidPaymentInitiationParameters);
 
         // Then
         verify(createPaymentValidator).validate(createPaymentRequestObject);
@@ -305,7 +318,7 @@ public class PaymentServiceTest {
         PaymentInitiationParameters parameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
         // When
-        paymentService.createPayment(singlePayment, parameters);
+        paymentService.createPayment(singlePaymentBytes, parameters);
 
         // Then
         verify(xs2aEventService, times(1)).recordTppRequest(argumentCaptor.capture(), any());
@@ -329,7 +342,7 @@ public class PaymentServiceTest {
         PaymentInitiationParameters parameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
 
         // When
-        ResponseObject<PaymentInitiationResponse> response = paymentService.createPayment(singlePayment, parameters);
+        ResponseObject<PaymentInitiationResponse> response = paymentService.createPayment(singlePaymentBytes, parameters);
 
         // Then
         assertFalse(response.hasError());
@@ -523,8 +536,8 @@ public class PaymentServiceTest {
         // Given
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(ACCP);
-        when(paymentServiceResolver.getCancelPaymentService(any())).thenReturn(cancelCertainPaymentService);
-        when(cancelCertainPaymentService.cancelPayment(any(), any())).thenReturn(ResponseObject.<CancelPaymentResponse>builder().body(getCancelPaymentResponse()).build());
+        when(paymentServiceResolver.getCancelPaymentService(any())).thenReturn(cancelPaymentService);
+        when(cancelPaymentService.cancelPayment(any(), any())).thenReturn(ResponseObject.<CancelPaymentResponse>builder().body(getCancelPaymentResponse()).build());
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(
@@ -542,9 +555,9 @@ public class PaymentServiceTest {
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(RCVD);
 
-        when(paymentServiceResolver.getCancelPaymentService(any())).thenReturn(cancelCertainPaymentService);
+        when(paymentServiceResolver.getCancelPaymentService(any())).thenReturn(cancelPaymentService);
         CancelPaymentResponse cancelPaymentResponse = getCancelPaymentResponse();
-        when(cancelCertainPaymentService.cancelPayment(any(), any())).thenReturn(ResponseObject.<CancelPaymentResponse>builder().body(cancelPaymentResponse).build());
+        when(cancelPaymentService.cancelPayment(any(), any())).thenReturn(ResponseObject.<CancelPaymentResponse>builder().body(cancelPaymentResponse).build());
 
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
@@ -562,9 +575,9 @@ public class PaymentServiceTest {
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(RCVD);
 
-        when(paymentServiceResolver.getCancelPaymentService(any())).thenReturn(cancelCertainPaymentService);
+        when(paymentServiceResolver.getCancelPaymentService(any())).thenReturn(cancelPaymentService);
         CancelPaymentResponse cancelPaymentResponse = getCancelPaymentResponse();
-        when(cancelCertainPaymentService.cancelPayment(any(), any())).thenReturn(ResponseObject.<CancelPaymentResponse>builder().body(cancelPaymentResponse).build());
+        when(cancelPaymentService.cancelPayment(any(), any())).thenReturn(ResponseObject.<CancelPaymentResponse>builder().body(cancelPaymentResponse).build());
 
         TransactionStatus expectedTransactionStatus = cancelPaymentResponse.getTransactionStatus();
 

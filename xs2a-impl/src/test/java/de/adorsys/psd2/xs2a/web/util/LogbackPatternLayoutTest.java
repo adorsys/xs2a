@@ -18,8 +18,8 @@ package de.adorsys.psd2.xs2a.web.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import org.junit.Test;
 
 import java.io.IOException;

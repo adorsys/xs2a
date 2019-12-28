@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator;
 
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
 import de.adorsys.psd2.xs2a.web.validator.header.XRequestIdHeaderValidatorImpl;
 import org.apache.commons.lang3.StringUtils;

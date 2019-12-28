@@ -1,0 +1,14 @@
+{
+  "transactionStatus": "RCVD",
+  "transactionFees": {
+    "currency": "EUR",
+    "amount": "20.00"
+  },
+  "transactionFeeIndicator": true,
+  "paymentId": "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b",
+  "scaMethods": [
+    {}
+  ],
+  "challengeData": {},
+  "psuMessage": "psu message"
+}

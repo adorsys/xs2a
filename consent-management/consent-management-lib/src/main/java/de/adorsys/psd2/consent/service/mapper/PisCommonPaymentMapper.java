@@ -176,7 +176,7 @@ public class PisCommonPaymentMapper {
         return pisPayments;
     }
 
-    private PisPayment mapToPisPayment(PisPaymentData payment) {
+    public PisPayment mapToPisPayment(PisPaymentData payment) {
         return Optional.ofNullable(payment)
                    .map(pm -> {
                        PisPayment pisPayment = new PisPayment();

@@ -18,19 +18,17 @@ package de.adorsys.psd2.xs2a.web.validator.body.payment;
 
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.FrequencyCode;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
+import de.adorsys.psd2.xs2a.validator.payment.CountryPaymentValidatorResolver;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.CurrencyValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
-import de.adorsys.psd2.xs2a.web.validator.body.payment.config.CountryPaymentValidatorResolver;
-import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
-import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidatorContext;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -58,7 +56,6 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     static final String BATCH_BOOKING_PREFERRED_FIELD_NAME = "batchBookingPreferred";
     static final String CURRENCY_STRING = "currency";
 
-    private PaymentTypeValidatorContext paymentTypeValidatorContext;
     private DateFieldValidator dateFieldValidator;
     private CurrencyValidator currencyValidator;
 
@@ -66,27 +63,24 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
 
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final FieldExtractor fieldExtractor;
-    private CountryPaymentValidatorResolver countryPaymentValidatorResolver;
     private final PathParameterExtractor pathParameterExtractor;
+    private CountryPaymentValidatorResolver countryPaymentValidatorResolver;
 
     @Autowired
     public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
-                                    PaymentTypeValidatorContext paymentTypeValidatorContext,
                                     StandardPaymentProductsResolver standardPaymentProductsResolver,
                                     TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
                                     DateFieldValidator dateFieldValidator, FieldExtractor fieldExtractor,
                                     CurrencyValidator currencyValidator,
-                                    CountryPaymentValidatorResolver countryPaymentValidatorResolver,
-                                    PathParameterExtractor pathParameterExtractor) {
+                                    PathParameterExtractor pathParameterExtractor, CountryPaymentValidatorResolver countryPaymentValidatorResolver) {
         super(errorBuildingService, xs2aObjectMapper);
-        this.paymentTypeValidatorContext = paymentTypeValidatorContext;
         this.standardPaymentProductsResolver = standardPaymentProductsResolver;
         this.dateFieldValidator = dateFieldValidator;
         this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
         this.fieldExtractor = fieldExtractor;
         this.currencyValidator = currencyValidator;
-        this.countryPaymentValidatorResolver = countryPaymentValidatorResolver;
         this.pathParameterExtractor = pathParameterExtractor;
+        this.countryPaymentValidatorResolver = countryPaymentValidatorResolver;
     }
 
     @Override
@@ -103,14 +97,9 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     public MessageError validateBodyFields(HttpServletRequest request, MessageError messageError) {
         tppRedirectUriBodyValidator.validate(request, messageError);
 
-        Optional<Object> bodyOptional = mapBodyToInstance(request, messageError, Object.class);
-
-        // In case of wrong JSON - we don't proceed to the inner fields validation.
-        if (!bodyOptional.isPresent()) {
-            return messageError;
-        }
-
-        return validateInitiatePaymentBody(bodyOptional.get(), getPathParameters(request), messageError);
+        String paymentService = getPathParameters(request).get(PAYMENT_SERVICE_PATH_VAR);
+        return countryPaymentValidatorResolver.getPaymentBodyFieldValidator()
+                   .validate(request, paymentService, messageError);
     }
 
     @Override
@@ -165,17 +154,6 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, FREQUENCY_FIELD_NAME));
             }
         }
-    }
-
-    private MessageError validateInitiatePaymentBody(Object body, Map<String, String> pathParametersMap, MessageError messageError) {
-        String paymentService = pathParametersMap.get(PAYMENT_SERVICE_PATH_VAR);
-
-        Optional<PaymentTypeValidator> validator = paymentTypeValidatorContext.getValidator(paymentService);
-        if (!validator.isPresent()) {
-            throw new IllegalArgumentException("Unsupported payment service");
-        }
-
-        return validator.get().validate(body, messageError, countryPaymentValidatorResolver.getValidationConfig());
     }
 
     private boolean isRawPaymentProduct(Map<String, String> pathParametersMap) {

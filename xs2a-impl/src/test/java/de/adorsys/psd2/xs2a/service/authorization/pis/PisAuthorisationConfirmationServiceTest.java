@@ -20,31 +20,29 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
-import de.adorsys.psd2.xs2a.service.spi.payment.SpiPaymentServiceResolver;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.service.PaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Test;
@@ -79,17 +77,13 @@ public class PisAuthorisationConfirmationServiceTest {
     @Mock
     private PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
     @Mock
-    private SpiPaymentServiceResolver spiPaymentServiceResolver;
-    @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     @Mock
-    private PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
+    private PisCheckAuthorisationConfirmationService pisCheckAuthorisationConfirmationService;
     @Mock
     private SpiErrorMapper spiErrorMapper;
-    @Mock
-    private PaymentSpi paymentSpi;
     @Mock
     private SpiPayment payment;
     @Mock
@@ -110,15 +104,13 @@ public class PisAuthorisationConfirmationServiceTest {
         when(pisAuthorisationServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID)).thenReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
                                                                                                         .payload(authorisationResponse)
                                                                                                         .build());
-        when(spiPaymentServiceResolver.getPaymentService(authorisationResponse, authorisationResponse.getPaymentType()))
-            .thenReturn(paymentSpi);
         when(spiContextDataProvider.provideWithPsuIdData(psuIdData))
             .thenReturn(contextData);
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(authorisationResponse, request.getPaymentService(), request.getPaymentProduct()))
             .thenReturn(payment);
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID))
             .thenReturn(aspspConsentDataProvider);
-        when(paymentSpi.checkConfirmationCode(contextData, spiConfirmationCode, payment, aspspConsentDataProvider))
+        when(pisCheckAuthorisationConfirmationService.checkConfirmationCode(contextData, spiConfirmationCode, payment, aspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiConfirmationCodeCheckingResponse>builder()
                             .payload(new SpiConfirmationCodeCheckingResponse(ScaStatus.FINALISED))
                             .build());
@@ -253,15 +245,13 @@ public class PisAuthorisationConfirmationServiceTest {
         when(pisAuthorisationServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID)).thenReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
                                                                                                         .payload(authorisationResponse)
                                                                                                         .build());
-        when(spiPaymentServiceResolver.getPaymentService(authorisationResponse, authorisationResponse.getPaymentType()))
-            .thenReturn(paymentSpi);
         when(spiContextDataProvider.provideWithPsuIdData(psuIdData))
             .thenReturn(contextData);
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(authorisationResponse, request.getPaymentService(), request.getPaymentProduct()))
             .thenReturn(payment);
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID))
             .thenReturn(aspspConsentDataProvider);
-        when(paymentSpi.checkConfirmationCode(contextData, spiConfirmationCode, payment, aspspConsentDataProvider))
+        when(pisCheckAuthorisationConfirmationService.checkConfirmationCode(contextData, spiConfirmationCode, payment, aspspConsentDataProvider))
             .thenReturn(spiResponse);
         when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS)).thenReturn(errorHolder);
         when(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(expectedResult)).thenReturn(buildUpdatePisCommonPaymentPsuDataRequest(psuIdData));

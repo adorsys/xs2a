@@ -78,6 +78,12 @@
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
+            <artifactId>cms-payment-support-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
             <artifactId>event-service-xs2a-impl</artifactId>
             <version>${project.version}</version>
         </dependency>

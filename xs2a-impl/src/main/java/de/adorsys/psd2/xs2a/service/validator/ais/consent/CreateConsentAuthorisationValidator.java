@@ -28,10 +28,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_409;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.STATUS_INVALID;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_409;
 
 /**
  * Validator to be used for validating create consent authorisation request according to some business rules

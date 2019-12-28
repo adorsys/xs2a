@@ -19,6 +19,10 @@ package de.adorsys.psd2.xs2a.web.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
@@ -27,7 +31,8 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.HrefType;
-import de.adorsys.psd2.xs2a.domain.*;
+import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
@@ -37,13 +42,11 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationS
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.*;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
 import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.header.PaymentCancellationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.PaymentInitiationHeadersBuilder;
@@ -66,11 +69,11 @@ import org.springframework.http.ResponseEntity;
 import java.util.*;
 import java.util.function.Function;
 
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_403;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -100,9 +103,9 @@ public class PaymentControllerTest {
     private static final Object XML_SCT = new Object();
     private static final PeriodicPaymentInitiationXmlPart2StandingorderTypeJson JSON_STANDING_ORDER_TYPE = new PeriodicPaymentInitiationXmlPart2StandingorderTypeJson();
     private static final MessageError PIS_400_MESSAGE_ERROR = new MessageError(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR));
-    private static final MessageError PIS_404_MESSAGE_ERROR = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
+    private static final MessageError PIS_404_MESSAGE_ERROR = new MessageError(PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
     private static final boolean TPP_REDIRECT_PREFERRED_TRUE = true;
-    private static final PaymentInitationRequestResponse201 PAYMENT_OBJECT = new PaymentInitationRequestResponse201();
+    private static final byte[] PAYMENT_OBJECT = "payment object".getBytes();
     private static final ResponseHeaders RESPONSE_HEADERS = ResponseHeaders.builder().aspspScaApproach(ScaApproach.REDIRECT).build();
     private static final boolean EXPLICIT_PREFERRED_FALSE = false;
     private static final String PSU_DATA_PASSWORD_JSON_PATH = "json/web/controller/psuData-password.json";
@@ -175,7 +178,7 @@ public class PaymentControllerTest {
 
     @Test
     public void getPaymentById_Failure() {
-        when(responseErrorMapper.generateErrorResponse(createMessageError(ErrorType.PIS_404, RESOURCE_UNKNOWN_404))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
+        when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_404, RESOURCE_UNKNOWN_404))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
 
         // When
         ResponseEntity response = paymentController.getPaymentInformation(CORRECT_PAYMENT_SERVICE, WRONG_PAYMENT_ID,
@@ -768,7 +771,7 @@ public class PaymentControllerTest {
                                                                   TPP_NOTIFICATION_URI, TPP_NOTIFICATION_MODES))
             .thenReturn(paymentInitiationParameters);
 
-        when(paymentModelMapperXs2a.mapToXs2aPayment(any(), eq(paymentInitiationParameters)))
+        when(paymentModelMapperXs2a.mapToXs2aPayment())
             .thenReturn(PAYMENT_OBJECT);
 
         // noinspection unchecked
@@ -798,7 +801,7 @@ public class PaymentControllerTest {
                                                                   TPP_NOTIFICATION_URI, TPP_NOTIFICATION_MODES))
             .thenReturn(paymentInitiationParameters);
 
-        when(paymentModelMapperXs2a.mapToXs2aPayment(any(), eq(paymentInitiationParameters)))
+        when(paymentModelMapperXs2a.mapToXs2aPayment())
             .thenReturn(PAYMENT_OBJECT);
 
         when(xs2aPaymentService.createPayment(PAYMENT_OBJECT, paymentInitiationParameters))

@@ -16,15 +16,15 @@
 
 package de.adorsys.psd2.xs2a.service.payment.create;
 
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 
 public interface CreatePaymentService {
-    ResponseObject<PaymentInitiationResponse> createPayment(Object payment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo);
+    ResponseObject<PaymentInitiationResponse> createPayment(byte[] payment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo);
 
     default ResponseObject<PaymentInitiationResponse> buildErrorResponse(ErrorHolder errorHolder) {
         return ResponseObject.<PaymentInitiationResponse>builder()

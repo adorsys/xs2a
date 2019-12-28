@@ -16,34 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.spi.payment;
 
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.spi.service.*;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Component;
+import de.adorsys.psd2.xs2a.spi.service.PaymentSpi;
 
-@Component
-@RequiredArgsConstructor
-public class SpiPaymentServiceResolver {
-    private final CommonPaymentSpi commonPaymentSpi;
-    private final SinglePaymentSpi singlePaymentSpi;
-    private final PeriodicPaymentSpi periodicPaymentSpi;
-    private final BulkPaymentSpi bulkPaymentSpi;
-
-    public PaymentSpi getPaymentService(GetPisAuthorisationResponse pisAuthorisationResponse,
-                                           PaymentType paymentType) {
-        if (CollectionUtils.isEmpty(pisAuthorisationResponse.getPayments())) {
-            return commonPaymentSpi;
-        }
-
-        if (PaymentType.SINGLE == paymentType) {
-            return singlePaymentSpi;
-        } else if (PaymentType.PERIODIC == paymentType) {
-            return periodicPaymentSpi;
-        } else {
-            return bulkPaymentSpi;
-        }
-    }
-
+public interface SpiPaymentServiceResolver {
+    PaymentSpi getPaymentService(String paymentProduct, PaymentType paymentType);
 }

@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.payment.create;
 
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
@@ -47,18 +46,12 @@ public class CreateCommonPaymentService extends AbstractCreatePaymentService<Com
     }
 
     @Override
-    protected CommonPayment getPaymentRequest(Object payment, PaymentInitiationParameters paymentInitiationParameters) {
+    protected CommonPayment getPaymentRequest(byte[] payment, PaymentInitiationParameters paymentInitiationParameters) {
         CommonPayment request = new CommonPayment();
         request.setPaymentType(paymentInitiationParameters.getPaymentType());
         request.setPaymentProduct(paymentInitiationParameters.getPaymentProduct());
-        request.setPaymentData((byte[]) payment);
+        request.setPaymentData(payment);
         request.setPsuDataList(Collections.singletonList(paymentInitiationParameters.getPsuData()));
         return request;
-    }
-
-    @Override
-    protected CommonPayment updateCommonPayment(CommonPayment paymentRequest, PaymentInitiationParameters paymentInitiationParameters,
-                                                PaymentInitiationResponse response, String paymentId) {
-        return paymentRequest;
     }
 }

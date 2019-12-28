@@ -19,72 +19,20 @@ package de.adorsys.psd2.xs2a.service.payment;
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
-import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
-import de.adorsys.psd2.xs2a.config.factory.ReadPaymentStatusFactory;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.payment.cancel.CancelCertainPaymentService;
-import de.adorsys.psd2.xs2a.service.payment.cancel.CancelCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.cancel.CancelPaymentService;
-import de.adorsys.psd2.xs2a.service.payment.create.*;
-import de.adorsys.psd2.xs2a.service.payment.read.ReadCommonPaymentService;
+import de.adorsys.psd2.xs2a.service.payment.create.CreatePaymentService;
 import de.adorsys.psd2.xs2a.service.payment.read.ReadPaymentService;
-import de.adorsys.psd2.xs2a.service.payment.status.ReadCommonPaymentStatusService;
 import de.adorsys.psd2.xs2a.service.payment.status.ReadPaymentStatusService;
-import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
-import java.util.EnumSet;
-
-@Slf4j
-@Component
-@AllArgsConstructor
-public class PaymentServiceResolver {
-    private final StandardPaymentProductsResolver standardPaymentProductsResolver;
-
-    private final CreateCommonPaymentService createCommonPaymentService;
-    private final CreateSinglePaymentService createSinglePaymentService;
-    private final CreatePeriodicPaymentService createPeriodicPaymentService;
-    private final CreateBulkPaymentService createBulkPaymentService;
-
-    private final ReadCommonPaymentService readCommonPaymentService;
-    private final ReadPaymentFactory readPaymentFactory;
-
-    private final ReadCommonPaymentStatusService readCommonPaymentStatusService;
-    private final ReadPaymentStatusFactory readPaymentStatusFactory;
-
-    private final ScaApproachResolver scaApproachResolver;
-
-    private final CancelCommonPaymentService cancelCommonPaymentService;
-    private final CancelCertainPaymentService cancelCertainPaymentService;
-
+public interface PaymentServiceResolver {
     /**
      * Returns definite service for payment creation depending on the payment initiation parameters.
      *
      * @param paymentInitiationParameters {@link PaymentInitiationParameters} object
      * @return definite implementation of {@link CreatePaymentService}
      */
-    public CreatePaymentService getCreatePaymentService(PaymentInitiationParameters paymentInitiationParameters) {
-        if (isNotSupportedScaApproach(scaApproachResolver.resolveScaApproach())) {
-            throw new UnsupportedOperationException("Unsupported operation");
-        }
-
-        if (standardPaymentProductsResolver.isRawPaymentProduct(paymentInitiationParameters.getPaymentProduct())) {
-            return createCommonPaymentService;
-        }
-
-        if (PaymentType.SINGLE == paymentInitiationParameters.getPaymentType()) {
-            return createSinglePaymentService;
-        } else if (PaymentType.PERIODIC == paymentInitiationParameters.getPaymentType()) {
-            return createPeriodicPaymentService;
-        } else {
-            return createBulkPaymentService;
-        }
-    }
+    CreatePaymentService getCreatePaymentService(PaymentInitiationParameters paymentInitiationParameters);
 
     /**
      * Returns definite service for getting payment details depending on the input payment data.
@@ -92,25 +40,9 @@ public class PaymentServiceResolver {
      * @param commonPaymentData {@link CommonPaymentData} object
      * @return definite implementation of {@link ReadPaymentService}
      */
-    public ReadPaymentService getReadPaymentService(CommonPaymentData commonPaymentData) {
-        if (commonPaymentData.getPaymentData() != null) {
-            return readCommonPaymentService;
-        }
-        return readPaymentFactory.getService(commonPaymentData.getPaymentType().getValue());
-    }
+    ReadPaymentService getReadPaymentService(CommonPaymentData commonPaymentData);
 
-    /**
-     * Returns definite service for getting payment status depending on the input payment data.
-     *
-     * @param pisCommonPaymentResponse {@link PisCommonPaymentResponse} object
-     * @return definite implementation of {@link ReadPaymentStatusService}
-     */
-    public ReadPaymentStatusService getReadPaymentStatusService(PisCommonPaymentResponse pisCommonPaymentResponse) {
-        if (pisCommonPaymentResponse.getPaymentData() != null) {
-            return readCommonPaymentStatusService;
-        }
-        return readPaymentStatusFactory.getService(ReadPaymentStatusFactory.SERVICE_PREFIX + pisCommonPaymentResponse.getPaymentType().getValue());
-    }
+    ReadPaymentStatusService getReadPaymentStatusService(PisCommonPaymentResponse pisCommonPaymentResponse);
 
     /**
      * Returns definite service for payment cancellation depending on the input payment cancellation data.
@@ -118,14 +50,5 @@ public class PaymentServiceResolver {
      * @param paymentCancellationRequest {@link PisPaymentCancellationRequest} object
      * @return definite implementation of {@link CancelPaymentService}
      */
-    public CancelPaymentService getCancelPaymentService(PisPaymentCancellationRequest paymentCancellationRequest) {
-        if (standardPaymentProductsResolver.isRawPaymentProduct(paymentCancellationRequest.getPaymentProduct())) {
-            return cancelCommonPaymentService;
-        }
-        return cancelCertainPaymentService;
-    }
-
-    private boolean isNotSupportedScaApproach(ScaApproach scaApproach) {
-        return !EnumSet.of(ScaApproach.REDIRECT, ScaApproach.EMBEDDED, ScaApproach.DECOUPLED).contains(scaApproach);
-    }
+    CancelPaymentService getCancelPaymentService(PisPaymentCancellationRequest paymentCancellationRequest);
 }

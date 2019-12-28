@@ -1,0 +1,218 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package de.adorsys.psd2.xs2a.service.payment.support.mapper;
+
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import de.adorsys.psd2.model.BulkPaymentInitiationJson;
+import de.adorsys.psd2.model.PaymentInitiationJson;
+import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
+import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
+import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.service.mapper.PaymentModelMapper;
+import de.adorsys.xs2a.reader.JsonReader;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
+public class RawToXs2aPaymentMapperTest {
+    private static final String SINGLE_PAYMENT_PSD2_JSON_PATH = "json/support/mapper/single-payment-initiation.json";
+    private static final String SINGLE_PAYMENT_XS2A_JSON_PATH = "json/support/mapper/xs2a-single-payment.json";
+    private static final String PERIODIC_PAYMENT_PSD2_JSON_PATH = "json/support/mapper/periodic-payment-initiation.json";
+    private static final String PERIODIC_PAYMENT_XS2A_JSON_PATH = "json/support/mapper/xs2a-periodic-payment.json";
+    private static final String BULK_PAYMENT_PSD2_JSON_PATH = "json/support/mapper/bulk-payment-initiation.json";
+    private static final String BULK_PAYMENT_XS2A_JSON_PATH = "json/support/mapper/xs2a-bulk-payment.json";
+    private static final byte[] MALFORMED_PAYMENT_BODY = "malformed body".getBytes();
+
+    @Mock
+    private PaymentModelMapper paymentModelMapper;
+    private Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
+
+    private RawToXs2aPaymentMapper rawToXs2aPaymentMapper;
+
+    private JsonReader jsonReader = new JsonReader();
+
+    @Before
+    public void setUp() {
+        xs2aObjectMapper.findAndRegisterModules();
+        rawToXs2aPaymentMapper = new RawToXs2aPaymentMapper(paymentModelMapper, xs2aObjectMapper);
+    }
+
+    @Test
+    public void mapToSinglePayment() {
+        // Given
+        PaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(SINGLE_PAYMENT_PSD2_JSON_PATH, PaymentInitiationJson.class);
+        SinglePayment xs2aSinglePayment = jsonReader.getObjectFromFile(SINGLE_PAYMENT_XS2A_JSON_PATH, SinglePayment.class);
+        when(paymentModelMapper.mapToXs2aPayment(paymentInitiationJson)).thenReturn(xs2aSinglePayment);
+
+        byte[] paymentBody = jsonReader.getBytesFromFile(SINGLE_PAYMENT_PSD2_JSON_PATH);
+        SinglePayment expectedSinglePayment = jsonReader.getObjectFromFile(SINGLE_PAYMENT_XS2A_JSON_PATH, SinglePayment.class);
+        expectedSinglePayment.setPaymentData(paymentBody);
+
+        // When
+        SinglePayment actual = rawToXs2aPaymentMapper.mapToSinglePayment(paymentBody);
+
+        // Then
+        assertEquals(expectedSinglePayment, actual);
+    }
+
+    @Test
+    public void mapToSinglePayment_null() {
+        // When
+        SinglePayment actual = rawToXs2aPaymentMapper.mapToSinglePayment(null);
+
+        // Then
+        assertNull(actual);
+        verify(paymentModelMapper, never()).mapToXs2aPayment(any(PaymentInitiationJson.class));
+    }
+
+    @Test
+    public void mapToSinglePayment_malformedBody() {
+        // When
+        SinglePayment actual = rawToXs2aPaymentMapper.mapToSinglePayment(MALFORMED_PAYMENT_BODY);
+
+        // Then
+        assertNull(actual);
+        verify(paymentModelMapper, never()).mapToXs2aPayment(any(PaymentInitiationJson.class));
+    }
+
+    @Test
+    public void mapToSinglePayment_nullSinglePayment() {
+        // Given
+        PaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(SINGLE_PAYMENT_PSD2_JSON_PATH, PaymentInitiationJson.class);
+        when(paymentModelMapper.mapToXs2aPayment(paymentInitiationJson)).thenReturn(null);
+
+        byte[] paymentBody = jsonReader.getBytesFromFile(SINGLE_PAYMENT_PSD2_JSON_PATH);
+
+        // When
+        SinglePayment actual = rawToXs2aPaymentMapper.mapToSinglePayment(paymentBody);
+
+        // Then
+        assertNull(actual);
+    }
+
+    @Test
+    public void mapToPeriodicPayment() {
+        // Given
+        PeriodicPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(PERIODIC_PAYMENT_PSD2_JSON_PATH, PeriodicPaymentInitiationJson.class);
+        PeriodicPayment xs2aPeriodicPayment = jsonReader.getObjectFromFile(PERIODIC_PAYMENT_XS2A_JSON_PATH, PeriodicPayment.class);
+        when(paymentModelMapper.mapToXs2aPayment(paymentInitiationJson)).thenReturn(xs2aPeriodicPayment);
+
+        byte[] paymentBody = jsonReader.getBytesFromFile(PERIODIC_PAYMENT_PSD2_JSON_PATH);
+        PeriodicPayment expectedPeriodicPayment = jsonReader.getObjectFromFile(PERIODIC_PAYMENT_XS2A_JSON_PATH, PeriodicPayment.class);
+        expectedPeriodicPayment.setPaymentData(paymentBody);
+
+        // When
+        PeriodicPayment actual = rawToXs2aPaymentMapper.mapToPeriodicPayment(paymentBody);
+
+        // Then
+        assertEquals(expectedPeriodicPayment, actual);
+    }
+
+    @Test
+    public void mapToPeriodicPayment_null() {
+        // When
+        PeriodicPayment actual = rawToXs2aPaymentMapper.mapToPeriodicPayment(null);
+
+        // Then
+        assertNull(actual);
+    }
+
+    @Test
+    public void mapToPeriodicPayment_malformedBody() {
+        // When
+        SinglePayment actual = rawToXs2aPaymentMapper.mapToPeriodicPayment(MALFORMED_PAYMENT_BODY);
+
+        // Then
+        assertNull(actual);
+        verify(paymentModelMapper, never()).mapToXs2aPayment(any(PeriodicPaymentInitiationJson.class));
+    }
+
+    @Test
+    public void mapToPeriodicPayment_nullPeriodicPayment() {
+        // Given
+        PeriodicPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(PERIODIC_PAYMENT_PSD2_JSON_PATH, PeriodicPaymentInitiationJson.class);
+        when(paymentModelMapper.mapToXs2aPayment(paymentInitiationJson)).thenReturn(null);
+
+        byte[] paymentBody = jsonReader.getBytesFromFile(PERIODIC_PAYMENT_PSD2_JSON_PATH);
+
+        // When
+        PeriodicPayment actual = rawToXs2aPaymentMapper.mapToPeriodicPayment(paymentBody);
+
+        // Then
+        assertNull(actual);
+    }
+
+    @Test
+    public void mapToBulkPayment() {
+        // Given
+        BulkPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(BULK_PAYMENT_PSD2_JSON_PATH, BulkPaymentInitiationJson.class);
+        BulkPayment xs2aBulkPayment = jsonReader.getObjectFromFile(BULK_PAYMENT_XS2A_JSON_PATH, BulkPayment.class);
+        when(paymentModelMapper.mapToXs2aPayment(paymentInitiationJson)).thenReturn(xs2aBulkPayment);
+
+        byte[] paymentBody = jsonReader.getBytesFromFile(BULK_PAYMENT_PSD2_JSON_PATH);
+        BulkPayment expectedBulkPayment = jsonReader.getObjectFromFile(BULK_PAYMENT_XS2A_JSON_PATH, BulkPayment.class);
+        expectedBulkPayment.setPaymentData(paymentBody);
+
+        // When
+        BulkPayment actual = rawToXs2aPaymentMapper.mapToBulkPayment(paymentBody);
+
+        // Then
+        assertEquals(expectedBulkPayment, actual);
+    }
+
+    @Test
+    public void mapToBulkPayment_null() {
+        // When
+        BulkPayment actual = rawToXs2aPaymentMapper.mapToBulkPayment(null);
+
+        // Then
+        assertNull(actual);
+    }
+
+    @Test
+    public void mapToBulkPayment_malformedBody() {
+        // When
+        BulkPayment actual = rawToXs2aPaymentMapper.mapToBulkPayment(MALFORMED_PAYMENT_BODY);
+
+        // Then
+        assertNull(actual);
+        verify(paymentModelMapper, never()).mapToXs2aPayment(any(BulkPaymentInitiationJson.class));
+    }
+
+    @Test
+    public void mapToBulkPayment_nullBulkPayment() {
+        // Given
+        BulkPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(BULK_PAYMENT_PSD2_JSON_PATH, BulkPaymentInitiationJson.class);
+        when(paymentModelMapper.mapToXs2aPayment(paymentInitiationJson)).thenReturn(null);
+
+        byte[] paymentBody = jsonReader.getBytesFromFile(BULK_PAYMENT_PSD2_JSON_PATH);
+
+        // When
+        BulkPayment actual = rawToXs2aPaymentMapper.mapToBulkPayment(paymentBody);
+
+        // Then
+        assertNull(actual);
+    }
+}

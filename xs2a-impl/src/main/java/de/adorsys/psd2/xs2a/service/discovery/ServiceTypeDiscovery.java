@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.discovery;
 
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
 
@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType.*;
+import static de.adorsys.psd2.xs2a.core.mapper.ServiceType.*;
 
 @Slf4j
 class ServiceTypeDiscovery {

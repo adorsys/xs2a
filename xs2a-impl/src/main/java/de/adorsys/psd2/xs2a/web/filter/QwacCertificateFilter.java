@@ -50,8 +50,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 
 /**
  * The intent of this Class is to get the Qwac certificate from header, extract

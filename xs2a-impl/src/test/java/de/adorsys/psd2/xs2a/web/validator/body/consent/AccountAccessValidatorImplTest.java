@@ -19,10 +19,10 @@ package de.adorsys.psd2.xs2a.web.validator.body.consent;
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.Consents;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.*;
@@ -216,13 +216,15 @@ public class AccountAccessValidatorImplTest {
     }
 
     private AccountAccessValidatorImpl createValidator(Consents consents) {
-        return new AccountAccessValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), new Xs2aObjectMapper(), accountReferenceValidator, dateFieldValidator) {
+        return new AccountAccessValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), new Xs2aObjectMapper(),
+                                              accountReferenceValidator, dateFieldValidator, new FieldExtractor(null, null) {
             @SuppressWarnings("unchecked")
             @Override
-            protected <T> Optional<T> mapBodyToInstance(HttpServletRequest request, MessageError messageError, Class<T> clazz) {
+            public <T> Optional<T> mapBodyToInstance(HttpServletRequest request, MessageError messageError, Class<T> clazz) {
                 assertEquals(Consents.class, clazz);
                 return (Optional<T>) Optional.of(consents);
             }
+        }) {
         };
     }
 }

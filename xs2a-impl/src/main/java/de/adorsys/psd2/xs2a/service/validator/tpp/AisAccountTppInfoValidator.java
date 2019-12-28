@@ -16,13 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service.validator.tpp;
 
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.springframework.stereotype.Component;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 
 @Component
 public class AisAccountTppInfoValidator extends TppInfoValidator {
@@ -32,7 +31,7 @@ public class AisAccountTppInfoValidator extends TppInfoValidator {
 
     @Override
     ErrorType getErrorType() {
-        return AIS_400;
+        return ErrorType.AIS_400;
     }
 
     @Override

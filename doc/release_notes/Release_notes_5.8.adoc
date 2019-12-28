@@ -1,3 +1,52 @@
 = Release notes v.5.8
 
 == Table of Contents
+
+* Allow custom payment validation
+* Migrate to common payment object
+
+== Allow custom payment validation
+
+From now on, XS2A allows to validate custom country-specific payments.
+Payment body and payment business validators were affected by this changes.
+To configure validation for another country, SPI developer should provide custom implementation of `de.adorsys.psd2.validator.payment.CountryValidatorHolder` interface.
+
+== Migrate to common payment object
+
+From now on, XS2A is switching to using common payment object instead of type-specific payments (single, periodic and bulk).
+Common payment is stored in CMS and transferred to SPI as byte array without parsing specific fields, just as it was received from TPP.
+To provide backward compatibility for previous versions new modules were added:
+
+[source]
+----
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>xs2a-payment-support-impl</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>cms-payment-support-impl</artifactId>
+</dependency>
+----
+
+`xs2a-payment-support-impl` should be added as a dependency to connector for using type-specific implementations of `PaymentSpi` (`SinglePaymentSpi`, `PeriodicPaymentSpi`, BulkPaymentSpi).
+
+`cms-payment-support-impl` should be added as a dependency to custom CMS application for mapping common payment to existing type-specific payment models.
+
+To handle only common payments, previously mentioned dependencies should be replaced with the following ones:
+
+[source]
+----
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>xs2a-payment-common-impl</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>cms-payment-common-impl</artifactId>
+</dependency>
+----
+
+In case of using common implementations, all payments will be forwarded to `CommonPaymentSpi`.

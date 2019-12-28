@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
@@ -33,11 +34,13 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
 import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
@@ -53,6 +56,9 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
     private final TppInfoRepository tppInfoRepository;
     private final PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
+    private final CorePaymentsConvertService corePaymentsConvertService;
+    @Value("${convert-core-payment-to-common-payment:true}")
+    private boolean convertCorePaymentToCommonPayment;
 
     /**
      * Creates new pis common payment with full information about payment
@@ -117,13 +123,16 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Override
     @Transactional
     public CmsResponse<PisCommonPaymentResponse> getCommonPaymentById(String paymentId) {
-        Optional<PisCommonPaymentResponse> responseOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId)
+        Optional<PisCommonPaymentData> paymentOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
+        Optional<PisCommonPaymentResponse> responseOptional = paymentOptional
                                                                   .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
                                                                   .flatMap(pisCommonPaymentMapper::mapToPisCommonPaymentResponse);
 
         if (responseOptional.isPresent()) {
+            PisCommonPaymentResponse pisCommonPaymentResponse = responseOptional.get();
+            transferCorePaymentToCommonPayment(pisCommonPaymentResponse, paymentOptional.get());
             return CmsResponse.<PisCommonPaymentResponse>builder()
-                       .payload(responseOptional.get())
+                       .payload(pisCommonPaymentResponse)
                        .build();
         }
 
@@ -132,6 +141,20 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         return CmsResponse.<PisCommonPaymentResponse>builder()
                    .error(LOGICAL_ERROR)
                    .build();
+    }
+
+    void transferCorePaymentToCommonPayment(PisCommonPaymentResponse pisCommonPaymentResponse, PisCommonPaymentData pisCommonPaymentData) {
+        if (convertCorePaymentToCommonPayment && pisCommonPaymentData.getPayment() == null) {
+            List<PisPayment> pisPayments = pisCommonPaymentData.getPayments().stream()
+                                               .map(pisCommonPaymentMapper::mapToPisPayment)
+                                               .collect(Collectors.toList());
+            byte[] paymentData = corePaymentsConvertService.buildPaymentData(pisPayments, pisCommonPaymentData.getPaymentType());
+            if (paymentData != null) {
+                pisCommonPaymentData.setPayment(paymentData);
+                pisCommonPaymentDataRepository.save(pisCommonPaymentData);
+                pisCommonPaymentResponse.setPaymentData(paymentData);
+            }
+        }
     }
 
     /**
@@ -175,7 +198,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     public CmsResponse<CmsResponse.VoidResponse> updateCommonPayment(PisCommonPaymentRequest request, String paymentId) {
         Optional<PisCommonPaymentData> pisCommonPaymentById = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
         pisCommonPaymentById
-            .ifPresent(commonPayment -> savePaymentData(commonPayment, request));
+            .ifPresent(commonPayment -> savePaymentData(request));
 
         return CmsResponse.<CmsResponse.VoidResponse>builder()
                    .payload(CmsResponse.voidResponse())
@@ -248,14 +271,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         return commonPaymentData;
     }
 
-    private void savePaymentData(PisCommonPaymentData pisCommonPayment, PisCommonPaymentRequest request) {
-        boolean isCommonPayment = CollectionUtils.isEmpty(request.getPayments()) && request.getPaymentInfo() != null;
-        // todo implementation should be changed  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
-
-        if (isCommonPayment) {
-            pisCommonPaymentDataRepository.save(pisCommonPaymentMapper.mapToPisCommonPaymentData(request.getPaymentInfo()));
-        } else {
-            pisPaymentDataRepository.saveAll(pisCommonPaymentMapper.mapToPisPaymentDataList(request.getPayments(), pisCommonPayment));
-        }
+    private void savePaymentData(PisCommonPaymentRequest request) {
+        pisCommonPaymentDataRepository.save(pisCommonPaymentMapper.mapToPisCommonPaymentData(request.getPaymentInfo()));
     }
 }

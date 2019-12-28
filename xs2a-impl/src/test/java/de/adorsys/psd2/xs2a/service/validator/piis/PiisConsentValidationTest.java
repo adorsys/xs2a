@@ -21,7 +21,6 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PiisTppInfoValidator;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -36,9 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE;
 import static de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType.ALL_TPP;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -167,7 +166,7 @@ public class PiisConsentValidationTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.hasError());
         assertEquals(MessageErrorCode.NO_PIIS_ACTIVATION, validationResult.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode());
-        assertEquals(ErrorType.PIIS_400, validationResult.getErrorHolder().getErrorType());
+        assertEquals(PIIS_400, validationResult.getErrorHolder().getErrorType());
     }
 
     private PiisConsent buildWrongPiisConsent() {
@@ -182,6 +181,6 @@ public class PiisConsentValidationTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.hasError());
         assertEquals(validationResult.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode(), consentUnknown400);
-        assertEquals(validationResult.getErrorHolder().getErrorType(), ErrorType.PIIS_400);
+        assertEquals(validationResult.getErrorHolder().getErrorType(), PIIS_400);
     }
 }

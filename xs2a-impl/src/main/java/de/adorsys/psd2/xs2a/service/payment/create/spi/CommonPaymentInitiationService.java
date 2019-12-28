@@ -48,15 +48,15 @@ public class CommonPaymentInitiationService extends AbstractPaymentInitiationSer
     }
 
     @Override
-    SpiResponse<SpiPaymentInitiationResponse> initiateSpiPayment(SpiContextData spiContextData, CommonPayment payment, String paymentProduct,
-                                                                 InitialSpiAspspConsentDataProvider aspspConsentDataProvider) {
+    protected SpiResponse<SpiPaymentInitiationResponse> initiateSpiPayment(SpiContextData spiContextData, CommonPayment payment, String paymentProduct,
+                                                                           InitialSpiAspspConsentDataProvider aspspConsentDataProvider) {
         return commonPaymentSpi.initiatePayment(spiContextData,
                                                 xs2aToSpiPaymentInfo.mapToSpiPaymentRequest(payment, paymentProduct),
                                                 aspspConsentDataProvider);
     }
 
     @Override
-    CommonPaymentInitiationResponse mapToXs2aResponse(SpiPaymentInitiationResponse spiResponse, InitialSpiAspspConsentDataProvider provider, PaymentType paymentType) {
+    protected CommonPaymentInitiationResponse mapToXs2aResponse(SpiPaymentInitiationResponse spiResponse, InitialSpiAspspConsentDataProvider provider, PaymentType paymentType) {
         return spiToXs2aPaymentMapper.mapToCommonPaymentInitiateResponse(spiResponse, paymentType, provider);
     }
 }
