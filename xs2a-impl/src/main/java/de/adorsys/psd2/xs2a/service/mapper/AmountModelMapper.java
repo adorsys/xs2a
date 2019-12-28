@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.model.Amount;
-import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
+import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

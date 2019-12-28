@@ -35,9 +35,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
+import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORBIDDEN;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED_NO_TOKEN;
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 
 
 @Slf4j

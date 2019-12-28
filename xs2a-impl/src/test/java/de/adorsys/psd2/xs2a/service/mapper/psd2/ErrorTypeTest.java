@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.psd2;
 
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import org.junit.Test;
 
 import java.util.Optional;

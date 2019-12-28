@@ -16,7 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.psd2;
 
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ais.*;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.piis.*;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.pis.*;
@@ -30,7 +31,7 @@ import javax.annotation.PostConstruct;
 import java.util.EnumMap;
 import java.util.Map;
 
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
 
 @Component
 @RequiredArgsConstructor
@@ -128,7 +129,7 @@ public class ErrorMapperContainer {
         Psd2ErrorMapper psd2ErrorMapper = mapperContainer.get(error.getErrorType());
 
         return new ErrorBody(psd2ErrorMapper.getMapper()
-            .apply(error), psd2ErrorMapper.getErrorStatus());
+                                 .apply(error), psd2ErrorMapper.getErrorStatus());
     }
 
     @Value

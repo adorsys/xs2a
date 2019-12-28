@@ -48,12 +48,10 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_EXPIRED;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.ROLE_INVALID;
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

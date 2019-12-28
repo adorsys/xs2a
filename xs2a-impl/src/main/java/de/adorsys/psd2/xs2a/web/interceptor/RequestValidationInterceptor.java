@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.interceptor;
 
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.MethodValidator;

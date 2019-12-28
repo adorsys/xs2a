@@ -18,8 +18,8 @@ package de.adorsys.psd2.xs2a.web.validator.body.raw;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -78,5 +78,15 @@ public class FieldExtractor {
         } catch (IOException e) {
             return Collections.emptyList();
         }
+    }
+
+    public <T> Optional<T> mapBodyToInstance(HttpServletRequest request, MessageError messageError, Class<T> clazz) {
+        try {
+            return Optional.of(xs2aObjectMapper.readValue(request.getInputStream(), clazz));
+        } catch (IOException e) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
+        }
+
+        return Optional.empty();
     }
 }

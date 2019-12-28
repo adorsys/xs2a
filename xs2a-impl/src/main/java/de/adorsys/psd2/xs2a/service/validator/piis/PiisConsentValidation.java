@@ -17,12 +17,12 @@
 package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PiisTppInfoValidator;
@@ -37,8 +37,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 
 @Slf4j
 @Service

@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
@@ -42,6 +43,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,6 +70,9 @@ public class PisCommonPaymentServiceInternalTest {
     private PisPaymentDataRepository pisPaymentDataRepository;
     @Mock
     private PsuDataMapper psuDataMapper;
+    @Mock
+    private CorePaymentsConvertService corePaymentsConvertService;
+
 
     private PisCommonPaymentData pisCommonPaymentData;
     private static final String PAYMENT_ID = "5bbde955ca10e8e4035a10c2";
@@ -239,8 +244,12 @@ public class PisCommonPaymentServiceInternalTest {
     public void updateCommonPayment() {
         // Given
         PisCommonPaymentRequest request = new PisCommonPaymentRequest();
+        PisPaymentInfo pisPaymentInfo = new PisPaymentInfo();
+        request.setPaymentInfo(pisPaymentInfo);
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
-        when(pisCommonPaymentMapper.mapToPisPaymentDataList(request.getPayments(), pisCommonPaymentData)).thenReturn(Collections.emptyList());
+
+        PisCommonPaymentData updatedPisCommonPaymentData = new PisCommonPaymentData();
+        when(pisCommonPaymentMapper.mapToPisCommonPaymentData(pisPaymentInfo)).thenReturn(updatedPisCommonPaymentData);
 
         // When
         CmsResponse<CmsResponse.VoidResponse> actual = pisCommonPaymentService.updateCommonPayment(request, PAYMENT_ID);
@@ -249,7 +258,7 @@ public class PisCommonPaymentServiceInternalTest {
         assertTrue(actual.isSuccessful());
         assertEquals(CmsResponse.voidResponse(), actual.getPayload());
 
-        verify(pisPaymentDataRepository).saveAll(Collections.emptyList());
+        verify(pisCommonPaymentDataRepository).save(updatedPisCommonPaymentData);
     }
 
     @Test
@@ -284,6 +293,44 @@ public class PisCommonPaymentServiceInternalTest {
         // Then
         assertTrue(actual.hasError());
         assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
+    }
+
+    @Test
+    public void transferCorePaymentToCommonPayment_success() {
+        PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
+        PisPaymentData pisPaymentData = new PisPaymentData();
+        pisCommonPaymentData.setPayments(Collections.singletonList(pisPaymentData));
+        pisCommonPaymentData.setPayment(null);
+
+        PisPayment pisPayment = new PisPayment();
+        when(pisCommonPaymentMapper.mapToPisPayment(pisPaymentData)).thenReturn(pisPayment);
+        byte[] bytes = "content".getBytes();
+        when(corePaymentsConvertService.buildPaymentData(Collections.singletonList(pisPayment), pisCommonPaymentData.getPaymentType()))
+            .thenReturn(bytes);
+        when(pisCommonPaymentDataRepository.save(pisCommonPaymentData)).thenReturn(pisCommonPaymentData);
+
+        ReflectionTestUtils.setField(pisCommonPaymentService, "convertCorePaymentToCommonPayment", true);
+        pisCommonPaymentService.transferCorePaymentToCommonPayment(pisCommonPaymentResponse, pisCommonPaymentData);
+
+        assertEquals(bytes, pisCommonPaymentResponse.getPaymentData());
+
+        verify(pisCommonPaymentMapper, times(1)).mapToPisPayment(pisPaymentData);
+        verify(corePaymentsConvertService, times(1)).buildPaymentData(Collections.singletonList(pisPayment), pisCommonPaymentData.getPaymentType());
+        verify(pisCommonPaymentDataRepository, times(1)).save(pisCommonPaymentData);
+    }
+
+    @Test
+    public void transferCorePaymentToCommonPayment_convertCorePaymentToCommonPaymentIsTurnOff() {
+        PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
+
+        ReflectionTestUtils.setField(pisCommonPaymentService, "convertCorePaymentToCommonPayment", false);
+        pisCommonPaymentService.transferCorePaymentToCommonPayment(pisCommonPaymentResponse, pisCommonPaymentData);
+
+        assertNull(pisCommonPaymentResponse.getPaymentData());
+
+        verify(pisCommonPaymentMapper, never()).mapToPisPayment(any());
+        verify(corePaymentsConvertService, never()).buildPaymentData(any(), any());
+        verify(pisCommonPaymentDataRepository, never()).save(any());
     }
 
     private PisCommonPaymentData buildPisCommonPaymentData() {

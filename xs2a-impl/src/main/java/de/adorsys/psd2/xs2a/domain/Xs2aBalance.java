@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
+import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import lombok.Data;
 
 import java.time.LocalDate;

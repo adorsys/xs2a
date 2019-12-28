@@ -17,21 +17,17 @@
 package de.adorsys.psd2.xs2a.service.payment.cancel;
 
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
-import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
 
 @RequiredArgsConstructor
 public abstract class AbstractCancelPaymentService implements CancelPaymentService {
@@ -40,14 +36,7 @@ public abstract class AbstractCancelPaymentService implements CancelPaymentServi
 
     @Override
     public ResponseObject<CancelPaymentResponse> cancelPayment(CommonPaymentData commonPaymentData, PisPaymentCancellationRequest paymentCancellationRequest) {
-        List<PisPayment> pisPayments = getPisPayments(commonPaymentData);
-        if (!isCommonPayment() && CollectionUtils.isEmpty(pisPayments)) {
-            return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
-                       .build();
-        }
-
-        Optional<? extends SpiPayment> spiPaymentOptional = createSpiPayment(pisPayments, commonPaymentData);
+        Optional<? extends SpiPayment> spiPaymentOptional = createSpiPayment(commonPaymentData);
         if (!spiPaymentOptional.isPresent()) {
             return ResponseObject.<CancelPaymentResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
@@ -60,24 +49,5 @@ public abstract class AbstractCancelPaymentService implements CancelPaymentServi
                                                                      paymentCancellationRequest.getTppRedirectUri());
     }
 
-    protected abstract Optional<? extends SpiPayment> createSpiPayment(List<PisPayment> pisPayments, CommonPaymentData commonPaymentData);
-
-    protected boolean isCommonPayment(){
-        return false;
-    }
-
-    private List<PisPayment> getPisPayments(CommonPaymentData commonPaymentData) {
-        List<PisPayment> pisPayments = Optional.of(commonPaymentData)
-                                           .map(CommonPaymentData::getPayments)
-                                           .orElseGet(Collections::emptyList);
-
-        pisPayments.forEach(pmt -> {
-            pmt.setPaymentId(commonPaymentData.getExternalId());
-            pmt.setTransactionStatus(commonPaymentData.getTransactionStatus());
-            pmt.setPsuDataList(commonPaymentData.getPsuData());
-            pmt.setStatusChangeTimestamp(commonPaymentData.getStatusChangeTimestamp());
-        });
-
-        return pisPayments;
-    }
+    protected abstract Optional<? extends SpiPayment> createSpiPayment(CommonPaymentData commonPaymentData);
 }

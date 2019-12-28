@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.domain.pis;
 
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

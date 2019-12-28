@@ -27,9 +27,9 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_EXPIRED;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 
 @Component
 @RequiredArgsConstructor

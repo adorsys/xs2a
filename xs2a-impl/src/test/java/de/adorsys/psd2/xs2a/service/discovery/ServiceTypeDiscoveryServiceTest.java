@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.discovery;
 
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

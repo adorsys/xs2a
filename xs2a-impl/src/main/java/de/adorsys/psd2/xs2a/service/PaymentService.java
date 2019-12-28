@@ -19,11 +19,12 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.event.core.model.EventType;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
@@ -45,12 +46,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
 
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
 @Slf4j
 @Service
@@ -69,6 +71,7 @@ public class PaymentService {
     private final CancelPaymentValidator cancelPaymentValidator;
     private final PaymentServiceResolver paymentServiceResolver;
     private final LoggingContextService loggingContextService;
+    private final ScaApproachResolver scaApproachResolver;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -77,7 +80,7 @@ public class PaymentService {
      * @param paymentInitiationParameters Parameters for payment initiation
      * @return Response containing information about created payment or corresponding error
      */
-    public ResponseObject<PaymentInitiationResponse> createPayment(Object payment, PaymentInitiationParameters paymentInitiationParameters) {
+    public ResponseObject<PaymentInitiationResponse> createPayment(byte[] payment, PaymentInitiationParameters paymentInitiationParameters) {
         xs2aEventService.recordTppRequest(EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, payment);
 
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(payment, paymentInitiationParameters));
@@ -87,6 +90,10 @@ public class PaymentService {
             return ResponseObject.<PaymentInitiationResponse>builder()
                        .fail(validationResult.getMessageError())
                        .build();
+        }
+
+        if (isNotSupportedScaApproach(scaApproachResolver.resolveScaApproach())) {
+            throw new UnsupportedOperationException("Unsupported operation");
         }
 
         TppInfo tppInfo = tppService.getTppInfo();
@@ -298,5 +305,9 @@ public class PaymentService {
         PsuIdData psuIdData = requestProviderService.getPsuIdData();
         log.info("X-Request-ID: [{}]. Corresponding PSU-ID {} was provided from request.", requestProviderService.getRequestId(), psuIdData);
         return psuIdData;
+    }
+
+    private boolean isNotSupportedScaApproach(ScaApproach scaApproach) {
+        return !EnumSet.of(ScaApproach.REDIRECT, ScaApproach.EMBEDDED, ScaApproach.DECOUPLED).contains(scaApproach);
     }
 }

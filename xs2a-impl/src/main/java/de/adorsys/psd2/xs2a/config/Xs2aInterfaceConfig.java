@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = {"de.adorsys.psd2.xs2a", "de.adorsys.psd2.aspsp.profile", "de.adorsys.psd2.consent", "de.adorsys.psd2.event", "de.adorsys.psd2.mapper"})
+@ComponentScan(basePackages = {"de.adorsys.psd2.xs2a", "de.adorsys.psd2.aspsp.profile", "de.adorsys.psd2.consent",
+    "de.adorsys.psd2.event", "de.adorsys.psd2.mapper"})
 public class Xs2aInterfaceConfig {
 }

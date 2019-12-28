@@ -17,8 +17,8 @@
 package de.adorsys.psd2.xs2a.service.mapper.psd2.ais;
 
 import de.adorsys.psd2.model.TppMessageCategory;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.exception.model.error500.Error500NGAIS;
 import de.adorsys.psd2.xs2a.exception.model.error500.TppMessage500AIS;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.Psd2ErrorMapper;

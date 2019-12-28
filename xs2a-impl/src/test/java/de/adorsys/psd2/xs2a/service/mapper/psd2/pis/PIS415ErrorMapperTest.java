@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.psd2.pis;
 
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.exception.model.error415.Error415NGPIS;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Test;

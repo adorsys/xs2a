@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.psd2;
 
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.web.error.ServiceUnavailableError;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;

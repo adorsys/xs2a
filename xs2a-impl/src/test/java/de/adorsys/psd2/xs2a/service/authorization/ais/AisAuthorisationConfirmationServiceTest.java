@@ -19,10 +19,12 @@ package de.adorsys.psd2.xs2a.service.authorization.ais;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
@@ -31,8 +33,6 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -53,9 +53,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Optional;
 
 import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_403;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -155,7 +154,7 @@ public class AisAuthorisationConfirmationServiceTest {
         // given
         UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                                                                          .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
+                                                                          .fail(ErrorType.AIS_403, of(CONSENT_UNKNOWN_403)).build();
 
         when(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(CmsResponse.<AisConsentAuthorizationResponse>builder()
@@ -229,7 +228,7 @@ public class AisAuthorisationConfirmationServiceTest {
         // given
         UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
         AisConsentAuthorizationResponse aisConsentAuthorizationResponse = getConsentAuthorisationResponse();
-        ErrorHolder errorHolder = ErrorHolder.builder(AIS_403)
+        ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_403)
                                       .tppMessages(of(CONSENT_UNKNOWN_403))
                                       .build();
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder()
@@ -259,7 +258,7 @@ public class AisAuthorisationConfirmationServiceTest {
         SpiResponse<SpiConfirmationCodeCheckingResponse> spiResponse = SpiResponse.<SpiConfirmationCodeCheckingResponse>builder()
                                                                            .error(new TppMessage(PSU_CREDENTIALS_INVALID))
                                                                            .build();
-        ErrorHolder errorHolder = ErrorHolder.builder(AIS_403)
+        ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_403)
                                       .tppMessages(of(CONSENT_UNKNOWN_403))
                                       .build();
 

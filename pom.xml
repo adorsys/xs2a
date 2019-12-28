@@ -36,6 +36,8 @@
         <module>spi-stub</module>
         <module>json-reader</module>
         <module>xs2a-object-mapper</module>
+        <module>xs2a-core-payments</module>
+        <module>xs2a-payment-support</module>
     </modules>
     <packaging>pom</packaging>
 

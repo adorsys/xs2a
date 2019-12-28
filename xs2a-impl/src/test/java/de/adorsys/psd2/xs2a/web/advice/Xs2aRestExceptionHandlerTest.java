@@ -18,10 +18,10 @@ package de.adorsys.psd2.xs2a.web.advice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;

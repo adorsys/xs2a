@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 @Value
 public class CreatePaymentRequestObject {
     @NotNull
-    private final Object payment;
+    private final byte[] payment;
     @NotNull
     private final PaymentInitiationParameters paymentInitiationParameters;
 }

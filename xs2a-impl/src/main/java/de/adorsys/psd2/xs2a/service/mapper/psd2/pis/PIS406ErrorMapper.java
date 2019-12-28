@@ -16,9 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.psd2.pis;
 
-import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.model.Error406NGPIS;
+import de.adorsys.psd2.model.TppMessage406PIS;
+import de.adorsys.psd2.model.TppMessageCategory;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.Psd2ErrorMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;

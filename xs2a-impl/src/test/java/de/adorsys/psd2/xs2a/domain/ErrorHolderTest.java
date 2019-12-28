@@ -16,7 +16,9 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import org.junit.Test;
 
 import java.util.Arrays;

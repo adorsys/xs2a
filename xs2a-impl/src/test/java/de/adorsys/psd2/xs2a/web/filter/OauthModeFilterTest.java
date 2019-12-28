@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -41,9 +40,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORBIDDEN;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED_NO_TOKEN;
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -109,7 +108,7 @@ public class OauthModeFilterTest {
             .thenReturn(IDP_URL);
         when(aspspProfileService.getScaRedirectFlow())
             .thenReturn(ScaRedirectFlow.OAUTH_PRE_STEP);
-        when(tppErrorMessageBuilder.buildTppErrorMessageWithPlaceholder(MessageCategory.ERROR, UNAUTHORIZED_NO_TOKEN, IDP_URL))
+        when(tppErrorMessageBuilder.buildTppErrorMessageWithPlaceholder(ERROR, UNAUTHORIZED_NO_TOKEN, IDP_URL))
             .thenReturn(TPP_ERROR_MESSAGE_UNAUTHORIZED);
 
         ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
@@ -132,7 +131,7 @@ public class OauthModeFilterTest {
             .thenReturn(TOKEN);
         when(aspspProfileService.getScaRedirectFlow())
             .thenReturn(ScaRedirectFlow.OAUTH);
-        when(tppErrorMessageBuilder.buildTppErrorMessage(MessageCategory.ERROR, FORBIDDEN))
+        when(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, FORBIDDEN))
             .thenReturn(TPP_ERROR_MESSAGE_FORBIDDEN);
 
         ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);

@@ -29,8 +29,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
 /**
  * Validator to be used for validating create PIS authorisation request according to some business rules

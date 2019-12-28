@@ -21,6 +21,8 @@ import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import de.adorsys.psd2.model.PaymentInitiationCancelResponse202;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -30,7 +32,6 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.NotificationModeResponseHeaders;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
@@ -47,7 +48,6 @@ import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.header.PaymentCancellationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.PaymentInitiationHeadersBuilder;
@@ -128,9 +128,7 @@ public class PaymentController implements PaymentApi {
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
                    : responseMapper.ok(ResponseObject.builder()
                                            .body(paymentModelMapperPsd2
-                                                     .mapToGetPaymentResponse(serviceResponse.getBody(),
-                                                                              PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service: " + paymentService)),
-                                                                              paymentProduct)).build());
+                                                     .mapToGetPaymentResponse(serviceResponse.getBody(), paymentProduct)).build());
     }
 
     //Method for JSON format payments
@@ -150,12 +148,11 @@ public class PaymentController implements PaymentApi {
                                                                            .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
-
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType, psUIPAddress, new AdditionalPsuIdData(psUIPPort, psUUserAgent, psUGeoLocation, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUHttpMethod, psUDeviceID));
         List<NotificationSupportedMode> notificationModes = notificationSupportedModeService.getProcessedNotificationModes(tpPNotificationContentPreferred);
         PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData, tpPNotificationURI, notificationModes);
         ResponseObject<PaymentInitiationResponse> serviceResponse =
-            xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aPayment(body, paymentInitiationParameters), paymentInitiationParameters);
+            xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aPayment(), paymentInitiationParameters);
 
         if (serviceResponse.hasError()) {
             return responseErrorMapper.generateErrorResponse(serviceResponse.getError());

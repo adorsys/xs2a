@@ -44,9 +44,9 @@ import org.springframework.stereotype.Service;
 import java.util.EnumSet;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
 @Slf4j
 @Service

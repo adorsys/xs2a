@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.starter.Xs2aEmbeddedStarter;
-import de.adorsys.psd2.starter.config.validation.PaymentValidationConfigImpl;
 import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
@@ -40,8 +39,7 @@ import org.springframework.test.context.junit4.SpringRunner;
     ObjectMapperConfig.class,
     WebConfig.class,
     Xs2aEndpointPathConstant.class,
-    Xs2aInterfaceConfig.class,
-    PaymentValidationConfigImpl.class
+    Xs2aInterfaceConfig.class
 })
 public class EmbeddedModeIT {
 

@@ -19,13 +19,14 @@ package de.adorsys.psd2.xs2a.web.validator.body.piis;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.Amount;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.CurrencyValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,17 +40,21 @@ public class FundsConfirmationBodyValidatorImpl extends AbstractBodyValidatorImp
     private final AccountReferenceValidator accountReferenceValidator;
     private final AmountValidator amountValidator;
     private final CurrencyValidator currencyValidator;
+    private final FieldExtractor fieldExtractor;
 
-    public FundsConfirmationBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper, AccountReferenceValidator accountReferenceValidator, AmountValidator amountValidator, CurrencyValidator currencyValidator) {
+    public FundsConfirmationBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
+                                              AccountReferenceValidator accountReferenceValidator, AmountValidator amountValidator,
+                                              CurrencyValidator currencyValidator, FieldExtractor fieldExtractor) {
         super(errorBuildingService, xs2aObjectMapper);
         this.accountReferenceValidator = accountReferenceValidator;
         this.amountValidator = amountValidator;
         this.currencyValidator = currencyValidator;
+        this.fieldExtractor = fieldExtractor;
     }
 
     @Override
     public MessageError validate(HttpServletRequest request, MessageError messageError) {
-        Optional<ConfirmationOfFunds> confirmationOfFundsOptional = mapBodyToInstance(request, messageError, ConfirmationOfFunds.class);
+        Optional<ConfirmationOfFunds> confirmationOfFundsOptional = fieldExtractor.mapBodyToInstance(request, messageError, ConfirmationOfFunds.class);
 
         // In case of wrong JSON - we don't proceed to the inner fields validation.
         if (!confirmationOfFundsOptional.isPresent()) {

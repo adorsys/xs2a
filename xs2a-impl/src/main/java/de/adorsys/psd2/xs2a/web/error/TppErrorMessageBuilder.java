@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.error;
 
+import de.adorsys.psd2.xs2a.core.domain.MessageCategory;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
 import lombok.RequiredArgsConstructor;

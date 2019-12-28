@@ -16,7 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.validator;
 
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.HeaderValidator;
 import de.adorsys.psd2.xs2a.web.validator.path.PathParameterValidator;
@@ -40,7 +41,7 @@ public abstract class AbstractMethodValidator implements MethodValidator {
      * Common method which processes all stuff by validators provided in {@link ValidatorWrapper} class.
      *
      * @param request      {@link HttpServletRequest}
-     * @param messageError object to be populated by errors ({@link de.adorsys.psd2.xs2a.domain.TppMessageInformation}
+     * @param messageError object to be populated by errors ({@link TppMessageInformation}
      *                     objects) during validation
      * @return {@link MessageError} object, enriched or not.
      */

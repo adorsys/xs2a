@@ -27,8 +27,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 

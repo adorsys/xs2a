@@ -26,9 +26,9 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_429;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_429;
 
 @Component
 @RequiredArgsConstructor
