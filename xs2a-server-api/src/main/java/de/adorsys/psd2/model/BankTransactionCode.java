@@ -23,11 +23,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Bank transaction code as used by the ASPSP and using the sub elements of this structured code defined by ISO 20022.  This code type is concatenating the three ISO20022 Codes   * Domain Code,   * Family Code, and   * SubFamiliy Code by hyphens, resulting in �DomainCode�-�FamilyCode�-�SubFamilyCode�. 
+ * Bank transaction code as used by the ASPSP and using the sub elements of this structured code defined by ISO 20022.   This code type is concatenating the three ISO20022 Codes    * Domain Code,    * Family Code, and    * SubFamiliy Code  by hyphens, resulting in &#39;DomainCode&#39;-&#39;FamilyCode&#39;-&#39;SubFamilyCode&#39;. 
  */
-@ApiModel(description = "Bank transaction code as used by the ASPSP and using the sub elements of this structured code defined by ISO 20022.  This code type is concatenating the three ISO20022 Codes   * Domain Code,   * Family Code, and   * SubFamiliy Code by hyphens, resulting in �DomainCode�-�FamilyCode�-�SubFamilyCode�. ")
+@ApiModel(description = "Bank transaction code as used by the ASPSP and using the sub elements of this structured code defined by ISO 20022.   This code type is concatenating the three ISO20022 Codes    * Domain Code,    * Family Code, and    * SubFamiliy Code  by hyphens, resulting in 'DomainCode'-'FamilyCode'-'SubFamilyCode'. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class BankTransactionCode   {
 
@@ -38,7 +38,7 @@ public class BankTransactionCode   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
+}
     return true;
   }
 

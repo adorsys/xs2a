@@ -32,7 +32,7 @@ import javax.validation.constraints.*;
  * LinksTransactionDetails
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class LinksTransactionDetails extends HashMap<String, HrefType>  {
   @JsonProperty("transactionDetails")
@@ -70,10 +70,12 @@ public class LinksTransactionDetails extends HashMap<String, HrefType>  {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
+}
+    if (!super.equals(o)) {
+    return false;
     }
     LinksTransactionDetails _linksTransactionDetails = (LinksTransactionDetails) o;
-    return Objects.equals(this.transactionDetails, _linksTransactionDetails.transactionDetails) &&
-        super.equals(o);
+    return Objects.equals(this.transactionDetails, _linksTransactionDetails.transactionDetails);
   }
 
   @Override

@@ -33,7 +33,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Links to the account, which can be directly used for retrieving account information from this dedicated account.  Links to \"balances\" and/or \"transactions\"  These links are only supported, when the corresponding consent has been already granted. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class LinksAccountDetails extends HashMap<String, HrefType>  {
   @JsonProperty("balances")
@@ -96,11 +96,13 @@ public class LinksAccountDetails extends HashMap<String, HrefType>  {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
+}
+    if (!super.equals(o)) {
+    return false;
     }
     LinksAccountDetails _linksAccountDetails = (LinksAccountDetails) o;
     return Objects.equals(this.balances, _linksAccountDetails.balances) &&
-        Objects.equals(this.transactions, _linksAccountDetails.transactions) &&
-        super.equals(o);
+    Objects.equals(this.transactions, _linksAccountDetails.transactions);
   }
 
   @Override

@@ -29,7 +29,7 @@ import javax.validation.constraints.*;
  * Amount
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Amount   {
   @JsonProperty("currency")
@@ -92,10 +92,9 @@ public class Amount   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Amount amount = (Amount) o;
+}    Amount amount = (Amount) o;
     return Objects.equals(this.currency, amount.currency) &&
-        Objects.equals(this.amount, amount.amount);
+    Objects.equals(this.amount, amount.amount);
   }
 
   @Override

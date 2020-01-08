@@ -35,7 +35,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Body of the JSON response for a successful consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class ConsentsResponse201   {
   @JsonProperty("consentStatus")
@@ -205,12 +205,12 @@ public class ConsentsResponse201   {
   }
 
   /**
-   * Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach.
+   * Get psuMessage
    * @return psuMessage
   **/
-  @ApiModelProperty(value = "Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach.")
+  @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("psuMessage")
   public String getPsuMessage() {
@@ -229,15 +229,14 @@ public class ConsentsResponse201   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    ConsentsResponse201 consentsResponse201 = (ConsentsResponse201) o;
+}    ConsentsResponse201 consentsResponse201 = (ConsentsResponse201) o;
     return Objects.equals(this.consentStatus, consentsResponse201.consentStatus) &&
-        Objects.equals(this.consentId, consentsResponse201.consentId) &&
-        Objects.equals(this.scaMethods, consentsResponse201.scaMethods) &&
-        Objects.equals(this.chosenScaMethod, consentsResponse201.chosenScaMethod) &&
-        Objects.equals(this.challengeData, consentsResponse201.challengeData) &&
-        Objects.equals(this._links, consentsResponse201._links) &&
-        Objects.equals(this.psuMessage, consentsResponse201.psuMessage);
+    Objects.equals(this.consentId, consentsResponse201.consentId) &&
+    Objects.equals(this.scaMethods, consentsResponse201.scaMethods) &&
+    Objects.equals(this.chosenScaMethod, consentsResponse201.chosenScaMethod) &&
+    Objects.equals(this.challengeData, consentsResponse201.challengeData) &&
+    Objects.equals(this._links, consentsResponse201._links) &&
+    Objects.equals(this.psuMessage, consentsResponse201.psuMessage);
   }
 
   @Override

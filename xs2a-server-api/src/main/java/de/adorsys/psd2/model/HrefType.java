@@ -30,7 +30,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Link to a resource.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class HrefType   {
   @JsonProperty("href")
@@ -66,8 +66,7 @@ public class HrefType   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    HrefType hrefType = (HrefType) o;
+}    HrefType hrefType = (HrefType) o;
     return Objects.equals(this.href, hrefType.href);
   }
 

@@ -26,11 +26,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * This is a data element to support the declaration of additional errors in the context of [RFC7807] in case of a HTTP error code 429 for. 
+ * This is a data element to support the declaration of additional errors in the context of [RFC7807]  in case of a HTTP error code 429 for.  
  */
-@ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807] in case of a HTTP error code 429 for. ")
+@ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807]  in case of a HTTP error code 429 for.  ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Error429AISAdditionalErrors   {
   @JsonProperty("title")
@@ -75,7 +75,7 @@ public class Error429AISAdditionalErrors   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("detail")
   public String getDetail() {
@@ -116,11 +116,10 @@ public class Error429AISAdditionalErrors   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error429AISAdditionalErrors error429AISAdditionalErrors = (Error429AISAdditionalErrors) o;
+}    Error429AISAdditionalErrors error429AISAdditionalErrors = (Error429AISAdditionalErrors) o;
     return Objects.equals(this.title, error429AISAdditionalErrors.title) &&
-        Objects.equals(this.detail, error429AISAdditionalErrors.detail) &&
-        Objects.equals(this.code, error429AISAdditionalErrors.code);
+    Objects.equals(this.detail, error429AISAdditionalErrors.detail) &&
+    Objects.equals(this.code, error429AISAdditionalErrors.code);
   }
 
   @Override

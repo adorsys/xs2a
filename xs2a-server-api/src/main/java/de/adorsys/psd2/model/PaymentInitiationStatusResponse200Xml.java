@@ -23,11 +23,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Body of the response for a successful payment initiation status request in case of an XML based endpoint.  The status is returned as a pain.002 structure.  urn:iso:std:iso:20022:tech:xsd:pain.002.001.03  The chosen XML schema of the Status request is following the XML schema definitions of the original pain.001 schema. 
+ * Body of the response for a successful payment initiation status request in case of an XML based endpoint.  The status is returned as a pain.002 structure.   urn:iso:std:iso:20022:tech:xsd:pain.002.001.03  The chosen XML schema of the Status request is following the XML schema definitions of the original pain.001 schema. 
  */
-@ApiModel(description = "Body of the response for a successful payment initiation status request in case of an XML based endpoint.  The status is returned as a pain.002 structure.  urn:iso:std:iso:20022:tech:xsd:pain.002.001.03  The chosen XML schema of the Status request is following the XML schema definitions of the original pain.001 schema. ")
+@ApiModel(description = "Body of the response for a successful payment initiation status request in case of an XML based endpoint.  The status is returned as a pain.002 structure.   urn:iso:std:iso:20022:tech:xsd:pain.002.001.03  The chosen XML schema of the Status request is following the XML schema definitions of the original pain.001 schema. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class PaymentInitiationStatusResponse200Xml   {
 
@@ -38,7 +38,7 @@ public class PaymentInitiationStatusResponse200Xml   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
+}
     return true;
   }
 

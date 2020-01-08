@@ -34,7 +34,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 406 for PIS. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Error406PIS   {
   @JsonProperty("type")
@@ -208,14 +208,13 @@ public class Error406PIS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error406PIS error406PIS = (Error406PIS) o;
+}    Error406PIS error406PIS = (Error406PIS) o;
     return Objects.equals(this.type, error406PIS.type) &&
-        Objects.equals(this.title, error406PIS.title) &&
-        Objects.equals(this.detail, error406PIS.detail) &&
-        Objects.equals(this.code, error406PIS.code) &&
-        Objects.equals(this.additionalErrors, error406PIS.additionalErrors) &&
-        Objects.equals(this._links, error406PIS._links);
+    Objects.equals(this.title, error406PIS.title) &&
+    Objects.equals(this.detail, error406PIS.detail) &&
+    Objects.equals(this.code, error406PIS.code) &&
+    Objects.equals(this.additionalErrors, error406PIS.additionalErrors) &&
+    Objects.equals(this._links, error406PIS._links);
   }
 
   @Override

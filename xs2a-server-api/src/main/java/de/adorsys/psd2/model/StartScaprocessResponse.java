@@ -35,7 +35,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Body of the JSON response for a Start SCA authorisation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class StartScaprocessResponse   {
   @JsonProperty("scaStatus")
@@ -210,7 +210,7 @@ public class StartScaprocessResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("psuMessage")
   public String getPsuMessage() {
@@ -229,15 +229,14 @@ public class StartScaprocessResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    StartScaprocessResponse startScaprocessResponse = (StartScaprocessResponse) o;
+}    StartScaprocessResponse startScaprocessResponse = (StartScaprocessResponse) o;
     return Objects.equals(this.scaStatus, startScaprocessResponse.scaStatus) &&
-        Objects.equals(this.authorisationId, startScaprocessResponse.authorisationId) &&
-        Objects.equals(this.scaMethods, startScaprocessResponse.scaMethods) &&
-        Objects.equals(this.chosenScaMethod, startScaprocessResponse.chosenScaMethod) &&
-        Objects.equals(this.challengeData, startScaprocessResponse.challengeData) &&
-        Objects.equals(this._links, startScaprocessResponse._links) &&
-        Objects.equals(this.psuMessage, startScaprocessResponse.psuMessage);
+    Objects.equals(this.authorisationId, startScaprocessResponse.authorisationId) &&
+    Objects.equals(this.scaMethods, startScaprocessResponse.scaMethods) &&
+    Objects.equals(this.chosenScaMethod, startScaprocessResponse.chosenScaMethod) &&
+    Objects.equals(this.challengeData, startScaprocessResponse.challengeData) &&
+    Objects.equals(this._links, startScaprocessResponse._links) &&
+    Objects.equals(this.psuMessage, startScaprocessResponse.psuMessage);
   }
 
   @Override

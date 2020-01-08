@@ -31,7 +31,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Exchange Rate.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class PaymentExchangeRate   {
   @JsonProperty("unitCurrency")
@@ -175,12 +175,11 @@ public class PaymentExchangeRate   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    PaymentExchangeRate paymentExchangeRate = (PaymentExchangeRate) o;
+}    PaymentExchangeRate paymentExchangeRate = (PaymentExchangeRate) o;
     return Objects.equals(this.unitCurrency, paymentExchangeRate.unitCurrency) &&
-        Objects.equals(this.exchangeRate, paymentExchangeRate.exchangeRate) &&
-        Objects.equals(this.contractIdentification, paymentExchangeRate.contractIdentification) &&
-        Objects.equals(this.rateType, paymentExchangeRate.rateType);
+    Objects.equals(this.exchangeRate, paymentExchangeRate.exchangeRate) &&
+    Objects.equals(this.contractIdentification, paymentExchangeRate.contractIdentification) &&
+    Objects.equals(this.rateType, paymentExchangeRate.rateType);
   }
 
   @Override

@@ -10,7 +10,7 @@ import javax.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
- * The following codes from the \"EventFrequency7Code\" of ISO 20022 are supported: - \"Daily\" - \"Weekly\" - \"EveryTwoWeeks\" - \"Monthly\" - \"EveryTwoMonths\" - \"Quarterly\" - \"SemiAnnual\" - \"Annual\" 
+ * The following codes from the \"EventFrequency7Code\" of ISO 20022 are supported: - \"Daily\" - \"Weekly\" - \"EveryTwoWeeks\" - \"Monthly\" - \"EveryTwoMonths\" - \"Quarterly\" - \"SemiAnnual\" - \"Annual\" - \"MonthlyVariable\" 
  */
 public enum FrequencyCode {
   
@@ -28,7 +28,9 @@ public enum FrequencyCode {
   
   SEMIANNUAL("SemiAnnual"),
   
-  ANNUAL("Annual");
+  ANNUAL("Annual"),
+  
+  MONTHLYVARIABLE("MonthlyVariable");
 
   private String value;
 

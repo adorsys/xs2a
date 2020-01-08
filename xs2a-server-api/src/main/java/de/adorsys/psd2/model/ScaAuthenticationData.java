@@ -23,11 +23,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * SCA authentication data, depending on the chosen authentication method. If the data is binary, then it is base64 encoded. 
+ * SCA authentication data, depending on the chosen authentication method.  If the data is binary, then it is base64 encoded. 
  */
-@ApiModel(description = "SCA authentication data, depending on the chosen authentication method. If the data is binary, then it is base64 encoded. ")
+@ApiModel(description = "SCA authentication data, depending on the chosen authentication method.  If the data is binary, then it is base64 encoded. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class ScaAuthenticationData   {
 
@@ -38,7 +38,7 @@ public class ScaAuthenticationData   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
+}
     return true;
   }
 

@@ -84,12 +84,13 @@ public class PaymentController implements PaymentApi {
 
     @Override
     public ResponseEntity getPaymentInitiationStatus(String paymentService, String paymentProduct,
-                                                     String paymentId, UUID xRequestID, String digest,
-                                                     String signature, byte[] tpPSignatureCertificate,
-                                                     String psUIPAddress, String psUIPPort, String psUAccept,
-                                                     String psUAcceptCharset, String psUAcceptEncoding,
-                                                     String psUAcceptLanguage, String psUUserAgent,
-                                                     String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+                                                     String paymentId, UUID xRequestId, String digest,
+                                                     String signature, byte[] tppSignatureCertificate,
+                                                     Boolean tppRedirectPreferred, String tppRedirectUri,
+                                                     String tppNokRedirectUri, String psuIpAddress, String psuIpPort,
+                                                     String psuAccept, String psuAcceptCharset, String psuAcceptEncoding,
+                                                     String psuAcceptLanguage, String psuUserAgent, String psuHttpMethod,
+                                                     UUID psuDeviceId, String psuGeoLocation) {
 
         ResponseObject<GetPaymentStatusResponse> serviceResponse = PaymentType.getByValue(paymentService)
                                                                        .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentProduct, paymentId))
@@ -134,7 +135,7 @@ public class PaymentController implements PaymentApi {
         // As this method is mapped to '/v1/{payment-service}/{payment-product}' path, we need to check payment-service value to be compliant with spec
         if (!PaymentType.getByValue(paymentService).isPresent()) {
             ResponseObject<PaymentInitiationResponse> responseObject = ResponseObject.<PaymentInitiationResponse>builder()
-                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
+                                                                           .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
 
@@ -175,7 +176,7 @@ public class PaymentController implements PaymentApi {
         // As this method is mapped to '/v1/{payment-service}/{payment-product}' path, we need to check payment-service value to be compliant with spec
         if (!PaymentType.getByValue(paymentService).isPresent()) {
             ResponseObject<PaymentInitiationResponse> responseObject = ResponseObject.<PaymentInitiationResponse>builder()
-                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
+                                                                           .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
 
@@ -215,7 +216,7 @@ public class PaymentController implements PaymentApi {
         // As this method is mapped to '/v1/{payment-service}/{payment-product}' path, we need to check payment-service value to be compliant with spec
         if (!PaymentType.getByValue(paymentService).isPresent()) {
             ResponseObject<PaymentInitiationResponse> responseObject = ResponseObject.<PaymentInitiationResponse>builder()
-                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
+                                                                           .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
 
@@ -240,10 +241,11 @@ public class PaymentController implements PaymentApi {
     @Override
     public ResponseEntity cancelPayment(String paymentService, String paymentProduct, String paymentId,
                                         UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate,
-                                        Boolean tpPRedirectPreferred, String tpPRedirectURI, String tpPNokRedirectURI,
-                                        String psUIPAddress, String psUIPPort, String psUAccept,
-                                        String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage,
-                                        String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation, Boolean tppExplicitAuthorisationPreferred) {
+                                        Boolean tpPRedirectPreferred, String tpPNokRedirectURI, String tpPRedirectURI,
+                                        Boolean tppExplicitAuthorisationPreferred, String psUIPAddress, String psUIPPort,
+                                        String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
+                                        String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
+                                        UUID psUDeviceID, String psUGeoLocation) {
 
         PisPaymentCancellationRequest paymentCancellationRequest = paymentModelMapperPsd2.mapToPaymentCancellationRequest(paymentProduct, paymentService, paymentId, tppExplicitAuthorisationPreferred, tpPRedirectURI, tpPNokRedirectURI);
         ResponseObject<CancelPaymentResponse> serviceResponse = PaymentType.getByValue(paymentService)
@@ -274,7 +276,7 @@ public class PaymentController implements PaymentApi {
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
         if (!paymentType.isPresent()) {
             ResponseObject<ScaStatus> responseObject = ResponseObject.<ScaStatus>builder()
-                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
+                                                           .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
         ResponseObject<ScaStatus> serviceResponse =
@@ -293,7 +295,7 @@ public class PaymentController implements PaymentApi {
         Optional<PaymentType> paymentTypeOptional = PaymentType.getByValue(paymentService);
         if (!paymentTypeOptional.isPresent()) {
             ResponseObject<Xs2aAuthorisationSubResources> responseObject = ResponseObject.<Xs2aAuthorisationSubResources>builder()
-                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
+                                                                               .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
 
@@ -314,7 +316,7 @@ public class PaymentController implements PaymentApi {
         Optional<PaymentType> paymentTypeOptional = PaymentType.getByValue(paymentService);
         if (!paymentTypeOptional.isPresent()) {
             ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> responseObject = ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
-                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
+                                                                                                 .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
 
@@ -335,7 +337,7 @@ public class PaymentController implements PaymentApi {
         Optional<PaymentType> paymentTypeOptional = PaymentType.getByValue(paymentService);
         if (!paymentTypeOptional.isPresent()) {
             ResponseObject<ScaStatus> responseObject = ResponseObject.<ScaStatus>builder()
-                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
+                                                           .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
 
@@ -397,7 +399,7 @@ public class PaymentController implements PaymentApi {
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
         if (!paymentType.isPresent()) {
             ResponseObject<CancellationAuthorisationResponse> responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
-                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
+                                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType);
@@ -426,7 +428,7 @@ public class PaymentController implements PaymentApi {
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
         if (!paymentType.isPresent()) {
             ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
-                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
+                                                                                           .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType);
@@ -457,7 +459,7 @@ public class PaymentController implements PaymentApi {
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
         if (!paymentType.isPresent()) {
             ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
-                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
+                                                                                           .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, authorisationId, paymentType.get(), paymentProduct, (Map) body);

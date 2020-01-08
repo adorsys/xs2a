@@ -34,7 +34,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Body of the JSON response for a successfull get consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class ConsentInformationResponse200Json   {
   @JsonProperty("access")
@@ -231,15 +231,14 @@ public class ConsentInformationResponse200Json   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    ConsentInformationResponse200Json consentInformationResponse200Json = (ConsentInformationResponse200Json) o;
+}    ConsentInformationResponse200Json consentInformationResponse200Json = (ConsentInformationResponse200Json) o;
     return Objects.equals(this.access, consentInformationResponse200Json.access) &&
-        Objects.equals(this.recurringIndicator, consentInformationResponse200Json.recurringIndicator) &&
-        Objects.equals(this.validUntil, consentInformationResponse200Json.validUntil) &&
-        Objects.equals(this.frequencyPerDay, consentInformationResponse200Json.frequencyPerDay) &&
-        Objects.equals(this.lastActionDate, consentInformationResponse200Json.lastActionDate) &&
-        Objects.equals(this.consentStatus, consentInformationResponse200Json.consentStatus) &&
-        Objects.equals(this._links, consentInformationResponse200Json._links);
+    Objects.equals(this.recurringIndicator, consentInformationResponse200Json.recurringIndicator) &&
+    Objects.equals(this.validUntil, consentInformationResponse200Json.validUntil) &&
+    Objects.equals(this.frequencyPerDay, consentInformationResponse200Json.frequencyPerDay) &&
+    Objects.equals(this.lastActionDate, consentInformationResponse200Json.lastActionDate) &&
+    Objects.equals(this.consentStatus, consentInformationResponse200Json.consentStatus) &&
+    Objects.equals(this._links, consentInformationResponse200Json._links);
   }
 
   @Override

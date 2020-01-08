@@ -30,7 +30,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Structured remittance information. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class RemittanceInformationStructured   {
   @JsonProperty("reference")
@@ -117,11 +117,10 @@ public class RemittanceInformationStructured   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    RemittanceInformationStructured remittanceInformationStructured = (RemittanceInformationStructured) o;
+}    RemittanceInformationStructured remittanceInformationStructured = (RemittanceInformationStructured) o;
     return Objects.equals(this.reference, remittanceInformationStructured.reference) &&
-        Objects.equals(this.referenceType, remittanceInformationStructured.referenceType) &&
-        Objects.equals(this.referenceIssuer, remittanceInformationStructured.referenceIssuer);
+    Objects.equals(this.referenceType, remittanceInformationStructured.referenceType) &&
+    Objects.equals(this.referenceIssuer, remittanceInformationStructured.referenceIssuer);
   }
 
   @Override

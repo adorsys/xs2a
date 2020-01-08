@@ -23,11 +23,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Is the identification of the transaction as used e.g. for reference for deltafunction on application level. 
+ * Is the identification of the transaction as used e.g. for reference for deltafunction on application level. The same identification as for example used within camt.05x messages. 
  */
-@ApiModel(description = "Is the identification of the transaction as used e.g. for reference for deltafunction on application level. ")
+@ApiModel(description = "Is the identification of the transaction as used e.g. for reference for deltafunction on application level. The same identification as for example used within camt.05x messages. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class EntryReference   {
 
@@ -38,7 +38,7 @@ public class EntryReference   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
+}
     return true;
   }
 

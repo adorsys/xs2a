@@ -35,7 +35,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Body of the JSON response for a Start SCA authorisation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class StartCancellationScaProcessResponse   {
   @JsonProperty("scaStatus")
@@ -209,7 +209,7 @@ public class StartCancellationScaProcessResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("psuMessage")
   public String getPsuMessage() {
@@ -228,15 +228,14 @@ public class StartCancellationScaProcessResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    StartCancellationScaProcessResponse startCancellationScaProcessResponse = (StartCancellationScaProcessResponse) o;
+}    StartCancellationScaProcessResponse startCancellationScaProcessResponse = (StartCancellationScaProcessResponse) o;
     return Objects.equals(this.scaStatus, startCancellationScaProcessResponse.scaStatus) &&
-        Objects.equals(this.cancellationId, startCancellationScaProcessResponse.cancellationId) &&
-        Objects.equals(this.scaMethods, startCancellationScaProcessResponse.scaMethods) &&
-        Objects.equals(this.chosenScaMethod, startCancellationScaProcessResponse.chosenScaMethod) &&
-        Objects.equals(this.challengeData, startCancellationScaProcessResponse.challengeData) &&
-        Objects.equals(this._links, startCancellationScaProcessResponse._links) &&
-        Objects.equals(this.psuMessage, startCancellationScaProcessResponse.psuMessage);
+    Objects.equals(this.cancellationId, startCancellationScaProcessResponse.cancellationId) &&
+    Objects.equals(this.scaMethods, startCancellationScaProcessResponse.scaMethods) &&
+    Objects.equals(this.chosenScaMethod, startCancellationScaProcessResponse.chosenScaMethod) &&
+    Objects.equals(this.challengeData, startCancellationScaProcessResponse.challengeData) &&
+    Objects.equals(this._links, startCancellationScaProcessResponse._links) &&
+    Objects.equals(this.psuMessage, startCancellationScaProcessResponse.psuMessage);
   }
 
   @Override

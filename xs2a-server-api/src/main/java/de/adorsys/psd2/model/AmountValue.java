@@ -27,7 +27,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "The amount given with fractional digits, where fractions must be compliant to the currency definition. Up to 14 significant figures. Negative amounts are signed by minus. The decimal separator is a dot.  **Example:** Valid representations for EUR with up to two decimals are:    * 1056   * 5768.2   * -1.50   * 5877.78 ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class AmountValue   {
 
@@ -38,7 +38,7 @@ public class AmountValue   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
+}
     return true;
   }
 

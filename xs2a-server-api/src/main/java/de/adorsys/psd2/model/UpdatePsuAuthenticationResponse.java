@@ -35,7 +35,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Body of the JSON response for a successful update PSU authentication request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class UpdatePsuAuthenticationResponse   {
   @JsonProperty("chosenScaMethod")
@@ -186,7 +186,7 @@ public class UpdatePsuAuthenticationResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("psuMessage")
   public String getPsuMessage() {
@@ -227,15 +227,14 @@ public class UpdatePsuAuthenticationResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    UpdatePsuAuthenticationResponse updatePsuAuthenticationResponse = (UpdatePsuAuthenticationResponse) o;
+}    UpdatePsuAuthenticationResponse updatePsuAuthenticationResponse = (UpdatePsuAuthenticationResponse) o;
     return Objects.equals(this.chosenScaMethod, updatePsuAuthenticationResponse.chosenScaMethod) &&
-        Objects.equals(this.challengeData, updatePsuAuthenticationResponse.challengeData) &&
-        Objects.equals(this.scaMethods, updatePsuAuthenticationResponse.scaMethods) &&
-        Objects.equals(this._links, updatePsuAuthenticationResponse._links) &&
-        Objects.equals(this.scaStatus, updatePsuAuthenticationResponse.scaStatus) &&
-        Objects.equals(this.psuMessage, updatePsuAuthenticationResponse.psuMessage) &&
-        Objects.equals(this.authorisationId, updatePsuAuthenticationResponse.authorisationId);
+    Objects.equals(this.challengeData, updatePsuAuthenticationResponse.challengeData) &&
+    Objects.equals(this.scaMethods, updatePsuAuthenticationResponse.scaMethods) &&
+    Objects.equals(this._links, updatePsuAuthenticationResponse._links) &&
+    Objects.equals(this.scaStatus, updatePsuAuthenticationResponse.scaStatus) &&
+    Objects.equals(this.psuMessage, updatePsuAuthenticationResponse.psuMessage) &&
+    Objects.equals(this.authorisationId, updatePsuAuthenticationResponse.authorisationId);
   }
 
   @Override

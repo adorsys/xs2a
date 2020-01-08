@@ -30,11 +30,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 409 for PIS. 
+ * Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 409 for PIS. 
  */
-@ApiModel(description = "Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 409 for PIS. ")
+@ApiModel(description = "Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 409 for PIS. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Error409PIS   {
   @JsonProperty("type")
@@ -62,10 +62,10 @@ public class Error409PIS   {
   }
 
   /**
-   * A URI reference [RFC3986] that identifies the problem type. Remark For Future: These URI will be provided by NextGenPSD2 in future. 
+   * A URI reference [RFC3986] that identifies the problem type.  Remark For Future: These URI will be provided by NextGenPSD2 in future. 
    * @return type
   **/
-  @ApiModelProperty(required = true, value = "A URI reference [RFC3986] that identifies the problem type. Remark For Future: These URI will be provided by NextGenPSD2 in future. ")
+  @ApiModelProperty(required = true, value = "A URI reference [RFC3986] that identifies the problem type.  Remark For Future: These URI will be provided by NextGenPSD2 in future. ")
   @NotNull
 
 @Size(max=70) 
@@ -85,10 +85,10 @@ public class Error409PIS   {
   }
 
   /**
-   * Short human readable description of error type. Could be in local language. To be provided by ASPSPs. 
+   * Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. 
    * @return title
   **/
-  @ApiModelProperty(value = "Short human readable description of error type. Could be in local language. To be provided by ASPSPs. ")
+  @ApiModelProperty(value = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
 
 @Size(max=70) 
 
@@ -107,12 +107,12 @@ public class Error409PIS   {
   }
 
   /**
-   * Detailed human readable text specific to this instance of the error. XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. 
+   * Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. 
    * @return detail
   **/
-  @ApiModelProperty(value = "Detailed human readable text specific to this instance of the error. XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
+  @ApiModelProperty(value = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("detail")
   public String getDetail() {
@@ -208,14 +208,13 @@ public class Error409PIS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error409PIS error409PIS = (Error409PIS) o;
+}    Error409PIS error409PIS = (Error409PIS) o;
     return Objects.equals(this.type, error409PIS.type) &&
-        Objects.equals(this.title, error409PIS.title) &&
-        Objects.equals(this.detail, error409PIS.detail) &&
-        Objects.equals(this.code, error409PIS.code) &&
-        Objects.equals(this.additionalErrors, error409PIS.additionalErrors) &&
-        Objects.equals(this._links, error409PIS._links);
+    Objects.equals(this.title, error409PIS.title) &&
+    Objects.equals(this.detail, error409PIS.detail) &&
+    Objects.equals(this.code, error409PIS.code) &&
+    Objects.equals(this.additionalErrors, error409PIS.additionalErrors) &&
+    Objects.equals(this._links, error409PIS._links);
   }
 
   @Override

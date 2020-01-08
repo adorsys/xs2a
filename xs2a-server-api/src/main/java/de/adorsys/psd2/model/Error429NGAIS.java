@@ -34,7 +34,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 429. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Error429NGAIS   {
   @JsonProperty("tppMessages")
@@ -106,10 +106,9 @@ public class Error429NGAIS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error429NGAIS error429NGAIS = (Error429NGAIS) o;
+}    Error429NGAIS error429NGAIS = (Error429NGAIS) o;
     return Objects.equals(this.tppMessages, error429NGAIS.tppMessages) &&
-        Objects.equals(this._links, error429NGAIS._links);
+    Objects.equals(this._links, error429NGAIS._links);
   }
 
   @Override

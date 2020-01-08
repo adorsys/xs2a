@@ -23,11 +23,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * This parameter is requesting a valid until date for the requested consent. The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.  If a maximal available date is requested, a date in far future is to be used: \&quot;9999-12-31\&quot;.  In both cases the consent object to be retrieved by the Get consent request will contain the adjusted date. 
+ * This parameter is requesting a valid until date for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \&quot;9999-12-31\&quot;.   In both cases the consent object to be retrieved by the Get consent request will contain the adjusted date. 
  */
-@ApiModel(description = "This parameter is requesting a valid until date for the requested consent. The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.  If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".  In both cases the consent object to be retrieved by the Get consent request will contain the adjusted date. ")
+@ApiModel(description = "This parameter is requesting a valid until date for the requested consent.  The content is the local ASPSP date in ISO-Date format, e.g. 2017-10-30.  Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the Get consent request will contain the adjusted date. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class ValidUntil   {
 
@@ -38,7 +38,7 @@ public class ValidUntil   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
+}
     return true;
   }
 

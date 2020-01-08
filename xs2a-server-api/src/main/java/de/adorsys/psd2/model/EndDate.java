@@ -27,7 +27,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "The last applicable day of execution. If not given, it is an infinite standing order. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class EndDate   {
 
@@ -38,7 +38,7 @@ public class EndDate   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
+}
     return true;
   }
 

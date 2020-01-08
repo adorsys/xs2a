@@ -36,7 +36,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Generic JSON response body consistion of the corresponding bulk payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class BulkPaymentInitiationWithStatusResponse   {
   @JsonProperty("batchBookingPreferred")
@@ -184,13 +184,12 @@ public class BulkPaymentInitiationWithStatusResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    BulkPaymentInitiationWithStatusResponse bulkPaymentInitiationWithStatusResponse = (BulkPaymentInitiationWithStatusResponse) o;
+}    BulkPaymentInitiationWithStatusResponse bulkPaymentInitiationWithStatusResponse = (BulkPaymentInitiationWithStatusResponse) o;
     return Objects.equals(this.batchBookingPreferred, bulkPaymentInitiationWithStatusResponse.batchBookingPreferred) &&
-        Objects.equals(this.requestedExecutionDate, bulkPaymentInitiationWithStatusResponse.requestedExecutionDate) &&
-        Objects.equals(this.debtorAccount, bulkPaymentInitiationWithStatusResponse.debtorAccount) &&
-        Objects.equals(this.payments, bulkPaymentInitiationWithStatusResponse.payments) &&
-        Objects.equals(this.transactionStatus, bulkPaymentInitiationWithStatusResponse.transactionStatus);
+    Objects.equals(this.requestedExecutionDate, bulkPaymentInitiationWithStatusResponse.requestedExecutionDate) &&
+    Objects.equals(this.debtorAccount, bulkPaymentInitiationWithStatusResponse.debtorAccount) &&
+    Objects.equals(this.payments, bulkPaymentInitiationWithStatusResponse.payments) &&
+    Objects.equals(this.transactionStatus, bulkPaymentInitiationWithStatusResponse.transactionStatus);
   }
 
   @Override

@@ -39,7 +39,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Body of the response for a successful payment initiation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class PaymentInitationRequestResponse201   {
   @JsonProperty("transactionStatus")
@@ -269,7 +269,7 @@ public class PaymentInitationRequestResponse201   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("psuMessage")
   public String getPsuMessage() {
@@ -319,18 +319,17 @@ public class PaymentInitationRequestResponse201   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    PaymentInitationRequestResponse201 paymentInitationRequestResponse201 = (PaymentInitationRequestResponse201) o;
+}    PaymentInitationRequestResponse201 paymentInitationRequestResponse201 = (PaymentInitationRequestResponse201) o;
     return Objects.equals(this.transactionStatus, paymentInitationRequestResponse201.transactionStatus) &&
-        Objects.equals(this.paymentId, paymentInitationRequestResponse201.paymentId) &&
-        Objects.equals(this.transactionFees, paymentInitationRequestResponse201.transactionFees) &&
-        Objects.equals(this.transactionFeeIndicator, paymentInitationRequestResponse201.transactionFeeIndicator) &&
-        Objects.equals(this.scaMethods, paymentInitationRequestResponse201.scaMethods) &&
-        Objects.equals(this.chosenScaMethod, paymentInitationRequestResponse201.chosenScaMethod) &&
-        Objects.equals(this.challengeData, paymentInitationRequestResponse201.challengeData) &&
-        Objects.equals(this._links, paymentInitationRequestResponse201._links) &&
-        Objects.equals(this.psuMessage, paymentInitationRequestResponse201.psuMessage) &&
-        Objects.equals(this.tppMessages, paymentInitationRequestResponse201.tppMessages);
+    Objects.equals(this.paymentId, paymentInitationRequestResponse201.paymentId) &&
+    Objects.equals(this.transactionFees, paymentInitationRequestResponse201.transactionFees) &&
+    Objects.equals(this.transactionFeeIndicator, paymentInitationRequestResponse201.transactionFeeIndicator) &&
+    Objects.equals(this.scaMethods, paymentInitationRequestResponse201.scaMethods) &&
+    Objects.equals(this.chosenScaMethod, paymentInitationRequestResponse201.chosenScaMethod) &&
+    Objects.equals(this.challengeData, paymentInitationRequestResponse201.challengeData) &&
+    Objects.equals(this._links, paymentInitationRequestResponse201._links) &&
+    Objects.equals(this.psuMessage, paymentInitationRequestResponse201.psuMessage) &&
+    Objects.equals(this.tppMessages, paymentInitationRequestResponse201.tppMessages);
   }
 
   @Override

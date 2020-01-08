@@ -30,7 +30,7 @@ import javax.validation.constraints.*;
  * TppMessage429AIS
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class TppMessage429AIS   {
   @JsonProperty("category")
@@ -125,7 +125,7 @@ public class TppMessage429AIS   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("text")
   public String getText() {
@@ -144,12 +144,11 @@ public class TppMessage429AIS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    TppMessage429AIS tppMessage429AIS = (TppMessage429AIS) o;
+}    TppMessage429AIS tppMessage429AIS = (TppMessage429AIS) o;
     return Objects.equals(this.category, tppMessage429AIS.category) &&
-        Objects.equals(this.code, tppMessage429AIS.code) &&
-        Objects.equals(this.path, tppMessage429AIS.path) &&
-        Objects.equals(this.text, tppMessage429AIS.text);
+    Objects.equals(this.code, tppMessage429AIS.code) &&
+    Objects.equals(this.path, tppMessage429AIS.path) &&
+    Objects.equals(this.text, tppMessage429AIS.text);
   }
 
   @Override

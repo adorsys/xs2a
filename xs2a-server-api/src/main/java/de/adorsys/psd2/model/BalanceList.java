@@ -26,11 +26,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * A list of balances regarding this account, e.g. the current balance, the last booked balance. The list migght be restricted to the current balance. 
+ * A list of balances regarding this account, e.g. the current balance, the last booked balance. The list might be restricted to the current balance. 
  */
-@ApiModel(description = "A list of balances regarding this account, e.g. the current balance, the last booked balance. The list migght be restricted to the current balance. ")
+@ApiModel(description = "A list of balances regarding this account, e.g. the current balance, the last booked balance. The list might be restricted to the current balance. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class BalanceList extends ArrayList<Balance>  {
 
@@ -41,7 +41,11 @@ public class BalanceList extends ArrayList<Balance>  {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
+}
+    if (!super.equals(o)) {
+    return false;
     }
+
     return true;
   }
 

@@ -23,11 +23,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Short human readable description of error type. Could be in local language. To be provided by ASPSPs. 
+ * Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. 
  */
-@ApiModel(description = "Short human readable description of error type. Could be in local language. To be provided by ASPSPs. ")
+@ApiModel(description = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class TppErrorTitle   {
 
@@ -38,7 +38,7 @@ public class TppErrorTitle   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
+}
     return true;
   }
 

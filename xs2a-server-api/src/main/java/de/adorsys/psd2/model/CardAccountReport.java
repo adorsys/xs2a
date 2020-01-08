@@ -32,7 +32,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "JSON based card account report.  This card account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class CardAccountReport   {
   @JsonProperty("booked")
@@ -123,11 +123,10 @@ public class CardAccountReport   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    CardAccountReport cardAccountReport = (CardAccountReport) o;
+}    CardAccountReport cardAccountReport = (CardAccountReport) o;
     return Objects.equals(this.booked, cardAccountReport.booked) &&
-        Objects.equals(this.pending, cardAccountReport.pending) &&
-        Objects.equals(this._links, cardAccountReport._links);
+    Objects.equals(this.pending, cardAccountReport.pending) &&
+    Objects.equals(this._links, cardAccountReport._links);
   }
 
   @Override

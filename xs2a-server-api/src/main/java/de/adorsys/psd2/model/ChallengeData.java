@@ -33,7 +33,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "It is contained in addition to the data element 'chosenScaMethod' if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the 'startAuthorisationWithPsuAuthentication' link. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class ChallengeData   {
   @JsonProperty("image")
@@ -234,14 +234,13 @@ public class ChallengeData   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    ChallengeData challengeData = (ChallengeData) o;
+}    ChallengeData challengeData = (ChallengeData) o;
     return Objects.equals(this.image, challengeData.image) &&
-        Objects.equals(this.data, challengeData.data) &&
-        Objects.equals(this.imageLink, challengeData.imageLink) &&
-        Objects.equals(this.otpMaxLength, challengeData.otpMaxLength) &&
-        Objects.equals(this.otpFormat, challengeData.otpFormat) &&
-        Objects.equals(this.additionalInformation, challengeData.additionalInformation);
+    Objects.equals(this.data, challengeData.data) &&
+    Objects.equals(this.imageLink, challengeData.imageLink) &&
+    Objects.equals(this.otpMaxLength, challengeData.otpMaxLength) &&
+    Objects.equals(this.otpFormat, challengeData.otpFormat) &&
+    Objects.equals(this.additionalInformation, challengeData.additionalInformation);
   }
 
   @Override

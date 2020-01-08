@@ -31,11 +31,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Body of the JSON response for a successful update PSU authentication request.
+ * Body of the JSON response for a successful update PSU Authentication request.
  */
-@ApiModel(description = "Body of the JSON response for a successful update PSU authentication request.")
+@ApiModel(description = "Body of the JSON response for a successful update PSU Authentication request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class UpdateCancellationPsuAuthenticationResponse   {
   @JsonProperty("chosenScaMethod")
@@ -186,7 +186,7 @@ public class UpdateCancellationPsuAuthenticationResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("psuMessage")
   public String getPsuMessage() {
@@ -227,15 +227,14 @@ public class UpdateCancellationPsuAuthenticationResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    UpdateCancellationPsuAuthenticationResponse updateCancellationPsuAuthenticationResponse = (UpdateCancellationPsuAuthenticationResponse) o;
+}    UpdateCancellationPsuAuthenticationResponse updateCancellationPsuAuthenticationResponse = (UpdateCancellationPsuAuthenticationResponse) o;
     return Objects.equals(this.chosenScaMethod, updateCancellationPsuAuthenticationResponse.chosenScaMethod) &&
-        Objects.equals(this.challengeData, updateCancellationPsuAuthenticationResponse.challengeData) &&
-        Objects.equals(this.scaMethods, updateCancellationPsuAuthenticationResponse.scaMethods) &&
-        Objects.equals(this._links, updateCancellationPsuAuthenticationResponse._links) &&
-        Objects.equals(this.scaStatus, updateCancellationPsuAuthenticationResponse.scaStatus) &&
-        Objects.equals(this.psuMessage, updateCancellationPsuAuthenticationResponse.psuMessage) &&
-        Objects.equals(this.cancellationId, updateCancellationPsuAuthenticationResponse.cancellationId);
+    Objects.equals(this.challengeData, updateCancellationPsuAuthenticationResponse.challengeData) &&
+    Objects.equals(this.scaMethods, updateCancellationPsuAuthenticationResponse.scaMethods) &&
+    Objects.equals(this._links, updateCancellationPsuAuthenticationResponse._links) &&
+    Objects.equals(this.scaStatus, updateCancellationPsuAuthenticationResponse.scaStatus) &&
+    Objects.equals(this.psuMessage, updateCancellationPsuAuthenticationResponse.psuMessage) &&
+    Objects.equals(this.cancellationId, updateCancellationPsuAuthenticationResponse.cancellationId);
   }
 
   @Override

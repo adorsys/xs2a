@@ -30,7 +30,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Error409PISAdditionalErrors   {
   @JsonProperty("title")
@@ -75,7 +75,7 @@ public class Error409PISAdditionalErrors   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("detail")
   public String getDetail() {
@@ -116,11 +116,10 @@ public class Error409PISAdditionalErrors   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error409PISAdditionalErrors error409PISAdditionalErrors = (Error409PISAdditionalErrors) o;
+}    Error409PISAdditionalErrors error409PISAdditionalErrors = (Error409PISAdditionalErrors) o;
     return Objects.equals(this.title, error409PISAdditionalErrors.title) &&
-        Objects.equals(this.detail, error409PISAdditionalErrors.detail) &&
-        Objects.equals(this.code, error409PISAdditionalErrors.code);
+    Objects.equals(this.detail, error409PISAdditionalErrors.detail) &&
+    Objects.equals(this.code, error409PISAdditionalErrors.code);
   }
 
   @Override

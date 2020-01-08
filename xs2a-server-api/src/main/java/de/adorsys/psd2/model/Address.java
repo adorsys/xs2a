@@ -29,7 +29,7 @@ import javax.validation.constraints.*;
  * Address
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Address   {
   @JsonProperty("streetName")
@@ -166,13 +166,12 @@ public class Address   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Address address = (Address) o;
+}    Address address = (Address) o;
     return Objects.equals(this.streetName, address.streetName) &&
-        Objects.equals(this.buildingNumber, address.buildingNumber) &&
-        Objects.equals(this.townName, address.townName) &&
-        Objects.equals(this.postCode, address.postCode) &&
-        Objects.equals(this.country, address.country);
+    Objects.equals(this.buildingNumber, address.buildingNumber) &&
+    Objects.equals(this.townName, address.townName) &&
+    Objects.equals(this.postCode, address.postCode) &&
+    Objects.equals(this.country, address.country);
   }
 
   @Override

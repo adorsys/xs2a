@@ -32,11 +32,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Generic Body for a bulk payment initation via JSON.  paymentInformationId is contained in code but commented since it is n.a. and not all ASPSP are able to support this field now. In a later version the field will be mandatory. 
+ * Generic Body for a bulk payment initation via JSON.  paymentInformationId is contained in code but commented since it is n.a.  and not all ASPSP are able to support this field now. In a later version the field will be mandatory. 
  */
-@ApiModel(description = "Generic Body for a bulk payment initation via JSON.  paymentInformationId is contained in code but commented since it is n.a. and not all ASPSP are able to support this field now. In a later version the field will be mandatory. ")
+@ApiModel(description = "Generic Body for a bulk payment initation via JSON.  paymentInformationId is contained in code but commented since it is n.a.  and not all ASPSP are able to support this field now. In a later version the field will be mandatory. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class BulkPaymentInitiationJson   {
   @JsonProperty("batchBookingPreferred")
@@ -184,13 +184,12 @@ public class BulkPaymentInitiationJson   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    BulkPaymentInitiationJson bulkPaymentInitiationJson = (BulkPaymentInitiationJson) o;
+}    BulkPaymentInitiationJson bulkPaymentInitiationJson = (BulkPaymentInitiationJson) o;
     return Objects.equals(this.batchBookingPreferred, bulkPaymentInitiationJson.batchBookingPreferred) &&
-        Objects.equals(this.debtorAccount, bulkPaymentInitiationJson.debtorAccount) &&
-        Objects.equals(this.requestedExecutionDate, bulkPaymentInitiationJson.requestedExecutionDate) &&
-        Objects.equals(this.requestedExecutionTime, bulkPaymentInitiationJson.requestedExecutionTime) &&
-        Objects.equals(this.payments, bulkPaymentInitiationJson.payments);
+    Objects.equals(this.debtorAccount, bulkPaymentInitiationJson.debtorAccount) &&
+    Objects.equals(this.requestedExecutionDate, bulkPaymentInitiationJson.requestedExecutionDate) &&
+    Objects.equals(this.requestedExecutionTime, bulkPaymentInitiationJson.requestedExecutionTime) &&
+    Objects.equals(this.payments, bulkPaymentInitiationJson.payments);
   }
 
   @Override
