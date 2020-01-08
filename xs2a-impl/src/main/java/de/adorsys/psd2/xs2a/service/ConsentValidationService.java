@@ -16,10 +16,13 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.service.validator.TppNotificationDataValidator;
+import de.adorsys.psd2.xs2a.service.validator.TppUriHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.*;
@@ -28,6 +31,9 @@ import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentReque
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +47,8 @@ public class ConsentValidationService {
     private final UpdateConsentPsuDataValidator updateConsentPsuDataValidator;
     private final GetConsentAuthorisationsValidator getConsentAuthorisationsValidator;
     private final GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
+    private final TppUriHeaderValidator tppUriHeaderValidator;
+    private final TppNotificationDataValidator tppNotificationDataValidator;
 
     public ValidationResult validateConsentOnCreate(CreateConsentReq request, PsuIdData psuIdData) {
         return createConsentRequestValidator.validate(new CreateConsentRequestObject(request, psuIdData));
@@ -72,5 +80,14 @@ public class ConsentValidationService {
 
     public ValidationResult validateConsentAuthorisationScaStatus(AccountConsent consent, String authorisationId) {
         return getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(consent, authorisationId));
+    }
+
+    public Set<TppMessageInformation> buildWarningMessages(CreateConsentReq request) {
+        Set<TppMessageInformation> warnings = new HashSet<>();
+
+        warnings.addAll(tppUriHeaderValidator.buildWarningMessages(request.getTppRedirectUri()));
+        warnings.addAll(tppNotificationDataValidator.buildWarningMessages(request.getTppNotificationData()));
+
+        return warnings;
     }
 }

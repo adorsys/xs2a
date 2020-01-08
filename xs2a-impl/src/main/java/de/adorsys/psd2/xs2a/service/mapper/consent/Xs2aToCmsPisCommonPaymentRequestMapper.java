@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -46,8 +47,8 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         paymentInfo.setInternalRequestId(internalRequestId);
         paymentInfo.setPaymentData(paymentData);
         paymentInfo.setCreationTimestamp(creationTimestamp);
-        paymentInfo.setTppNotificationUri(paymentInitiationParameters.getTppNotificationUri());
-        paymentInfo.setNotificationSupportedModes(paymentInitiationParameters.getNotificationSupportedModes());
+        paymentInfo.setTppNotificationUri(Optional.ofNullable(paymentInitiationParameters.getTppNotificationData()).map(TppNotificationData::getTppNotificationUri).orElse(null));
+        paymentInfo.setNotificationSupportedModes(Optional.ofNullable(paymentInitiationParameters.getTppNotificationData()).map(TppNotificationData::getNotificationModes).orElse(null));
         return paymentInfo;
     }
 

@@ -16,19 +16,26 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.payment;
 
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.service.validator.TppUriHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 /**
  * Validator to be used for validating cancel payment request according to some business rules
  */
 @Component
 public class CancelPaymentValidator extends AbstractPisValidator<CancelPaymentPO> {
+    private final TppUriHeaderValidator tppUriHeaderValidator;
 
-    public CancelPaymentValidator(RequestProviderService requestProviderService) {
+    public CancelPaymentValidator(RequestProviderService requestProviderService, TppUriHeaderValidator tppUriHeaderValidator) {
         super(requestProviderService);
+        this.tppUriHeaderValidator = tppUriHeaderValidator;
     }
 
     /**
@@ -43,5 +50,10 @@ public class CancelPaymentValidator extends AbstractPisValidator<CancelPaymentPO
     @Override
     protected ValidationResult executeBusinessValidation(CancelPaymentPO paymentObject) {
         return ValidationResult.valid();
+    }
+
+    @Override
+    public @NotNull Set<TppMessageInformation> buildWarningMessages(@NotNull CancelPaymentPO cancelPaymentPO) {
+        return tppUriHeaderValidator.buildWarningMessages(cancelPaymentPO.getTppRedirectUri());
     }
 }

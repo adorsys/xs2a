@@ -21,7 +21,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
-
+import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.WARNING;
 
 @Data
 @EqualsAndHashCode
@@ -34,6 +34,10 @@ public class TppMessageInformation {
 
     public static TppMessageInformation buildWithCustomError(MessageErrorCode messageErrorCode, String text) {
         return new TppMessageInformation(ERROR, messageErrorCode, null, text, null);
+    }
+
+    public static TppMessageInformation buildWarning(String text) {
+        return new TppMessageInformation(WARNING, null, null, text);
     }
 
     public static TppMessageInformation of(MessageErrorCode messageErrorCode) { //NOPMD

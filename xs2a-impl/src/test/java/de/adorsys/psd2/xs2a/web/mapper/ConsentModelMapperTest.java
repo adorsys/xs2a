@@ -21,6 +21,7 @@ import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -69,6 +70,7 @@ public class ConsentModelMapperTest {
     private static final String MASKED_PAN = "Test MASKED_PAN";
     private static final String MSISDN = "Test MSISDN";
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
+    private static final String INVALID_DOMAIN_MESSAGE = "TPP URIs are not compliant with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate";
 
     @InjectMocks
     private ConsentModelMapper consentModelMapper;
@@ -123,6 +125,23 @@ public class ConsentModelMapperTest {
     }
 
     @Test
+    public void mapToConsentsResponse201_withScaMethods_withWarnings() {
+        // Given
+        ScaMethods methods = new ScaMethods();
+        methods.add(new AuthenticationObject());
+        when(scaMethodsMapper.mapToScaMethods(anyList())).thenReturn(methods);
+        when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
+        createConsentResponseWithScaMethods.setTppMessageInformation(Collections.singleton(TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE)));
+
+        // When
+        ConsentsResponse201 actual = consentModelMapper.mapToConsentsResponse201(createConsentResponseWithScaMethods);
+
+        // Then
+        checkCommonFields(actual);
+        assertFalse(actual.getScaMethods().isEmpty());
+    }
+
+    @Test
     public void mapToConsentsResponse201_withoutScaMethods_shouldNotReturnEmptyArray() {
         when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
 
@@ -154,7 +173,7 @@ public class ConsentModelMapperTest {
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAvailableAccountsWithBalances.json", Consents.class);
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAvailableAccountsWithBalances.json", CreateConsentReq.class);
         //When
-        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null, null);
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null);
         //Then
         assertEquals(expected, actual);
     }
@@ -167,7 +186,7 @@ public class ConsentModelMapperTest {
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAdditionalAccountInformation.json", CreateConsentReq.class);
         //When
-        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null, null);
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null);
         //Then
         assertEquals(expected, actual);
     }
@@ -180,7 +199,7 @@ public class ConsentModelMapperTest {
         consent.getAccess().getAdditionalInformation().setOwnerName(Collections.emptyList());
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAdditionalAccountInformationOwnerNameEmpty.json", CreateConsentReq.class);
         //When
-        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null, null);
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null);
         //Then
         assertEquals(expected, actual);
     }

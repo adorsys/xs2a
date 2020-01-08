@@ -157,6 +157,8 @@ public class ConsentService {
                                                                                 requestProviderService.getInternalRequestIdString(),
                                                                                 createAisConsentResponse.getTppNotificationContentPreferred());
 
+        createConsentResponse.setTppMessageInformation(consentValidationService.buildWarningMessages(request));
+
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(createConsentResponse).build();
 
         if (authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -29,6 +30,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class CancelPaymentResponse {
@@ -49,4 +51,5 @@ public class CancelPaymentResponse {
     @JsonProperty("_links")
     private Links links;
     private String internalRequestId;
+    private Set<TppMessageInformation> tppMessageInformation;
 }

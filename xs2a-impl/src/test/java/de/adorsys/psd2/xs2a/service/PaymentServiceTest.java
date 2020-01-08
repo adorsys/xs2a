@@ -602,7 +602,7 @@ public class PaymentServiceTest {
             new PisPaymentCancellationRequest(paymentType, PAYMENT_PRODUCT, PAYMENT_ID, false, null));
 
         // Then
-        verify(cancelPaymentValidator).validate(new CancelPaymentPO(invalidPisCommonPaymentResponse, paymentType, PAYMENT_PRODUCT));
+        verify(cancelPaymentValidator).validate(new CancelPaymentPO(invalidPisCommonPaymentResponse, paymentType, PAYMENT_PRODUCT, null));
         assertThatErrorIs(actualResponse, VALIDATION_ERROR);
     }
 
