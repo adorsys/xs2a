@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import de.adorsys.psd2.core.payment.model.PeriodicPaymentInitiationJson;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +36,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -71,7 +71,16 @@ public class CorePaymentsConvertServiceTest {
 
         PaymentInitiationJson expectedPaymentInitiationJson = jsonReader.getObjectFromFile("json/service/mapper/payment-initiation-resp.json", PaymentInitiationJson.class);
         byte[] expected = xs2aObjectMapper.writeValueAsBytes(expectedPaymentInitiationJson);
-        Assert.assertArrayEquals(expected, actual);
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void buildPaymentData_singlePayment_emptyPayments() {
+        // When
+        byte[] actual = corePaymentsConvertService.buildPaymentData(Collections.emptyList(), PaymentType.SINGLE);
+
+        // Then
+        assertArrayEquals(new byte[0], actual);
     }
 
     @Test
@@ -80,7 +89,16 @@ public class CorePaymentsConvertServiceTest {
 
         PeriodicPaymentInitiationJson expectedPeriodicPaymentInitiationJson = jsonReader.getObjectFromFile("json/service/mapper/periodic-payment-initiation-resp.json", PeriodicPaymentInitiationJson.class);
         byte[] expected = xs2aObjectMapper.writeValueAsBytes(expectedPeriodicPaymentInitiationJson);
-        Assert.assertArrayEquals(expected, actual);
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void buildPaymentData_periodicPayment_emptyPayments() {
+        // When
+        byte[] actual = corePaymentsConvertService.buildPaymentData(Collections.emptyList(), PaymentType.PERIODIC);
+
+        // Then
+        assertArrayEquals(new byte[0], actual);
     }
 
     @Test
@@ -89,7 +107,16 @@ public class CorePaymentsConvertServiceTest {
 
         BulkPaymentInitiationJson expectedBulkPaymentInitiationJson = jsonReader.getObjectFromFile("json/service/mapper/bulk-payment-initiation-resp.json", BulkPaymentInitiationJson.class);
         byte[] expected = xs2aObjectMapper.writeValueAsBytes(expectedBulkPaymentInitiationJson);
-        Assert.assertArrayEquals(expected, actual);
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void buildPaymentData_bulkPayment_emptyPayments() {
+        // When
+        byte[] actual = corePaymentsConvertService.buildPaymentData(Collections.emptyList(), PaymentType.BULK);
+
+        // Then
+        assertArrayEquals(new byte[0], actual);
     }
 
     @Test
