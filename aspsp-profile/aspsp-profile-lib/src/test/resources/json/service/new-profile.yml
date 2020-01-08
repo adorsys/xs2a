@@ -32,6 +32,7 @@ setting:
     authorisationConfirmationRequestMandated: false
     authorisationExpirationTimeMs: 86400000
     checkTppRolesFromCertificateSupported: true
+    checkUriComplianceToDomainSupported: false
     forceXs2aBaseLinksUrl: false
     multicurrencyAccountLevelSupported: SUBACCOUNT
     oauthConfigurationUrl: http://localhost:4200/idp/

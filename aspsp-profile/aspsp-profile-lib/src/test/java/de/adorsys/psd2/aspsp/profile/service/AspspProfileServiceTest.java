@@ -87,6 +87,7 @@ public class AspspProfileServiceTest {
     private static final List<NotificationSupportedMode> ASPSP_NOTIFICATIONS_SUPPORTED = Collections.singletonList(NotificationSupportedMode.NONE);
     private static final boolean AUTHORISATION_CONFIRMATION_REQUEST_MANDATED = false;
     private static final boolean AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A = false;
+    private static final boolean CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED = false;
 
     @InjectMocks
     private AspspProfileServiceImpl aspspProfileService;
@@ -250,7 +251,8 @@ public class AspspProfileServiceTest {
                                                                                  IS_CHECK_TPP_ROLES_FROM_CERTIFICATE,
                                                                                  ASPSP_NOTIFICATIONS_SUPPORTED,
                                                                                  AUTHORISATION_CONFIRMATION_REQUEST_MANDATED,
-                                                                                 AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A);
+                                                                                 AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A,
+                                                                                 CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED);
         return new BankProfileSetting(ais, pis, piis, common);
     }
 
