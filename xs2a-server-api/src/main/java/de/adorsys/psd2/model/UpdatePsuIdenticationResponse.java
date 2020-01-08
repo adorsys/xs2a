@@ -33,7 +33,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Body of the JSON response for a successful update PSU identification request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class UpdatePsuIdenticationResponse   {
   @JsonProperty("scaMethods")
@@ -130,7 +130,7 @@ public class UpdatePsuIdenticationResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("psuMessage")
   public String getPsuMessage() {
@@ -149,12 +149,11 @@ public class UpdatePsuIdenticationResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    UpdatePsuIdenticationResponse updatePsuIdenticationResponse = (UpdatePsuIdenticationResponse) o;
+}    UpdatePsuIdenticationResponse updatePsuIdenticationResponse = (UpdatePsuIdenticationResponse) o;
     return Objects.equals(this.scaMethods, updatePsuIdenticationResponse.scaMethods) &&
-        Objects.equals(this._links, updatePsuIdenticationResponse._links) &&
-        Objects.equals(this.scaStatus, updatePsuIdenticationResponse.scaStatus) &&
-        Objects.equals(this.psuMessage, updatePsuIdenticationResponse.psuMessage);
+    Objects.equals(this._links, updatePsuIdenticationResponse._links) &&
+    Objects.equals(this.scaStatus, updatePsuIdenticationResponse.scaStatus) &&
+    Objects.equals(this.psuMessage, updatePsuIdenticationResponse.psuMessage);
   }
 
   @Override

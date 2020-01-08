@@ -30,11 +30,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 405 for AIS. 
+ * Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 405 for AIS. 
  */
-@ApiModel(description = "Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 405 for AIS. ")
+@ApiModel(description = "Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 405 for AIS. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Error405AIS   {
   @JsonProperty("type")
@@ -62,10 +62,10 @@ public class Error405AIS   {
   }
 
   /**
-   * A URI reference [RFC3986] that identifies the problem type. Remark For Future: These URI will be provided by NextGenPSD2 in future. 
+   * A URI reference [RFC3986] that identifies the problem type.  Remark For Future: These URI will be provided by NextGenPSD2 in future. 
    * @return type
   **/
-  @ApiModelProperty(required = true, value = "A URI reference [RFC3986] that identifies the problem type. Remark For Future: These URI will be provided by NextGenPSD2 in future. ")
+  @ApiModelProperty(required = true, value = "A URI reference [RFC3986] that identifies the problem type.  Remark For Future: These URI will be provided by NextGenPSD2 in future. ")
   @NotNull
 
 @Size(max=70) 
@@ -85,10 +85,10 @@ public class Error405AIS   {
   }
 
   /**
-   * Short human readable description of error type. Could be in local language. To be provided by ASPSPs. 
+   * Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. 
    * @return title
   **/
-  @ApiModelProperty(value = "Short human readable description of error type. Could be in local language. To be provided by ASPSPs. ")
+  @ApiModelProperty(value = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
 
 @Size(max=70) 
 
@@ -107,12 +107,12 @@ public class Error405AIS   {
   }
 
   /**
-   * Detailed human readable text specific to this instance of the error. XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. 
+   * Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. 
    * @return detail
   **/
-  @ApiModelProperty(value = "Detailed human readable text specific to this instance of the error. XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
+  @ApiModelProperty(value = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("detail")
   public String getDetail() {
@@ -208,14 +208,13 @@ public class Error405AIS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error405AIS error405AIS = (Error405AIS) o;
+}    Error405AIS error405AIS = (Error405AIS) o;
     return Objects.equals(this.type, error405AIS.type) &&
-        Objects.equals(this.title, error405AIS.title) &&
-        Objects.equals(this.detail, error405AIS.detail) &&
-        Objects.equals(this.code, error405AIS.code) &&
-        Objects.equals(this.additionalErrors, error405AIS.additionalErrors) &&
-        Objects.equals(this._links, error405AIS._links);
+    Objects.equals(this.title, error405AIS.title) &&
+    Objects.equals(this.detail, error405AIS.detail) &&
+    Objects.equals(this.code, error405AIS.code) &&
+    Objects.equals(this.additionalErrors, error405AIS.additionalErrors) &&
+    Objects.equals(this._links, error405AIS._links);
   }
 
   @Override

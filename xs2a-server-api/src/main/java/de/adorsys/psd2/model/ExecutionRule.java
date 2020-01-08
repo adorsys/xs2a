@@ -10,7 +10,7 @@ import javax.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
- * \"following\" or \"preceding\" supported as values. This data attribute defines the behaviour when recurring payment dates falls on a weekend or bank holiday. The payment is then executed either the \"preceding\" or \"following\" working day. ASPSP might reject the request due to the communicated value, if rules in Online-Banking are not supporting this execution rule. 
+ * \"following\" or \"preceding\" supported as values.  This data attribute defines the behaviour when recurring payment dates falls on a weekend or bank holiday.  The payment is then executed either the \"preceding\" or \"following\" working day. ASPSP might reject the request due to the communicated value, if rules in Online-Banking are not supporting  this execution rule. 
  */
 public enum ExecutionRule {
   

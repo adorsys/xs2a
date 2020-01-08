@@ -31,11 +31,14 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Body of the JSON response for a successful get status request for a consent.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class ConsentStatusResponse200   {
   @JsonProperty("consentStatus")
   private ConsentStatus consentStatus = null;
+
+  @JsonProperty("psuMessage")
+  private String psuMessage = null;
 
   public ConsentStatusResponse200 consentStatus(ConsentStatus consentStatus) {
     this.consentStatus = consentStatus;
@@ -61,6 +64,28 @@ public class ConsentStatusResponse200   {
     this.consentStatus = consentStatus;
   }
 
+  public ConsentStatusResponse200 psuMessage(String psuMessage) {
+    this.psuMessage = psuMessage;
+    return this;
+  }
+
+  /**
+   * Get psuMessage
+   * @return psuMessage
+  **/
+  @ApiModelProperty(value = "")
+
+@Size(max=500) 
+
+  @JsonProperty("psuMessage")
+  public String getPsuMessage() {
+    return psuMessage;
+  }
+
+  public void setPsuMessage(String psuMessage) {
+    this.psuMessage = psuMessage;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -69,14 +94,14 @@ public class ConsentStatusResponse200   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    ConsentStatusResponse200 consentStatusResponse200 = (ConsentStatusResponse200) o;
-    return Objects.equals(this.consentStatus, consentStatusResponse200.consentStatus);
+}    ConsentStatusResponse200 consentStatusResponse200 = (ConsentStatusResponse200) o;
+    return Objects.equals(this.consentStatus, consentStatusResponse200.consentStatus) &&
+    Objects.equals(this.psuMessage, consentStatusResponse200.psuMessage);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(consentStatus);
+    return Objects.hash(consentStatus, psuMessage);
   }
 
   @Override
@@ -85,6 +110,7 @@ public class ConsentStatusResponse200   {
     sb.append("class ConsentStatusResponse200 {\n");
     
     sb.append("    consentStatus: ").append(toIndentedString(consentStatus)).append("\n");
+    sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
     sb.append("}");
     return sb.toString();
   }

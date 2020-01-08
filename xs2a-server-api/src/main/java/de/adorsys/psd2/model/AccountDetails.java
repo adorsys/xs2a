@@ -34,7 +34,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \"currency\" is set to \"XXX\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class AccountDetails   {
   @JsonProperty("resourceId")
@@ -112,6 +112,9 @@ public class AccountDetails   {
 
   @JsonProperty("_links")
   private Map _links = null;
+
+  @JsonProperty("ownerName")
+  private String ownerName = null;
 
   public AccountDetails resourceId(String resourceId) {
     this.resourceId = resourceId;
@@ -390,7 +393,7 @@ public class AccountDetails   {
   **/
   @ApiModelProperty(value = "Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card ")
 
-@Size(max=140) 
+@Size(max=500) 
 
   @JsonProperty("details")
   public String getDetails() {
@@ -447,6 +450,28 @@ public class AccountDetails   {
     this._links = _links;
   }
 
+  public AccountDetails ownerName(String ownerName) {
+    this.ownerName = ownerName;
+    return this;
+  }
+
+  /**
+   * Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.
+   * @return ownerName
+  **/
+  @ApiModelProperty(value = "Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.")
+
+@Size(max=140) 
+
+  @JsonProperty("ownerName")
+  public String getOwnerName() {
+    return ownerName;
+  }
+
+  public void setOwnerName(String ownerName) {
+    this.ownerName = ownerName;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -455,28 +480,28 @@ public class AccountDetails   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    AccountDetails accountDetails = (AccountDetails) o;
+}    AccountDetails accountDetails = (AccountDetails) o;
     return Objects.equals(this.resourceId, accountDetails.resourceId) &&
-        Objects.equals(this.iban, accountDetails.iban) &&
-        Objects.equals(this.bban, accountDetails.bban) &&
-        Objects.equals(this.msisdn, accountDetails.msisdn) &&
-        Objects.equals(this.currency, accountDetails.currency) &&
-        Objects.equals(this.name, accountDetails.name) &&
-        Objects.equals(this.product, accountDetails.product) &&
-        Objects.equals(this.cashAccountType, accountDetails.cashAccountType) &&
-        Objects.equals(this.status, accountDetails.status) &&
-        Objects.equals(this.bic, accountDetails.bic) &&
-        Objects.equals(this.linkedAccounts, accountDetails.linkedAccounts) &&
-        Objects.equals(this.usage, accountDetails.usage) &&
-        Objects.equals(this.details, accountDetails.details) &&
-        Objects.equals(this.balances, accountDetails.balances) &&
-        Objects.equals(this._links, accountDetails._links);
+    Objects.equals(this.iban, accountDetails.iban) &&
+    Objects.equals(this.bban, accountDetails.bban) &&
+    Objects.equals(this.msisdn, accountDetails.msisdn) &&
+    Objects.equals(this.currency, accountDetails.currency) &&
+    Objects.equals(this.name, accountDetails.name) &&
+    Objects.equals(this.product, accountDetails.product) &&
+    Objects.equals(this.cashAccountType, accountDetails.cashAccountType) &&
+    Objects.equals(this.status, accountDetails.status) &&
+    Objects.equals(this.bic, accountDetails.bic) &&
+    Objects.equals(this.linkedAccounts, accountDetails.linkedAccounts) &&
+    Objects.equals(this.usage, accountDetails.usage) &&
+    Objects.equals(this.details, accountDetails.details) &&
+    Objects.equals(this.balances, accountDetails.balances) &&
+    Objects.equals(this._links, accountDetails._links) &&
+    Objects.equals(this.ownerName, accountDetails.ownerName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(resourceId, iban, bban, msisdn, currency, name, product, cashAccountType, status, bic, linkedAccounts, usage, details, balances, _links);
+    return Objects.hash(resourceId, iban, bban, msisdn, currency, name, product, cashAccountType, status, bic, linkedAccounts, usage, details, balances, _links, ownerName);
   }
 
   @Override
@@ -499,6 +524,7 @@ public class AccountDetails   {
     sb.append("    details: ").append(toIndentedString(details)).append("\n");
     sb.append("    balances: ").append(toIndentedString(balances)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
+    sb.append("    ownerName: ").append(toIndentedString(ownerName)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -26,11 +26,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Authentication Object. 
+ * Authentication object. 
  */
-@ApiModel(description = "Authentication Object. ")
+@ApiModel(description = "Authentication object. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class AuthenticationObject   {
   @JsonProperty("authenticationType")
@@ -168,13 +168,12 @@ public class AuthenticationObject   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    AuthenticationObject authenticationObject = (AuthenticationObject) o;
+}    AuthenticationObject authenticationObject = (AuthenticationObject) o;
     return Objects.equals(this.authenticationType, authenticationObject.authenticationType) &&
-        Objects.equals(this.authenticationVersion, authenticationObject.authenticationVersion) &&
-        Objects.equals(this.authenticationMethodId, authenticationObject.authenticationMethodId) &&
-        Objects.equals(this.name, authenticationObject.name) &&
-        Objects.equals(this.explanation, authenticationObject.explanation);
+    Objects.equals(this.authenticationVersion, authenticationObject.authenticationVersion) &&
+    Objects.equals(this.authenticationMethodId, authenticationObject.authenticationMethodId) &&
+    Objects.equals(this.name, authenticationObject.name) &&
+    Objects.equals(this.explanation, authenticationObject.explanation);
   }
 
   @Override

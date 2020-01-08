@@ -37,7 +37,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class PaymentInitiationWithStatusResponse   {
   @JsonProperty("endToEndIdentification")
@@ -63,6 +63,9 @@ public class PaymentInitiationWithStatusResponse   {
 
   @JsonProperty("creditorAddress")
   private Address creditorAddress = null;
+
+  @JsonProperty("creditorId")
+  private String creditorId = null;
 
   @JsonProperty("ultimateCreditor")
   private String ultimateCreditor = null;
@@ -266,6 +269,28 @@ public class PaymentInitiationWithStatusResponse   {
     this.creditorAddress = creditorAddress;
   }
 
+  public PaymentInitiationWithStatusResponse creditorId(String creditorId) {
+    this.creditorId = creditorId;
+    return this;
+  }
+
+  /**
+   * Identification of Creditors, e.g. a SEPA Creditor ID.
+   * @return creditorId
+  **/
+  @ApiModelProperty(value = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+
+@Size(max=35) 
+
+  @JsonProperty("creditorId")
+  public String getCreditorId() {
+    return creditorId;
+  }
+
+  public void setCreditorId(String creditorId) {
+    this.creditorId = creditorId;
+  }
+
   public PaymentInitiationWithStatusResponse ultimateCreditor(String ultimateCreditor) {
     this.ultimateCreditor = ultimateCreditor;
     return this;
@@ -410,27 +435,27 @@ public class PaymentInitiationWithStatusResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    PaymentInitiationWithStatusResponse paymentInitiationWithStatusResponse = (PaymentInitiationWithStatusResponse) o;
+}    PaymentInitiationWithStatusResponse paymentInitiationWithStatusResponse = (PaymentInitiationWithStatusResponse) o;
     return Objects.equals(this.endToEndIdentification, paymentInitiationWithStatusResponse.endToEndIdentification) &&
-        Objects.equals(this.debtorAccount, paymentInitiationWithStatusResponse.debtorAccount) &&
-        Objects.equals(this.ultimateDebtor, paymentInitiationWithStatusResponse.ultimateDebtor) &&
-        Objects.equals(this.instructedAmount, paymentInitiationWithStatusResponse.instructedAmount) &&
-        Objects.equals(this.creditorAccount, paymentInitiationWithStatusResponse.creditorAccount) &&
-        Objects.equals(this.creditorAgent, paymentInitiationWithStatusResponse.creditorAgent) &&
-        Objects.equals(this.creditorName, paymentInitiationWithStatusResponse.creditorName) &&
-        Objects.equals(this.creditorAddress, paymentInitiationWithStatusResponse.creditorAddress) &&
-        Objects.equals(this.ultimateCreditor, paymentInitiationWithStatusResponse.ultimateCreditor) &&
-        Objects.equals(this.purposeCode, paymentInitiationWithStatusResponse.purposeCode) &&
-        Objects.equals(this.remittanceInformationUnstructured, paymentInitiationWithStatusResponse.remittanceInformationUnstructured) &&
-        Objects.equals(this.remittanceInformationStructured, paymentInitiationWithStatusResponse.remittanceInformationStructured) &&
-        Objects.equals(this.requestedExecutionDate, paymentInitiationWithStatusResponse.requestedExecutionDate) &&
-        Objects.equals(this.transactionStatus, paymentInitiationWithStatusResponse.transactionStatus);
+    Objects.equals(this.debtorAccount, paymentInitiationWithStatusResponse.debtorAccount) &&
+    Objects.equals(this.ultimateDebtor, paymentInitiationWithStatusResponse.ultimateDebtor) &&
+    Objects.equals(this.instructedAmount, paymentInitiationWithStatusResponse.instructedAmount) &&
+    Objects.equals(this.creditorAccount, paymentInitiationWithStatusResponse.creditorAccount) &&
+    Objects.equals(this.creditorAgent, paymentInitiationWithStatusResponse.creditorAgent) &&
+    Objects.equals(this.creditorName, paymentInitiationWithStatusResponse.creditorName) &&
+    Objects.equals(this.creditorAddress, paymentInitiationWithStatusResponse.creditorAddress) &&
+    Objects.equals(this.creditorId, paymentInitiationWithStatusResponse.creditorId) &&
+    Objects.equals(this.ultimateCreditor, paymentInitiationWithStatusResponse.ultimateCreditor) &&
+    Objects.equals(this.purposeCode, paymentInitiationWithStatusResponse.purposeCode) &&
+    Objects.equals(this.remittanceInformationUnstructured, paymentInitiationWithStatusResponse.remittanceInformationUnstructured) &&
+    Objects.equals(this.remittanceInformationStructured, paymentInitiationWithStatusResponse.remittanceInformationStructured) &&
+    Objects.equals(this.requestedExecutionDate, paymentInitiationWithStatusResponse.requestedExecutionDate) &&
+    Objects.equals(this.transactionStatus, paymentInitiationWithStatusResponse.transactionStatus);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(endToEndIdentification, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, requestedExecutionDate, transactionStatus);
+    return Objects.hash(endToEndIdentification, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, requestedExecutionDate, transactionStatus);
   }
 
   @Override
@@ -446,6 +471,7 @@ public class PaymentInitiationWithStatusResponse   {
     sb.append("    creditorAgent: ").append(toIndentedString(creditorAgent)).append("\n");
     sb.append("    creditorName: ").append(toIndentedString(creditorName)).append("\n");
     sb.append("    creditorAddress: ").append(toIndentedString(creditorAddress)).append("\n");
+    sb.append("    creditorId: ").append(toIndentedString(creditorId)).append("\n");
     sb.append("    ultimateCreditor: ").append(toIndentedString(ultimateCreditor)).append("\n");
     sb.append("    purposeCode: ").append(toIndentedString(purposeCode)).append("\n");
     sb.append("    remittanceInformationUnstructured: ").append(toIndentedString(remittanceInformationUnstructured)).append("\n");

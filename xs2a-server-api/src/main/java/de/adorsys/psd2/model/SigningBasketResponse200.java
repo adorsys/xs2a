@@ -34,7 +34,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Body of the JSON response for a successful get signing basket request.    * 'payments': payment initiations which shall be authorised through this signing basket.   * 'consents': consent objects which shall be authorised through this signing basket.   * 'transactionStatus': Only the codes RCVD, ACTC, RJCT are used.   * '_links': The ASPSP might integrate hyperlinks to indicate next (authorisation) steps to be taken. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class SigningBasketResponse200   {
   @JsonProperty("payments")
@@ -150,12 +150,11 @@ public class SigningBasketResponse200   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    SigningBasketResponse200 signingBasketResponse200 = (SigningBasketResponse200) o;
+}    SigningBasketResponse200 signingBasketResponse200 = (SigningBasketResponse200) o;
     return Objects.equals(this.payments, signingBasketResponse200.payments) &&
-        Objects.equals(this.consents, signingBasketResponse200.consents) &&
-        Objects.equals(this.transactionStatus, signingBasketResponse200.transactionStatus) &&
-        Objects.equals(this._links, signingBasketResponse200._links);
+    Objects.equals(this.consents, signingBasketResponse200.consents) &&
+    Objects.equals(this.transactionStatus, signingBasketResponse200.transactionStatus) &&
+    Objects.equals(this._links, signingBasketResponse200._links);
   }
 
   @Override

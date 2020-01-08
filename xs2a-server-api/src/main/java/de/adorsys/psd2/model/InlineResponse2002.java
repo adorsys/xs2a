@@ -30,7 +30,7 @@ import javax.validation.constraints.*;
  * InlineResponse2002
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class InlineResponse2002   {
   @JsonProperty("cardAccount")
@@ -67,8 +67,7 @@ public class InlineResponse2002   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    InlineResponse2002 inlineResponse2002 = (InlineResponse2002) o;
+}    InlineResponse2002 inlineResponse2002 = (InlineResponse2002) o;
     return Objects.equals(this.cardAccount, inlineResponse2002.cardAccount);
   }
 

@@ -23,11 +23,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Proprietary bank transaction code as used within a community or within an ASPSP e.g. for MT94x based transaction reports. 
+ * Proprietary bank transaction code as used within a community or within an ASPSP e.g.  for MT94x based transaction reports. 
  */
-@ApiModel(description = "Proprietary bank transaction code as used within a community or within an ASPSP e.g. for MT94x based transaction reports. ")
+@ApiModel(description = "Proprietary bank transaction code as used within a community or within an ASPSP e.g.  for MT94x based transaction reports. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class ProprietaryBankTransactionCode   {
 
@@ -38,7 +38,7 @@ public class ProprietaryBankTransactionCode   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
+}
     return true;
   }
 

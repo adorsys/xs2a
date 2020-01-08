@@ -32,7 +32,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Body of the response for a successful read balance for an account request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class ReadAccountBalanceResponse200   {
   @JsonProperty("account")
@@ -96,10 +96,9 @@ public class ReadAccountBalanceResponse200   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    ReadAccountBalanceResponse200 readAccountBalanceResponse200 = (ReadAccountBalanceResponse200) o;
+}    ReadAccountBalanceResponse200 readAccountBalanceResponse200 = (ReadAccountBalanceResponse200) o;
     return Objects.equals(this.account, readAccountBalanceResponse200.account) &&
-        Objects.equals(this.balances, readAccountBalanceResponse200.balances);
+    Objects.equals(this.balances, readAccountBalanceResponse200.balances);
   }
 
   @Override

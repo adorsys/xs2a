@@ -32,7 +32,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "JSON Body of a establish signing basket request. The body shall contain at least one entry. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class SigningBasket   {
   @JsonProperty("paymentIds")
@@ -95,10 +95,9 @@ public class SigningBasket   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    SigningBasket signingBasket = (SigningBasket) o;
+}    SigningBasket signingBasket = (SigningBasket) o;
     return Objects.equals(this.paymentIds, signingBasket.paymentIds) &&
-        Objects.equals(this.consentIds, signingBasket.consentIds);
+    Objects.equals(this.consentIds, signingBasket.consentIds);
   }
 
   @Override

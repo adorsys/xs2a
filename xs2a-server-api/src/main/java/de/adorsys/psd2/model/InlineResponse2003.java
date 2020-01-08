@@ -26,11 +26,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Equals \&quot;true\&quot; if sufficient funds are available at the time of the request, \&quot;false\&quot; otherwise. 
+ * Equals \&quot;true\&quot; if sufficient funds are available at the time of the request,  \&quot;false\&quot; otherwise. 
  */
-@ApiModel(description = "Equals \"true\" if sufficient funds are available at the time of the request, \"false\" otherwise. ")
+@ApiModel(description = "Equals \"true\" if sufficient funds are available at the time of the request,  \"false\" otherwise. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class InlineResponse2003   {
   @JsonProperty("fundsAvailable")
@@ -66,8 +66,7 @@ public class InlineResponse2003   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    InlineResponse2003 inlineResponse2003 = (InlineResponse2003) o;
+}    InlineResponse2003 inlineResponse2003 = (InlineResponse2003) o;
     return Objects.equals(this.fundsAvailable, inlineResponse2003.fundsAvailable);
   }
 

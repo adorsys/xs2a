@@ -30,7 +30,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Error405SBSAdditionalErrors   {
   @JsonProperty("title")
@@ -75,7 +75,7 @@ public class Error405SBSAdditionalErrors   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("detail")
   public String getDetail() {
@@ -116,11 +116,10 @@ public class Error405SBSAdditionalErrors   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error405SBSAdditionalErrors error405SBSAdditionalErrors = (Error405SBSAdditionalErrors) o;
+}    Error405SBSAdditionalErrors error405SBSAdditionalErrors = (Error405SBSAdditionalErrors) o;
     return Objects.equals(this.title, error405SBSAdditionalErrors.title) &&
-        Objects.equals(this.detail, error405SBSAdditionalErrors.detail) &&
-        Objects.equals(this.code, error405SBSAdditionalErrors.code);
+    Objects.equals(this.detail, error405SBSAdditionalErrors.detail) &&
+    Objects.equals(this.code, error405SBSAdditionalErrors.code);
   }
 
   @Override

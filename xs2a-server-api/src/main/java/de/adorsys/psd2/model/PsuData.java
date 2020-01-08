@@ -26,11 +26,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * PSU data for update PSU authentication.
+ * PSU Data for Update PSU authentication.
  */
-@ApiModel(description = "PSU data for update PSU authentication.")
+@ApiModel(description = "PSU Data for Update PSU authentication.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class PsuData   {
   @JsonProperty("password")
@@ -141,12 +141,11 @@ public class PsuData   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    PsuData psuData = (PsuData) o;
+}    PsuData psuData = (PsuData) o;
     return Objects.equals(this.password, psuData.password) &&
-        Objects.equals(this.encryptedPassword, psuData.encryptedPassword) &&
-        Objects.equals(this.additionalPassword, psuData.additionalPassword) &&
-        Objects.equals(this.additionalEncryptedPassword, psuData.additionalEncryptedPassword);
+    Objects.equals(this.encryptedPassword, psuData.encryptedPassword) &&
+    Objects.equals(this.additionalPassword, psuData.additionalPassword) &&
+    Objects.equals(this.additionalEncryptedPassword, psuData.additionalEncryptedPassword);
   }
 
   @Override

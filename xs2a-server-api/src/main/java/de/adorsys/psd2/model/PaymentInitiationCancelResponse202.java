@@ -35,7 +35,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Body of the response for a successful cancel payment request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class PaymentInitiationCancelResponse202   {
   @JsonProperty("transactionStatus")
@@ -177,13 +177,12 @@ public class PaymentInitiationCancelResponse202   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    PaymentInitiationCancelResponse202 paymentInitiationCancelResponse202 = (PaymentInitiationCancelResponse202) o;
+}    PaymentInitiationCancelResponse202 paymentInitiationCancelResponse202 = (PaymentInitiationCancelResponse202) o;
     return Objects.equals(this.transactionStatus, paymentInitiationCancelResponse202.transactionStatus) &&
-        Objects.equals(this.scaMethods, paymentInitiationCancelResponse202.scaMethods) &&
-        Objects.equals(this.chosenScaMethod, paymentInitiationCancelResponse202.chosenScaMethod) &&
-        Objects.equals(this.challengeData, paymentInitiationCancelResponse202.challengeData) &&
-        Objects.equals(this._links, paymentInitiationCancelResponse202._links);
+    Objects.equals(this.scaMethods, paymentInitiationCancelResponse202.scaMethods) &&
+    Objects.equals(this.chosenScaMethod, paymentInitiationCancelResponse202.chosenScaMethod) &&
+    Objects.equals(this.challengeData, paymentInitiationCancelResponse202.challengeData) &&
+    Objects.equals(this._links, paymentInitiationCancelResponse202._links);
   }
 
   @Override

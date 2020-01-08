@@ -40,7 +40,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Generic JSON response body consistion of the corresponding periodic payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class PeriodicPaymentInitiationWithStatusResponse   {
   @JsonProperty("endToEndIdentification")
@@ -517,26 +517,25 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    PeriodicPaymentInitiationWithStatusResponse periodicPaymentInitiationWithStatusResponse = (PeriodicPaymentInitiationWithStatusResponse) o;
+}    PeriodicPaymentInitiationWithStatusResponse periodicPaymentInitiationWithStatusResponse = (PeriodicPaymentInitiationWithStatusResponse) o;
     return Objects.equals(this.endToEndIdentification, periodicPaymentInitiationWithStatusResponse.endToEndIdentification) &&
-        Objects.equals(this.debtorAccount, periodicPaymentInitiationWithStatusResponse.debtorAccount) &&
-        Objects.equals(this.ultimateDebtor, periodicPaymentInitiationWithStatusResponse.ultimateDebtor) &&
-        Objects.equals(this.instructedAmount, periodicPaymentInitiationWithStatusResponse.instructedAmount) &&
-        Objects.equals(this.creditorAccount, periodicPaymentInitiationWithStatusResponse.creditorAccount) &&
-        Objects.equals(this.creditorAgent, periodicPaymentInitiationWithStatusResponse.creditorAgent) &&
-        Objects.equals(this.creditorName, periodicPaymentInitiationWithStatusResponse.creditorName) &&
-        Objects.equals(this.creditorAddress, periodicPaymentInitiationWithStatusResponse.creditorAddress) &&
-        Objects.equals(this.ultimateCreditor, periodicPaymentInitiationWithStatusResponse.ultimateCreditor) &&
-        Objects.equals(this.purposeCode, periodicPaymentInitiationWithStatusResponse.purposeCode) &&
-        Objects.equals(this.remittanceInformationUnstructured, periodicPaymentInitiationWithStatusResponse.remittanceInformationUnstructured) &&
-        Objects.equals(this.remittanceInformationStructured, periodicPaymentInitiationWithStatusResponse.remittanceInformationStructured) &&
-        Objects.equals(this.startDate, periodicPaymentInitiationWithStatusResponse.startDate) &&
-        Objects.equals(this.endDate, periodicPaymentInitiationWithStatusResponse.endDate) &&
-        Objects.equals(this.executionRule, periodicPaymentInitiationWithStatusResponse.executionRule) &&
-        Objects.equals(this.frequency, periodicPaymentInitiationWithStatusResponse.frequency) &&
-        Objects.equals(this.dayOfExecution, periodicPaymentInitiationWithStatusResponse.dayOfExecution) &&
-        Objects.equals(this.transactionStatus, periodicPaymentInitiationWithStatusResponse.transactionStatus);
+    Objects.equals(this.debtorAccount, periodicPaymentInitiationWithStatusResponse.debtorAccount) &&
+    Objects.equals(this.ultimateDebtor, periodicPaymentInitiationWithStatusResponse.ultimateDebtor) &&
+    Objects.equals(this.instructedAmount, periodicPaymentInitiationWithStatusResponse.instructedAmount) &&
+    Objects.equals(this.creditorAccount, periodicPaymentInitiationWithStatusResponse.creditorAccount) &&
+    Objects.equals(this.creditorAgent, periodicPaymentInitiationWithStatusResponse.creditorAgent) &&
+    Objects.equals(this.creditorName, periodicPaymentInitiationWithStatusResponse.creditorName) &&
+    Objects.equals(this.creditorAddress, periodicPaymentInitiationWithStatusResponse.creditorAddress) &&
+    Objects.equals(this.ultimateCreditor, periodicPaymentInitiationWithStatusResponse.ultimateCreditor) &&
+    Objects.equals(this.purposeCode, periodicPaymentInitiationWithStatusResponse.purposeCode) &&
+    Objects.equals(this.remittanceInformationUnstructured, periodicPaymentInitiationWithStatusResponse.remittanceInformationUnstructured) &&
+    Objects.equals(this.remittanceInformationStructured, periodicPaymentInitiationWithStatusResponse.remittanceInformationStructured) &&
+    Objects.equals(this.startDate, periodicPaymentInitiationWithStatusResponse.startDate) &&
+    Objects.equals(this.endDate, periodicPaymentInitiationWithStatusResponse.endDate) &&
+    Objects.equals(this.executionRule, periodicPaymentInitiationWithStatusResponse.executionRule) &&
+    Objects.equals(this.frequency, periodicPaymentInitiationWithStatusResponse.frequency) &&
+    Objects.equals(this.dayOfExecution, periodicPaymentInitiationWithStatusResponse.dayOfExecution) &&
+    Objects.equals(this.transactionStatus, periodicPaymentInitiationWithStatusResponse.transactionStatus);
   }
 
   @Override

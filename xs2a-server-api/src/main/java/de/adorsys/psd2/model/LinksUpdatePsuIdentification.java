@@ -29,11 +29,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP defined extensions):  - &#39;scaStatus&#39;: The link to retrieve the scaStatus of the corresponding authorisation sub-resource. - &#39;selectAuthenticationMethod&#39;: This is a link to a resource, where the TPP can select the applicable second factor authentication methods for the PSU, if there are several available authentication methods and if the PSU is already sufficiently authenticated. If this link is contained, then there is also the data element \&quot;scaMethods\&quot; contained in the response body. 
+ * A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP  defined extensions):  - &#39;scaStatus&#39;: The link to retrieve the scaStatus of the corresponding authorisation sub-resource. - &#39;selectAuthenticationMethod&#39;: This is a link to a resource, where the TPP can select the applicable second factor authentication methods for the PSU, if there are several available authentication methods and if the PSU is already sufficiently authenticated.. If this link is contained, then there is also the data element \&quot;scaMethods\&quot; contained in the response body. 
  */
-@ApiModel(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP defined extensions):  - 'scaStatus': The link to retrieve the scaStatus of the corresponding authorisation sub-resource. - 'selectAuthenticationMethod': This is a link to a resource, where the TPP can select the applicable second factor authentication methods for the PSU, if there are several available authentication methods and if the PSU is already sufficiently authenticated. If this link is contained, then there is also the data element \"scaMethods\" contained in the response body. ")
+@ApiModel(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP  defined extensions):  - 'scaStatus': The link to retrieve the scaStatus of the corresponding authorisation sub-resource. - 'selectAuthenticationMethod': This is a link to a resource, where the TPP can select the applicable second factor authentication methods for the PSU, if there are several available authentication methods and if the PSU is already sufficiently authenticated.. If this link is contained, then there is also the data element \"scaMethods\" contained in the response body. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class LinksUpdatePsuIdentification extends HashMap<String, HrefType>  {
   @JsonProperty("scaStatus")
@@ -96,11 +96,13 @@ public class LinksUpdatePsuIdentification extends HashMap<String, HrefType>  {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
+}
+    if (!super.equals(o)) {
+    return false;
     }
     LinksUpdatePsuIdentification _linksUpdatePsuIdentification = (LinksUpdatePsuIdentification) o;
     return Objects.equals(this.scaStatus, _linksUpdatePsuIdentification.scaStatus) &&
-        Objects.equals(this.selectAuthenticationMethod, _linksUpdatePsuIdentification.selectAuthenticationMethod) &&
-        super.equals(o);
+    Objects.equals(this.selectAuthenticationMethod, _linksUpdatePsuIdentification.selectAuthenticationMethod);
   }
 
   @Override

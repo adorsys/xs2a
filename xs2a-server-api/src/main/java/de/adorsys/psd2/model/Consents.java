@@ -32,7 +32,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Content of the body of a consent request. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Consents   {
   @JsonProperty("access")
@@ -175,13 +175,12 @@ public class Consents   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Consents consents = (Consents) o;
+}    Consents consents = (Consents) o;
     return Objects.equals(this.access, consents.access) &&
-        Objects.equals(this.recurringIndicator, consents.recurringIndicator) &&
-        Objects.equals(this.validUntil, consents.validUntil) &&
-        Objects.equals(this.frequencyPerDay, consents.frequencyPerDay) &&
-        Objects.equals(this.combinedServiceIndicator, consents.combinedServiceIndicator);
+    Objects.equals(this.recurringIndicator, consents.recurringIndicator) &&
+    Objects.equals(this.validUntil, consents.validUntil) &&
+    Objects.equals(this.frequencyPerDay, consents.frequencyPerDay) &&
+    Objects.equals(this.combinedServiceIndicator, consents.combinedServiceIndicator);
   }
 
   @Override

@@ -34,7 +34,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Card transaction information.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class CardTransaction   {
   @JsonProperty("cardTransactionId")
@@ -453,24 +453,23 @@ public class CardTransaction   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    CardTransaction cardTransaction = (CardTransaction) o;
+}    CardTransaction cardTransaction = (CardTransaction) o;
     return Objects.equals(this.cardTransactionId, cardTransaction.cardTransactionId) &&
-        Objects.equals(this.terminalId, cardTransaction.terminalId) &&
-        Objects.equals(this.transactionDate, cardTransaction.transactionDate) &&
-        Objects.equals(this.bookingDate, cardTransaction.bookingDate) &&
-        Objects.equals(this.transactionAmount, cardTransaction.transactionAmount) &&
-        Objects.equals(this.currencyExchange, cardTransaction.currencyExchange) &&
-        Objects.equals(this.originalAmount, cardTransaction.originalAmount) &&
-        Objects.equals(this.markupFee, cardTransaction.markupFee) &&
-        Objects.equals(this.markupFeePercentage, cardTransaction.markupFeePercentage) &&
-        Objects.equals(this.cardAcceptorId, cardTransaction.cardAcceptorId) &&
-        Objects.equals(this.cardAcceptorAddress, cardTransaction.cardAcceptorAddress) &&
-        Objects.equals(this.merchantCategoryCode, cardTransaction.merchantCategoryCode) &&
-        Objects.equals(this.maskedPAN, cardTransaction.maskedPAN) &&
-        Objects.equals(this.transactionDetails, cardTransaction.transactionDetails) &&
-        Objects.equals(this.invoiced, cardTransaction.invoiced) &&
-        Objects.equals(this.proprietaryBankTransactionCode, cardTransaction.proprietaryBankTransactionCode);
+    Objects.equals(this.terminalId, cardTransaction.terminalId) &&
+    Objects.equals(this.transactionDate, cardTransaction.transactionDate) &&
+    Objects.equals(this.bookingDate, cardTransaction.bookingDate) &&
+    Objects.equals(this.transactionAmount, cardTransaction.transactionAmount) &&
+    Objects.equals(this.currencyExchange, cardTransaction.currencyExchange) &&
+    Objects.equals(this.originalAmount, cardTransaction.originalAmount) &&
+    Objects.equals(this.markupFee, cardTransaction.markupFee) &&
+    Objects.equals(this.markupFeePercentage, cardTransaction.markupFeePercentage) &&
+    Objects.equals(this.cardAcceptorId, cardTransaction.cardAcceptorId) &&
+    Objects.equals(this.cardAcceptorAddress, cardTransaction.cardAcceptorAddress) &&
+    Objects.equals(this.merchantCategoryCode, cardTransaction.merchantCategoryCode) &&
+    Objects.equals(this.maskedPAN, cardTransaction.maskedPAN) &&
+    Objects.equals(this.transactionDetails, cardTransaction.transactionDetails) &&
+    Objects.equals(this.invoiced, cardTransaction.invoiced) &&
+    Objects.equals(this.proprietaryBankTransactionCode, cardTransaction.proprietaryBankTransactionCode);
   }
 
   @Override

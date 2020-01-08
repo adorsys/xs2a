@@ -31,7 +31,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "The multipart message definition for the initiation of a periodic payment initiation where the information of the payment is contained in an pain.001 message (Part 1) and the additional informations related to the periodic payment is an additional JSON message (Part 2). ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class PeriodicPaymentInitiationMultipartBody   {
   @JsonProperty("xml_sct")
@@ -93,10 +93,9 @@ public class PeriodicPaymentInitiationMultipartBody   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    PeriodicPaymentInitiationMultipartBody periodicPaymentInitiationMultipartBody = (PeriodicPaymentInitiationMultipartBody) o;
+}    PeriodicPaymentInitiationMultipartBody periodicPaymentInitiationMultipartBody = (PeriodicPaymentInitiationMultipartBody) o;
     return Objects.equals(this.xmlSct, periodicPaymentInitiationMultipartBody.xmlSct) &&
-        Objects.equals(this.jsonStandingorderType, periodicPaymentInitiationMultipartBody.jsonStandingorderType);
+    Objects.equals(this.jsonStandingorderType, periodicPaymentInitiationMultipartBody.jsonStandingorderType);
   }
 
   @Override

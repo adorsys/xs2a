@@ -31,7 +31,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Exchange Rate.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class ReportExchangeRate   {
   @JsonProperty("sourceCurrency")
@@ -198,14 +198,13 @@ public class ReportExchangeRate   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    ReportExchangeRate reportExchangeRate = (ReportExchangeRate) o;
+}    ReportExchangeRate reportExchangeRate = (ReportExchangeRate) o;
     return Objects.equals(this.sourceCurrency, reportExchangeRate.sourceCurrency) &&
-        Objects.equals(this.exchangeRate, reportExchangeRate.exchangeRate) &&
-        Objects.equals(this.unitCurrency, reportExchangeRate.unitCurrency) &&
-        Objects.equals(this.targetCurrency, reportExchangeRate.targetCurrency) &&
-        Objects.equals(this.quotationDate, reportExchangeRate.quotationDate) &&
-        Objects.equals(this.contractIdentification, reportExchangeRate.contractIdentification);
+    Objects.equals(this.exchangeRate, reportExchangeRate.exchangeRate) &&
+    Objects.equals(this.unitCurrency, reportExchangeRate.unitCurrency) &&
+    Objects.equals(this.targetCurrency, reportExchangeRate.targetCurrency) &&
+    Objects.equals(this.quotationDate, reportExchangeRate.quotationDate) &&
+    Objects.equals(this.contractIdentification, reportExchangeRate.contractIdentification);
   }
 
   @Override

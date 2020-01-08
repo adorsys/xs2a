@@ -26,11 +26,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Reference to an account by either:   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or   * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN). 
+ * Reference to an account by either:   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN). 
  */
-@ApiModel(description = "Reference to an account by either:   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or   * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN). ")
+@ApiModel(description = "Reference to an account by either:   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN). ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class AccountReference   {
   @JsonProperty("iban")
@@ -191,14 +191,13 @@ public class AccountReference   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    AccountReference accountReference = (AccountReference) o;
+}    AccountReference accountReference = (AccountReference) o;
     return Objects.equals(this.iban, accountReference.iban) &&
-        Objects.equals(this.bban, accountReference.bban) &&
-        Objects.equals(this.pan, accountReference.pan) &&
-        Objects.equals(this.maskedPan, accountReference.maskedPan) &&
-        Objects.equals(this.msisdn, accountReference.msisdn) &&
-        Objects.equals(this.currency, accountReference.currency);
+    Objects.equals(this.bban, accountReference.bban) &&
+    Objects.equals(this.pan, accountReference.pan) &&
+    Objects.equals(this.maskedPan, accountReference.maskedPan) &&
+    Objects.equals(this.msisdn, accountReference.msisdn) &&
+    Objects.equals(this.currency, accountReference.currency);
   }
 
   @Override

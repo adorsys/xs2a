@@ -34,7 +34,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 404. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Error404NGSBS   {
   @JsonProperty("tppMessages")
@@ -106,10 +106,9 @@ public class Error404NGSBS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error404NGSBS error404NGSBS = (Error404NGSBS) o;
+}    Error404NGSBS error404NGSBS = (Error404NGSBS) o;
     return Objects.equals(this.tppMessages, error404NGSBS.tppMessages) &&
-        Objects.equals(this._links, error404NGSBS._links);
+    Objects.equals(this._links, error404NGSBS._links);
   }
 
   @Override

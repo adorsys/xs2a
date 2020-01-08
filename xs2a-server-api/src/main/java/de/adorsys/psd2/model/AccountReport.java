@@ -28,11 +28,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * JSON based account report. This account report contains transactions resulting from the query parameters.  &#39;booked&#39; shall be contained if bookingStatus parameter is set to \&quot;booked\&quot; or \&quot;both\&quot;.  &#39;pending&#39; is not contained if the bookingStatus parameter is set to \&quot;booked\&quot;. 
+ * JSON based account report. This account report contains transactions resulting from the query parameters.  &#39;information&#39; is used if and only if the bookingStatus entry equals \&quot;information\&quot;. Every active standing order related to the dedicated payment account result into one entry.  &#39;booked&#39; shall be contained if bookingStatus parameter is set to \&quot;booked\&quot; or \&quot;both\&quot;.  &#39;pending&#39; is not contained if the bookingStatus parameter is set to \&quot;booked\&quot;. 
  */
-@ApiModel(description = "JSON based account report. This account report contains transactions resulting from the query parameters.  'booked' shall be contained if bookingStatus parameter is set to \"booked\" or \"both\".  'pending' is not contained if the bookingStatus parameter is set to \"booked\". ")
+@ApiModel(description = "JSON based account report. This account report contains transactions resulting from the query parameters.  'information' is used if and only if the bookingStatus entry equals \"information\". Every active standing order related to the dedicated payment account result into one entry.  'booked' shall be contained if bookingStatus parameter is set to \"booked\" or \"both\".  'pending' is not contained if the bookingStatus parameter is set to \"booked\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class AccountReport   {
   @JsonProperty("booked")
@@ -40,6 +40,9 @@ public class AccountReport   {
 
   @JsonProperty("pending")
   private TransactionList pending = null;
+
+  @JsonProperty("information")
+  private TransactionList information = null;
 
   @JsonProperty("_links")
   private Map _links = null;
@@ -90,6 +93,29 @@ public class AccountReport   {
     this.pending = pending;
   }
 
+  public AccountReport information(TransactionList information) {
+    this.information = information;
+    return this;
+  }
+
+  /**
+   * Get information
+   * @return information
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("information")
+  public TransactionList getInformation() {
+    return information;
+  }
+
+  public void setInformation(TransactionList information) {
+    this.information = information;
+  }
+
   public AccountReport _links(Map _links) {
     this._links = _links;
     return this;
@@ -122,16 +148,16 @@ public class AccountReport   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    AccountReport accountReport = (AccountReport) o;
+}    AccountReport accountReport = (AccountReport) o;
     return Objects.equals(this.booked, accountReport.booked) &&
-        Objects.equals(this.pending, accountReport.pending) &&
-        Objects.equals(this._links, accountReport._links);
+    Objects.equals(this.pending, accountReport.pending) &&
+    Objects.equals(this.information, accountReport.information) &&
+    Objects.equals(this._links, accountReport._links);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(booked, pending, _links);
+    return Objects.hash(booked, pending, information, _links);
   }
 
   @Override
@@ -141,6 +167,7 @@ public class AccountReport   {
     
     sb.append("    booked: ").append(toIndentedString(booked)).append("\n");
     sb.append("    pending: ").append(toIndentedString(pending)).append("\n");
+    sb.append("    information: ").append(toIndentedString(information)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("}");
     return sb.toString();

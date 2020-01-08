@@ -34,7 +34,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Body of the JSON response for a successful select PSU authentication method request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class SelectPsuAuthenticationMethodResponse   {
   @JsonProperty("chosenScaMethod")
@@ -156,7 +156,7 @@ public class SelectPsuAuthenticationMethodResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("psuMessage")
   public String getPsuMessage() {
@@ -175,13 +175,12 @@ public class SelectPsuAuthenticationMethodResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    SelectPsuAuthenticationMethodResponse selectPsuAuthenticationMethodResponse = (SelectPsuAuthenticationMethodResponse) o;
+}    SelectPsuAuthenticationMethodResponse selectPsuAuthenticationMethodResponse = (SelectPsuAuthenticationMethodResponse) o;
     return Objects.equals(this.chosenScaMethod, selectPsuAuthenticationMethodResponse.chosenScaMethod) &&
-        Objects.equals(this.challengeData, selectPsuAuthenticationMethodResponse.challengeData) &&
-        Objects.equals(this._links, selectPsuAuthenticationMethodResponse._links) &&
-        Objects.equals(this.scaStatus, selectPsuAuthenticationMethodResponse.scaStatus) &&
-        Objects.equals(this.psuMessage, selectPsuAuthenticationMethodResponse.psuMessage);
+    Objects.equals(this.challengeData, selectPsuAuthenticationMethodResponse.challengeData) &&
+    Objects.equals(this._links, selectPsuAuthenticationMethodResponse._links) &&
+    Objects.equals(this.scaStatus, selectPsuAuthenticationMethodResponse.scaStatus) &&
+    Objects.equals(this.psuMessage, selectPsuAuthenticationMethodResponse.psuMessage);
   }
 
   @Override

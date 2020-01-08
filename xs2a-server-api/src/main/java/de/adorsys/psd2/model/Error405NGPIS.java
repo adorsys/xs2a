@@ -34,7 +34,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Error405NGPIS   {
   @JsonProperty("tppMessages")
@@ -106,10 +106,9 @@ public class Error405NGPIS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error405NGPIS error405NGPIS = (Error405NGPIS) o;
+}    Error405NGPIS error405NGPIS = (Error405NGPIS) o;
     return Objects.equals(this.tppMessages, error405NGPIS.tppMessages) &&
-        Objects.equals(this._links, error405NGPIS._links);
+    Objects.equals(this._links, error405NGPIS._links);
   }
 
   @Override

@@ -30,7 +30,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Error400AISAdditionalErrors   {
   @JsonProperty("title")
@@ -75,7 +75,7 @@ public class Error400AISAdditionalErrors   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512) 
+@Size(max=500) 
 
   @JsonProperty("detail")
   public String getDetail() {
@@ -116,11 +116,10 @@ public class Error400AISAdditionalErrors   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error400AISAdditionalErrors error400AISAdditionalErrors = (Error400AISAdditionalErrors) o;
+}    Error400AISAdditionalErrors error400AISAdditionalErrors = (Error400AISAdditionalErrors) o;
     return Objects.equals(this.title, error400AISAdditionalErrors.title) &&
-        Objects.equals(this.detail, error400AISAdditionalErrors.detail) &&
-        Objects.equals(this.code, error400AISAdditionalErrors.code);
+    Objects.equals(this.detail, error400AISAdditionalErrors.detail) &&
+    Objects.equals(this.code, error400AISAdditionalErrors.code);
   }
 
   @Override

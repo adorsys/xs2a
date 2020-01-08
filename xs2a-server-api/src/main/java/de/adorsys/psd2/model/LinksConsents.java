@@ -29,11 +29,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response (which might be extended by single ASPSPs as indicated in its XS2A documentation):   - &#39;scaRedirect&#39;:     In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to redirect the     PSU browser.   - &#39;scaOAuth&#39;:     In case of an OAuth2 based Redirect Approach, the ASPSP is transmitting the link where the configuration     of the OAuth2 Server is defined.     The configuration follows the OAuth 2.0 Authorisation Server Metadata specification.   - &#39;startAuthorisation&#39;:     In case, where an explicit start of the transaction authorisation is needed,     but no more data needs to be updated (no authentication method to be selected,     no PSU identification nor PSU authentication data to be uploaded).   - &#39;startAuthorisationWithPsuIdentification&#39;:     The link to the authorisation end-point, where the authorisation sub-resource has to be generated     while uploading the PSU identification data.   - &#39;startAuthorisationWithPsuAuthentication&#39;:     The link to the authorisation end-point, where the authorisation sub-resource has to be generated     while uploading the PSU authentication data.   * &#39;startAuthorisationWithEncryptedPsuAuthentication&#39;:     Same as startAuthorisactionWithPsuAuthentication where the authentication data need to be encrypted on     application layer in uploading.   - &#39;startAuthorisationWithAuthenticationMethodSelection&#39;:     The link to the authorisation end-point, where the authorisation sub-resource has to be generated     while selecting the authentication method. This link is contained under exactly the same conditions     as the data element &#39;scaMethods&#39;   - &#39;startAuthorisationWithTransactionAuthorisation&#39;:     The link to the authorisation end-point, where the authorisation sub-resource has to be generated     while authorising the transaction e.g. by uploading an OTP received by SMS.   - &#39;self&#39;:     The link to the Establish Account Information Consent resource created by this request.     This link can be used to retrieve the resource data.   - &#39;status&#39;:     The link to retrieve the status of the account information consent.   - &#39;scaStatus&#39;: The link to retrieve the scaStatus of the corresponding authorisation sub-resource.     This link is only contained, if an authorisation sub-resource has been already created. 
+ * A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response (which might be extended by single ASPSPs as indicated in its XS2A  documentation):   * &#39;scaRedirect&#39;:      In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to redirect the      PSU browser.   * &#39;scaOAuth&#39;:      In case of an OAuth2 based Redirect Approach, the ASPSP is transmitting the link where the configuration      of the OAuth2 Server is defined.      The configuration follows the OAuth 2.0 Authorisation Server Metadata specification.    * &#39;startAuthorisation&#39;:      In case, where an explicit start of the transaction authorisation is needed,      but no more data needs to be updated (no authentication method to be selected,      no PSU identification nor PSU authentication data to be uploaded).   * &#39;startAuthorisationWithPsuIdentification&#39;:      The link to the authorisation end-point, where the authorisation sub-resource has to be generated      while uploading the PSU identification data.   * &#39;startAuthorisationWithPsuAuthentication&#39;:     The link to the authorisation end-point, where the authorisation sub-resource has to be generated      while uploading the PSU authentication data.   * &#39;startAuthorisationWithEncryptedPsuAuthentication&#39;:     Same as startAuthorisactionWithPsuAuthentication where the authentication data need to be encrypted on      application layer in uploading.   * &#39;startAuthorisationWithAuthenticationMethodSelection&#39;:     The link to the authorisation end-point, where the authorisation sub-resource has to be generated      while selecting the authentication method. This link is contained under exactly the same conditions      as the data element &#39;scaMethods&#39;    * &#39;startAuthorisationWithTransactionAuthorisation&#39;:     The link to the authorisation end-point, where the authorisation sub-resource has to be generated      while authorising the transaction e.g. by uploading an OTP received by SMS.   * &#39;self&#39;:      The link to the Establish Account Information Consent resource created by this request.      This link can be used to retrieve the resource data.    * &#39;status&#39;:      The link to retrieve the status of the account information consent.   * &#39;scaStatus&#39;: The link to retrieve the scaStatus of the corresponding authorisation sub-resource.      This link is only contained, if an authorisation sub-resource has been already created. 
  */
-@ApiModel(description = "A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response (which might be extended by single ASPSPs as indicated in its XS2A documentation):   - 'scaRedirect':     In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to redirect the     PSU browser.   - 'scaOAuth':     In case of an OAuth2 based Redirect Approach, the ASPSP is transmitting the link where the configuration     of the OAuth2 Server is defined.     The configuration follows the OAuth 2.0 Authorisation Server Metadata specification.   - 'startAuthorisation':     In case, where an explicit start of the transaction authorisation is needed,     but no more data needs to be updated (no authentication method to be selected,     no PSU identification nor PSU authentication data to be uploaded).   - 'startAuthorisationWithPsuIdentification':     The link to the authorisation end-point, where the authorisation sub-resource has to be generated     while uploading the PSU identification data.   - 'startAuthorisationWithPsuAuthentication':     The link to the authorisation end-point, where the authorisation sub-resource has to be generated     while uploading the PSU authentication data.   * 'startAuthorisationWithEncryptedPsuAuthentication':     Same as startAuthorisactionWithPsuAuthentication where the authentication data need to be encrypted on     application layer in uploading.   - 'startAuthorisationWithAuthenticationMethodSelection':     The link to the authorisation end-point, where the authorisation sub-resource has to be generated     while selecting the authentication method. This link is contained under exactly the same conditions     as the data element 'scaMethods'   - 'startAuthorisationWithTransactionAuthorisation':     The link to the authorisation end-point, where the authorisation sub-resource has to be generated     while authorising the transaction e.g. by uploading an OTP received by SMS.   - 'self':     The link to the Establish Account Information Consent resource created by this request.     This link can be used to retrieve the resource data.   - 'status':     The link to retrieve the status of the account information consent.   - 'scaStatus': The link to retrieve the scaStatus of the corresponding authorisation sub-resource.     This link is only contained, if an authorisation sub-resource has been already created. ")
+@ApiModel(description = "A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response (which might be extended by single ASPSPs as indicated in its XS2A  documentation):   * 'scaRedirect':      In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to redirect the      PSU browser.   * 'scaOAuth':      In case of an OAuth2 based Redirect Approach, the ASPSP is transmitting the link where the configuration      of the OAuth2 Server is defined.      The configuration follows the OAuth 2.0 Authorisation Server Metadata specification.    * 'startAuthorisation':      In case, where an explicit start of the transaction authorisation is needed,      but no more data needs to be updated (no authentication method to be selected,      no PSU identification nor PSU authentication data to be uploaded).   * 'startAuthorisationWithPsuIdentification':      The link to the authorisation end-point, where the authorisation sub-resource has to be generated      while uploading the PSU identification data.   * 'startAuthorisationWithPsuAuthentication':     The link to the authorisation end-point, where the authorisation sub-resource has to be generated      while uploading the PSU authentication data.   * 'startAuthorisationWithEncryptedPsuAuthentication':     Same as startAuthorisactionWithPsuAuthentication where the authentication data need to be encrypted on      application layer in uploading.   * 'startAuthorisationWithAuthenticationMethodSelection':     The link to the authorisation end-point, where the authorisation sub-resource has to be generated      while selecting the authentication method. This link is contained under exactly the same conditions      as the data element 'scaMethods'    * 'startAuthorisationWithTransactionAuthorisation':     The link to the authorisation end-point, where the authorisation sub-resource has to be generated      while authorising the transaction e.g. by uploading an OTP received by SMS.   * 'self':      The link to the Establish Account Information Consent resource created by this request.      This link can be used to retrieve the resource data.    * 'status':      The link to retrieve the status of the account information consent.   * 'scaStatus': The link to retrieve the scaStatus of the corresponding authorisation sub-resource.      This link is only contained, if an authorisation sub-resource has been already created. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class LinksConsents extends HashMap<String, HrefType>  {
   @JsonProperty("scaRedirect")
@@ -68,6 +68,9 @@ public class LinksConsents extends HashMap<String, HrefType>  {
 
   @JsonProperty("scaStatus")
   private HrefType scaStatus = null;
+
+  @JsonProperty("confirmation")
+  private HrefType confirmation = null;
 
   public LinksConsents scaRedirect(HrefType scaRedirect) {
     this.scaRedirect = scaRedirect;
@@ -322,6 +325,29 @@ public class LinksConsents extends HashMap<String, HrefType>  {
     this.scaStatus = scaStatus;
   }
 
+  public LinksConsents confirmation(HrefType confirmation) {
+    this.confirmation = confirmation;
+    return this;
+  }
+
+  /**
+   * Get confirmation
+   * @return confirmation
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("confirmation")
+  public HrefType getConfirmation() {
+    return confirmation;
+  }
+
+  public void setConfirmation(HrefType confirmation) {
+    this.confirmation = confirmation;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -330,25 +356,28 @@ public class LinksConsents extends HashMap<String, HrefType>  {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
+}
+    if (!super.equals(o)) {
+    return false;
     }
     LinksConsents _linksConsents = (LinksConsents) o;
     return Objects.equals(this.scaRedirect, _linksConsents.scaRedirect) &&
-        Objects.equals(this.scaOAuth, _linksConsents.scaOAuth) &&
-        Objects.equals(this.startAuthorisation, _linksConsents.startAuthorisation) &&
-        Objects.equals(this.startAuthorisationWithPsuIdentification, _linksConsents.startAuthorisationWithPsuIdentification) &&
-        Objects.equals(this.startAuthorisationWithPsuAuthentication, _linksConsents.startAuthorisationWithPsuAuthentication) &&
-        Objects.equals(this.startAuthorisationWithEncryptedPsuAuthentication, _linksConsents.startAuthorisationWithEncryptedPsuAuthentication) &&
-        Objects.equals(this.startAuthorisationWithAuthenticationMethodSelection, _linksConsents.startAuthorisationWithAuthenticationMethodSelection) &&
-        Objects.equals(this.startAuthorisationWithTransactionAuthorisation, _linksConsents.startAuthorisationWithTransactionAuthorisation) &&
-        Objects.equals(this.self, _linksConsents.self) &&
-        Objects.equals(this.status, _linksConsents.status) &&
-        Objects.equals(this.scaStatus, _linksConsents.scaStatus) &&
-        super.equals(o);
+    Objects.equals(this.scaOAuth, _linksConsents.scaOAuth) &&
+    Objects.equals(this.startAuthorisation, _linksConsents.startAuthorisation) &&
+    Objects.equals(this.startAuthorisationWithPsuIdentification, _linksConsents.startAuthorisationWithPsuIdentification) &&
+    Objects.equals(this.startAuthorisationWithPsuAuthentication, _linksConsents.startAuthorisationWithPsuAuthentication) &&
+    Objects.equals(this.startAuthorisationWithEncryptedPsuAuthentication, _linksConsents.startAuthorisationWithEncryptedPsuAuthentication) &&
+    Objects.equals(this.startAuthorisationWithAuthenticationMethodSelection, _linksConsents.startAuthorisationWithAuthenticationMethodSelection) &&
+    Objects.equals(this.startAuthorisationWithTransactionAuthorisation, _linksConsents.startAuthorisationWithTransactionAuthorisation) &&
+    Objects.equals(this.self, _linksConsents.self) &&
+    Objects.equals(this.status, _linksConsents.status) &&
+    Objects.equals(this.scaStatus, _linksConsents.scaStatus) &&
+    Objects.equals(this.confirmation, _linksConsents.confirmation);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(scaRedirect, scaOAuth, startAuthorisation, startAuthorisationWithPsuIdentification, startAuthorisationWithPsuAuthentication, startAuthorisationWithEncryptedPsuAuthentication, startAuthorisationWithAuthenticationMethodSelection, startAuthorisationWithTransactionAuthorisation, self, status, scaStatus, super.hashCode());
+    return Objects.hash(scaRedirect, scaOAuth, startAuthorisation, startAuthorisationWithPsuIdentification, startAuthorisationWithPsuAuthentication, startAuthorisationWithEncryptedPsuAuthentication, startAuthorisationWithAuthenticationMethodSelection, startAuthorisationWithTransactionAuthorisation, self, status, scaStatus, confirmation, super.hashCode());
   }
 
   @Override
@@ -367,6 +396,7 @@ public class LinksConsents extends HashMap<String, HrefType>  {
     sb.append("    self: ").append(toIndentedString(self)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
+    sb.append("    confirmation: ").append(toIndentedString(confirmation)).append("\n");
     sb.append("}");
     return sb.toString();
   }

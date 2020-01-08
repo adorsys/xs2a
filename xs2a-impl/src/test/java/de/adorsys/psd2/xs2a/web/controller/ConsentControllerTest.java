@@ -30,7 +30,6 @@ import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ConsentService;
-import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
@@ -120,12 +119,12 @@ public class ConsentControllerTest {
         Consents consents = getConsents();
 
         //When:
-        ResponseEntity responseEntity = consentController.createConsent(null, consents,
-                                                                        null, null, null, CORRECT_PSU_ID, null, null,
+        ResponseEntity responseEntity = consentController.createConsent(null, null, consents, null, null,
+                                                                        new byte[]{}, CORRECT_PSU_ID, null, null,
                                                                         null, false, null, null,
-                                                                        EXPLICIT_PREFERRED, null, null, null, null,
+                                                                        EXPLICIT_PREFERRED, null, null, null, null, null,
                                                                         null, null, null, null, null,
-                                                                        null, null, null);
+                                                                        null);
         ConsentsResponse201 resp = (ConsentsResponse201) responseEntity.getBody();
 
         //Then:
@@ -142,12 +141,12 @@ public class ConsentControllerTest {
         Consents consents = getConsents();
 
         //When:
-        consentController.createConsent(null, consents,
-                                        null, null, null, CORRECT_PSU_ID, null, null,
+        consentController.createConsent(null, null, consents, null, null,
+                                        new byte[]{}, CORRECT_PSU_ID, null, null,
                                         null, false, null, null,
-                                        EXPLICIT_PREFERRED, null, null, null, null,
+                                        EXPLICIT_PREFERRED, null, null, null, null, null,
                                         null, null, null, null, null,
-                                        null, null, null);
+                                        null);
     }
 
     @Test
@@ -157,12 +156,12 @@ public class ConsentControllerTest {
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         Consents consents = getConsents();
         //When:
-        ResponseEntity responseEntity = consentController.createConsent(null, consents,
-                                                                        null, null, null, WRONG_PSU_ID, null, null,
+        ResponseEntity responseEntity = consentController.createConsent(null, null, consents, null, null,
+                                                                        new byte[]{}, WRONG_PSU_ID, null, null,
                                                                         null, false, null, null,
-                                                                        EXPLICIT_PREFERRED, null, null, null, null,
+                                                                        EXPLICIT_PREFERRED, null, null, null, null, null,
                                                                         null, null, null, null, null,
-                                                                        null, null, null);
+                                                                        null);
         //Then:
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -244,7 +243,7 @@ public class ConsentControllerTest {
 
     @Test
     public void getAccountConsentsInformationById_Success() {
-        doReturn(new ResponseEntity<>(getConsentInformationResponse(CONSENT_ID).getBody(), HttpStatus.OK))
+        doReturn(new ResponseEntity<>(getConsentInformationResponse().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
         //When:
         ResponseEntity responseEntity = consentController.getConsentInformation(CONSENT_ID, null,
@@ -373,12 +372,7 @@ public class ConsentControllerTest {
                    : ResponseObject.<AccountConsent>builder().body(accountConsent).build();
     }
 
-    private ResponseObject<ConsentInformationResponse200Json> getConsentInformationResponse(String consentId) {
-        if (consentId.equals(WRONG_CONSENT_ID)) {
-            return ResponseObject.<ConsentInformationResponse200Json>builder()
-                       .fail(MESSAGE_ERROR_AIS_404)
-                       .build();
-        }
+    private ResponseObject<ConsentInformationResponse200Json> getConsentInformationResponse() {
 
         ConsentInformationResponse200Json consent = new ConsentInformationResponse200Json();
         AccountAccess access = new AccountAccess();
