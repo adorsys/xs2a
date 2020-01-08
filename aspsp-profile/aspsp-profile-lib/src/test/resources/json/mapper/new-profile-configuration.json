@@ -58,7 +58,8 @@
         "NONE"
       ],
       "authorisationConfirmationRequestMandated": false,
-      "authorisationConfirmationCheckByXs2a": false
+      "authorisationConfirmationCheckByXs2a": false,
+      "checkUriComplianceToDomainSupported": false
     },
     "piis": {
       "piisConsentSupported": false

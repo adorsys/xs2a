@@ -123,4 +123,9 @@ public class CommonAspspProfileBankSetting {
      * Shows if the authentication data should be checked by XS2A.
      */
     private boolean authorisationConfirmationCheckByXs2a;
+
+    /**
+     * Indicates whether ASPSP supports validation URIs with domain from certificate
+     */
+    private boolean checkUriComplianceToDomainSupported;
 }

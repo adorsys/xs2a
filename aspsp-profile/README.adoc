@@ -204,4 +204,7 @@ LAST: Only a notification on the last consentStatus or transactionStatus as avai
 
 NONE: if ASPSP doesn't support status notifications. |NONE |SCA, PROCESS, LAST, NONE
 
+|checkUriComplianceToDomainSupported |This field indicates whether ASPSP supports validation of TPP URIs with domain from certificate for compliance.
+
+If parameter = FALSE then TPP URIs should not be checked for compliance. If it is TRUE then TPP URIs should be checked. |FALSE |TRUE, FALSE
 |===
