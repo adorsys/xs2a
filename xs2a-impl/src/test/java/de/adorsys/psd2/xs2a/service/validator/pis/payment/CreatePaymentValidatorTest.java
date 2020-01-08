@@ -25,6 +25,8 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.service.mapper.ValidationResultMapper;
 import de.adorsys.psd2.xs2a.service.validator.PsuDataInInitialRequestValidator;
+import de.adorsys.psd2.xs2a.service.validator.TppNotificationDataValidator;
+import de.adorsys.psd2.xs2a.service.validator.TppUriHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
@@ -35,6 +37,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,6 +59,7 @@ public class CreatePaymentValidatorTest {
     private static final byte[] PAYMENT_BODY = "some body".getBytes();
 
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final String INVALID_DOMAIN_MESSAGE = "TPP URIs are not compliant with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate";
 
     @Mock
     private PsuDataInInitialRequestValidator psuDataInInitialRequestValidator;
@@ -65,6 +71,10 @@ public class CreatePaymentValidatorTest {
     private CountryPaymentValidatorResolver countryPaymentValidatorResolver;
     @Mock
     private ValidationResultMapper validationResultMapper;
+    @Mock
+    private TppUriHeaderValidator tppUriHeaderValidator;
+    @Mock
+    private TppNotificationDataValidator tppNotificationDataValidator;
 
     @InjectMocks
     private CreatePaymentValidator createPaymentValidator;
@@ -188,6 +198,51 @@ public class CreatePaymentValidatorTest {
         assertThat(validationResult.isNotValid()).isTrue();
         assertThat(validationResult.getMessageError()).isEqualTo(BUSINESS_VALIDATION_ERROR);
     }
+
+    @Test
+    public void buildWarningMessages_emptySet() {
+        // Given
+        Set<TppMessageInformation> emptySet = new HashSet<>();
+        PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(EMPTY_PSU_DATA, PaymentType.SINGLE);
+        CreatePaymentRequestObject createPaymentRequestObject = new CreatePaymentRequestObject(buildPayment(), paymentInitiationParameters);
+
+        when(tppUriHeaderValidator.buildWarningMessages(any()))
+            .thenReturn(emptySet);
+        when(tppNotificationDataValidator.buildWarningMessages(any()))
+            .thenReturn(emptySet);
+
+        // When
+        Set<TppMessageInformation> actual = createPaymentValidator.buildWarningMessages(createPaymentRequestObject);
+
+        // Then
+        assertEquals(actual, emptySet);
+        verify(tppUriHeaderValidator, times(1)).buildWarningMessages(any());
+        verify(tppNotificationDataValidator, times(1)).buildWarningMessages(any());
+    }
+
+    @Test
+    public void buildWarningMessages_warningsFromUriHeaderValidator() {
+        // Given
+        Set<TppMessageInformation> emptySet = new HashSet<>();
+        Set<TppMessageInformation> uriHeaderValidatorSet = new HashSet<>();
+        uriHeaderValidatorSet.add(TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE));
+        PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(EMPTY_PSU_DATA, PaymentType.SINGLE);
+        CreatePaymentRequestObject createPaymentRequestObject = new CreatePaymentRequestObject(buildPayment(), paymentInitiationParameters);
+
+        when(tppUriHeaderValidator.buildWarningMessages(any()))
+            .thenReturn(uriHeaderValidatorSet);
+        when(tppNotificationDataValidator.buildWarningMessages(any()))
+            .thenReturn(emptySet);
+
+        // When
+        Set<TppMessageInformation> actual = createPaymentValidator.buildWarningMessages(createPaymentRequestObject);
+
+        // Then
+        assertEquals(actual, uriHeaderValidatorSet);
+        verify(tppUriHeaderValidator, times(1)).buildWarningMessages(any());
+        verify(tppNotificationDataValidator, times(1)).buildWarningMessages(any());
+    }
+
 
     private PaymentInitiationParameters buildPaymentInitiationParameters(PsuIdData psuIdData, PaymentType paymentType) {
         return buildPaymentInitiationParameters(psuIdData, paymentType, PAYMENT_PRODUCT);

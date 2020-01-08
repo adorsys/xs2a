@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
+import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
@@ -170,6 +171,7 @@ public class PaymentModelMapperPsd2Test {
 
     @Test
     public void mapToPaymentRequestParameters() {
+        TppNotificationData tppNotificationData = new TppNotificationData(NOTIFICATION_MODES, "notification.uri");
         PaymentInitiationParameters expected = new PaymentInitiationParameters();
         expected.setPaymentProduct(PAYMENT_PRODUCT);
         expected.setPaymentType(PaymentType.SINGLE);
@@ -177,11 +179,10 @@ public class PaymentModelMapperPsd2Test {
         expected.setTppRedirectUri(new TppRedirectUri("ok.uri", "nok.uri"));
         expected.setTppExplicitAuthorisationPreferred(true);
         expected.setPsuData(PSU_ID_DATA);
-        expected.setTppNotificationUri("notification.uri");
-        expected.setNotificationSupportedModes(NOTIFICATION_MODES);
+        expected.setTppNotificationData(tppNotificationData);
 
         PaymentInitiationParameters actual = mapper.mapToPaymentRequestParameters(PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), "certificate".getBytes(), "ok.uri", "nok.uri",
-                                                                                  true, PSU_ID_DATA, "notification.uri", NOTIFICATION_MODES);
+                                                                                  true, PSU_ID_DATA, tppNotificationData);
 
         assertEquals(expected, actual);
     }

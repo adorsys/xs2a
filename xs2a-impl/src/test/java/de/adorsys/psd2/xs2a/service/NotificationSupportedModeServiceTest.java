@@ -17,17 +17,18 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
+import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.NotificationModeResponseHeaders;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.web.validator.header.TppDomainValidator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
@@ -38,9 +39,6 @@ public class NotificationSupportedModeServiceTest {
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
-
-    @Mock
-    private TppDomainValidator tppDomainValidator;
 
     @Mock
     private RequestProviderService requestProviderService;
@@ -55,11 +53,8 @@ public class NotificationSupportedModeServiceTest {
         when(aspspProfileServiceWrapper.getNotificationSupportedModes()).thenReturn(Arrays.asList(NotificationSupportedMode.SCA,
                                                                                                   NotificationSupportedMode.LAST,
                                                                                                   NotificationSupportedMode.PROCESS));
-        when(tppDomainValidator.validate(TPP_NOTIFICATION_URI))
-            .thenReturn(ValidationResult.valid());
-
         // When
-        NotificationModeResponseHeaders actual = notificationSupportedModeService.resolveNotificationHeaders(usedModes, TPP_NOTIFICATION_URI);
+        NotificationModeResponseHeaders actual = notificationSupportedModeService.resolveNotificationHeaders(usedModes);
 
         // Then
         assertTrue(actual.getAspspNotificationSupport());
@@ -76,7 +71,7 @@ public class NotificationSupportedModeServiceTest {
             .thenReturn(Collections.singletonList(NotificationSupportedMode.NONE));
 
         // When
-        NotificationModeResponseHeaders actual = notificationSupportedModeService.resolveNotificationHeaders(usedModes, TPP_NOTIFICATION_URI);
+        NotificationModeResponseHeaders actual = notificationSupportedModeService.resolveNotificationHeaders(usedModes);
 
         // Then
         assertNull(actual.getAspspNotificationSupport());
@@ -90,11 +85,8 @@ public class NotificationSupportedModeServiceTest {
         when(aspspProfileServiceWrapper.getNotificationSupportedModes())
             .thenReturn(Collections.singletonList(NotificationSupportedMode.SCA));
 
-        when(tppDomainValidator.validate(TPP_NOTIFICATION_URI))
-            .thenReturn(ValidationResult.valid());
-
         // When
-        NotificationModeResponseHeaders actual = notificationSupportedModeService.resolveNotificationHeaders(usedModes, TPP_NOTIFICATION_URI);
+        NotificationModeResponseHeaders actual = notificationSupportedModeService.resolveNotificationHeaders(usedModes);
 
         // Then
         assertFalse(actual.getAspspNotificationSupport());
@@ -107,12 +99,12 @@ public class NotificationSupportedModeServiceTest {
         when(aspspProfileServiceWrapper.getNotificationSupportedModes())
             .thenReturn(Arrays.asList(NotificationSupportedMode.SCA, NotificationSupportedMode.LAST));
         String tppNotificationContentPreferred = "status=SCA,LAST";
-
+        TppNotificationData expected = new TppNotificationData(Arrays.asList(NotificationSupportedMode.SCA, NotificationSupportedMode.LAST), TPP_NOTIFICATION_URI);
         // When
-        Set<NotificationSupportedMode> actual = new HashSet<>(notificationSupportedModeService.getProcessedNotificationModes(tppNotificationContentPreferred));
+        TppNotificationData actual = notificationSupportedModeService.getTppNotificationData(tppNotificationContentPreferred, TPP_NOTIFICATION_URI);
 
         // Then
-        assertEquals(EnumSet.of(NotificationSupportedMode.LAST, NotificationSupportedMode.SCA), actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -121,12 +113,13 @@ public class NotificationSupportedModeServiceTest {
         when(aspspProfileServiceWrapper.getNotificationSupportedModes())
             .thenReturn(Arrays.asList(NotificationSupportedMode.SCA, NotificationSupportedMode.LAST));
         String tppNotificationContentPreferred = "";
+        TppNotificationData expected = new TppNotificationData(Collections.emptyList(), TPP_NOTIFICATION_URI);
 
         // When
-        Set<NotificationSupportedMode> actual = new HashSet<>(notificationSupportedModeService.getProcessedNotificationModes(tppNotificationContentPreferred));
+        TppNotificationData actual = notificationSupportedModeService.getTppNotificationData(tppNotificationContentPreferred, TPP_NOTIFICATION_URI);
 
         // Then
-        assertEquals(Collections.emptySet(), actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -135,12 +128,12 @@ public class NotificationSupportedModeServiceTest {
         when(aspspProfileServiceWrapper.getNotificationSupportedModes())
             .thenReturn(Arrays.asList(NotificationSupportedMode.NONE, NotificationSupportedMode.LAST));
         String tppNotificationContentPreferred = "";
-
+        TppNotificationData expected = new TppNotificationData(Collections.emptyList(), TPP_NOTIFICATION_URI);
         // When
-        Set<NotificationSupportedMode> actual = new HashSet<>(notificationSupportedModeService.getProcessedNotificationModes(tppNotificationContentPreferred));
+        TppNotificationData actual = notificationSupportedModeService.getTppNotificationData(tppNotificationContentPreferred, TPP_NOTIFICATION_URI);
 
         // Then
-        assertEquals(Collections.emptySet(), actual);
+        assertEquals(expected, actual);
     }
 
 }

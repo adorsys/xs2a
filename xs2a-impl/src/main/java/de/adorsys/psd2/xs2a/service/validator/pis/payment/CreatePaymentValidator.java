@@ -17,12 +17,11 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.payment;
 
 import de.adorsys.psd2.validator.payment.PaymentBusinessValidator;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.service.mapper.ValidationResultMapper;
-import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
-import de.adorsys.psd2.xs2a.service.validator.PsuDataInInitialRequestValidator;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.*;
 import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
 import de.adorsys.psd2.xs2a.validator.payment.CountryPaymentValidatorResolver;
@@ -30,6 +29,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Validator to be used for validating create payment request according to some business rules
@@ -42,6 +44,8 @@ public class CreatePaymentValidator implements BusinessValidator<CreatePaymentRe
     private final PaymentTypeAndProductValidator paymentProductAndTypeValidator;
     private final CountryPaymentValidatorResolver countryPaymentValidatorResolver;
     private final ValidationResultMapper validationResultMapper;
+    private final TppUriHeaderValidator tppUriHeaderValidator;
+    private final TppNotificationDataValidator tppNotificationDataValidator;
 
     /**
      * Validates create payment request by checking whether:
@@ -74,5 +78,15 @@ public class CreatePaymentValidator implements BusinessValidator<CreatePaymentRe
         PaymentBusinessValidator countrySpecificBusinessValidator = countryPaymentValidatorResolver.getPaymentBusinessValidator();
         de.adorsys.psd2.xs2a.core.service.validator.ValidationResult countrySpecificValidationResult = countrySpecificBusinessValidator.validate(createPaymentRequestObject.getPayment(), paymentProduct, paymentType);
         return validationResultMapper.mapToXs2aValidationResult(countrySpecificValidationResult);
+    }
+
+    @Override
+    public @NotNull Set<TppMessageInformation> buildWarningMessages(@NotNull CreatePaymentRequestObject createPaymentRequestObject) {
+        Set<TppMessageInformation> warnings = new HashSet<>();
+
+        warnings.addAll(tppUriHeaderValidator.buildWarningMessages(createPaymentRequestObject.getPaymentInitiationParameters().getTppRedirectUri()));
+        warnings.addAll(tppNotificationDataValidator.buildWarningMessages(createPaymentRequestObject.getPaymentInitiationParameters().getTppNotificationData()));
+
+        return warnings;
     }
 }

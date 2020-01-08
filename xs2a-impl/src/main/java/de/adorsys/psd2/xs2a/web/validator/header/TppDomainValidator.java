@@ -18,56 +18,70 @@ package de.adorsys.psd2.xs2a.web.validator.header;
 
 import com.google.common.net.InternetDomainName;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_DOMAIN;
 
 @Service
 @AllArgsConstructor
 @Slf4j
-public class TppDomainValidator {
+public class TppDomainValidator implements BusinessValidator<String> {
+    private static final String INVALID_DOMAIN_MESSAGE = "TPP URIs are not compliant with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate";
     private static final String PATTERN_FOR_NORMALIZE_DOMAIN = "\\*.";
-    private final ErrorBuildingService errorBuildingService;
+    private final TppMessageInformation INVALID_DOMAIN_WARNING_MESSAGE = TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE);
     private final TppService tppService;
     private final RequestProviderService requestProviderService;
+    private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
+    @Override
     public ValidationResult validate(String header) {
-        if (StringUtils.isNotBlank(header)) {
+        return ValidationResult.valid();
+    }
+
+    @Override
+    public Set<TppMessageInformation> buildWarningMessages(@NotNull String urlString) {
+        Set<TppMessageInformation> warningMessages = new HashSet<>();
+
+        if (!aspspProfileServiceWrapper.isCheckUriComplianceToDomainSupported()) {
+            return warningMessages;
+        }
+
+        if (StringUtils.isNotBlank(urlString)) {
             List<URL> certificateUrls = getDomainsFromTppInfo().stream()
                                             .map(this::buildURL)
                                             .filter(Objects::nonNull)
                                             .collect(Collectors.toList());
 
             if (certificateUrls.isEmpty()) {
-                return ValidationResult.valid();
+                return warningMessages;
             }
 
-            URL urlHeader = buildURL(header);
-            if (urlHeader == null) {
-                return buildInvalidResult();
+            URL url = buildURL(urlString);
+            if (url == null) {
+                warningMessages.add(INVALID_DOMAIN_WARNING_MESSAGE);
+                return warningMessages;
             }
 
-            return isUrlCompliant(urlHeader, certificateUrls)
-                       ? ValidationResult.valid()
-                       : buildInvalidResult();
+            if (!isUrlCompliant(url, certificateUrls)) {
+                warningMessages.add(INVALID_DOMAIN_WARNING_MESSAGE);
+            }
+
         }
 
-        return ValidationResult.valid();
+        return warningMessages;
     }
 
     private boolean isUrlCompliant(URL urlHeader, List<URL> certificateUrls) {
@@ -112,11 +126,6 @@ public class TppDomainValidator {
         return domain.startsWith("http")
                    ? domain
                    : "http://" + domain;
-    }
-
-    private ValidationResult buildInvalidResult() {
-        return ValidationResult.invalid(
-            errorBuildingService.buildErrorType(), FORMAT_ERROR_INVALID_DOMAIN);
     }
 
     private String getTopDomain(String host) {

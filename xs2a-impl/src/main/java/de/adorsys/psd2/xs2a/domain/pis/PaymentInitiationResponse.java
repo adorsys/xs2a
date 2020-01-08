@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.domain.pis;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
@@ -32,6 +33,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -55,6 +57,7 @@ public abstract class PaymentInitiationResponse {
     private ErrorHolder errorHolder;
     private String internalRequestId;
     private List<NotificationSupportedMode> tppNotificationContentPreferred;
+    private Set<TppMessageInformation> tppMessageInformation;
 
     PaymentInitiationResponse(ErrorHolder errorHolder) {
         this.errorHolder = errorHolder;

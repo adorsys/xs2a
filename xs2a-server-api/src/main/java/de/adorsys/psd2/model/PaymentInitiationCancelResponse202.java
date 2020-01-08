@@ -23,6 +23,8 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -48,6 +50,10 @@ public class PaymentInitiationCancelResponse202   {
 
   @JsonProperty("_links")
   private Map _links = null;
+
+  @JsonProperty("tppMessages")
+  @Valid
+  private List<TppMessage2XX> tppMessages = null;
 
   public PaymentInitiationCancelResponse202 transactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
@@ -165,6 +171,36 @@ public class PaymentInitiationCancelResponse202   {
     this._links = _links;
   }
 
+    public PaymentInitiationCancelResponse202 tppMessages(List<TppMessage2XX> tppMessages) {
+        this.tppMessages = tppMessages;
+        return this;
+    }
+
+    public PaymentInitiationCancelResponse202 addTppMessagesItem(TppMessage2XX tppMessagesItem) {
+        if (this.tppMessages == null) {
+            this.tppMessages = new ArrayList<>();
+        }
+        this.tppMessages.add(tppMessagesItem);
+        return this;
+    }
+
+    /**
+     * Get tppMessages
+     * @return tppMessages
+     **/
+    @ApiModelProperty(value = "")
+
+    @Valid
+
+
+    @JsonProperty("tppMessages")
+    public List<TppMessage2XX> getTppMessages() {
+        return tppMessages;
+    }
+
+    public void setTppMessages(List<TppMessage2XX> tppMessages) {
+        this.tppMessages = tppMessages;
+    }
 
   @Override
   public boolean equals(Object o) {

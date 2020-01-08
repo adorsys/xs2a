@@ -24,6 +24,8 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -55,6 +57,10 @@ public class ConsentsResponse201   {
 
   @JsonProperty("psuMessage")
   private String psuMessage = null;
+
+  @JsonProperty("tppMessages")
+  @Valid
+  private List<TppMessage2XX> tppMessages = null;
 
   public ConsentsResponse201 consentStatus(ConsentStatus consentStatus) {
     this.consentStatus = consentStatus;
@@ -108,7 +114,38 @@ public class ConsentsResponse201   {
     return this;
   }
 
-  /**
+    public ConsentsResponse201 tppMessages(List<TppMessage2XX> tppMessages) {
+        this.tppMessages = tppMessages;
+        return this;
+    }
+
+    public ConsentsResponse201 addTppMessagesItem(TppMessage2XX tppMessagesItem) {
+        if (this.tppMessages == null) {
+            this.tppMessages = new ArrayList<>();
+        }
+        this.tppMessages.add(tppMessagesItem);
+        return this;
+    }
+
+    /**
+     * Get tppMessages
+     * @return tppMessages
+     **/
+    @ApiModelProperty(value = "")
+
+    @Valid
+
+
+    @JsonProperty("tppMessages")
+    public List<TppMessage2XX> getTppMessages() {
+        return tppMessages;
+    }
+
+    public void setTppMessages(List<TppMessage2XX> tppMessages) {
+        this.tppMessages = tppMessages;
+    }
+
+    /**
    * Get scaMethods
    * @return scaMethods
   **/
@@ -202,10 +239,10 @@ public class ConsentsResponse201   {
   }
 
   /**
-   * Get psuMessage
+   * Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach.
    * @return psuMessage
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach.")
 
 @Size(max=500)
 
@@ -226,14 +263,16 @@ public class ConsentsResponse201   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    ConsentsResponse201 consentsResponse201 = (ConsentsResponse201) o;
+    }
+    ConsentsResponse201 consentsResponse201 = (ConsentsResponse201) o;
     return Objects.equals(this.consentStatus, consentsResponse201.consentStatus) &&
-    Objects.equals(this.consentId, consentsResponse201.consentId) &&
-    Objects.equals(this.scaMethods, consentsResponse201.scaMethods) &&
-    Objects.equals(this.chosenScaMethod, consentsResponse201.chosenScaMethod) &&
-    Objects.equals(this.challengeData, consentsResponse201.challengeData) &&
-    Objects.equals(this._links, consentsResponse201._links) &&
-    Objects.equals(this.psuMessage, consentsResponse201.psuMessage);
+        Objects.equals(this.consentId, consentsResponse201.consentId) &&
+        Objects.equals(this.scaMethods, consentsResponse201.scaMethods) &&
+        Objects.equals(this.chosenScaMethod, consentsResponse201.chosenScaMethod) &&
+        Objects.equals(this.challengeData, consentsResponse201.challengeData) &&
+        Objects.equals(this._links, consentsResponse201._links) &&
+        Objects.equals(this.tppMessages, consentsResponse201.tppMessages) &&
+        Objects.equals(this.psuMessage, consentsResponse201.psuMessage);
   }
 
   @Override
@@ -253,6 +292,7 @@ public class ConsentsResponse201   {
     sb.append("    challengeData: ").append(toIndentedString(challengeData)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
+    sb.append("    tppMessages: ").append(toIndentedString(tppMessages)).append("\n");
     sb.append("}");
     return sb.toString();
   }

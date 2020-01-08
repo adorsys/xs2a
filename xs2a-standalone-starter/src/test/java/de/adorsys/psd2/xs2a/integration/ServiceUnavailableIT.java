@@ -59,6 +59,7 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.web.controller.ConsentController;
+import de.adorsys.psd2.xs2a.web.filter.ContentCachingWrappingFilter;
 import de.adorsys.psd2.xs2a.web.filter.OauthModeFilter;
 import de.adorsys.psd2.xs2a.web.filter.QwacCertificateFilter;
 import de.adorsys.psd2.xs2a.web.filter.SignatureFilter;
@@ -164,6 +165,8 @@ public class ServiceUnavailableIT {
     @Autowired
     private SignatureFilter signatureFilter;
     @Autowired
+    private ContentCachingWrappingFilter contentCachingWrappingFilter;
+    @Autowired
     private ConsentController consentController;
     @Autowired
     private GlobalExceptionHandlerController globalExceptionHandlerController;
@@ -252,7 +255,7 @@ public class ServiceUnavailableIT {
     @Test
     @ResourceAvailable(profile = false)
     public void aspsp_profile_not_accessible_in_interceptor() throws Exception {
-        MockMvc mockMvc = buildMockMvcWithoutFilters();
+        MockMvc mockMvc = buildMockMvcWithoutCustomFilters();
         create_consent_service_unavailable_test(mockMvc);
     }
 
@@ -266,7 +269,7 @@ public class ServiceUnavailableIT {
     @Test
     @ResourceAvailable(cms = false)
     public void cms_not_accessible_in_interceptor() throws Exception {
-        MockMvc mockMvc = buildMockMvcWithoutFilters();
+        MockMvc mockMvc = buildMockMvcWithoutCustomFilters();
         create_consent_service_unavailable_test(mockMvc);
     }
 
@@ -310,8 +313,9 @@ public class ServiceUnavailableIT {
                    .build();
     }
 
-    private MockMvc buildMockMvcWithoutFilters() {
+    private MockMvc buildMockMvcWithoutCustomFilters() {
         return MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                   .addFilter(contentCachingWrappingFilter)
                    .build();
     }
 

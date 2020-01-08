@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
@@ -65,8 +66,8 @@ public class Xs2aAisConsentMapper {
                        aisRequest.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
                        aisRequest.setTppRedirectUri(r.getTppRedirectUri());
                        aisRequest.setInternalRequestId(internalRequestId);
-                       aisRequest.setTppNotificationUri(req.getTppNotificationUri());
-                       aisRequest.setNotificationSupportedModes(req.getNotificationSupportedModes());
+                       aisRequest.setTppNotificationUri(Optional.ofNullable(req.getTppNotificationData()).map(TppNotificationData::getTppNotificationUri).orElse(null));
+                       aisRequest.setNotificationSupportedModes(Optional.ofNullable(req.getTppNotificationData()).map(TppNotificationData::getNotificationModes).orElse(null));
                        return aisRequest;
                    })
                    .orElse(null);

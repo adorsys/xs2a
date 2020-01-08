@@ -17,10 +17,9 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
+import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.NotificationModeResponseHeaders;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.web.validator.header.TppDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -40,20 +39,16 @@ public class NotificationSupportedModeService {
     private static final String MODES_SEPARATOR = ",";
 
     private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    private final TppDomainValidator tppDomainValidator;
     private final RequestProviderService requestProviderService;
 
-    public NotificationModeResponseHeaders resolveNotificationHeaders(List<NotificationSupportedMode> usedModes, String tppNotificationURI) {
+    public NotificationModeResponseHeaders resolveNotificationHeaders(List<NotificationSupportedMode> usedModes) {
         List<NotificationSupportedMode> supportedModes = aspspProfileServiceWrapper.getNotificationSupportedModes();
 
         if (supportedModes.contains(NotificationSupportedMode.NONE)) {
             return new NotificationModeResponseHeaders(null, null);
         }
 
-        ValidationResult validationResult = tppDomainValidator.validate(tppNotificationURI);
-
-        if (CollectionUtils.isEmpty(usedModes)
-                || validationResult.isNotValid()) {
+        if (CollectionUtils.isEmpty(usedModes)) {
 
             log.info("InR-ID: [{}], X-Request-ID: [{}]. TPP notification URI is not correct or requested modes are not supported!",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
@@ -65,10 +60,10 @@ public class NotificationSupportedModeService {
 
     }
 
-    public List<NotificationSupportedMode> getProcessedNotificationModes(String tppNotificationContentPreferred) {
+    public TppNotificationData getTppNotificationData(String tppNotificationContentPreferred, String tppNotificationUri) {
         List<NotificationSupportedMode> modesFromRequest = parseTppNotificationContentPreferred(tppNotificationContentPreferred);
 
-        return getProcessedNotificationModes(modesFromRequest);
+        return new TppNotificationData(getProcessedNotificationModes(modesFromRequest), tppNotificationUri);
     }
 
     private String getModesAsString(List<NotificationSupportedMode> modes) {
