@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -19,7 +35,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \"currency\" is set to \"XXX\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-11T13:12:30.656354+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class AccountDetails   {
   @JsonProperty("resourceId")
@@ -378,7 +394,7 @@ public class AccountDetails   {
   **/
   @ApiModelProperty(value = "Specifications that might be provided by the ASPSP:   - characteristics of the account   - characteristics of the relevant card ")
 
-@Size(max=140)
+@Size(max=500)
 
   @JsonProperty("details")
   public String getDetails() {
@@ -465,24 +481,23 @@ public class AccountDetails   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    AccountDetails accountDetails = (AccountDetails) o;
+}    AccountDetails accountDetails = (AccountDetails) o;
     return Objects.equals(this.resourceId, accountDetails.resourceId) &&
-        Objects.equals(this.iban, accountDetails.iban) &&
-        Objects.equals(this.bban, accountDetails.bban) &&
-        Objects.equals(this.msisdn, accountDetails.msisdn) &&
-        Objects.equals(this.currency, accountDetails.currency) &&
-        Objects.equals(this.name, accountDetails.name) &&
-        Objects.equals(this.product, accountDetails.product) &&
-        Objects.equals(this.cashAccountType, accountDetails.cashAccountType) &&
-        Objects.equals(this.status, accountDetails.status) &&
-        Objects.equals(this.bic, accountDetails.bic) &&
-        Objects.equals(this.linkedAccounts, accountDetails.linkedAccounts) &&
-        Objects.equals(this.usage, accountDetails.usage) &&
-        Objects.equals(this.details, accountDetails.details) &&
-        Objects.equals(this.balances, accountDetails.balances) &&
-        Objects.equals(this._links, accountDetails._links) &&
-        Objects.equals(this.ownerName, accountDetails.ownerName);
+    Objects.equals(this.iban, accountDetails.iban) &&
+    Objects.equals(this.bban, accountDetails.bban) &&
+    Objects.equals(this.msisdn, accountDetails.msisdn) &&
+    Objects.equals(this.currency, accountDetails.currency) &&
+    Objects.equals(this.name, accountDetails.name) &&
+    Objects.equals(this.product, accountDetails.product) &&
+    Objects.equals(this.cashAccountType, accountDetails.cashAccountType) &&
+    Objects.equals(this.status, accountDetails.status) &&
+    Objects.equals(this.bic, accountDetails.bic) &&
+    Objects.equals(this.linkedAccounts, accountDetails.linkedAccounts) &&
+    Objects.equals(this.usage, accountDetails.usage) &&
+    Objects.equals(this.details, accountDetails.details) &&
+    Objects.equals(this.balances, accountDetails.balances) &&
+    Objects.equals(this._links, accountDetails._links) &&
+    Objects.equals(this.ownerName, accountDetails.ownerName);
   }
 
   @Override

@@ -16,32 +16,14 @@
 
 package de.adorsys.psd2.xs2a.core.pis;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 public enum FrequencyCode {
-    DAILY("Daily"),
-    WEEKLY("Weekly"),
-    EVERYTWOWEEKS("EveryTwoWeeks"),
-    MONTHLY("Monthly"),
-    EVERYTWOMONTHS("EveryTwoMonths"),
-    QUARTERLY("Quarterly"),
-    SEMIANNUAL("SemiAnnual"),
-    ANNUAL("Annual"),
-    MONTHLYVARIABLE("MonthlyVariable");
-
-    private String value;
-
-    FrequencyCode(String value) {
-        this.value = value;
-    }
-
-    @JsonCreator
-    public static FrequencyCode fromValue(String text) {
-        for (FrequencyCode b : FrequencyCode.values()) {
-            if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-                return b;
-            }
-        }
-        return null;
-    }
+    DAILY,
+    WEEKLY,
+    EVERYTWOWEEKS,
+    MONTHLY,
+    EVERYTWOMONTHS,
+    QUARTERLY,
+    SEMIANNUAL,
+    ANNUAL,
+    MONTHLYVARIABLE
 }

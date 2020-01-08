@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,7 +31,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Additional account information ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-11T13:12:30.656354+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class AdditionalInformationAccess   {
   @JsonProperty("ownerName")
@@ -61,8 +77,7 @@ public class AdditionalInformationAccess   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    AdditionalInformationAccess additionalInformationAccess = (AdditionalInformationAccess) o;
+}    AdditionalInformationAccess additionalInformationAccess = (AdditionalInformationAccess) o;
     return Objects.equals(this.ownerName, additionalInformationAccess.ownerName);
   }
 

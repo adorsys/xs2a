@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +30,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "A _link object with all availabel link types. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-11T13:48:52.194360+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class LinksAll extends HashMap<String, HrefType>  {
   @JsonProperty("scaRedirect")
@@ -825,46 +841,48 @@ public class LinksAll extends HashMap<String, HrefType>  {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
+}
+    if (!super.equals(o)) {
+    return false;
     }
     LinksAll _linksAll = (LinksAll) o;
     return Objects.equals(this.scaRedirect, _linksAll.scaRedirect) &&
-        Objects.equals(this.scaOAuth, _linksAll.scaOAuth) &&
-        Objects.equals(this.startAuthorisation, _linksAll.startAuthorisation) &&
-        Objects.equals(this.startAuthorisationWithPsuIdentification, _linksAll.startAuthorisationWithPsuIdentification) &&
-        Objects.equals(this.updatePsuIdentification, _linksAll.updatePsuIdentification) &&
-        Objects.equals(this.startAuthorisationWithProprietaryData, _linksAll.startAuthorisationWithProprietaryData) &&
-        Objects.equals(this.updateProprietaryData, _linksAll.updateProprietaryData) &&
-        Objects.equals(this.startAuthorisationWithPsuAuthentication, _linksAll.startAuthorisationWithPsuAuthentication) &&
-        Objects.equals(this.updatePsuAuthentication, _linksAll.updatePsuAuthentication) &&
-        Objects.equals(this.startAuthorisationWithEncryptedPsuAuthentication, _linksAll.startAuthorisationWithEncryptedPsuAuthentication) &&
-        Objects.equals(this.updateEncryptedPsuAuthentication, _linksAll.updateEncryptedPsuAuthentication) &&
-        Objects.equals(this.updateAdditionalPsuAuthentication, _linksAll.updateAdditionalPsuAuthentication) &&
-        Objects.equals(this.updateAdditionalEncryptedPsuAuthentication, _linksAll.updateAdditionalEncryptedPsuAuthentication) &&
-        Objects.equals(this.startAuthorisationWithAuthenticationMethodSelection, _linksAll.startAuthorisationWithAuthenticationMethodSelection) &&
-        Objects.equals(this.selectAuthenticationMethod, _linksAll.selectAuthenticationMethod) &&
-        Objects.equals(this.startAuthorisationWithTransactionAuthorisation, _linksAll.startAuthorisationWithTransactionAuthorisation) &&
-        Objects.equals(this.authoriseTransaction, _linksAll.authoriseTransaction) &&
-        Objects.equals(this.self, _linksAll.self) &&
-        Objects.equals(this.status, _linksAll.status) &&
-        Objects.equals(this.scaStatus, _linksAll.scaStatus) &&
-        Objects.equals(this.account, _linksAll.account) &&
-        Objects.equals(this.balances, _linksAll.balances) &&
-        Objects.equals(this.transactions, _linksAll.transactions) &&
-        Objects.equals(this.transactionDetails, _linksAll.transactionDetails) &&
-        Objects.equals(this.cardAccount, _linksAll.cardAccount) &&
-        Objects.equals(this.cardTransactions, _linksAll.cardTransactions) &&
-        Objects.equals(this.first, _linksAll.first) &&
-        Objects.equals(this.next, _linksAll.next) &&
-        Objects.equals(this.previous, _linksAll.previous) &&
-        Objects.equals(this.last, _linksAll.last) &&
-        Objects.equals(this.download, _linksAll.download) &&
-        super.equals(o);
+    Objects.equals(this.scaOAuth, _linksAll.scaOAuth) &&
+    Objects.equals(this.startAuthorisation, _linksAll.startAuthorisation) &&
+    Objects.equals(this.startAuthorisationWithPsuIdentification, _linksAll.startAuthorisationWithPsuIdentification) &&
+    Objects.equals(this.updatePsuIdentification, _linksAll.updatePsuIdentification) &&
+    Objects.equals(this.startAuthorisationWithProprietaryData, _linksAll.startAuthorisationWithProprietaryData) &&
+    Objects.equals(this.updateProprietaryData, _linksAll.updateProprietaryData) &&
+    Objects.equals(this.startAuthorisationWithPsuAuthentication, _linksAll.startAuthorisationWithPsuAuthentication) &&
+    Objects.equals(this.updatePsuAuthentication, _linksAll.updatePsuAuthentication) &&
+    Objects.equals(this.startAuthorisationWithEncryptedPsuAuthentication, _linksAll.startAuthorisationWithEncryptedPsuAuthentication) &&
+    Objects.equals(this.updateEncryptedPsuAuthentication, _linksAll.updateEncryptedPsuAuthentication) &&
+    Objects.equals(this.updateAdditionalPsuAuthentication, _linksAll.updateAdditionalPsuAuthentication) &&
+    Objects.equals(this.updateAdditionalEncryptedPsuAuthentication, _linksAll.updateAdditionalEncryptedPsuAuthentication) &&
+    Objects.equals(this.startAuthorisationWithAuthenticationMethodSelection, _linksAll.startAuthorisationWithAuthenticationMethodSelection) &&
+    Objects.equals(this.selectAuthenticationMethod, _linksAll.selectAuthenticationMethod) &&
+    Objects.equals(this.startAuthorisationWithTransactionAuthorisation, _linksAll.startAuthorisationWithTransactionAuthorisation) &&
+    Objects.equals(this.authoriseTransaction, _linksAll.authoriseTransaction) &&
+    Objects.equals(this.self, _linksAll.self) &&
+    Objects.equals(this.status, _linksAll.status) &&
+    Objects.equals(this.scaStatus, _linksAll.scaStatus) &&
+    Objects.equals(this.account, _linksAll.account) &&
+    Objects.equals(this.balances, _linksAll.balances) &&
+    Objects.equals(this.transactions, _linksAll.transactions) &&
+    Objects.equals(this.transactionDetails, _linksAll.transactionDetails) &&
+    Objects.equals(this.cardAccount, _linksAll.cardAccount) &&
+    Objects.equals(this.cardTransactions, _linksAll.cardTransactions) &&
+    Objects.equals(this.first, _linksAll.first) &&
+    Objects.equals(this.next, _linksAll.next) &&
+    Objects.equals(this.previous, _linksAll.previous) &&
+    Objects.equals(this.last, _linksAll.last) &&
+    Objects.equals(this.download, _linksAll.download);
   }
 
   @Override
@@ -916,7 +934,7 @@ public class LinksAll extends HashMap<String, HrefType>  {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

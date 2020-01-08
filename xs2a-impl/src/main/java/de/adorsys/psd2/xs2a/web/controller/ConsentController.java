@@ -65,31 +65,32 @@ public class ConsentController implements ConsentApi {
     private final NotificationSupportedModeService notificationSupportedModeService;
 
     @Override
-    public ResponseEntity createConsent(UUID xRequestID, Consents body, String digest, String signature,
-                                        byte[] tpPSignatureCertificate, String psuId, String psUIDType, String psUCorporateID,
-                                        String psUCorporateIDType, Boolean tpPRedirectPreferred, String tpPRedirectURI,
-                                        String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred,
-                                        String tpPNotificationURI, String tpPNotificationContentPreferred, String psUIPAddress,
-                                        String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
-                                        String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
-                                        String psUGeoLocation) {
+    public ResponseEntity createConsent(UUID xRequestID, String psuIpAddress, Consents body, String digest, String signature,
+                                        byte[] tppSignatureCertificate, String psuId, String psuIdType, String psuCorporateId,
+                                        String psuCorporateIdType, Boolean tppRedirectPreferred, String tppRedirectUriString, String tppNokRedirectUriString,
+                                        Boolean tppExplicitAuthorisationPreferred, String tppNotificationUri,
+                                        String tppNotificationContentPreferred, String psuIpPort, String psuAccept,
+                                        String psuAcceptCharset, String psuAcceptEncoding, String psuAcceptLanguage,
+                                        String psuUserAgent, String psuHttpMethod, UUID psuDeviceId,
+                                        String psuGeoLocation) {
 
-        TppRedirectUri tppRedirectUri = tppRedirectUriMapper.mapToTppRedirectUri(tpPRedirectURI, tpPNokRedirectURI);
-        List<NotificationSupportedMode> notificationModes = notificationSupportedModeService.getProcessedNotificationModes(tpPNotificationContentPreferred);
+        TppRedirectUri tppRedirectUri = tppRedirectUriMapper.mapToTppRedirectUri(tppRedirectUriString, tppNokRedirectUriString);
+        List<NotificationSupportedMode> notificationModes = notificationSupportedModeService.getProcessedNotificationModes(tppNotificationContentPreferred);
 
-        CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body, tppRedirectUri, tpPNotificationURI, notificationModes);
+        CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body, tppRedirectUri, tppNotificationUri, notificationModes);
 
-        PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType, psUIPAddress, new AdditionalPsuIdData(psUIPPort, psUUserAgent, psUGeoLocation, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUHttpMethod, psUDeviceID));
+        PsuIdData psuData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, psuIpAddress,
+                                          new AdditionalPsuIdData(psuIpPort, psuUserAgent, psuGeoLocation, psuAccept, psuAcceptCharset, psuAcceptEncoding, psuAcceptLanguage, psuHttpMethod, psuDeviceId));
 
         ResponseObject<CreateConsentResponse> createResponse =
-            consentService.createAccountConsentsWithResponse(createConsent, psuData, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred));
+            consentService.createAccountConsentsWithResponse(createConsent, psuData, BooleanUtils.isTrue(tppExplicitAuthorisationPreferred));
 
         if (createResponse.hasError()) {
             return responseErrorMapper.generateErrorResponse(createResponse.getError());
         }
 
         CreateConsentResponse createConsentResponse = createResponse.getBody();
-        NotificationModeResponseHeaders notificationHeaders = notificationSupportedModeService.resolveNotificationHeaders(createConsentResponse.getTppNotificationContentPreferred(), tpPNotificationURI);
+        NotificationModeResponseHeaders notificationHeaders = notificationSupportedModeService.resolveNotificationHeaders(createConsentResponse.getTppNotificationContentPreferred(), tppNotificationUri);
 
         ResponseHeaders headers = consentHeadersBuilder.buildCreateConsentHeaders(createConsentResponse.getAuthorizationId(),
                                                                                   Optional.ofNullable(createConsentResponse.getLinks().getSelf())
