@@ -1,6 +1,4 @@
 {
-  "paymentId": "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI",
-  "paymentProduct": "sepa-credit-transfers",
   "creditorAccount": {
     "currency": "EUR",
     "iban": "DE52500105173911841934",
@@ -39,6 +37,5 @@
   },
   "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
   "startDate": "2017-03-03",
-  "endDate": "2020-12-02",
-  "transactionStatus": "ACCP"
+  "endDate": "2020-12-02"
 }

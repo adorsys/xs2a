@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,25 +45,41 @@ public class SpiToXs2aPaymentMapperSupport {
     public SinglePayment mapToSinglePayment(SpiSinglePayment spiSinglePayment) {
         SinglePayment singlePayment = spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(spiSinglePayment);
         PaymentInitiationJson paymentInitiationJson = xs2aToPsd2PaymentMapperSupport.mapToPaymentInitiationJson(singlePayment);
-        singlePayment.setPaymentData(convertToBytes(paymentInitiationJson));
+
+        if (singlePayment != null) {
+            singlePayment.setPaymentData(convertToBytes(paymentInitiationJson));
+        }
+
         return singlePayment;
     }
 
     public PeriodicPayment mapToPeriodicPayment(SpiPeriodicPayment spiPeriodicPayment) {
         PeriodicPayment periodicPayment = spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(spiPeriodicPayment);
         PeriodicPaymentInitiationJson paymentInitiationJson = xs2aToPsd2PaymentMapperSupport.mapToPeriodicPaymentInitiationJson(periodicPayment);
-        periodicPayment.setPaymentData(convertToBytes(paymentInitiationJson));
+
+        if (periodicPayment != null) {
+            periodicPayment.setPaymentData(convertToBytes(paymentInitiationJson));
+        }
+
         return periodicPayment;
     }
 
     public BulkPayment mapToBulkPayment(SpiBulkPayment spiBulkPayment) {
         BulkPayment bulkPayment = spiToXs2aBulkPaymentMapper.mapToXs2aBulkPayment(spiBulkPayment);
         BulkPaymentInitiationJson paymentInitiationJson = xs2aToPsd2PaymentMapperSupport.mapToBulkPaymentInitiationJson(bulkPayment);
-        bulkPayment.setPaymentData(convertToBytes(paymentInitiationJson));
+
+        if (bulkPayment != null) {
+            bulkPayment.setPaymentData(convertToBytes(paymentInitiationJson));
+        }
+
         return bulkPayment;
     }
 
     private byte[] convertToBytes(Object payment) {
+        if (payment == null) {
+            return new byte[0];
+        }
+
         try {
             return xs2aObjectMapper.writeValueAsBytes(payment);
         } catch (JsonProcessingException e) {
