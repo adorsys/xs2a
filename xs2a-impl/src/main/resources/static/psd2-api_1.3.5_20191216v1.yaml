@@ -1,10 +1,10 @@
 openapi: 3.0.1
 info:
   title: NextGenPSD2 XS2A Framework
-  version: "1.3.4_2019-07-17v1"
+  version: "1.3.5_2019-12-06v1"
   description: |
     # Summary
-    The **NextGenPSD2** *Framework Version 1.3.4* offers a modern, open, harmonised and interoperable set of
+    The **NextGenPSD2** *Framework Version 1.3.5* offers a modern, open, harmonised and interoperable set of
     Application Programming Interfaces (APIs) as the safest and most efficient way to provide data securely.
     The NextGenPSD2 Framework reduces XS2A complexity and costs, addresses the problem of multiple competing standards
     in Europe and, aligned with the goals of the Euro Retail Payments Board,
@@ -82,6 +82,12 @@ externalDocs:
     (General Introduction Paper, Operational Rules, Implementation Guidelines)
   url: https://www.berlin-group.org/nextgenpsd2-downloads
 
+servers:
+  - url: https://api.testbank.com/psd2
+    description: PSD2 server
+  - url: https://test-api.testbank.com/psd2
+    description: Optional PSD2 test server
+
 paths:
 
   #####################################################
@@ -134,7 +140,7 @@ paths:
 
         For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,
         i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the
-        response message of a Payment initation request for a payment, where multiple authorisations are needed.
+        response message of a Payment Initation Request for a payment, where multiple authorisations are needed.
         Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,
         since all starts of the multiple authorisations are fully equal.
         In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link.
@@ -146,7 +152,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -231,7 +237,7 @@ paths:
 
     get:
       summary: Get payment information
-      description: Returns the content of a payment object.
+      description: Returns the content of a payment object
       operationId: getPaymentInformation
       tags:
         - Payment Initiation Service (PIS)
@@ -239,7 +245,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -327,7 +333,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -351,12 +357,10 @@ paths:
         - $ref: "#/components/parameters/Digest"
         - $ref: "#/components/parameters/Signature"
         - $ref: "#/components/parameters/TPP-Signature-Certificate"
-          #optional parameter, if it equals "true", the TPP prefers a redirect over an embedded SCA approach.
         - $ref: "#/components/parameters/TPP-Redirect-Preferred"
-          #conditional parameter, URI of the TPP, where the transaction flow shall be redirected to after a Redirect.
-        - $ref: "#/components/parameters/TPP-Redirect-URI"
-          #optional parameter
         - $ref: "#/components/parameters/TPP-Nok-Redirect-URI"
+        - $ref: "#/components/parameters/TPP-Redirect-URI"
+        - $ref: "#/components/parameters/TPP-Explicit-Authorisation-Preferred"
           #optional additional PSU Information in header
         - $ref: "#/components/parameters/PSU-IP-Address_optional"
         - $ref: "#/components/parameters/PSU-IP-Port"
@@ -418,7 +422,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -442,6 +446,12 @@ paths:
         - $ref: "#/components/parameters/Digest"
         - $ref: "#/components/parameters/Signature"
         - $ref: "#/components/parameters/TPP-Signature-Certificate"
+          #optional parameter, if it equals "true", the TPP prefers a redirect over an embedded SCA approach.
+        - $ref: "#/components/parameters/TPP-Redirect-Preferred"
+          #conditional parameter, URI of the TPP, where the transaction flow shall be redirected to after a Redirect.
+        - $ref: "#/components/parameters/TPP-Redirect-URI"
+          #optional parameter
+        - $ref: "#/components/parameters/TPP-Nok-Redirect-URI"
           #optional additional PSU Information in header
         - $ref: "#/components/parameters/PSU-IP-Address_optional"
         - $ref: "#/components/parameters/PSU-IP-Port"
@@ -530,7 +540,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -631,7 +641,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -713,7 +723,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -797,10 +807,10 @@ paths:
             * the selection of authentication methods, before choosing the actual SCA approach.
         * Decoupled SCA Approach:
           A specific Update PSU data request is only applicable for
-          * adding the PSU identification, if not provided yet in the Payment initiation request or the Account Information Consent request, or if no OAuth2 access token is used, or
+          * adding the PSU Identification, if not provided yet in the Payment initiation request or the Account Information Consent Request, or if no OAuth2 access token is used, or
           * the selection of authentication methods.
         * Embedded SCA Approach:
-          The Update PSU data request might be used
+          The Update PSU Data request might be used
           * to add credentials as a first factor authentication data of the PSU and
           * to select the authentication method and
           * transaction authorisation.
@@ -830,7 +840,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -884,7 +894,7 @@ paths:
             examples:
               "Update PSU Identification (Decoupled Approach)":
                 value: {}
-              "Update PSU Authentication (Embedded Approach)":
+              "Update PSU authentication (Embedded Approach)":
                 $ref: "#/components/examples/updatePsuAuthenticationExample_Embedded"
               "Select PSU Authentication Method (Embedded Approach)":
                 $ref: "#/components/examples/selectPsuAuthenticationMethodExample_Embedded"
@@ -966,7 +976,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -1064,7 +1074,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -1146,7 +1156,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -1233,10 +1243,10 @@ paths:
             * the selection of authentication methods, before choosing the actual SCA approach.
         * Decoupled SCA Approach:
           A specific Update PSU data request is only applicable for
-          * adding the PSU identification, if not provided yet in the Payment initiation request or the Account Information Consent request, or if no OAuth2 access token is used, or
+          * adding the PSU Identification, if not provided yet in the Payment initiation request or the Account Information Consent Request, or if no OAuth2 access token is used, or
           * the selection of authentication methods.
         * Embedded SCA Approach:
-          The Update PSU data request might be used
+          The Update PSU Data request might be used
           * to add credentials as a first factor authentication data of the PSU and
           * to select the authentication method and
           * transaction authorisation.
@@ -1266,7 +1276,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -1319,7 +1329,7 @@ paths:
             examples:
               "Update PSU Identification (Embedded Approach)":
                 value: {}
-              "Update PSU Authentication (Embedded Approach)":
+              "Update PSU authentication (Embedded Approach)":
                 $ref: "#/components/examples/updatePsuAuthenticationExample_Embedded"
               "Select PSU Authentication Method (Embedded Approach)":
                 $ref: "#/components/examples/selectPsuAuthenticationMethodExample_Embedded"
@@ -1393,7 +1403,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -1484,7 +1494,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -1572,7 +1582,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -1656,7 +1666,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -1748,7 +1758,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -1838,7 +1848,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -1921,7 +1931,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -2010,7 +2020,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -2092,7 +2102,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -2201,7 +2211,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -2234,10 +2244,9 @@ paths:
           #conditional for extended service lean Push
         - $ref: "#/components/parameters/TPP-Notification-URI"
         - $ref: "#/components/parameters/TPP-Notification-Content-Preferred"
-          #conditional elemention for AIS
-        - $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
           #optional additional PSU Information in header
         - $ref: "#/components/parameters/PSU-IP-Port"
+        - $ref: "#/components/parameters/PSU-IP-Address_mandatory"
         - $ref: "#/components/parameters/PSU-Accept"
         - $ref: "#/components/parameters/PSU-Accept-Charset"
         - $ref: "#/components/parameters/PSU-Accept-Encoding"
@@ -2296,7 +2305,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -2373,7 +2382,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -2451,7 +2460,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -2562,7 +2571,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -2661,7 +2670,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -2742,7 +2751,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -2810,7 +2819,7 @@ paths:
 
 
     put:
-      summary: Update PSU data for consents
+      summary: Update PSU Data for consents
       description: |
         This method update PSU data on the consents  resource if needed.
         It may authorise a consent within the Embedded SCA Approach where needed.
@@ -2828,10 +2837,10 @@ paths:
             * the selection of authentication methods, before choosing the actual SCA approach.
         * Decoupled SCA Approach:
           A specific Update PSU data request is only applicable for
-          * adding the PSU identification, if not provided yet in the Payment initiation request or the Account Information Consent request, or if no OAuth2 access token is used, or
+          * adding the PSU Identification, if not provided yet in the Payment initiation request or the Account Information Consent Request, or if no OAuth2 access token is used, or
           * the selection of authentication methods.
         * Embedded SCA Approach:
-          The Update PSU data request might be used
+          The Update PSU Data request might be used
           * to add credentials as a first factor authentication data of the PSU and
           * to select the authentication method and
           * transaction authorisation.
@@ -2861,7 +2870,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -2914,7 +2923,7 @@ paths:
             examples:
               "Update PSU Identification/Additional SCA Process (Embedded Approach)":
                 value: {}
-              "Update PSU Authentication (Embedded Approach)":
+              "Update PSU authentication (Embedded Approach)":
                 $ref: "#/components/examples/updatePsuAuthenticationExample_Embedded"
               "Select PSU Authentication Method (Embedded Approach)":
                 $ref: "#/components/examples/selectPsuAuthenticationMethodExample_Embedded"
@@ -3036,7 +3045,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -3118,7 +3127,7 @@ paths:
   /v1/signing-baskets/{basketId}:
 
     get:
-      summary: Return the content of an signing basket object
+      summary: Returns the content of an signing basket object
       description:
         Returns the content of an signing basket object.
       operationId: getSigningBasket
@@ -3128,7 +3137,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -3207,7 +3216,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -3285,7 +3294,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -3400,7 +3409,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -3499,7 +3508,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -3585,10 +3594,10 @@ paths:
             * the selection of authentication methods, before choosing the actual SCA approach.
         * Decoupled SCA Approach:
           A specific Update PSU data request is only applicable for
-          * adding the PSU identification, if not provided yet in the Payment initiation request or the Account Information Consent request, or if no OAuth2 access token is used, or
+          * adding the PSU Identification, if not provided yet in the Payment initiation request or the Account Information Consent Request, or if no OAuth2 access token is used, or
           * the selection of authentication methods.
         * Embedded SCA Approach:
-          The Update PSU data request might be used
+          The Update PSU Data request might be used
           * to add credentials as a first factor authentication data of the PSU and
           * to select the authentication method and
           * transaction authorisation.
@@ -3618,7 +3627,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -3671,7 +3680,7 @@ paths:
             examples:
               "Update PSU Identification (Embedded Approach)":
                 value: {}
-              "Update PSU Authentication (Embedded Approach)":
+              "Update PSU authentication (Embedded Approach)":
                 $ref: "#/components/examples/updatePsuAuthenticationExample_Embedded"
               "Select PSU Authentication Method (Embedded Approach)":
                 $ref: "#/components/examples/selectPsuAuthenticationMethodExample_Embedded"
@@ -3721,7 +3730,7 @@ paths:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
         # In this file only the basic security element to transport
-        # the bearer token of an OAuth2 process, which has to
+        # the bearer token of an an OAuth2 process, which has to
         # be included in the HTTP header is described.
         #
         # WARNING:
@@ -3797,7 +3806,7 @@ components:
     # Predefined Security Schemes:
     #
     # In this file only the basic security element to transport
-    # the bearer token of an OAuth2 process, which has to
+    # the bearer token of an an OAuth2 process, which has to
     # be included in the HTTP header is described.
     #
     # WARNING:
@@ -3909,6 +3918,7 @@ components:
     entryReference:
       description: |
         Is the identification of the transaction as used e.g. for reference for deltafunction on application level.
+        The same identification as for example used within camt.05x messages.
       type: string
       maxLength: 35
 
@@ -4072,7 +4082,6 @@ components:
         - "terminatedByTpp"
         - "partiallyAuthorised"
 
-
     transactionFeeIndicator:
       description: |
         If equals 'true', the transaction will involve specific transaction cost as shown by the ASPSP in
@@ -4150,7 +4159,7 @@ components:
 
     authenticationObject:
       description: |
-        Authentication Object.
+        Authentication object.
       type: object
       required:
         - authenticationType
@@ -4242,7 +4251,7 @@ components:
 
         This data element is contained in a payment status response,
         if supported by the ASPSP, if a funds check has been performed and
-        if the transactionStatus is "ATCT", "ACWC" or "ACCP".
+        if the transactionStatus is "ACTC", "ACWC" or "ACCP".
       type: boolean
 
 
@@ -4383,9 +4392,6 @@ components:
               - not yet invoiced but already booked entries and
               - pending items (not yet booked)
 
-          - "authorised":
-            The expected balance together with the value of a pre-approved credit line the ASPSP makes permanently available to the user.
-
             For card-accounts:
 
             "money to spend with the value of a pre-approved credit limit on the card account"
@@ -4415,7 +4421,6 @@ components:
       enum:
         - "closingBooked"
         - "expected"
-        - "authorised"
         - "openingBooked"
         - "interimAvailable"
         - "interimBooked"
@@ -4479,7 +4484,7 @@ components:
           description: |
             Optional if supported by API provider.
 
-            Only the value "allAccounts" is admitted.
+            Only the values "allAccounts" and "allAccountsWithOwnerName" are admitted.
           type: string
           enum:
             - "allAccounts"
@@ -4580,7 +4585,7 @@ components:
               - characteristics of the account
               - characteristics of the relevant card
           type: string
-          maxLength: 140
+          maxLength: 500
         balances:
           $ref: "#/components/schemas/balanceList"
         _links:
@@ -4634,7 +4639,7 @@ components:
               - characteristics of the account
               - characteristics of the relevant card
           type: string
-          maxLength: 140
+          maxLength: 500
         creditLimit:
           $ref: "#/components/schemas/amount"
         balances:
@@ -4738,11 +4743,7 @@ components:
             transaction using the Get transaction details request.
           type: string
         entryReference:
-          description: |
-            Is the identification of the transaction as used e.g. for reference for deltafunction on application level.
-            The same identification as for example used within camt.05x messages.
-          type: string
-          maxLength: 35
+          $ref: "#/components/schemas/entryReference"
         endToEndId:
           description: Unique end to end identity.
           type: string
@@ -4773,12 +4774,16 @@ components:
           $ref: "#/components/schemas/creditorName"
         creditorAccount:
           $ref: "#/components/schemas/accountReference"
+        creditorAgent:
+          $ref: "#/components/schemas/bicfi"
         ultimateCreditor:
           $ref: "#/components/schemas/ultimateCreditor"
         debtorName:
           $ref: "#/components/schemas/debtorName"
         debtorAccount:
           $ref: "#/components/schemas/accountReference"
+        debtorAgent:
+          $ref: "#/components/schemas/bicfi"
         ultimateDebtor:
           $ref: "#/components/schemas/ultimateDebtor"
         remittanceInformationUnstructured:
@@ -4794,7 +4799,7 @@ components:
           description: |
             Might be used by the ASPSP to transport additional transaction related information to the PSU.
           type: string
-          maxLength: 512
+          maxLength: 500
         purposeCode:
           $ref: "#/components/schemas/purposeCode"
         bankTransactionCode:
@@ -4803,6 +4808,8 @@ components:
           $ref: "#/components/schemas/proprietaryBankTransactionCode"
         additionalInformationStructured:
           $ref: "#/components/schemas/additionalInformationStructured"
+        balanceAfterTransaction:
+          $ref: "#/components/schemas/balance"
         _links:
           $ref: "#/components/schemas/_linksTransactionDetails"
 
@@ -4941,7 +4948,7 @@ components:
     balanceList:
       description: |
         A list of balances regarding this account, e.g. the current balance, the last booked balance.
-        The list migght be restricted to the current balance.
+        The list might be restricted to the current balance.
       type: array
       items:
         $ref: "#/components/schemas/balance"
@@ -4954,13 +4961,13 @@ components:
         $ref: "#/components/schemas/cancellationId"
 
     cancellations:
-      description: An array of all cancellationIds.
-      type: object
-      required:
+        description: An array of all cancellationIds.
+        type: object
+        required:
         - cancellationIds
-      properties:
-        cancellationIds:
-          $ref: "#/components/schemas/cancellationList"
+        properties:
+            cancellationIds:
+                $ref: "#/components/schemas/cancellationList"
 
     bicfi:
       description: |
@@ -5055,7 +5062,7 @@ components:
 
 
     creditorNameAndAddress:
-      description: Creditor name and address in a free text field.
+      description: Creditor Name and Address in a free text field.
       type: string
       maxLength: 140
       example: "Max Masters, Main Street 1, 12345 City, Example Country"
@@ -5455,9 +5462,9 @@ components:
           * Domain Code,
           * Family Code, and
           * SubFamiliy Code
-        by hyphens, resulting in �DomainCode�-�FamilyCode�-�SubFamilyCode�.
+        by hyphens, resulting in 'DomainCode'-'FamilyCode'-'SubFamilyCode'.
       type: string
-      example: "PMNT-RCDT-ESCT"
+      example: "PMNT-RDDT-ESDD"
 
 
     proprietaryBankTransactionCode:
@@ -5472,7 +5479,6 @@ components:
       type: string
       maxLength: 4
       minLength: 4
-
 
     frequencyCode:
       description: |
@@ -5497,7 +5503,6 @@ components:
         - "SemiAnnual"
         - "Annual"
         - "MonthlyVariable"
-
 
     additionalInformationStructured:
       description: Is used if and only if the bookingStatus entry equals "information". Every active standing order related to the dedicated payment account result into one entry.
@@ -5534,7 +5539,7 @@ components:
             If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.
 
             Example: executionRule equals "preceding", dayOfExecution equals "02" and the second of a month is a Sunday. In this case, the transaction date would be on the last day of the month before.
-            This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month.
+             This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month.
             Remark: This attribute is rarely supported in the market.
           type: boolean
         frequency:
@@ -5557,7 +5562,6 @@ components:
           description: |
             Details of underlying standing orders.
           type: standingOrderDetails
-
 
     frequencyPerDay:
       description: |
@@ -5639,7 +5643,7 @@ components:
         - "preceding"
 
     psuData:
-      description: PSU data for update PSU authentication.
+      description: PSU Data for Update PSU authentication.
       type: object
       minProperties: 1
       properties:
@@ -5659,7 +5663,7 @@ components:
     psuMessageText:
       description: Text to be displayed to the PSU.
       type: string
-      maxLength: 512
+      maxLength: 500
 
     creditorName:
       description: Creditor Name.
@@ -5783,6 +5787,7 @@ components:
          <table style="width:100%">
          <tr><th>Data Element</th><th>SCT EU Core</th><th>SCT INST EU Core</th><th>Target2 Paym. Core</th><th>Cross Border CT Core</th></tr>
          <tr><td>endToEndIdentification</td><td> optional</td> <td>optional</td> <td>optional</td> <td>n.a.</td> </tr>
+         <tr><td>instructionIdentification</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>
          <tr><td>debtorAccount</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>
          <tr><td>debtorId</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>
          <tr><td>ultimateDebtor</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>
@@ -5830,10 +5835,13 @@ components:
         endToEndIdentification:
           type: string
           maxLength: 35
+        #        instructionIdentification: # N.A. for all, but can be used by ASPSP if needed
+        #          type: string
+        #          maxLength: 35
         debtorAccount:
           $ref: "#/components/schemas/accountReference"
         #        debtorId: # N.A. for all, but can be used by ASPSP if needed
-        #          $ref: "#/components/schemas/ultimateDebtor"
+        #          $ref: "#/components/schemas/debtorId"
         ultimateDebtor: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/ultimateDebtor"
         instructedAmount:
@@ -5866,8 +5874,8 @@ components:
         #          $ref: "#/components/schemas/chargeBearer"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
-        #        remittanceInformationUnstructuredArray:
-        #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
+    #        remittanceInformationUnstructuredArray:
+    #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/remittanceInformationStructured"
         requestedExecutionDate: # N.A. for all, but can be used by ASPSP if needed
@@ -5910,6 +5918,7 @@ components:
          <table style="width:100%">
          <tr><th>Data Element</th><th>SCT EU Core</th><th>SCT INST EU Core</th><th>Target2 Paym. Core</th><th>Cross Border CT Core</th></tr>
          <tr><td>endToEndIdentification</td><td> optional</td> <td>optional</td> <td>optional</td> <td>n.a.</td> </tr>
+         <tr><td>instructionIdentification</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>
          <tr><td>debtorId</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>
          <tr><td>ultimateDebtor</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>
          <tr><td>instructedAmount</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>
@@ -5953,6 +5962,11 @@ components:
         endToEndIdentification:
           type: string
           maxLength: 35
+        #        instructionIdentification: # N.A. for all, but can be used by ASPSP if needed
+        #          type: string
+        #          maxLength: 35
+        #        debtorId: # N.A. for all, but can be used by ASPSP if needed
+        #          $ref: "#/components/schemas/debtorId"
         ultimateDebtor: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/ultimateDebtor"
         instructedAmount:
@@ -5985,8 +5999,8 @@ components:
         #          $ref: "#/components/schemas/chargeBearer"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
-        #        remittanceInformationUnstructuredArray:
-        #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
+    #        remittanceInformationUnstructuredArray:
+    #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/remittanceInformationStructured"
 
@@ -6016,6 +6030,7 @@ components:
          <table style="width:100%">
          <tr><th>Data Element</th><th>SCT EU Core</th><th>SCT INST EU Core</th><th>Target2 Paym. Core</th><th>Cross Border CT Core</th></tr>
          <tr><td>endToEndIdentification</td><td> optional</td> <td>optional</td> <td>optional</td> <td>n.a.</td> </tr>
+         <tr><td>instructionIdentification</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>
          <tr><td>debtorAccount</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>
          <tr><td>debtorId</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>
          <tr><td>ultimateDebtor</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>
@@ -6070,9 +6085,14 @@ components:
         endToEndIdentification:
           type: string
           maxLength: 35
+        #        instructionIdentification:  # N.A. for all, but can be used by ASPSP if needed
+        #          type: string
+        #          maxLength: 35
+        #        debtorId: # N.A. for all, but can be used by ASPSP if needed
+        #          $ref: "#/components/schemas/debtorId"
         debtorAccount:
           $ref: "#/components/schemas/accountReference"
-        ultimateDebtor: # N.A.
+        ultimateDebtor:  # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/ultimateDebtor"
         instructedAmount:
           $ref: "#/components/schemas/amount"
@@ -6080,28 +6100,28 @@ components:
           $ref: "#/components/schemas/accountReference"
         creditorAgent:
           $ref: "#/components/schemas/bicfi"
-        creditorName:
-          $ref: "#/components/schemas/creditorName"
-        creditorAddress:
-          $ref: "#/components/schemas/address"
         creditorId:
           description: Identification of Creditors, e.g. a SEPA Creditor ID.
           type: string
           maxLength: 35
-        ultimateCreditor: # N.A.
+        creditorName:
+          $ref: "#/components/schemas/creditorName"
+        creditorAddress:
+          $ref: "#/components/schemas/address"
+        ultimateCreditor:  # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/ultimateCreditor"
-        purposeCode: # N.A.
+        purposeCode:  # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/purposeCode"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
         #        remittanceInformationUnstructuredArray:
         #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
-        remittanceInformationStructured:  # N.A.
+        remittanceInformationStructured:   # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/remittanceInformationStructured"
-        #        requestedExecutionDate: # N.A.
+        #        requestedExecutionDate:  # N.A. for all, but can be used by ASPSP if needed
         #          type: string
         #          format: date
-        #        requestedExecutionTime: # N.A.
+        #        requestedExecutionTime:  # N.A. for all, but can be used by ASPSP if needed
         #          type: string
         #          format: date-time
         #Additional Information for periodic payments
@@ -6157,7 +6177,7 @@ components:
 
     confirmationOfFunds:
       description: |
-        JSON Request body for the "Confirmation of Funds Service".
+        JSON Request body for the "Confirmation of funds service".
 
         <table>
         <tr>
@@ -6234,7 +6254,7 @@ components:
 
     updatePsuAuthentication:
       description: |
-        Content of the body of a Update PSU authentication request.
+        Content of the body of a Update PSU authentication Request
 
         Password subfield is used.
       type: object
@@ -6247,7 +6267,7 @@ components:
 
     selectPsuAuthenticationMethod:
       description: |
-        Content of the body of a Select PSU authentication method Rrequest.
+        Content of the body of a Select PSU authentication method request.
       type: object
       required:
         - authenticationMethodId
@@ -6394,6 +6414,8 @@ components:
           $ref: "#/components/schemas/transactionStatus"
         fundsAvailable:
           $ref: "#/components/schemas/fundsAvailable"
+        psuMessage:
+          $ref: "#/components/schemas/psuMessageText"
 
 
     paymentInitiationStatusResponse-200_xml:
@@ -6487,6 +6509,10 @@ components:
           $ref: "#/components/schemas/creditorName"
         creditorAddress:
           $ref: "#/components/schemas/address"
+        creditorId:
+          description: Identification of Creditors, e.g. a SEPA Creditor ID.
+          type: string
+          maxLength: 35
         ultimateCreditor: # N.A.
           $ref: "#/components/schemas/ultimateCreditor"
         purposeCode: # N.A.
@@ -6626,27 +6652,27 @@ components:
           $ref: "#/components/schemas/psuMessageText"
 
     startCancellationScaProcessResponse:
-      description: Body of the JSON response for a Start SCA authorisation request.
-      type: object
-      required:
-        - scaStatus
-        - authorisationId
-        - _links
-      properties:
-        scaStatus:
-          $ref: "#/components/schemas/scaStatus"
-        cancellationId:
-          $ref: "#/components/schemas/cancellationId"
-        scaMethods:
-          $ref: "#/components/schemas/scaMethods"
-        chosenScaMethod:
-          $ref: "#/components/schemas/chosenScaMethod"
-        challengeData:
-          $ref: "#/components/schemas/challengeData"
-        _links:
-          $ref: "#/components/schemas/_linksStartScaProcess"
-        psuMessage:
-          $ref: "#/components/schemas/psuMessageText"
+        description: Body of the JSON response for a Start SCA authorisation request.
+        type: object
+        required:
+            - scaStatus
+            - authorisationId
+            - _links
+        properties:
+            scaStatus:
+                $ref: "#/components/schemas/scaStatus"
+            cancellationId:
+                $ref: "#/components/schemas/cancellationId"
+            scaMethods:
+                $ref: "#/components/schemas/scaMethods"
+            chosenScaMethod:
+                $ref: "#/components/schemas/chosenScaMethod"
+            challengeData:
+                $ref: "#/components/schemas/challengeData"
+            _links:
+                $ref: "#/components/schemas/_linksStartScaProcess"
+            psuMessage:
+                $ref: "#/components/schemas/psuMessageText"
 
 
     updatePsuIdenticationResponse:
@@ -6687,8 +6713,9 @@ components:
         authorisationId:
           $ref: "#/components/schemas/authorisationId"
 
+
     updateCancellationPsuAuthenticationResponse:
-      description: Body of the JSON response for a successful update PSU authentication request.
+      description: Body of the JSON response for a successful update PSU Authentication request.
       type: object
       required:
         - scaStatus
@@ -6808,9 +6835,7 @@ components:
         _links:
           $ref: "#/components/schemas/_linksConsents"
         psuMessage:
-          description: Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach.
-          type: string
-          maxLength: 512
+          $ref: "#/components/schemas/psuMessageText"
 
 
     consentStatusResponse-200:
@@ -6821,6 +6846,8 @@ components:
       properties:
         consentStatus:
           $ref: "#/components/schemas/consentStatus"
+        psuMessage:
+          $ref: "#/components/schemas/psuMessageText"
 
     consentInformationResponse-200_json:
       description: Body of the JSON response for a successfull get consent request.
@@ -7143,7 +7170,7 @@ components:
         defined extensions):
 
         - 'scaStatus': The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
-        - 'selectAuthenticationMethod': This is a link to a resource, where the TPP can select the applicable second factor authentication methods for the PSU, if there are several available authentication methods and if the PSU is already sufficiently authenticated. If this link is contained, then there is also the data element "scaMethods" contained in the response body.
+        - 'selectAuthenticationMethod': This is a link to a resource, where the TPP can select the applicable second factor authentication methods for the PSU, if there are several available authentication methods and if the PSU is already sufficiently authenticated.. If this link is contained, then there is also the data element "scaMethods" contained in the response body.
       type: object
       additionalProperties:
         $ref: "#/components/schemas/hrefType"
@@ -7343,39 +7370,39 @@ components:
 
         Type of links admitted in this response (which might be extended by single ASPSPs as indicated in its XS2A
         documentation):
-          - 'scaRedirect':
+          * 'scaRedirect':
             In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to redirect the
             PSU browser.
-          - 'scaOAuth':
+          * 'scaOAuth':
             In case of an OAuth2 based Redirect Approach, the ASPSP is transmitting the link where the configuration
             of the OAuth2 Server is defined.
             The configuration follows the OAuth 2.0 Authorisation Server Metadata specification.
-          - 'startAuthorisation':
+          * 'startAuthorisation':
             In case, where an explicit start of the transaction authorisation is needed,
             but no more data needs to be updated (no authentication method to be selected,
             no PSU identification nor PSU authentication data to be uploaded).
-          - 'startAuthorisationWithPsuIdentification':
+          * 'startAuthorisationWithPsuIdentification':
             The link to the authorisation end-point, where the authorisation sub-resource has to be generated
             while uploading the PSU identification data.
-          - 'startAuthorisationWithPsuAuthentication':
+          * 'startAuthorisationWithPsuAuthentication':
             The link to the authorisation end-point, where the authorisation sub-resource has to be generated
             while uploading the PSU authentication data.
           * 'startAuthorisationWithEncryptedPsuAuthentication':
             Same as startAuthorisactionWithPsuAuthentication where the authentication data need to be encrypted on
             application layer in uploading.
-          - 'startAuthorisationWithAuthenticationMethodSelection':
+          * 'startAuthorisationWithAuthenticationMethodSelection':
             The link to the authorisation end-point, where the authorisation sub-resource has to be generated
             while selecting the authentication method. This link is contained under exactly the same conditions
             as the data element 'scaMethods'
-          - 'startAuthorisationWithTransactionAuthorisation':
+          * 'startAuthorisationWithTransactionAuthorisation':
             The link to the authorisation end-point, where the authorisation sub-resource has to be generated
             while authorising the transaction e.g. by uploading an OTP received by SMS.
-          - 'self':
+          * 'self':
             The link to the Establish Account Information Consent resource created by this request.
             This link can be used to retrieve the resource data.
-          - 'status':
+          * 'status':
             The link to retrieve the status of the account information consent.
-          - 'scaStatus': The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
+          * 'scaStatus': The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
             This link is only contained, if an authorisation sub-resource has been already created.
 
       type: object
@@ -7627,36 +7654,29 @@ components:
       description: Message codes defined for PIIS for HTTP Error code 403 (FORBIDDEN).
       type: string
 
-
     MessageCode403_SBS:
       description: Message codes defined for signing baskets for HTTP Error code 403 (FORBIDDEN).
       type: string
-
 
     MessageCode404_PIS:
       description: Message codes defined for PIS for HTTP Error code 404 (NOT FOUND).
       type: string
 
-
     MessageCode404_AIS:
       description: Message codes defined for AIS for HTTP Error code 404 (NOT FOUND).
       type: string
-
 
     MessageCode404_PIIS:
       description: Message codes defined for PIIS for HTTP Error code 404 (NOT FOUND).
       type: string
 
-
     MessageCode404_SBS:
       description: Message codes defined for signing baskets for HTTP Error code 404 (NOT FOUND).
       type: string
 
-
     MessageCode405_PIS:
       description: Message codes defined for payment cancelations PIS for HTTP Error code 405 (METHOD NOT ALLOWED).
       type: string
-
 
     MessageCode405_PIS_CANC:
       description: Message codes defined for payment cancelations PIS for HTTP Error code 405 (METHOD NOT ALLOWED).
@@ -7673,7 +7693,6 @@ components:
     MessageCode405_SBS:
       description: Message codes defined for SBS for HTTP Error code 405 (METHOD NOT ALLOWED).
       type: string
-
 
     MessageCode406_AIS:
       description: Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).
@@ -7704,16 +7723,15 @@ components:
       type: string
 
 
-
     #####################################################
-    # Next Gen propriatary Tpp-Messages
+    # Next Gen proprietary TPP-Messages
     #####################################################
 
 
     tppMessageText:
       description: Additional explaining text to the TPP.
       type: string
-      maxLength: 512
+      maxLength: 500
 
 
     tppMessage2XX:
@@ -7857,6 +7875,7 @@ components:
           type: string
         text:
           $ref: "#/components/schemas/tppMessageText"
+
 
     tppMessage403_PIS:
       type: object
@@ -8112,6 +8131,18 @@ components:
         text:
           $ref: "#/components/schemas/tppMessageText"
 
+    Error406_NG_PIS:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 406.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage406_PIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
     tppMessage409_AIS:
       type: object
       required:
@@ -8195,7 +8226,7 @@ components:
         XPath might be used to point to the issue generating the error in addition.
         Remark for Future: In future, a dedicated field might be introduced for the XPath.
       type: string
-      maxLength: 512
+      maxLength: 500
 
 
 
@@ -8235,7 +8266,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode400_PIS"
         additionalErrors:
@@ -8289,7 +8320,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode400_AIS"
         additionalErrors:
@@ -8343,7 +8374,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode400_PIIS"
         additionalErrors:
@@ -8397,7 +8428,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode400_SBS"
         additionalErrors:
@@ -8451,7 +8482,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode401_PIS"
         additionalErrors:
@@ -8505,7 +8536,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode401_AIS"
         additionalErrors:
@@ -8559,7 +8590,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode401_PIS"
         additionalErrors:
@@ -8613,7 +8644,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode401_SBS"
         additionalErrors:
@@ -8667,7 +8698,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode403_PIS"
         additionalErrors:
@@ -8721,7 +8752,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode403_AIS"
         additionalErrors:
@@ -8775,7 +8806,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode403_PIIS"
         additionalErrors:
@@ -8829,7 +8860,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode403_SBS"
         additionalErrors:
@@ -8883,7 +8914,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode404_PIS"
         additionalErrors:
@@ -8937,7 +8968,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode404_AIS"
         additionalErrors:
@@ -8991,7 +9022,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode404_PIIS"
         additionalErrors:
@@ -9045,7 +9076,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode404_SBS"
         additionalErrors:
@@ -9099,7 +9130,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode405_PIS"
         additionalErrors:
@@ -9153,7 +9184,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode405_PIS_CANC"
         additionalErrors:
@@ -9207,7 +9238,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode405_AIS"
         additionalErrors:
@@ -9261,7 +9292,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode405_PIIS"
         additionalErrors:
@@ -9315,7 +9346,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode405_SBS"
         additionalErrors:
@@ -9369,7 +9400,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode406_AIS"
         additionalErrors:
@@ -9390,222 +9421,6 @@ components:
                 $ref: "#/components/schemas/tppErrorDetail"
               code:
                 $ref: "#/components/schemas/MessageCode406_AIS"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
-
-
-    Error409_PIS:
-      description: |
-        Standardised definition of reporting error information according to [RFC7807]
-        in case of a HTTP error code 409 for PIS.
-      type: object
-      required:
-        - type
-        - code
-      properties:
-        type:
-          description: |
-            A URI reference [RFC3986] that identifies the problem type.
-            Remark For Future: These URI will be provided by NextGenPSD2 in future.
-          type: string
-          format: uri
-          maxLength: 70
-        title:
-          description: |
-            Short human readable description of error type.
-            Could be in local language.
-            To be provided by ASPSPs.
-          type: string
-          maxLength: 70
-        detail:
-          description: |
-            Detailed human readable text specific to this instance of the error.
-            XPath might be used to point to the issue generating the error in addition.
-            Remark for Future: In future, a dedicated field might be introduced for the XPath.
-          type: string
-          maxLength: 512
-        code:
-          $ref: "#/components/schemas/MessageCode409_PIS"
-        additionalErrors:
-          description: |
-            Array of Error Information Blocks.
-
-            Might be used if more than one error is to be communicated
-          type: array
-          items: #ErrorInformation
-            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
-            type: object
-            required:
-              - code
-            properties:
-              title:
-                $ref: "#/components/schemas/tppErrorTitle"
-              detail:
-                $ref: "#/components/schemas/tppErrorDetail"
-              code:
-                $ref: "#/components/schemas/MessageCode409_PIS"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
-
-
-    Error409_AIS:
-      description: |
-        Standardised definition of reporting error information according to [RFC7807]
-        in case of a HTTP error code 409 for AIS.
-      type: object
-      required:
-        - type
-        - code
-      properties:
-        type:
-          description: |
-            A URI reference [RFC3986] that identifies the problem type.
-            Remark For Future: These URI will be provided by NextGenPSD2 in future.
-          type: string
-          format: uri
-          maxLength: 70
-        title:
-          description: |
-            Short human readable description of error type.
-            Could be in local language.
-            To be provided by ASPSPs.
-          type: string
-          maxLength: 70
-        detail:
-          description: |
-            Detailed human readable text specific to this instance of the error.
-            XPath might be used to point to the issue generating the error in addition.
-            Remark for Future: In future, a dedicated field might be introduced for the XPath.
-          type: string
-          maxLength: 512
-        code:
-          $ref: "#/components/schemas/MessageCode409_AIS"
-        additionalErrors:
-          description: |
-            Array of Error Information Blocks.
-
-            Might be used if more than one error is to be communicated
-          type: array
-          items: #ErrorInformation
-            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
-            type: object
-            required:
-              - code
-            properties:
-              title:
-                $ref: "#/components/schemas/tppErrorTitle"
-              detail:
-                $ref: "#/components/schemas/tppErrorDetail"
-              code:
-                $ref: "#/components/schemas/MessageCode409_AIS"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
-
-
-    Error409_PIIS:
-      description: |
-        Standardised definition of reporting error information according to [RFC7807]
-        in case of a HTTP error code 409 for PIIS.
-      type: object
-      required:
-        - type
-        - code
-      properties:
-        type:
-          description: |
-            A URI reference [RFC3986] that identifies the problem type.
-            Remark For Future: These URI will be provided by NextGenPSD2 in future.
-          type: string
-          format: uri
-          maxLength: 70
-        title:
-          description: |
-            Short human readable description of error type.
-            Could be in local language.
-            To be provided by ASPSPs.
-          type: string
-          maxLength: 70
-        detail:
-          description: |
-            Detailed human readable text specific to this instance of the error.
-            XPath might be used to point to the issue generating the error in addition.
-            Remark for Future: In future, a dedicated field might be introduced for the XPath.
-          type: string
-          maxLength: 512
-        code:
-          $ref: "#/components/schemas/MessageCode409_PIIS"
-        additionalErrors:
-          description: |
-            Array of Error Information Blocks.
-
-            Might be used if more than one error is to be communicated
-          type: array
-          items: #ErrorInformation
-            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
-            type: object
-            required:
-              - code
-            properties:
-              title:
-                $ref: "#/components/schemas/tppErrorTitle"
-              detail:
-                $ref: "#/components/schemas/tppErrorDetail"
-              code:
-                $ref: "#/components/schemas/MessageCode409_PIIS"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
-
-
-    Error409_SBS:
-      description: |
-        Standardised definition of reporting error information according to [RFC7807]
-        in case of a HTTP error code 409 for signing baskets.
-      type: object
-      required:
-        - type
-        - code
-      properties:
-        type:
-          description: |
-            A URI reference [RFC3986] that identifies the problem type.
-            Remark For Future: These URI will be provided by NextGenPSD2 in future.
-          type: string
-          format: uri
-          maxLength: 70
-        title:
-          description: |
-            Short human readable description of error type.
-            Could be in local language.
-            To be provided by ASPSPs.
-          type: string
-          maxLength: 70
-        detail:
-          description: |
-            Detailed human readable text specific to this instance of the error.
-            XPath might be used to point to the issue generating the error in addition.
-            Remark for Future: In future, a dedicated field might be introduced for the XPath.
-          type: string
-          maxLength: 512
-        code:
-          $ref: "#/components/schemas/MessageCode409_SBS"
-        additionalErrors:
-          description: |
-            Array of Error Information Blocks.
-
-            Might be used if more than one error is to be communicated
-          type: array
-          items: #ErrorInformation
-            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
-            type: object
-            required:
-              - code
-            properties:
-              title:
-                $ref: "#/components/schemas/tppErrorTitle"
-              detail:
-                $ref: "#/components/schemas/tppErrorDetail"
-              code:
-                $ref: "#/components/schemas/MessageCode409_SBS"
         _links:
           $ref: "#/components/schemas/_linksAll"
 
@@ -9663,6 +9478,222 @@ components:
           $ref: "#/components/schemas/_linksAll"
 
 
+    Error409_PIS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 409 for PIS.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 500
+        code:
+          $ref: "#/components/schemas/MessageCode409_PIS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode409_PIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error409_AIS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 409 for AIS.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 500
+        code:
+          $ref: "#/components/schemas/MessageCode409_AIS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode409_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error409_PIIS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 409 for PIIS.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 500
+        code:
+          $ref: "#/components/schemas/MessageCode409_PIIS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode409_PIIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error409_SBS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 409 for signing baskets.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 500
+        code:
+          $ref: "#/components/schemas/MessageCode409_SBS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode409_SBS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
     Error429_AIS:
       description: |
         Standardised definition of reporting error information according to [RFC7807]
@@ -9692,7 +9723,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode429_AIS"
         additionalErrors:
@@ -9994,17 +10025,6 @@ components:
         _links:
           $ref: "#/components/schemas/_linksAll"
 
-    Error406_NG_PIS:
-      description: |
-        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 406.
-      type: object
-      properties:
-        tppMessages:
-          type: array
-          items:
-            $ref: "#/components/schemas/tppMessage406_PIS"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
 
     Error406_NG_AIS:
       description: |
@@ -10034,7 +10054,7 @@ components:
         [{
            "category": "ERROR",
            "code": "STATUS_INVALID",
-           "text": "additional text information of the ASPSP up to 512 characters"
+           "text": "additional text information of the ASPSP up to 500 characters"
          }]
 
 
@@ -10053,7 +10073,7 @@ components:
         [{
            "category": "ERROR",
            "code": "STATUS_INVALID",
-           "text": "additional text information of the ASPSP up to 512 characters"
+           "text": "additional text information of the ASPSP up to 500 characters"
          }]
 
 
@@ -10072,7 +10092,7 @@ components:
         [{
            "category": "ERROR",
            "code": "STATUS_INVALID",
-           "text": "additional text information of the ASPSP up to 512 characters"
+           "text": "additional text information of the ASPSP up to 500 characters"
          }]
 
 
@@ -10091,7 +10111,7 @@ components:
         [{
            "category": "ERROR",
            "code": "STATUS_INVALID",
-           "text": "additional text information of the ASPSP up to 512 characters"
+           "text": "additional text information of the ASPSP up to 500 characters"
          }]
 
 
@@ -10110,7 +10130,7 @@ components:
         [{
            "category": "ERROR",
            "code": "ACCESS_EXCEEDED",
-           "text": "additional text information of the ASPSP up to 512 characters"
+           "text": "additional text information of the ASPSP up to 500 characters"
          }]
 
 
@@ -10438,7 +10458,6 @@ components:
         enum:
           - "true"
           - "false"
-        #type: boolean
       required: false
 
 
@@ -10609,6 +10628,7 @@ components:
       in: header
       description: |
         The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.
+        If not available, the TPP shall use the IP Address used by the TPP when submitting this request.
       schema:
         type: string
         format: ipv4
@@ -11274,13 +11294,13 @@ components:
 
             oneOf: #Different Authorisation Bodies
               - $ref: "#/components/schemas/updatePsuIdenticationResponse" #Update PSU Identification
-              - $ref: "#/components/schemas/updatePsuAuthenticationResponse" #Update PSU Authentication
+              - $ref: "#/components/schemas/updatePsuAuthenticationResponse" #Update PSU authentication
               - $ref: "#/components/schemas/selectPsuAuthenticationMethodResponse" #Select Authentication Method
               - $ref: "#/components/schemas/scaStatusResponse" #Transaction Authorisation
           examples:
             "Update PSU Identification - Payment Initiation (Decoupled Approach)":
               $ref: "#/components/examples/updatePsuIdentificationResponseExample_Decoupled_payments"
-            "Update PSU Authentication - Payment Initiation (Embedded Approach)":
+            "Update PSU authentication - Payment Initiation (Embedded Approach)":
               $ref: "#/components/examples/updatePsuAuthenticationResponseExample_Embedded_payments"
             "Select PSU Authentication - Payment Initiation Method (Embedded Approach)":
               $ref: "#/components/examples/selectPsuAuthenticationMethodResponseExample_Embedded_payments"
@@ -11302,13 +11322,13 @@ components:
 
             oneOf: #Different Authorisation Bodies
               - $ref: "#/components/schemas/updatePsuIdenticationResponse" #Update PSU Identification
-              - $ref: "#/components/schemas/updateCancellationPsuAuthenticationResponse" #Update PSU Authentication
+              - $ref: "#/components/schemas/updateCancellationPsuAuthenticationResponse" #Update PSU authentication
               - $ref: "#/components/schemas/selectPsuAuthenticationMethodResponse" #Select Authentication Method
               - $ref: "#/components/schemas/scaStatusResponse" #Transaction Authorisation
           examples:
             "Update PSU Identification - Payment Initiation (Decoupled Approach)":
               $ref: "#/components/examples/updatePsuIdentificationResponseExample_Decoupled_payments"
-            "Update PSU Authentication - Payment Initiation (Embedded Approach)":
+            "Update PSU authentication - Payment Initiation (Embedded Approach)":
               $ref: "#/components/examples/updatePsuAuthenticationResponseExample_Embedded_payments"
             "Select PSU Authentication - Payment Initiation Method (Embedded Approach)":
               $ref: "#/components/examples/selectPsuAuthenticationMethodResponseExample_Embedded_payments"
@@ -11443,22 +11463,24 @@ components:
             "Example 1: payments - Decoupled Approach":
               $ref: "#/components/examples/startScaProcessResponseExample1"
 
+
     CREATED_201_StartCancellationScaProcess:
-      description: Created cancellation authorisation
+        description: Created cancellation authorisation
 
-      headers:
-        X-Request-ID:
-          $ref: "#/components/headers/X-Request-ID"
-        ASPSP-SCA-Approach:
-          $ref: "#/components/headers/ASPSP-SCA-Approach"
+        headers:
+            X-Request-ID:
+                $ref: "#/components/headers/X-Request-ID"
+            ASPSP-SCA-Approach:
+                $ref: "#/components/headers/ASPSP-SCA-Approach"
 
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/startCancellationScaProcessResponse"
-          examples:
-            "Example 1: payments - Decoupled Approach":
-              $ref: "#/components/examples/startCancellationScaProcessResponseExample1"
+        content:
+            application/json:
+                schema:
+                    $ref: "#/components/schemas/startCancellationScaProcessResponse"
+                examples:
+                    "Example 1: payments - Decoupled Approach":
+                        $ref: "#/components/examples/startCancellationScaProcessResponseExample1"
+
 
     CREATED_201_Consents:
       description: Created
@@ -12085,6 +12107,17 @@ components:
           schema:
             $ref: "#/components/schemas/Error409_PIIS"
 
+    startCancellationScaProcessResponseExample1:
+        value:
+            {
+                "scaStatus": "received",
+                "cancellationId": "123auth456",
+                "psuMessage": "Please use your BankApp for transaction Authorisation.",
+                "_links":
+                    {
+                        "scaStatus":  {"href":"/v1/payments/qwer3456tzui7890/cancellation-authorisations/123auth456"}
+                    }
+            }
 
     CONFLICT_409_SBS:
       description: Conflict
@@ -12415,7 +12448,7 @@ components:
           "remittanceInformationUnstructured": "Ref Number Abonnement",
           "startDate": "2018-03-01",
           "executionRule": "preceding",
-          "frequency": "monthly",
+          "frequency": "Monthly",
           "dayOfExecution": "01"
         }
 
@@ -12445,7 +12478,7 @@ components:
 
 
     accountDetailsRegularAccount:
-      description: Account details for a regular account.
+      description: Account details for a regular Account.
       value:
         {
           "account":
@@ -12666,17 +12699,7 @@ components:
         }
 
 
-    startCancellationScaProcessResponseExample1:
-      value:
-        {
-          "scaStatus": "received",
-          "cancellationId": "123auth456",
-          "psuMessage": "Please use your BankApp for transaction Authorisation.",
-          "_links":
-            {
-              "scaStatus":  {"href":"/v1/payments/qwer3456tzui7890/cancellation-authorisations/123auth456"}
-            }
-        }
+
 
     signingBasketExample:
       description: "JSON Body of a signing basket request"
@@ -12984,12 +13007,12 @@ components:
       value: |
         {
           "transactionStatus": "ACCP",
-          "scaStatus": "Some SCA Status"
+          "scaStatus": "received"
         }
 
 
     updatePsuIdentificationResponseExample_Decoupled_payments:
-      description: Response of an update PSU identification for a payment initiation request for the decoupled approach.
+      description: Response of an Update PSU identification for a payment initiation request for the decoupled approach.
       value:
         {
           "scatransactionStatus": "psuIdentified",
@@ -13002,7 +13025,7 @@ components:
 
 
     updatePsuAuthenticationResponseExample_Embedded_payments:
-      description: Response of an update PSU authentication for a consent request for the embedded approach.
+      description: Response of an Update PSU authentication for a consent request for the embedded approach.
       value:
         {
           "scaStatus": "psuAuthenticated",
@@ -13013,7 +13036,7 @@ components:
 
 
     selectPsuAuthenticationMethodResponseExample_Embedded_payments:
-      description: Response of a select PSU authentication Method payment initiation request for the embedded approach.
+      description: Response of a Select PSU authentication method payment initiation request for the embedded approach.
       value:
         {
           "scaStatus": "scaMethodSelected",
@@ -13100,7 +13123,7 @@ components:
 
     balancesExample_CardAccount:
       description: |
-        Response in case of card acoount balance request.
+        Response in case of card account balance request.
       value:
         {
           "cardAccount": {"maskedPan": "525412******3241"},
@@ -13164,7 +13187,7 @@ components:
 
 
     transactionsExample3_MulticurrencyAccount_json:
-      description: Response in JSON format for an access on a multicurrency account on aggregation level.
+      description: Response in JSON format for an access on a multicurrency account on aggregation level
       value:
         {
           "account": {"iban": "DE40100100103307118608"},
@@ -13223,7 +13246,7 @@ components:
               "bookingDate": "2017-10-25",
               "valueDate": "2017-10-26",
               "remittanceInformationUnstructured": "Example 1",
-              "bankTransactionCode": "PMNT-RCVD-ESDD",
+              "bankTransactionCode": "PMNT-RDDT-ESDD",
             }
         }
 
@@ -13260,6 +13283,7 @@ components:
             ]
           }
         }
+
 
     authorisationListExample:
       value:
@@ -13310,5 +13334,5 @@ tags:
       authorisation of transactions by using SCA are very similar in PIS and AIS and signing baskets services.
       The API calls supporting these processes are described in the following independently from the service/endpoint.
       For reasons of clarity, the endpoints are defined always for the Payment Initiation Service, the Payment cancellation,
-      the Account Information Service (Consents), and signing baskets separately.
+      the Account Information Service (Consents), and Signing Baskets separately.
       These processes usually are used following a hyperlink of the ASPSP.

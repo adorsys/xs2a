@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,7 +33,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Details of underlying standing orders.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-11T13:48:52.194360+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class StandingOrderDetails   {
   @JsonProperty("startDate")
@@ -127,10 +143,10 @@ public class StandingOrderDetails   {
   }
 
   /**
-   * This element is only used in case of frequency equals \"monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday. In this case, the transaction date would be on the last day of the month before. This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market.
+   * This element is only used in case of frequency equals \"monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday. In this case, the transaction date would be on the last day of the month before.  This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market.
    * @return withinAMonthFlag
   **/
-  @ApiModelProperty(value = "This element is only used in case of frequency equals \"monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday. In this case, the transaction date would be on the last day of the month before. This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market. ")
+  @ApiModelProperty(value = "This element is only used in case of frequency equals \"monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday. In this case, the transaction date would be on the last day of the month before.  This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market. ")
 
 
 
@@ -186,6 +202,7 @@ public class StandingOrderDetails   {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
 
   @JsonProperty("monthsOfExecution")
@@ -288,24 +305,23 @@ public class StandingOrderDetails   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    StandingOrderDetails standingOrderDetails = (StandingOrderDetails) o;
+}    StandingOrderDetails standingOrderDetails = (StandingOrderDetails) o;
     return Objects.equals(this.startDate, standingOrderDetails.startDate) &&
-        Objects.equals(this.endDate, standingOrderDetails.endDate) &&
-        Objects.equals(this.executionRule, standingOrderDetails.executionRule) &&
-        Objects.equals(this.withinAMonthFlag, standingOrderDetails.withinAMonthFlag) &&
-        Objects.equals(this.frequency, standingOrderDetails.frequency) &&
-        Objects.equals(this.monthsOfExecution, standingOrderDetails.monthsOfExecution) &&
-        Objects.equals(this.multiplicator, standingOrderDetails.multiplicator) &&
-        Objects.equals(this.dayOfExecution, standingOrderDetails.dayOfExecution) &&
-        Objects.equals(this.limitAmount, standingOrderDetails.limitAmount) &&
-        Objects.equals(this.standingOrderDetails, standingOrderDetails.standingOrderDetails);
+    Objects.equals(this.endDate, standingOrderDetails.endDate) &&
+    Objects.equals(this.executionRule, standingOrderDetails.executionRule) &&
+    Objects.equals(this.withinAMonthFlag, standingOrderDetails.withinAMonthFlag) &&
+    Objects.equals(this.frequency, standingOrderDetails.frequency) &&
+    Objects.equals(this.monthsOfExecution, standingOrderDetails.monthsOfExecution) &&
+    Objects.equals(this.multiplicator, standingOrderDetails.multiplicator) &&
+    Objects.equals(this.dayOfExecution, standingOrderDetails.dayOfExecution) &&
+    Objects.equals(this.limitAmount, standingOrderDetails.limitAmount) &&
+    Objects.equals(this.standingOrderDetails, standingOrderDetails.standingOrderDetails);
   }
 
   @Override
@@ -336,7 +352,7 @@ public class StandingOrderDetails   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

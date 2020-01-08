@@ -27,8 +27,8 @@ You can check your readiness for PSD2 Compliance and other information via [our 
 
 ## Features of adorsys/XS2A
 
-* **Current supported version of NextGenPSD2 XS2A API is 1.3.4**.
-You can check out our [Swagger API yaml file](xs2a-impl/src/main/resources/static/psd2-api_1.3.4_20190717v1.yaml).
+* **Current supported version of NextGenPSD2 XS2A API is 1.3**.
+You can check out our [Swagger API yaml file](xs2a-impl/src/main/resources/static/psd2-api_1.3.5_20191216v1.yaml).
 
 * **XS2A-impl** is an implemetation of NextGenPSD2 XS2A Interface of Berlin Group.
 All mandatory API endpoints defined in Berlin Group specification are implemented.
@@ -93,7 +93,7 @@ Please read [CONTRIBUTING](doc/CONTRIBUTING.md) for details on our code of condu
 
 See also the list of [contributors](doc/contributors.md) who participated in this project.
 
-For commercial support please contact **[adorsys Team](https://adorsys.de/en/kontakt/)**.
+For commercial support please contact **[adorsys Team](https://adorsys-platform.de/solutions/)**.
 
 ## License
 

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,7 +33,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "A single balance element. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-11T13:48:52.194360+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class Balance   {
   @JsonProperty("balanceAmount")
@@ -92,10 +108,10 @@ public class Balance   {
   }
 
   /**
-   * A flag indicating if the credit limit of the corresponding account is included in the calculation of the balance, where applicable.
+   * A flag indicating if the credit limit of the corresponding account  is included in the calculation of the balance, where applicable.
    * @return creditLimitIncluded
   **/
-  @ApiModelProperty(value = "A flag indicating if the credit limit of the corresponding account is included in the calculation of the balance, where applicable. ")
+  @ApiModelProperty(value = "A flag indicating if the credit limit of the corresponding account  is included in the calculation of the balance, where applicable. ")
 
 
 
@@ -114,10 +130,10 @@ public class Balance   {
   }
 
   /**
-   * This data element might be used to indicate e.g. with the expected or booked balance that no action is known on the account, which is not yet booked.
+   * This data element might be used to indicate e.g. with the expected or booked balance that no action is known  on the account, which is not yet booked.
    * @return lastChangeDateTime
   **/
-  @ApiModelProperty(value = "This data element might be used to indicate e.g. with the expected or booked balance that no action is known on the account, which is not yet booked. ")
+  @ApiModelProperty(value = "This data element might be used to indicate e.g. with the expected or booked balance that no action is known  on the account, which is not yet booked. ")
 
   @Valid
 
@@ -160,10 +176,10 @@ public class Balance   {
   }
 
   /**
-   * \"entryReference\" of the last commited transaction to support the TPP in identifying whether all PSU transactions are already known.
+   * \"entryReference\" of the last commited transaction to support the TPP in identifying whether all  PSU transactions are already known.
    * @return lastCommittedTransaction
   **/
-  @ApiModelProperty(value = "\"entryReference\" of the last commited transaction to support the TPP in identifying whether all PSU transactions are already known. ")
+  @ApiModelProperty(value = "\"entryReference\" of the last commited transaction to support the TPP in identifying whether all  PSU transactions are already known. ")
 
 @Size(max=35)
 
@@ -178,20 +194,19 @@ public class Balance   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Balance balance = (Balance) o;
+}    Balance balance = (Balance) o;
     return Objects.equals(this.balanceAmount, balance.balanceAmount) &&
-        Objects.equals(this.balanceType, balance.balanceType) &&
-        Objects.equals(this.creditLimitIncluded, balance.creditLimitIncluded) &&
-        Objects.equals(this.lastChangeDateTime, balance.lastChangeDateTime) &&
-        Objects.equals(this.referenceDate, balance.referenceDate) &&
-        Objects.equals(this.lastCommittedTransaction, balance.lastCommittedTransaction);
+    Objects.equals(this.balanceType, balance.balanceType) &&
+    Objects.equals(this.creditLimitIncluded, balance.creditLimitIncluded) &&
+    Objects.equals(this.lastChangeDateTime, balance.lastChangeDateTime) &&
+    Objects.equals(this.referenceDate, balance.referenceDate) &&
+    Objects.equals(this.lastCommittedTransaction, balance.lastCommittedTransaction);
   }
 
   @Override
@@ -218,7 +233,7 @@ public class Balance   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

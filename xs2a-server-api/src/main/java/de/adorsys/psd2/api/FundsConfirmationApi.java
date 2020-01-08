@@ -38,7 +38,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-18T12:38:01.509+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 @Api(value = "v1", description = "funds confirmation API")
 public interface FundsConfirmationApi {
 
@@ -75,7 +75,7 @@ public interface FundsConfirmationApi {
         produces = {"application/json", "application/problem+json"},
         consumes = {"application/json"},
         method = RequestMethod.POST)
-    default ResponseEntity<InlineResponse2003> _checkAvailabilityOfFunds(@ApiParam(value = "Request body for a confirmation of funds request. ", required = true) @Valid @RequestBody ConfirmationOfFunds body, @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID, @ApiParam(value = "This field  might be used in case where a consent was agreed between ASPSP and PSU through an OAuth2 based protocol, facilitated by the TPP. ") @RequestHeader(value = "Authorization", required = false) String authorization, @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest, @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature, @ApiParam(value = "The certificate used for signing the request, in base64 encoding. Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate) {
+    default ResponseEntity<InlineResponse2003> _checkAvailabilityOfFunds(@ApiParam(value = "Request body for a confirmation of funds request. ", required = true) @Valid @RequestBody ConfirmationOfFunds body, @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID, @ApiParam(value = "This field  might be used in case where a consent was agreed between ASPSP and PSU through an OAuth2 based protocol,  facilitated by the TPP. ") @RequestHeader(value = "Authorization", required = false) String authorization, @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest, @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature, @ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate) {
         return checkAvailabilityOfFunds(body, xRequestID, authorization, digest, signature, tpPSignatureCertificate);
     }
 

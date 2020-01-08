@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Map;
@@ -17,7 +34,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Transaction details.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-11T13:48:52.194360+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class TransactionDetails   {
   @JsonProperty("transactionId")
@@ -56,6 +73,9 @@ public class TransactionDetails   {
   @JsonProperty("creditorAccount")
   private AccountReference creditorAccount = null;
 
+  @JsonProperty("creditorAgent")
+  private String creditorAgent = null;
+
   @JsonProperty("ultimateCreditor")
   private String ultimateCreditor = null;
 
@@ -64,6 +84,9 @@ public class TransactionDetails   {
 
   @JsonProperty("debtorAccount")
   private AccountReference debtorAccount = null;
+
+  @JsonProperty("debtorAgent")
+  private String debtorAgent = null;
 
   @JsonProperty("ultimateDebtor")
   private String ultimateDebtor = null;
@@ -89,6 +112,9 @@ public class TransactionDetails   {
   @JsonProperty("additionalInformationStructured")
   private AdditionalInformationStructured additionalInformationStructured = null;
 
+  @JsonProperty("balanceAfterTransaction")
+  private Balance balanceAfterTransaction = null;
+
   @JsonProperty("_links")
   private Map _links = null;
 
@@ -98,10 +124,10 @@ public class TransactionDetails   {
   }
 
   /**
-   * the Transaction Id can be used as access-ID in the API, where more details on an transaction is offered. If this data attribute is provided this shows that the AIS can get access on more details about this transaction using the Get transaction details request.
+   * the Transaction Id can be used as access-ID in the API, where more details on an transaction is offered.  If this data attribute is provided this shows that the AIS can get access on more details about this  transaction using the Get transaction details request.
    * @return transactionId
   **/
-  @ApiModelProperty(value = "the Transaction Id can be used as access-ID in the API, where more details on an transaction is offered. If this data attribute is provided this shows that the AIS can get access on more details about this transaction using the Get transaction details request. ")
+  @ApiModelProperty(value = "the Transaction Id can be used as access-ID in the API, where more details on an transaction is offered.  If this data attribute is provided this shows that the AIS can get access on more details about this  transaction using the Get transaction details request. ")
 
 
 
@@ -120,10 +146,10 @@ public class TransactionDetails   {
   }
 
   /**
-   * Is the identification of the transaction as used e.g. for reference for deltafunction on application level. The same identification as for example used within camt.05x messages.
+   * Get entryReference
    * @return entryReference
   **/
-  @ApiModelProperty(value = "Is the identification of the transaction as used e.g. for reference for deltafunction on application level. The same identification as for example used within camt.05x messages. ")
+  @ApiModelProperty(value = "")
 
 @Size(max=35)
 
@@ -362,6 +388,28 @@ public class TransactionDetails   {
     this.creditorAccount = creditorAccount;
   }
 
+  public TransactionDetails creditorAgent(String creditorAgent) {
+    this.creditorAgent = creditorAgent;
+    return this;
+  }
+
+  /**
+   * Get creditorAgent
+   * @return creditorAgent
+  **/
+  @ApiModelProperty(value = "")
+
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")
+
+  @JsonProperty("creditorAgent")
+  public String getCreditorAgent() {
+    return creditorAgent;
+  }
+
+  public void setCreditorAgent(String creditorAgent) {
+    this.creditorAgent = creditorAgent;
+  }
+
   public TransactionDetails ultimateCreditor(String ultimateCreditor) {
     this.ultimateCreditor = ultimateCreditor;
     return this;
@@ -427,6 +475,28 @@ public class TransactionDetails   {
 
   public void setDebtorAccount(AccountReference debtorAccount) {
     this.debtorAccount = debtorAccount;
+  }
+
+  public TransactionDetails debtorAgent(String debtorAgent) {
+    this.debtorAgent = debtorAgent;
+    return this;
+  }
+
+  /**
+   * Get debtorAgent
+   * @return debtorAgent
+  **/
+  @ApiModelProperty(value = "")
+
+@Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")
+
+  @JsonProperty("debtorAgent")
+  public String getDebtorAgent() {
+    return debtorAgent;
+  }
+
+  public void setDebtorAgent(String debtorAgent) {
+    this.debtorAgent = debtorAgent;
   }
 
   public TransactionDetails ultimateDebtor(String ultimateDebtor) {
@@ -506,7 +576,7 @@ public class TransactionDetails   {
   **/
   @ApiModelProperty(value = "Might be used by the ASPSP to transport additional transaction related information to the PSU. ")
 
-@Size(max=512)
+@Size(max=500)
 
   @JsonProperty("additionalInformation")
   public String getAdditionalInformation() {
@@ -607,6 +677,29 @@ public class TransactionDetails   {
     this.additionalInformationStructured = additionalInformationStructured;
   }
 
+  public TransactionDetails balanceAfterTransaction(Balance balanceAfterTransaction) {
+    this.balanceAfterTransaction = balanceAfterTransaction;
+    return this;
+  }
+
+  /**
+   * Get balanceAfterTransaction
+   * @return balanceAfterTransaction
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("balanceAfterTransaction")
+  public Balance getBalanceAfterTransaction() {
+    return balanceAfterTransaction;
+  }
+
+  public void setBalanceAfterTransaction(Balance balanceAfterTransaction) {
+    this.balanceAfterTransaction = balanceAfterTransaction;
+  }
+
   public TransactionDetails _links(Map _links) {
     this._links = _links;
     return this;
@@ -632,43 +725,45 @@ public class TransactionDetails   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    TransactionDetails transactionDetails = (TransactionDetails) o;
+}    TransactionDetails transactionDetails = (TransactionDetails) o;
     return Objects.equals(this.transactionId, transactionDetails.transactionId) &&
-        Objects.equals(this.entryReference, transactionDetails.entryReference) &&
-        Objects.equals(this.endToEndId, transactionDetails.endToEndId) &&
-        Objects.equals(this.mandateId, transactionDetails.mandateId) &&
-        Objects.equals(this.checkId, transactionDetails.checkId) &&
-        Objects.equals(this.creditorId, transactionDetails.creditorId) &&
-        Objects.equals(this.bookingDate, transactionDetails.bookingDate) &&
-        Objects.equals(this.valueDate, transactionDetails.valueDate) &&
-        Objects.equals(this.transactionAmount, transactionDetails.transactionAmount) &&
-        Objects.equals(this.currencyExchange, transactionDetails.currencyExchange) &&
-        Objects.equals(this.creditorName, transactionDetails.creditorName) &&
-        Objects.equals(this.creditorAccount, transactionDetails.creditorAccount) &&
-        Objects.equals(this.ultimateCreditor, transactionDetails.ultimateCreditor) &&
-        Objects.equals(this.debtorName, transactionDetails.debtorName) &&
-        Objects.equals(this.debtorAccount, transactionDetails.debtorAccount) &&
-        Objects.equals(this.ultimateDebtor, transactionDetails.ultimateDebtor) &&
-        Objects.equals(this.remittanceInformationUnstructured, transactionDetails.remittanceInformationUnstructured) &&
-        Objects.equals(this.remittanceInformationStructured, transactionDetails.remittanceInformationStructured) &&
-        Objects.equals(this.additionalInformation, transactionDetails.additionalInformation) &&
-        Objects.equals(this.purposeCode, transactionDetails.purposeCode) &&
-        Objects.equals(this.bankTransactionCode, transactionDetails.bankTransactionCode) &&
-        Objects.equals(this.proprietaryBankTransactionCode, transactionDetails.proprietaryBankTransactionCode) &&
-        Objects.equals(this.additionalInformationStructured, transactionDetails.additionalInformationStructured) &&
-        Objects.equals(this._links, transactionDetails._links);
+    Objects.equals(this.entryReference, transactionDetails.entryReference) &&
+    Objects.equals(this.endToEndId, transactionDetails.endToEndId) &&
+    Objects.equals(this.mandateId, transactionDetails.mandateId) &&
+    Objects.equals(this.checkId, transactionDetails.checkId) &&
+    Objects.equals(this.creditorId, transactionDetails.creditorId) &&
+    Objects.equals(this.bookingDate, transactionDetails.bookingDate) &&
+    Objects.equals(this.valueDate, transactionDetails.valueDate) &&
+    Objects.equals(this.transactionAmount, transactionDetails.transactionAmount) &&
+    Objects.equals(this.currencyExchange, transactionDetails.currencyExchange) &&
+    Objects.equals(this.creditorName, transactionDetails.creditorName) &&
+    Objects.equals(this.creditorAccount, transactionDetails.creditorAccount) &&
+    Objects.equals(this.creditorAgent, transactionDetails.creditorAgent) &&
+    Objects.equals(this.ultimateCreditor, transactionDetails.ultimateCreditor) &&
+    Objects.equals(this.debtorName, transactionDetails.debtorName) &&
+    Objects.equals(this.debtorAccount, transactionDetails.debtorAccount) &&
+    Objects.equals(this.debtorAgent, transactionDetails.debtorAgent) &&
+    Objects.equals(this.ultimateDebtor, transactionDetails.ultimateDebtor) &&
+    Objects.equals(this.remittanceInformationUnstructured, transactionDetails.remittanceInformationUnstructured) &&
+    Objects.equals(this.remittanceInformationStructured, transactionDetails.remittanceInformationStructured) &&
+    Objects.equals(this.additionalInformation, transactionDetails.additionalInformation) &&
+    Objects.equals(this.purposeCode, transactionDetails.purposeCode) &&
+    Objects.equals(this.bankTransactionCode, transactionDetails.bankTransactionCode) &&
+    Objects.equals(this.proprietaryBankTransactionCode, transactionDetails.proprietaryBankTransactionCode) &&
+    Objects.equals(this.additionalInformationStructured, transactionDetails.additionalInformationStructured) &&
+    Objects.equals(this.balanceAfterTransaction, transactionDetails.balanceAfterTransaction) &&
+    Objects.equals(this._links, transactionDetails._links);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, transactionAmount, currencyExchange, creditorName, creditorAccount, ultimateCreditor, debtorName, debtorAccount, ultimateDebtor, remittanceInformationUnstructured, remittanceInformationStructured, additionalInformation, purposeCode, bankTransactionCode, proprietaryBankTransactionCode, additionalInformationStructured, _links);
+    return Objects.hash(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, transactionAmount, currencyExchange, creditorName, creditorAccount, creditorAgent, ultimateCreditor, debtorName, debtorAccount, debtorAgent, ultimateDebtor, remittanceInformationUnstructured, remittanceInformationStructured, additionalInformation, purposeCode, bankTransactionCode, proprietaryBankTransactionCode, additionalInformationStructured, balanceAfterTransaction, _links);
   }
 
   @Override
@@ -688,9 +783,11 @@ public class TransactionDetails   {
     sb.append("    currencyExchange: ").append(toIndentedString(currencyExchange)).append("\n");
     sb.append("    creditorName: ").append(toIndentedString(creditorName)).append("\n");
     sb.append("    creditorAccount: ").append(toIndentedString(creditorAccount)).append("\n");
+    sb.append("    creditorAgent: ").append(toIndentedString(creditorAgent)).append("\n");
     sb.append("    ultimateCreditor: ").append(toIndentedString(ultimateCreditor)).append("\n");
     sb.append("    debtorName: ").append(toIndentedString(debtorName)).append("\n");
     sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
+    sb.append("    debtorAgent: ").append(toIndentedString(debtorAgent)).append("\n");
     sb.append("    ultimateDebtor: ").append(toIndentedString(ultimateDebtor)).append("\n");
     sb.append("    remittanceInformationUnstructured: ").append(toIndentedString(remittanceInformationUnstructured)).append("\n");
     sb.append("    remittanceInformationStructured: ").append(toIndentedString(remittanceInformationStructured)).append("\n");
@@ -699,6 +796,7 @@ public class TransactionDetails   {
     sb.append("    bankTransactionCode: ").append(toIndentedString(bankTransactionCode)).append("\n");
     sb.append("    proprietaryBankTransactionCode: ").append(toIndentedString(proprietaryBankTransactionCode)).append("\n");
     sb.append("    additionalInformationStructured: ").append(toIndentedString(additionalInformationStructured)).append("\n");
+    sb.append("    balanceAfterTransaction: ").append(toIndentedString(balanceAfterTransaction)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -708,7 +806,7 @@ public class TransactionDetails   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

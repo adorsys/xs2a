@@ -33,7 +33,7 @@ import java.util.Collections;
 
 @EnableSwagger2
 public class SwaggerConfig {
-    private static final String DEFAULT_PSD2_API_LOCATION = "/psd2-api_1.3.4_20190717v1.yaml";
+    private static final String DEFAULT_PSD2_API_LOCATION = "/psd2-api_1.3.5_20191216v1.yaml";
 
     @Value("${xs2a.swagger.psd2.api.location:}")
     private String customPsd2ApiLocation;
