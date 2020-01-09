@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "99e641fe-dae8-4ee3-8b57-16bef6717ba4",
+		"_postman_id": "24b29590-05d1-4c4d-807a-b5a1361d65c6",
 		"name": "PIIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -344,7 +344,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2020-10-10\"\n}"
+					"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2020-10-10\"\n}"
 				},
 				"url": {
 					"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
@@ -647,7 +647,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\"\n  },\n  \"instructedAmount\": {\n    \"amount\": \"100.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
+					"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"instructedAmount\": {\n    \"amount\": \"100.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
 				},
 				"url": {
 					"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",

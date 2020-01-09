@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7b3a140c-94f0-4ddb-be59-d228c20074e5",
+		"_postman_id": "6cd927ec-59e3-48bf-93c9-7c9b97ee4a3e",
 		"name": "AIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -16552,7 +16552,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"accountAccess\": {\n        \"accounts\": [\n            {\n                \"iban\": \"{{iban_single}}\",\n                \"currency\": \"EUR\"\n            }\n        ],\n        \"balances\": [\n            {\n                \"iban\": \"{{iban_single}}\",\n                \"currency\": \"EUR\"\n            }\n        ],\n        \"transactions\": [\n            {\n                \"iban\": \"{{iban_single}}\",\n                \"currency\": \"EUR\"\n            }\n        ]\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2019-12-31\"\n}"
+									"raw": "{\n    \"accountAccess\": {\n        \"accounts\": [\n            {\n                \"iban\": \"{{iban_single}}\",\n                \"currency\": \"EUR\"\n            }\n        ],\n        \"balances\": [\n            {\n                \"iban\": \"{{iban_single}}\",\n                \"currency\": \"EUR\"\n            }\n        ],\n        \"transactions\": [\n            {\n                \"iban\": \"{{iban_single}}\",\n                \"currency\": \"EUR\"\n            }\n        ]\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2020-12-31\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",
@@ -17430,7 +17430,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"accountAccess\": {\n        \"accounts\": [\n            {\n                \"iban\": \"{{iban_single}}\",\n                \"currency\": \"EUR\"\n            }\n        ],\n        \"balances\": [\n            {\n                \"iban\": \"{{iban_single}}\",\n                \"currency\": \"EUR\"\n            }\n        ],\n        \"transactions\": [\n            {\n                \"iban\": \"{{iban_single}}\",\n                \"currency\": \"EUR\"\n            }\n        ]\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2019-12-31\"\n}"
+									"raw": "{\n    \"accountAccess\": {\n        \"accounts\": [\n            {\n                \"iban\": \"{{iban_single}}\",\n                \"currency\": \"EUR\"\n            }\n        ],\n        \"balances\": [\n            {\n                \"iban\": \"{{iban_single}}\",\n                \"currency\": \"EUR\"\n            }\n        ],\n        \"transactions\": [\n            {\n                \"iban\": \"{{iban_single}}\",\n                \"currency\": \"EUR\"\n            }\n        ]\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2020-12-31\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",
@@ -18378,7 +18378,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"accountAccess\": {\n    \t\"availableAccounts\": \"allAccounts\"\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2019-12-31\"\n}"
+									"raw": "{\n    \"accountAccess\": {\n    \t\"availableAccounts\": \"allAccounts\"\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2020-12-31\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",
@@ -19213,7 +19213,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"accountAccess\": {\n    \t\"availableAccounts\": \"allAccounts\"\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2019-12-31\"\n}"
+									"raw": "{\n    \"accountAccess\": {\n    \t\"availableAccounts\": \"allAccounts\"\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2020-12-31\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",
@@ -20108,7 +20108,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"accountAccess\": {\n    \t\"availableAccountsWithBalance\": \"allAccounts\"\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2019-12-31\"\n}"
+									"raw": "{\n    \"accountAccess\": {\n    \t\"availableAccountsWithBalance\": \"allAccounts\"\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2020-12-31\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",
@@ -20955,7 +20955,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"accountAccess\": {\n    \t\"availableAccountsWithBalance\": \"allAccounts\"\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2019-12-31\"\n}"
+									"raw": "{\n    \"accountAccess\": {\n    \t\"availableAccountsWithBalance\": \"allAccounts\"\n    },\n    \"frequencyPerDay\": 100,\n    \"validUntil\": \"2020-12-31\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",
@@ -21852,7 +21852,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"accountAccess\": {\n\t\t\"allPsd2\" : \"allAccounts\"\n    },\n    \"frequencyPerDay\": 99,\n    \"validUntil\": \"2019-12-31\",\n    \"combinedServiceIndicator\": true,\n    \"recurringIndicator\": true\n}"
+									"raw": "{\n    \"accountAccess\": {\n\t\t\"allPsd2\" : \"allAccounts\"\n    },\n    \"frequencyPerDay\": 99,\n    \"validUntil\": \"2020-12-31\",\n    \"combinedServiceIndicator\": true,\n    \"recurringIndicator\": true\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",
@@ -22624,7 +22624,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"accountAccess\": {\n\t\t\"allPsd2\" : \"allAccounts\"\n    },\n    \"frequencyPerDay\": 99,\n    \"validUntil\": \"2019-12-31\",\n    \"combinedServiceIndicator\": true,\n    \"recurringIndicator\": true\n}"
+									"raw": "{\n    \"accountAccess\": {\n\t\t\"allPsd2\" : \"allAccounts\"\n    },\n    \"frequencyPerDay\": 99,\n    \"validUntil\": \"2020-12-31\",\n    \"combinedServiceIndicator\": true,\n    \"recurringIndicator\": true\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",
@@ -34539,7 +34539,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts/{{account_id_current}}/transactions?dateFrom=2018-01-01&dateTo=2019-12-31&withBalance={{with_balance}}&bookingStatus={{booking_status}}",
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts/{{account_id_current}}/transactions?withBalance={{with_balance}}&bookingStatus={{booking_status}}&dateTo=2020-12-31&dateFrom=2019-01-01",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{url_xs2a}}"
@@ -34552,14 +34552,6 @@
 							],
 							"query": [
 								{
-									"key": "dateFrom",
-									"value": "2018-01-01"
-								},
-								{
-									"key": "dateTo",
-									"value": "2019-12-31"
-								},
-								{
 									"key": "withBalance",
 									"value": "{{with_balance}}"
 								},
@@ -34570,6 +34562,14 @@
 								{
 									"key": null,
 									"value": null
+								},
+								{
+									"key": "dateTo",
+									"value": "2020-12-31"
+								},
+								{
+									"key": "dateFrom",
+									"value": "2019-01-01"
 								}
 							]
 						},
