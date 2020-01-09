@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.AuthenticationObject;
 import de.adorsys.psd2.model.ChosenScaMethod;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,8 +47,8 @@ public class ChosenScaMethodMapperTest {
     @Test
     public void mapToChosenScaMethod() {
         // Given
-        Xs2aAuthenticationObject authenticationObject =
-            jsonReader.getObjectFromFile("json/web/mapper/Xs2aAuthenticationObject.json", Xs2aAuthenticationObject.class);
+        de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject authenticationObject =
+            jsonReader.getObjectFromFile("json/web/mapper/Xs2aAuthenticationObject.json", de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject.class);
 
         AuthenticationObject expected =
             jsonReader.getObjectFromFile("json/web/mapper/chosenScaMethod.json", ChosenScaMethod.class);

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -25,7 +26,6 @@ import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import lombok.extern.slf4j.Slf4j;
 
@@ -92,11 +92,11 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
                  request.getScaApproach());
     }
 
-    boolean isSingleScaMethod(List<SpiAuthenticationObject> spiScaMethods) {
+    boolean isSingleScaMethod(List<AuthenticationObject> spiScaMethods) {
         return spiScaMethods.size() == 1;
     }
 
-    boolean isMultipleScaMethods(List<SpiAuthenticationObject> spiScaMethods) {
+    boolean isMultipleScaMethods(List<AuthenticationObject> spiScaMethods) {
         return spiScaMethods.size() > 1;
     }
 

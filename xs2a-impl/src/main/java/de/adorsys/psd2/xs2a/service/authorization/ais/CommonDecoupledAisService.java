@@ -16,13 +16,13 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -76,9 +76,9 @@ public class CommonDecoupledAisService {
     }
 
     // Should ONLY be used for switching from Embedded to Decoupled approach during SCA method selection
-    private Xs2aAuthenticationObject buildXs2aAuthenticationObjectForDecoupledApproach(String authenticationMethodId) {
-        Xs2aAuthenticationObject xs2aAuthenticationObject = new Xs2aAuthenticationObject();
-        xs2aAuthenticationObject.setAuthenticationMethodId(authenticationMethodId);
-        return xs2aAuthenticationObject;
+    private AuthenticationObject buildXs2aAuthenticationObjectForDecoupledApproach(String authenticationMethodId) {
+        AuthenticationObject authenticationObject = new AuthenticationObject();
+        authenticationObject.setAuthenticationMethodId(authenticationMethodId);
+        return authenticationObject;
     }
 }

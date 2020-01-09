@@ -40,7 +40,6 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
@@ -77,12 +76,10 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
                                                             Xs2aUpdatePaymentAfterSpiService updatePaymentAfterSpiService,
                                                             Xs2aPisCommonPaymentService xs2aPisCommonPaymentService,
                                                             PisCommonDecoupledService pisCommonDecoupledService,
-                                                            SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
                                                             PisPsuDataService pisPsuDataService, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper) {
         super(requestProviderService, services, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
               spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper,
-              spiToXs2aAuthenticationObjectMapper, pisAspspDataService, xs2aPisCommonPaymentMapper,
-              xs2aToSpiPsuDataMapper);
+              pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper);
         this.paymentCancellationSpi = paymentCancellationSpi;
         this.spiErrorMapper = spiErrorMapper;
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;

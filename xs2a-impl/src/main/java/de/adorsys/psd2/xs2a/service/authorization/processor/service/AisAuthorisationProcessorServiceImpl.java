@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
@@ -24,7 +25,6 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
@@ -40,12 +40,14 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAvailableScaMethodsResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -67,11 +69,10 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final SpiErrorMapper spiErrorMapper;
     private final CommonDecoupledAisService commonDecoupledAisService;
-    private final SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
     private final AisScaAuthorisationService aisScaAuthorisationService;
     private final Xs2aToSpiPsuDataMapper psuDataMapper;
 
-    public AisAuthorisationProcessorServiceImpl(RequestProviderService requestProviderService, List<AisAuthorizationService> services, Xs2aAisConsentService aisConsentService, AisConsentSpi aisConsentSpi, Xs2aAisConsentMapper aisConsentMapper, SpiContextDataProvider spiContextDataProvider, SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory, SpiErrorMapper spiErrorMapper, CommonDecoupledAisService commonDecoupledAisService, SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper, AisScaAuthorisationService aisScaAuthorisationService, Xs2aToSpiPsuDataMapper psuDataMapper) {
+    public AisAuthorisationProcessorServiceImpl(RequestProviderService requestProviderService, List<AisAuthorizationService> services, Xs2aAisConsentService aisConsentService, AisConsentSpi aisConsentSpi, Xs2aAisConsentMapper aisConsentMapper, SpiContextDataProvider spiContextDataProvider, SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory, SpiErrorMapper spiErrorMapper, CommonDecoupledAisService commonDecoupledAisService, AisScaAuthorisationService aisScaAuthorisationService, Xs2aToSpiPsuDataMapper psuDataMapper) {
         super(requestProviderService);
         this.services = services;
         this.aisConsentService = aisConsentService;
@@ -81,7 +82,6 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
         this.spiErrorMapper = spiErrorMapper;
         this.commonDecoupledAisService = commonDecoupledAisService;
-        this.spiToXs2aAuthenticationObjectMapper = spiToXs2aAuthenticationObjectMapper;
         this.aisScaAuthorisationService = aisScaAuthorisationService;
         this.psuDataMapper = psuDataMapper;
     }
@@ -204,12 +204,9 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
 
         SpiAuthorizationCodeResult authorizationCodeResult = spiResponse.getPayload();
 
-        SpiAuthenticationObject chosenScaMethod = authorizationCodeResult.getSelectedScaMethod();
-        ChallengeData challengeData = authorizationCodeResult.getChallengeData();
-
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, request.getBusinessObjectId(), request.getAuthorisationId());
-        response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(chosenScaMethod));
-        response.setChallengeData(challengeData);
+        response.setChosenScaMethod(authorizationCodeResult.getSelectedScaMethod());
+        response.setChallengeData(authorizationCodeResult.getChallengeData());
         return response;
     }
 
@@ -282,9 +279,9 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
             return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId);
         }
 
-        List<SpiAuthenticationObject> availableScaMethods = spiResponse.getPayload().getAvailableScaMethods();
+        List<AuthenticationObject> availableScaMethods = spiResponse.getPayload().getAvailableScaMethods();
         if (CollectionUtils.isNotEmpty(availableScaMethods)) {
-            aisConsentService.saveAuthenticationMethods(authorisationId, spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(availableScaMethods));
+            aisConsentService.saveAuthenticationMethods(authorisationId, availableScaMethods);
 
             if (isMultipleScaMethods(availableScaMethods)) {
                 return createResponseForMultipleAvailableMethods(availableScaMethods, authorisationId, consentId);
@@ -303,13 +300,13 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
         }
     }
 
-    private UpdateConsentPsuDataResponse createResponseForMultipleAvailableMethods(List<SpiAuthenticationObject> availableScaMethods, String authorisationId, String consentId) {
+    private UpdateConsentPsuDataResponse createResponseForMultipleAvailableMethods(List<AuthenticationObject> availableScaMethods, String authorisationId, String consentId) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.PSUAUTHENTICATED, consentId, authorisationId);
-        response.setAvailableScaMethods(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(availableScaMethods));
+        response.setAvailableScaMethods(availableScaMethods);
         return response;
     }
 
-    private UpdateConsentPsuDataResponse createResponseForOneAvailableMethod(AuthorisationProcessorRequest authorisationProcessorRequest, SpiAccountConsent spiAccountConsent, SpiAuthenticationObject scaMethod, PsuIdData psuData) {
+    private UpdateConsentPsuDataResponse createResponseForOneAvailableMethod(AuthorisationProcessorRequest authorisationProcessorRequest, SpiAccountConsent spiAccountConsent, AuthenticationObject scaMethod, PsuIdData psuData) {
         UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
         if (scaMethod.isDecoupled()) {
             aisConsentService.updateScaApproach(request.getAuthorisationId(), ScaApproach.DECOUPLED);

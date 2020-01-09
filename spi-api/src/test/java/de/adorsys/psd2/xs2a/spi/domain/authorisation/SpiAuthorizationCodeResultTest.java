@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -26,7 +27,7 @@ public class SpiAuthorizationCodeResultTest {
     @Test
     public void isEmpty_works_by_null_ChallengeData() {
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
-        spiAuthorizationCodeResult.setSelectedScaMethod(new SpiAuthenticationObject());
+        spiAuthorizationCodeResult.setSelectedScaMethod(new AuthenticationObject());
 
         assertFalse(spiAuthorizationCodeResult.isEmpty());
     }

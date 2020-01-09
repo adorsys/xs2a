@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.xs2a.web.link;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -49,7 +49,7 @@ public class UpdatePisAuthorisationLinksTest {
     private UpdatePisAuthorisationLinks links;
     private Xs2aCreatePisAuthorisationRequest request;
     private Xs2aUpdatePisCommonPaymentPsuDataResponse response;
-    private Xs2aAuthenticationObject authenticationObject;
+    private AuthenticationObject authenticationObject;
 
     private Links expectedLinks;
 
@@ -62,7 +62,7 @@ public class UpdatePisAuthorisationLinksTest {
         response = new Xs2aUpdatePisCommonPaymentPsuDataResponse();
         response.setAuthorisationId(AUTHORISATION_ID);
 
-        authenticationObject = jsonReader.getObjectFromFile("json/link/authentication-object.json", Xs2aAuthenticationObject.class);
+        authenticationObject = jsonReader.getObjectFromFile("json/link/authentication-object.json", AuthenticationObject.class);
     }
 
     @Test

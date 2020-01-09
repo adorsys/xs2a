@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.xs2a.web.link;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
@@ -30,7 +30,7 @@ public class UpdatePisPsuDataLinks extends AbstractLinks {
 
     public UpdatePisPsuDataLinks(String httpUrl, ScaApproachResolver scaApproachResolver,
                                  Xs2aUpdatePisCommonPaymentPsuDataRequest request, ScaStatus scaStatus,
-                                 Xs2aAuthenticationObject chosenScaMethod) {
+                                 AuthenticationObject chosenScaMethod) {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
 
