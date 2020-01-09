@@ -16,78 +16,97 @@
 
 package de.adorsys.psd2.aspsp.profile.config;
 
+import de.adorsys.psd2.aspsp.profile.domain.ais.*;
+import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.service.BankProfileReadingService;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.internal.util.reflection.Whitebox;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.core.io.DefaultResourceLoader;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BankProfileReaderConfigurationTest {
+    @Mock
+    private BankProfileReadingService bankProfileReadingService;
+
     private BankProfileReaderConfiguration bankProfileReaderConfiguration;
 
     @Before
     public void setUp() {
-        bankProfileReaderConfiguration = new BankProfileReaderConfiguration();
-        bankProfileReaderConfiguration.setResourceLoader(new DefaultResourceLoader());
+        bankProfileReaderConfiguration = new BankProfileReaderConfiguration(bankProfileReadingService);
+        ProfileConfiguration profileConfiguration = buildProfileConfiguration();
+        profileConfiguration.afterPropertiesSet();
+        when(bankProfileReadingService.getProfileConfiguration())
+            .thenReturn(profileConfiguration);
     }
 
     @Test
-    public void profileConfigurationWithAdditionalFields() {
-        ProfileConfiguration defaultConfiguration = bankProfileReaderConfiguration.profileConfiguration();
-
-        Whitebox.setInternalState(bankProfileReaderConfiguration,
-                                  "customBankProfile",
-                                  "classpath:bank_profile_additional_fields.yml");
-
-        ProfileConfiguration configurationWithCustomProfile = bankProfileReaderConfiguration.profileConfiguration();
-
-
-        assertEquals(defaultConfiguration.getSetting(), configurationWithCustomProfile.getSetting());
-    }
-
-    @Test
-    public void profileConfigurationWithoutUsualFields() {
-        ProfileConfiguration defaultConfiguration = bankProfileReaderConfiguration.profileConfiguration();
-
-        Whitebox.setInternalState(bankProfileReaderConfiguration,
-                                  "customBankProfile",
-                                  "classpath:bank_profile_missing_fields.yml");
-
-        ProfileConfiguration configurationWithCustomProfile = bankProfileReaderConfiguration.profileConfiguration();
-
-
-        assertNotEquals(defaultConfiguration.getSetting(), configurationWithCustomProfile.getSetting());
-    }
-
-    @Test
-    public void profileConfigurationScaRedirectFlowOAUTH() {
+    public void profileConfigurationDefaultScaRedirectFlow() {
         //Given
         //When
-        Whitebox.setInternalState(bankProfileReaderConfiguration,
-                                  "customBankProfile",
-                                  "classpath:bank_profile_sca_redirect_flow_oauth.yml");
-
-        ProfileConfiguration configurationWithCustomProfile = bankProfileReaderConfiguration.profileConfiguration();
+        ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
         //Then
-        assertEquals(ScaRedirectFlow.OAUTH, configurationWithCustomProfile.getSetting().getCommon().getScaRedirectFlow());
+        assertEquals(ScaRedirectFlow.REDIRECT, profileConfiguration.getSetting().getCommon().getScaRedirectFlow());
     }
 
     @Test
-    public void profileConfigurationScaRedirectFlowRedirect() {
+    public void profileConfigurationDefaultBookingStatus() {
         //Given
         //When
-        Whitebox.setInternalState(bankProfileReaderConfiguration,
-                                  "customBankProfile",
-                                  "classpath:bank_profile_sca_redirect_flow_redirect.yml");
-
-        ProfileConfiguration configurationWithCustomProfile = bankProfileReaderConfiguration.profileConfiguration();
+        ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
         //Then
-        assertEquals(ScaRedirectFlow.REDIRECT, configurationWithCustomProfile.getSetting().getCommon().getScaRedirectFlow());
+        assertEquals(1, profileConfiguration.getSetting().getAis().getTransactionParameters().getAvailableBookingStatuses().size());
+        assertEquals(true, profileConfiguration.getSetting().getAis().getTransactionParameters().getAvailableBookingStatuses().contains(BookingStatus.BOOKED));
+    }
+
+    @Test
+    public void profileConfigurationDefaultScaApproach() {
+        //Given
+        //When
+        ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
+        //Then
+        assertEquals(1, profileConfiguration.getSetting().getCommon().getScaApproachesSupported().size());
+        assertEquals(true, profileConfiguration.getSetting().getCommon().getScaApproachesSupported().contains(ScaApproach.REDIRECT));
+    }
+
+    @Test
+    public void profileConfigurationDefaultStartAuthorisationMode() {
+        //Given
+        //When
+        ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
+        //Then
+        assertEquals(StartAuthorisationMode.AUTO.getValue(), profileConfiguration.getSetting().getCommon().getStartAuthorisationMode());
+    }
+
+    private ProfileConfiguration buildProfileConfiguration() {
+        ProfileConfiguration profileConfiguration = new ProfileConfiguration();
+        profileConfiguration.setSetting(new BankProfileSetting(buildAisAspspProfileBankSetting(), buildPisAspspProfileBankSetting(), buildPiisAspspProfileBankSetting(), buildCommonAspspProfileBankSetting()));
+        return profileConfiguration;
+    }
+
+    private AisAspspProfileBankSetting buildAisAspspProfileBankSetting() {
+        return new AisAspspProfileBankSetting(new ConsentTypeBankSetting(), new AisRedirectLinkBankSetting(), new AisTransactionBankSetting(), new DeltaReportBankSetting(), new OneTimeConsentScaBankSetting());
+    }
+
+    private PisAspspProfileBankSetting buildPisAspspProfileBankSetting() {
+        return new PisAspspProfileBankSetting();
+    }
+
+    private PiisAspspProfileBankSetting buildPiisAspspProfileBankSetting() {
+        return new PiisAspspProfileBankSetting();
+    }
+
+    private CommonAspspProfileBankSetting buildCommonAspspProfileBankSetting() {
+        return new CommonAspspProfileBankSetting();
     }
 }

@@ -4,6 +4,7 @@
 
 * Allow custom payment validation
 * Migrate to common payment object
+* Implement auto reloading for profile
 
 == Allow custom payment validation
 
@@ -50,3 +51,9 @@ To handle only common payments, previously mentioned dependencies should be repl
 ----
 
 In case of using common implementations, all payments will be forwarded to `CommonPaymentSpi`.
+
+== Implement auto reloading for profile
+
+From now on, there is the possibility of auto reloading the profile. By default, the profile isn't reloaded.
+The exact specification about needed timeframes, between each reload, is customizable in the `application.properties` via
+`aspsp-profile-reload.cron.expression` (as cron expression).
