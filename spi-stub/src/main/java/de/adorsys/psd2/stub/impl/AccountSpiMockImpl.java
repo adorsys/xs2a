@@ -132,8 +132,8 @@ public class AccountSpiMockImpl implements AccountSpi {
     private SpiTransaction buildSpiTransactionById(String transactionId) {
         return new SpiTransaction(transactionId, "", "", "", "", "aspsp", LocalDate.of(2019, Month.JANUARY, 4),
                                   LocalDate.of(2019, Month.JANUARY, 4), new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)), Collections.emptyList(),
-                                  "Müller", buildSpiAccountReference(), "Müller", "Müller", buildSpiAccountReference(),
-                                  "Müller", "", "", "", "", "");
+                                  "Müller", buildSpiAccountReference(), "Müller", "Müller", "Müller", buildSpiAccountReference(),
+                                  "Müller", "Müller", "", "", "", "", "", buildSpiAccountBalance());
     }
 
     private SpiAccountReference buildSpiAccountReference() {

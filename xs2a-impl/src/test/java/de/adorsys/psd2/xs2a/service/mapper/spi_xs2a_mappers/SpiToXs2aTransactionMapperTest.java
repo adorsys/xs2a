@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(
-    classes = {SpiToXs2aTransactionMapperImpl.class, SpiToXs2aAmountMapperImpl.class,
+    classes = {SpiToXs2aTransactionMapperImpl.class, SpiToXs2aAmountMapperImpl.class, SpiToXs2aBalanceMapperImpl.class,
         SpiToXs2aExchangeRateMapperImpl.class, SpiToXs2aAccountReferenceMapperImpl.class})
 public class SpiToXs2aTransactionMapperTest {
     private JsonReader jsonReader = new JsonReader();
