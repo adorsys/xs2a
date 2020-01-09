@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,8 +56,6 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     private final TppInfoRepository tppInfoRepository;
     private final PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
     private final CorePaymentsConvertService corePaymentsConvertService;
-    @Value("${convert-core-payment-to-common-payment:true}")
-    private boolean convertCorePaymentToCommonPayment;
 
     /**
      * Creates new pis common payment with full information about payment
@@ -144,16 +141,18 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     }
 
     void transferCorePaymentToCommonPayment(PisCommonPaymentResponse pisCommonPaymentResponse, PisCommonPaymentData pisCommonPaymentData) {
-        if (convertCorePaymentToCommonPayment && pisCommonPaymentData.getPayment() == null) {
-            List<PisPayment> pisPayments = pisCommonPaymentData.getPayments().stream()
-                                               .map(pisCommonPaymentMapper::mapToPisPayment)
-                                               .collect(Collectors.toList());
-            byte[] paymentData = corePaymentsConvertService.buildPaymentData(pisPayments, pisCommonPaymentData.getPaymentType());
-            if (paymentData != null) {
-                pisCommonPaymentData.setPayment(paymentData);
-                pisCommonPaymentDataRepository.save(pisCommonPaymentData);
-                pisCommonPaymentResponse.setPaymentData(paymentData);
-            }
+        if (pisCommonPaymentData.getPayment() != null) {
+            return;
+        }
+
+        List<PisPayment> pisPayments = pisCommonPaymentData.getPayments().stream()
+                                           .map(pisCommonPaymentMapper::mapToPisPayment)
+                                           .collect(Collectors.toList());
+        byte[] paymentData = corePaymentsConvertService.buildPaymentData(pisPayments, pisCommonPaymentData.getPaymentType());
+        if (paymentData != null) {
+            pisCommonPaymentData.setPayment(paymentData);
+            pisCommonPaymentDataRepository.save(pisCommonPaymentData);
+            pisCommonPaymentResponse.setPaymentData(paymentData);
         }
     }
 

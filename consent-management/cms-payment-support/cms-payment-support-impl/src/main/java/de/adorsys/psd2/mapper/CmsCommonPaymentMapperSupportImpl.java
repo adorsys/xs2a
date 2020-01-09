@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import de.adorsys.psd2.consent.api.pis.*;
 import de.adorsys.psd2.core.payment.model.*;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -35,9 +35,9 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper {
-    @Autowired
-    protected Xs2aObjectMapper xs2aObjectMapper;
+    private final Xs2aObjectMapper xs2aObjectMapper;
 
     @Override
     public CmsPayment mapToCmsSinglePayment(CmsCommonPayment cmsCommonPayment) {
@@ -215,8 +215,8 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
 
     private Optional<PisExecutionRule> mapToPisExecutionRule(ExecutionRule executionRule) {
         return Optional.ofNullable(executionRule)
-                             .map(ExecutionRule::toString)
-                             .flatMap(PisExecutionRule::getByValue);
+                   .map(ExecutionRule::toString)
+                   .flatMap(PisExecutionRule::getByValue);
     }
 
     private String mapToPurposeCode(PurposeCode purposeCode) {

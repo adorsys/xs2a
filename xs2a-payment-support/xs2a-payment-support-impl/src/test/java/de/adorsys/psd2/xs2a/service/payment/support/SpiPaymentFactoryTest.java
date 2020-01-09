@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
-import de.adorsys.psd2.xs2a.service.payment.support.mapper.CmsToXs2aPaymentMapperSupport;
+import de.adorsys.psd2.xs2a.service.payment.support.mapper.CmsToXs2aPaymentSupportMapper;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
@@ -58,7 +58,7 @@ public class SpiPaymentFactoryTest {
     private SpiPaymentFactory spiPaymentFactory;
 
     @Mock
-    private CmsToXs2aPaymentMapperSupport cmsToXs2aPaymentMapperSupport;
+    private CmsToXs2aPaymentSupportMapper cmsToXs2APaymentSupportMapper;
     @Mock
     private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     @Mock
@@ -77,7 +77,7 @@ public class SpiPaymentFactoryTest {
     public void createSpiPaymentByPaymentType_single_success() {
         // Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.SINGLE);
-        when(cmsToXs2aPaymentMapperSupport.mapToSinglePayment(commonPaymentData))
+        when(cmsToXs2APaymentSupportMapper.mapToSinglePayment(commonPaymentData))
             .thenReturn(SINGLE_PAYMENT);
         when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(SINGLE_PAYMENT, PRODUCT))
             .thenReturn(SPI_SINGLE_PAYMENT);
@@ -94,7 +94,7 @@ public class SpiPaymentFactoryTest {
     public void createSpiPaymentByPaymentType_single_failed() {
         // Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.SINGLE);
-        when(cmsToXs2aPaymentMapperSupport.mapToSinglePayment(commonPaymentData))
+        when(cmsToXs2APaymentSupportMapper.mapToSinglePayment(commonPaymentData))
             .thenReturn(null);
 
         //When
@@ -109,7 +109,7 @@ public class SpiPaymentFactoryTest {
     public void createSpiPaymentByPaymentType_periodic_success() {
         // Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.PERIODIC);
-        when(cmsToXs2aPaymentMapperSupport.mapToPeriodicPayment(commonPaymentData))
+        when(cmsToXs2APaymentSupportMapper.mapToPeriodicPayment(commonPaymentData))
             .thenReturn(PERIODIC_PAYMENT);
         when(xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(PERIODIC_PAYMENT, PRODUCT))
             .thenReturn(SPI_PERIODIC_PAYMENT);
@@ -126,7 +126,7 @@ public class SpiPaymentFactoryTest {
     public void createSpiPaymentByPaymentType_periodic_failed() {
         //Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.PERIODIC);
-        when(cmsToXs2aPaymentMapperSupport.mapToPeriodicPayment(commonPaymentData))
+        when(cmsToXs2APaymentSupportMapper.mapToPeriodicPayment(commonPaymentData))
             .thenReturn(null);
 
         //When
@@ -141,7 +141,7 @@ public class SpiPaymentFactoryTest {
     public void createSpiPaymentByPaymentType_bulk_success() {
         //Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.BULK);
-        when(cmsToXs2aPaymentMapperSupport.mapToBulkPayment(commonPaymentData))
+        when(cmsToXs2APaymentSupportMapper.mapToBulkPayment(commonPaymentData))
             .thenReturn(BULK_PAYMENT);
         when(xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(BULK_PAYMENT, PRODUCT))
             .thenReturn(SPI_BULK_PAYMENT);
@@ -158,7 +158,7 @@ public class SpiPaymentFactoryTest {
     public void createSpiPaymentByPaymentType_bulk_failed() {
         //Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.BULK);
-        when(cmsToXs2aPaymentMapperSupport.mapToBulkPayment(commonPaymentData))
+        when(cmsToXs2APaymentSupportMapper.mapToBulkPayment(commonPaymentData))
             .thenReturn(null);
 
         //When
@@ -173,7 +173,7 @@ public class SpiPaymentFactoryTest {
     public void createSpiSinglePayment_success() {
         //Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.SINGLE);
-        when(cmsToXs2aPaymentMapperSupport.mapToSinglePayment(commonPaymentData))
+        when(cmsToXs2APaymentSupportMapper.mapToSinglePayment(commonPaymentData))
             .thenReturn(SINGLE_PAYMENT);
         when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(SINGLE_PAYMENT, PRODUCT))
             .thenReturn(SPI_SINGLE_PAYMENT);
@@ -190,7 +190,7 @@ public class SpiPaymentFactoryTest {
     public void createSpiSinglePayment_failed() {
         //Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.SINGLE);
-        when(cmsToXs2aPaymentMapperSupport.mapToSinglePayment(commonPaymentData))
+        when(cmsToXs2APaymentSupportMapper.mapToSinglePayment(commonPaymentData))
             .thenReturn(null);
 
         //When
@@ -205,7 +205,7 @@ public class SpiPaymentFactoryTest {
     public void createSpiPeriodicPayment_success() {
         //Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.PERIODIC);
-        when(cmsToXs2aPaymentMapperSupport.mapToPeriodicPayment(commonPaymentData))
+        when(cmsToXs2APaymentSupportMapper.mapToPeriodicPayment(commonPaymentData))
             .thenReturn(PERIODIC_PAYMENT);
         when(xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(PERIODIC_PAYMENT, PRODUCT))
             .thenReturn(SPI_PERIODIC_PAYMENT);
@@ -222,7 +222,7 @@ public class SpiPaymentFactoryTest {
     public void createSpiPeriodicPayment_failed() {
         //Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.PERIODIC);
-        when(cmsToXs2aPaymentMapperSupport.mapToPeriodicPayment(commonPaymentData))
+        when(cmsToXs2APaymentSupportMapper.mapToPeriodicPayment(commonPaymentData))
             .thenReturn(null);
 
         //When
@@ -237,7 +237,7 @@ public class SpiPaymentFactoryTest {
     public void createSpiBulkPayment_success() {
         //Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.PERIODIC);
-        when(cmsToXs2aPaymentMapperSupport.mapToBulkPayment(commonPaymentData))
+        when(cmsToXs2APaymentSupportMapper.mapToBulkPayment(commonPaymentData))
             .thenReturn(BULK_PAYMENT);
         when(xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(BULK_PAYMENT, PRODUCT))
             .thenReturn(SPI_BULK_PAYMENT);
@@ -254,7 +254,7 @@ public class SpiPaymentFactoryTest {
     public void createSpiBulkPayment_failed() {
         //Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.PERIODIC);
-        when(cmsToXs2aPaymentMapperSupport.mapToBulkPayment(commonPaymentData))
+        when(cmsToXs2APaymentSupportMapper.mapToBulkPayment(commonPaymentData))
             .thenReturn(null);
 
         //When

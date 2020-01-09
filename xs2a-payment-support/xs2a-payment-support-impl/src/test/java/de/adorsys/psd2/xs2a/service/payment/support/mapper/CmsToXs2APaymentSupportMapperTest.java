@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CmsToXs2aPaymentMapperSupportTest {
+public class CmsToXs2APaymentSupportMapperTest {
     private static final byte[] PAYMENT_BODY = "some payment body".getBytes();
     private static final String PAYMENT_ID =
         "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI";
@@ -52,7 +52,7 @@ public class CmsToXs2aPaymentMapperSupportTest {
     private RawToXs2aPaymentMapper rawToXs2aPaymentMapper;
 
     @InjectMocks
-    private CmsToXs2aPaymentMapperSupport cmsToXs2aPaymentMapperSupport;
+    private CmsToXs2aPaymentSupportMapper cmsToXs2APaymentSupportMapper;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -66,7 +66,7 @@ public class CmsToXs2aPaymentMapperSupportTest {
         CommonPaymentData commonPaymentData = buildCommonPaymentData();
 
         // When
-        SinglePayment actual = cmsToXs2aPaymentMapperSupport.mapToSinglePayment(commonPaymentData);
+        SinglePayment actual = cmsToXs2APaymentSupportMapper.mapToSinglePayment(commonPaymentData);
 
         // Then
         assertEquals(expectedSinglePayment, actual);
@@ -75,7 +75,7 @@ public class CmsToXs2aPaymentMapperSupportTest {
     @Test
     public void mapToSinglePayment_null() {
         // When
-        SinglePayment actual = cmsToXs2aPaymentMapperSupport.mapToSinglePayment(null);
+        SinglePayment actual = cmsToXs2APaymentSupportMapper.mapToSinglePayment(null);
 
         // Then
         assertNull(actual);
@@ -91,7 +91,7 @@ public class CmsToXs2aPaymentMapperSupportTest {
         CommonPaymentData commonPaymentData = buildCommonPaymentData();
 
         // When
-        PeriodicPayment actual = cmsToXs2aPaymentMapperSupport.mapToPeriodicPayment(commonPaymentData);
+        PeriodicPayment actual = cmsToXs2APaymentSupportMapper.mapToPeriodicPayment(commonPaymentData);
 
         // Then
         assertEquals(expectedPeriodicPayment, actual);
@@ -100,7 +100,7 @@ public class CmsToXs2aPaymentMapperSupportTest {
     @Test
     public void mapToPeriodicPayment_null() {
         // When
-        PeriodicPayment actual = cmsToXs2aPaymentMapperSupport.mapToPeriodicPayment(null);
+        PeriodicPayment actual = cmsToXs2APaymentSupportMapper.mapToPeriodicPayment(null);
 
         // Then
         assertNull(actual);
@@ -116,7 +116,7 @@ public class CmsToXs2aPaymentMapperSupportTest {
         CommonPaymentData commonPaymentData = buildCommonPaymentData();
 
         // When
-        BulkPayment actual = cmsToXs2aPaymentMapperSupport.mapToBulkPayment(commonPaymentData);
+        BulkPayment actual = cmsToXs2APaymentSupportMapper.mapToBulkPayment(commonPaymentData);
 
         // Then
         assertEquals(expectedBulkPayment, actual);
@@ -134,7 +134,7 @@ public class CmsToXs2aPaymentMapperSupportTest {
         CommonPaymentData commonPaymentData = buildCommonPaymentData();
 
         // When
-        BulkPayment actual = cmsToXs2aPaymentMapperSupport.mapToBulkPayment(commonPaymentData);
+        BulkPayment actual = cmsToXs2APaymentSupportMapper.mapToBulkPayment(commonPaymentData);
 
         // Then
         assertEquals(expectedBulkPayment, actual);
@@ -143,7 +143,7 @@ public class CmsToXs2aPaymentMapperSupportTest {
     @Test
     public void mapToBulkPayment_null() {
         // When
-        BulkPayment actual = cmsToXs2aPaymentMapperSupport.mapToBulkPayment(null);
+        BulkPayment actual = cmsToXs2APaymentSupportMapper.mapToBulkPayment(null);
 
         // Then
         assertNull(actual);

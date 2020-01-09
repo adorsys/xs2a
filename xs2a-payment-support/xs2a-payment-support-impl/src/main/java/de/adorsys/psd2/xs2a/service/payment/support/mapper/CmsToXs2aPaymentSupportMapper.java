@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class CmsToXs2aPaymentMapperSupport {
+public class CmsToXs2aPaymentSupportMapper {
     private final RawToXs2aPaymentMapper rawToXs2aPaymentMapper;
 
     public SinglePayment mapToSinglePayment(CommonPaymentData commonPayment) {

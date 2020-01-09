@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,25 @@ package de.adorsys.psd2.validator.payment;
 
 public interface CountryValidatorHolder {
     /**
-     * Returns country identifier for which this validator will be applied
+     * Returns country identifier for which payment validators will be applied
      *
      * @return country identifier
      */
     String getCountryIdentifier();
 
+    /**
+     * Returns payment body fields validator for validating format of the payment
+     *
+     * @return body validator
+     */
     PaymentBodyFieldsValidator getPaymentBodyFieldsValidator();
 
+    /**
+     * Returns payment business validator for executing custom validation according to specific business rules.
+     * <p>
+     * Will be executed after validating payment fields, but before any call to SPI.
+     *
+     * @return business validator
+     */
     PaymentBusinessValidator getPaymentBusinessValidator();
 }

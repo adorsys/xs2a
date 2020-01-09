@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,14 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import javax.servlet.http.HttpServletRequest;
 
 public interface PaymentBodyFieldsValidator {
-
+    /**
+     * Validates payment body format.
+     *
+     * @param request        information about incoming request
+     * @param paymentService payment service for which the initiation request has been sent
+     * @param messageError   error holder that contains already found errors
+     * @return error container with no errors if the payment is correct,
+     * container with populated errors to be displayed to the TPP otherwise
+     */
     MessageError validate(HttpServletRequest request, String paymentService, MessageError messageError);
 }

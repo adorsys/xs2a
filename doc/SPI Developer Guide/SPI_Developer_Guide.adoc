@@ -14,6 +14,8 @@ include::Implementing SPI-API.adoc[Implementing SPI-API]
 
 include::Configuring XS2A Service.adoc[Configuring XS2A Service]
 
+include::Configuring CMS Service.adoc[Configuring CMS Service]
+
 include::Working with CMS.adoc[Working with CMS]
 
 include::Upgrading XS2A instances version on the same server.adoc[Upgrading XS2A instances version on the same server]

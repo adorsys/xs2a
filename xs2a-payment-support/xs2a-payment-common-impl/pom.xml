@@ -32,6 +32,7 @@
     </properties>
 
     <dependencies>
+        <!-- Project dependencies-->
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-impl</artifactId>
@@ -39,6 +40,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Other dependencies-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
-import de.adorsys.psd2.xs2a.service.payment.support.mapper.CmsToXs2aPaymentMapperSupport;
+import de.adorsys.psd2.xs2a.service.payment.support.mapper.CmsToXs2aPaymentSupportMapper;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
@@ -44,7 +44,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class SpiPaymentFactory {
-    private final CmsToXs2aPaymentMapperSupport cmsToXs2aPaymentMapperSupport;
+    private final CmsToXs2aPaymentSupportMapper cmsToXs2aPaymentSupportMapper;
     private final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     private final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;
     private final Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper;
@@ -79,7 +79,7 @@ public class SpiPaymentFactory {
      */
     public Optional<SpiSinglePayment> createSpiSinglePayment(CommonPaymentData commonPaymentData) {
         String paymentProduct = commonPaymentData.getPaymentProduct();
-        SinglePayment singlePayment = cmsToXs2aPaymentMapperSupport.mapToSinglePayment(commonPaymentData);
+        SinglePayment singlePayment = cmsToXs2aPaymentSupportMapper.mapToSinglePayment(commonPaymentData);
 
         if (singlePayment == null) {
             log.warn("InR-ID: [{}], X-Request-ID: [{}]. Can't map PIS Payment with paymentProduct [{}] to SINGLE payment.",
@@ -97,7 +97,7 @@ public class SpiPaymentFactory {
      */
     public Optional<SpiPeriodicPayment> createSpiPeriodicPayment(CommonPaymentData commonPaymentData) {
         String paymentProduct = commonPaymentData.getPaymentProduct();
-        PeriodicPayment periodicPayment = cmsToXs2aPaymentMapperSupport.mapToPeriodicPayment(commonPaymentData);
+        PeriodicPayment periodicPayment = cmsToXs2aPaymentSupportMapper.mapToPeriodicPayment(commonPaymentData);
 
         if (periodicPayment == null) {
             log.warn("InR-ID: [{}], X-Request-ID: [{}]. Can't map PIS Payment with paymentProduct [{}] to PERIODIC payment.",
@@ -115,7 +115,7 @@ public class SpiPaymentFactory {
      */
     public Optional<SpiBulkPayment> createSpiBulkPayment(CommonPaymentData commonPaymentData) {
         String paymentProduct = commonPaymentData.getPaymentProduct();
-        BulkPayment bulkPayment = cmsToXs2aPaymentMapperSupport.mapToBulkPayment(commonPaymentData);
+        BulkPayment bulkPayment = cmsToXs2aPaymentSupportMapper.mapToBulkPayment(commonPaymentData);
 
         if (bulkPayment == null) {
             log.warn("InR-ID: [{}], X-Request-ID: [{}]. Can't map list of PIS Payments with paymentProduct [{}] to BULK payment.",
