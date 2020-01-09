@@ -1,0 +1,8 @@
+= Release notes v.5.8
+
+== Table of Contents
+* Move AuthenticationObject to xs2a-core
+
+== Move AuthenticationObject to xs2a-core
+
+Usages of `Xs2aAuthenticationObject` and `SpiAuthenticationObject` were substituted with `de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject`

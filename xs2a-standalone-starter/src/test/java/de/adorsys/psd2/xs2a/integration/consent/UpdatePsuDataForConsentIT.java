@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -156,13 +157,21 @@ public class UpdatePsuDataForConsentIT {
             .willReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
                             .build());
+
+        AuthenticationObject sms = new AuthenticationObject();
+        sms.setAuthenticationType("SMS_OTP");
+        sms.setAuthenticationMethodId("sms");
+        sms.setName("some-sms-name");
+
         given(aisConsentSpi.requestAvailableScaMethods(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
-                            .payload(new SpiAvailableScaMethodsResponse(Collections.singletonList(new SpiAuthenticationObject())))
+                            .payload(new SpiAvailableScaMethodsResponse(Collections.singletonList(sms)))
                             .build());
-        given(aisConsentSpi.requestAuthorisationCode(any(SpiContextData.class), isNull(), any(), any(SpiAspspConsentDataProvider.class)))
+        SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
+        spiAuthorizationCodeResult.setSelectedScaMethod(sms);
+        given(aisConsentSpi.requestAuthorisationCode(any(SpiContextData.class), anyString(), any(), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
-                            .payload(new SpiAuthorizationCodeResult())
+                            .payload(spiAuthorizationCodeResult)
                             .build());
         given(aisConsentAuthorisationServiceEncrypted.updateConsentAuthorization(eq(AUTHORISATION_ID), any(AisConsentAuthorizationRequest.class)))
             .willReturn(CmsResponse.<Boolean>builder()

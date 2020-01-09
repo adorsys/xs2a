@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.core.autorisation;
+package de.adorsys.psd2.xs2a.core.authorisation;
 
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.jetbrains.annotations.Nullable;
 
 @Data
-public class AuthorisationTemplate {
-
-    @Nullable
-    @ApiModelProperty(value = "TPP redirect URIs")
-    private TppRedirectUri tppRedirectUri;
-
-    @Nullable
-    @ApiModelProperty(value = "Cancel TPP redirect URIs")
-    private TppRedirectUri cancelTppRedirectUri;
+public class AuthenticationObject {
+    private String authenticationType;
+    private String authenticationMethodId;
+    private String authenticationVersion;
+    private String name;
+    private String explanation;
+    /**
+     * Represents, whether current authentication object requires decoupled SCA
+     */
+    private boolean decoupled;
 }

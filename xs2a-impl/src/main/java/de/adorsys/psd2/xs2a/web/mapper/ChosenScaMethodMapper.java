@@ -17,10 +17,10 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.ChosenScaMethod;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface ChosenScaMethodMapper {
-    ChosenScaMethod mapToChosenScaMethod(Xs2aAuthenticationObject xs2aAuthenticationObject);
+    ChosenScaMethod mapToChosenScaMethod(AuthenticationObject authenticationObject);
 }

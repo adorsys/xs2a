@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.mapper.consent;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -125,7 +126,7 @@ public class Xs2aAisConsentMapperTest {
     @Test
     public void mapToSpiUpdateConsentPsuDataReq() {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, CONSENT_ID, AUTHORISATION_ID);
-        Xs2aAuthenticationObject chosenScaMethod = new Xs2aAuthenticationObject();
+        AuthenticationObject chosenScaMethod = new AuthenticationObject();
         chosenScaMethod.setAuthenticationMethodId("3284932jk6456");
         response.setChosenScaMethod(chosenScaMethod);
 

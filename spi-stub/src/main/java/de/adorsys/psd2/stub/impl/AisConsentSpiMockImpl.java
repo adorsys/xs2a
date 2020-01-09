@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.stub.impl;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -102,13 +103,13 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     @Override
     public SpiResponse<SpiAvailableScaMethodsResponse> requestAvailableScaMethods(@NotNull SpiContextData contextData, SpiAccountConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("AisConsentSpi#requestAvailableScaMethods: contextData {}, businessObject-id {}", contextData, businessObject.getId());
-        List<SpiAuthenticationObject> spiScaMethods = new ArrayList<>();
-        SpiAuthenticationObject sms = new SpiAuthenticationObject();
+        List<AuthenticationObject> spiScaMethods = new ArrayList<>();
+        AuthenticationObject sms = new AuthenticationObject();
         sms.setAuthenticationType("SMS_OTP");
         sms.setAuthenticationMethodId("sms");
         sms.setName("some-sms-name");
         spiScaMethods.add(sms);
-        SpiAuthenticationObject push = new SpiAuthenticationObject();
+        AuthenticationObject push = new AuthenticationObject();
         push.setAuthenticationType("PUSH_OTP");
         push.setAuthenticationMethodId("push");
         push.setDecoupled(true);
@@ -124,7 +125,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiContextData contextData, @NotNull String authenticationMethodId, @NotNull SpiAccountConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("AisConsentSpi#requestAuthorisationCode: contextData {}, authenticationMethodId {}, businessObject-id {}", contextData, authenticationMethodId, businessObject.getId());
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
-        SpiAuthenticationObject method = new SpiAuthenticationObject();
+        AuthenticationObject method = new AuthenticationObject();
         method.setAuthenticationMethodId("sms");
         method.setAuthenticationType("SMS_OTP");
         spiAuthorizationCodeResult.setSelectedScaMethod(method);

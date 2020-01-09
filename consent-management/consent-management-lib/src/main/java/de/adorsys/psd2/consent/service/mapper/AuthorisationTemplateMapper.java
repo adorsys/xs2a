@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
-import de.adorsys.psd2.xs2a.core.autorisation.AuthorisationTemplate;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

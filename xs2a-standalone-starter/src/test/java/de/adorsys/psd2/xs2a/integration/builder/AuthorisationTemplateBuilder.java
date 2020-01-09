@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.integration.builder;
 
-import de.adorsys.psd2.xs2a.core.autorisation.AuthorisationTemplate;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 
 public class AuthorisationTemplateBuilder {

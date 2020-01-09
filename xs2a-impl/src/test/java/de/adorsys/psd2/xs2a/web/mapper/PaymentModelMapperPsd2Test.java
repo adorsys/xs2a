@@ -27,7 +27,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
@@ -156,7 +155,7 @@ public class PaymentModelMapperPsd2Test {
         when(paymentInitiationResponse.getPaymentId()).thenReturn(PAYMENT_ID);
         when(paymentInitiationResponse.getTransactionFees()).thenReturn(new Xs2aAmount(Currency.getInstance("EUR"), "20.00"));
         when(paymentInitiationResponse.getTransactionFeeIndicator()).thenReturn(true);
-        when(paymentInitiationResponse.getScaMethods()).thenReturn(Collections.singletonList(new Xs2aAuthenticationObject()));
+        when(paymentInitiationResponse.getScaMethods()).thenReturn(Collections.singletonList(new de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject()));
         when(paymentInitiationResponse.getChallengeData()).thenReturn(new ChallengeData());
         when(paymentInitiationResponse.getLinks()).thenReturn(null);
         when(paymentInitiationResponse.getPsuMessage()).thenReturn("psu message");
@@ -191,12 +190,12 @@ public class PaymentModelMapperPsd2Test {
     public void mapToPaymentInitiationCancelResponse() {
         CancelPaymentResponse cancelPaymentResponse = new CancelPaymentResponse();
         cancelPaymentResponse.setTransactionStatus(TransactionStatus.CANC);
-        Xs2aAuthenticationObject xs2aAuthenticationObject = new Xs2aAuthenticationObject();
-        xs2aAuthenticationObject.setAuthenticationMethodId("authenticationMethodId");
-        xs2aAuthenticationObject.setAuthenticationType("authenticationType");
-        xs2aAuthenticationObject.setAuthenticationVersion("authenticationVersion");
-        xs2aAuthenticationObject.setName("name123");
-        cancelPaymentResponse.setScaMethods(Collections.singletonList(xs2aAuthenticationObject));
+        de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject authenticationObjec = new de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject();
+        authenticationObjec.setAuthenticationMethodId("authenticationMethodId");
+        authenticationObjec.setAuthenticationType("authenticationType");
+        authenticationObjec.setAuthenticationVersion("authenticationVersion");
+        authenticationObjec.setName("name123");
+        cancelPaymentResponse.setScaMethods(Collections.singletonList(authenticationObjec));
         Xs2aChosenScaMethod chosenScaMethod = new Xs2aChosenScaMethod();
         chosenScaMethod.setAuthenticationMethodId("authenticationMethodId1");
         chosenScaMethod.setAuthenticationType("authenticationType1");

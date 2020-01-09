@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.mapper.consent;
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
@@ -122,7 +123,7 @@ public class Xs2aAisConsentMapper {
                        req.setConsentId(request.getBusinessObjectId());
                        req.setAuthorizationId(request.getAuthorisationId());
                        req.setAuthenticationMethodId(Optional.ofNullable(data.getChosenScaMethod())
-                                                         .map(Xs2aAuthenticationObject::getAuthenticationMethodId)
+                                                         .map(AuthenticationObject::getAuthenticationMethodId)
                                                          .orElse(null));
                        req.setScaAuthenticationData(request.getScaAuthenticationData());
                        req.setScaStatus(data.getScaStatus());
@@ -133,7 +134,7 @@ public class Xs2aAisConsentMapper {
 
     private String getAuthenticationMethodId(UpdateConsentPsuDataResponse data) {
         return Optional.ofNullable(data.getChosenScaMethod())
-                   .map(Xs2aAuthenticationObject::getAuthenticationMethodId)
+                   .map(AuthenticationObject::getAuthenticationMethodId)
                    .orElse(null);
     }
 
