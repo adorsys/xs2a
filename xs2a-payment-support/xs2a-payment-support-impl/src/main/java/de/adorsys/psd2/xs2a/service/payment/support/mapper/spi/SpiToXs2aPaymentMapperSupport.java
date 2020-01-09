@@ -24,7 +24,7 @@ import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.xs2a.service.payment.support.mapper.Xs2aToPsd2PaymentMapperSupport;
+import de.adorsys.psd2.xs2a.service.payment.support.mapper.Xs2aToPsd2PaymentSupportMapper;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
@@ -39,12 +39,12 @@ public class SpiToXs2aPaymentMapperSupport {
     private final SpiToXs2aSinglePaymentMapper spiToXs2aSinglePaymentMapper;
     private final SpiToXs2aPeriodicPaymentMapper spiToXs2aPeriodicPaymentMapper;
     private final SpiToXs2aBulkPaymentMapper spiToXs2aBulkPaymentMapper;
-    private final Xs2aToPsd2PaymentMapperSupport xs2aToPsd2PaymentMapperSupport;
+    private final Xs2aToPsd2PaymentSupportMapper xs2AToPsd2PaymentSupportMapper;
     private final Xs2aObjectMapper xs2aObjectMapper;
 
     public SinglePayment mapToSinglePayment(SpiSinglePayment spiSinglePayment) {
         SinglePayment singlePayment = spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(spiSinglePayment);
-        PaymentInitiationJson paymentInitiationJson = xs2aToPsd2PaymentMapperSupport.mapToPaymentInitiationJson(singlePayment);
+        PaymentInitiationJson paymentInitiationJson = xs2AToPsd2PaymentSupportMapper.mapToPaymentInitiationJson(singlePayment);
 
         if (singlePayment != null) {
             singlePayment.setPaymentData(convertToBytes(paymentInitiationJson));
@@ -55,7 +55,7 @@ public class SpiToXs2aPaymentMapperSupport {
 
     public PeriodicPayment mapToPeriodicPayment(SpiPeriodicPayment spiPeriodicPayment) {
         PeriodicPayment periodicPayment = spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(spiPeriodicPayment);
-        PeriodicPaymentInitiationJson paymentInitiationJson = xs2aToPsd2PaymentMapperSupport.mapToPeriodicPaymentInitiationJson(periodicPayment);
+        PeriodicPaymentInitiationJson paymentInitiationJson = xs2AToPsd2PaymentSupportMapper.mapToPeriodicPaymentInitiationJson(periodicPayment);
 
         if (periodicPayment != null) {
             periodicPayment.setPaymentData(convertToBytes(paymentInitiationJson));
@@ -66,7 +66,7 @@ public class SpiToXs2aPaymentMapperSupport {
 
     public BulkPayment mapToBulkPayment(SpiBulkPayment spiBulkPayment) {
         BulkPayment bulkPayment = spiToXs2aBulkPaymentMapper.mapToXs2aBulkPayment(spiBulkPayment);
-        BulkPaymentInitiationJson paymentInitiationJson = xs2aToPsd2PaymentMapperSupport.mapToBulkPaymentInitiationJson(bulkPayment);
+        BulkPaymentInitiationJson paymentInitiationJson = xs2AToPsd2PaymentSupportMapper.mapToBulkPaymentInitiationJson(bulkPayment);
 
         if (bulkPayment != null) {
             bulkPayment.setPaymentData(convertToBytes(paymentInitiationJson));

@@ -414,7 +414,9 @@ Returns a *SpiPaymentExecutionResponse* object with appropriate transaction stat
 ==== CommonPaymentSpi
 
 The Interface is used for common payments SPI implementation.
-This interface will be called instead of other payment SPI interfaces for any payment product that doesn't belong to the pre-defined list of standard JSON payment products, regardless of payment service or content type.
+
+This interface will be called instead of other payment SPI interfaces if the affected payment is considered to be a common one.
+Depending on <<SPI_Developer_Guide.adoc#configuring-mapping-type-specific-payments-spi,mapping configuration of payments for SPI>> this can mean either all payments, or only payments with any payment product that doesn't belong to the pre-defined list of standard JSON payment products (regardless of payment service or content type).
 
 The following methods should be implemented:
 

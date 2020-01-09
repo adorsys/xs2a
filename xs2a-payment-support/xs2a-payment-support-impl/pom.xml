@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2018-2019 adorsys GmbH & Co KG
+  ~ Copyright 2018-2020 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@
     </properties>
 
     <dependencies>
+        <!-- Project dependencies-->
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-impl</artifactId>
@@ -39,6 +40,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Other dependencies-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

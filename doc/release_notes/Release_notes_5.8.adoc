@@ -30,7 +30,7 @@ To provide backward compatibility for previous versions new modules were added:
 </dependency>
 ----
 
-`xs2a-payment-support-impl` should be added as a dependency to connector for using type-specific implementations of `PaymentSpi` (`SinglePaymentSpi`, `PeriodicPaymentSpi`, BulkPaymentSpi).
+`xs2a-payment-support-impl` should be added as a dependency to connector for using type-specific implementations of `PaymentSpi` (`SinglePaymentSpi`, `PeriodicPaymentSpi`, `BulkPaymentSpi`).
 
 `cms-payment-support-impl` should be added as a dependency to custom CMS application for mapping common payment to existing type-specific payment models.
 

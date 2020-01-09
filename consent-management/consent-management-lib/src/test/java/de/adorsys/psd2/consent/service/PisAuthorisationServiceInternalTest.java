@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.*;
 
@@ -755,7 +754,6 @@ public class PisAuthorisationServiceInternalTest {
             .thenReturn(bytes);
         when(pisCommonPaymentDataRepository.save(pisCommonPaymentData)).thenReturn(pisCommonPaymentData);
 
-        ReflectionTestUtils.setField(pisAuthorisationServiceInternal, "convertCorePaymentToCommonPayment", true);
         pisAuthorisationServiceInternal.transferCorePaymentToCommonPayment(pisAuthorisation);
 
         assertEquals(bytes, pisCommonPaymentData.getPayment());
@@ -763,22 +761,6 @@ public class PisAuthorisationServiceInternalTest {
         verify(pisCommonPaymentMapper, times(1)).mapToPisPayment(pisPaymentData);
         verify(corePaymentsConvertService, times(1)).buildPaymentData(Collections.singletonList(pisPayment), pisCommonPaymentData.getPaymentType());
         verify(pisCommonPaymentDataRepository, times(1)).save(pisCommonPaymentData);
-    }
-
-    @Test
-    public void transferCorePaymentToCommonPayment_convertCorePaymentToCommonPaymentIsTurnOff() {
-        PisAuthorization pisAuthorisation = new PisAuthorization();
-        PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
-        pisAuthorisation.setPaymentData(pisCommonPaymentData);
-
-        ReflectionTestUtils.setField(pisAuthorisationServiceInternal, "convertCorePaymentToCommonPayment", false);
-        pisAuthorisationServiceInternal.transferCorePaymentToCommonPayment(new PisAuthorization());
-
-        assertNull(pisCommonPaymentData.getPayment());
-
-        verify(pisCommonPaymentMapper, never()).mapToPisPayment(any());
-        verify(corePaymentsConvertService, never()).buildPaymentData(any(), any());
-        verify(pisCommonPaymentDataRepository, never()).save(any());
     }
 
     private UpdatePisCommonPaymentPsuDataRequest buildUpdatePisCommonPaymentPsuDataRequest(ScaStatus status) {

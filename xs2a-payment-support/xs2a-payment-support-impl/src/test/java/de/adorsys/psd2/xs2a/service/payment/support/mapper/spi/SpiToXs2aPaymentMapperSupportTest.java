@@ -24,7 +24,7 @@ import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.xs2a.service.payment.support.mapper.Xs2aToPsd2PaymentMapperSupport;
+import de.adorsys.psd2.xs2a.service.payment.support.mapper.Xs2aToPsd2PaymentSupportMapper;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
@@ -57,7 +57,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     @Mock
     private SpiToXs2aBulkPaymentMapper spiToXs2aBulkPaymentMapper;
     @Mock
-    private Xs2aToPsd2PaymentMapperSupport xs2aToPsd2PaymentMapperSupport;
+    private Xs2aToPsd2PaymentSupportMapper xs2aToPsd2PaymentSupportMapper;
     @Mock
     private Xs2aObjectMapper mockXs2aObjectMapper;
 
@@ -72,7 +72,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
         spiToXs2aPaymentMapperSupport = new SpiToXs2aPaymentMapperSupport(spiToXs2aSinglePaymentMapper,
                                                                           spiToXs2aPeriodicPaymentMapper,
                                                                           spiToXs2aBulkPaymentMapper,
-                                                                          xs2aToPsd2PaymentMapperSupport,
+                                                                          xs2aToPsd2PaymentSupportMapper,
                                                                           xs2aObjectMapper);
     }
 
@@ -85,7 +85,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
         when(spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(spiSinglePayment)).thenReturn(xs2aSinglePayment);
 
         PaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(SINGLE_PAYMENT_INITIATION_JSON_PATH, PaymentInitiationJson.class);
-        when(xs2aToPsd2PaymentMapperSupport.mapToPaymentInitiationJson(xs2aSinglePayment)).thenReturn(paymentInitiationJson);
+        when(xs2aToPsd2PaymentSupportMapper.mapToPaymentInitiationJson(xs2aSinglePayment)).thenReturn(paymentInitiationJson);
 
         SinglePayment expectedPayment = jsonReader.getObjectFromFile(XS2A_SINGLE_PAYMENT_JSON_PATH, SinglePayment.class);
         expectedPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
@@ -131,7 +131,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
             new SpiToXs2aPaymentMapperSupport(spiToXs2aSinglePaymentMapper,
                                               spiToXs2aPeriodicPaymentMapper,
                                               spiToXs2aBulkPaymentMapper,
-                                              xs2aToPsd2PaymentMapperSupport,
+                                              xs2aToPsd2PaymentSupportMapper,
                                               mockXs2aObjectMapper);
 
         SpiSinglePayment spiSinglePayment = new SpiSinglePayment(PAYMENT_PRODUCT);
@@ -140,7 +140,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
         when(spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(spiSinglePayment)).thenReturn(xs2aSinglePayment);
 
         PaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(SINGLE_PAYMENT_INITIATION_JSON_PATH, PaymentInitiationJson.class);
-        when(xs2aToPsd2PaymentMapperSupport.mapToPaymentInitiationJson(xs2aSinglePayment)).thenReturn(paymentInitiationJson);
+        when(xs2aToPsd2PaymentSupportMapper.mapToPaymentInitiationJson(xs2aSinglePayment)).thenReturn(paymentInitiationJson);
 
         when(mockXs2aObjectMapper.writeValueAsBytes(any())).thenThrow(JsonProcessingException.class);
 
@@ -163,7 +163,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
         when(spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(spiPeriodicPayment)).thenReturn(xs2aPeriodicPayment);
 
         PeriodicPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(PERIODIC_PAYMENT_INITIATION_JSON_PATH, PeriodicPaymentInitiationJson.class);
-        when(xs2aToPsd2PaymentMapperSupport.mapToPeriodicPaymentInitiationJson(xs2aPeriodicPayment)).thenReturn(paymentInitiationJson);
+        when(xs2aToPsd2PaymentSupportMapper.mapToPeriodicPaymentInitiationJson(xs2aPeriodicPayment)).thenReturn(paymentInitiationJson);
 
         PeriodicPayment expectedPayment = jsonReader.getObjectFromFile(XS2A_PERIODIC_PAYMENT_JSON_PATH, PeriodicPayment.class);
         expectedPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
@@ -209,7 +209,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
             new SpiToXs2aPaymentMapperSupport(spiToXs2aSinglePaymentMapper,
                                               spiToXs2aPeriodicPaymentMapper,
                                               spiToXs2aBulkPaymentMapper,
-                                              xs2aToPsd2PaymentMapperSupport,
+                                              xs2aToPsd2PaymentSupportMapper,
                                               mockXs2aObjectMapper);
 
         SpiPeriodicPayment spiPeriodicPayment = new SpiPeriodicPayment(PAYMENT_PRODUCT);
@@ -218,7 +218,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
         when(spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(spiPeriodicPayment)).thenReturn(xs2aPeriodicPayment);
 
         PeriodicPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(PERIODIC_PAYMENT_INITIATION_JSON_PATH, PeriodicPaymentInitiationJson.class);
-        when(xs2aToPsd2PaymentMapperSupport.mapToPeriodicPaymentInitiationJson(xs2aPeriodicPayment)).thenReturn(paymentInitiationJson);
+        when(xs2aToPsd2PaymentSupportMapper.mapToPeriodicPaymentInitiationJson(xs2aPeriodicPayment)).thenReturn(paymentInitiationJson);
 
         when(mockXs2aObjectMapper.writeValueAsBytes(any())).thenThrow(JsonProcessingException.class);
 
@@ -241,7 +241,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
         when(spiToXs2aBulkPaymentMapper.mapToXs2aBulkPayment(spiBulkPayment)).thenReturn(xs2aBulkPayment);
 
         BulkPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(BULK_PAYMENT_INITIATION_JSON_PATH, BulkPaymentInitiationJson.class);
-        when(xs2aToPsd2PaymentMapperSupport.mapToBulkPaymentInitiationJson(xs2aBulkPayment)).thenReturn(paymentInitiationJson);
+        when(xs2aToPsd2PaymentSupportMapper.mapToBulkPaymentInitiationJson(xs2aBulkPayment)).thenReturn(paymentInitiationJson);
 
         BulkPayment expectedPayment = jsonReader.getObjectFromFile(XS2A_BULK_PAYMENT_JSON_PATH, BulkPayment.class);
         expectedPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
@@ -287,7 +287,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
             new SpiToXs2aPaymentMapperSupport(spiToXs2aSinglePaymentMapper,
                                               spiToXs2aPeriodicPaymentMapper,
                                               spiToXs2aBulkPaymentMapper,
-                                              xs2aToPsd2PaymentMapperSupport,
+                                              xs2aToPsd2PaymentSupportMapper,
                                               mockXs2aObjectMapper);
 
         SpiBulkPayment spiBulkPayment = new SpiBulkPayment();
@@ -296,7 +296,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
         when(spiToXs2aBulkPaymentMapper.mapToXs2aBulkPayment(spiBulkPayment)).thenReturn(xs2aBulkPayment);
 
         BulkPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(BULK_PAYMENT_INITIATION_JSON_PATH, BulkPaymentInitiationJson.class);
-        when(xs2aToPsd2PaymentMapperSupport.mapToBulkPaymentInitiationJson(xs2aBulkPayment)).thenReturn(paymentInitiationJson);
+        when(xs2aToPsd2PaymentSupportMapper.mapToBulkPaymentInitiationJson(xs2aBulkPayment)).thenReturn(paymentInitiationJson);
 
         when(mockXs2aObjectMapper.writeValueAsBytes(any())).thenThrow(JsonProcessingException.class);
 

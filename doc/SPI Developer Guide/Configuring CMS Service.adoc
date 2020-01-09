@@ -1,0 +1,32 @@
+== Configuring CMS Service
+:toc-title:
+:toc: left
+
+[#configuring-mapping-type-specific-payments-cms-apis]
+=== Configuring mapping of type-specific payments for CMS APIs
+
+In general XS2A handles all payments as common payments, regardless of payment type and payment product.
+This means that the request body of any payment will be stored in CMS and presented in response of `cms-aspsp-api` and `cms-psu-api` methods and endpoints as byte array.
+
+This is the preferred approach and to enable it CMS application should provide dependency on `cms-payment-common-impl`:
+
+[source]
+----
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>cms-payment-common-impl</artifactId>
+</dependency>
+----
+
+To provide backward compatibility with previous versions it's possible to use support library that will transform payments with standard payment products into type-specific implementations of `de.adorsys.psd2.consent.api.pis.CmsPayment` (`CmsSinglePayment`, `CmsPeriodicPayment` and `CmsBulkPayment`).
+To enable such transformation, CMS application should use `cms-payment-support-impl` module instead of `cms-payment-common-impl`:
+
+[source]
+----
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>cms-payment-support-impl</artifactId>
+</dependency>
+----
+
+See <<SPI_Developer_Guide.adoc#configuring-mapping-type-specific-payments-spi,Configuring mapping of type-specific payments for SPI>> for providing similar configuration for XS2A application.
