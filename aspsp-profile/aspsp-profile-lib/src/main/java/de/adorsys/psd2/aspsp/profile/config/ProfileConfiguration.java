@@ -34,14 +34,18 @@ import static de.adorsys.psd2.xs2a.core.ais.BookingStatus.BOOKED;
 public class ProfileConfiguration implements InitializingBean {
     private BankProfileSetting setting;
 
-    @Override
-    public void afterPropertiesSet() {
+    public void setDefaultProperties() {
         if (setting.getCommon() != null && setting.getAis() != null) {
             setDefaultScaApproach(ScaApproach.REDIRECT);
             setDefaultBookingStatus(BOOKED);
             setDefaultScaRedirectFlow();
             setDefaultStartAuthorisationMode();
         }
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        setDefaultProperties();
     }
 
     private void setDefaultScaApproach(ScaApproach scaApproach) {
