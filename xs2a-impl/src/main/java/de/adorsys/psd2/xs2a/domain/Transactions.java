@@ -79,6 +79,9 @@ public class Transactions {
     @ApiModelProperty(value = "Creditor account")
     private AccountReference creditorAccount;
 
+    @ApiModelProperty(value = "Creditor agent")
+    private String creditorAgent;
+
     @ApiModelProperty(value = "Name of the last creditor", example = "Paul Simpson")
     @Size(max = 70)
     private String ultimateCreditor;
@@ -88,6 +91,9 @@ public class Transactions {
 
     @ApiModelProperty(value = "Debtor account")
     private AccountReference debtorAccount;
+
+    @ApiModelProperty(value = "Debtor agent")
+    private String debtorAgent;
 
     @ApiModelProperty(value = "Name of the last debtor", example = "Max")
     @Size(max = 70)
@@ -113,6 +119,9 @@ public class Transactions {
 
     @ApiModelProperty(value = "Is used if and only if the bookingStatus entry equals \"information\". Every active standing order related to the dedicated payment account result into one entry.")
     private Xs2aAdditionalInformationStructured additionalInformationStructured;
+
+    @ApiModelProperty(value = "Balance after transaction")
+    private Xs2aBalance balanceAfterTransaction;
 
     @ApiModelProperty(value = "The following links could be used for retrieving details of a transaction")
     @JsonProperty("_links")
