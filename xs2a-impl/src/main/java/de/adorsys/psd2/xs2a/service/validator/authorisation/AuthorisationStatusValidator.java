@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.validator.authorisation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +30,11 @@ import org.jetbrains.annotations.NotNull;
 @Slf4j
 @RequiredArgsConstructor
 public abstract class AuthorisationStatusValidator {
-    private final RequestProviderService requestProviderService;
 
     @NotNull
     public ValidationResult validate(@NotNull ScaStatus scaStatus) {
         if (scaStatus == ScaStatus.FAILED) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Authorisation has failed status",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+            log.info("Authorisation has failed status");
             return ValidationResult.invalid(getErrorType(), MessageErrorCode.STATUS_INVALID);
         }
 

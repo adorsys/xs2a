@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,16 @@ package de.adorsys.psd2.xs2a.web.validator.header;
 
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static org.mockito.Mockito.mock;
-
 public class ErrorBuildingServiceMock extends ErrorBuildingService {
     private ErrorType errorType;
 
     public ErrorBuildingServiceMock(ErrorType errorType) {
-        super(new ServiceTypeDiscoveryService(new MockHttpServletRequest(), mock(RequestProviderService.class)), new ServiceTypeToErrorTypeMapper(),
+        super(new ServiceTypeDiscoveryService(new MockHttpServletRequest()), new ServiceTypeToErrorTypeMapper(),
               null, new Xs2aObjectMapper());
         this.errorType = errorType;
     }

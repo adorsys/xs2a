@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import de.adorsys.psd2.xs2a.domain.ContentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
@@ -51,7 +50,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -60,7 +58,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ReadBulkPaymentServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
-    private static final UUID X_REQUEST_ID = UUID.randomUUID();
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
     private static final List<PisPayment> PIS_PAYMENTS = Collections.singletonList(new PisPayment());
     private static final BulkPayment BULK_PAYMENT = new BulkPayment();
@@ -86,8 +83,6 @@ public class ReadBulkPaymentServiceTest {
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private SpiPaymentFactory spiPaymentFactory;
-    @Mock
-    private RequestProviderService requestProviderService;
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
     @Mock
@@ -127,9 +122,6 @@ public class ReadBulkPaymentServiceTest {
 
     @Test
     public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_failed() {
-        //Given
-        when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
-
         //When
         PaymentInformationResponse<CommonPayment> actualResponse = readBulkPaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID, ACCEPT_MEDIA_TYPE);
 

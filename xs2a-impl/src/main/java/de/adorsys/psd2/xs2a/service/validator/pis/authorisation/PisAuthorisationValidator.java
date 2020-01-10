@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -32,17 +30,15 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class PisAuthorisationValidator {
-    private final RequestProviderService requestProviderService;
 
     @NotNull
     public ValidationResult validate(@NotNull String authorisationId, @NotNull PisCommonPaymentResponse commonPaymentResponse) {
         Optional<Authorisation> authorisationOptional = commonPaymentResponse.findAuthorisationInPayment(authorisationId);
 
         if (!authorisationOptional.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: couldn't find authorisation with given authorisationId for payment",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), commonPaymentResponse.getExternalId(), authorisationId);
+            log.info("Payment ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: couldn't find authorisation with given authorisationId for payment",
+                     commonPaymentResponse.getExternalId(), authorisationId);
             return ValidationResult.invalid(ErrorType.PIS_403, RESOURCE_UNKNOWN_403);
         }
         return ValidationResult.valid();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.PisAuthorisationStatusChecker;
@@ -42,9 +41,8 @@ public class CreatePisAuthorisationValidator extends AbstractPisValidator<Create
     private final AuthorisationPsuDataChecker authorisationPsuDataChecker;
     private final PisAuthorisationStatusChecker pisAuthorisationStatusChecker;
 
-    public CreatePisAuthorisationValidator(RequestProviderService requestProviderService, AuthorisationPsuDataChecker authorisationPsuDataChecker,
+    public CreatePisAuthorisationValidator(AuthorisationPsuDataChecker authorisationPsuDataChecker,
                                            PisAuthorisationStatusChecker pisAuthorisationStatusChecker) {
-        super(requestProviderService);
         this.authorisationPsuDataChecker = authorisationPsuDataChecker;
         this.pisAuthorisationStatusChecker = pisAuthorisationStatusChecker;
     }
@@ -83,8 +81,7 @@ public class CreatePisAuthorisationValidator extends AbstractPisValidator<Create
         }
 
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Creation of PIS authorisation has failed: payment has been rejected",
-                     getRequestProviderService().getInternalRequestId(), getRequestProviderService().getRequestId(), pisCommonPaymentResponse.getExternalId());
+            log.info("Payment ID: [{}]. Creation of PIS authorisation has failed: payment has been rejected", pisCommonPaymentResponse.getExternalId());
             return ValidationResult.invalid(PIS_403, RESOURCE_EXPIRED_403);
         }
 

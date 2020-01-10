@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.validator.tpp;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
@@ -32,14 +31,11 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_4
 @Component
 @RequiredArgsConstructor
 public class PiisTppInfoValidator {
-
-    private final RequestProviderService requestProviderService;
     private final TppService tppService;
 
     public ValidationResult validateTpp(String authorisationNumber) {
         if (differsFromTppInRequest(authorisationNumber)) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. TPP validation has failed: TPP in consent/payment doesn't match the TPP in request",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+            log.info("TPP validation has failed: TPP in consent/payment doesn't match the TPP in request");
             return ValidationResult.invalid(PIIS_400, CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE);
         }
 

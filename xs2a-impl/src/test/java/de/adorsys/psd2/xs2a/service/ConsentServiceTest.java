@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -201,9 +201,6 @@ public class ConsentServiceTest {
         when(spiContextDataProvider.provide()).thenReturn(spiContextData);
         when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
         when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(spiContextData);
-
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
 
         when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
             .thenReturn(initialSpiAspspConsentDataProvider);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogMessage;
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -30,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RequestResponseLoggingInterceptorTest {
@@ -40,8 +38,6 @@ public class RequestResponseLoggingInterceptorTest {
     private HttpServletResponse httpServletResponse;
     @Mock
     private RequestResponseLogger requestResponseLogger;
-    @Mock
-    private RequestProviderService requestProviderService;
     @InjectMocks
     private RequestResponseLoggingInterceptor requestResponseLoggingInterceptor;
 
@@ -49,10 +45,8 @@ public class RequestResponseLoggingInterceptorTest {
     public void afterCompletion_shouldLogRequestAndResponse() {
         // Given
         UUID internalRequestId = UUID.fromString("b87028ad-6925-41fa-b892-88912606a2f4");
-        when(requestProviderService.getInternalRequestId()).thenReturn(internalRequestId);
 
         RequestResponseLogMessage message = RequestResponseLogMessage.builder(httpServletRequest, httpServletResponse)
-                                                .withInternalRequestId(internalRequestId)
                                                 .withRequestUri()
                                                 .withRequestHeaders()
                                                 .withRequestPayload()

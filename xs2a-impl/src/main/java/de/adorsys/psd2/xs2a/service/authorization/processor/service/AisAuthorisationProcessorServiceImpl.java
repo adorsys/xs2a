@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
@@ -72,8 +71,7 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
     private final AisScaAuthorisationService aisScaAuthorisationService;
     private final Xs2aToSpiPsuDataMapper psuDataMapper;
 
-    public AisAuthorisationProcessorServiceImpl(RequestProviderService requestProviderService, List<AisAuthorizationService> services, Xs2aAisConsentService aisConsentService, AisConsentSpi aisConsentSpi, Xs2aAisConsentMapper aisConsentMapper, SpiContextDataProvider spiContextDataProvider, SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory, SpiErrorMapper spiErrorMapper, CommonDecoupledAisService commonDecoupledAisService, AisScaAuthorisationService aisScaAuthorisationService, Xs2aToSpiPsuDataMapper psuDataMapper) {
-        super(requestProviderService);
+    public AisAuthorisationProcessorServiceImpl(List<AisAuthorizationService> services, Xs2aAisConsentService aisConsentService, AisConsentSpi aisConsentSpi, Xs2aAisConsentMapper aisConsentMapper, SpiContextDataProvider spiContextDataProvider, SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory, SpiErrorMapper spiErrorMapper, CommonDecoupledAisService commonDecoupledAisService, AisScaAuthorisationService aisScaAuthorisationService, Xs2aToSpiPsuDataMapper psuDataMapper) {
         this.services = services;
         this.aisConsentService = aisConsentService;
         this.aisConsentSpi = aisConsentSpi;

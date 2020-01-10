@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,15 +82,13 @@ public class OauthModeFilter extends GlobalAbstractExceptionFilter {
     protected void doFilterInternalCustom(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         if (shouldFilterInternal(request)) {
             if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH_PRE_STEP) && requestProviderService.getOAuth2Token() == null) {
-                log.info("InR-ID: [{}], X-Request-ID: [{}], OAuth pre-step selected, no authorisation header is present in the request",
-                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+                log.info("OAuth pre-step selected, no authorisation header is present in the request");
                 tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, tppErrorMessageBuilder.buildTppErrorMessageWithPlaceholder(ERROR, UNAUTHORIZED_NO_TOKEN, aspspProfileService.getOauthConfigurationUrl()));
                 return;
             }
 
             if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH) && StringUtils.isNotBlank(requestProviderService.getOAuth2Token())) {
-                log.info("InR-ID: [{}], X-Request-ID: [{}], OAuth integrated selected, authorisation header is present in the request",
-                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+                log.info("OAuth integrated selected, authorisation header is present in the request");
                 tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_FORBIDDEN, tppErrorMessageBuilder.buildTppErrorMessage(ERROR, FORBIDDEN));
                 return;
             }

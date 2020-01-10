@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.validator;
 
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -39,7 +38,6 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 public class PsuDataInInitialRequestValidator implements BusinessValidator<PsuIdData> {
 
     private final AspspProfileServiceWrapper aspspProfileService;
-    private final RequestProviderService requestProviderService;
     private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
     private final ServiceTypeToErrorTypeMapper errorTypeMapper;
 
@@ -56,13 +54,11 @@ public class PsuDataInInitialRequestValidator implements BusinessValidator<PsuId
             ErrorType errorType = errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), FORMAT_ERROR.getCode());
 
             if (psuId == null) {
-                log.info("InR-ID: [{}], X-Request-ID: [{}]. PSU Data validation has failed: mandated PSU ID is null",
-                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+                log.info("PSU Data validation has failed: mandated PSU ID is null");
                 return ValidationResult.invalid(errorType, FORMAT_ERROR_NO_PSU_ID);
             }
 
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. PSU Data validation has failed: mandated PSU ID is blank",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+            log.info("PSU Data validation has failed: mandated PSU ID is blank");
             return ValidationResult.invalid(errorType, FORMAT_ERROR_PSU_ID_BLANK);
         }
 

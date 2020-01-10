@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.PisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -52,13 +51,11 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
     private final PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator;
     private final AuthorisationStageCheckValidator authorisationStageCheckValidator;
 
-    public AbstractUpdatePisPsuDataValidator(RequestProviderService requestProviderService,
-                                                  PisEndpointAccessCheckerService pisEndpointAccessCheckerService,
-                                                  PisAuthorisationValidator pisAuthorisationValidator,
-                                                  PisAuthorisationStatusValidator pisAuthorisationStatusValidator,
-                                                  PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator,
-                                                  AuthorisationStageCheckValidator authorisationStageCheckValidator) {
-        super(requestProviderService);
+    public AbstractUpdatePisPsuDataValidator(PisEndpointAccessCheckerService pisEndpointAccessCheckerService,
+                                             PisAuthorisationValidator pisAuthorisationValidator,
+                                             PisAuthorisationStatusValidator pisAuthorisationStatusValidator,
+                                             PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator,
+                                             AuthorisationStageCheckValidator authorisationStageCheckValidator) {
         this.pisEndpointAccessCheckerService = pisEndpointAccessCheckerService;
         this.pisAuthorisationValidator = pisAuthorisationValidator;
         this.pisAuthorisationStatusValidator = pisAuthorisationStatusValidator;
@@ -83,8 +80,7 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
         boolean confirmationCodeReceived = StringUtils.isNotBlank(request.getConfirmationCode());
 
         if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, getPaymentAuthorisationType(), confirmationCodeReceived)) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data  has failed: endpoint is not accessible for authorisation",
-                     getRequestProviderService().getInternalRequestId(), getRequestProviderService().getRequestId(), authorisationId);
+            log.info("Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data  has failed: endpoint is not accessible for authorisation", authorisationId);
             return ValidationResult.invalid(ErrorType.PIS_403, SERVICE_BLOCKED);
         }
 

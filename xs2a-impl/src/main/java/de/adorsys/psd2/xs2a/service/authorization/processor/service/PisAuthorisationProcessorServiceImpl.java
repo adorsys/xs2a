@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisExecutePaymentService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
@@ -67,7 +66,7 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
     private final PaymentAuthorisationSpi paymentAuthorisationSpi;
     private final PisCommonDecoupledService pisCommonDecoupledService;
 
-    public PisAuthorisationProcessorServiceImpl(RequestProviderService requestProviderService, List<PisScaAuthorisationService> services,
+    public PisAuthorisationProcessorServiceImpl(List<PisScaAuthorisationService> services,
                                                 Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper, PisExecutePaymentService pisExecutePaymentService,
                                                 PisAspspDataService pisAspspDataService, Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper,
                                                 SpiContextDataProvider spiContextDataProvider, SpiErrorMapper spiErrorMapper,
@@ -76,7 +75,7 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
                                                 Xs2aPisCommonPaymentService xs2aPisCommonPaymentService,
                                                 PaymentAuthorisationSpi paymentAuthorisationSpi,
                                                 PisCommonDecoupledService pisCommonDecoupledService, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper) {
-        super(requestProviderService, services, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
+        super(services, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
               spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper,
               pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper);
         this.pisExecutePaymentService = pisExecutePaymentService;

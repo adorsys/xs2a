@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,11 @@ package de.adorsys.psd2.xs2a.service.context;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import org.apache.commons.lang3.NotImplementedException;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.MDC;
+
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -31,6 +32,9 @@ public class MdcLoggingContextServiceTest {
     private static final String CONSENT_STATUS_KEY = "consentStatus";
     private static final String TRANSACTION_STATUS_KEY = "transactionStatus";
     private static final String SCA_STATUS_KEY = "scaStatus";
+    private static final String INTERNAL_REQUEST_ID_KEY = "internal-request-id";
+    private static final String X_REQUEST_ID_KEY = "x-request-id";
+
 
     private MdcLoggingContextService mdcLoggingContextService = new MdcLoggingContextService();
 
@@ -125,6 +129,20 @@ public class MdcLoggingContextServiceTest {
 
         // Then
         assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    public void storeRequestInformation_shouldPutRequestIdsIntoMdc() {
+        // Given
+        UUID xRequestId = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
+        UUID internalRequestId = UUID.fromString("9fe83704-6019-46fa-b8aa-53fb8fa667ea");
+
+        // When
+        mdcLoggingContextService.storeRequestInformation(internalRequestId, xRequestId);
+
+        // Then
+        assertEquals(internalRequestId.toString(), MDC.get(INTERNAL_REQUEST_ID_KEY));
+        assertEquals(xRequestId.toString(), MDC.get(X_REQUEST_ID_KEY));
     }
 
     @Test

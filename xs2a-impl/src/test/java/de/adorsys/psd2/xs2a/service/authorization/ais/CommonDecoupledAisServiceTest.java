@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -72,8 +71,6 @@ public class CommonDecoupledAisServiceTest {
     @Mock
     private AisConsentSpi aisConsentSpi;
     @Mock
-    private RequestProviderService requestProviderService;
-    @Mock
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
@@ -91,7 +88,6 @@ public class CommonDecoupledAisServiceTest {
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
 
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
     }

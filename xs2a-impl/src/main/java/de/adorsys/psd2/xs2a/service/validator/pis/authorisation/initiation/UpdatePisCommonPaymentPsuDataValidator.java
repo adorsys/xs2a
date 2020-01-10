@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.PisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -42,13 +41,12 @@ import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType
 @Component
 public class UpdatePisCommonPaymentPsuDataValidator extends AbstractUpdatePisPsuDataValidator<UpdatePisCommonPaymentPsuDataPO> {
 
-    public UpdatePisCommonPaymentPsuDataValidator(RequestProviderService requestProviderService,
-                                                  PisEndpointAccessCheckerService pisEndpointAccessCheckerService,
+    public UpdatePisCommonPaymentPsuDataValidator(PisEndpointAccessCheckerService pisEndpointAccessCheckerService,
                                                   PisAuthorisationValidator pisAuthorisationValidator,
                                                   PisAuthorisationStatusValidator pisAuthorisationStatusValidator,
                                                   PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator,
                                                   AuthorisationStageCheckValidator authorisationStageCheckValidator) {
-        super(requestProviderService, pisEndpointAccessCheckerService, pisAuthorisationValidator,
+        super(pisEndpointAccessCheckerService, pisAuthorisationValidator,
               pisAuthorisationStatusValidator, pisPsuDataUpdateAuthorisationCheckerValidator,
               authorisationStageCheckValidator);
     }
@@ -66,8 +64,7 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractUpdatePisPsu
     @Override
     protected ValidationResult validateTransactionStatus(UpdatePisPsuDataPO paymentObject) {
         if (paymentObject.getPisCommonPaymentResponse().getTransactionStatus() == TransactionStatus.RJCT) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: payment has been rejected",
-                     getRequestProviderService().getInternalRequestId(), getRequestProviderService().getRequestId(),
+            log.info("Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: payment has been rejected",
                      paymentObject.getUpdateRequest().getAuthorisationId());
 
             return ValidationResult.invalid(ErrorType.PIS_403, RESOURCE_EXPIRED_403);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,8 +75,7 @@ public class Xs2aAisConsentService {
         CmsResponse<CreateAisConsentResponse> response = aisConsentService.createConsent(createAisConsentRequest);
 
         if (response.hasError()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Consent cannot be created, because can't save to cms DB",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+            log.info("Consent cannot be created, because can't save to cms DB");
             return Optional.empty();
         }
 
@@ -95,8 +94,7 @@ public class Xs2aAisConsentService {
         CmsResponse<AisAccountConsent> consentById = aisConsentService.getAisAccountConsentById(consentId);
 
         if (consentById.hasError()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Get consent by id failed due to CMS problems",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+            log.info("Get consent by id failed due to CMS problems");
             return Optional.empty();
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,7 +127,7 @@ public class PisAuthorisationProcessorServiceImplTest {
 
         when(embeddedPisScaAuthorisationService.getScaApproachServiceType()).thenReturn(ScaApproach.EMBEDDED);
 
-        PisAuthorisationProcessorServiceImpl pisAuthorisationProcessorService = new PisAuthorisationProcessorServiceImpl(null, services, null, null, null, null, null, null, null, null, null, null, null, null);
+        PisAuthorisationProcessorServiceImpl pisAuthorisationProcessorService = new PisAuthorisationProcessorServiceImpl(services, null, null, null, null, null, null, null, null, null, null, null, null);
 
         //When
         pisAuthorisationProcessorService.updateAuthorisation(buildAuthorisationProcessorRequest(), buildAuthorisationProcessorResponse());

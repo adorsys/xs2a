@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetailsHolder;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
@@ -48,7 +47,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
@@ -68,7 +66,6 @@ public class AccountDetailsService {
     private final SpiErrorMapper spiErrorMapper;
 
     private final GetAccountDetailsValidator getAccountDetailsValidator;
-    private final RequestProviderService requestProviderService;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final AccountHelperService accountHelperService;
     private final LoggingContextService loggingContextService;
@@ -90,12 +87,9 @@ public class AccountDetailsService {
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        UUID internalRequestId = requestProviderService.getInternalRequestId();
-        UUID xRequestId = requestProviderService.getRequestId();
-
         if (!accountConsentOptional.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}]. Get account details failed. Account consent not found by id",
-                     internalRequestId, xRequestId, accountId, consentId);
+            log.info("Account-ID [{}], Consent-ID [{}]. Get account details failed. Account consent not found by id",
+                     accountId, consentId);
             return ResponseObject.<Xs2aAccountDetailsHolder>builder()
                        .fail(AIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400))
                        .build();
@@ -105,8 +99,8 @@ public class AccountDetailsService {
         ValidationResult validationResult = getValidationResultForCommonAccountRequest(accountId, withBalance, requestUri, accountConsent);
 
         if (validationResult.isNotValid()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get account details - validation failed: {}",
-                     internalRequestId, xRequestId, accountId, consentId, withBalance, requestUri, validationResult.getMessageError());
+            log.info("Account-ID [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get account details - validation failed: {}",
+                     accountId, consentId, withBalance, requestUri, validationResult.getMessageError());
             return ResponseObject.<Xs2aAccountDetailsHolder>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -124,7 +118,7 @@ public class AccountDetailsService {
     }
 
     private ValidationResult getValidationResultForCommonAccountRequest(String accountId, boolean withBalance, String requestUri, AccountConsent accountConsent) {
-        CommonAccountRequestObject validatorObject =  new CommonAccountRequestObject(accountConsent, accountId, withBalance, requestUri);
+        CommonAccountRequestObject validatorObject = new CommonAccountRequestObject(accountConsent, accountId, withBalance, requestUri);
         return getAccountDetailsValidator.validate(validatorObject);
     }
 
@@ -140,12 +134,9 @@ public class AccountDetailsService {
     }
 
     private ResponseObject<Xs2aAccountDetailsHolder> checkSpiResponse(String consentId, String accountId, SpiResponse<SpiAccountDetails> spiResponse) {
-        UUID internalRequestId = requestProviderService.getInternalRequestId();
-        UUID xRequestId = requestProviderService.getRequestId();
-
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
-        log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get account details failed: couldn't get account details. Error msg: [{}]",
-                 internalRequestId, xRequestId, accountId, consentId, errorHolder);
+        log.info("Account-ID [{}], Consent-ID: [{}]. Get account details failed: couldn't get account details. Error msg: [{}]",
+                 accountId, consentId, errorHolder);
         return ResponseObject.<Xs2aAccountDetailsHolder>builder()
                    .fail(errorHolder)
                    .build();

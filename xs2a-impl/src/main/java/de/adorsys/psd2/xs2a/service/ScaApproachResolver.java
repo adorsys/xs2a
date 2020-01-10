@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,8 +121,8 @@ public class ScaApproachResolver {
         }
 
         if (!scaApproachResponse.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Couldn't retrieve SCA approach from the authorisation with id: {} and type: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId, authorisationType);
+            log.info("Couldn't retrieve SCA approach from the authorisation with id: {} and type: {}",
+                     authorisationId, authorisationType);
             throw new IllegalArgumentException("Wrong authorisation id: " + authorisationId +
                                                    " or type: " + authorisationType);
         }

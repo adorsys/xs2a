@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
@@ -33,10 +32,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
-import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,10 +42,7 @@ public class ConsentLoggingInterceptorTest {
     private static final String TPP_IP = "1.1.1.1";
     private static final String TPP_INFO_JSON = "json/web/interceptor/logging/tpp-info.json";
     private static final String REQUEST_URI = "request_uri";
-    private static final String X_REQUEST_ID_HEADER_NAME = "x-request-id";
-    private static final String X_REQUEST_ID_HEADER_VALUE = "222";
     private static final String REDIRECT_ID = "redirect-id";
-    private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("b571c834-4eb1-468f-91b0-f5e83589bc22");
 
     @InjectMocks
     private ConsentLoggingInterceptor interceptor;
@@ -61,8 +55,6 @@ public class ConsentLoggingInterceptorTest {
     @Mock
     private RedirectIdService redirectIdService;
     @Mock
-    private RequestProviderService requestProviderService;
-    @Mock
     private LoggingContextService loggingContextService;
     @Mock
     private PathParameterExtractor pathParameterExtractor;
@@ -72,8 +64,6 @@ public class ConsentLoggingInterceptorTest {
     @Before
     public void setUp() {
         when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
-        when(response.getHeader(X_REQUEST_ID_HEADER_NAME)).thenReturn(X_REQUEST_ID_HEADER_VALUE);
-        when(requestProviderService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
         when(pathParameterExtractor.extractParameters(any(HttpServletRequest.class))).thenReturn(Collections.emptyMap());
     }
 
@@ -86,8 +76,6 @@ public class ConsentLoggingInterceptorTest {
 
         verify(pathParameterExtractor).extractParameters(any(HttpServletRequest.class));
         verify(tppService).getTppInfo();
-        verify(requestProviderService).getInternalRequestId();
-        verify(request).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
         verify(request).getRemoteAddr();
         verify(request).getRequestURI();
     }
@@ -102,8 +90,6 @@ public class ConsentLoggingInterceptorTest {
 
         verify(pathParameterExtractor).extractParameters(any(HttpServletRequest.class));
         verify(tppService).getTppInfo();
-        verify(requestProviderService).getInternalRequestId();
-        verify(request).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
         verify(request).getRemoteAddr();
         verify(request).getRequestURI();
     }
@@ -117,8 +103,6 @@ public class ConsentLoggingInterceptorTest {
         interceptor.afterCompletion(request, response, null, null);
 
         verify(tppService).getTppInfo();
-        verify(requestProviderService).getInternalRequestId();
-        verify(response).getHeader(eq(X_REQUEST_ID_HEADER_NAME));
         verify(response).getStatus();
         verify(redirectIdService).getRedirectId();
         verify(loggingContextService).getConsentStatus();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@
 package de.adorsys.psd2.xs2a.web.validator.header;
 
 import com.google.common.net.InternetDomainName;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
@@ -41,9 +40,8 @@ import java.util.stream.Collectors;
 public class TppDomainValidator implements BusinessValidator<String> {
     private static final String INVALID_DOMAIN_MESSAGE = "TPP URIs are not compliant with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate";
     private static final String PATTERN_FOR_NORMALIZE_DOMAIN = "\\*.";
-    private final TppMessageInformation INVALID_DOMAIN_WARNING_MESSAGE = TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE);
+    private static final TppMessageInformation INVALID_DOMAIN_WARNING_MESSAGE = TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE);
     private final TppService tppService;
-    private final RequestProviderService requestProviderService;
     private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     @Override
@@ -101,8 +99,7 @@ public class TppDomainValidator implements BusinessValidator<String> {
                 return url;
             }
         } catch (MalformedURLException e) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}] Cannot build URL from [{}]",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), domain);
+            log.warn("Cannot build URL from [{}]", domain);
         }
 
         return null;
@@ -132,8 +129,7 @@ public class TppDomainValidator implements BusinessValidator<String> {
         try {
             return InternetDomainName.from(host).topPrivateDomain().toString();
         } catch (IllegalStateException ex) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}] Cannot get top domain from [{}]",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), host);
+            log.warn("Cannot get top domain from [{}]", host);
         }
         return null;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -43,7 +42,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CommonDecoupledAisService {
     private final AisConsentSpi aisConsentSpi;
-    private final RequestProviderService requestProviderService;
     private final SpiErrorMapper spiErrorMapper;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final SpiContextDataProvider spiContextDataProvider;
@@ -59,8 +57,8 @@ public class CommonDecoupledAisService {
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}], Authentication-Method-ID [{}]. Notifies a decoupled app about starting SCA when proceed decoupled approach has failed. Error msg: {}.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId, authorisationId, psuData.getPsuId(), authenticationMethodId, errorHolder);
+            log.info("Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}], Authentication-Method-ID [{}]. Notifies a decoupled app about starting SCA when proceed decoupled approach has failed. Error msg: {}.",
+                     consentId, authorisationId, psuData.getPsuId(), authenticationMethodId, errorHolder);
 
             Optional<MessageErrorCode> first = errorHolder.getFirstErrorCode();
             if (first.isPresent() && first.get() == MessageErrorCode.PSU_CREDENTIALS_INVALID) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ public class NotificationSupportedModeService {
     private static final String MODES_SEPARATOR = ",";
 
     private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    private final RequestProviderService requestProviderService;
 
     public NotificationModeResponseHeaders resolveNotificationHeaders(List<NotificationSupportedMode> usedModes) {
         List<NotificationSupportedMode> supportedModes = aspspProfileServiceWrapper.getNotificationSupportedModes();
@@ -50,8 +49,7 @@ public class NotificationSupportedModeService {
 
         if (CollectionUtils.isEmpty(usedModes)) {
 
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. TPP notification URI is not correct or requested modes are not supported!",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+            log.info("TPP notification URI is not correct or requested modes are not supported!");
 
             return new NotificationModeResponseHeaders(false, null);
         }

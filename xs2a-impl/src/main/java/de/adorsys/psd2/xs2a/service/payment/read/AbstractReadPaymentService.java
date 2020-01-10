@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
@@ -40,7 +39,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * This class handles traditional payments (single, bulk, periodic).
@@ -52,16 +50,14 @@ public abstract class AbstractReadPaymentService implements ReadPaymentService {
 
     private SpiErrorMapper spiErrorMapper;
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
-    private RequestProviderService requestProviderService;
     private Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
 
     public AbstractReadPaymentService(SpiErrorMapper spiErrorMapper, SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
-                                      RequestProviderService requestProviderService, Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService,
+                                      Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService,
                                       SpiContextDataProvider spiContextDataProvider) {
         this.spiContextDataProvider = spiContextDataProvider;
         this.spiErrorMapper = spiErrorMapper;
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
-        this.requestProviderService = requestProviderService;
         this.updatePaymentStatusAfterSpiService = updatePaymentStatusAfterSpiService;
     }
 
@@ -88,13 +84,11 @@ public abstract class AbstractReadPaymentService implements ReadPaymentService {
             aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(encryptedPaymentId);
 
         SpiResponse spiResponse = getSpiPaymentById(spiContextData, acceptMediaType, spiPaymentOptional.get(), aspspConsentDataProvider);
-        UUID internalRequestId = requestProviderService.getInternalRequestId();
-        UUID xRequestId = requestProviderService.getRequestId();
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Read payment failed. Can't get payment by ID at SPI level. Error msg: [{}]",
-                     internalRequestId, xRequestId, ((SpiPayment) spiPaymentOptional.get()).getPaymentId(), errorHolder);
+            log.info("Payment-ID [{}]. Read payment failed. Can't get payment by ID at SPI level. Error msg: [{}]",
+                     ((SpiPayment) spiPaymentOptional.get()).getPaymentId(), errorHolder);
             return new PaymentInformationResponse<>(errorHolder);
         }
 
@@ -103,8 +97,8 @@ public abstract class AbstractReadPaymentService implements ReadPaymentService {
         TransactionStatus paymentStatus = xs2aPayment.getTransactionStatus();
 
         if (!updatePaymentStatusAfterSpiService.updatePaymentStatus(encryptedPaymentId, paymentStatus)) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Internal payment ID: [{}], Transaction status: [{}]. Update of a payment status in the CMS has failed.",
-                     internalRequestId, xRequestId, xs2aPayment.getPaymentId(), paymentStatus);
+            log.info("Internal payment ID: [{}], Transaction status: [{}]. Update of a payment status in the CMS has failed.",
+                     xs2aPayment.getPaymentId(), paymentStatus);
         }
 
         return new PaymentInformationResponse<>(xs2aPayment);

@@ -1,5 +1,5 @@
 ﻿<!--
-  ~ Copyright 2018-2019 adorsys GmbH & Co KG
+  ~ Copyright 2018-2020 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -18,7 +18,13 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
     <property name="LOGS_HOME" value="logs" />
-    <property name="LOGS_PATTERN" value="%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m %n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+    <property name="WHITESPACE" value="%1X{key-that-does-not-exist}"/>
+    <property name="MDC_PATTERN"
+              value="InR-ID: [%X{internal-request-id}], X-Request-ID: [%X{x-request-id}]${WHITESPACE}"/>
+    <property name="EMPTY_MDC_VALUES_REGEX" value="[\\w-]+: \\[\\][, ]+"/>
+    <property name="LOG_MESSAGE" value="%replace(${MDC_PATTERN}){'${EMPTY_MDC_VALUES_REGEX}', ''}%m"/>
+    <property name="LOGS_PATTERN"
+              value="%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} ${LOG_MESSAGE} %n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="de.adorsys.psd2.xs2a.web.util.LogbackPatternLayout">

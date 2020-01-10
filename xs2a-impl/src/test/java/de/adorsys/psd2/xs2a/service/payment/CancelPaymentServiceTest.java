@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,7 +102,6 @@ public class CancelPaymentServiceTest {
     @Before
     public void setUp() {
         when(spiContextDataProvider.provide()).thenReturn(SPI_CONTEXT_DATA);
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
     }

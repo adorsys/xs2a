@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2020 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.CmsError;
@@ -5,7 +21,6 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
@@ -18,9 +33,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -30,7 +43,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -45,14 +57,11 @@ public class Xs2aPisCommonPaymentServiceTest {
     private static final TppInfo TPP_INFO = buildTppInfo();
     private static final PaymentInitiationParameters PAYMENT_INITIATION_PARAMETERS = buildPaymentInitiationParameters();
     private static final PisPaymentInfo PIS_PAYMENT_INFO = buildPisPaymentInfo(PAYMENT_DATA);
-    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType","psuIpAddress");
+    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
     private static final CreatePisCommonPaymentResponse CREATE_PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID, null);
     private static final PisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new PisCommonPaymentResponse();
     private static final List<AuthenticationObject> AUTHENTICATION_OBJECT_LIST = Collections.singletonList(new AuthenticationObject());
     private static final List<CmsScaMethod> CMS_SCA_METHOD_LIST = Collections.singletonList(new CmsScaMethod(AUTHORISATION_ID, true));
-    private static final UpdatePisCommonPaymentPsuDataRequest UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST = buildUpdatePisCommonPaymentPsuDataRequest();
-    private static final UpdatePisCommonPaymentPsuDataResponse UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_RESPONSE = new UpdatePisCommonPaymentPsuDataResponse(ScaStatus.RECEIVED);
-
 
     @InjectMocks
     private Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
@@ -63,13 +72,6 @@ public class Xs2aPisCommonPaymentServiceTest {
     private PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
     @Mock
     private Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
-    @Mock
-    private RequestProviderService requestProviderService;
-
-    @Before
-    public void setUp() {
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-    }
 
     @Test
     public void createCommonPayment_by_request_success() {

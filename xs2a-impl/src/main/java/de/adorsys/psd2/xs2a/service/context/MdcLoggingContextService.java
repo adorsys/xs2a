@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,15 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class MdcLoggingContextService implements LoggingContextService {
     private static final String TRANSACTION_STATUS_KEY = "transactionStatus";
     private static final String CONSENT_STATUS_KEY = "consentStatus";
     private static final String SCA_STATUS_KEY = "scaStatus";
+    private static final String INTERNAL_REQUEST_ID_KEY = "internal-request-id";
+    private static final String X_REQUEST_ID_KEY = "x-request-id";
 
     @Override
     public void storeConsentStatus(@NotNull ConsentStatus consentStatus) {
@@ -66,6 +70,12 @@ public class MdcLoggingContextService implements LoggingContextService {
     @Override
     public String getScaStatus() {
         return MDC.get(SCA_STATUS_KEY);
+    }
+
+    @Override
+    public void storeRequestInformation(UUID internalRequestId, UUID xRequestId) {
+        MDC.put(INTERNAL_REQUEST_ID_KEY, internalRequestId.toString());
+        MDC.put(X_REQUEST_ID_KEY, xRequestId.toString());
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
@@ -51,7 +50,6 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
     private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
     private final ServiceTypeToErrorTypeMapper errorTypeMapper;
     private final Xs2aObjectMapper xs2aObjectMapper;
-    private final RequestProviderService requestProviderService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -63,8 +61,7 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(CERTIFICATE_BLOCKED.getCode());
 
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. TPP {}.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), STOP_LIST_ERROR_MESSAGE);
+            log.info("TPP {}.", STOP_LIST_ERROR_MESSAGE);
             return false;
         }
 

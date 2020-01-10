@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.discovery;
 
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UrlPathHelper;
@@ -28,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class ServiceTypeDiscoveryService {
     private final HttpServletRequest request;
-    private final RequestProviderService requestProviderService;
 
     /**
      * Gets service type from request URI by invoking ServiceTypeDiscovery
@@ -36,9 +34,7 @@ public class ServiceTypeDiscoveryService {
      * @return ServiceType value
      */
     public ServiceType getServiceType() {
-        return ServiceTypeDiscovery.getServiceType(new UrlPathHelper().getPathWithinApplication(request),
-                                                   requestProviderService.getInternalRequestId(),
-                                                   requestProviderService.getRequestIdString());
+        return ServiceTypeDiscovery.getServiceType(new UrlPathHelper().getPathWithinApplication(request));
     }
 }
 

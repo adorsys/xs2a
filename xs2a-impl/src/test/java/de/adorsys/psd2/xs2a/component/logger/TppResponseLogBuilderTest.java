@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,16 +58,6 @@ public class TppResponseLogBuilderTest {
 
         // Then
         verify(httpServletResponse).getStatus();
-        verifyNoMoreInteractions(httpServletResponse);
-    }
-
-    @Test
-    public void withXRequestId_shouldAddXRequestId() {
-        // When
-        tppResponseLogBuilder.withXRequestId();
-
-        // Then
-        verify(httpServletResponse).getHeader(eq(X_REQUEST_ID_HEADER));
         verifyNoMoreInteractions(httpServletResponse);
     }
 }

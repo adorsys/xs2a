@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.PisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
@@ -37,13 +36,12 @@ import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType
 @Component
 public class UpdatePisCancellationPsuDataValidator extends AbstractUpdatePisPsuDataValidator<UpdatePisCancellationPsuDataPO> {
 
-    public UpdatePisCancellationPsuDataValidator(RequestProviderService requestProviderService,
-                                                 PisEndpointAccessCheckerService pisEndpointAccessCheckerService,
+    public UpdatePisCancellationPsuDataValidator(PisEndpointAccessCheckerService pisEndpointAccessCheckerService,
                                                  PisAuthorisationValidator pisAuthorisationValidator,
                                                  PisAuthorisationStatusValidator pisAuthorisationStatusValidator,
                                                  PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator,
                                                  AuthorisationStageCheckValidator authorisationStageCheckValidator) {
-        super(requestProviderService, pisEndpointAccessCheckerService, pisAuthorisationValidator,
+        super(pisEndpointAccessCheckerService, pisAuthorisationValidator,
               pisAuthorisationStatusValidator, pisPsuDataUpdateAuthorisationCheckerValidator,
               authorisationStageCheckValidator);
     }

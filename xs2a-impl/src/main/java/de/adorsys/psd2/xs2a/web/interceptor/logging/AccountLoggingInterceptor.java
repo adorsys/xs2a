@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
 import de.adorsys.psd2.xs2a.component.logger.TppLogger;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
@@ -35,7 +34,6 @@ import java.util.Optional;
 public class AccountLoggingInterceptor extends HandlerInterceptorAdapter {
     private static final String NOT_EXIST_IN_URI = "Not exist in URI";
     private final TppService tppService;
-    private final RequestProviderService requestProviderService;
     private final LoggingContextService loggingContextService;
     private final PathParameterExtractor pathParameterExtractor;
 
@@ -48,8 +46,6 @@ public class AccountLoggingInterceptor extends HandlerInterceptorAdapter {
 
         TppLogger.logRequest(request)
             .withTpp(tppService.getTppInfo())
-            .withInternalRequestId(requestProviderService.getInternalRequestId())
-            .withXRequestId()
             .withRequestUri()
             .withParam("Account ID", accountId)
             .withParam("Consent ID", request.getHeader("Consent-ID"))
@@ -62,8 +58,6 @@ public class AccountLoggingInterceptor extends HandlerInterceptorAdapter {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         TppLogger.logResponse(response)
             .withTpp(tppService.getTppInfo())
-            .withInternalRequestId(requestProviderService.getInternalRequestId())
-            .withXRequestId()
             .withResponseStatus()
             .withParam("consentStatus", loggingContextService.getConsentStatus())
             .perform();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,8 +116,7 @@ public class AccountController implements AccountApi {
     }
 
     @GetMapping(value = "/v1/accounts/{account-id}/transactions/download/{download-id}")
-    public void downloadTransactions(@RequestHeader("X-Request-ID") UUID xRequestId,
-                                     @RequestHeader("Consent-ID") String consentId,
+    public void downloadTransactions(@RequestHeader("Consent-ID") String consentId,
                                      @PathVariable("account-id") String accountId,
                                      @PathVariable("download-id") String downloadId) {
         ResponseObject<Xs2aTransactionsDownloadResponse> downloadTransactionsResponse = transactionService.downloadTransactions(consentId, accountId, downloadId);
@@ -142,8 +141,8 @@ public class AccountController implements AccountApi {
             }
             response.flushBuffer();
         } catch (IOException e) {
-            log.info("X-Request-ID: [{}], Consent-ID: [{}], Account-ID: [{}]. Download-ID [{}]. Download transactions failed: IOException occurred in downloadTransactions controller.",
-                     xRequestId, consentId, accountId, downloadId);
+            log.info("Consent-ID: [{}], Account-ID: [{}]. Download-ID [{}]. Download transactions failed: IOException occurred in downloadTransactions controller.",
+                     consentId, accountId, downloadId);
             flushResponseError(HttpStatus.INTERNAL_SERVER_ERROR.value(), tppErrorMessageBuilder.buildTppErrorMessage(ERROR, MessageErrorCode.INTERNAL_SERVER_ERROR));
         }
     }
