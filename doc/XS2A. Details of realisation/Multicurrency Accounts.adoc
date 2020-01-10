@@ -38,4 +38,6 @@ To fit the requirements one more value was added to ASPSP-profile named *"multic
 
 This interface specification is acting on sub-accounts of multicurrency accounts in exactly the same way as on regular accounts. This applies to payment initiation as well as to account information.
 
+In case of parameter *"multicurrencyAccountLevelSupported"* in ASPSP-Profile is set to *"AGGREGATION"* and PSU has a multicurrency account with two sub-accounts with currencies EUR and USD, then Response for Read Account List Request contains data for an account with *undefined "currency": "XXX"* and *"product": "Multi currency account"* .
+
 *Remark:* The multi-currency account product is in use in some markets in Europe, e.g. in Online-Banking products within the Belgium market. The support of this functionality in the XS2A API is only applicable in these markets.
