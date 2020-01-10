@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,8 +89,7 @@ public class FundsConfirmationService {
 
             if (validationResult.hasError()) {
                 ErrorHolder errorHolder = validationResult.getErrorHolder();
-                log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds validation failed: {}",
-                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), errorHolder);
+                log.info("Check availability of funds validation failed: {}", errorHolder);
                 return ResponseObject.<FundsConfirmationResponse>builder()
                            .fail(new MessageError(errorHolder))
                            .build();
@@ -100,7 +99,7 @@ public class FundsConfirmationService {
         }
 
         PsuIdData psuIdData = requestProviderService.getPsuIdData();
-        log.info("X-Request-ID: [{}]. Corresponding PSU-ID {} was provided from request.", requestProviderService.getRequestId(), psuIdData);
+        log.info("Corresponding PSU-ID {} was provided from request.", psuIdData);
 
         // We don't transfer provider to the SPI level if there is no PIIS consent. Both PIIS consent and the provider
         // parameters are marked as @Nullable in SPI.
@@ -125,8 +124,8 @@ public class FundsConfirmationService {
         AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
 
         if (selector == null) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds failed, because while validate account reference no account identifier found in the request [{}].",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), accountReference);
+            log.info("Check availability of funds failed, because while validate account reference no account identifier found in the request [{}].",
+                     accountReference);
             return new PiisConsentValidationResult(ErrorHolder.builder(PIIS_400)
                                                        .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
                                                        .build());
@@ -157,8 +156,8 @@ public class FundsConfirmationService {
 
         if (fundsSufficientCheck.hasError()) {
             ErrorHolder error = spiErrorMapper.mapToErrorHolder(fundsSufficientCheck, ServiceType.PIIS);
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds failed, because perform funds sufficient check failed. Msg error: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), error);
+            log.info("Check availability of funds failed, because perform funds sufficient check failed. Msg error: {}",
+                     error);
             return new FundsConfirmationResponse(error);
         }
 

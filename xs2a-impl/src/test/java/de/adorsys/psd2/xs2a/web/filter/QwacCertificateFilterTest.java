@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
@@ -119,7 +122,6 @@ public class QwacCertificateFilterTest {
         when(requestProviderService.getEncodedTppQwacCert()).thenReturn(TEST_QWAC_CERTIFICATE_EXPIRED);
         ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, CERTIFICATE_EXPIRED)).thenReturn(TPP_ERROR_MESSAGE_EXPIRED);
 
         //When
@@ -181,7 +183,6 @@ public class QwacCertificateFilterTest {
         ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);
         when(requestProviderService.getEncodedTppQwacCert()).thenReturn(TEST_QWAC_CERTIFICATE_VALID);
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(requestProviderService.getTppRolesAllowedHeader()).thenReturn("PIISP");
         when(tppInfoRolesMapper.mapToTppRoles(Arrays.asList("PIISP"))).thenReturn(Arrays.asList(TppRole.PIISP));
         when(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, ROLE_INVALID)).thenReturn(TPP_ERROR_MESSAGE_ACCESS);

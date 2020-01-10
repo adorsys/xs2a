@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -44,7 +43,6 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 public class SupportedAccountReferenceValidator implements BusinessValidator<Collection<AccountReference>> {
 
     private final AspspProfileServiceWrapper aspspProfileService;
-    private final RequestProviderService requestProviderService;
     private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
     private final ServiceTypeToErrorTypeMapper errorTypeMapper;
 
@@ -83,8 +81,8 @@ public class SupportedAccountReferenceValidator implements BusinessValidator<Col
             return ValidationResult.valid();
         } else {
             String wrongReferenceNames = StringUtils.join(wrongReferences, ", ");
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Supported account reference validation has failed: account reference type: {} is not supported by the ASPSP",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), wrongReferenceNames);
+            log.info("Supported account reference validation has failed: account reference type: {} is not supported by the ASPSP",
+                     wrongReferenceNames);
             ErrorType errorType = errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(),
                                                                  FORMAT_ERROR.getCode());
             return ValidationResult.invalid(errorType, TppMessageInformation.of(

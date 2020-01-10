@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.payment.support.read;
 
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
@@ -46,9 +45,9 @@ public class ReadPeriodicPaymentService extends AbstractReadPaymentService {
     @Autowired
     public ReadPeriodicPaymentService(PeriodicPaymentSpi periodicPaymentSpi, SpiToXs2aPaymentMapperSupport spiToXs2aPaymentMapperSupport,
                                       SpiErrorMapper spiErrorMapper, SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
-                                      RequestProviderService requestProviderService, Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService,
+                                      Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService,
                                       SpiContextDataProvider spiContextDataProvider, SpiPaymentFactory spiPaymentFactory) {
-        super(spiErrorMapper, aspspConsentDataProviderFactory, requestProviderService, updatePaymentStatusAfterSpiService, spiContextDataProvider);
+        super(spiErrorMapper, aspspConsentDataProviderFactory, updatePaymentStatusAfterSpiService, spiContextDataProvider);
         this.spiToXs2aPaymentMapperSupport = spiToXs2aPaymentMapperSupport;
         this.periodicPaymentSpi = periodicPaymentSpi;
         this.spiPaymentFactory = spiPaymentFactory;

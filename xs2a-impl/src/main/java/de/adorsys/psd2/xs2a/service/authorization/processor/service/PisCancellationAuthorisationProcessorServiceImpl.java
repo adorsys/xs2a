@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
@@ -68,7 +67,7 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
     private final PisCommonDecoupledService pisCommonDecoupledService;
     private final PisPsuDataService pisPsuDataService;
 
-    public PisCancellationAuthorisationProcessorServiceImpl(RequestProviderService requestProviderService, List<PisScaAuthorisationService> services,
+    public PisCancellationAuthorisationProcessorServiceImpl(List<PisScaAuthorisationService> services,
                                                             Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper, PaymentCancellationSpi paymentCancellationSpi,
                                                             PisAspspDataService pisAspspDataService, Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper,
                                                             SpiContextDataProvider spiContextDataProvider, SpiErrorMapper spiErrorMapper,
@@ -77,7 +76,7 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
                                                             Xs2aPisCommonPaymentService xs2aPisCommonPaymentService,
                                                             PisCommonDecoupledService pisCommonDecoupledService,
                                                             PisPsuDataService pisPsuDataService, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper) {
-        super(requestProviderService, services, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
+        super(services, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
               spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper,
               pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper);
         this.paymentCancellationSpi = paymentCancellationSpi;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,14 +55,14 @@ public class AccountHelperService {
 
     public SpiContextData getSpiContextData() {
         PsuIdData psuIdData = requestProviderService.getPsuIdData();
-        log.info("X-Request-ID: [{}]. Corresponding PSU-ID {} was provided from request.", requestProviderService.getRequestId(), psuIdData);
+        log.info("Corresponding PSU-ID {} was provided from request.", psuIdData);
         return spiContextDataProvider.provideWithPsuIdData(psuIdData);
     }
 
     ActionStatus createActionStatus(boolean withBalance, TypeAccess access, ResponseObject response) {
         return response.hasError()
                    ? errorToActionStatusMapper.mapActionStatusError(response.getError().getTppMessage().getMessageErrorCode(),
-                                                        withBalance, access)
+                                                                    withBalance, access)
                    : ActionStatus.SUCCESS;
     }
 

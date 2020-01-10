@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.component.logger;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
 import org.jetbrains.annotations.Nullable;
 
 import javax.servlet.http.HttpServletResponse;
@@ -50,11 +49,6 @@ public class TppResponseLogBuilder extends TppLogger.TppLogBuilder<TppResponseLo
         }
 
         return this;
-    }
-
-    @Override
-    protected String getXRequestIdValue() {
-        return response.getHeader(Xs2aHeaderConstant.X_REQUEST_ID);
     }
 
     @Override

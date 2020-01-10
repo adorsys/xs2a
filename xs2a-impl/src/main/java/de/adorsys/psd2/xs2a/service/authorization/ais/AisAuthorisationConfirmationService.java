@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -59,7 +58,6 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 public class AisAuthorisationConfirmationService {
 
     private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    private final RequestProviderService requestProviderService;
     private final SpiContextDataProvider spiContextDataProvider;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final Xs2aAisConsentService aisConsentService;
@@ -83,8 +81,8 @@ public class AisAuthorisationConfirmationService {
         CmsResponse<AisConsentAuthorizationResponse> authorisation = aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(authorisationId, consentId);
 
         if (authorisation.hasError()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation-ID: [{}]. Update consent PSU data failed: authorisation not found by ID",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getAuthorizationId());
+            log.info("Authorisation-ID: [{}]. Update consent PSU data failed: authorisation not found by ID",
+                     request.getAuthorizationId());
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
@@ -158,8 +156,7 @@ public class AisAuthorisationConfirmationService {
                                       .tppMessages(of(FORMAT_ERROR_SCA_STATUS, ScaStatus.FINALISED.name(), ScaStatus.UNCONFIRMED.name(), currentStatus))
                                       .build();
 
-        log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation-ID: [{}]. Update consent PSU data failed: SCA status is invalid.",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
+        log.info("Authorisation-ID: [{}]. Update consent PSU data failed: SCA status is invalid.", authorisationId);
 
 
         return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId);
@@ -170,8 +167,7 @@ public class AisAuthorisationConfirmationService {
                                       .tppMessages(of(SCA_INVALID))
                                       .build();
 
-        log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation-ID: [{}]. Update consent PSU data failed: confirmation code is wrong.",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
+        log.info("Authorisation-ID: [{}]. Update consent PSU data failed: confirmation code is wrong.", authorisationId);
 
         return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId);
     }
@@ -179,8 +175,7 @@ public class AisAuthorisationConfirmationService {
     private UpdateConsentPsuDataResponse buildConfirmationCodeSpiErrorResponse(SpiResponse<SpiConfirmationCodeCheckingResponse> spiResponse, String consentId, String authorisationId) {
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
 
-        log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation-ID: [{}]. Update consent PSU data failed: error occurred at SPI.",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
+        log.info("Authorisation-ID: [{}]. Update consent PSU data failed: error occurred at SPI.", authorisationId);
 
         return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId);
     }
@@ -190,8 +185,7 @@ public class AisAuthorisationConfirmationService {
                                       .tppMessages(of(CONSENT_UNKNOWN_403))
                                       .build();
 
-        log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID: [{}]. Update consent PSU data failed: consent not found by id",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), consentId);
+        log.info("Consent-ID: [{}]. Update consent PSU data failed: consent not found by id", consentId);
 
         return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ package de.adorsys.psd2.xs2a.service.validator.piis;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PiisTppInfoValidator;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -53,8 +52,6 @@ public class PiisConsentValidationTest {
 
     @Mock
     private PiisTppInfoValidator piisTppInfoValidator;
-    @Mock
-    private RequestProviderService requestProviderService;
 
     @InjectMocks
     private PiisConsentValidation piisConsentValidation;
@@ -65,7 +62,6 @@ public class PiisConsentValidationTest {
             .thenReturn(ValidationResult.invalid(PIIS_400, CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE));
 
         when(piisTppInfoValidator.validateTpp(AUTHORISATION_NUMBER)).thenReturn(ValidationResult.valid());
-        when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
     }
 
     @Test

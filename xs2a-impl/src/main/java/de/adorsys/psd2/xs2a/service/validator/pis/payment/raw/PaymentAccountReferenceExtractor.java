@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.AccountReferenceCollector;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.PaymentModelMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +39,6 @@ import java.util.Set;
 public class PaymentAccountReferenceExtractor {
     private final Xs2aObjectMapper xs2aObjectMapper;
     private final PaymentModelMapper paymentModelMapper;
-    private final RequestProviderService requestProviderService;
 
     /**
      * Extracts account references that are present in JSON payment body
@@ -72,8 +70,7 @@ public class PaymentAccountReferenceExtractor {
                     throw new IllegalArgumentException("Unknown payment type: " + paymentType);
             }
         } catch (IOException ioe) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Couldn't parse payment with paymentType {} from payment body {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentType, paymentBody);
+            log.info("Couldn't parse payment with paymentType {} from payment body {}", paymentType, paymentBody);
             return Optional.empty();
         }
     }

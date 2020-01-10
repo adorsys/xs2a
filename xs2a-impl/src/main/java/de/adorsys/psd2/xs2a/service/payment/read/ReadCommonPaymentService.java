@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentInfoMapper;
@@ -39,7 +38,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * This class handles common payments (with byte array in the body).
- *
  */
 @Slf4j
 @Service
@@ -52,7 +50,6 @@ public class ReadCommonPaymentService implements ReadPaymentService {
     private final Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
     private final SpiToXs2aPaymentInfoMapper spiToXs2aPaymentInfoMapper;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
-    private final RequestProviderService requestProviderService;
 
     @Override
     public PaymentInformationResponse<CommonPayment> getPayment(CommonPaymentData commonPaymentData, PsuIdData psuData, String encryptedPaymentId, String acceptMediaType) {
@@ -67,8 +64,8 @@ public class ReadCommonPaymentService implements ReadPaymentService {
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Read common payment failed. Can't get Payment by ID at SPI level. Error msg: [{}]",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), commonPaymentData.getExternalId(), errorHolder);
+            log.info("Payment-ID [{}]. Read common payment failed. Can't get Payment by ID at SPI level. Error msg: [{}]",
+                     commonPaymentData.getExternalId(), errorHolder);
             return new PaymentInformationResponse<>(errorHolder);
         }
 

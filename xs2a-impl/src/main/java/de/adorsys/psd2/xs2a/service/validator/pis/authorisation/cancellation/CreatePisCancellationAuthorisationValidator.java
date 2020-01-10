@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.PisCancellationAuthorisationStatusChecker;
@@ -37,13 +36,11 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.STATUS_INVALID;
  */
 @Component
 public class CreatePisCancellationAuthorisationValidator extends AbstractPisValidator<CreatePisCancellationAuthorisationObject> {
-
     private final AuthorisationPsuDataChecker authorisationPsuDataChecker;
     private final PisCancellationAuthorisationStatusChecker pisCancellationAuthorisationStatusChecker;
 
-    public CreatePisCancellationAuthorisationValidator(RequestProviderService requestProviderService, AuthorisationPsuDataChecker authorisationPsuDataChecker,
+    public CreatePisCancellationAuthorisationValidator(AuthorisationPsuDataChecker authorisationPsuDataChecker,
                                                        PisCancellationAuthorisationStatusChecker pisCancellationAuthorisationStatusChecker) {
-        super(requestProviderService);
         this.authorisationPsuDataChecker = authorisationPsuDataChecker;
         this.pisCancellationAuthorisationStatusChecker = pisCancellationAuthorisationStatusChecker;
     }

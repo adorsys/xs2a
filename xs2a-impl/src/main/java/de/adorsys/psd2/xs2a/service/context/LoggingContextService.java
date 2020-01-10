@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 /**
  * Service for storing and retrieving information about the current request for further usage in logs.
@@ -76,6 +78,14 @@ public interface LoggingContextService {
      * @return string representation of SCA status
      */
     String getScaStatus();
+
+    /**
+     * Records information about the request into current logging context
+     *
+     * @param internalRequestId current internal request id
+     * @param xRequestId        current used x-request-id
+     */
+    void storeRequestInformation(UUID internalRequestId, UUID xRequestId);
 
     /**
      * Clears current logging context.

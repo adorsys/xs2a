@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
@@ -365,7 +364,7 @@ public class AccountControllerTest {
         when(response.getOutputStream()).thenReturn(servletOutputStream);
 
         // When
-        accountController.downloadTransactions(UUID.randomUUID(), CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
+        accountController.downloadTransactions(CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
 
         // Then
         verify(response, times(1)).addHeader(anyString(), anyString());
@@ -381,7 +380,7 @@ public class AccountControllerTest {
         when(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, FORMAT_ERROR)).thenReturn(tppErrorMessage);
 
         // When
-        accountController.downloadTransactions(UUID.randomUUID(), CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
+        accountController.downloadTransactions(CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
 
         // Then
         verify(response, times(1)).flushBuffer();

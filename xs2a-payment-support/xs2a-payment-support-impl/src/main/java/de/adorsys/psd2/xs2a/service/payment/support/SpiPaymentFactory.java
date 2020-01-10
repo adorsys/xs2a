@@ -21,7 +21,6 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
@@ -48,7 +47,6 @@ public class SpiPaymentFactory {
     private final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     private final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;
     private final Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper;
-    private final RequestProviderService requestProviderService;
 
     /**
      * Creates Optional of SpiPayment from PisPayment, PaymentProduct and PaymentType. Should be used, when general SpiPayment type is needed.
@@ -66,8 +64,7 @@ public class SpiPaymentFactory {
             case BULK:
                 return createSpiBulkPayment(commonPaymentData);
             default:
-                log.info("InR-ID: [{}], X-Request-ID: [{}]. Unknown payment type: [{}]",
-                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentType);
+                log.info("Unknown payment type: [{}]", paymentType);
                 throw new IllegalArgumentException("Unknown payment type");
         }
     }
@@ -82,8 +79,7 @@ public class SpiPaymentFactory {
         SinglePayment singlePayment = cmsToXs2aPaymentSupportMapper.mapToSinglePayment(commonPaymentData);
 
         if (singlePayment == null) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}]. Can't map PIS Payment with paymentProduct [{}] to SINGLE payment.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentProduct);
+            log.warn("Can't map PIS Payment with paymentProduct [{}] to SINGLE payment.", paymentProduct);
             return Optional.empty();
         }
 
@@ -100,8 +96,7 @@ public class SpiPaymentFactory {
         PeriodicPayment periodicPayment = cmsToXs2aPaymentSupportMapper.mapToPeriodicPayment(commonPaymentData);
 
         if (periodicPayment == null) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}]. Can't map PIS Payment with paymentProduct [{}] to PERIODIC payment.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentProduct);
+            log.warn("Can't map PIS Payment with paymentProduct [{}] to PERIODIC payment.", paymentProduct);
             return Optional.empty();
         }
 
@@ -118,8 +113,7 @@ public class SpiPaymentFactory {
         BulkPayment bulkPayment = cmsToXs2aPaymentSupportMapper.mapToBulkPayment(commonPaymentData);
 
         if (bulkPayment == null) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}]. Can't map list of PIS Payments with paymentProduct [{}] to BULK payment.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentProduct);
+            log.warn("Can't map list of PIS Payments with paymentProduct [{}] to BULK payment.", paymentProduct);
             return Optional.empty();
         }
 

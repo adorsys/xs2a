@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -50,7 +49,6 @@ public class ReadCommonPaymentStatusService implements ReadPaymentStatusService 
     private final Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
     private final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
-    private final RequestProviderService requestProviderService;
     private final MediaTypeMapper mediaTypeMapper;
 
     @Override
@@ -65,8 +63,8 @@ public class ReadCommonPaymentStatusService implements ReadPaymentStatusService 
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. READ COMMON Payment STATUS failed. Can't get Payment status by ID at SPI level. Error msg: [{}]",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), commonPayment.getPaymentId(), errorHolder);
+            log.info("Payment-ID [{}]. READ COMMON Payment STATUS failed. Can't get Payment status by ID at SPI level. Error msg: [{}]",
+                     commonPayment.getPaymentId(), errorHolder);
             return new ReadPaymentStatusResponse(errorHolder);
         }
 

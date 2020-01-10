@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
@@ -41,11 +40,6 @@ import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 @Component
 public abstract class AbstractPisValidator<T extends PaymentTypeAndInfoProvider> implements BusinessValidator<T> {
     private PisTppInfoValidator pisTppInfoValidator;
-    private RequestProviderService requestProviderService;
-
-    public AbstractPisValidator(RequestProviderService requestProviderService) {
-        this.requestProviderService = requestProviderService;
-    }
 
     @NotNull
     @Override
@@ -68,14 +62,12 @@ public abstract class AbstractPisValidator<T extends PaymentTypeAndInfoProvider>
         PisCommonPaymentResponse paymentResponse = object.getPisCommonPaymentResponse();
 
         if (!object.getPaymentType().equals(paymentResponse.getPaymentType())) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Payment validation has failed: payment type [{}] is incorrect",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentResponse.getExternalId(), object.getPaymentType());
+            log.info("Payment ID: [{}]. Payment validation has failed: payment type [{}] is incorrect", paymentResponse.getExternalId(), object.getPaymentType());
             return ValidationResult.invalid(ErrorType.PIS_405, of(MessageErrorCode.SERVICE_INVALID_405_FOR_PAYMENT));
         }
 
         if (!object.getPaymentProduct().equals(paymentResponse.getPaymentProduct())) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment ID: [{}]. Payment validation has failed: payment product [{}] is incorrect",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentResponse.getExternalId(), object.getPaymentProduct());
+            log.info("Payment ID: [{}]. Payment validation has failed: payment product [{}] is incorrect", paymentResponse.getExternalId(), object.getPaymentProduct());
             return ValidationResult.invalid(ErrorType.PIS_403, of(MessageErrorCode.PRODUCT_INVALID_FOR_PAYMENT));
         }
 
@@ -93,9 +85,5 @@ public abstract class AbstractPisValidator<T extends PaymentTypeAndInfoProvider>
     @Autowired
     public void setPisValidators(PisTppInfoValidator pisTppInfoValidator) {
         this.pisTppInfoValidator = pisTppInfoValidator;
-    }
-
-    public RequestProviderService getRequestProviderService() {
-        return requestProviderService;
     }
 }

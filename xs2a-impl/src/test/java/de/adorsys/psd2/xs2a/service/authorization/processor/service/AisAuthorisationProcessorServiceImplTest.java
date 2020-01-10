@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ public class AisAuthorisationProcessorServiceImplTest {
         when(decoupledAisAuthorisationService.getScaApproachServiceType()).thenReturn(ScaApproach.DECOUPLED);
         List<AisAuthorizationService> services = Arrays.asList(decoupledAisAuthorisationService, embeddedAisAuthorisationService);
 
-        aisAuthorisationProcessorService = new AisAuthorisationProcessorServiceImpl(requestProviderService, services, xs2aAisConsentService, aisConsentSpi, xs2aAisConsentMapper, spiContextDataProvider, spiAspspConsentDataProviderFactory, spiErrorMapper, commonDecoupledAisService, aisScaAuthorisationService, xs2aToSpiPsuDataMapper);
+        aisAuthorisationProcessorService = new AisAuthorisationProcessorServiceImpl(services, xs2aAisConsentService, aisConsentSpi, xs2aAisConsentMapper, spiContextDataProvider, spiAspspConsentDataProviderFactory, spiErrorMapper, commonDecoupledAisService, aisScaAuthorisationService, xs2aToSpiPsuDataMapper);
     }
 
     @Test

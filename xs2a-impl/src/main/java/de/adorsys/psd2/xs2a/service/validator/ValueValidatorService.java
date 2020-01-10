@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,14 +30,12 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 @Slf4j
 @Service
 public class ValueValidatorService {
-    private final RequestProviderService requestProviderService;
 
     private Validator validator;
 
     @Autowired
-    public ValueValidatorService(RequestProviderService requestProviderService, Validator validator) {
+    public ValueValidatorService(Validator validator) {
         this.validator = validator;
-        this.requestProviderService = requestProviderService;
     }
 
     public void validateAccountIdTransactionId(String accountId, String transactionId) {
@@ -55,8 +52,7 @@ public class ValueValidatorService {
                                             .collect(Collectors.toList());
 
         if (!violations.isEmpty()) {
-            log.debug("InR-ID: [{}], X-Request-ID: [{}]. Value validation failed: {}",
-                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), violations.toString());
+            log.debug("Value validation failed: {}", violations.toString());
             throw new ValidationException(FORMAT_ERROR.name() + ": " + violations);
         }
     }

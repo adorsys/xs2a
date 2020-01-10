@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,6 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     private final UpdatePisCancellationPsuDataValidator updatePisCancellationPsuDataValidator;
     private final GetPaymentCancellationAuthorisationsValidator getPaymentAuthorisationsValidator;
     private final GetPaymentCancellationAuthorisationScaStatusValidator getPaymentAuthorisationScaStatusValidator;
-    private final RequestProviderService requestProviderService;
     private final LoggingContextService loggingContextService;
 
     /**
@@ -110,8 +109,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentResponseOptional.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Update PIS Cancellation PSU Data has failed. Payment not found by id.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
+            log.info("Payment-ID [{}]. Update PIS Cancellation PSU Data has failed. Payment not found by id.", paymentId);
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
@@ -128,8 +126,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                 xs2aPisCommonPaymentService.updatePisAuthorisationStatus(request.getAuthorisationId(), ScaStatus.FAILED);
             }
 
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Update PIS cancellation authorisation - validation failed: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, request.getAuthorisationId(), validationResult.getMessageError());
+            log.info("Payment-ID [{}], Authorisation-ID [{}]. Update PIS cancellation authorisation - validation failed: {}",
+                     paymentId, request.getAuthorisationId(), validationResult.getMessageError());
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -162,8 +160,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentResponse.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get information PIS Cancellation Authorisation has failed. Payment not found by id.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
+            log.info("Payment-ID [{}]. Get information PIS Cancellation Authorisation has failed. Payment not found by id.",
+                     paymentId);
             return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
@@ -173,8 +171,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         ValidationResult validationResult = getPaymentAuthorisationsValidator.validate(new CommonPaymentObject(pisCommonPaymentResponse.get(), paymentType, paymentProduct));
         if (validationResult.isNotValid()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get information PIS cancellation authorisation - validation failed: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
+            log.info("Payment-ID [{}]. Get information PIS cancellation authorisation - validation failed: {}",
+                     paymentId, validationResult.getMessageError());
             return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -184,8 +182,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
         return pisScaAuthorisationService.getCancellationAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder().body(resp).build())
                    .orElseGet(() -> {
-                       log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get information PIS Cancellation Authorisation has failed. Authorisation not found by payment id.",
-                                requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
+                       log.info("Payment-ID [{}]. Get information PIS Cancellation Authorisation has failed. Authorisation not found by payment id.",
+                                paymentId);
                        return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
                                   .fail(PIS_404, of(RESOURCE_UNKNOWN_404))
                                   .build();
@@ -208,8 +206,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentResponseOptional.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get SCA status PIS Cancellation Authorisation has failed. Payment not found by id.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
+            log.info("Payment-ID [{}]. Get SCA status PIS Cancellation Authorisation has failed. Payment not found by id.",
+                     paymentId);
             return ResponseObject.<ScaStatus>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
@@ -222,8 +220,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                                                                                                                   paymentType,
                                                                                                                   paymentProduct));
         if (validationResult.isNotValid()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get SCA status PIS cancellation authorisation - validation failed: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
+            log.info("Payment-ID [{}]. Get SCA status PIS cancellation authorisation - validation failed: {}",
+                     paymentId, validationResult.getMessageError());
             return ResponseObject.<ScaStatus>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -251,8 +249,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentResponseOptional.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS Cancellation Authorization has failed. Payment not found by id.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
+            log.info("Payment-ID [{}]. Create PIS Cancellation Authorization has failed. Payment not found by id.",
+                     paymentId);
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
@@ -264,8 +262,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                                                                                                               paymentType,
                                                                                                               paymentProduct));
         if (validationResult.isNotValid()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS Cancellation Authorisation - validation failed: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, validationResult.getMessageError());
+            log.info("Payment-ID [{}]. Create PIS Cancellation Authorisation - validation failed: {}",
+                     paymentId, validationResult.getMessageError());
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                        .fail(validationResult.getMessageError())
                        .build();

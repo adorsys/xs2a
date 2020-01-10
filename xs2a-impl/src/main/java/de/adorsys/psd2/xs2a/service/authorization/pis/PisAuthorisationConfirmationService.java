@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -55,7 +54,6 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.FINALISED;
 public class PisAuthorisationConfirmationService {
 
     private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    private final RequestProviderService requestProviderService;
     private final Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
     private final Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
     private final PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
@@ -85,8 +83,8 @@ public class PisAuthorisationConfirmationService {
             ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_404)
                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_AUTHORISATION))
                                           .build();
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed: authorisation is not found by id.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authorisationId);
+            log.info("Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed: authorisation is not found by id.",
+                     paymentId, authorisationId);
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, request.getPsuData());
 
         }
@@ -156,8 +154,7 @@ public class PisAuthorisationConfirmationService {
     private Xs2aUpdatePisCommonPaymentPsuDataResponse buildConfirmationCodeSpiErrorResponse(SpiResponse<SpiConfirmationCodeCheckingResponse> spiResponse, String paymentId, String authorisationId, PsuIdData psuData) {
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
 
-        log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation-ID: [{}]. Update payment PSU data failed: error occurred at SPI.",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
+        log.info("Authorisation-ID: [{}]. Update payment PSU data failed: error occurred at SPI.", authorisationId);
 
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
     }
@@ -170,8 +167,8 @@ public class PisAuthorisationConfirmationService {
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)
                                       .tppMessages(TppMessageInformation.of(MessageErrorCode.SCA_INVALID))
                                       .build();
-        log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed: confirmation code is wrong.",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId, authorisationId);
+        log.info("Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed: confirmation code is wrong.",
+                 paymentId, authorisationId);
 
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
     }
@@ -181,8 +178,7 @@ public class PisAuthorisationConfirmationService {
                                       .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_SCA_STATUS, ScaStatus.FINALISED.name(), ScaStatus.UNCONFIRMED.name(), currentStatus))
                                       .build();
 
-        log.info("InR-ID: [{}], X-Request-ID: [{}], Authorisation-ID: [{}]. Update payment PSU data failed: SCA status is invalid.",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId);
+        log.info("Authorisation-ID: [{}]. Update payment PSU data failed: SCA status is invalid.", authorisationId);
 
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
     }

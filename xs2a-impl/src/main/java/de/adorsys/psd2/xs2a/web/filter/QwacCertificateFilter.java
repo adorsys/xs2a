@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,20 +160,17 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
     }
 
     private void buildCertificateInvalidNoAccessErrorResponse(HttpServletResponse response, CertificateValidationException e) throws IOException {
-        log.info("InR-ID: [{}], X-Request-ID: [{}], TPP unauthorised because CertificateValidationException: {}",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), e.getMessage());
+        log.info("TPP unauthorised because CertificateValidationException: {}", e.getMessage());
         setResponseStatusAndErrorCode(response, CERTIFICATE_INVALID_NO_ACCESS);
     }
 
     private void buildRoleInvalidErrorResponse(HttpServletResponse response, TppCertificateData tppCertificateData) throws IOException {
-        log.info("InR-ID: [{}], X-Request-ID: [{}], Access forbidden for TPP with authorisation number: [{}]",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), tppCertificateData.getPspAuthorisationNumber());
+        log.info("Access forbidden for TPP with authorisation number: [{}]", tppCertificateData.getPspAuthorisationNumber());
         setResponseStatusAndErrorCode(response, ROLE_INVALID);
     }
 
     private void buildCertificateExpiredErrorResponse(HttpServletResponse response) throws IOException {
-        log.info("InR-ID: [{}], X-Request-ID: [{}], TPP Certificate is expired",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+        log.info("TPP Certificate is expired");
         setResponseStatusAndErrorCode(response, CERTIFICATE_EXPIRED);
     }
 

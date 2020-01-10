@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.PisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -98,8 +97,6 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     @Mock
     private PisEndpointAccessCheckerService pisEndpointAccessCheckerService;
     @Mock
-    private RequestProviderService requestProviderService;
-    @Mock
     private PisAuthorisationValidator pisAuthorisationValidator;
     @Mock
     private PisAuthorisationStatusValidator pisAuthorisationStatusValidator;
@@ -113,8 +110,6 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     public void setUp() {
         // Inject pisTppInfoValidator via setter
         updatePisCommonPaymentPsuDataValidator.setPisValidators(pisTppInfoValidator);
-
-        when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
 
         when(pisTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());

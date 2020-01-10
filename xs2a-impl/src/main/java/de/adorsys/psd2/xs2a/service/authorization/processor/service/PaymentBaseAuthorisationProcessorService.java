@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
@@ -59,7 +58,7 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 
 abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisationProcessorService {
 
-    private  static final String EMBEDDED_SELECTING_SCA_METHOD_FAILED_MSG = "Proceed embedded approach when performs authorisation depending on selected SCA method has failed.";
+    private static final String EMBEDDED_SELECTING_SCA_METHOD_FAILED_MSG = "Proceed embedded approach when performs authorisation depending on selected SCA method has failed.";
 
     private List<PisScaAuthorisationService> services;
     private Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
@@ -71,8 +70,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
     private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
-    protected PaymentBaseAuthorisationProcessorService(RequestProviderService requestProviderService,
-                                                       List<PisScaAuthorisationService> services,
+    protected PaymentBaseAuthorisationProcessorService(List<PisScaAuthorisationService> services,
                                                        Xs2aPisCommonPaymentService xs2aPisCommonPaymentService,
                                                        Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper,
                                                        SpiContextDataProvider spiContextDataProvider,
@@ -81,7 +79,6 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
                                                        PisAspspDataService pisAspspDataService,
                                                        Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper,
                                                        Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper) {
-        super(requestProviderService);
         this.services = services;
         this.xs2aPisCommonPaymentService = xs2aPisCommonPaymentService;
         this.xs2aToSpiPaymentMapper = xs2aToSpiPaymentMapper;
