@@ -31,8 +31,82 @@ If TPP-Redirect-Preferred is true and ASPSP supports REDIRECT approach, then RED
 For the redirect approach the individual steps of the SCA are not executed at the XS2A interface, but directly between the PSU and the ASPSP. In this case, the PSU is redirected to a web interface of the ASPSP for authentication.
 Once the PSU has been redirected to the ASPSP (app or web interface) the SCA of the PSU is executed step by step and directly between the ASPSP and the PSU. After completion of the SCA the PSU is redirected back to the TPP.
 
+=== Support Pre-step and Integrated OAuth modes
+The XS2A supports OAuth2 mode in two ways: as a Pre-step for PSU authentication and as Integrated OAuth SCA approach for the authorisation of payment/ consent/ payment cancellation.
+
+Parameter *"scaRedirectFlow"* in the ASPSP-Profile defines variant of the SCA redirect approach:
+
+* REDIRECT for standard Redirect SCA;
+
+* OAUTH_PRESTEP for pre-step OAuth SCA (TPP asks for token before initiation of request);
+
+* OAUTH for integrated OAuth SCA (TPP asks for token after initiation of request).
+
+Parameter *"oauthConfigurationUrl"* in the ASPSP-Profile defines link to IDP (Authorisation Server) to authorise request with Redirect approach. Attribute is available to be configured with custom url pattern.
+
+==== Pre-step OAuth
+Profile settings:
+|===
+|Option |Value
+
+|scaApproachesSupported
+|REDIRECT
+
+|scaRedirectFlow
+|OAUTH_PRESTEP
+
+|...RedirectUrlToAspsp
+|http://localhost:4200/...
+
+|oauthConfigurationUrl
+|http://localhost:4242/...
+|===
+
+During Prestep OAuth TPP in initial request for consent, payment and payment cancellation must send header _Authorisation_ with Token.
+
+* If *Token is present*, then TPP did pre-step OAuth and XS2A gives link *scaRedirect* (based on ...RedirectUrlToAspsp in Profile) to redirect PSU to online-banking (or other authorisation server) for SCA.
+
+* If *Token is absent* in initial request, then XS2A responds with *HTTP error 401 Unauthorized* "Please retrieve token first from ... (link scaOauth)".
+
+==== Integrated OAuth
+Profile settings:
+|===
+|Option |Value
+
+|scaApproachesSupported
+|REDIRECT
+
+|scaRedirectFlow
+|OAUTH
+
+|...RedirectUrlToAspsp
+|http://localhost:4200/...
+
+|oauthConfigurationUrl
+|http://localhost:4242/...
+|===
+
+* If ASPSP supports integrated OAuth and *Token is absent* in initial request for consent, payment and payment cancellation, then XS2A gives link *scaOauth* (based on oauthConfigurationUrl in Profile) to redirect TPP to Authorisation Server (IDP).
+
+* If *Token is present*, then XS2A responds with *HTTP error 403 Forbidden* "Token is not valid for the addressed service/resource."
+
+The Header _Authorisation_ should be present in all GET requests:
+
+* For pre-step Oauth - always.
+
+* For integrated Oauth - after authorisation is finalised.
+
+The Token is validated in SPI, there is a collection of an error messages in responses in case of **invalid token**:
+
+* *401 TOKEN_UNKNOWN* The OAuth2 token cannot be matched by the ASPSP relative to the TPP.
+
+* *401 TOKEN_INVALID* The OAuth2 token is associated to the TPP but is not valid for the addressed service/resource.
+
+* *401 TOKEN_EXPIRED* The OAuth2 token is associated to the TPP but has expired and needs to be renewed.
+
 === SCA using the decoupled approach
-The transaction flow of the decoupled approach to SCA is similar to that of the redirect approach. The difference is that the ASPSP asks the PSU to authenticate e.g. by sending a push notification with payment transaction details to a dedicated mobile app or via any other application or device which is independent of the online banking frontend.
+The transaction flow of the decoupled approach to SCA is similar to that of the redirect approach. The difference is that the ASPSP asks the PSU to authenticate
+e.g. by sending a push notification with payment transaction details to a dedicated mobile app or via any other application or device which is independent of the online banking frontend.
 The first factor of authorisation process is executed on XS2A side and the second one through the bank application
 
 === SCA using the embedded approach
@@ -40,6 +114,58 @@ When applying the embedded approach the SCA of the PSU is executed entirely as p
 
 === Explicit/Implicit start of authorisation
 Explicit start of authorisation is supported in case of Multilevel SCA and in case of Signing Basket, otherwise there is implicit start of authorisation.
+
+ASPSP may have Explicit\Implicit\Auto start of authorisation in any case of all flows.
+
+There is an option in ASPSP- Profile *"startAuthorisationMode"* that accepts 3 values (*case-insensetive*):
+
+* Explicit - always explicit;
+
+* Auto - current behaviour (and also default value if no option is set);
+
+* Implicit - always implicit.
+
+This force overrides multilevel SCA, signing baskets etc.
+
+=== Confirmation of Authorisation
+The NextGenPSD2 TF has decided to define a specific mitigation measure in the NextGenPSD2 XS2A interface for session fixation in addition to mitigation measures
+applicable only in the SCA Redirect Approach and Integrated SCA OAuth Approach.
+
+This solution is following the solution proposal as defined in OAuth2 using an access token resp. a confirmation code for a confirmation command of the TPP
+after the transaction has been authorized by the PSU via a redirection to the ASPSP authentication server.
+
+This solution available for the Integrated OAuth NextGenPSD2 Interface solution as well as for a plain redirect SCA approach. The ASPSP will inform the TPP about
+the extended process step by providing an additional hyperlink with *tag "confirmation"* together with either the hyplink with tag *"scaOAuth" or "redirect"*.
+
+The payment (consent, signing basket) will not be executed by the ASPSP as long as the Transaction Confirmation Request Message has not been performed.
+
+The hyperlink with tag *"confirmation"* might be added by the ASPSP to the response body in the following sections of [XS2A IG]:
+
+* Section 5.3.1 Payment Initiation Request (JSON encoding);
+
+* Section 6.4.1 Account Information Concent Request;
+
+* Section 6.4.4 Multilevel SCA for Establish Consent;
+
+* Section 7.1 Start Authorisation Process;
+
+* Section 7.2.3 Update PSU Data (Select Authentication Method).
+
+The entry for the hyperlink is defined as follows:
+
+*"confirmation":* Might be added by the ASPSP if either the "redirect" or "scaOAuth" hyperlink is returned in the same response message. This hyperlink defines the URL to the resource which needs to be updated with:
+
+* a confirmation code as retrieved after the plain redirect authentication process with the ASPSP authentication server or
+
+* an access token as retrieved by submitting an authorization code after the integrated OAuth based authentication process with the ASPSP authentication server.
+
+If the confirmation of the transaction authorisation is mandated by the ASPSP by providing a hyperlink with tag "confirmation", then a new code "unconfirmed" is introduced to the SCA Status data type:
+
+*unconfirmed* - "Authorisation is technically successfully finalised by the PSU, but the authorisation resource needs a confirmation command by the TPP yet".
+
+NOTE: This definition implies that the current available scaStatus "finalised" is still telling the TPP that the full authorisation process (including potentially a confirmation) is successfully completed.
+
+In case where a confirmation is processed but the preceding SCA method failed, then XS2A responds with *HTTP code 400 SCA_INVALID*. 
 
 === Authorisation (SCA) Statuses
 Statuses which are defined finalised:

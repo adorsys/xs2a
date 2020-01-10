@@ -212,7 +212,11 @@ Consent Statuses which are defined as *Finalised*:
 After setting finalised status for consent:
 
 * status isn't allowed to be changed in CMS any more;
-* new authorisation sub-resource can't be created
+* new authorisation sub-resource can't be created.
+
+=== Revoke all consents when account is closed
+
+In case PSU decides to close an account in the bank - ASPSP enables to revoke all AIS and PIIS consents of account in one step. It can be performed via endpoint in the CMS.
 
 === Get consent Status Request
 Field *lastActionDate* - is containing the date of the last action on the consent object either through the XS2A interface or the PSU/ASPSP interface having an impact on the status:
@@ -220,30 +224,30 @@ Field *lastActionDate* - is containing the date of the last action on the consen
 * When consent is created and gets status "Received" - lastActionDate contains date of consent creation.
 * When consent status is changed - lastActionDate also is updated with new date.
 
-=== Additional Account Information
-The following rules and requirements for the support of this service apply.
+=== Account Owner Name Service
+The following rules and requirements for the support of this service apply:
 
-An ASPSP might require an agreement with the TPP to use this service.
+1. An ASPSP may deliver the account owner service without any extension to the consent model as defined in [XS2A-IG].
 
-An ASPSP might differ in rules on different additional data types due e.g. to different  regulatory requirements.
-
-An ASPSP might require an explicit consent by the PSU to deliver this service.
-
-An ASPSP might limit this service to the case where the PSU equals the legal  account owner.
-
-An ASPSP might require consent by the account owner for an PSU within the ASPSP prior to enabling consenting possibility.
+2. An ASPSP may require an explicit consent by the PSU to deliver the account owner name service.
 
 ASPSP may decide whether to support additional account information or not, by setting the corresponding value for parameter in the ASPSP-Profile:
 
 * *accountOwnerInformationSupported* (boolean, default value is FALSE).
-During Consent creation in request the additional account information for AIS as *owner name* and *address information* can be asking.
 
-Optional field *"additionalAccountInformation"* of type *"Additional Information Access"* in the Consent Request:
+During Consent creation in request the additional account information for AIS as *owner name* can be asking.
 
-* is asking for additional information as added within this structured object. This data element might be ignored by the ASPSP if it is not supported (*"accountOwnerInformationSupported" = FALSE*). In this case it will not be part of the consent model which is generated through the call where this object is contained.
+Optional field *"additionalInformation"* of type *"Additional Information Access"* in the Consent Request:
+
+* is asking for additional information as added within this structured object. In case of ASPSP does not support Account Owner Name Service (accountOwnerInformationSupported = FALSE)
+then the Message Code *CONSENT_INVALID* is in response with text *"An explicit consent of ownerName is not supported"*.
 * value of this parameter can be array or empty:
-** If the array is empty in the request, the TPP is asking for the account owner name of all accessible accounts.
-** If the array is empty, also the arrays for accounts, balances or transactions shall be empty if used.
+** The usage of this data element requires at least one of the entries "accounts", "transactions" or "balances" also to be contained in the object.
+** If the array is empty, also the arrays for accounts, balances or transactions shall be empty if used. If the array is empty in the request, the TPP is asking for the account owner name of all accessible accounts.
+
+Fields *"availableAccounts"*, *"availableAccountsWithBalance"* and *"allPsd2"* may have values *"allAccounts"* and *"allAccountsWithOwnerName"*.
+So if any of these fields are present in consent request and ASPSP-Profile contains *accountOwnerInformationSupported=true*, new values should be stored in consent.
+
 This should be passed to SPI together with consent object. Get Consent of received consent should respond with created consent.
 
 If additional account information is supported by ASPSP, then after authorisation of consent ASPSP will indicate additional account information in Account Details or empty array in Account Details (if consent right to have additional info is not confirmed for this PSU). And this state of consent should be responded on Get consent.
