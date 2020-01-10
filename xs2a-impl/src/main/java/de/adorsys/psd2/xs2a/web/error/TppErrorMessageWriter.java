@@ -39,7 +39,7 @@ public class TppErrorMessageWriter {
             throw new IllegalArgumentException( "ErrorCode is not correct for given service type." );
         }
 
-        MessageError messageError = new MessageError(byServiceTypeAndErrorCode.get(), TppMessageInformation.of(tppErrorMessage.getCategory(), messageErrorCode));
+        MessageError messageError = new MessageError(byServiceTypeAndErrorCode.get(), TppMessageInformation.of(tppErrorMessage.getCategory(), messageErrorCode, tppErrorMessage.getTextParams()));
         ErrorMapperContainer.ErrorBody errorBody = errorMapperContainer.getErrorBody(messageError);
         xs2aObjectMapper.writeValue(response.getWriter(), errorBody.getBody());
     }

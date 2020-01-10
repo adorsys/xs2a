@@ -16,65 +16,100 @@
 
 package de.adorsys.psd2.xs2a.web.advice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import de.adorsys.psd2.mapper.Xs2aObjectMapper;
-import de.adorsys.psd2.xs2a.core.error.ErrorType;
-import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
-import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
+import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
+import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ModelAndView;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_405_METHOD_NOT_SUPPORTED;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Xs2aRestExceptionHandlerTest {
-
-    private static final String ERROR_TEXT = "HTTP method 'DELETE' is not supported";
     private static final String METHOD_NAME = "DELETE";
 
     @InjectMocks
-    private Xs2aRestExceptionHandler xs2aRestExceptionHandler;
-    @Mock
-    private ErrorMapperContainer errorMapperContainer;
-    @Mock
-    private ServiceTypeDiscoveryService serviceTypeDiscoveryService;
-    @Mock
-    private ServiceTypeToErrorTypeMapper errorTypeMapper;
+    private Xs2aRestExceptionHandler exceptionHandler;
 
     @Mock
-    private WebRequest webRequest;
+    private TppErrorMessageWriter tppErrorMessageWriter;
+    @Mock
+    private Xs2aEndpointChecker xs2aEndpointChecker;
 
     @Mock
-    private Xs2aObjectMapper xs2aObjectMapper;
+    private HttpServletRequest request;
+    @Mock
+    private HttpServletResponse response;
+    private Object handler;
+    private HttpRequestMethodNotSupportedException methodNotSupportedException;
+    private HttpMediaTypeNotAcceptableException mediaTypeNotAcceptableException;
+
+    @Before
+    public void setUp() {
+        handler = new Object();
+        methodNotSupportedException =  new HttpRequestMethodNotSupportedException(METHOD_NAME);
+        mediaTypeNotAcceptableException = new HttpMediaTypeNotAcceptableException("Error message");
+        when(xs2aEndpointChecker.isXs2aEndpoint(request)).thenReturn(true);
+    }
 
     @Test
-    public void handleHttpRequestMethodNotSupported() throws JsonProcessingException {
-        HttpRequestMethodNotSupportedException exception = new HttpRequestMethodNotSupportedException(METHOD_NAME);
-        HttpHeaders headers = new HttpHeaders();
-        HttpStatus status = HttpStatus.OK;
+    public void doResolveException_resolve() {
+        // When
+        ModelAndView actual = exceptionHandler.doResolveException(request, response, handler, methodNotSupportedException);
 
-        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(ServiceType.PIS);
-        when(errorTypeMapper.mapToErrorType(ServiceType.PIS, 405)).thenReturn(ErrorType.PIS_405);
-        when(errorMapperContainer.getErrorBody(any())).thenReturn(new ErrorMapperContainer.ErrorBody(ERROR_TEXT, HttpStatus.METHOD_NOT_ALLOWED));
-        when(xs2aObjectMapper.writeValueAsString(any())).thenReturn(ERROR_TEXT);
+        // Then
+        assertNotNull(actual);
+    }
 
-        ResponseEntity response = xs2aRestExceptionHandler.handleHttpRequestMethodNotSupported(exception, headers, status, webRequest);
+    @Test
+    public void doResolveException_doNotResolve() {
+        // Given
+        when(xs2aEndpointChecker.isXs2aEndpoint(request)).thenReturn(false);
 
-        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, response.getStatusCode());
-        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
-        assertEquals(ERROR_TEXT, response.getBody());
+        // When
+        ModelAndView actual = exceptionHandler.doResolveException(request, response, handler, methodNotSupportedException);
+
+        // Then
+        assertNull(actual);
+    }
+
+    @Test
+    public void handleHttpRequestMethodNotSupported() throws IOException {
+        // Given
+        TppErrorMessage tppErrorMessage = new TppErrorMessage(ERROR, SERVICE_INVALID_405_METHOD_NOT_SUPPORTED, methodNotSupportedException.getMethod());
+
+        // When
+        exceptionHandler.handleHttpRequestMethodNotSupported(methodNotSupportedException, request, response, handler);
+
+        // Then
+        verify(tppErrorMessageWriter, times(1)).writeError(response, 405, tppErrorMessage);
+    }
+
+    @Test
+    public void handleHttpMediaTypeNotAcceptable() throws IOException {
+        // Given
+        TppErrorMessage tppErrorMessage = new TppErrorMessage(ERROR, CONSENT_INVALID);
+
+        // When
+        exceptionHandler.handleHttpMediaTypeNotAcceptable(mediaTypeNotAcceptableException, request, response, handler);
+
+        // Then
+        verify(tppErrorMessageWriter, times(1)).writeError(response, 401, tppErrorMessage);
     }
 }

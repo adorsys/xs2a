@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
-import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
+import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
@@ -37,8 +37,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoggingContextFilterTest {
-    private static final String XS2A_PATH = "/v1/accounts";
-    private static final String CUSTOM_PATH = "/custom-endpoint";
     private static final String X_REQUEST_ID = "0d7f200e-09b4-46f5-85bd-f4ea89fccace";
     private static final String INTERNAL_REQUEST_ID = "9fe83704-6019-46fa-b8aa-53fb8fa667ea";
 
@@ -47,7 +45,7 @@ public class LoggingContextFilterTest {
     @Mock
     private FilterChain filterChain;
     @Mock
-    private RequestPathResolver requestPathResolver;
+    private Xs2aEndpointChecker xs2aEndpointChecker;;
     @Mock
     private RequestProviderService requestProviderService;
 
@@ -60,8 +58,8 @@ public class LoggingContextFilterTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        when(requestPathResolver.resolveRequestPath(mockRequest))
-            .thenReturn(XS2A_PATH);
+        when(xs2aEndpointChecker.isXs2aEndpoint(mockRequest))
+            .thenReturn(true);
 
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
         when(requestProviderService.getRequestIdString()).thenReturn(X_REQUEST_ID);
@@ -83,8 +81,8 @@ public class LoggingContextFilterTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        when(requestPathResolver.resolveRequestPath(mockRequest))
-            .thenReturn(CUSTOM_PATH);
+        when(xs2aEndpointChecker.isXs2aEndpoint(mockRequest))
+            .thenReturn(false);
 
         // When
         loggingContextFilter.doFilter(mockRequest, mockResponse, filterChain);

@@ -21,7 +21,6 @@ import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import lombok.extern.slf4j.Slf4j;
@@ -63,16 +62,14 @@ public class OauthModeFilter extends GlobalAbstractExceptionFilter {
 
     private final AspspProfileServiceWrapper aspspProfileService;
     private final RequestProviderService requestProviderService;
-    private final TppErrorMessageBuilder tppErrorMessageBuilder;
     private final ScaApproachResolver scaApproachResolver;
     private final TppErrorMessageWriter tppErrorMessageWriter;
     private final RequestPathResolver requestPathResolver;
 
-    public OauthModeFilter(TppErrorMessageWriter tppErrorMessageWriter, AspspProfileServiceWrapper aspspProfileService, RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder, ScaApproachResolver scaApproachResolver, TppErrorMessageWriter tppErrorMessageWriter1, RequestPathResolver requestPathResolver) {
+    public OauthModeFilter(TppErrorMessageWriter tppErrorMessageWriter, AspspProfileServiceWrapper aspspProfileService, RequestProviderService requestProviderService, ScaApproachResolver scaApproachResolver, TppErrorMessageWriter tppErrorMessageWriter1, RequestPathResolver requestPathResolver) {
         super(tppErrorMessageWriter);
         this.aspspProfileService = aspspProfileService;
         this.requestProviderService = requestProviderService;
-        this.tppErrorMessageBuilder = tppErrorMessageBuilder;
         this.scaApproachResolver = scaApproachResolver;
         this.tppErrorMessageWriter = tppErrorMessageWriter1;
         this.requestPathResolver = requestPathResolver;
@@ -83,13 +80,13 @@ public class OauthModeFilter extends GlobalAbstractExceptionFilter {
         if (shouldFilterInternal(request)) {
             if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH_PRE_STEP) && requestProviderService.getOAuth2Token() == null) {
                 log.info("OAuth pre-step selected, no authorisation header is present in the request");
-                tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, tppErrorMessageBuilder.buildTppErrorMessageWithPlaceholder(ERROR, UNAUTHORIZED_NO_TOKEN, aspspProfileService.getOauthConfigurationUrl()));
+                tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, new TppErrorMessage(ERROR, UNAUTHORIZED_NO_TOKEN, aspspProfileService.getOauthConfigurationUrl()));
                 return;
             }
 
             if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH) && StringUtils.isNotBlank(requestProviderService.getOAuth2Token())) {
                 log.info("OAuth integrated selected, authorisation header is present in the request");
-                tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_FORBIDDEN, tppErrorMessageBuilder.buildTppErrorMessage(ERROR, FORBIDDEN));
+                tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_FORBIDDEN, new TppErrorMessage(ERROR, FORBIDDEN));
                 return;
             }
         }

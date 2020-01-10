@@ -20,9 +20,8 @@ import de.adorsys.psd2.validator.signature.DigestVerifier;
 import de.adorsys.psd2.validator.signature.SignatureVerifier;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
+import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
-import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -48,15 +47,13 @@ public class SignatureFilter extends AbstractXs2aFilter {
     private static final String PATTERN_MESSAGE = "TPP unauthorized: {}";
     private final AspspProfileServiceWrapper aspspProfileService;
     private final TppErrorMessageWriter tppErrorMessageWriter;
-    private final TppErrorMessageBuilder tppErrorMessageBuilder;
     private final DigestVerifier digestVerifier;
     private final SignatureVerifier signatureVerifier;
 
-    public SignatureFilter(TppErrorMessageWriter tppErrorMessageWriter, RequestPathResolver requestPathResolver, AspspProfileServiceWrapper aspspProfileService, TppErrorMessageWriter tppErrorMessageWriter1, TppErrorMessageBuilder tppErrorMessageBuilder, DigestVerifier digestVerifier, SignatureVerifier signatureVerifier) {
-        super(tppErrorMessageWriter, requestPathResolver);
+    public SignatureFilter(TppErrorMessageWriter tppErrorMessageWriter, Xs2aEndpointChecker xs2aEndpointChecker, AspspProfileServiceWrapper aspspProfileService, TppErrorMessageWriter tppErrorMessageWriter1, DigestVerifier digestVerifier, SignatureVerifier signatureVerifier) {
+        super(tppErrorMessageWriter, xs2aEndpointChecker);
         this.aspspProfileService = aspspProfileService;
         this.tppErrorMessageWriter = tppErrorMessageWriter1;
-        this.tppErrorMessageBuilder = tppErrorMessageBuilder;
         this.digestVerifier = digestVerifier;
         this.signatureVerifier = signatureVerifier;
     }
@@ -143,6 +140,6 @@ public class SignatureFilter extends AbstractXs2aFilter {
     }
 
     private void setResponseStatusAndErrorCode(HttpServletResponse response, MessageErrorCode messageErrorCode) throws IOException {
-        tppErrorMessageWriter.writeError(response, messageErrorCode.getCode(), tppErrorMessageBuilder.buildTppErrorMessage(ERROR, messageErrorCode));
+        tppErrorMessageWriter.writeError(response, messageErrorCode.getCode(), new TppErrorMessage(ERROR, messageErrorCode));
     }
 }

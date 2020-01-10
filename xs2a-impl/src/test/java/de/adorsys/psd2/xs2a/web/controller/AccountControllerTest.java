@@ -39,9 +39,7 @@ import de.adorsys.psd2.xs2a.service.ais.TransactionService;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
-import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
-import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,9 +64,7 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
-import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_EXPIRED;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static junit.framework.TestCase.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -119,10 +115,7 @@ public class AccountControllerTest {
     @Mock
     private ResponseErrorMapper responseErrorMapper;
     @Mock
-    private TppErrorMessageBuilder tppErrorMessageBuilder;
-    @Mock
     private TppErrorMessageWriter tppErrorMessageWriter;
-
 
     @Before
     public void setUp() {
@@ -374,10 +367,8 @@ public class AccountControllerTest {
     @Test
     public void downloadTransactions_spiError() throws IOException {
         // Given
-        TppErrorMessage tppErrorMessage = new TppErrorMessage(ERROR, CERTIFICATE_EXPIRED, "Certificate is expired");
 
         when(transactionService.downloadTransactions(CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID)).thenReturn(buildTransactionDownloadResponseError());
-        when(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, FORMAT_ERROR)).thenReturn(tppErrorMessage);
 
         // When
         accountController.downloadTransactions(CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
@@ -525,5 +516,4 @@ public class AccountControllerTest {
                    .fail(new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR)))
                    .build();
     }
-
 }

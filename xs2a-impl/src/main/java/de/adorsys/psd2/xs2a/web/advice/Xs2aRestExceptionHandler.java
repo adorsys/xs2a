@@ -16,70 +16,49 @@
 
 package de.adorsys.psd2.xs2a.web.advice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import de.adorsys.psd2.mapper.Xs2aObjectMapper;
-import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.core.error.ErrorType;
-import de.adorsys.psd2.xs2a.core.error.MessageError;
-import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
+import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
+import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
+import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 
-import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_405_METHOD_NOT_SUPPORTED;
 
 @Slf4j
-@ControllerAdvice
+@Component
 @RequiredArgsConstructor
-public class Xs2aRestExceptionHandler extends ResponseEntityExceptionHandler {
-    private final ErrorMapperContainer errorMapperContainer;
-    private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
-    private final ServiceTypeToErrorTypeMapper errorTypeMapper;
-    private final Xs2aObjectMapper xs2aObjectMapper;
+public class Xs2aRestExceptionHandler extends DefaultHandlerExceptionResolver {
+    private final TppErrorMessageWriter tppErrorMessageWriter;
+    private final Xs2aEndpointChecker xs2aEndpointChecker;
 
     @Override
-    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
-                                                                         HttpHeaders headers,
-                                                                         HttpStatus status,
-                                                                         WebRequest request) {
-        String responseStringWithError = StringUtils.EMPTY;
-
-        try {
-            responseStringWithError = xs2aObjectMapper.writeValueAsString(createError(ex.getMethod()));
-        } catch (JsonProcessingException e) {
-            log.warn("Can't convert object to json: {}", e.getMessage());
+    protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        if (xs2aEndpointChecker.isXs2aEndpoint(request)) {
+            return super.doResolveException(request, response, handler, ex);
         }
-
-        return ResponseEntity
-                   .status(HttpStatus.METHOD_NOT_ALLOWED)
-                   .contentType(MediaType.APPLICATION_JSON)
-                   .body(responseStringWithError);
-    }
-
-    private Object createError(String methodName) {
-        MessageError messageError = new MessageError(errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), SERVICE_INVALID_405.getCode()), buildErrorTppMessages(methodName));
-        return errorMapperContainer.getErrorBody(messageError).getBody();
-    }
-
-    private TppMessageInformation buildErrorTppMessages(String methodName) {
-        return of(SERVICE_INVALID_405_METHOD_NOT_SUPPORTED, methodName);
+        return null;
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ErrorMapperContainer.ErrorBody errorBody = this.errorMapperContainer.getErrorBody(new MessageError(ErrorType.AIS_401, of(CONSENT_INVALID)));
-        return new ResponseEntity<>(errorBody.getBody(), errorBody.getStatus());
+    protected ModelAndView handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+        tppErrorMessageWriter.writeError(response, 405, new TppErrorMessage(ERROR, SERVICE_INVALID_405_METHOD_NOT_SUPPORTED, ex.getMethod()));
+        return new ModelAndView();
+    }
+
+    @Override
+    protected ModelAndView handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+        tppErrorMessageWriter.writeError(response, 401, new TppErrorMessage(ERROR, CONSENT_INVALID));
+        return new ModelAndView();
     }
 }

@@ -31,7 +31,6 @@ import de.adorsys.psd2.xs2a.service.ais.TransactionService;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
-import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
 import io.swagger.annotations.Api;
@@ -74,7 +73,6 @@ public class AccountController implements AccountApi {
     private final ResponseMapper responseMapper;
     private final AccountModelMapper accountModelMapper;
     private final ResponseErrorMapper responseErrorMapper;
-    private final TppErrorMessageBuilder tppErrorMessageBuilder;
     private final TppErrorMessageWriter tppErrorMessageWriter;
 
     @Override
@@ -124,7 +122,7 @@ public class AccountController implements AccountApi {
         if (downloadTransactionsResponse.hasError()) {
             MessageError error = downloadTransactionsResponse.getError();
             TppMessageInformation tppMessage = error.getTppMessage();
-            flushResponseError(error.getErrorType().getErrorCode(), tppErrorMessageBuilder.buildTppErrorMessage(tppMessage.getCategory(), tppMessage.getMessageErrorCode()));
+            flushResponseError(error.getErrorType().getErrorCode(), new TppErrorMessage(tppMessage.getCategory(), tppMessage.getMessageErrorCode()));
             return;
         }
 
@@ -143,7 +141,7 @@ public class AccountController implements AccountApi {
         } catch (IOException e) {
             log.info("Consent-ID: [{}], Account-ID: [{}]. Download-ID [{}]. Download transactions failed: IOException occurred in downloadTransactions controller.",
                      consentId, accountId, downloadId);
-            flushResponseError(HttpStatus.INTERNAL_SERVER_ERROR.value(), tppErrorMessageBuilder.buildTppErrorMessage(ERROR, MessageErrorCode.INTERNAL_SERVER_ERROR));
+            flushResponseError(HttpStatus.INTERNAL_SERVER_ERROR.value(), new TppErrorMessage(ERROR, MessageErrorCode.INTERNAL_SERVER_ERROR));
         }
     }
 
