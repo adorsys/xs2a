@@ -263,7 +263,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <argLine>-Dspring.profiles.active=mock-qwac,test</argLine>
+                    <argLine>@{argLine} -Dspring.profiles.active=mock-qwac,test</argLine>
                 </configuration>
             </plugin>
             <plugin>

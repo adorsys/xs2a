@@ -189,7 +189,7 @@
         <javax.el-api.version>3.0.0</javax.el-api.version>
         <jaxb-api.version>2.3.0</jaxb-api.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
-        <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <classmate.version>1.4.0</classmate.version>
 
@@ -222,7 +222,10 @@
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.moduleName>${project.artifactId}</sonar.moduleName>
         <sonar.language>java</sonar.language>
-        <sonar.coverage.exclusions>**/*Entity.java,**/*TO.java,**/*Exception.java,**/*Config.java</sonar.coverage.exclusions>
+        <sonar.coverage.exclusions>**/*Entity.java,**/*TO.java,**/*BO.java,**/*PO.java,**/*Application.java,**/*Exception.java,
+            **/*Config.java,pom.xml,/xs2a-server-api/**/*,/xs2a-core-payments/**/*,**/consent-psu-api/**/*,**/consent-core-web/**/*,
+            **/consent-aspsp-api/**/*,**/spi-stub/**/*
+        </sonar.coverage.exclusions>
     </properties>
 
     <dependencyManagement>
@@ -761,7 +764,7 @@ Use it manually to generate javadocs. Don't commit it
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.2</version>
+                <version>0.8.5</version>
                 <configuration>
                     <destFile>${sonar.jacoco.reportPath}</destFile>
                     <dataFile>${sonar.jacoco.reportPath}</dataFile>
