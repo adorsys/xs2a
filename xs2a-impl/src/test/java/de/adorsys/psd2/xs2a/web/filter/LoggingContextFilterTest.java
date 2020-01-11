@@ -32,7 +32,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -40,8 +39,8 @@ import static org.mockito.Mockito.*;
 public class LoggingContextFilterTest {
     private static final String XS2A_PATH = "/v1/accounts";
     private static final String CUSTOM_PATH = "/custom-endpoint";
-    private static final UUID X_REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
-    private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("9fe83704-6019-46fa-b8aa-53fb8fa667ea");
+    private static final String X_REQUEST_ID = "0d7f200e-09b4-46f5-85bd-f4ea89fccace";
+    private static final String INTERNAL_REQUEST_ID = "9fe83704-6019-46fa-b8aa-53fb8fa667ea";
 
     @Mock
     private LoggingContextService loggingContextService;
@@ -64,8 +63,8 @@ public class LoggingContextFilterTest {
         when(requestPathResolver.resolveRequestPath(mockRequest))
             .thenReturn(XS2A_PATH);
 
-        when(requestProviderService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
-        when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
+        when(requestProviderService.getRequestIdString()).thenReturn(X_REQUEST_ID);
 
         // When
         loggingContextFilter.doFilter(mockRequest, mockResponse, filterChain);

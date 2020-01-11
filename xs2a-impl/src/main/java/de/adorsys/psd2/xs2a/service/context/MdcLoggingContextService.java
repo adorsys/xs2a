@@ -24,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 public class MdcLoggingContextService implements LoggingContextService {
     private static final String TRANSACTION_STATUS_KEY = "transactionStatus";
@@ -73,9 +71,9 @@ public class MdcLoggingContextService implements LoggingContextService {
     }
 
     @Override
-    public void storeRequestInformation(UUID internalRequestId, UUID xRequestId) {
-        MDC.put(INTERNAL_REQUEST_ID_KEY, internalRequestId.toString());
-        MDC.put(X_REQUEST_ID_KEY, xRequestId.toString());
+    public void storeRequestInformation(String internalRequestId, String xRequestId) {
+        MDC.put(INTERNAL_REQUEST_ID_KEY, internalRequestId);
+        MDC.put(X_REQUEST_ID_KEY, xRequestId);
     }
 
     @Override

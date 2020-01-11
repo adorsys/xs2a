@@ -22,8 +22,6 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
 /**
  * Service for storing and retrieving information about the current request for further usage in logs.
  * Should be cleared manually after every request.
@@ -85,7 +83,7 @@ public interface LoggingContextService {
      * @param internalRequestId current internal request id
      * @param xRequestId        current used x-request-id
      */
-    void storeRequestInformation(UUID internalRequestId, UUID xRequestId);
+    void storeRequestInformation(String internalRequestId, String xRequestId);
 
     /**
      * Clears current logging context.

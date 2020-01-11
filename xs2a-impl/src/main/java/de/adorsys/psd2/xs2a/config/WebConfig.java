@@ -29,7 +29,6 @@ import de.adorsys.psd2.xs2a.domain.InternalRequestIdHolder;
 import de.adorsys.psd2.xs2a.domain.RedirectIdHolder;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
@@ -76,7 +75,6 @@ public class WebConfig implements WebMvcConfigurer {
     private final ErrorMapperContainer errorMapperContainer;
     private final Xs2aObjectMapper xs2aObjectMapper;
     private final RequestValidationInterceptor requestValidationInterceptor;
-    private final RequestProviderService requestProviderService;
     private final RedirectIdService redirectIdService;
     private final RequestResponseLogger requestResponseLogger;
     private final LoggingContextService loggingContextService;

@@ -23,8 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.MDC;
 
-import java.util.UUID;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -134,8 +132,8 @@ public class MdcLoggingContextServiceTest {
     @Test
     public void storeRequestInformation_shouldPutRequestIdsIntoMdc() {
         // Given
-        UUID xRequestId = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
-        UUID internalRequestId = UUID.fromString("9fe83704-6019-46fa-b8aa-53fb8fa667ea");
+        String xRequestId = "0d7f200e-09b4-46f5-85bd-f4ea89fccace";
+        String internalRequestId = "9fe83704-6019-46fa-b8aa-53fb8fa667ea";
 
         // When
         mdcLoggingContextService.storeRequestInformation(internalRequestId, xRequestId);
