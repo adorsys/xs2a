@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 406 for PIS. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-01-10T12:33:55.792831+02:00[Europe/Kiev]")
 
 public class Error406PIS   {
   @JsonProperty("type")
@@ -112,7 +112,7 @@ public class Error406PIS   {
   **/
   @ApiModelProperty(value = "Detailed human readable text specific to this instance of the error. XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
 
-@Size(max=512)
+@Size(max=500)
 
   @JsonProperty("detail")
   public String getDetail() {
