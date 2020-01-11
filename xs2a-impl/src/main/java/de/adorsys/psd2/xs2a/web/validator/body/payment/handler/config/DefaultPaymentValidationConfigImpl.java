@@ -23,6 +23,7 @@ import lombok.Data;
 @Data
 public class DefaultPaymentValidationConfigImpl implements PaymentValidationConfig {
     protected ValidationObject endToEndIdentification = new ValidationObject(35);
+    protected ValidationObject instructionIdentification = new ValidationObject(35);
     protected ValidationObject ultimateDebtor = new ValidationObject(70);
     protected ValidationObject ultimateCreditor = new ValidationObject(70);
     protected ValidationObject creditorName = new ValidationObject(Occurrence.REQUIRED, 70);

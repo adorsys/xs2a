@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2019 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,11 +17,14 @@ import java.util.Objects;
  */
 @ApiModel(description = "Generic Body for a payment initation via JSON.  This generic JSON body can be used to represent valid payment initiations for the following JSON based payment product,  which where defined in the Implementation Guidelines:    * sepa-credit-transfers   * instant-sepa-credit-transfers   * target-2-payments   * cross-border-credit-transfers  For the convenience of the implementer additional which are already predefinded in the Implementation Guidelines  are included (but commented in source code), such that an ASPSP may add them easily.  Take care: Since the format is intended to fit for all payment products  there are additional conditions which are NOT covered by this specification. Please check the Implementation Guidelines for detailes.   The following data element are depending on the actual payment product available (in source code):   <table style=\"width:100%\">  <tr><th>Data Element</th><th>SCT EU Core</th><th>SCT INST EU Core</th><th>Target2 Paym. Core</th><th>Cross Border CT Core</th></tr>  <tr><td>endToEndIdentification</td><td> optional</td> <td>optional</td> <td>optional</td> <td>n.a.</td> </tr>  <tr><td>instructionIdentification</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>debtorAccount</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>debtorId</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>ultimateDebtor</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>instructedAmount</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>transactionCurrency</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>exchangeRateInformation</td> <td>n.a.</td> <td>n.a.</td><td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>creditorAccount</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>creditorAgent</td> <td>optional</td> <td>optional</td> <td>optional</td> <td>conditional </td> </tr>  <tr><td>creditorAgentName</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>creditorName</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> <td>mandatory</td> </tr>  <tr><td>creditorId</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>creditorAddress</td>optional</td> <td>optional</td> <td>optional</td> <td>conditional </td> </tr>  <tr><td>creditorNameAndAddress</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>ultimateCreditor</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>purposeCode</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>chargeBearer</td> <td>n.a.</td> <td>n.a.</td> <td>optional</td> <td>conditional </td> </tr>  <tr><td>remittanceInformationUnstructured</td> <td>optional</td> <td>optional</td> <td> optional</td> <td>optional</td> </tr>  <tr><td>remittanceInformationUnstructuredArray</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>remittanceInformationStructured</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>requestedExecutionDate</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>  <tr><td>requestedExecutionTime</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> <td>n.a.</td> </tr>     </td></tr>   </table>  IMPORTANT: In this API definition the following holds:   * All data elements mentioned above are defined, but some of them are commented,     i.e. they are only visible in the source code and can be used by uncommenting them.   * Data elements which are mandatory in the table above for all payment products      are set to be mandatory in this specification.   * Data elements which are indicated in the table above as n.a. for all payment products are commented in the source code.   * Data elements which are indicated to be option, conditional or mandatory for at least one payment product      in the table above are set to be optional in the s specification except the case where all are definde to be mandatory.    * Data element which are inticated to be n.a. can be used by the ASPS if needed.      In this case uncomment tthe the relatetd lines in the source code.   * If one uses this data types for some payment products he has to ensure that the used data type is      valid according to the underlying payment product, e.g. by some appropriate validations. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-01-10T12:31:55.101018+02:00[Europe/Kiev]")
 
 public class PaymentInitiationJson   {
   @JsonProperty("endToEndIdentification")
   private String endToEndIdentification = null;
+
+  @JsonProperty("instructionIdentification")
+  private String instructionIdentification = null;
 
   @JsonProperty("debtorAccount")
   private AccountReference debtorAccount = null;
@@ -101,6 +88,28 @@ public class PaymentInitiationJson   {
 
   public void setEndToEndIdentification(String endToEndIdentification) {
     this.endToEndIdentification = endToEndIdentification;
+  }
+
+  public PaymentInitiationJson instructionIdentification(String instructionIdentification) {
+    this.instructionIdentification = instructionIdentification;
+    return this;
+  }
+
+  /**
+   * Get instructionIdentification
+   * @return instructionIdentification
+  **/
+  @ApiModelProperty(value = "")
+
+@Size(max=35)
+
+  @JsonProperty("instructionIdentification")
+  public String getInstructionIdentification() {
+    return instructionIdentification;
+  }
+
+  public void setInstructionIdentification(String instructionIdentification) {
+    this.instructionIdentification = instructionIdentification;
   }
 
   public PaymentInitiationJson debtorAccount(AccountReference debtorAccount) {
@@ -430,27 +439,29 @@ public class PaymentInitiationJson   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    PaymentInitiationJson paymentInitiationJson = (PaymentInitiationJson) o;
+    }
+    PaymentInitiationJson paymentInitiationJson = (PaymentInitiationJson) o;
     return Objects.equals(this.endToEndIdentification, paymentInitiationJson.endToEndIdentification) &&
-    Objects.equals(this.debtorAccount, paymentInitiationJson.debtorAccount) &&
-    Objects.equals(this.ultimateDebtor, paymentInitiationJson.ultimateDebtor) &&
-    Objects.equals(this.instructedAmount, paymentInitiationJson.instructedAmount) &&
-    Objects.equals(this.creditorAccount, paymentInitiationJson.creditorAccount) &&
-    Objects.equals(this.creditorAgent, paymentInitiationJson.creditorAgent) &&
-    Objects.equals(this.creditorAgentName, paymentInitiationJson.creditorAgentName) &&
-    Objects.equals(this.creditorName, paymentInitiationJson.creditorName) &&
-    Objects.equals(this.creditorAddress, paymentInitiationJson.creditorAddress) &&
-    Objects.equals(this.creditorId, paymentInitiationJson.creditorId) &&
-    Objects.equals(this.ultimateCreditor, paymentInitiationJson.ultimateCreditor) &&
-    Objects.equals(this.purposeCode, paymentInitiationJson.purposeCode) &&
-    Objects.equals(this.remittanceInformationUnstructured, paymentInitiationJson.remittanceInformationUnstructured) &&
-    Objects.equals(this.remittanceInformationStructured, paymentInitiationJson.remittanceInformationStructured) &&
-    Objects.equals(this.requestedExecutionDate, paymentInitiationJson.requestedExecutionDate);
+        Objects.equals(this.instructionIdentification, paymentInitiationJson.instructionIdentification) &&
+        Objects.equals(this.debtorAccount, paymentInitiationJson.debtorAccount) &&
+        Objects.equals(this.ultimateDebtor, paymentInitiationJson.ultimateDebtor) &&
+        Objects.equals(this.instructedAmount, paymentInitiationJson.instructedAmount) &&
+        Objects.equals(this.creditorAccount, paymentInitiationJson.creditorAccount) &&
+        Objects.equals(this.creditorAgent, paymentInitiationJson.creditorAgent) &&
+        Objects.equals(this.creditorAgentName, paymentInitiationJson.creditorAgentName) &&
+        Objects.equals(this.creditorName, paymentInitiationJson.creditorName) &&
+        Objects.equals(this.creditorAddress, paymentInitiationJson.creditorAddress) &&
+        Objects.equals(this.creditorId, paymentInitiationJson.creditorId) &&
+        Objects.equals(this.ultimateCreditor, paymentInitiationJson.ultimateCreditor) &&
+        Objects.equals(this.purposeCode, paymentInitiationJson.purposeCode) &&
+        Objects.equals(this.remittanceInformationUnstructured, paymentInitiationJson.remittanceInformationUnstructured) &&
+        Objects.equals(this.remittanceInformationStructured, paymentInitiationJson.remittanceInformationStructured) &&
+        Objects.equals(this.requestedExecutionDate, paymentInitiationJson.requestedExecutionDate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(endToEndIdentification, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorAgentName, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, requestedExecutionDate);
+    return Objects.hash(endToEndIdentification, instructionIdentification, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorAgentName, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, requestedExecutionDate);
   }
 
   @Override
@@ -459,6 +470,7 @@ public class PaymentInitiationJson   {
     sb.append("class PaymentInitiationJson {\n");
 
     sb.append("    endToEndIdentification: ").append(toIndentedString(endToEndIdentification)).append("\n");
+    sb.append("    instructionIdentification: ").append(toIndentedString(instructionIdentification)).append("\n");
     sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
     sb.append("    ultimateDebtor: ").append(toIndentedString(ultimateDebtor)).append("\n");
     sb.append("    instructedAmount: ").append(toIndentedString(instructedAmount)).append("\n");
