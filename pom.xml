@@ -154,7 +154,7 @@
         <apache.commons.collections>4.1</apache.commons.collections>
         <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
         <hibernate.version>5.4.2.Final</hibernate.version>
-        <hibernate.validator.version>6.0.16.Final</hibernate.validator.version>
+        <hibernate.validator.version>6.1.0.Final</hibernate.validator.version>
         <javax.validation.api.version>2.0.1.Final</javax.validation.api.version>
         <jsr311.pi.version>1.1.1</jsr311.pi.version>
         <commons.io.version>2.6</commons.io.version>
@@ -204,7 +204,7 @@
         <spring-aop.version>${spring.version}</spring-aop.version>
         <spring-webmvc.version>${spring.version}</spring-webmvc.version>
         <spring-core.version>${spring.version}</spring-core.version>
-        <spring-data-jpa.version>2.1.8.RELEASE</spring-data-jpa.version>
+        <spring-data-jpa.version>2.1.11.RELEASE</spring-data-jpa.version>
         <spring-boot.version>2.1.4.RELEASE</spring-boot.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
