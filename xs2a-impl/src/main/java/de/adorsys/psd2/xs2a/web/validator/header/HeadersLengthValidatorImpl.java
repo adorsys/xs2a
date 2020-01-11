@@ -22,16 +22,36 @@ import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_OVERSIZE_HEADER;
-import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.HEADERS_MAX_LENGTHS;
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.*;
 
 
 @Component
 public class HeadersLengthValidatorImpl extends AbstractHeaderValidatorImpl
     implements ConsentHeaderValidator, PaymentHeaderValidator {
+
+    static final Map<String, Integer> headerMaxLengths;
+
+    static {
+        Map<String, Integer> maxLengthsHolder = new HashMap<>();
+        maxLengthsHolder.put(PSU_ID, 50);
+        maxLengthsHolder.put(PSU_ID_TYPE, 50);
+        maxLengthsHolder.put(PSU_CORPORATE_ID, 50);
+        maxLengthsHolder.put(PSU_CORPORATE_ID_TYPE, 50);
+
+        // These 2 values are limited by CMS columns length:
+        maxLengthsHolder.put(TPP_REDIRECT_URI, 255);
+        maxLengthsHolder.put(TPP_NOK_REDIRECT_URI, 255);
+
+        maxLengthsHolder.put(PSU_IP_ADDRESS, 140);
+
+        headerMaxLengths = Collections.unmodifiableMap(maxLengthsHolder);
+    }
 
     @Autowired
     public HeadersLengthValidatorImpl(ErrorBuildingService errorBuildingService) {
@@ -47,7 +67,7 @@ public class HeadersLengthValidatorImpl extends AbstractHeaderValidatorImpl
     public MessageError validate(Map<String, String> inputHeaders, MessageError messageError) {
         for (Map.Entry<String, String> header : inputHeaders.entrySet()) {
             if (isHeaderExceedsLength(header)) {
-                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_OVERSIZE_HEADER, header.getKey(), HEADERS_MAX_LENGTHS.get(header.getKey())));
+                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_OVERSIZE_HEADER, header.getKey(), headerMaxLengths.get(header.getKey())));
             }
         }
 
@@ -61,8 +81,8 @@ public class HeadersLengthValidatorImpl extends AbstractHeaderValidatorImpl
             return false; // no header - no length check
         }
         String headerNameLowerCase = headerName.toLowerCase();
-        Set<String> headersToValidate = HEADERS_MAX_LENGTHS.keySet();
+        Set<String> headersToValidate = headerMaxLengths.keySet();
         return headersToValidate.contains(headerNameLowerCase)
-                   && headerValue.length() > HEADERS_MAX_LENGTHS.get(headerNameLowerCase);
+                   && headerValue.length() > headerMaxLengths.get(headerNameLowerCase);
     }
 }

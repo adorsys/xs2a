@@ -79,17 +79,17 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
 
         Consents consents = consentsOptional.get();
 
-        if (consents.getRecurringIndicator() == null) {
+        if (consents.getRecurringIndicator() == null) { //NOSONAR
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "recurringIndicator"));
         }
 
-        if (consents.getValidUntil() == null) {
+        if (consents.getValidUntil() == null) { //NOSONAR
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "validUntil"));
         } else {
             validateValidUntil(consents.getValidUntil(), messageError);
         }
 
-        if (consents.getFrequencyPerDay() == null) {
+        if (consents.getFrequencyPerDay() == null) { //NOSONAR
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "frequencyPerDay"));
         } else {
             validateFrequencyPerDay(consents.getFrequencyPerDay(), messageError);

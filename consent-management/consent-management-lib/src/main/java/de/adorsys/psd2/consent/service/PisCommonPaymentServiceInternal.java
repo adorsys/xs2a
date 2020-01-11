@@ -121,16 +121,18 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Transactional
     public CmsResponse<PisCommonPaymentResponse> getCommonPaymentById(String paymentId) {
         Optional<PisCommonPaymentData> paymentOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
-        Optional<PisCommonPaymentResponse> responseOptional = paymentOptional
-                                                                  .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
-                                                                  .flatMap(pisCommonPaymentMapper::mapToPisCommonPaymentResponse);
+        if (paymentOptional.isPresent()) {
+            Optional<PisCommonPaymentResponse> responseOptional = paymentOptional
+                                                                      .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
+                                                                      .flatMap(pisCommonPaymentMapper::mapToPisCommonPaymentResponse);
 
-        if (responseOptional.isPresent()) {
-            PisCommonPaymentResponse pisCommonPaymentResponse = responseOptional.get();
-            transferCorePaymentToCommonPayment(pisCommonPaymentResponse, paymentOptional.get());
-            return CmsResponse.<PisCommonPaymentResponse>builder()
-                       .payload(pisCommonPaymentResponse)
-                       .build();
+            if (responseOptional.isPresent()) {
+                PisCommonPaymentResponse pisCommonPaymentResponse = responseOptional.get();
+                transferCorePaymentToCommonPayment(pisCommonPaymentResponse, paymentOptional.get());
+                return CmsResponse.<PisCommonPaymentResponse>builder()
+                           .payload(pisCommonPaymentResponse)
+                           .build();
+            }
         }
 
         log.info("Payment ID: [{}]. Get common payment by ID failed, because payment was not found by the ID",
@@ -191,7 +193,6 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @param request   PIS common payment request for update payment data
      * @param paymentId common payment ID
      */
-    // TODO return correct error code in case payment was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408
     @Override
     @Transactional
     public CmsResponse<CmsResponse.VoidResponse> updateCommonPayment(PisCommonPaymentRequest request, String paymentId) {
@@ -259,7 +260,6 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     }
 
     private Optional<PisCommonPaymentData> readPisCommonPaymentDataByPaymentId(String paymentId) {
-        // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
         Optional<PisCommonPaymentData> commonPaymentData = pisPaymentDataRepository.findByPaymentId(paymentId)
                                                                .filter(CollectionUtils::isNotEmpty)
                                                                .map(list -> list.get(0).getPaymentData());
