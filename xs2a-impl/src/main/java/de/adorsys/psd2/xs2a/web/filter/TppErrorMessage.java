@@ -26,5 +26,11 @@ public class TppErrorMessage {
     private MessageCategory category;
     @NotNull
     private MessageErrorCode code;
-    private String text;
+    private Object[] textParams;
+
+    public TppErrorMessage(MessageCategory category, @NotNull MessageErrorCode code, Object... textParams) {
+        this.category = category;
+        this.code = code;
+        this.textParams = textParams;
+    }
 }

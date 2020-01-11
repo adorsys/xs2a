@@ -20,9 +20,8 @@ import de.adorsys.psd2.validator.signature.DigestVerifier;
 import de.adorsys.psd2.validator.signature.SignatureVerifier;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
+import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
-import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +34,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
@@ -50,8 +48,6 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 @RunWith(MockitoJUnitRunner.class)
 public class SignatureFilterTest {
     private static final JsonReader jsonReader = new JsonReader();
-    private static final String XS2A_URI = "/v1/consents";
-    private static final String CUSTOM_PATH = "/custom-endpoint";
 
     private static final String POST_METHOD = "POST";
 
@@ -63,7 +59,7 @@ public class SignatureFilterTest {
     @Mock
     private RequestProviderService requestProviderService;
     @Mock
-    private TppErrorMessageBuilder tppErrorMessageBuilder;
+    private Xs2aEndpointChecker xs2aEndpointChecker;
     @Mock
     private TppErrorMessageWriter tppErrorMessageWriter;
     @Mock
@@ -72,8 +68,6 @@ public class SignatureFilterTest {
     private SignatureVerifier signatureVerifier;
     @Mock
     private FilterChain chain;
-    @Mock
-    private RequestPathResolver requestPathResolver;
 
     private Map<String, String> headerMap = new HashMap<>();
 
@@ -85,8 +79,7 @@ public class SignatureFilterTest {
         fillDefaultHeaders();
         body = "correct json body";
 
-        when(requestPathResolver.resolveRequestPath(any(HttpServletRequest.class)))
-            .thenReturn(XS2A_URI);
+        when(xs2aEndpointChecker.isXs2aEndpoint(any())).thenReturn(true);
     }
 
     @Test
@@ -256,8 +249,7 @@ public class SignatureFilterTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        when(requestPathResolver.resolveRequestPath(mockRequest))
-            .thenReturn(CUSTOM_PATH);
+        when(xs2aEndpointChecker.isXs2aEndpoint(mockRequest)).thenReturn(false);
 
         // When
         signatureFilter.doFilter(mockRequest, mockResponse, chain);
@@ -271,7 +263,6 @@ public class SignatureFilterTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContent(body.getBytes());
         mockRequest.setMethod(method);
-        mockRequest.setRequestURI(XS2A_URI);
 
         headerMap.forEach(mockRequest::addHeader);
 

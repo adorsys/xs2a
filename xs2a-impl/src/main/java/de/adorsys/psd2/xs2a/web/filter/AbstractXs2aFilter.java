@@ -16,35 +16,24 @@
 
 package de.adorsys.psd2.xs2a.web.filter;
 
+import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
-import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Abstract filter that will be executed only once and will be applied only to XS2A endpoints.
  */
 public abstract class AbstractXs2aFilter extends GlobalAbstractExceptionFilter {
-    private static final List<String> XS2A_ENDPOINTS = Arrays.asList("/v1/accounts",
-                                                                     "/v1/consents",
-                                                                     "/v1/funds-confirmations",
-                                                                     "/v1/payments",
-                                                                     "/v1/bulk-payments",
-                                                                     "/v1/periodic-payments",
-                                                                     "/v1/signing-baskets");
-    private final RequestPathResolver requestPathResolver;
+    private final Xs2aEndpointChecker xs2aEndpointChecker;
 
-    protected AbstractXs2aFilter(TppErrorMessageWriter tppErrorMessageWriter, RequestPathResolver requestPathResolver) {
+    protected AbstractXs2aFilter(TppErrorMessageWriter tppErrorMessageWriter, Xs2aEndpointChecker xs2aEndpointChecker) {
         super(tppErrorMessageWriter);
-        this.requestPathResolver = requestPathResolver;
+        this.xs2aEndpointChecker = xs2aEndpointChecker;
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String requestPath = requestPathResolver.resolveRequestPath(request);
-        return XS2A_ENDPOINTS.stream()
-                   .noneMatch(requestPath::startsWith);
+        return !xs2aEndpointChecker.isXs2aEndpoint(request);
     }
 }

@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
+import de.adorsys.psd2.xs2a.web.advice.Xs2aRestExceptionHandler;
 import de.adorsys.psd2.xs2a.web.interceptor.RequestValidationInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
@@ -48,6 +49,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -79,6 +81,12 @@ public class WebConfig implements WebMvcConfigurer {
     private final RequestResponseLogger requestResponseLogger;
     private final LoggingContextService loggingContextService;
     private final PathParameterExtractor pathParameterExtractor;
+    private final Xs2aRestExceptionHandler xs2aRestExceptionHandler;
+
+    @Override
+    public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
+        resolvers.add(0, xs2aRestExceptionHandler);
+    }
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {

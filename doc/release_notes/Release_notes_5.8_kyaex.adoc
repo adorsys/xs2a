@@ -1,0 +1,10 @@
+= Release notes v.5.8
+
+== Table of Contents
+
+* Handle errors only for XS2A endpoints
+
+== Handle errors only for XS2A endpoints
+
+From now on, `Xs2aRestExceptionHandler` handles exceptions only from XS2A endpoints.
+

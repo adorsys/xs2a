@@ -68,7 +68,7 @@ public class TppErrorMessageWriterTest {
         when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE);
 
         TppErrorMessage tppErrorMessage = new TppErrorMessage(MESSAGE_CATEGORY, MESSAGE_ERROR_CODE, MESSAGE_ERROR_STRING);
-        MessageError messageError = new MessageError(ErrorType.AIS_400, TppMessageInformation.of(tppErrorMessage.getCategory(), tppErrorMessage.getCode()));
+        MessageError messageError = new MessageError(ErrorType.AIS_400, TppMessageInformation.of(tppErrorMessage.getCategory(), tppErrorMessage.getCode(), tppErrorMessage.getTextParams()));
         when(errorMapperContainer.getErrorBody(messageError)).thenReturn(ERROR_BODY);
         when(response.getWriter()).thenReturn(PRINT_WRITER);
 

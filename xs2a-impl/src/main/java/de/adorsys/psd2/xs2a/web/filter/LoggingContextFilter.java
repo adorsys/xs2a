@@ -18,8 +18,8 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
-import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
@@ -38,10 +38,10 @@ public class LoggingContextFilter extends AbstractXs2aFilter {
     private final RequestProviderService requestProviderService;
 
     public LoggingContextFilter(TppErrorMessageWriter tppErrorMessageWriter,
-                                RequestPathResolver requestPathResolver,
+                                Xs2aEndpointChecker xs2aEndpointChecker,
                                 LoggingContextService loggingContextService,
                                 RequestProviderService requestProviderService) {
-        super(tppErrorMessageWriter, requestPathResolver);
+        super(tppErrorMessageWriter, xs2aEndpointChecker);
         this.loggingContextService = loggingContextService;
         this.requestProviderService = requestProviderService;
     }
