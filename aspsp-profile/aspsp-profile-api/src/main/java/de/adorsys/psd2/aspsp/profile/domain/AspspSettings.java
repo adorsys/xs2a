@@ -63,4 +63,5 @@ public class AspspSettings {
     private boolean entryReferenceFromSupported;
     private List<String> supportedTransactionApplicationTypes;
     private StartAuthorisationMode startAuthorisationMode;
+    private boolean checkUriComplianceToDomainSupported;
 }

@@ -641,7 +641,7 @@ public class AisConsentServiceInternalTest {
         return new AspspSettings(1, false, false, null, null,
                                  null, false, null, null, consentLifeTime, 1, false,
                                  false, false, false, false, 1, 1,
-                                 null, 1, 1, null, 1, false, false, false, false, null, ScaRedirectFlow.REDIRECT, false, false, null, StartAuthorisationMode.AUTO);
+                                 null, 1, 1, null, 1, false, false, false, false, null, ScaRedirectFlow.REDIRECT, false, false, null, StartAuthorisationMode.AUTO, false);
     }
 
     private AisConsent buildConsent(String externalId) {

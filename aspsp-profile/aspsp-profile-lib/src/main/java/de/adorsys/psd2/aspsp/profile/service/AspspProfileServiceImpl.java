@@ -67,7 +67,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.isDeltaListSupported(),
             setting.isEntryReferenceFromSupported(),
             setting.getSupportedTransactionApplicationTypes(),
-            StartAuthorisationMode.getByValue(setting.getStartAuthorisationMode())
+            StartAuthorisationMode.getByValue(setting.getStartAuthorisationMode()),
+            setting.isCheckUriComplianceToDomainSupported()
         );
     }
 

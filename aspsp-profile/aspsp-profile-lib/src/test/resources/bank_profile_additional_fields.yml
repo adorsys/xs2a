@@ -51,3 +51,4 @@ setting:
  supportedTransactionApplicationTypes:
    - application/json
  startAuthorisationMode: auto
+ checkUriComplianceToDomainSupported: FALSE
