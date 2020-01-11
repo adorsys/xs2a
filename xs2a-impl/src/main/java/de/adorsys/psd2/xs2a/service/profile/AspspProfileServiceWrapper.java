@@ -273,6 +273,15 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().getStartAuthorisationMode();
     }
 
+    /**
+     * Indicates whether ASPSP supports validation URIs with domain from certificate.
+     *
+     * @return true if ASPSP supports validation URIs with domain from certificate, false otherwise.
+     */
+    public boolean isCheckUriComplianceToDomainSupported() {
+        return readAspspSettings().isCheckUriComplianceToDomainSupported();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }

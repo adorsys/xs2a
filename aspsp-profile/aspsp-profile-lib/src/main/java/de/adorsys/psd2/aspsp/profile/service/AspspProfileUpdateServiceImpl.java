@@ -89,5 +89,6 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setEntryReferenceFromSupported(aspspSettings.isEntryReferenceFromSupported());
         setting.setSupportedTransactionApplicationTypes(aspspSettings.getSupportedTransactionApplicationTypes());
         setting.setStartAuthorisationMode(aspspSettings.getStartAuthorisationMode() == null ? StartAuthorisationMode.AUTO.getValue() : aspspSettings.getStartAuthorisationMode().getValue());
+        setting.setCheckUriComplianceToDomainSupported(aspspSettings.isCheckUriComplianceToDomainSupported());
     }
 }

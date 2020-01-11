@@ -202,4 +202,9 @@ public class BankProfileSetting {
      * The mode of authorisation from the ASPSP profile service.
      */
     private String startAuthorisationMode;
+
+    /**
+     * If ASPSP supports validation URIs with domain from certificate, false otherwise.
+     */
+    private boolean checkUriComplianceToDomainSupported;
 }

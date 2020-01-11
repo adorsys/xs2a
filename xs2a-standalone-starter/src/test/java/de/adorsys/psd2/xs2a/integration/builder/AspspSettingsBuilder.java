@@ -63,6 +63,7 @@ public class AspspSettingsBuilder {
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
     private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("application/json", "application/xml");
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
+    private static final boolean CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED = false;
 
     public static AspspSettings buildAspspSettings() {
         return new AspspSettings(
@@ -98,7 +99,8 @@ public class AspspSettingsBuilder {
             DELTA_LIST_SUPPORTED,
             ENTRY_REFERENCE_FROM_SUPPORTED,
             SUPPORTED_TRANSACTION_APPLICATION_TYPES,
-            START_AUTHORISATION_MODE);
+            START_AUTHORISATION_MODE,
+            CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED);
     }
 
     public static AspspSettings buildAspspSettingsWithForcedXs2aBaseUrl(String xs2aBaseUrl) {
@@ -135,7 +137,8 @@ public class AspspSettingsBuilder {
             DELTA_LIST_SUPPORTED,
             ENTRY_REFERENCE_FROM_SUPPORTED,
             SUPPORTED_TRANSACTION_APPLICATION_TYPES,
-            START_AUTHORISATION_MODE);
+            START_AUTHORISATION_MODE,
+            CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

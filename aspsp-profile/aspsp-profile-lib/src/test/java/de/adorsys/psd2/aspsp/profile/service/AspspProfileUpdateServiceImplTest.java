@@ -76,6 +76,7 @@ public class AspspProfileUpdateServiceImplTest {
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
     private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("application/json", "application/xml");
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
+    private static final boolean CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED = false;
 
     @InjectMocks
     private AspspProfileUpdateServiceImpl aspspProfileUpdateService;
@@ -105,7 +106,7 @@ public class AspspProfileUpdateServiceImplTest {
                                                                         TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED, SIGNING_BASKET_SUPPORTED, PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED, PIIS_CONSENT_SUPPORTED, REDIRECT_URL_EXPIRATION_TIME_MS, AUTHORISATION_EXPIRATION_TIME_MS,
                                                                         PIS_CANCELLATION_REDIRECT_LINK, NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS, NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS, SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX, PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS,
                                                                         AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED, SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, PSU_IN_INITIAL_REQUEST_MANDATED, FORCE_XS2A_BASE_URL, XS2A_BASE_URL, SCA_REDIRECT_FLOW, DELTA_LIST_SUPPORTED, ENTRY_REFERENCE_FROM_SUPPORTED, SUPPORTED_TRANSACTION_APPLICATION_TYPES,
-                                                                        START_AUTHORISATION_MODE));
+                                                                        START_AUTHORISATION_MODE, CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED));
 
         //Then:
         BankProfileSetting setting = profileConfiguration.getSetting();
