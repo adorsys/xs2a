@@ -6480,6 +6480,10 @@ components:
           $ref: "#/components/schemas/challengeData"
         _links:
           $ref: "#/components/schemas/_linksPaymentInitiationCancel"
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage2XX"
 
 
     paymentInitiationWithStatusResponse:
@@ -6836,6 +6840,10 @@ components:
           $ref: "#/components/schemas/_linksConsents"
         psuMessage:
           $ref: "#/components/schemas/psuMessageText"
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage2XX"
 
 
     consentStatusResponse-200:
@@ -9453,7 +9461,7 @@ components:
             XPath might be used to point to the issue generating the error in addition.
             Remark for Future: In future, a dedicated field might be introduced for the XPath.
           type: string
-          maxLength: 512
+          maxLength: 500
         code:
           $ref: "#/components/schemas/MessageCode406_PIS"
         additionalErrors:
