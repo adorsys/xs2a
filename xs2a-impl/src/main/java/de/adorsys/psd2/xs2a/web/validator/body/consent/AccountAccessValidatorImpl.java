@@ -71,7 +71,7 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
 
         Consents consents = consentsOptional.get();
 
-        if (consents.getAccess() == null) {
+        if (consents.getAccess() == null) { //NOSONAR
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "access"));
         } else {
             validateAccountAccess(consents, messageError);

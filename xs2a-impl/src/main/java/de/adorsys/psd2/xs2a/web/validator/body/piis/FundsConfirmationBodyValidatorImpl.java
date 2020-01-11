@@ -63,13 +63,13 @@ public class FundsConfirmationBodyValidatorImpl extends AbstractBodyValidatorImp
 
         ConfirmationOfFunds confirmationOfFunds = confirmationOfFundsOptional.get();
 
-        if (confirmationOfFunds.getAccount() == null) {
+        if (confirmationOfFunds.getAccount() == null) { //NOSONAR
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "access"));
         } else {
             accountReferenceValidator.validate(confirmationOfFunds.getAccount(), messageError);
         }
 
-        if (confirmationOfFunds.getInstructedAmount() == null) {
+        if (confirmationOfFunds.getInstructedAmount() == null) { //NOSONAR
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "instructedAmount"));
         } else {
             validateAmount(confirmationOfFunds.getInstructedAmount(), messageError);

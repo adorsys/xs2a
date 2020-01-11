@@ -28,7 +28,6 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.HEADERS_MAX_LENGTHS;
 import static org.junit.Assert.*;
 
 public class HeadersLengthValidatorImplTest {
@@ -61,7 +60,7 @@ public class HeadersLengthValidatorImplTest {
     @Test
     public void validate_allLengthsAreCorrect() {
         // Given
-        HEADERS_MAX_LENGTHS.forEach((header, length) -> headers.put(header, StringUtils.repeat(ONE_CHAR, length)));
+        HeadersLengthValidatorImpl.headerMaxLengths.forEach((header, length) -> headers.put(header, StringUtils.repeat(ONE_CHAR, length)));
 
         // When
         validator.validate(headers, messageError);
@@ -73,7 +72,7 @@ public class HeadersLengthValidatorImplTest {
     @Test
     public void validate_allLengthsAreExceeded() {
         // Given
-        HEADERS_MAX_LENGTHS.forEach((header, length) -> headers.put(header, StringUtils.repeat(ONE_CHAR, length + 1)));
+        HeadersLengthValidatorImpl.headerMaxLengths.forEach((header, length) -> headers.put(header, StringUtils.repeat(ONE_CHAR, length + 1)));
 
         // When
         validator.validate(headers, messageError);
@@ -87,7 +86,7 @@ public class HeadersLengthValidatorImplTest {
 
     @Test
     public void check_that_headersList_contains_only_lowercase() {
-        for (String header : HEADERS_MAX_LENGTHS.keySet()) {
+        for (String header : HeadersLengthValidatorImpl.headerMaxLengths.keySet()) {
             assertEquals(header, header.toLowerCase());
         }
     }

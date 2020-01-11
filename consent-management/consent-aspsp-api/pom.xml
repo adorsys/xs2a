@@ -28,6 +28,7 @@
 
     <artifactId>consent-aspsp-api</artifactId>
     <packaging>jar</packaging>
+
     <properties>
         <ruleset.basedir>../..</ruleset.basedir>
     </properties>
@@ -36,7 +37,7 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-core-api</artifactId>
-            <version>5.8-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

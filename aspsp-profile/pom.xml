@@ -25,9 +25,16 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>de.adorsys.psd2</groupId>
     <artifactId>aspsp-profile</artifactId>
-    <version>5.8-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>aspsp-profile</name>
+    <description>ASPSP Profile Module for OpenSource PSD2 XS2A API implementation</description>
+
+    <properties>
+        <ruleset.basedir>..</ruleset.basedir>
+    </properties>
+
     <modules>
         <module>aspsp-profile-api</module>
         <module>aspsp-profile-server</module>
@@ -36,11 +43,5 @@
         <module>aspsp-profile-web</module>
         <module>aspsp-profile-internal-api</module>
     </modules>
-    <packaging>pom</packaging>
 
-    <name>aspsp-profile</name>
-    <description>ASPSP Profile Module for OpenSource PSD2 XS2A API implementation</description>
-    <properties>
-        <ruleset.basedir>..</ruleset.basedir>
-    </properties>
 </project>

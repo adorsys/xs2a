@@ -63,7 +63,7 @@ public class PiisConsentValidation {
                                                 .map(this::isTppValid)
                                                 .orElseGet(() -> ValidationResult.invalid(PIIS_400, CONSENT_UNKNOWN_400));
 
-        if (validationResult.isNotValid()) {
+        if (!filteredPiisConsent.isPresent() || validationResult.isNotValid()) {
             return new PiisConsentValidationResult(buildErrorHolderFromMessageError(validationResult.getMessageError()));
         }
 

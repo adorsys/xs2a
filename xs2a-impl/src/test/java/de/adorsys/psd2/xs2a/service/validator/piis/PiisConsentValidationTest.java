@@ -32,7 +32,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE;
@@ -46,7 +45,6 @@ public class PiisConsentValidationTest {
     private static final String CREATE_WRONG_PIIS_CONSENT_JSON_PATH = "json/service/validator/tpp/wrong-piis-consent-request.json";
     private static final String AUTHORISATION_NUMBER = "12345987";
     private static final String DIFFERENT_AUTHORISATION_NUMBER = "different authorisation number";
-    private static final UUID X_REQUEST_ID = UUID.fromString("1af360bc-13cb-40ab-9aa0-cc0d6af4510c");
 
     private JsonReader jsonReader = new JsonReader();
 
