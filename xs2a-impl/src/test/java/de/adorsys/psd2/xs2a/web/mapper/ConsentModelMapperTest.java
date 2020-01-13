@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
@@ -69,6 +70,7 @@ public class ConsentModelMapperTest {
     private static final String MASKED_PAN = "Test MASKED_PAN";
     private static final String MSISDN = "Test MSISDN";
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
+    private static final String INVALID_DOMAIN_MESSAGE = "TPP URIs are not compliant with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate";
 
     @InjectMocks
     private ConsentModelMapper consentModelMapper;
@@ -107,6 +109,23 @@ public class ConsentModelMapperTest {
         methods.add(new AuthenticationObject());
         when(scaMethodsMapper.mapToScaMethods(anyList())).thenReturn(methods);
         when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
+
+        // When
+        ConsentsResponse201 actual = consentModelMapper.mapToConsentsResponse201(createConsentResponseWithScaMethods);
+
+        // Then
+        checkCommonFields(actual);
+        assertFalse(actual.getScaMethods().isEmpty());
+    }
+
+    @Test
+    public void mapToConsentsResponse201_withScaMethods_withWarnings() {
+        // Given
+        ScaMethods methods = new ScaMethods();
+        methods.add(new AuthenticationObject());
+        when(scaMethodsMapper.mapToScaMethods(anyList())).thenReturn(methods);
+        when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
+        createConsentResponseWithScaMethods.setTppMessageInformation(Collections.singleton(TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE)));
 
         // When
         ConsentsResponse201 actual = consentModelMapper.mapToConsentsResponse201(createConsentResponseWithScaMethods);

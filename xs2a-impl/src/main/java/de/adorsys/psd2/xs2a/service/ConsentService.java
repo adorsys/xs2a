@@ -112,7 +112,9 @@ public class ConsentService {
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred) { // NOPMD // TODO we need to refactor this method and class. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/749
         xs2aEventService.recordTppRequest(EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, request);
 
-        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(request, psuData));
+        CreateConsentRequestObject createConsentRequestObject = new CreateConsentRequestObject(request, psuData);
+
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentRequestObject);
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}]. Create account consent with response - validation failed: {}",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), validationResult.getMessageError());
@@ -172,6 +174,9 @@ public class ConsentService {
 
         ConsentStatus consentStatus = ConsentStatus.RECEIVED;
         CreateConsentResponse createConsentResponse = new CreateConsentResponse(consentStatus.getValue(), consentId, null, null, null, spiResponsePayload.getPsuMessage(), multilevelScaRequired, requestProviderService.getInternalRequestIdString());
+
+        createConsentResponse.setTppMessageInformation(createConsentRequestValidator.buildWarningMessages(createConsentRequestObject));
+
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(createConsentResponse).build();
 
         if (authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {

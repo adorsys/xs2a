@@ -24,10 +24,12 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
 
@@ -72,6 +74,7 @@ public class ConsentModelMapper {
                                 .scaMethods(scaMethodsMapper.mapToScaMethods(cnst.getScaMethods()))
                                 ._links(hrefLinkMapper.mapToLinksMap(cnst.getLinks()))
                                 .psuMessage(cnst.getPsuMessage())
+                                .tppMessages(mapToTppMessage2XXList(cnst.getTppMessageInformation()))
                    )
                    .orElse(null);
     }
@@ -229,5 +232,24 @@ public class ConsentModelMapper {
         cancellationList.addAll(cancellationIds);
         cancellations.setCancellationIds(cancellationList);
         return cancellations;
+    }
+
+    private List<TppMessage2XX> mapToTppMessage2XXList(Set<TppMessageInformation> tppMessages) {
+        if (CollectionUtils.isEmpty(tppMessages)) {
+            return null;
+        }
+        return tppMessages.stream()
+                   .map(this::mapToTppMessage2XX)
+                   .collect(Collectors.toList());
+    }
+
+    private TppMessage2XX mapToTppMessage2XX(TppMessageInformation tppMessage) {
+        TppMessage2XX tppMessage2XX = new TppMessage2XX();
+        tppMessage2XX.setCategory(TppMessageCategory.fromValue(tppMessage.getCategory().name()));
+        tppMessage2XX.setCode(MessageCode2XX.WARNING);
+        tppMessage2XX.setPath(tppMessage.getPath());
+        tppMessage2XX.setText(tppMessage.getText());
+
+        return tppMessage2XX;
     }
 }

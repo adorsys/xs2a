@@ -19,15 +19,13 @@ package de.adorsys.psd2.xs2a.service.validator.pis.payment;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.AccountReferenceCollector;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
-import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
-import de.adorsys.psd2.xs2a.service.validator.PsuDataInInitialRequestValidator;
-import de.adorsys.psd2.xs2a.service.validator.SupportedAccountReferenceValidator;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.*;
 import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -49,6 +48,7 @@ public class CreatePaymentValidator implements BusinessValidator<CreatePaymentRe
     private final SupportedAccountReferenceValidator supportedAccountReferenceValidator;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final PaymentTypeAndProductValidator paymentProductAndTypeValidator;
+    private final TppUriHeaderValidator tppUriHeaderValidator;
 
     /**
      * Validates create payment request by checking whether:
@@ -87,6 +87,15 @@ public class CreatePaymentValidator implements BusinessValidator<CreatePaymentRe
         }
 
         return ValidationResult.valid();
+    }
+
+    @Override
+    public @NotNull Set<TppMessageInformation> buildWarningMessages(@NotNull CreatePaymentRequestObject createPaymentRequestObject) {
+        Set<TppMessageInformation> warnings = new HashSet<>();
+
+        warnings.addAll(tppUriHeaderValidator.buildWarningMessages(createPaymentRequestObject.getPaymentInitiationParameters().getTppRedirectUri()));
+
+        return warnings;
     }
 
     private Set<AccountReference> extractAccountReferencesFromPayment(String paymentProduct, PaymentType paymentType, Object payment) {

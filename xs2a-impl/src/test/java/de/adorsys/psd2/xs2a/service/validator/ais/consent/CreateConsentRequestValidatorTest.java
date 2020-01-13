@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.PsuDataInInitialRequestValidator;
 import de.adorsys.psd2.xs2a.service.validator.SupportedAccountReferenceValidator;
+import de.adorsys.psd2.xs2a.service.validator.TppUriHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
 import org.jetbrains.annotations.NotNull;
@@ -43,10 +44,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Currency;
+import java.util.HashSet;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SESSIONS_NOT_SUPPORTED;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -58,6 +62,7 @@ public class CreateConsentRequestValidatorTest {
     private static final MessageError SUPPORTED_ACCOUNT_REFERENCE_VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR));
     private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
+    private static final String INVALID_DOMAIN_MESSAGE = "TPP URIs are not compliant with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate";
 
     @InjectMocks
     private CreateConsentRequestValidator createConsentRequestValidator;
@@ -69,6 +74,8 @@ public class CreateConsentRequestValidatorTest {
     private PsuDataInInitialRequestValidator psuDataInInitialRequestValidator;
     @Mock
     private SupportedAccountReferenceValidator supportedAccountReferenceValidator;
+    @Mock
+    private TppUriHeaderValidator tppUriHeaderValidator;
 
     @Before
     public void setUp() {
@@ -215,6 +222,41 @@ public class CreateConsentRequestValidatorTest {
         //Then
         assertThat(validationResult.isNotValid()).isTrue();
         assertThat(validationResult.getMessageError()).isEqualTo(COMBINED_SERVICE_VALIDATION_ERROR);
+    }
+
+    @Test
+    public void buildWarningMessages_emptySet() {
+        // Given
+        Set<TppMessageInformation> emptySet = new HashSet<>();
+        CreateConsentReq createConsentReq = new CreateConsentReq();
+        when(tppUriHeaderValidator.buildWarningMessages(any()))
+            .thenReturn(emptySet);
+
+        // When
+        Set<TppMessageInformation> actual = createConsentRequestValidator.buildWarningMessages(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+
+        // Then
+        assertEquals(actual, emptySet);
+        verify(tppUriHeaderValidator, times(1)).buildWarningMessages(any());
+    }
+
+    @Test
+    public void buildWarningMessages_warningsFromUriHeaderValidator() {
+        // Given
+        Set<TppMessageInformation> uriHeaderValidatorSet = new HashSet<>();
+        uriHeaderValidatorSet.add(TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE));
+
+        CreateConsentReq createConsentReq = new CreateConsentReq();
+        when(tppUriHeaderValidator.buildWarningMessages(any()))
+            .thenReturn(uriHeaderValidatorSet);
+
+        // When
+        Set<TppMessageInformation> actual = createConsentRequestValidator.buildWarningMessages(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+
+        // Then
+        assertEquals(actual, uriHeaderValidatorSet);
+        verify(tppUriHeaderValidator, times(1)).buildWarningMessages(any());
+
     }
 
     private CreateConsentReq buildCreateConsentReqWithAccess(Xs2aAccountAccess xs2aAccountAccess) {
