@@ -5835,9 +5835,9 @@ components:
         endToEndIdentification:
           type: string
           maxLength: 35
-        #        instructionIdentification: # N.A. for all, but can be used by ASPSP if needed
-        #          type: string
-        #          maxLength: 35
+        instructionIdentification: # N.A. for all, but can be used by ASPSP if needed
+          type: string
+          maxLength: 35
         debtorAccount:
           $ref: "#/components/schemas/accountReference"
         #        debtorId: # N.A. for all, but can be used by ASPSP if needed
@@ -5962,9 +5962,9 @@ components:
         endToEndIdentification:
           type: string
           maxLength: 35
-        #        instructionIdentification: # N.A. for all, but can be used by ASPSP if needed
-        #          type: string
-        #          maxLength: 35
+        instructionIdentification: # N.A. for all, but can be used by ASPSP if needed
+          type: string
+          maxLength: 35
         #        debtorId: # N.A. for all, but can be used by ASPSP if needed
         #          $ref: "#/components/schemas/debtorId"
         ultimateDebtor: # N.A. for all, but can be used by ASPSP if needed
@@ -6085,9 +6085,9 @@ components:
         endToEndIdentification:
           type: string
           maxLength: 35
-        #        instructionIdentification:  # N.A. for all, but can be used by ASPSP if needed
-        #          type: string
-        #          maxLength: 35
+        instructionIdentification:  # N.A. for all, but can be used by ASPSP if needed
+          type: string
+          maxLength: 35
         #        debtorId: # N.A. for all, but can be used by ASPSP if needed
         #          $ref: "#/components/schemas/debtorId"
         debtorAccount:

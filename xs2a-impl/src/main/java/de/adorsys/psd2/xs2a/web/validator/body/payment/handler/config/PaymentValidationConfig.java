@@ -21,6 +21,7 @@ import de.adorsys.psd2.validator.payment.config.ValidationObject;
 public interface PaymentValidationConfig{
 
     ValidationObject getEndToEndIdentification();
+    ValidationObject getInstructionIdentification();
     ValidationObject getUltimateDebtor();
     ValidationObject getUltimateCreditor();
     ValidationObject getCreditorName();

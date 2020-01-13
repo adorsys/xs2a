@@ -144,6 +144,15 @@ public class BulkPaymentTypeValidatorImplTest {
     }
 
     @Test
+    public void doValidation_instructionIdentification_tooLong_error() {
+        singlePayment.setInstructionIdentification(VALUE_36_LENGHT);
+
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"instructionIdentification", 35}, messageError.getTppMessage().getTextParameters());
+    }
+
+    @Test
     public void doValidation_bulkDebtorAccount_null_error() {
         bulkPayment.setDebtorAccount(null);
 

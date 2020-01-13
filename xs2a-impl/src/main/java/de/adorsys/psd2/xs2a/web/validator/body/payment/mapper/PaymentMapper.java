@@ -87,6 +87,7 @@ public class PaymentMapper {
         payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
         payment.setRemittanceInformationStructured(remittanceMapper.mapToToRemittance(paymentRequest.getRemittanceInformationStructured()));
+        payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
         return payment;
     }
 
@@ -114,6 +115,7 @@ public class PaymentMapper {
         payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
         payment.setRemittanceInformationStructured(remittanceMapper.mapToToRemittance(paymentRequest.getRemittanceInformationStructured()));
+        payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
         return payment;
     }
 
@@ -202,6 +204,7 @@ public class PaymentMapper {
                        payment.setUltimateCreditor(p.getUltimateCreditor());
                        payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(p.getPurposeCode()));
                        payment.setRemittanceInformationStructured(remittanceMapper.mapToToRemittance(p.getRemittanceInformationStructured()));
+                       payment.setInstructionIdentification(p.getInstructionIdentification());
                        return payment;
                    })
                    .collect(Collectors.toList());

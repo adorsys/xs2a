@@ -2,7 +2,13 @@
 
 == Table of Contents
 * Move AuthenticationObject to xs2a-core
+* Feature: Add new data attribute instructionIdentification for all standard payment types
 
 == Move AuthenticationObject to xs2a-core
 
 Usages of `Xs2aAuthenticationObject` and `SpiAuthenticationObject` were substituted with `de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject`
+
+== Feature: Add new data attribute instructionIdentification for all standard payment types
+
+From now on, `instructionIdentification` field was added to all standard payment types.
+Also in case `instructionIdentification` field exceeds the maximum length of 35 symbols TPP will receive `400 Bad Request` error with `FORMAT_ERROR` code.
