@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.web.xs2a.controller;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/tpp")
-@Api(value = "api/v1/tpp", tags = "TPP", description = "Provides access to the TPP")
+@Api(value = "api/v1/tpp", tags = InternalCmsXs2aApiTagName.TPP)
 public class TppController {
     private final TppService tppService;
     private final TppStopListService tppStopListService;

@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
@@ -39,7 +40,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/ais/consent")
-@Api(value = "api/v1/ais/consent", tags = "AIS, Consents", description = "Provides access to consent management system for AIS")
+@Api(value = "api/v1/ais/consent", tags = InternalCmsXs2aApiTagName.AIS_CONSENTS)
 public class AisConsentController {
     private final AisConsentAuthorisationServiceEncrypted aisConsentAuthorisationServiceEncrypted;
     private final AisConsentServiceEncrypted aisConsentService;

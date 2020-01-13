@@ -37,7 +37,6 @@ import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
-import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -52,7 +51,6 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@Api(value = "v1", description = "Provides access to the account information", tags = {"Account Information Service (AIS)"})
 public class ConsentController implements ConsentApi {
     private final ConsentService consentService;
     private final ResponseMapper responseMapper;

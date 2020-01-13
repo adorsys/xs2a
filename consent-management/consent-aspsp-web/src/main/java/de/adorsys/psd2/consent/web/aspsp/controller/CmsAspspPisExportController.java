@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService;
+import de.adorsys.psd2.consent.web.aspsp.config.CmsAspspApiTagName;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-api/v1/pis/payments")
-@Api(value = "aspsp-api/v1/pis/payments", tags = "ASPSP Export Payments", description = "Provides access to the consent management system for exporting PIS payments by ASPSP")
+@Api(value = "aspsp-api/v1/pis/payments", tags = CmsAspspApiTagName.ASPSP_EXPORT_PAYMENTS)
 public class CmsAspspPisExportController {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 

@@ -44,6 +44,17 @@ public class Xs2aApiSwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                    .groupName("Internal CMS-XS2A-API")
                    .apiInfo(getApiInfo())
+                   .tags(
+                       InternalCmsXs2aApiTagHolder.AIS_CONSENTS,
+                       InternalCmsXs2aApiTagHolder.AIS_PSU_DATA,
+                       InternalCmsXs2aApiTagHolder.ASPSP_CONSENT_DATA,
+                       InternalCmsXs2aApiTagHolder.EVENTS,
+                       InternalCmsXs2aApiTagHolder.PIIS_CONSENTS,
+                       InternalCmsXs2aApiTagHolder.PIS_COMMON_PAYMENT,
+                       InternalCmsXs2aApiTagHolder.PIS_PAYMENTS,
+                       InternalCmsXs2aApiTagHolder.PIS_PSU_DATA,
+                       InternalCmsXs2aApiTagHolder.TPP
+                   )
                    .select()
                    .apis(RequestHandlerSelectors.basePackage("de.adorsys.psd2.consent.web.xs2a"))
                    .paths(Predicates.not(PathSelectors.regex("/error.*?")))

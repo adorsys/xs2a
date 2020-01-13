@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.psu.CmsAspspPsuAccountService;
+import de.adorsys.psd2.consent.web.aspsp.config.CmsAspspApiTagName;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-api/v1/psu/consent")
-@Api(value = "aspsp-api/v1/psu/consent", tags = "ASPSP PSU consent management")
+@Api(value = "aspsp-api/v1/psu/consent", tags = CmsAspspApiTagName.ASPSP_PSU_CONSENT_MANAGEMENT)
 public class CmsAspspPsuConsentManagementController {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 

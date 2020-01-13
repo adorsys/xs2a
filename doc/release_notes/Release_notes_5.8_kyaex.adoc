@@ -3,8 +3,13 @@
 == Table of Contents
 
 * Handle errors only for XS2A endpoints
+* Replaced deprecated description property in swagger `@Api` annotation in `CMS` and `Profile` controllers
 
 == Handle errors only for XS2A endpoints
 
 From now on, `Xs2aRestExceptionHandler` handles exceptions only from XS2A endpoints.
 
+== Replaced deprecated description property in swagger `@Api` annotation in `CMS` and `Profile` controllers
+
+From now on, deprecated description property in swagger `@Api` is replaced with `tags` method in swagger
+configuration.

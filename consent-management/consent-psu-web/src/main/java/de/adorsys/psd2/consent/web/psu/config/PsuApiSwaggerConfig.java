@@ -44,6 +44,7 @@ public class PsuApiSwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                    .groupName("CMS-PSU-API")
                    .apiInfo(getApiInfo())
+                   .tags(CmsPsuApiTagHolder.PSU_PIIS_CONSENTS)
                    .select()
                    .apis(RequestHandlerSelectors.basePackage("de.adorsys.psd2.consent.web.psu"))
                    .paths(Predicates.not(PathSelectors.regex("/error.*?")))

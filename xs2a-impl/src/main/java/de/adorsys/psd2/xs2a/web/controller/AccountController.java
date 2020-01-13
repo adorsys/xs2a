@@ -33,7 +33,6 @@ import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
-import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -61,7 +60,6 @@ import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@Api(value = "v1", description = "Provides access to the account information", tags = {"Account Information Service (AIS)"})
 public class AccountController implements AccountApi {
 
     private final HttpServletRequest request;

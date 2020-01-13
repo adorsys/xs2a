@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.tpp.CmsAspspTppService;
+import de.adorsys.psd2.consent.web.aspsp.config.CmsAspspApiTagName;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-api/v1/tpp")
-@Api(value = "aspsp-api/v1/tpp", tags = "ASPSP TPP Info", description = "Provides access to the consent management system TPP Info")
+@Api(value = "aspsp-api/v1/tpp", tags = CmsAspspApiTagName.ASPSP_TPP_INFO)
 public class CmsAspspTppInfoController {
     private final CmsAspspTppService cmsAspspTppService;
 

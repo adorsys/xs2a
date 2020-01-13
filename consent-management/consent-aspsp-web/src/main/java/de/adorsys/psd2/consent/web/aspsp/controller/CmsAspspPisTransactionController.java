@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.pis.AspspPaymentService;
+import de.adorsys.psd2.consent.web.aspsp.config.CmsAspspApiTagName;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-api/v1/pis/transaction-status")
-@Api(value = "aspsp-api/v1/pis/transaction-status", tags = {"ASPSP PIS Transaction Status"})
+@Api(value = "aspsp-api/v1/pis/transaction-status", tags = CmsAspspApiTagName.ASPSP_PIS_TRANSACTION_STATUS)
 public class CmsAspspPisTransactionController {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 

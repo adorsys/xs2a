@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
 import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
+import de.adorsys.psd2.consent.web.psu.config.CmsPsuApiTagName;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -40,7 +41,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "psu-api/v1/payment")
-@Api(value = "psu-api/v1/payment", tags = {"PSU PIS Payment"})
+@Api(value = "psu-api/v1/payment", tags = CmsPsuApiTagName.PSU_PIS_PAYMENT)
 public class CmsPsuPisController {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 

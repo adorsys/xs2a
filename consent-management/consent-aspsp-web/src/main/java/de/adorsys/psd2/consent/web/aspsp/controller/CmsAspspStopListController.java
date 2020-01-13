@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.tpp.CmsAspspTppService;
+import de.adorsys.psd2.consent.web.aspsp.config.CmsAspspApiTagName;
 import de.adorsys.psd2.xs2a.core.tpp.TppStopListRecord;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ import java.time.Duration;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-api/v1/tpp/stop-list")
-@Api(value = "aspsp-api/v1/tpp/stop-list", tags = "ASPSP TPP Stop List", description = "Provides access to the consent management system TPP Stop List")
+@Api(value = "aspsp-api/v1/tpp/stop-list", tags = CmsAspspApiTagName.ASPSP_TPP_STOP_LIST)
 public class CmsAspspStopListController {
     private final CmsAspspTppService cmsAspspTppService;
 
