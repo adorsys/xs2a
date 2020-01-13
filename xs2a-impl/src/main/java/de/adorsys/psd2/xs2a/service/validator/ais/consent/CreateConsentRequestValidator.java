@@ -16,22 +16,22 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
-import de.adorsys.psd2.xs2a.service.validator.PsuDataInInitialRequestValidator;
-import de.adorsys.psd2.xs2a.service.validator.SupportedAccountReferenceValidator;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.*;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -48,6 +48,7 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
     private final ScaApproachResolver scaApproachResolver;
     private final PsuDataInInitialRequestValidator psuDataInInitialRequestValidator;
     private final SupportedAccountReferenceValidator supportedAccountReferenceValidator;
+    private final TppUriHeaderValidator tppUriHeaderValidator;
 
     /**
      * Validates Create consent request according to:
@@ -94,6 +95,15 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
         }
 
         return ValidationResult.valid();
+    }
+
+    @Override
+    public Set<TppMessageInformation> buildWarningMessages(@NotNull CreateConsentRequestObject request) {
+        Set<TppMessageInformation> warnings = new HashSet<>();
+
+        warnings.addAll(tppUriHeaderValidator.buildWarningMessages(request.getCreateConsentReq().getTppRedirectUri()));
+
+        return warnings;
     }
 
     private boolean isNotSupportedGlobalConsentForAllPsd2(CreateConsentReq request) {

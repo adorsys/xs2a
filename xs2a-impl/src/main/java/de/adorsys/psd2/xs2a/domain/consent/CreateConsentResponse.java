@@ -20,9 +20,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class CreateConsentResponse {
@@ -49,5 +51,5 @@ public class CreateConsentResponse {
 
     @JsonIgnore
     private final String internalRequestId;
-
+    private Set<TppMessageInformation> tppMessageInformation;
 }

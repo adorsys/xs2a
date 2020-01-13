@@ -47,6 +47,7 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
         log.info("PaymentCancellationSpi#initiatePaymentCancellation: contextData {}, payment {}, aspspConsentData {}", contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
         SpiPaymentCancellationResponse response = new SpiPaymentCancellationResponse();
         response.setTransactionStatus(TransactionStatus.ACCP);
+        response.setCancellationAuthorisationMandated(true);
 
         return SpiResponse.<SpiPaymentCancellationResponse>builder()
                    .payload(response)

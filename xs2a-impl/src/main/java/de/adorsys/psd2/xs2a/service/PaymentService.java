@@ -79,7 +79,9 @@ public class PaymentService {
     public ResponseObject<PaymentInitiationResponse> createPayment(Object payment, PaymentInitiationParameters paymentInitiationParameters) {
         xs2aEventService.recordTppRequest(EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, payment);
 
-        ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(payment, paymentInitiationParameters));
+        CreatePaymentRequestObject createPaymentRequestObject = new CreatePaymentRequestObject(payment, paymentInitiationParameters);
+
+        ValidationResult validationResult = createPaymentValidator.validate(createPaymentRequestObject);
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], PaymentType [{}], PaymentProduct [{}]. Create payment - validation failed: [{}]",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentInitiationParameters.getPaymentType(), paymentInitiationParameters.getPaymentProduct(), validationResult.getMessageError());
@@ -102,6 +104,7 @@ public class PaymentService {
         }
 
         PaymentInitiationResponse paymentInitiationResponse = responseObject.getBody();
+        paymentInitiationResponse.setTppMessageInformation(createPaymentValidator.buildWarningMessages(createPaymentRequestObject));
         loggingContextService.storeTransactionAndScaStatus(paymentInitiationResponse.getTransactionStatus(), paymentInitiationResponse.getScaStatus());
 
         return ResponseObject.<PaymentInitiationResponse>builder()
@@ -255,8 +258,9 @@ public class PaymentService {
         }
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
-        ValidationResult validationResult = cancelPaymentValidator.validate(
-            new CancelPaymentPO(pisCommonPaymentResponse, paymentCancellationRequest.getPaymentType(), paymentCancellationRequest.getPaymentProduct()));
+        CancelPaymentPO cancelPaymentPO = new CancelPaymentPO(pisCommonPaymentResponse, paymentCancellationRequest.getPaymentType(), paymentCancellationRequest.getPaymentProduct(), paymentCancellationRequest.getTppRedirectUri());
+
+        ValidationResult validationResult = cancelPaymentValidator.validate(cancelPaymentPO);
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Cancel payment - validation failed: [{}]",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId(), validationResult.getMessageError());
@@ -286,6 +290,7 @@ public class PaymentService {
         }
 
         CancelPaymentResponse cancelPaymentResponse = responseObject.getBody();
+        cancelPaymentResponse.setTppMessageInformation(cancelPaymentValidator.buildWarningMessages(cancelPaymentPO));
         loggingContextService.storeTransactionStatus(cancelPaymentResponse.getTransactionStatus());
 
         return ResponseObject.<CancelPaymentResponse>builder()
