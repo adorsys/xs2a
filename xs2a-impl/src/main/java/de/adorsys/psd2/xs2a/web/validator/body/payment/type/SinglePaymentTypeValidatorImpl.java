@@ -115,6 +115,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         checkFieldForMaxLength(singlePayment.getCreditorId(), "creditorId", validationConfig.getCreditorId(), messageError);
         checkFieldForMaxLength(singlePayment.getUltimateDebtor(), "ultimateDebtor", validationConfig.getUltimateDebtor(), messageError);
         checkFieldForMaxLength(singlePayment.getUltimateCreditor(), "ultimateCreditor", validationConfig.getUltimateDebtor(), messageError);
+        checkFieldForMaxLength(singlePayment.getInstructionIdentification(), "instructionIdentification", validationConfig.getInstructionIdentification(), messageError);
         validateRemittanceInformationStructured(singlePayment.getRemittanceInformationStructured(), messageError);
     }
 

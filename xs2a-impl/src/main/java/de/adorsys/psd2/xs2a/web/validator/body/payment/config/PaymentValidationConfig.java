@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.validator.body.payment.config;
 public interface PaymentValidationConfig {
 
     ValidationObject getEndToEndIdentification();
+    ValidationObject getInstructionIdentification();
     ValidationObject getUltimateDebtor();
     ValidationObject getCreditorName();
 

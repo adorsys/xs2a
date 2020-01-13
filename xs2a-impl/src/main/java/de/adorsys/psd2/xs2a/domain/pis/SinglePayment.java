@@ -40,6 +40,7 @@ import java.util.Set;
 public class SinglePayment extends CommonPayment implements AccountReferenceCollector {
 
     private String endToEndIdentification;
+    private String instructionIdentification;
 
     @NotNull
     private AccountReference debtorAccount;
