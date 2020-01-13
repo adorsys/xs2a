@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.controller;
+package de.adorsys.psd2.consent.web.psu.config;
 
-import de.adorsys.psd2.api.SigningBasketApi;
-import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.service.Tag;
 
-@RestController
-@AllArgsConstructor
-public class SigningBasketController implements SigningBasketApi {
-
-
+public class CmsPsuApiTagHolder {
+    public static final Tag PSU_PIIS_CONSENTS = new Tag(CmsPsuApiTagName.PSU_PIIS_CONSENTS, "Provides access to consent management system for PSU PIIS");
 }

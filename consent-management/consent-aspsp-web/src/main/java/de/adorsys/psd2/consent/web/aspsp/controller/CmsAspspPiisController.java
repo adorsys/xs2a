@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.web.aspsp.controller;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentResponse;
+import de.adorsys.psd2.consent.web.aspsp.config.CmsAspspApiTagName;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
@@ -32,7 +33,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-api/v1/piis/consents")
-@Api(value = "aspsp-api/v1/piis/consents", tags = "ASPSP PIIS, Consents", description = "Controller for CMS-ASPSP-API providing access to PIIS consents")
+@Api(value = "aspsp-api/v1/piis/consents", tags = CmsAspspApiTagName.ASPSP_PIIS_CONSENTS)
 public class CmsAspspPiisController {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.controller;
+package de.adorsys.psd2.consent.web.psu.config;
 
-import de.adorsys.psd2.api.SigningBasketApi;
-import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-@AllArgsConstructor
-public class SigningBasketController implements SigningBasketApi {
-
-
+public class CmsPsuApiTagName {
+    public static final String ASPSP_CONSENT_DATA = "Aspsp Consent Data";
+    public static final String PSU_AIS_CONSENTS = "PSU AIS Consents";
+    public static final String PSU_PIIS_CONSENTS = "PSU PIIS, Consents";
+    public static final String PSU_PIS_PAYMENT = "PSU PIS Payment";
 }

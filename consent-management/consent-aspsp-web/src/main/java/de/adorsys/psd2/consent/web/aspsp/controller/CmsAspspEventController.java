@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
+import de.adorsys.psd2.consent.web.aspsp.config.CmsAspspApiTagName;
 import de.adorsys.psd2.event.service.AspspEventService;
 import de.adorsys.psd2.event.service.model.AspspEvent;
 import io.swagger.annotations.*;
@@ -34,7 +35,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-api/v1/events")
-@Api(value = "aspsp-api/v1/events", tags = "ASPSP Events", description = "Provides access to the consent management system for ASPSP Events")
+@Api(value = "aspsp-api/v1/events", tags = CmsAspspApiTagName.ASPSP_EVENTS)
 public class CmsAspspEventController {
     private final AspspEventService aspspEventService;
 

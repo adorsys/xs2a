@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.controller;
+package de.adorsys.psd2.aspsp.profile.web.config;
 
-import de.adorsys.psd2.api.SigningBasketApi;
-import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.service.Tag;
 
-@RestController
-@AllArgsConstructor
-public class SigningBasketController implements SigningBasketApi {
-
-
+public class AspspProfileApiTagHolder {
+    public static final Tag ASPSP_PROFILE = new Tag(AspspProfileApiTagName.ASPSP_PROFILE, "Provides access to aspsp profile");
+    public static final Tag UPDATE_ASPSP_PROFILE = new Tag(AspspProfileApiTagName.UPDATE_ASPSP_PROFILE, "Provides access to update aspsp profile");
 }

@@ -46,6 +46,10 @@ public class AspspProfileApiSwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                    .groupName("ASPSP-PROFILE-API")
                    .apiInfo(getApiInfo())
+                   .tags(
+                       AspspProfileApiTagHolder.ASPSP_PROFILE,
+                       AspspProfileApiTagHolder.UPDATE_ASPSP_PROFILE
+                   )
                    .select()
                    .apis(RequestHandlerSelectors.basePackage("de.adorsys.psd2.aspsp.profile"))
                    .paths(Predicates.not(PathSelectors.regex("/error.*?")))

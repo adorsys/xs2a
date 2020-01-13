@@ -18,6 +18,7 @@ package de.adorsys.psd2.aspsp.profile.web.controller;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.aspsp.profile.web.config.AspspProfileApiTagName;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +35,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/aspsp-profile")
-@Api(value = "Aspsp profile", tags = "Aspsp profile", description = "Provides access to aspsp profile")
+@Api(value = "Aspsp profile", tags = AspspProfileApiTagName.ASPSP_PROFILE)
 public class AspspProfileController {
 
     private final AspspProfileService aspspProfileService;

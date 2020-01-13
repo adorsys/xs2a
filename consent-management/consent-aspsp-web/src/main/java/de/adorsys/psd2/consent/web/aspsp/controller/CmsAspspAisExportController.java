@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService;
+import de.adorsys.psd2.consent.web.aspsp.config.CmsAspspApiTagName;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-api/v1/ais/consents")
-@Api(value = "aspsp-api/v1/ais/consents", tags = "ASPSP Export AIS Consents", description = "Provides access to the consent management system for exporting AIS consents by ASPSP")
+@Api(value = "aspsp-api/v1/ais/consents", tags = CmsAspspApiTagName.ASPSP_EXPORT_AIS_CONSENTS)
 public class CmsAspspAisExportController {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
