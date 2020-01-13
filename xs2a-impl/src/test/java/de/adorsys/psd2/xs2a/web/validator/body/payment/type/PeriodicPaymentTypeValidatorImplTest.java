@@ -103,6 +103,15 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
+    public void doValidation_instructionIdentification_tooLong_error() {
+        periodicPayment.setInstructionIdentification(VALUE_36_LENGHT);
+
+        validator.doSingleValidation(periodicPayment, messageError);
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"instructionIdentification", 35}, messageError.getTppMessage().getTextParameters());
+    }
+
+    @Test
     public void doValidation_debtorAccount_null_error() {
         periodicPayment.setDebtorAccount(null);
 
