@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.context;
+package de.adorsys.psd2.logger.context;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -71,9 +71,21 @@ public class MdcLoggingContextService implements LoggingContextService {
     }
 
     @Override
-    public void storeRequestInformation(String internalRequestId, String xRequestId) {
-        MDC.put(INTERNAL_REQUEST_ID_KEY, internalRequestId);
-        MDC.put(X_REQUEST_ID_KEY, xRequestId);
+    public void storeRequestInformation(RequestInfo requestInfo) {
+        if (requestInfo == null) {
+            return;
+        }
+
+        MDC.put(INTERNAL_REQUEST_ID_KEY, requestInfo.getInternalRequestId());
+        MDC.put(X_REQUEST_ID_KEY, requestInfo.getXRequestId());
+    }
+
+    @Override
+    public RequestInfo getRequestInformation() {
+        String internalRequestId = MDC.get(INTERNAL_REQUEST_ID_KEY);
+        String xRequestId = MDC.get(X_REQUEST_ID_KEY);
+
+        return new RequestInfo(internalRequestId, xRequestId);
     }
 
     @Override

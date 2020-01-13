@@ -16,6 +16,17 @@ If the change of logging configuration is needed, custom logback file (*logback.
 
 Although XS2A provides configuration file for *Logback*, it's possible to configure and use any logging framework that's compatible with *SLF4J*.
 
+[#propagating-request-information]
+=== Propagating information about the request from XS2A to external services
+
+By default XS2A propagates information about the TPP request (in form of internal request ID and X-Request-ID) to CMS and ASPSP Profile services.
+This is done by providing additional headers with relevant information about the request for each REST call to CMS or ASPSP Profile, initiated by the XS2A service.
+
+If there's a need to propagate this information to other services, it's possible to make use of classes from `xs2a-logger-web` module.
+`de.adorsys.psd2.logger.web.LoggingContextInterceptor` is responsible for intercepting REST calls to external services and populating request headers with information about the request.
+This interceptor should be applied to all requests to the external service.
+In order to make use of the provided information, external service should provide implementation of `de.adorsys.psd2.logger.web.AbstractLoggingContextFilter` for extracting data from request headers and storing them in the logging context.
+
 [#configuring-payment-validation-rules]
 === Configuring payment validation rules
 

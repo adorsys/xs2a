@@ -16,8 +16,9 @@
 
 package de.adorsys.psd2.xs2a.web.filter;
 
+import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.logger.context.RequestInfo;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import org.springframework.stereotype.Component;
@@ -33,14 +34,14 @@ import java.io.IOException;
  * Responsible for populating logging context with request-related data and clearing context afterwards.
  */
 @Component
-public class LoggingContextFilter extends AbstractXs2aFilter {
+public class Xs2aLoggingContextFilter extends AbstractXs2aFilter {
     private final LoggingContextService loggingContextService;
     private final RequestProviderService requestProviderService;
 
-    public LoggingContextFilter(TppErrorMessageWriter tppErrorMessageWriter,
-                                Xs2aEndpointChecker xs2aEndpointChecker,
-                                LoggingContextService loggingContextService,
-                                RequestProviderService requestProviderService) {
+    public Xs2aLoggingContextFilter(TppErrorMessageWriter tppErrorMessageWriter,
+                                    Xs2aEndpointChecker xs2aEndpointChecker,
+                                    LoggingContextService loggingContextService,
+                                    RequestProviderService requestProviderService) {
         super(tppErrorMessageWriter, xs2aEndpointChecker);
         this.loggingContextService = loggingContextService;
         this.requestProviderService = requestProviderService;
@@ -48,7 +49,9 @@ public class LoggingContextFilter extends AbstractXs2aFilter {
 
     @Override
     protected void doFilterInternalCustom(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        loggingContextService.storeRequestInformation(requestProviderService.getInternalRequestIdString(), requestProviderService.getRequestIdString());
+        RequestInfo requestInfo = new RequestInfo(requestProviderService.getInternalRequestIdString(), requestProviderService.getRequestIdString());
+        loggingContextService.storeRequestInformation(requestInfo);
+
         try {
             doFilter(request, response, filterChain);
         } finally {

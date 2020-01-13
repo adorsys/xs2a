@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package de.adorsys.psd2.aspsp.profile.config;
 
+import de.adorsys.psd2.logger.web.LoggingContextInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +26,10 @@ import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConve
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
+@RequiredArgsConstructor
 public class AspspProfileRestConfig {
+    private final LoggingContextInterceptor loggingContextInterceptor;
+
     @Value("${http-client.read-timeout.ms:10000}")
     private int readTimeout;
     @Value("${http-client.connection-timeout.ms:10000}")
@@ -35,6 +40,7 @@ public class AspspProfileRestConfig {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().removeIf(m -> m.getClass().isAssignableFrom(MappingJackson2XmlHttpMessageConverter.class));
         rest.setErrorHandler(new AspspProfileRestErrorHandler());
+        rest.getInterceptors().add(loggingContextInterceptor);
         return rest;
     }
 

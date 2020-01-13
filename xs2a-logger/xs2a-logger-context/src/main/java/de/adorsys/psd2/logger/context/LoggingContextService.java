@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.context;
+package de.adorsys.psd2.logger.context;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -80,10 +80,16 @@ public interface LoggingContextService {
     /**
      * Records information about the request into current logging context
      *
-     * @param internalRequestId current internal request id
-     * @param xRequestId        current used x-request-id
+     * @param requestInfo information about the request
      */
-    void storeRequestInformation(String internalRequestId, String xRequestId);
+    void storeRequestInformation(RequestInfo requestInfo);
+
+    /**
+     * Retrieves information about the request from current logging context
+     *
+     * @return information about the request
+     */
+    RequestInfo getRequestInformation();
 
     /**
      * Clears current logging context.

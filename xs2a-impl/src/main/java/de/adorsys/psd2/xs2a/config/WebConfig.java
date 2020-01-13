@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.config;
 
 import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.validator.signature.DigestVerifier;
 import de.adorsys.psd2.validator.signature.SignatureVerifier;
@@ -30,7 +31,6 @@ import de.adorsys.psd2.xs2a.domain.RedirectIdHolder;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.TppService;
-import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
