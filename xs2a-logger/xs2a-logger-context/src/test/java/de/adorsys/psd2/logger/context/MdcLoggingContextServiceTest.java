@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.context;
+package de.adorsys.psd2.logger.context;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -32,7 +32,8 @@ public class MdcLoggingContextServiceTest {
     private static final String SCA_STATUS_KEY = "scaStatus";
     private static final String INTERNAL_REQUEST_ID_KEY = "internal-request-id";
     private static final String X_REQUEST_ID_KEY = "x-request-id";
-
+    private static final String X_REQUEST_ID = "0d7f200e-09b4-46f5-85bd-f4ea89fccace";
+    private static final String INTERNAL_REQUEST_ID = "9fe83704-6019-46fa-b8aa-53fb8fa667ea";
 
     private MdcLoggingContextService mdcLoggingContextService = new MdcLoggingContextService();
 
@@ -131,16 +132,66 @@ public class MdcLoggingContextServiceTest {
 
     @Test
     public void storeRequestInformation_shouldPutRequestIdsIntoMdc() {
-        // Given
-        String xRequestId = "0d7f200e-09b4-46f5-85bd-f4ea89fccace";
-        String internalRequestId = "9fe83704-6019-46fa-b8aa-53fb8fa667ea";
-
         // When
-        mdcLoggingContextService.storeRequestInformation(internalRequestId, xRequestId);
+        mdcLoggingContextService.storeRequestInformation(new RequestInfo(INTERNAL_REQUEST_ID, X_REQUEST_ID));
 
         // Then
-        assertEquals(internalRequestId.toString(), MDC.get(INTERNAL_REQUEST_ID_KEY));
-        assertEquals(xRequestId.toString(), MDC.get(X_REQUEST_ID_KEY));
+        assertEquals(INTERNAL_REQUEST_ID, MDC.get(INTERNAL_REQUEST_ID_KEY));
+        assertEquals(X_REQUEST_ID, MDC.get(X_REQUEST_ID_KEY));
+    }
+
+    @Test
+    public void storeRequestInformation_nullValues_shouldOverwriteMdcValues() {
+        // Given
+        MDC.put(INTERNAL_REQUEST_ID_KEY, INTERNAL_REQUEST_ID);
+        MDC.put(X_REQUEST_ID_KEY, X_REQUEST_ID);
+
+        // When
+        mdcLoggingContextService.storeRequestInformation(new RequestInfo(null, null));
+
+        // Then
+        assertNull(MDC.get(INTERNAL_REQUEST_ID_KEY));
+        assertNull(MDC.get(X_REQUEST_ID_KEY));
+    }
+
+    @Test
+    public void storeRequestInformation_null_shouldPreserveMdcValues() {
+        // Given
+        MDC.put(INTERNAL_REQUEST_ID_KEY, INTERNAL_REQUEST_ID);
+        MDC.put(X_REQUEST_ID_KEY, X_REQUEST_ID);
+
+        // When
+        mdcLoggingContextService.storeRequestInformation(null);
+
+        // Then
+        assertEquals(INTERNAL_REQUEST_ID, MDC.get(INTERNAL_REQUEST_ID_KEY));
+        assertEquals(X_REQUEST_ID, MDC.get(X_REQUEST_ID_KEY));
+    }
+
+    @Test
+    public void getRequestInformation_shouldTakeValuesFromMdc() {
+        // Given
+        MDC.put(INTERNAL_REQUEST_ID_KEY, INTERNAL_REQUEST_ID);
+        MDC.put(X_REQUEST_ID_KEY, X_REQUEST_ID);
+        RequestInfo expectedRequestInfo = new RequestInfo(INTERNAL_REQUEST_ID, X_REQUEST_ID);
+
+        // When
+        RequestInfo actualRequestInfo = mdcLoggingContextService.getRequestInformation();
+
+        // Then
+        assertEquals(expectedRequestInfo, actualRequestInfo);
+    }
+
+    @Test
+    public void getRequestInformation_nullValues_shouldReturnNullValues() {
+        // Given
+        RequestInfo expectedRequestInfo = new RequestInfo(null, null);
+
+        // When
+        RequestInfo actualRequestInfo = mdcLoggingContextService.getRequestInformation();
+
+        // Then
+        assertEquals(expectedRequestInfo, actualRequestInfo);
     }
 
     @Test

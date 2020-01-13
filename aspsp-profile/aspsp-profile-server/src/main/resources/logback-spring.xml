@@ -1,0 +1,38 @@
+﻿<!--
+  ~ Copyright 2018-2020 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <property name="WHITESPACE" value="%1X{key-that-does-not-exist}"/>
+    <property name="MDC_PATTERN"
+              value="InR-ID: [%X{internal-request-id}], X-Request-ID: [%X{x-request-id}]${WHITESPACE}"/>
+    <property name="EMPTY_MDC_VALUES_REGEX" value="[\\w-]+: \\[\\][, ]+"/>
+    <property name="LOG_MESSAGE" value="%replace(${MDC_PATTERN}){'${EMPTY_MDC_VALUES_REGEX}', ''}%m"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} ${LOG_MESSAGE}%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>

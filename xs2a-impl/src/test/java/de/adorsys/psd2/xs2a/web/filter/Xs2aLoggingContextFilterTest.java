@@ -16,8 +16,9 @@
 
 package de.adorsys.psd2.xs2a.web.filter;
 
+import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.logger.context.RequestInfo;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +37,7 @@ import java.io.IOException;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LoggingContextFilterTest {
+public class Xs2aLoggingContextFilterTest {
     private static final String X_REQUEST_ID = "0d7f200e-09b4-46f5-85bd-f4ea89fccace";
     private static final String INTERNAL_REQUEST_ID = "9fe83704-6019-46fa-b8aa-53fb8fa667ea";
 
@@ -45,12 +46,13 @@ public class LoggingContextFilterTest {
     @Mock
     private FilterChain filterChain;
     @Mock
-    private Xs2aEndpointChecker xs2aEndpointChecker;;
+    private Xs2aEndpointChecker xs2aEndpointChecker;
+    ;
     @Mock
     private RequestProviderService requestProviderService;
 
     @InjectMocks
-    private LoggingContextFilter loggingContextFilter;
+    private Xs2aLoggingContextFilter loggingContextFilter;
 
     @Test
     public void doFilter_onXs2aEndpoint_shouldHandleLoggingContext() throws ServletException, IOException {
@@ -69,7 +71,7 @@ public class LoggingContextFilterTest {
 
         // Then
         InOrder inOrder = Mockito.inOrder(filterChain, loggingContextService);
-        inOrder.verify(loggingContextService).storeRequestInformation(INTERNAL_REQUEST_ID, X_REQUEST_ID);
+        inOrder.verify(loggingContextService).storeRequestInformation(new RequestInfo(INTERNAL_REQUEST_ID, X_REQUEST_ID));
         inOrder.verify(filterChain).doFilter(mockRequest, mockResponse);
         inOrder.verify(loggingContextService).clearContext();
         inOrder.verifyNoMoreInteractions();
@@ -89,7 +91,7 @@ public class LoggingContextFilterTest {
 
         // Then
         verify(filterChain).doFilter(mockRequest, mockResponse);
-        verify(loggingContextService, never()).storeRequestInformation(any(), any());
+        verify(loggingContextService, never()).storeRequestInformation(any());
         verify(loggingContextService, never()).clearContext();
     }
 }

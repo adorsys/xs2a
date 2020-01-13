@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.event.core.model.EventType;
+import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -41,7 +42,6 @@ import de.adorsys.psd2.xs2a.service.ais.AccountHelperService;
 import de.adorsys.psd2.xs2a.service.ais.TransactionService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAccountService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
-import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2018-2019 adorsys GmbH & Co KG
+  ~ Copyright 2018-2020 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -46,6 +46,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>xs2a-logger-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- other dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -67,6 +73,12 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

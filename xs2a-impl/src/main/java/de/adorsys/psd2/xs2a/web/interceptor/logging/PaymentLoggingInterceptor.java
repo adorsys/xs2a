@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
+import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.component.logger.TppLogger;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.TppService;
-import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
