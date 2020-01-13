@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.validator.header;
+package de.adorsys.psd2.xs2a.service.validator.tpp;
 
 import com.google.common.net.InternetDomainName;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;

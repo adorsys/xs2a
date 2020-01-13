@@ -20,7 +20,7 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.web.validator.header.TppDomainValidator;
+import de.adorsys.psd2.xs2a.service.validator.tpp.TppDomainValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
