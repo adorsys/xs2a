@@ -53,3 +53,17 @@ Examples:
 All parameters are optional and can be omitted.
 
 === Using debug interface
+
+The debug interface of the ASPSP profile enables the developer to update the list of supported SCA approaches and/or
+ASPSP profile settings, temporarily during runtime. The changes won't be persisted, and only stored in the local
+application cache. Thus, these endpoints are unviable for a production environment and should only be used for debugging,
+as a more convenient way of changing the SCA approaches and/or the ASPSP profile settings.
+
+The debug interface is enabled via configuring Spring Profiles. The according profile name is `debug_mode`.
+
+The endpoints provided are the following:
+
+- `POST /api/v1/aspsp-profile/for-debug/aspsp-settings` - Updates aspsp profile settings
+* Requires the ASPSP profile settings, in JSON format
+- `POST /api/v1/aspsp-profile/for-debug/sca-approaches` - Updates list of sca approaches
+* Requires the SCA approaches, as separated Strings, in a JSON array
