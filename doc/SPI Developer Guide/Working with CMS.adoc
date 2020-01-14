@@ -19,7 +19,7 @@ CMS-PSU-API has 4 main parts which are implemented as separate REST controllers:
 
 Below is the description of each controller with its endpoints and names of corresponding java source code methods.
 
-==== ASPSP consent data controller.
+==== ASPSP consent data controller
 
 This controller has endpoints for handling ASPSP consent data.
 
@@ -30,7 +30,7 @@ This controller has endpoints for handling ASPSP consent data.
 More detailed ASPSP data handling is described
 xref:./Implementing SPI-API.adoc[here].
 
-==== AIS consent controller.
+==== AIS consent controller
 
 This controller has endpoints for working with AIS consent entities and their attributes.
 
@@ -41,12 +41,13 @@ This controller has endpoints for working with AIS consent entities and their at
 * *PUT /psu-api/v1/ais/consent/{consent-id}/confirm-consent* - switches the AIS consent status to `VALID`. Method name - `confirmConsent`;
 * *PUT /psu-api/v1/ais/consent/{consent-id}/reject-consent* - switches the AIS consent status to `REJECTED`. Method - `rejectConsent`;
 * *PUT /psu-api/v1/ais/consent/{consent-id}/revoke-consent* - switches the AIS consent status to `REVOKED_BY_PSU`. Method - `revokeConsent`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/authorise-partially-consent* - switches the AIS consent status to `PARTIALLY_AUTHORISED`. Method - `authorisePartiallyConsent`;
 * *PUT /psu-api/v1/ais/consent/{consent-id}/save-access* - stores the account accesses for the definite consent with proper status (not applicable to `REVOKED`, `CANCELLED` and `EXPIRED` consent statuses). To be used for bank offered consents only. Java method - `putAccountAccessInConsent`;
 * *GET /psu-api/v1/ais/consent/authorisation/{authorisation-id}* - returns authorisation object by its ID. Method - `getAuthorisationByAuthorisationId`;
 * *GET /psu-api/v1/ais/consent/consents* - returns list of AIS consents by provided `PSU-ID` header. Java method - `getConsentsForPsu`;
 * *GET /psu-api/v1/ais/consent/redirect/{redirect-id}* - returns AIS consent object by provided authorisation (redirect) ID. Method - `getConsentIdByRedirectId`.
 
-==== PIS payment controller.
+==== PIS payment controller
 
 This controller has endpoints for working with PIS payment entities and their attributes.
 
@@ -60,7 +61,7 @@ This controller has endpoints for working with PIS payment entities and their at
 * *GET /psu-api/v1/payment/cancellation/redirect/{redirect-id}* - returns PIS payment object by provided cancellation authorisation (redirect) ID. Method - `getPaymentIdByRedirectIdForCancellation`;
 * *GET /psu-api/v1/payment/redirect/{redirect-id}* - returns PIS payment object by provided authorisation (redirect) ID. Method - `getPaymentIdByRedirectId`.
 
-==== PIIS consent controller.
+==== PIIS consent controller
 
 This controller has endpoints for working with PIIS consent entities and their attributes.
 
