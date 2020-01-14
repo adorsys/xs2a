@@ -79,3 +79,26 @@ cancellation, XS2A returns link `scaOauth` (based on `oauthConfigurationUrl` in 
 is present, XS2A responds with error `403 FORBIDDEN` with text `Token is not valid for the addressed service/resource`.
 
 === Using debug interface
+
+The debug interface of the ASPSP profile enables the developer to update the list of supported SCA approaches and/or
+ASPSP profile settings, temporarily during runtime. The changes won't be persisted, and only stored in the local
+application cache. Thus, these endpoints are unviable for a production environment and should only be used for
+debugging, as a more convenient way of changing the SCA approaches and/or the ASPSP profile settings.
+
+The debug interface is enabled via configuring Spring Profiles. The according profile name is `debug_mode`.
+
+The endpoints provided are the following:
+
+- `POST /api/v1/aspsp-profile/for-debug/aspsp-settings` - Updates aspsp profile settings
+    * Requires the ASPSP profile settings, in JSON format
+- `POST /api/v1/aspsp-profile/for-debug/sca-approaches` - Updates list of sca approaches
+    * Requires the SCA approaches, as separated Strings, in a JSON array
+
+From v.5.x onwards there is one additional endpoint that is accesible in the scope of `debug-mode`. This endpoint allows
+the customer to change an old ASPSP-Profile (prior to v.5.x) to a newer version, which improves readability and
+structures the settings more rigorously.
+
+The endpoint containing this behavior is accesible via:
+
+- `POST /api/v1/aspsp-profile/convert-profile/aspsp-settings` - Converts old aspsp profile to the new format
+    * Requires the, v.4.x. and prior, ASPSP profile settings, in YAML format
