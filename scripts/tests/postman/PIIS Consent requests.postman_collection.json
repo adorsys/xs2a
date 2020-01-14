@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "24b29590-05d1-4c4d-807a-b5a1361d65c6",
+		"_postman_id": "02321cfb-0b7a-45c7-b6c3-c223c91fe75c",
 		"name": "PIIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -190,7 +190,7 @@
 											"       ",
 											"    pm.expect(error.category).to.eql('ERROR');",
 											"    pm.expect(error.code).to.eql('CONSENT_UNKNOWN');",
-											"    pm.expect(error.text).to.eql('TPP certificate doesn’t match the initial request');",
+											"    pm.expect(error.text).to.eql('The Consent-ID cannot be matched by the ASPSP relative to the TPP');",
 											"    ",
 											"});",
 											"",
@@ -227,6 +227,697 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"account\": {\n\t\t\"currency\": \"EUR\",\n\t    \"iban\": \"{{iban_multiple}}\"\n},\n  \"cardNumber\": \"12345\",\n  \"instructedAmount\": {\n    \"amount\": \"160.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"funds-confirmations"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Several TPPs for one PSU account",
+			"item": [
+				{
+					"name": "Preparations",
+					"item": [
+						{
+							"name": "1. Enable PIIS consent support in ASPSP profile",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "67af457a-0c1a-44da-8b16-9af106584c29",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n            \t\"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        }\n    },\n    \"piis\": {\n        \"piisConsentSupported\": true\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"aspsp-settings"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Authorise in ledgers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5c9efc2d-6b20-48d6-8729-cb958af978e5",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Bearer token exists\", () => {",
+											"   pm.expect(jsonData).to.have.property('bearerToken');",
+											"});",
+											"",
+											"var tokenWithoutQuotes = JSON.stringify(jsonData.bearerToken.access_token).replace(/\"/g,\"\")",
+											"",
+											"pm.globals.set(\"ledgersBearerToken\", tokenWithoutQuotes);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "psu-id",
+										"type": "text",
+										"value": "{{psu_id_none}}",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_ledgers}}/users/login?login={{psu_id_none}}&pin={{psu_id_password}}&role=CUSTOMER",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_ledgers}}"
+									],
+									"path": [
+										"users",
+										"login"
+									],
+									"query": [
+										{
+											"key": "login",
+											"value": "{{psu_id_none}}"
+										},
+										{
+											"key": "pin",
+											"value": "{{psu_id_password}}"
+										},
+										{
+											"key": "role",
+											"value": "CUSTOMER"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Execute /me request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5c9efc2d-6b20-48d6-8729-cb958af978e5",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"User ID exists\", () => {",
+											"   pm.expect(jsonData).to.have.property('id');",
+											"});",
+											"",
+											"pm.globals.set(\"userId\", jsonData.id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ledgersBearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{protocol}}://{{url_ledgers}}/users/me",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_ledgers}}"
+									],
+									"path": [
+										"users",
+										"me"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "TPP_1",
+					"item": [
+						{
+							"name": "4. Create PIIS consent in CMS-ASPSP-API",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5c9efc2d-6b20-48d6-8729-cb958af978e5",
+										"exec": [
+											"pm.test(\"Status code is 201\", () => {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"PIIS consent ID exists\", () => {",
+											"   pm.expect(jsonData).to.have.property('consentId');",
+											"});",
+											"",
+											"pm.globals.set(\"piis_consent_id\", jsonData.consentId);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "psu-id",
+										"value": "{{psu_id_none}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2020-10-10\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_cms}}"
+									],
+									"path": [
+										"aspsp-api",
+										"v1",
+										"piis",
+										"consents",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. Create PIIS consent in ledgers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5c9efc2d-6b20-48d6-8729-cb958af978e5",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"SCA status exists\", () => {",
+											"   pm.expect(jsonData).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.globals.set(\"ledgersResponse\", JSON.stringify(jsonData));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ledgersBearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"access\": {\n    \"accounts\": [\n         \"{{iban_none}}\"\n    ]\n  },\n  \"frequencyPerDay\": 4,\n  \"tppId\": \"PSDDE-FAKENCA-87B2AC\",\n  \"userId\": \"{{userId}}\",\n  \"validUntil\": \"2020-10-10\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_ledgers}}/consents/piis",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_ledgers}}"
+									],
+									"path": [
+										"consents",
+										"piis"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6. Update ASPSP consent data for the given PIIS consent in CMS-PSU-API",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "4cdb2bc7-e7a4-463d-b867-d67addf82fc1",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a369776b-06b6-4114-8c55-7f3b2f865a1d",
+										"exec": [
+											"var ledgersResponse = pm.globals.get(\"ledgersResponse\");",
+											"var utf8string = CryptoJS.enc.Utf8.parse(ledgersResponse);",
+											"",
+											"pm.globals.set(\"encodedLedgersResponse\", CryptoJS.enc.Base64.stringify(utf8string));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"aspspConsentDataBase64\": \"{{encodedLedgersResponse}}\",\n  \"consentId\": \"{{piis_consent_id}}\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/aspsp-consent-data/consents/{{piis_consent_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_cms}}"
+									],
+									"path": [
+										"psu-api",
+										"v1",
+										"aspsp-consent-data",
+										"consents",
+										"{{piis_consent_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7. Fund confirmation request in xs2a",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ff8da433-7a07-44be-8f3b-18b88ed71393",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"fundsAvailable is present\", () => {",
+											"    pm.expect(jsonData).to.have.property('fundsAvailable');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									},
+									{
+										"key": "TPP-qwac-Certificate",
+										"value": "-----BEGIN CERTIFICATE-----MIIFJzCCAw+gAwIBAgIETxsR7TANBgkqhkiG9w0BAQsFADB4MQswCQYDVQQGEwJERTEQMA4GA1UECAwHQkFWQVJJQTESMBAGA1UEBwwJTnVyZW1iZXJnMSIwIAYDVQQKDBlUcnVzdCBTZXJ2aWNlIFByb3ZpZGVyIEFHMR8wHQYDVQQLDBZJbmZvcm1hdGlvbiBUZWNobm9sb2d5MB4XDTIwMDExMTEwNDM1M1oXDTIxMDExMDAwMDAwMFowgdgxITAfBgNVBAoMGEZpY3Rpb25hbCBDb3Jwb3JhdGlvbiBBRzEVMBMGA1UEAwwMWFMyQSBTYW5kYm94MSUwIwYKCZImiZPyLGQBGRYVcHVibGljLmNvcnBvcmF0aW9uLmRlMR8wHQYDVQQLDBZJbmZvcm1hdGlvbiBUZWNobm9sb2d5MRAwDgYDVQQGEwdHZXJtYW55MQ8wDQYDVQQIDAZCYXllcm4xEjAQBgNVBAcMCU51cmVtYmVyZzEdMBsGA1UEYQwUUFNEREUtRkFLRU5DQS04N0IyQUMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCRhx6LCOvlHYtld1Bifsqdku4d2SASNqj9ZptbgL6Lf+1WhDxgeUGbHyjN/AdsGkjzY0TUiYV77g/EgcIXuHPKKogN6Ad9Cz4MzIVsQCiZmdk04M78j5l+y7gtqrmV+4h+sGdKFLMEv/yCNb1ahci26CktnzyKQnjhkb7ijIEAWMI83sX1Yo8F5oRPj0XFMr2k4xa8tkqYzt7P3ChxS3kR57lvptAeNNxMpHWhRp0DSxKWhAbxHt7R0FG6Qs8pEuEcyxh/FBK9YPQtEgYbGD91UoB8k1UejKhWJs6+ZNz47gUPylGx2Bh0EczpMwty207KM9YBl1RvZu5ElZzX4V+rAgMBAAGjWDBWMFQGCCsGAQUFBwEDBEgwRgYGBACBmCcCMDwwEzARBgcEAIGYJwECDAZQU1BfUEkMGVRydXN0IFNlcnZpY2UgUHJvdmlkZXIgQUcMCkRFLUZBS0VOQ0EwDQYJKoZIhvcNAQELBQADggIBAIRLwIiRSOc7F4FBn07YVmFwTw/HnFWMkdoDieMHyyioKdJGaOHIRzodw1WMjDl6V6A4G/V3U+nsGG2ra0fFXujoc1YMGEI0Mzrt0VSYwWPS18svBhp31UmegeQIRukXugGKOeWgBnh3DYvNuCbJfKDAUFL3nej75JRZWAzAklb/RaK50iedOrkUEts2K6qaQvygEMW6ytn+RmeqTXwin1g7L2qhBpdCGv/S/PufOW9BZfW4KmmiA9SjQhLQclZWY8DqUoOZUwFEaTgjhd4KZxg7ZvnyPE7Jh0GJMGFsibMEovkltr3ZZyffCDHe9h81Ar611dXKuzgZDu8ejs3v/PIvBzL5GjAvF5N5mSy8YBB91DvGJeJsh9rXi9cwj9qpTA4Ufn6hJiv3a2AAw9xtsa7z/btuEuGPr6G+r385ckcqbOKFqEXwnEVNt65EWhqBPFqm4oU5qVfMLZJ5AJVDkbRGu7lq7HZ/N4MN3a6HQxBk1Mpa6Ap7Tz/7MWbNE+0cXlGOUVZ7+KjasbnqQGRmCvkJK4Bt+fnXBSeKQPDcfI9VLZ1frOM0GcR6NqD/zbrmm1n9JWUxIvOHtylEgNEp4C8lP3YA3YUjRX9WCT41IczMcNbmaj/i0jiiaSFRTXMtKB0iPbD60SJeHI1zeFMTA4EDItb0S70eR23Op5/smJPy-----END CERTIFICATE-----",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"instructedAmount\": {\n    \"amount\": \"100.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"funds-confirmations"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "TPP_2",
+					"item": [
+						{
+							"name": "8. Create PIIS consent in CMS-ASPSP-API",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5c9efc2d-6b20-48d6-8729-cb958af978e5",
+										"exec": [
+											"pm.test(\"Status code is 201\", () => {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"PIIS consent ID exists\", () => {",
+											"   pm.expect(jsonData).to.have.property('consentId');",
+											"});",
+											"",
+											"pm.globals.set(\"piis_consent_id\", jsonData.consentId);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "psu-id",
+										"type": "text",
+										"value": "{{psu_id_none}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AD\",\n  \"validUntil\": \"2020-10-10\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_cms}}"
+									],
+									"path": [
+										"aspsp-api",
+										"v1",
+										"piis",
+										"consents",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "9. Create PIIS consent in ledgers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5c9efc2d-6b20-48d6-8729-cb958af978e5",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"SCA status exists\", () => {",
+											"   pm.expect(jsonData).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.globals.set(\"ledgersResponse\", JSON.stringify(jsonData));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ledgersBearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"access\": {\n    \"accounts\": [\n         \"{{iban_none}}\"\n    ]\n  },\n  \"frequencyPerDay\": 4,\n  \"tppId\": \"PSDDE-FAKENCA-87B2AD\",\n  \"userId\": \"{{userId}}\",\n  \"validUntil\": \"2020-10-10\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_ledgers}}/consents/piis",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_ledgers}}"
+									],
+									"path": [
+										"consents",
+										"piis"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "10. Update ASPSP consent data for the given PIIS consent in CMS-PSU-API",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "4cdb2bc7-e7a4-463d-b867-d67addf82fc1",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a369776b-06b6-4114-8c55-7f3b2f865a1d",
+										"exec": [
+											"var ledgersResponse = pm.globals.get(\"ledgersResponse\");",
+											"var utf8string = CryptoJS.enc.Utf8.parse(ledgersResponse);",
+											"",
+											"pm.globals.set(\"encodedLedgersResponse\", CryptoJS.enc.Base64.stringify(utf8string));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"aspspConsentDataBase64\": \"{{encodedLedgersResponse}}\",\n  \"consentId\": \"{{piis_consent_id}}\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/aspsp-consent-data/consents/{{piis_consent_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_cms}}"
+									],
+									"path": [
+										"psu-api",
+										"v1",
+										"aspsp-consent-data",
+										"consents",
+										"{{piis_consent_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "11. Fund confirmation request in xs2a",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ff8da433-7a07-44be-8f3b-18b88ed71393",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"fundsAvailable is present\", () => {",
+											"    pm.expect(jsonData).to.have.property('fundsAvailable');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									},
+									{
+										"key": "TPP-QWAC-CERTIFICATE",
+										"value": "-----BEGIN CERTIFICATE-----MIIFJzCCAw+gAwIBAgIEMiq6iTANBgkqhkiG9w0BAQsFADB4MQswCQYDVQQGEwJERTEQMA4GA1UECAwHQkFWQVJJQTESMBAGA1UEBwwJTnVyZW1iZXJnMSIwIAYDVQQKDBlUcnVzdCBTZXJ2aWNlIFByb3ZpZGVyIEFHMR8wHQYDVQQLDBZJbmZvcm1hdGlvbiBUZWNobm9sb2d5MB4XDTIwMDExMTEwNDQzN1oXDTIxMDExMDAwMDAwMFowgdgxITAfBgNVBAoMGEZpY3Rpb25hbCBDb3Jwb3JhdGlvbiBBRzEVMBMGA1UEAwwMWFMyQSBTYW5kYm94MSUwIwYKCZImiZPyLGQBGRYVcHVibGljLmNvcnBvcmF0aW9uLmRlMR8wHQYDVQQLDBZJbmZvcm1hdGlvbiBUZWNobm9sb2d5MRAwDgYDVQQGEwdHZXJtYW55MQ8wDQYDVQQIDAZCYXllcm4xEjAQBgNVBAcMCU51cmVtYmVyZzEdMBsGA1UEYQwUUFNEREUtRkFLRU5DQS04N0IyQUQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCyvyHjlApfVSmSTPeCij9WwVWXPV/lvK7KqWB325zLokQWtcGEt+BKeN00G2i5b4jWyhJgMn40FqnfWGUkSl70q5cgjztm9uoNZ514rEzbM0hI6LyL3KiLJ0gOa1zhvTuh9DrcgSfaJ1/Damdl1CoHHuoqwC5OuIDU/ygR6SIfMabMbXMy7N8piBo3SH4UGEIvadmMH7FghMtbNbVqiVe3hzOj2v2P3emKRJcOhQhiXUGdMxWjBvdmlegBxuhymRRVW2SxjerGoLbwLC6WhKIYaEXeUTqdyazPTVbkdQryEiVdEdXak//rJC6NAgBnBw9N6bF+PtrZnOSuZ1bp19XjAgMBAAGjWDBWMFQGCCsGAQUFBwEDBEgwRgYGBACBmCcCMDwwEzARBgcEAIGYJwECDAZQU1BfUEkMGVRydXN0IFNlcnZpY2UgUHJvdmlkZXIgQUcMCkRFLUZBS0VOQ0EwDQYJKoZIhvcNAQELBQADggIBABXq8wHPveWnieMFjchftwizQmSoRA5ph+sV9alLVgP5LjkF9hpTWzDdZyW+n3fOmK187ngYgokel6YsxPrq+tO/1TANv9nzzLfcfIepcFgoivdYoIKuK6gpexaLoSUJMffp6Xwksb8SmvZxsgzUUl9LqJ/HxTWvPRQ6RchRRQhUbj7CDB1Jay6hnv5AY4ns8bdkYsv7BLpNlLeUDJyMp5l0SnT5QiyrCcac2vtcFI70nGyd8RRskWt+nm7jB39e0jo5tCrpmtDmfV+KWyhS8peYoPRlNZEY9NfD8ko7aemCwl0SuGVtWBKVGXDJ1/GaavzZZc1dzAQWILb+8wVvM7L5cFGgqgHpSHdja9TsNAIGnLlMU736rbvFbYzPsCHdyrXPMPBPVRvgVvQBpBUjPzTE2GJ8YzLLGrkZMeDDx+/nJ1Ifl56/NMlHrefmZutYozyoFlkO63NMK5eSic525+1baHwNQ/6HSTYyRnW2EExYyI7BuJze4lf/GxijzKyIa9IbYpU6y6epvRJU3COTMiFoW5mzpxkqLE1wQ7wAl6UxIqUV/JB8xpKKGYABeld4/Gbu8G5T1Pe1uNw18ZRXu8CsWO9MZp5BT9f/inadx2Sz4n7oH1Jyf/D21wDZKBXPlFhLDdqjRaz0kv+xs1wbfEqk84xrwiX3QhjZZym8Sk7T-----END CERTIFICATE-----",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"instructedAmount\": {\n    \"amount\": \"100.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",

@@ -3,6 +3,7 @@
 == Table of Contents
 * Move AuthenticationObject to xs2a-core
 * Feature: Add new data attribute instructionIdentification for all standard payment types
+* Bugfix: PIIS request not filtered by TPP consent
 
 == Move AuthenticationObject to xs2a-core
 
@@ -12,3 +13,8 @@ Usages of `Xs2aAuthenticationObject` and `SpiAuthenticationObject` were substitu
 
 From now on, `instructionIdentification` field was added to all standard payment types.
 Also in case `instructionIdentification` field exceeds the maximum length of 35 symbols TPP will receive `400 Bad Request` error with `FORMAT_ERROR` code.
+
+
+== Bugfix: PIIS request not filtered by TPP consent
+
+From now on, PIIS consents are correctly filtered by TPP during Funds Confirmation Request (`POST /v1/funds-confirmations`).
