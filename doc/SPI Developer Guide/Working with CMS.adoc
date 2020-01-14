@@ -118,11 +118,26 @@ In order to do it, you can use several `CMS-ASPSP-API` REST controllers. They ar
 * `GET aspsp-api/v1/tpp/` - get TPP info.
 * `GET aspsp-api/v1/tpp/{tpp-id}` - get TPP info with path.
 
-=== Using the Events interface
+==== Using the Events interface
 
-=== Using the FundsConfirmation Consent interface
+==== Using the Funds Confirmation Consent interface
 
-=== Using the Consents/Payments export interface
+Funds Confirmation Consent interface (PIIS consent interface) allows ASPSP to manage consents for accessing Confirmation of Funds Service.
+It should be used only if ASPSP supports PIIS consents created by the ASPSP.
+This interface can be accessed either by REST endpoints in CMS or by Java methods in `de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService` (in case of using CMS in embedded mode).
+
+* `POST aspsp-api/v1/piis/consents` (or `CmsAspspPiisService#createConsent`) - creates new PIIS consent for given PSU.
+Request for creating new consent must contain PSU credentials data, TPP authorisation number, account reference information and `validUntil` date.
+If the consent was successfully created, its ID will be returned in the response.
+Because PSU can only have one PIIS consent for one account and TPP, previously existing PIIS consent for the same PSU, account and TPP will get revoked (its status will become `revokedByPsu`)
+
+* `GET aspsp-api/v1/piis/consents` (or `CmsAspspPiisService#getConsentsForPsu`) - returns list of all PIIS consents, associated with given PSU and optional instance ID.
+
+* `DELETE aspsp-api/v1/piis/consents/{consent-id}` (or `CmsAspspPiisService#terminateConsent`) - terminates PIIS consent by its ID and optional instance ID.
+Consent will get status `terminatedByAspsp`.
+Response will contain `true` if the consent was found and successfully terminated, `false` otherwise.
+
+==== Using the Consents/Payments export interface
 
 Consents/Payments export interfaces give an opportunity to get consent/payment by `TPP`, `PSU` or `account ID`.
 In order to do that, you need to request endpoints of one of the `CMS-ASPSP-API` REST controllers:
@@ -173,7 +188,7 @@ Corresponding java method - `getConsentsByPsu`.
 you'll get a list of `PIIS consents` by given mandatory `aspsp account id`, optional `creation date` and `instance ID`.
 Corresponding java method - `getConsentsByAccountId`.
 
-=== Using the Payment Transaction interface
+==== Using the Payment Transaction interface
 
 Payment transaction interface serves for changing transaction status for payment in CMS database.
 In consists one REST controller -  `CmsAspspPisTransactionController`.
@@ -185,7 +200,7 @@ On this endpoint you can update `transaction status` of `payment` by its `paymen
 In order to do this you should enter `payment id` and new `transaction status` as path variables,
 also you can pass `instance id` as header, but it is not required.
 
-=== Using the Tpp locking interface
+==== Using the Tpp locking interface
 
 Tpp locking interface gives an access to `TPP stop list` and provides possibility to block and unblock `TPP` by
 `TPP authorisation number`. In order to do it, you can use `Tpp locking` REST controller - `CmsAspspStopListController`.
@@ -202,7 +217,7 @@ Corresponding java method - `getTppStopListRecord`.
 * `DELETE aspsp-api/v1/tpp/stop-list/unblock` - unblock `TPP`. Requesting this endpoint you'll unblock `TPP` by
 mandatory `TPP authorisation number` and optional `instance ID`. Corresponding java method - `unblockTpp`.
 
-=== Using the Tpp info interface
+==== Using the Tpp info interface
 
 Tpp info interface provide access to `TPP info`. In order to get it, you can use `Tpp info` REST controller -
 `CmsAspspTppInfoController`.
