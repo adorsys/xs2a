@@ -2,9 +2,13 @@
 
 == Table of Contents
 * Feature: Add new data attribute instructionIdentification for all standard payment types
-
+* Bugfix: PIIS request not filtered by TPP consent
 
 == Feature: Add new data attribute instructionIdentification for all standard payment types
 
 From now on, `instructionIdentification` field was added to all standard payment types.
 Also in case `instructionIdentification` field exceeds the maximum length of 35 symbols TPP will receive `400 Bad Request` error with `FORMAT_ERROR` code.
+
+== Bugfix: PIIS request not filtered by TPP consent
+
+From now on, PIIS consents are correctly filtered by TPP during Funds Confirmation Request (`POST /v1/funds-confirmations`).
