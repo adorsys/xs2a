@@ -6,6 +6,68 @@
 
 === Using the CMS-PSU-API
 
+CMS PSU API provides interfaces to be used by online-banking systems. Main purpose of these interfaces - providing
+access to internal data of business objects stored in CMS database. Access to this API is provided via REST requests.
+REST controllers classes are located in the `de.adorsys.psd2.consent.web.psu.controller` package.
+
+CMS-PSU-API has 4 main parts which are implemented as separate REST controllers:
+
+* ASPSP consent data part;
+* AIS consent part;
+* PIS payment part;
+* PIIS consent part.
+
+Below is the description of each controller with its endpoints and names of corresponding java source code methods.
+
+==== ASPSP consent data controller.
+
+This controller has endpoints for handling ASPSP consent data.
+
+* *GET /psu-api/v1/aspsp-consent-data/consents/{consent-id}* - reads ASPSP consent data by provided consent/payment ID. Corresponding java method - `getAspspConsentData`;
+* *PUT /psu-api/v1/aspsp-consent-data/consents/{consent-id}* - updates ASPSP consent data by provided consent/payment ID. Java method - `updateAspspConsentData`;
+* *DELETE /psu-api/v1/aspsp-consent-data/consents/{consent-id}* - clears ASPSP consent data by provided consent/payment ID. Method - `deleteAspspConsentData`.
+
+More detailed ASPSP data handling is described
+xref:./Implementing SPI-API.adoc[here].
+
+==== AIS consent controller.
+
+This controller has endpoints for working with AIS consent entities and their attributes.
+
+* *GET /psu-api/v1/ais/consent/{consent-id}* - returns AIS consent object by provided ID (ID should be internal). Corresponding java method is `getConsentByConsentId`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/authorisation/{authorisation-id}/psu-data* - updates PSU data for definite consent. Java - `updatePsuDataInConsent`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/authorisation/{authorisation-id}/status/{status}* - updates status of AIS consent authorisation. Java - `updateAuthorisationStatus`;
+* *GET /psu-api/v1/ais/consent/{consent-id}/authorisation/psus* - returns map consisting of PSU data IDs (keys) and statuses of their authorisations for the given consent (values). Method - `psuDataAuthorisations`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/confirm-consent* - switches the AIS consent status to `VALID`. Method name - `confirmConsent`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/reject-consent* - switches the AIS consent status to `REJECTED`. Method - `rejectConsent`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/revoke-consent* - switches the AIS consent status to `REVOKED_BY_PSU`. Method - `revokeConsent`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/save-access* - stores the account accesses for the definite consent with proper status (not applicable to `REVOKED`, `CANCELLED` and `EXPIRED` consent statuses). To be used for bank offered consents only. Java method - `putAccountAccessInConsent`;
+* *GET /psu-api/v1/ais/consent/authorisation/{authorisation-id}* - returns authorisation object by its ID. Method - `getAuthorisationByAuthorisationId`;
+* *GET /psu-api/v1/ais/consent/consents* - returns list of AIS consents by provided `PSU-ID` header. Java method - `getConsentsForPsu`;
+* *GET /psu-api/v1/ais/consent/redirect/{redirect-id}* - returns AIS consent object by provided authorisation (redirect) ID. Method - `getConsentIdByRedirectId`.
+
+==== PIS payment controller.
+
+This controller has endpoints for working with PIS payment entities and their attributes.
+
+* *GET /psu-api/v1/payment/{payment-id}* - returns PIS payment object by provided ID (ID should be internal). Corresponding java method is `getPaymentByPaymentId`;
+* *PUT /psu-api/v1/payment/{payment-id}/authorisation/{authorisation-id}/status/{status}* - updates status of PIS payment authorisation. Java method - `updateAuthorisationStatus`;
+* *GET /psu-api/v1/payment/{payment-id}/authorisation/psus* - returns map consisting of PSU data IDs (keys) and statuses of their authorisations for the given payment (values). Also, holds the type of authorisation for payment (`CREATED`/`CANCELLED`). Method for this - `psuAuthorisationStatuses`;
+* *PUT /psu-api/v1/payment/{payment-id}/status/{status}* - switches the PIS payment status. The status should be provided as a path variable. Method - `updatePaymentStatus`;
+* *GET /psu-api/v1/payment/authorisation/{authorisation-id}* - returns authorisation object by its ID; Method - `getAuthorisationByAuthorisationId`;
+* *PUT /psu-api/v1/payment/authorisation/{authorisation-id}/psu-data* - updates PSU data for definite authorisation. Method - `updatePsuInPayment`;
+* *GET /psu-api/v1/payment/cancellation/{payment-id}* - returns PIS payment object by provided cancellation ID. Used method - `getPaymentByPaymentIdForCancellation`;
+* *GET /psu-api/v1/payment/cancellation/redirect/{redirect-id}* - returns PIS payment object by provided cancellation authorisation (redirect) ID. Method - `getPaymentIdByRedirectIdForCancellation`;
+* *GET /psu-api/v1/payment/redirect/{redirect-id}* - returns PIS payment object by provided authorisation (redirect) ID. Method - `getPaymentIdByRedirectId`.
+
+==== PIIS consent controller.
+
+This controller has endpoints for working with PIIS consent entities and their attributes.
+
+* *GET /psu-api/v1/piis/consents* - returns list of PIIS consent objects by provided header `PSU-ID`. Method name - `getConsentsForPsu`;
+* *GET /psu-api/v1/piis/consents/{consent-id}* - returns PIIS consent object by its ID. Method - `getConsent`;
+* *PUT /psu-api/v1/piis/consents/{consent-id}/revoke-consent* - revokes the definite PIIS consent (status switches to `REVOKED_BY_PSU`). In java - `revokeConsent`.
+
 === SCA Approaches REDIRECT
 
 === SCA Approaches
