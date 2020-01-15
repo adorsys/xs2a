@@ -1,0 +1,10 @@
+= Release notes v.4.8
+
+== Table of Contents
+
+* Fixing acceptance of past validUntil date provided through CMS-PSU-API
+
+== Fixing acceptance of past validUntil date provided through CMS-PSU-API
+
+From now on, providing a validUntil date, that is prior to the current date gets rejected on
+calling `PUT /psu-api/v1/ais/consent/{consent-id}/save-access`.
