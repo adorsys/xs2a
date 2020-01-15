@@ -69,3 +69,10 @@ To enable this mapping, connector application should use `xs2a-payment-support-i
 ----
 
 See <<SPI_Developer_Guide.adoc#configuring-mapping-type-specific-payments-cms-apis,Configuring mapping of type-specific payments for CMS APIs>> for providing similar configuration for CMS application.
+
+=== Configuring XS2A filters
+
+XS2A relies on specific order of filter execution to function correctly and relies on connector application to maintain that order.
+
+If connector is launched as Spring Boot application, the order will be guaranteed by the priority of the filter beans and no additional configuration is required.
+If it's not the case, connector should make sure that `de.adorsys.psd2.xs2a.web.filter.Xs2aLoggingContextFilter` will be executed before any other XS2A filter.
