@@ -264,6 +264,21 @@ After this operation the given consent's account reference data will be updated 
 
 === Implementation of FundsConfirmationSpi
 
+This interface is used for retrieving information from ASPSP in scope of Confirmation of Funds requests.
+
+*FundsConfirmationSpi* contains only one method that should be implemented - *performFundsSufficientCheck*, which is responsible for checking whether requested account has sufficient funds.
+The method returns *SpiFundsConfirmationResponse* as part of *SpiResponse* with information whether the requested amount can be booked on the account.
+
+*performFundsSufficientCheck* takes the following arguments:
+
+* *spiContextData* - information about the context of the call
+* *piisConsent* - optional PIIS consent object, will be absent if the request is done from a workflow without the consent
+* *spiFundsConfirmationRequest* - information about the account and transaction amount, provided by the TPP
+* *aspspConsentDataProvider* - optional ASPSP consent data provider, will be absent if the request is done from a workflow without the consent
+
+PIIS consent will be passed to the SPI method along with ASPSP consent data provider if the ASPSP supports PIIS consents.
+Otherwise both PIIS consent object and ASPSP consent data provider will be absent in the request to SPI.
+
 === Implementation of PaymentSpi(s)
 
 We distinguish between following interfaces: *SinglePaymentSpi*, *BulkPaymentSpi*, *PeriodicPaymentSpi*, *PaymentAuthorisationSpi*, *PaymentCancellationSpi*.
