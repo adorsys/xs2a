@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Priority;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ import java.io.IOException;
  * Filter for managing logging context for each request.
  * Responsible for populating logging context with request-related data and clearing context afterwards.
  */
+@Priority(0)
 @Component
 public class Xs2aLoggingContextFilter extends AbstractXs2aFilter {
     private final LoggingContextService loggingContextService;
