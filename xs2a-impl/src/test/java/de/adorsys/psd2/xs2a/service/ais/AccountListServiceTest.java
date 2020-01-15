@@ -17,6 +17,8 @@
 package de.adorsys.psd2.xs2a.service.ais;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
@@ -202,7 +204,7 @@ public class AccountListServiceTest {
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
 
-        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList())).thenReturn(Optional.empty());
+        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList())).thenReturn(CmsResponse.<AccountConsent>builder().error(CmsError.LOGICAL_ERROR).build());
 
         // When
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -227,7 +229,7 @@ public class AccountListServiceTest {
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
 
-        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList())).thenReturn(Optional.of(accountConsent));
+        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList())).thenReturn(CmsResponse.<AccountConsent>builder().payload(accountConsent).build());
 
         // When
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -268,7 +270,7 @@ public class AccountListServiceTest {
 
         AccountConsent updatedAccountConsent = createConsent(createAccountAccess(XS2A_ACCOUNT_REFERENCE));
         when(accountReferenceUpdater.updateAccountReferences(CONSENT_ID, accountConsent.getAccess(), xs2aAccountDetailsList))
-            .thenReturn(Optional.of(updatedAccountConsent));
+            .thenReturn(CmsResponse.<AccountConsent>builder().payload(updatedAccountConsent).build());
 
         // When
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -293,7 +295,7 @@ public class AccountListServiceTest {
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
         when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList()))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(CmsResponse.<AccountConsent>builder().payload(accountConsent).build());
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
@@ -331,7 +333,7 @@ public class AccountListServiceTest {
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
         when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList()))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(CmsResponse.<AccountConsent>builder().payload(accountConsent).build());
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
 
         // When
@@ -422,7 +424,7 @@ public class AccountListServiceTest {
         List<Xs2aAccountDetails> xs2aAccountDetailsList = Collections.singletonList(xs2aAccountDetails);
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
-        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList())).thenReturn(Optional.of(accountConsent));
+        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList())).thenReturn(CmsResponse.<AccountConsent>builder().payload(accountConsent).build());
     }
 
     // Needed because SpiResponse is final, so it's impossible to mock it

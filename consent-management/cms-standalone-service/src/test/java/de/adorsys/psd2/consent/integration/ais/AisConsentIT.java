@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.integration.ais;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
@@ -81,7 +82,7 @@ public class AisConsentIT {
     }
 
     @Test
-    public void createAisConsent_successWithNewStatus() {
+    public void createAisConsent_successWithNewStatus() throws WrongChecksumException {
         // Given
         CreateAisConsentRequest createAisConsentRequest = buildCreateAisConsentRequest();
 
@@ -108,7 +109,7 @@ public class AisConsentIT {
     }
 
     @Test
-    public void createAisConsent_successWithTheSameStatus() {
+    public void createAisConsent_successWithTheSameStatus() throws WrongChecksumException {
         // Given
         CreateAisConsentRequest createAisConsentRequest = buildCreateAisConsentRequest();
 
@@ -135,7 +136,7 @@ public class AisConsentIT {
     }
 
     @Test(expected = PersistenceException.class)
-    public void createAisConsent_failShouldThrowException() {
+    public void createAisConsent_failShouldThrowException() throws WrongChecksumException {
         // Given
         CreateAisConsentRequest createAisConsentRequest = buildCreateAisConsentRequest();
 
@@ -159,7 +160,7 @@ public class AisConsentIT {
     }
 
     @Test
-    public void getConsentsForPsu_successWithDifferentPsu() {
+    public void getConsentsForPsu_successWithDifferentPsu() throws WrongChecksumException {
         //Given
         PsuIdData aspsp = buildPsuIdData("aspsp", "aspsp corporate id");
         PsuIdData aspsp1 = buildPsuIdData("aspsp1", "aspsp1 corporate id");

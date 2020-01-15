@@ -20,18 +20,25 @@ package de.adorsys.psd2.consent.repository.impl;
 import de.adorsys.psd2.consent.domain.sha.ChecksumConstant;
 import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingService;
 import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingServiceV1;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class ChecksumCalculatingFactory {
     private final Map<String, ChecksumCalculatingService> services = new HashMap<>();
-    private final ChecksumCalculatingServiceV1 v001 = new ChecksumCalculatingServiceV1();
 
-    public ChecksumCalculatingFactory() {
+    @Autowired
+    private ChecksumCalculatingServiceV1 v001;
+
+    @PostConstruct
+    public void init() {
         services.put(v001.getVersion(), v001);
     }
 

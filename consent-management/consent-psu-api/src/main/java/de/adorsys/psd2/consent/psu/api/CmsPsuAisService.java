@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.psu.api;
 
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
@@ -82,8 +83,9 @@ public interface CmsPsuAisService {
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
+     * @throws WrongChecksumException in case of any attempt to change definite consent fields after its status became valid.
      */
-    boolean confirmConsent(@NotNull String consentId, @NotNull String instanceId);
+    boolean confirmConsent(@NotNull String consentId, @NotNull String instanceId) throws WrongChecksumException;
 
     /**
      * Puts a Status of AIS Consent object by its ID and PSU ID to REJECTED
@@ -91,8 +93,9 @@ public interface CmsPsuAisService {
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
+     * @throws WrongChecksumException in case of any attempt to change definite consent fields after its status became valid.
      */
-    boolean rejectConsent(@NotNull String consentId, @NotNull String instanceId);
+    boolean rejectConsent(@NotNull String consentId, @NotNull String instanceId) throws WrongChecksumException;
 
     /**
      * Returns a list of AIS Consent objects by PSU ID
@@ -110,8 +113,9 @@ public interface CmsPsuAisService {
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and revoked. <code>false</code> otherwise.
+     * @throws WrongChecksumException in case of any attempt to change definite consent fields after its status became valid.
      */
-    boolean revokeConsent(@NotNull String consentId, @NotNull String instanceId);
+    boolean revokeConsent(@NotNull String consentId, @NotNull String instanceId) throws WrongChecksumException;
 
     /**
      * Returns CMS AIS consent identifier by redirect ID if redirect ID has not expired
@@ -148,6 +152,7 @@ public interface CmsPsuAisService {
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
+     * @throws WrongChecksumException in case of any attempt to change definite consent fields after its status became valid.
      */
-    boolean authorisePartiallyConsent(@NotNull String consentId, @NotNull String instanceId);
+    boolean authorisePartiallyConsent(@NotNull String consentId, @NotNull String instanceId) throws WrongChecksumException;
 }

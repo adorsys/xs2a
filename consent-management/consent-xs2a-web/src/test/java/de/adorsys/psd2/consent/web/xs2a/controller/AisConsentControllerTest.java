@@ -20,6 +20,7 @@ package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
@@ -76,7 +77,7 @@ public class AisConsentControllerTest {
     private AisConsentAuthorisationServiceEncrypted aisAuthorisationServiceEncrypted;
 
     @Before
-    public void setUp() {
+    public void setUp() throws WrongChecksumException {
         when(aisConsentService.getConsentStatusById(eq(CONSENT_ID)))
             .thenReturn(CmsResponse.<ConsentStatus>builder().payload(ConsentStatus.RECEIVED).build());
         when(aisConsentService.getConsentStatusById(eq(WRONG_CONSENT_ID)))
@@ -112,7 +113,7 @@ public class AisConsentControllerTest {
     }
 
     @Test
-    public void createConsent_success() {
+    public void createConsent_success() throws WrongChecksumException {
         // Given
         CreateAisConsentRequest createRequest = new CreateAisConsentRequest();
         CreateAisConsentResponse serviceResponse = new CreateAisConsentResponse(CONSENT_ID, new AisAccountConsent(), Arrays.asList(NotificationSupportedMode.LAST, NotificationSupportedMode.SCA));
@@ -128,7 +129,7 @@ public class AisConsentControllerTest {
     }
 
     @Test
-    public void createConsent_emptyServiceResponse() {
+    public void createConsent_emptyServiceResponse() throws WrongChecksumException {
         // Given
         CreateAisConsentRequest createRequest = new CreateAisConsentRequest();
         when(aisConsentService.createConsent(createRequest))

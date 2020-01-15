@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.ais;
 
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
@@ -50,7 +52,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_500;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_VALIDATION_FAILED;
 
 @Slf4j
 @Service
@@ -118,12 +122,18 @@ public class AccountListService {
 
         List<Xs2aAccountDetails> accountDetails = accountDetailsMapper.mapToXs2aAccountDetailsList(spiResponse.getPayload());
 
-        Optional<AccountConsent> accountConsentUpdated =
+        CmsResponse<AccountConsent> accountConsentUpdated =
             accountReferenceUpdater.updateAccountReferences(consentId, accountConsent.getAccess(), accountDetails);
 
-        if (!accountConsentUpdated.isPresent()) {
-            log.info("Consent-ID: [{}]. Get account list failed: couldn't update account consent access. Actual consent not found by id",
-                     consentId);
+        if (accountConsentUpdated.hasError()) {
+            log.info("Consent-ID: [{}]. Get account list failed: couldn't update account consent access.", consentId);
+
+            if (CmsError.CHECKSUM_ERROR == accountConsentUpdated.getError()) {
+                return ResponseObject.<Xs2aAccountListHolder>builder()
+                           .fail(AIS_500, TppMessageInformation.of(CONSENT_VALIDATION_FAILED))
+                           .build();
+            }
+
             return ResponseObject.<Xs2aAccountListHolder>builder()
                        .fail(AIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400))
                        .build();
@@ -131,7 +141,7 @@ public class AccountListService {
 
         loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
 
-        return getXs2aAccountListHolderResponseObject(consentId, withBalance, requestUri, accountConsentUpdated.get(), accountDetails);
+        return getXs2aAccountListHolderResponseObject(consentId, withBalance, requestUri, accountConsentUpdated.getPayload(), accountDetails);
     }
 
     private ValidationResult getValidationResultForGetAccountListConsent(boolean withBalance, String requestUri, AccountConsent accountConsent) {

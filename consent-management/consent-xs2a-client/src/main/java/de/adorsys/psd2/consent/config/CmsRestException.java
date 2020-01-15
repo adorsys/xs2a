@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.config;
 
+import de.adorsys.psd2.consent.api.CmsError;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -23,6 +24,7 @@ import org.springframework.http.HttpStatus;
 public class CmsRestException extends RuntimeException {
     private HttpStatus httpStatus;
     private String message;
+    private CmsError cmsError;
 
     CmsRestException(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
@@ -31,5 +33,6 @@ public class CmsRestException extends RuntimeException {
     CmsRestException(HttpStatus httpStatus, String message) {
         this.httpStatus = httpStatus;
         this.message = message;
+        this.cmsError = CmsError.getByName(message).orElse(CmsError.TECHNICAL_ERROR);
     }
 }

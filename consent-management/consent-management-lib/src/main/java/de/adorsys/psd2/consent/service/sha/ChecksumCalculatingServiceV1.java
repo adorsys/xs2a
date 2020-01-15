@@ -29,6 +29,7 @@ import de.adorsys.psd2.consent.domain.sha.AisConsentSha;
 import de.adorsys.psd2.consent.domain.sha.AspspAccountAccessSha;
 import de.adorsys.psd2.consent.domain.sha.ChecksumConstant;
 import de.adorsys.psd2.consent.domain.sha.TppAccountAccessSha;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
 import java.util.Base64;
@@ -37,6 +38,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Component
 public class ChecksumCalculatingServiceV1 implements ChecksumCalculatingService {
     private static final String VERSION = "001";
     private static final Charset CHARSET = Charset.defaultCharset();

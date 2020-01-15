@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
@@ -65,7 +66,7 @@ public class AccountReferenceInConsentUpdater {
      *
      * @return Response containing AIS Consent
      */
-    public Optional<AccountConsent> updateAccountReferences(@NotNull String consentId, @NotNull Xs2aAccountAccess existingAccess, @NotNull List<Xs2aAccountDetails> accountDetails) {
+    public CmsResponse<AccountConsent> updateAccountReferences(@NotNull String consentId, @NotNull Xs2aAccountAccess existingAccess, @NotNull List<Xs2aAccountDetails> accountDetails) {
         List<AccountReference> accounts = new ArrayList<>();
         List<AccountReference> transactions = new ArrayList<>();
         List<AccountReference> balances = new ArrayList<>();

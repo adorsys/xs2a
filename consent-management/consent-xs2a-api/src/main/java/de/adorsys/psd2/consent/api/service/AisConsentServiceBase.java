@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.api.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -38,7 +39,7 @@ interface AisConsentServiceBase {
      * @param request needed parameters for creating AIS consent
      * @return create consent response, containing consent and its encrypted ID
      */
-    CmsResponse<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request);
+    CmsResponse<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request) throws WrongChecksumException;
 
     /**
      * Reads status of consent by id
@@ -55,7 +56,7 @@ interface AisConsentServiceBase {
      * @param status    new consent status
      * @return Boolean
      */
-    CmsResponse<Boolean> updateConsentStatusById(String consentId, ConsentStatus status);
+    CmsResponse<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) throws WrongChecksumException;
 
     /**
      * Reads full information of consent by id
@@ -79,7 +80,7 @@ interface AisConsentServiceBase {
      *
      * @param request needed parameters for logging usage AIS consent
      */
-    CmsResponse<CmsResponse.VoidResponse> checkConsentAndSaveActionLog(AisConsentActionRequest request);
+    CmsResponse<CmsResponse.VoidResponse> checkConsentAndSaveActionLog(AisConsentActionRequest request) throws WrongChecksumException;
 
 
     /**
@@ -89,7 +90,7 @@ interface AisConsentServiceBase {
      * @param consentId id of the consent to be updated
      * @return String   consent id
      */
-    CmsResponse<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request);
+    CmsResponse<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) throws WrongChecksumException;
 
     /**
      * Updates AIS consent aspsp account access by id and return consent
@@ -98,7 +99,7 @@ interface AisConsentServiceBase {
      * @param consentId id of the consent to be updated
      * @return AisAccountConsent consent
      */
-    CmsResponse<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request);
+    CmsResponse<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request) throws WrongChecksumException;
 
     CmsResponse<List<PsuIdData>> getPsuDataByConsentId(String consentId);
 
@@ -109,5 +110,5 @@ interface AisConsentServiceBase {
      * @param multilevelScaRequired multilevel SCA required indicator
      * @return <code>true</code> if authorisation was found and SCA required field updated, <code>false</code> otherwise
      */
-    CmsResponse<Boolean> updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired);
+    CmsResponse<Boolean> updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) throws WrongChecksumException;
 }

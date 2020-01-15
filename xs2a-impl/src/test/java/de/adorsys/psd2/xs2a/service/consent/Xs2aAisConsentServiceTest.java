@@ -17,10 +17,7 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
-import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.CmsError;
-import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.CmsScaMethod;
+import de.adorsys.psd2.consent.api.*;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
@@ -117,7 +114,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void createConsent_success() {
+    public void createConsent_success() throws WrongChecksumException {
         //Given
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
             .thenReturn(1);
@@ -139,7 +136,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void createConsent_failed() {
+    public void createConsent_failed() throws WrongChecksumException {
         //Given
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
             .thenReturn(1);
@@ -388,7 +385,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void updateConsentStatus_shouldStoreConsentStatusInLoggingContext() {
+    public void updateConsentStatus_shouldStoreConsentStatusInLoggingContext() throws WrongChecksumException {
         // Given
         when(aisConsentServiceEncrypted.updateConsentStatusById(CONSENT_ID, CONSENT_STATUS))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
@@ -402,7 +399,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void updateConsentStatus_failure_shouldNotStoreConsentStatusInLoggingContext() {
+    public void updateConsentStatus_failure_shouldNotStoreConsentStatusInLoggingContext() throws WrongChecksumException {
         // Given
         when(aisConsentServiceEncrypted.updateConsentStatusById(CONSENT_ID, CONSENT_STATUS))
             .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
@@ -416,7 +413,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void consentActionLog() {
+    public void consentActionLog() throws WrongChecksumException {
         //Given
         ActionStatus actionStatus = ActionStatus.SUCCESS;
         ArgumentCaptor<AisConsentActionRequest> argumentCaptor = ArgumentCaptor.forClass(AisConsentActionRequest.class);
@@ -434,7 +431,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void createConsentCheckInternalRequestId() {
+    public void createConsentCheckInternalRequestId() throws WrongChecksumException {
         //Given
         ArgumentCaptor<CreateAisConsentRequest> argumentCaptor = ArgumentCaptor.forClass(CreateAisConsentRequest.class);
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))

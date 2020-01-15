@@ -33,6 +33,7 @@ import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.impl.AisConsentRepositoryImpl;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.repository.specification.AisConsentAuthorizationSpecification;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
@@ -284,7 +285,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void confirmConsentSuccess() {
+    public void confirmConsentSuccess() throws WrongChecksumException {
         // Given
         when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(anyString()))
             .thenReturn(CmsResponse.<Boolean>builder()
@@ -304,7 +305,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void confirmConsentFail() {
+    public void confirmConsentFail() throws WrongChecksumException {
         // When
         boolean updateAuthorisationStatus = cmsPsuAisService.confirmConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -315,7 +316,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void rejectConsentSuccess() {
+    public void rejectConsentSuccess() throws WrongChecksumException {
         // Given
         AisConsent aisConsentRejected = buildConsentByStatus(ConsentStatus.REJECTED);
         when(aisConsentRepositoryImpl.verifyAndSave(aisConsentRejected)).thenReturn(aisConsentRejected);
@@ -330,7 +331,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void rejectConsentFail() {
+    public void rejectConsentFail() throws WrongChecksumException {
         // When
         boolean updateAuthorisationStatus = cmsPsuAisService.rejectConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -341,7 +342,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void revokeConsentSuccess() {
+    public void revokeConsentSuccess() throws WrongChecksumException {
         // Given
         AisConsent aisConsentRevoked = buildConsentByStatus(ConsentStatus.REVOKED_BY_PSU);
         when(aisConsentRepositoryImpl.verifyAndSave(aisConsentRevoked)).thenReturn(aisConsentRevoked);
@@ -356,7 +357,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void revokeConsentFail() {
+    public void revokeConsentFail() throws WrongChecksumException {
         // When
         boolean updateAuthorisationStatus = cmsPsuAisService.revokeConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -367,7 +368,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void authorisePartiallyConsentSuccess() {
+    public void authorisePartiallyConsentSuccess() throws WrongChecksumException {
         //Given
         AisConsent aisConsent = buildConsentByStatus(ConsentStatus.PARTIALLY_AUTHORISED);
         aisConsent.setMultilevelScaRequired(true);
@@ -385,7 +386,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void confirmConsent_FinalisedStatus_Fail() {
+    public void confirmConsent_FinalisedStatus_Fail() throws WrongChecksumException {
         // When
         boolean result = cmsPsuAisService.confirmConsent(FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -396,7 +397,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void rejectConsent_FinalisedStatus_Fail() {
+    public void rejectConsent_FinalisedStatus_Fail() throws WrongChecksumException {
         // When
         boolean result = cmsPsuAisService.rejectConsent(FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -407,7 +408,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void revokeConsent_FinalisedStatus_Fail() {
+    public void revokeConsent_FinalisedStatus_Fail() throws WrongChecksumException {
         // When
         boolean result = cmsPsuAisService.revokeConsent(FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -486,7 +487,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void updateAccountAccessInConsent_Success() {
+    public void updateAccountAccessInConsent_Success() throws WrongChecksumException {
         // Given
         int frequencyPerDay = 777;
         String iban = "DE67597874259856475273";
@@ -516,7 +517,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void updateAccountAccessInConsent_NoAdditionalAccountInformation_Success() {
+    public void updateAccountAccessInConsent_NoAdditionalAccountInformation_Success() throws WrongChecksumException {
         // Given
         AccountReference accountReference = getAccountReference("DE67597874259856475273", Currency.getInstance("EUR"));
         AisAccountAccess aisAccountAccess = getAisAccountAccess(accountReference);
@@ -544,7 +545,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void updateAccountAccessInConsent_AdditionalAccountInformation_Success() {
+    public void updateAccountAccessInConsent_AdditionalAccountInformation_Success() throws WrongChecksumException {
         // Given
         AccountReference accountReference = getAccountReference("DE67597874259856475273", Currency.getInstance("EUR"));
         AisAccountAccess aisAccountAccess = getAisAccountAccessWithAdditionalAccountInformation(accountReference);
@@ -571,7 +572,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void updateAccountAccessInConsent_AdditionalAccountInformation_AllAvailableAccounts_Success() {
+    public void updateAccountAccessInConsent_AdditionalAccountInformation_AllAvailableAccounts_Success() throws WrongChecksumException {
         // Given
         AccountReference accountReference = getAccountReference("DE67597874259856475273", Currency.getInstance("EUR"));
         AisAccountAccess aisAccountAccess = getAisAccountAccessWithAdditionalAccountInformationAllAvailableAccounts(accountReference);

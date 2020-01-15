@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
+import de.adorsys.psd2.consent.api.CmsError;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -23,4 +24,13 @@ import lombok.Data;
 @AllArgsConstructor
 public class UpdateAisConsentResponse {
     private AisAccountConsent aisConsent;
+    private CmsError cmsError;
+
+    public UpdateAisConsentResponse(AisAccountConsent aisConsent) {
+        this.aisConsent = aisConsent;
+    }
+
+    public boolean hasError() {
+        return cmsError != null;
+    }
 }
