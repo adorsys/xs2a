@@ -68,12 +68,6 @@ This controller has endpoints for working with PIIS consent entities and their a
 * *GET /psu-api/v1/piis/consents/{consent-id}* - returns PIIS consent object by its ID. Method - `getConsent`;
 * *PUT /psu-api/v1/piis/consents/{consent-id}/revoke-consent* - revokes the definite PIIS consent (status switches to `REVOKED_BY_PSU`). In java - `revokeConsent`.
 
-=== SCA Approaches REDIRECT
-
-=== SCA Approaches
-
-=== SCA Approach EMBEDDED
-
 === Using the CMS-ASPSP-API
 
 `CMS-ASPSP-API` is an API for banks to make particular changes in `CMS` and to get needed information from it.
