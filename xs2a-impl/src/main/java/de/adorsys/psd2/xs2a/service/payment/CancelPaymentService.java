@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.payment;
 
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -29,6 +30,7 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCancelPaymentMapper;
@@ -45,9 +47,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CANCELLATION_INVALID;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_CANC_405;
 
 @Slf4j
 @Service
@@ -121,7 +121,7 @@ public class CancelPaymentService {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Payment has finalised status",
                      internalRequestId, xRequestId, encryptedPaymentId);
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_CANC_405, of(CANCELLATION_INVALID))
+                       .fail(ErrorType.PIS_400, of(MessageErrorCode.RESOURCE_BLOCKED))
                        .build();
         }
 
@@ -141,7 +141,7 @@ public class CancelPaymentService {
                 log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Initiate Payment Cancellation has failed. Can't create implicit authorisation",
                          internalRequestId, xRequestId, encryptedPaymentId);
                 return ResponseObject.<CancelPaymentResponse>builder()
-                           .fail(PIS_CANC_405, of(CANCELLATION_INVALID))
+                           .fail(ErrorType.PIS_CANC_405, of(MessageErrorCode.CANCELLATION_INVALID))
                            .build();
             }
 

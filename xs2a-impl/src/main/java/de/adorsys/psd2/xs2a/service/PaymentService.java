@@ -273,7 +273,7 @@ public class PaymentService {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Cancel payment has failed. Payment has finalised status",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId());
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_CANC_405, of(CANCELLATION_INVALID))
+                       .fail(PIS_400, of(RESOURCE_BLOCKED))
                        .build();
         }
 
