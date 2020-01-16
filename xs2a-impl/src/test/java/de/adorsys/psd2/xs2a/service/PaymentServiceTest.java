@@ -65,8 +65,8 @@ import java.util.UUID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_CANC_405;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
@@ -608,8 +608,8 @@ public class PaymentServiceTest {
 
         // Then
         assertThat(actualResult.getError()).isNotNull();
-        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_CANC_405);
-        assertThat(actualResult.getError().getTppMessages().contains(of(CANCELLATION_INVALID))).isTrue();
+        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_400);
+        assertThat(actualResult.getError().getTppMessages().contains(of(RESOURCE_BLOCKED))).isTrue();
     }
 
     private void assertThatPaymentWasCreated(ResponseObject<PaymentInitiationResponse> actualResponse) {
