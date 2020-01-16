@@ -70,6 +70,7 @@ public class PaymentModelMapperPsd2 {
             SinglePayment xs2aPayment = (SinglePayment) payment;
             PaymentInitiationWithStatusResponse paymentResponse = new PaymentInitiationWithStatusResponse();
             paymentResponse.setEndToEndIdentification(xs2aPayment.getEndToEndIdentification());
+            paymentResponse.setInstructionIdentification(xs2aPayment.getInstructionIdentification());
             paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getDebtorAccount()));
             paymentResponse.setInstructedAmount(amountModelMapper.mapToAmount(xs2aPayment.getInstructedAmount()));
             paymentResponse.setCreditorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getCreditorAccount()));
@@ -89,6 +90,7 @@ public class PaymentModelMapperPsd2 {
             PeriodicPaymentInitiationWithStatusResponse paymentResponse = new PeriodicPaymentInitiationWithStatusResponse();
 
             paymentResponse.setEndToEndIdentification(xs2aPayment.getEndToEndIdentification());
+            paymentResponse.setInstructionIdentification(xs2aPayment.getInstructionIdentification());
             paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getDebtorAccount()));
             paymentResponse.setInstructedAmount(amountModelMapper.mapToAmount(xs2aPayment.getInstructedAmount()));
             paymentResponse.setCreditorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getCreditorAccount()));
@@ -189,6 +191,7 @@ public class PaymentModelMapperPsd2 {
 
     private PaymentInitiationBulkElementJson mapToBulkPart(SinglePayment payment) {
         PaymentInitiationBulkElementJson bulkPart = new PaymentInitiationBulkElementJson().endToEndIdentification(payment.getEndToEndIdentification());
+        bulkPart.setInstructionIdentification(payment.getInstructionIdentification());
         bulkPart.setInstructedAmount(amountModelMapper.mapToAmount(payment.getInstructedAmount()));
         bulkPart.setCreditorAccount(accountModelMapper.mapToAccountReference(payment.getCreditorAccount()));
         bulkPart.setCreditorAgent(payment.getCreditorAgent());

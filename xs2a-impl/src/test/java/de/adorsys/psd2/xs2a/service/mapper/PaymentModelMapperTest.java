@@ -55,6 +55,7 @@ public class PaymentModelMapperTest {
 
     private static final boolean BATCH_BOOKING_PREFERRED = true;
     private static final String END_TO_END_IDENTIFICATION = "123456789";
+    private static final String INSTRUCTION_IDENTIFICATION = "INSTRUCTION_IDENTIFICATION";
     private static final String IBAN = "DE1234567890";
     private static final String CURRENCY = "EUR";
     private static final String STANDARD_PAYMENT_TYPE = "sepa-credit-transfers";
@@ -114,6 +115,7 @@ public class PaymentModelMapperTest {
         //Then
         assertThat(result).isNotNull();
         assertThat(result.getEndToEndIdentification()).isEqualTo(END_TO_END_IDENTIFICATION);
+        assertThat(result.getInstructionIdentification()).isEqualTo(INSTRUCTION_IDENTIFICATION);
         assertThat(result.getDebtorAccount()).isEqualTo(getPsd2AccountReference(true, true));
         assertThat(result.getInstructedAmount()).isEqualTo(getAmount12(true, true));
         assertThat(result.getCreditorAccount()).isEqualTo(getPsd2AccountReference(true, true));
@@ -136,6 +138,7 @@ public class PaymentModelMapperTest {
         //Then
         assertThat(result).isNotNull();
         assertThat(result.getEndToEndIdentification()).isEqualTo(END_TO_END_IDENTIFICATION);
+        assertThat(result.getInstructionIdentification()).isEqualTo(INSTRUCTION_IDENTIFICATION);
         assertThat(result.getDebtorAccount()).isEqualTo(getPsd2AccountReference(true, true));
         assertThat(result.getInstructedAmount()).isEqualTo(getAmount12(true, true));
         assertThat(result.getCreditorAccount()).isEqualTo(getPsd2AccountReference(true, true));
@@ -180,6 +183,7 @@ public class PaymentModelMapperTest {
         assertThat(bulkPaymentPart.getUltimateCreditor()).isEqualTo(ULTIMATE_CREDITOR);
         assertThat(bulkPaymentPart.getPurposeCode()).isEqualTo(PURPOSE_CODE);
         assertThat(bulkPaymentPart.getRemittanceInformationStructured()).isEqualTo(remittanceMapper.mapToRemittanceInformationStructured(REMITTANCE));
+        assertThat(bulkPaymentPart.getInstructionIdentification()).isEqualTo(INSTRUCTION_IDENTIFICATION);
     }
 
     @Test
@@ -249,6 +253,7 @@ public class PaymentModelMapperTest {
     private SinglePayment buildSinglePayment(TransactionStatus status) {
         SinglePayment payment = new SinglePayment();
         payment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
+        payment.setInstructionIdentification(INSTRUCTION_IDENTIFICATION);
         payment.setDebtorAccount(getAccountReference(true, true));
         payment.setInstructedAmount(buildXs2aAmount());
         payment.setCreditorAccount(getAccountReference(true, true));
@@ -267,6 +272,7 @@ public class PaymentModelMapperTest {
     private PeriodicPayment buildPeriodicPayment(TransactionStatus status) {
         PeriodicPayment payment = new PeriodicPayment();
         payment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
+        payment.setInstructionIdentification(INSTRUCTION_IDENTIFICATION);
         payment.setDebtorAccount(getAccountReference(true, true));
         payment.setInstructedAmount(buildXs2aAmount());
         payment.setCreditorAccount(getAccountReference(true, true));

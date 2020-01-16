@@ -28,6 +28,7 @@ import java.time.OffsetDateTime;
 @Data
 public class CmsSinglePayment extends BaseCmsPayment {
     private String endToEndIdentification;
+    private String instructionIdentification;
     private CmsAccountReference debtorAccount;
     private CmsAmount instructedAmount;
     private CmsAccountReference creditorAccount;

@@ -47,6 +47,7 @@ public class CmsToXs2aPaymentMapper {
                        PeriodicPayment periodic = new PeriodicPayment();
                        periodic.setPaymentId(p.getPaymentId());
                        periodic.setEndToEndIdentification(p.getEndToEndIdentification());
+                       periodic.setInstructionIdentification(p.getInstructionIdentification());
                        periodic.setDebtorAccount(p.getDebtorAccount());
                        periodic.setCreditorAccount(p.getCreditorAccount());
                        periodic.setInstructedAmount(new Xs2aAmount(p.getCurrency(), p.getAmount().toPlainString()));
@@ -80,6 +81,7 @@ public class CmsToXs2aPaymentMapper {
                        SinglePayment single = new SinglePayment();
                        single.setPaymentId(p.getPaymentId());
                        single.setEndToEndIdentification(p.getEndToEndIdentification());
+                       single.setInstructionIdentification(p.getInstructionIdentification());
                        single.setInstructedAmount(new Xs2aAmount(p.getCurrency(), p.getAmount().toPlainString()));
                        single.setDebtorAccount(p.getDebtorAccount());
                        single.setCreditorAccount(p.getCreditorAccount());
