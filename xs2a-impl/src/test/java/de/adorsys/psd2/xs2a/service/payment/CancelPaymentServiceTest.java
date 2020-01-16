@@ -272,7 +272,7 @@ public class CancelPaymentServiceTest {
         // Then
         assertThat(response.hasError()).isTrue();
         MessageError error = response.getError();
-        assertThat(error.getErrorType()).isEqualTo(PIS_CANC_405);
+        assertThat(error.getErrorType()).isEqualTo(PIS_400);
     }
 
     @Test

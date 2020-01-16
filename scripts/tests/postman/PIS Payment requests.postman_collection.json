@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b578184e-f106-4b89-9ccf-0fbac7985344",
+		"_postman_id": "0318d1fc-0ea9-4192-97f0-715dd61ec4c8",
 		"name": "PIS Payment requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -4399,14 +4399,14 @@
 											"script": {
 												"id": "b891d5cb-5fba-410f-9793-cc40df8bb179",
 												"exec": [
-													"pm.test(\"Status code is 405\", function () {",
-													"    pm.response.to.have.status(405);",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
 													"});",
 													"",
 													"const jsonData = pm.response.json().tppMessages[0];",
 													"",
-													"pm.test(\"Error code is CANCELLATION_INVALID\", () => {",
-													"    pm.expect(jsonData).to.have.property('code', 'CANCELLATION_INVALID');",
+													"pm.test(\"Error code is RESOURCE_BLOCKED\", () => {",
+													"    pm.expect(jsonData).to.have.property('code', 'RESOURCE_BLOCKED');",
 													"});",
 													""
 												],
@@ -5030,14 +5030,14 @@
 											"script": {
 												"id": "b891d5cb-5fba-410f-9793-cc40df8bb179",
 												"exec": [
-													"pm.test(\"Status code is 405\", function () {",
-													"    pm.response.to.have.status(405);",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
 													"});",
 													"",
 													"const jsonData = pm.response.json().tppMessages[0];",
 													"",
-													"pm.test(\"Error code is CANCELLATION_INVALID\", () => {",
-													"    pm.expect(jsonData).to.have.property('code', 'CANCELLATION_INVALID');",
+													"pm.test(\"Error code is RESOURCE_BLOCKED\", () => {",
+													"    pm.expect(jsonData).to.have.property('code', 'RESOURCE_BLOCKED');",
 													"});",
 													""
 												],
@@ -5967,14 +5967,14 @@
 											"script": {
 												"id": "b891d5cb-5fba-410f-9793-cc40df8bb179",
 												"exec": [
-													"pm.test(\"Status code is 405\", function () {",
-													"    pm.response.to.have.status(405);",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
 													"});",
 													"",
 													"const jsonData = pm.response.json().tppMessages[0];",
 													"",
-													"pm.test(\"Error code is CANCELLATION_INVALID\", () => {",
-													"    pm.expect(jsonData).to.have.property('code', 'CANCELLATION_INVALID');",
+													"pm.test(\"Error code is RESOURCE_BLOCKED\", () => {",
+													"    pm.expect(jsonData).to.have.property('code', 'RESOURCE_BLOCKED');",
 													"});",
 													""
 												],
@@ -8242,14 +8242,14 @@
 											"script": {
 												"id": "b891d5cb-5fba-410f-9793-cc40df8bb179",
 												"exec": [
-													"pm.test(\"Status code is 405\", function () {",
-													"    pm.response.to.have.status(405);",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
 													"});",
 													"",
 													"const jsonData = pm.response.json().tppMessages[0];",
 													"",
-													"pm.test(\"Error code is CANCELLATION_INVALID\", () => {",
-													"    pm.expect(jsonData).to.have.property('code', 'CANCELLATION_INVALID');",
+													"pm.test(\"Error code is RESOURCE_BLOCKED\", () => {",
+													"    pm.expect(jsonData).to.have.property('code', 'RESOURCE_BLOCKED');",
 													"});",
 													""
 												],
@@ -9363,14 +9363,14 @@
 											"script": {
 												"id": "b891d5cb-5fba-410f-9793-cc40df8bb179",
 												"exec": [
-													"pm.test(\"Status code is 405\", function () {",
-													"    pm.response.to.have.status(405);",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
 													"});",
 													"",
 													"const jsonData = pm.response.json().tppMessages[0];",
 													"",
-													"pm.test(\"Transaction Status exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('code', 'CANCELLATION_INVALID');",
+													"pm.test(\"Error code is RESOURCE_BLOCKED\", () => {",
+													"    pm.expect(jsonData).to.have.property('code', 'RESOURCE_BLOCKED');",
 													"});",
 													""
 												],
@@ -16473,14 +16473,14 @@
 											"script": {
 												"id": "b891d5cb-5fba-410f-9793-cc40df8bb179",
 												"exec": [
-													"pm.test(\"Status code is 405\", function () {",
-													"    pm.response.to.have.status(405);",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
 													"});",
 													"",
 													"const jsonData = pm.response.json().tppMessages[0];",
 													"",
-													"pm.test(\"Transaction Status exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('code', 'CANCELLATION_INVALID');",
+													"pm.test(\"Error code is RESOURCE_BLOCKED\", () => {",
+													"    pm.expect(jsonData).to.have.property('code', 'RESOURCE_BLOCKED');",
 													"});",
 													""
 												],
@@ -16805,14 +16805,14 @@
 											"script": {
 												"id": "b891d5cb-5fba-410f-9793-cc40df8bb179",
 												"exec": [
-													"pm.test(\"Status code is 405\", function () {",
-													"    pm.response.to.have.status(405);",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
 													"});",
 													"",
 													"const jsonData = pm.response.json().tppMessages[0];",
 													"",
-													"pm.test(\"Transaction Status exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('code', 'CANCELLATION_INVALID');",
+													"pm.test(\"Error code is RESOURCE_BLOCKED\", () => {",
+													"    pm.expect(jsonData).to.have.property('code', 'RESOURCE_BLOCKED');",
 													"});",
 													""
 												],
@@ -17138,14 +17138,14 @@
 											"script": {
 												"id": "b891d5cb-5fba-410f-9793-cc40df8bb179",
 												"exec": [
-													"pm.test(\"Status code is 405\", function () {",
-													"    pm.response.to.have.status(405);",
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
 													"});",
 													"",
 													"const jsonData = pm.response.json().tppMessages[0];",
 													"",
-													"pm.test(\"Transaction Status exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('code', 'CANCELLATION_INVALID');",
+													"pm.test(\"Error code is RESOURCE_BLOCKED\", () => {",
+													"    pm.expect(jsonData).to.have.property('code', 'RESOURCE_BLOCKED');",
 													"});",
 													""
 												],

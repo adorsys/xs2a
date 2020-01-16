@@ -17,6 +17,8 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -46,8 +48,6 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_CANC_405;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CANCELLATION_INVALID;
 
 @Slf4j
 @Service
@@ -118,7 +118,7 @@ public class CancelPaymentService {
         if (resultStatus.isFinalisedStatus()) {
             log.info("Payment-ID [{}]. Initiate Payment Cancellation has failed. Payment has finalised status", encryptedPaymentId);
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_CANC_405, of(CANCELLATION_INVALID))
+                       .fail(ErrorType.PIS_400, of(MessageErrorCode.RESOURCE_BLOCKED))
                        .build();
         }
 
@@ -138,7 +138,7 @@ public class CancelPaymentService {
                 log.info("Payment-ID [{}]. Initiate Payment Cancellation has failed. Can't create implicit authorisation",
                          encryptedPaymentId);
                 return ResponseObject.<CancelPaymentResponse>builder()
-                           .fail(PIS_CANC_405, of(CANCELLATION_INVALID))
+                           .fail(ErrorType.PIS_CANC_405, of(MessageErrorCode.CANCELLATION_INVALID))
                            .build();
             }
 
