@@ -106,6 +106,7 @@ public class SpiToXs2aBulkPaymentMapperTest {
         payment.setCreditorAddress(jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-address.json", SpiAddress.class));
         payment.setDebtorAccount(accountReference);
         payment.setEndToEndIdentification("RI-123456789");
+        payment.setInstructionIdentification("ABC/4562/2020-01-10");
         payment.setInstructedAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal("1000.00")));
         payment.setRemittanceInformationUnstructured("Ref. Number TELEKOM-1222");
         payment.setRequestedExecutionDate(OFFSET_DATE_TIME.toLocalDate());
