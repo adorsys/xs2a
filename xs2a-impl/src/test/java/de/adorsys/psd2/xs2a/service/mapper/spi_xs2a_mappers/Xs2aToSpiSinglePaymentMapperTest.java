@@ -58,6 +58,7 @@ import static org.mockito.Mockito.when;
 public class Xs2aToSpiSinglePaymentMapperTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String END_TO_END_IDENTIFICATION = "PAYMENT_ID";
+    private static final String INSTRUCTION_IDENTIFICATION = "INSTRUCTION_IDENTIFICATION";
     private static final String IBAN = "DE123456789";
     private static final String RESOURCE_ID = "5c2d20da-f20a-4a5e-bf6d-be5b239e3561";
     private static final String DEB_ACCOUNT_ID = "11111_debtorAccount";
@@ -126,6 +127,7 @@ public class Xs2aToSpiSinglePaymentMapperTest {
         //Then
         assertEquals(PAYMENT_ID, spiSinglePayment.getPaymentId());
         assertEquals(END_TO_END_IDENTIFICATION, spiSinglePayment.getEndToEndIdentification());
+        assertEquals(INSTRUCTION_IDENTIFICATION, spiSinglePayment.getInstructionIdentification());
         assertEquals(buildSpiAccountReference(), spiSinglePayment.getDebtorAccount());
         assertEquals(buildSpiAccountReference(), spiSinglePayment.getCreditorAccount());
         assertEquals(buildSpiAmount(EUR_CURRENCY, "100"), spiSinglePayment.getInstructedAmount());
@@ -150,6 +152,7 @@ public class Xs2aToSpiSinglePaymentMapperTest {
         SinglePayment singlePayment = new SinglePayment();
         singlePayment.setPaymentId(PAYMENT_ID);
         singlePayment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
+        singlePayment.setInstructionIdentification(INSTRUCTION_IDENTIFICATION);
         singlePayment.setDebtorAccount(buildAccountReference(DEB_ACCOUNT_ID));
         singlePayment.setCreditorAccount(buildAccountReference(CRED_ACCOUNT_ID));
         singlePayment.setInstructedAmount(buildXs2aAmount(EUR_CURRENCY, "100"));

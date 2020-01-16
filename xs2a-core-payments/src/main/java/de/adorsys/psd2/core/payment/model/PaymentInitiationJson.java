@@ -38,6 +38,9 @@ public class PaymentInitiationJson   {
   @JsonProperty("endToEndIdentification")
   private String endToEndIdentification = null;
 
+  @JsonProperty("instructionIdentification")
+  private String instructionIdentification = null;
+
   @JsonProperty("debtorAccount")
   private AccountReference debtorAccount = null;
 
@@ -100,6 +103,28 @@ public class PaymentInitiationJson   {
 
   public void setEndToEndIdentification(String endToEndIdentification) {
     this.endToEndIdentification = endToEndIdentification;
+  }
+
+  public PaymentInitiationJson instructionIdentification(String instructionIdentification) {
+    this.instructionIdentification = instructionIdentification;
+    return this;
+  }
+
+  /**
+   * Get instructionIdentification
+   * @return instructionIdentification
+  **/
+  @ApiModelProperty(value = "")
+
+@Size(max=35)
+
+  @JsonProperty("instructionIdentification")
+  public String getInstructionIdentification() {
+    return instructionIdentification;
+  }
+
+  public void setInstructionIdentification(String instructionIdentification) {
+    this.instructionIdentification = instructionIdentification;
   }
 
   public PaymentInitiationJson debtorAccount(AccountReference debtorAccount) {
@@ -432,6 +457,7 @@ public class PaymentInitiationJson   {
     }
     PaymentInitiationJson paymentInitiationJson = (PaymentInitiationJson) o;
     return Objects.equals(this.endToEndIdentification, paymentInitiationJson.endToEndIdentification) &&
+        Objects.equals(this.instructionIdentification, paymentInitiationJson.instructionIdentification) &&
         Objects.equals(this.debtorAccount, paymentInitiationJson.debtorAccount) &&
         Objects.equals(this.ultimateDebtor, paymentInitiationJson.ultimateDebtor) &&
         Objects.equals(this.instructedAmount, paymentInitiationJson.instructedAmount) &&
@@ -450,7 +476,7 @@ public class PaymentInitiationJson   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(endToEndIdentification, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorAgentName, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, requestedExecutionDate);
+    return Objects.hash(endToEndIdentification, instructionIdentification, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorAgentName, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, requestedExecutionDate);
   }
 
   @Override
@@ -459,6 +485,7 @@ public class PaymentInitiationJson   {
     sb.append("class PaymentInitiationJson {\n");
 
     sb.append("    endToEndIdentification: ").append(toIndentedString(endToEndIdentification)).append("\n");
+    sb.append("    instructionIdentification: ").append(toIndentedString(instructionIdentification)).append("\n");
     sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
     sb.append("    ultimateDebtor: ").append(toIndentedString(ultimateDebtor)).append("\n");
     sb.append("    instructedAmount: ").append(toIndentedString(instructedAmount)).append("\n");

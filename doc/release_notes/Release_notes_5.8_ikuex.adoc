@@ -13,7 +13,7 @@ Usages of `Xs2aAuthenticationObject` and `SpiAuthenticationObject` were substitu
 
 From now on, `instructionIdentification` field was added to all standard payment types.
 Also in case `instructionIdentification` field exceeds the maximum length of 35 symbols TPP will receive `400 Bad Request` error with `FORMAT_ERROR` code.
-
+New `instructionIdentification` field is stored in CMS database and is provided to SPI level.
 
 == Bugfix: PIIS request not filtered by TPP consent
 

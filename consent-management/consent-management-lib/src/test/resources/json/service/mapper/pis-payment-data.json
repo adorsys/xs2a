@@ -2,6 +2,7 @@
   "instanceId": "UNDEFINED",
   "paymentId": "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI",
   "endToEndIdentification": "RI-123456789",
+  "instructionIdentification" : "ABC/4562/2020-01-10",
   "currency": "EUR",
   "amount": 1000.00,
   "ultimateDebtor": "Mueller",

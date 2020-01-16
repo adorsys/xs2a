@@ -125,6 +125,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
 
                        pisPayment.setPaymentId(pmt.getPaymentId());
                        pisPayment.setEndToEndIdentification(pmt.getEndToEndIdentification());
+                       pisPayment.setInstructionIdentification(pmt.getInstructionIdentification());
                        pisPayment.setDebtorAccount(pmt.getDebtorAccount());
                        pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());
                        pisPayment.setCurrency(pmt.getInstructedAmount().getCurrency());
@@ -154,6 +155,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
 
                        pisPayment.setPaymentId(pmt.getPaymentId());
                        pisPayment.setEndToEndIdentification(pmt.getEndToEndIdentification());
+                       pisPayment.setInstructionIdentification(pmt.getInstructionIdentification());
                        pisPayment.setDebtorAccount(pmt.getDebtorAccount());
                        pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());
                        pisPayment.setCurrency(pmt.getInstructedAmount().getCurrency());
