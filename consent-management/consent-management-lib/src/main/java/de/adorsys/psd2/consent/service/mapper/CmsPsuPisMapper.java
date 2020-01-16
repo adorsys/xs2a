@@ -94,6 +94,7 @@ public class CmsPsuPisMapper {
         CmsPeriodicPayment periodicPayment = new CmsPeriodicPayment(paymentProduct);
         periodicPayment.setPaymentId(pisPaymentData.getPaymentId());
         periodicPayment.setEndToEndIdentification(pisPaymentData.getEndToEndIdentification());
+        periodicPayment.setInstructionIdentification(pisPaymentData.getInstructionIdentification());
         periodicPayment.setDebtorAccount(mapToCmsAccountReference(pisPaymentData.getDebtorAccount()));
         periodicPayment.setInstructedAmount(new CmsAmount(pisPaymentData.getCurrency(), pisPaymentData.getAmount()));
         periodicPayment.setCreditorAccount(mapToCmsAccountReference(pisPaymentData.getCreditorAccount()));
@@ -143,6 +144,7 @@ public class CmsPsuPisMapper {
         CmsSinglePayment singlePayment = new CmsSinglePayment(paymentProduct);
         singlePayment.setPaymentId(pisPaymentData.getPaymentId());
         singlePayment.setEndToEndIdentification(pisPaymentData.getEndToEndIdentification());
+        singlePayment.setInstructionIdentification(pisPaymentData.getInstructionIdentification());
         singlePayment.setDebtorAccount(mapToCmsAccountReference(pisPaymentData.getDebtorAccount()));
         singlePayment.setInstructedAmount(new CmsAmount(pisPaymentData.getCurrency(), pisPaymentData.getAmount()));
         singlePayment.setCreditorAccount(mapToCmsAccountReference(pisPaymentData.getCreditorAccount()));

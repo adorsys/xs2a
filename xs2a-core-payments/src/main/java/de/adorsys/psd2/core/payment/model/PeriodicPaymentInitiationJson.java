@@ -38,6 +38,9 @@ public class PeriodicPaymentInitiationJson   {
   @JsonProperty("endToEndIdentification")
   private String endToEndIdentification = null;
 
+  @JsonProperty("instructionIdentification")
+  private String instructionIdentification = null;
+
   @JsonProperty("debtorAccount")
   private AccountReference debtorAccount = null;
 
@@ -109,6 +112,28 @@ public class PeriodicPaymentInitiationJson   {
 
   public void setEndToEndIdentification(String endToEndIdentification) {
     this.endToEndIdentification = endToEndIdentification;
+  }
+
+  public PeriodicPaymentInitiationJson instructionIdentification(String instructionIdentification) {
+    this.instructionIdentification = instructionIdentification;
+    return this;
+  }
+
+  /**
+   * Get instructionIdentification
+   * @return instructionIdentification
+  **/
+  @ApiModelProperty(value = "")
+
+@Size(max=35)
+
+  @JsonProperty("instructionIdentification")
+  public String getInstructionIdentification() {
+    return instructionIdentification;
+  }
+
+  public void setInstructionIdentification(String instructionIdentification) {
+    this.instructionIdentification = instructionIdentification;
   }
 
   public PeriodicPaymentInitiationJson debtorAccount(AccountReference debtorAccount) {
@@ -511,6 +536,7 @@ public class PeriodicPaymentInitiationJson   {
     }
     PeriodicPaymentInitiationJson periodicPaymentInitiationJson = (PeriodicPaymentInitiationJson) o;
     return Objects.equals(this.endToEndIdentification, periodicPaymentInitiationJson.endToEndIdentification) &&
+        Objects.equals(this.instructionIdentification, periodicPaymentInitiationJson.instructionIdentification) &&
         Objects.equals(this.debtorAccount, periodicPaymentInitiationJson.debtorAccount) &&
         Objects.equals(this.ultimateDebtor, periodicPaymentInitiationJson.ultimateDebtor) &&
         Objects.equals(this.instructedAmount, periodicPaymentInitiationJson.instructedAmount) &&
@@ -532,7 +558,7 @@ public class PeriodicPaymentInitiationJson   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(endToEndIdentification, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, startDate, endDate, executionRule, frequency, dayOfExecution);
+    return Objects.hash(endToEndIdentification, instructionIdentification, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorId, creditorName, creditorAddress, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, startDate, endDate, executionRule, frequency, dayOfExecution);
   }
 
   @Override
@@ -541,6 +567,7 @@ public class PeriodicPaymentInitiationJson   {
     sb.append("class PeriodicPaymentInitiationJson {\n");
 
     sb.append("    endToEndIdentification: ").append(toIndentedString(endToEndIdentification)).append("\n");
+    sb.append("    instructionIdentification: ").append(toIndentedString(instructionIdentification)).append("\n");
     sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
     sb.append("    ultimateDebtor: ").append(toIndentedString(ultimateDebtor)).append("\n");
     sb.append("    instructedAmount: ").append(toIndentedString(instructedAmount)).append("\n");

@@ -42,6 +42,9 @@ public class PisPayment {
     @ApiModelProperty(value = "End to end identification", example = "RI-123456789")
     private String endToEndIdentification;
 
+    @ApiModelProperty(value = "Instruction identification", example = "ABC/4562/2020-01-10")
+    private String instructionIdentification;
+
     @ApiModelProperty(value = "Debtor account", required = true)
     private AccountReference debtorAccount;
 

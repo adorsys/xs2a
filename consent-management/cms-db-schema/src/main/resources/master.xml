@@ -119,4 +119,5 @@
     <include relativeToChangelogFile="true" file="migration/0091-add-column-checksum-to-ais-consent-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0092-create-additional-psu-data-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0093-delete-sequences-for-notification.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0094-add-instruction-identification-column-to-pis-payment-data-table.xml"/>
 </databaseChangeLog>

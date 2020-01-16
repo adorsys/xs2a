@@ -131,6 +131,7 @@ public class CmsCommonPaymentMapperSupportImplTest {
     private CmsPeriodicPayment getCmsPeriodicPayment(PeriodicPaymentInitiationJson paymentInitiationJson) {
         CmsPeriodicPayment payment = new CmsPeriodicPayment(PAYMENT_PRODUCT);
         payment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
+        payment.setInstructionIdentification(paymentInitiationJson.getInstructionIdentification());
         payment.setDebtorAccount(getAccount(paymentInitiationJson.getDebtorAccount()));
         Amount instructedAmount = paymentInitiationJson.getInstructedAmount();
         payment.setInstructedAmount(new CmsAmount(Currency.getInstance(instructedAmount.getCurrency()), BigDecimal.valueOf(Double.parseDouble(instructedAmount.getAmount()))));
@@ -173,6 +174,7 @@ public class CmsCommonPaymentMapperSupportImplTest {
         CmsSinglePayment singlePayment = new CmsSinglePayment(PAYMENT_PRODUCT);
         Amount instructedAmount = paymentInitiationJson.getInstructedAmount();
         singlePayment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
+        singlePayment.setInstructionIdentification(paymentInitiationJson.getInstructionIdentification());
         singlePayment.setInstructedAmount(new CmsAmount(Currency.getInstance("EUR"), new BigDecimal(instructedAmount.getAmount())));
         singlePayment.setCreditorAccount(getAccount(paymentInitiationJson.getCreditorAccount()));
         singlePayment.setCreditorAgent(paymentInitiationJson.getCreditorAgent());
@@ -212,7 +214,7 @@ public class CmsCommonPaymentMapperSupportImplTest {
     private CmsSinglePayment getCmsSinglePayment(PaymentInitiationJson paymentInitiationJson) {
         CmsSinglePayment payment = new CmsSinglePayment(PAYMENT_PRODUCT);
         payment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
-        payment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
+        payment.setInstructionIdentification(paymentInitiationJson.getInstructionIdentification());
         payment.setDebtorAccount(getAccount(paymentInitiationJson.getDebtorAccount()));
         Amount instructedAmount = paymentInitiationJson.getInstructedAmount();
         payment.setInstructedAmount(new CmsAmount(Currency.getInstance("EUR"), new BigDecimal(instructedAmount.getAmount())));
