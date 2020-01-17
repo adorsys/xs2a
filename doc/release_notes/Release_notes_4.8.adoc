@@ -1,3 +1,45 @@
 = Release notes v.4.8
 
 == Table of Contents
+* Feature: compatibility with new Berlin group yaml specification file
+* Feature: Add new data attribute instructionIdentification for all standard payment types
+* Bugfix: PIIS request not filtered by TPP consent
+* Updated Response Code And Message for cancellation already completed payment
+* Optional verification of URLs in headers according certificate domain
+* Adopt data type Max512Text to Max500Text
+* Fixing acceptance of past validUntil date provided through CMS-PSU-API
+
+
+== Feature: compatibility with new Berlin group yaml specification file
+
+All XS2A model files and REST controllers were updated in accordance with Berlin group yaml file version 1.3.5.
+
+== Feature: Add new data attribute instructionIdentification for all standard payment types
+
+From now on, `instructionIdentification` field was added to all standard payment types.
+Also in case `instructionIdentification` field exceeds the maximum length of 35 symbols TPP will receive `400 Bad Request` error with `FORMAT_ERROR` code.
+New `instructionIdentification` field is stored in CMS database and is provided to SPI level.
+
+== Bugfix: PIIS request not filtered by TPP consent
+
+From now on, PIIS consents are correctly filtered by TPP during Funds Confirmation Request (`POST /v1/funds-confirmations`).
+
+== Updated Response Code And Message for cancellation already completed payment
+
+From now on, when Cancellation request is sent for already completed payment, the response error will be
+`400 RESOURCE_BLOCKED`.
+
+== Optional verification of URLs in headers according certificate domain
+From now on, URL validator is optional. And it can can be controlled by parameter `checkUriComplianceToDomainSupported` in ASPSP Profile.
+When this parameter is `TRUE` then verification will check differences between domain from TPP Certificate and headers with URL (TPP-Redirect-URI, TPP-Nok-Redirect-URI and TPP-Notification-URI).
+If TPP URIs are not compliant, then request is not rejected and response has tppMessages with text "TPP URIs are not compliant with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate".
+
+
+== Adopt data type Max512Text to Max500Text
+
+From now on, length of text fields in some TppMessage classes was changed from 512 characters to 500 (In accordance with Errata for BG specification).
+
+== Fixing acceptance of past validUntil date provided through CMS-PSU-API
+
+From now on, providing a validUntil date, that is prior to the current date gets rejected on
+calling `PUT /psu-api/v1/ais/consent/{consent-id}/save-access`.
