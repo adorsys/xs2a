@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.domain.account;
 import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
-import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
+import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,21 @@
 
 package de.adorsys.psd2.xs2a.service.validator.tpp;
 
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import org.springframework.stereotype.Component;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_403_INCORRECT_CERTIFICATE;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_403;
 
 @Component
 public class AisConsentTppInfoValidator extends TppInfoValidator {
-    public AisConsentTppInfoValidator(TppInfoCheckerService tppInfoCheckerService, RequestProviderService requestProviderService) {
-        super(tppInfoCheckerService, requestProviderService);
+    public AisConsentTppInfoValidator(TppInfoCheckerService tppInfoCheckerService) {
+        super(tppInfoCheckerService);
     }
 
     @Override
     ErrorType getErrorType() {
-        return AIS_403;
+        return ErrorType.AIS_403;
     }
 
     @Override

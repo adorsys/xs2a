@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
+import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/aspsp-consent-data/consents/{consent-id}")
-@Api(value = "api/v1/aspsp-consent-data", tags = "Aspsp Consent Data", description = "Provides access to consent management system for AspspDataConsent")
+@Api(value = "api/v1/aspsp-consent-data", tags = InternalCmsXs2aApiTagName.ASPSP_CONSENT_DATA)
 public class AspspConsentDataController {
     private final AspspDataService aspspDataService;
 

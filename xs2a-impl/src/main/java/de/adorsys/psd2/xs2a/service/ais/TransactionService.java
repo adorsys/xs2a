@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,12 @@ package de.adorsys.psd2.xs2a.service.ais;
 
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.event.core.model.EventType;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
@@ -27,16 +32,11 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
-import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAccountService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
-import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -58,11 +58,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Base64;
 import java.util.Optional;
-import java.util.UUID;
 
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 
 @Slf4j
 @Service
@@ -89,7 +87,6 @@ public class TransactionService {
     private final GetTransactionsReportValidator getTransactionsReportValidator;
     private final DownloadTransactionsReportValidator downloadTransactionsReportValidator;
     private final GetTransactionDetailsValidator getTransactionDetailsValidator;
-    private final RequestProviderService requestProviderService;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final AccountHelperService accountHelperService;
 
@@ -110,14 +107,11 @@ public class TransactionService {
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(request.getConsentId());
 
-        UUID internalRequestId = requestProviderService.getInternalRequestId();
-        UUID xRequestId = requestProviderService.getRequestId();
-
         if (!accountConsentOptional.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}]. Get transactions report by period failed. Account consent not found by ID",
-                     internalRequestId, xRequestId, request.getAccountId(), request.getConsentId());
+            log.info("Account-ID [{}], Consent-ID [{}]. Get transactions report by period failed. Account consent not found by ID",
+                     request.getAccountId(), request.getConsentId());
             return ResponseObject.<Xs2aTransactionsReport>builder()
-                       .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                       .fail(AIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400))
                        .build();
         }
 
@@ -125,8 +119,8 @@ public class TransactionService {
         ValidationResult validationResult = getValidationResultForTransactionsReportByPeriod(request, accountConsent);
 
         if (validationResult.isNotValid()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get transactions report by period - validation failed: {}",
-                     internalRequestId, xRequestId, request.getAccountId(), request.getConsentId(), request.isWithBalance(),
+            log.info("Account-ID [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get transactions report by period - validation failed: {}",
+                     request.getAccountId(), request.getConsentId(), request.isWithBalance(),
                      request.getRequestUri(), validationResult.getMessageError());
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(validationResult.getMessageError())
@@ -160,14 +154,11 @@ public class TransactionService {
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        UUID internalRequestId = requestProviderService.getInternalRequestId();
-        UUID xRequestId = requestProviderService.getRequestId();
-
         if (!accountConsentOptional.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}]. Get transaction details failed. Account consent not found by ID",
-                     internalRequestId, xRequestId, accountId, consentId);
+            log.info("Account-ID [{}], Consent-ID [{}]. Get transaction details failed. Account consent not found by ID",
+                     accountId, consentId);
             return ResponseObject.<Transactions>builder()
-                       .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                       .fail(AIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400))
                        .build();
         }
 
@@ -175,8 +166,8 @@ public class TransactionService {
         ValidationResult validationResult = getValidationResultForCommonAccountTransactions(accountId, requestUri, accountConsent);
 
         if (validationResult.isNotValid()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID [{}], RequestUri [{}]. Get transaction details - validation failed: {}",
-                     internalRequestId, xRequestId, accountId, consentId, requestUri, validationResult.getMessageError());
+            log.info("Account-ID [{}], Consent-ID [{}], RequestUri [{}]. Get transaction details - validation failed: {}",
+                     accountId, consentId, requestUri, validationResult.getMessageError());
             return ResponseObject.<Transactions>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -206,14 +197,11 @@ public class TransactionService {
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        UUID internalRequestId = requestProviderService.getInternalRequestId();
-        UUID xRequestId = requestProviderService.getRequestId();
-
         if (!accountConsentOptional.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Account-ID: [{}], Download-ID: [{}]. Download transactions failed. Account consent not found by ID",
-                     internalRequestId, xRequestId, consentId, accountId, downloadId);
+            log.info("Consent-ID [{}], Account-ID: [{}], Download-ID: [{}]. Download transactions failed. Account consent not found by ID",
+                     consentId, accountId, downloadId);
             return ResponseObject.<Xs2aTransactionsDownloadResponse>builder()
-                       .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                       .fail(AIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400))
                        .build();
         }
 
@@ -221,8 +209,8 @@ public class TransactionService {
         ValidationResult validationResult = getValidationResultForDownloadTransactionRequest(accountConsent);
 
         if (validationResult.isNotValid()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Consent-ID [{}], Account-ID: [{}], Download-ID: [{}]. Download transactions - validation failed: {}",
-                     internalRequestId, xRequestId, consentId, accountId, downloadId, validationResult.getMessageError());
+            log.info("Consent-ID [{}], Account-ID: [{}], Download-ID: [{}]. Download transactions - validation failed: {}",
+                     consentId, accountId, downloadId, validationResult.getMessageError());
             return ResponseObject.<Xs2aTransactionsDownloadResponse>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -291,21 +279,18 @@ public class TransactionService {
 
     private ResponseObject<Xs2aTransactionsReport> checkSpiResponseForTransactionsReport(Xs2aTransactionsReportByPeriodRequest request,
                                                                                          SpiResponse<SpiTransactionReport> spiResponse) {
-        UUID internalRequestId = requestProviderService.getInternalRequestId();
-        UUID xRequestId = requestProviderService.getRequestId();
-
         // in this particular call we use NOT_SUPPORTED to indicate that requested Content-type is not ok for us
         if (spiResponse.getErrors().get(0).getErrorCode() == SERVICE_NOT_SUPPORTED) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transactions report by period failed: requested content-type not json or text.",
-                     internalRequestId, xRequestId, request.getAccountId(), request.getConsentId());
+            log.info("Account-ID [{}], Consent-ID: [{}]. Get transactions report by period failed: requested content-type not json or text.",
+                     request.getAccountId(), request.getConsentId());
             return ResponseObject.<Xs2aTransactionsReport>builder()
-                       .fail(ErrorType.AIS_406, of(REQUESTED_FORMATS_INVALID))
+                       .fail(ErrorType.AIS_406, TppMessageInformation.of(REQUESTED_FORMATS_INVALID))
                        .build();
         }
 
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
-        log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transactions report by period failed: Request transactions for account fail at SPI level: {}",
-                 internalRequestId, xRequestId, request.getAccountId(), request.getConsentId(), errorHolder);
+        log.info("Account-ID [{}], Consent-ID: [{}]. Get transactions report by period failed: Request transactions for account fail at SPI level: {}",
+                 request.getAccountId(), request.getConsentId(), errorHolder);
         return ResponseObject.<Xs2aTransactionsReport>builder()
                    .fail(errorHolder)
                    .build();
@@ -325,12 +310,9 @@ public class TransactionService {
 
     private ResponseObject<Transactions> checkSpiResponseForTransactions(String consentId, String accountId,
                                                                          SpiResponse<SpiTransaction> spiResponse) {
-        UUID internalRequestId = requestProviderService.getInternalRequestId();
-        UUID xRequestId = requestProviderService.getRequestId();
-
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
-        log.info("InR-ID: [{}], X-Request-ID: [{}], Account-ID [{}], Consent-ID: [{}]. Get transaction details failed: Request transactions for account fail at SPI level: {}",
-                 internalRequestId, xRequestId, accountId, consentId, errorHolder);
+        log.info("Account-ID [{}], Consent-ID: [{}]. Get transaction details failed: Request transactions for account fail at SPI level: {}",
+                 accountId, consentId, errorHolder);
         return ResponseObject.<Transactions>builder()
                    .fail(new MessageError(errorHolder))
                    .build();
@@ -351,11 +333,9 @@ public class TransactionService {
                                                                                                             String accountId,
                                                                                                             String downloadId,
                                                                                                             SpiResponse<SpiTransactionsDownloadResponse> spiResponse) {
-        UUID xRequestId = requestProviderService.getRequestId();
-
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
-        log.info("X-Request-ID: [{}], Consent-ID [{}], Account-ID: [{}], Download-ID: [{}]. Download transactions failed: couldn't get download transactions stream by link.",
-                 xRequestId, consentId, accountId, downloadId);
+        log.info("Consent-ID [{}], Account-ID: [{}], Download-ID: [{}]. Download transactions failed: couldn't get download transactions stream by link.",
+                 consentId, accountId, downloadId);
         return ResponseObject.<Xs2aTransactionsDownloadResponse>builder()
                    .fail(new MessageError(errorHolder))
                    .build();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service.validator.tpp;
 
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,8 +44,6 @@ public class AisAccountTppInfoValidatorTest {
 
     @Mock
     private TppInfoCheckerService tppInfoCheckerService;
-    @Mock
-    private RequestProviderService requestProviderService;
 
     @InjectMocks
     private AisAccountTppInfoValidator aisAccountTppInfoValidator;
@@ -57,9 +54,6 @@ public class AisAccountTppInfoValidatorTest {
             .thenReturn(false);
         when(tppInfoCheckerService.differsFromTppInRequest(DIFFERENT_TPP_INFO))
             .thenReturn(true);
-
-        when(requestProviderService.getRequestId())
-            .thenReturn(X_REQUEST_ID);
     }
 
     @Test

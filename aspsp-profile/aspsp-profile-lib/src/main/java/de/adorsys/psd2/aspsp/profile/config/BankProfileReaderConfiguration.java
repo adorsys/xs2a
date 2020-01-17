@@ -16,70 +16,20 @@
 
 package de.adorsys.psd2.aspsp.profile.config;
 
+import de.adorsys.psd2.aspsp.profile.service.BankProfileReadingService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.representer.Representer;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 @Slf4j
+@RequiredArgsConstructor
 @Configuration
-public class BankProfileReaderConfiguration implements ResourceLoaderAware {
-    private static final String DEFAULT_BANK_PROFILE = "classpath:bank_profile.yml";
-    private static final String CLASSPATH_PREFIX = "classpath:";
-    private static final String FILE_PREFIX = "file:";
-
-    @Value("${bank_profile.path:}")
-    private String customBankProfile;
-    private ResourceLoader resourceLoader;
-
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-    }
+public class BankProfileReaderConfiguration {
+    private final BankProfileReadingService bankProfileReadingService;
 
     @Bean
     public ProfileConfiguration profileConfiguration() {
-        Representer representer = new Representer();
-        representer.getPropertyUtils().setSkipMissingProperties(true);
-
-        return new Yaml(representer, getDumperOptions()).loadAs(loadProfile(), ProfileConfiguration.class);
-    }
-
-    private DumperOptions getDumperOptions() {
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        return options;
-    }
-
-    private InputStream loadProfile() {
-        Resource resource = resourceLoader.getResource(resolveBankProfile());
-        try {
-            return resource.getInputStream();
-        } catch (IOException e) {
-            log.error("PSD2 api file is not found", e);
-            throw new IllegalArgumentException("PSD2 api file is not found");
-        }
-    }
-
-    private String resolveBankProfile() {
-        if (StringUtils.isBlank(customBankProfile)) {
-            return DEFAULT_BANK_PROFILE;
-        } else {
-            if (customBankProfile.startsWith(CLASSPATH_PREFIX)
-                || customBankProfile.startsWith(FILE_PREFIX)) {
-                return customBankProfile;
-            }
-            return FILE_PREFIX + customBankProfile;
-        }
+        return bankProfileReadingService.getProfileConfiguration();
     }
 }

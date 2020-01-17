@@ -15,3 +15,64 @@ This configuration redirects messages from *access-log* and *request-log* logger
 If the change of logging configuration is needed, custom logback file (*logback.xml* or *logback.groovy* if Groovy is on the classpath) should be created in the root of the classpath with appropriate configurations.
 
 Although XS2A provides configuration file for *Logback*, it's possible to configure and use any logging framework that's compatible with *SLF4J*.
+
+[#propagating-request-information]
+=== Propagating information about the request from XS2A to external services
+
+By default XS2A propagates information about the TPP request (in form of internal request ID and X-Request-ID) to CMS and ASPSP Profile services.
+This is done by providing additional headers with relevant information about the request for each REST call to CMS or ASPSP Profile, initiated by the XS2A service.
+
+If there's a need to propagate this information to other services, it's possible to make use of classes from `xs2a-logger-web` module.
+`de.adorsys.psd2.logger.web.LoggingContextInterceptor` is responsible for intercepting REST calls to external services and populating request headers with information about the request.
+This interceptor should be applied to all requests to the external service.
+In order to make use of the provided information, external service should provide implementation of `de.adorsys.psd2.logger.web.AbstractLoggingContextFilter` for extracting data from request headers and storing them in the logging context.
+
+[#configuring-payment-validation-rules]
+=== Configuring payment validation rules
+
+XS2A provides an opportunity to change the validation rules for payment body during payment initiation request by providing custom country-specific rules.
+
+To configure custom validation rules, new implementation of `de.adorsys.psd2.validator.payment.CountryValidatorHolder` interface should be provided as a Spring bean in the application with appropriate country identifier.
+During the payment initiation request XS2A will try to find and execute implementation of `CountryValidatorHolder` with country identifier matching to the value of `countryValidationSupported` property in the ASPSP profile.
+If there is no custom implementation for the country identifier specified in ASPSP profile, XS2A will use validation rules for Germany by default.
+
+[#configuring-mapping-type-specific-payments-spi]
+=== Configuring mapping of type-specific payments for SPI
+
+In general XS2A handles all payments as common payments, regardless of payment type and payment product.
+This means that the request body of any payment will be stored in CMS and transferred to SPI in form of byte array just as it was received from TPP, without any transformation or mapping by XS2A.
+All payment-related SPI calls will be forwarded to `de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi` implementation.
+
+This is the preferred approach and to enable it connector application should provide dependency on `xs2a-payment-common-impl`:
+
+[source]
+----
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>xs2a-payment-common-impl</artifactId>
+</dependency>
+----
+
+To provide backward compatibility with previous versions it's possible to use support library that will provide payments with standard payment products to SPI as parsed payments.
+In this case standard payments will be mapped into type-specific implementations of `de.adorsys.psd2.xs2a.spi.service.SpiPayment` (`SpiSinglePayment`, `SpiPeriodicPayment` and `SpiBulkPayment`) before being passed to SPI level.
+All payment-related SPI calls will be forwarded to appropriate implementations of `de.adorsys.psd2.xs2a.spi.service.PaymentSpi` (`SinglePaymentSpi`, `PeriodicPaymentSpi`, `BulkPaymentSpi`).
+Only non-standard payments will be handled as common payments and forwarded to `de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi`.
+
+To enable this mapping, connector application should use `xs2a-payment-support-impl` module instead of `xs2a-payment-common-impl`:
+
+[source]
+----
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>xs2a-payment-support-impl</artifactId>
+</dependency>
+----
+
+See <<SPI_Developer_Guide.adoc#configuring-mapping-type-specific-payments-cms-apis,Configuring mapping of type-specific payments for CMS APIs>> for providing similar configuration for CMS application.
+
+=== Configuring XS2A filters
+
+XS2A relies on specific order of filter execution to function correctly and relies on connector application to maintain that order.
+
+If connector is launched as Spring Boot application, the order will be guaranteed by the priority of the filter beans and no additional configuration is required.
+If it's not the case, connector should make sure that `de.adorsys.psd2.xs2a.web.filter.Xs2aLoggingContextFilter` will be executed before any other XS2A filter.

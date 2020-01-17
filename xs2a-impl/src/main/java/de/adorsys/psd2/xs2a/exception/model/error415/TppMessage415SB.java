@@ -114,7 +114,7 @@ public class TppMessage415SB {
      * @return text
      **/
     @ApiModelProperty(value = "")
-    @Size(max = 512)
+    @Size(max = 500)
     public String getText() {
         return text;
     }

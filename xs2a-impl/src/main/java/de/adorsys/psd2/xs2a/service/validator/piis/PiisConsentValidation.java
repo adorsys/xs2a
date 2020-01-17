@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,14 @@
 package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
-import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.tpp.PiisTppInfoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -37,15 +36,14 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PiisConsentValidation {
-    private final RequestProviderService requestProviderService;
-    private final PiisTppInfoValidator piisTppInfoValidator;
+    private final TppService tppService;
 
     public PiisConsentValidationResult validatePiisConsentData(List<PiisConsent> piisConsents) {
         if (CollectionUtils.isEmpty(piisConsents)) {
@@ -58,31 +56,35 @@ public class PiisConsentValidation {
                                                         .filter(e -> Optional.ofNullable(e.getExpireDate())
                                                                          .map(d -> d.compareTo(LocalDate.now()) >= 0)
                                                                          .orElse(true))
+                                                        .filter(this::filterByTpp)
                                                         .sorted(Comparator.comparing(PiisConsent::getCreationTimestamp, Comparator.nullsLast(Comparator.reverseOrder())))
                                                         .findAny();
 
         ValidationResult validationResult = filteredPiisConsent
-                                                .map(this::isTppValid)
+                                                .map(this::isTppAccessTypeValid)
                                                 .orElseGet(() -> ValidationResult.invalid(PIIS_400, CONSENT_UNKNOWN_400));
 
-        if (validationResult.isNotValid()) {
+        if (!filteredPiisConsent.isPresent() || validationResult.isNotValid()) {
             return new PiisConsentValidationResult(buildErrorHolderFromMessageError(validationResult.getMessageError()));
         }
 
         return new PiisConsentValidationResult(filteredPiisConsent.get());
     }
 
-    private ValidationResult isTppValid(PiisConsent piisConsent) {
-        if (piisConsent.getTppAccessType() == PiisConsentTppAccessType.ALL_TPP) {
-            return ValidationResult.valid();
-        } else if (piisConsent.getTppAccessType() == PiisConsentTppAccessType.SINGLE_TPP) {
-            return piisTppInfoValidator.validateTpp(piisConsent.getTppAuthorisationNumber());
-        } else {
-            PiisConsentTppAccessType accessType = piisConsent.getTppAccessType();
+    private boolean filterByTpp(PiisConsent piisConsent) {
+        return Optional.of(piisConsent)
+                   .filter(e -> e.getTppAccessType() == PiisConsentTppAccessType.SINGLE_TPP)
+                   .map(e -> e.getTppAuthorisationNumber().equals(tppService.getTppInfo().getAuthorisationNumber()))
+                   .orElse(true);
+    }
 
-            log.error("InR-ID: [{}], X-Request-ID: [{}]. Unknown TPP access type: {}",
-                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), accessType);
-            return accessType == null ? ValidationResult.invalid(PIIS_400, CONSENT_UNKNOWN_400_NULL_ACCESS_TYPE):
+    private ValidationResult isTppAccessTypeValid(PiisConsent piisConsent) {
+        PiisConsentTppAccessType accessType = piisConsent.getTppAccessType();
+        if (EnumSet.of(PiisConsentTppAccessType.ALL_TPP, PiisConsentTppAccessType.SINGLE_TPP).contains(accessType)) {
+            return ValidationResult.valid();
+        } else {
+            log.error("Unknown TPP access type: {}", accessType);
+            return accessType == null ? ValidationResult.invalid(PIIS_400, CONSENT_UNKNOWN_400_NULL_ACCESS_TYPE) :
                        ValidationResult.invalid(PIIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400_UNKNOWN_ACCESS_TYPE, accessType));
         }
     }

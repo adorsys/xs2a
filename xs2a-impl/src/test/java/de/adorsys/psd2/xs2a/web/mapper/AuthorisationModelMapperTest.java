@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
@@ -72,11 +71,11 @@ public class AuthorisationModelMapperTest {
         Links xs2aLinks = jsonReader.getObjectFromFile("json/web/mapper/xs2a-links.json", Links.class);
         when(mockHrefLinkMapper.mapToLinksMap(xs2aLinks)).thenReturn(links);
 
-        Xs2aAuthenticationObject xs2aAuthenticationObject = jsonReader.getObjectFromFile("json/web/mapper/chosenScaMethod.json", Xs2aAuthenticationObject.class);
+        de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject xs2aAuthenticationObject = jsonReader.getObjectFromFile("json/web/mapper/chosenScaMethod.json", de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject.class);
         ChosenScaMethod chosenScaMethod = jsonReader.getObjectFromFile("json/web/mapper/chosenScaMethod.json", ChosenScaMethod.class);
         when(mockChosenScaMethodMapper.mapToChosenScaMethod(xs2aAuthenticationObject)).thenReturn(chosenScaMethod);
 
-        List<Xs2aAuthenticationObject> xs2aAuthenticationObjects = jsonReader.getObjectFromFile("json/web/mapper/scaMethods.json", new TypeReference<List<Xs2aAuthenticationObject>>() {
+        List<de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject> xs2aAuthenticationObjects = jsonReader.getObjectFromFile("json/web/mapper/scaMethods.json", new TypeReference<List<de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject>>() {
         });
         ScaMethods scaMethods = jsonReader.getObjectFromFile("json/web/mapper/scaMethods.json", ScaMethods.class);
         when(mockScaMethodsMapper.mapToScaMethods(xs2aAuthenticationObjects)).thenReturn(scaMethods);

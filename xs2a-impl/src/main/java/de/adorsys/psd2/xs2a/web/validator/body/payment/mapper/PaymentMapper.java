@@ -18,12 +18,12 @@ package de.adorsys.psd2.xs2a.web.validator.body.payment.mapper;
 
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
+import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
+import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
-import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
-import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
@@ -87,6 +87,7 @@ public class PaymentMapper {
         payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
         payment.setRemittanceInformationStructured(remittanceMapper.mapToToRemittance(paymentRequest.getRemittanceInformationStructured()));
+        payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
         return payment;
     }
 
@@ -114,6 +115,7 @@ public class PaymentMapper {
         payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
         payment.setRemittanceInformationStructured(remittanceMapper.mapToToRemittance(paymentRequest.getRemittanceInformationStructured()));
+        payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
         return payment;
     }
 
@@ -202,6 +204,7 @@ public class PaymentMapper {
                        payment.setUltimateCreditor(p.getUltimateCreditor());
                        payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(p.getPurposeCode()));
                        payment.setRemittanceInformationStructured(remittanceMapper.mapToToRemittance(p.getRemittanceInformationStructured()));
+                       payment.setInstructionIdentification(p.getInstructionIdentification());
                        return payment;
                    })
                    .collect(Collectors.toList());

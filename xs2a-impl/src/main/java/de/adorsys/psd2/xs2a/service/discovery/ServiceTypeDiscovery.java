@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@
 
 package de.adorsys.psd2.xs2a.service.discovery;
 
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType.*;
+import static de.adorsys.psd2.xs2a.core.mapper.ServiceType.*;
 
 @Slf4j
 class ServiceTypeDiscovery {
@@ -46,12 +45,10 @@ class ServiceTypeDiscovery {
     /**
      * Returns service type by checking incoming path on existing paths patterns matching (each pattern is associated with corresponding service type).
      *
-     * @param targetPath        target path to be checked on pattern matching
-     * @param internalRequestId internal id of the request
-     * @param xRequestId        request id provided by the TPP
+     * @param targetPath target path to be checked on pattern matching
      * @return Service Type value
      */
-    static ServiceType getServiceType(String targetPath, UUID internalRequestId, String xRequestId) {
+    static ServiceType getServiceType(String targetPath) {
         for (Map.Entry<String, ServiceType> entry : pathToServiceType.entrySet()) {
             String pattern = entry.getKey();
 
@@ -60,8 +57,7 @@ class ServiceTypeDiscovery {
             }
         }
 
-        log.warn("InR-ID: [{}], X-Request-ID: [{}]. Can't get ServiceType because illegal path: [{}]",
-                 internalRequestId, xRequestId, targetPath);
+        log.warn("Can't get ServiceType because illegal path: [{}]", targetPath);
         throw new IllegalArgumentException("Illegal path: " + targetPath);
     }
 }

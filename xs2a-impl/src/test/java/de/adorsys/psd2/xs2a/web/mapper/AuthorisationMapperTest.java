@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
@@ -125,7 +124,7 @@ public class AuthorisationMapperTest {
                                                                                        .body(xs2aUpdatePisCommonPaymentPsuDataResponse)
                                                                                        .build();
 
-        List<Xs2aAuthenticationObject> xs2aScaMethods = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-scaMethods.json", new TypeReference<List<Xs2aAuthenticationObject>>() {
+        List<de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject> xs2aScaMethods = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-scaMethods.json", new TypeReference<List<de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject>>() {
         });
         ScaMethods scaMethods = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-scaMethods.json", ScaMethods.class);
         when(scaMethodsMapper.mapToScaMethods(xs2aScaMethods)).thenReturn(scaMethods);

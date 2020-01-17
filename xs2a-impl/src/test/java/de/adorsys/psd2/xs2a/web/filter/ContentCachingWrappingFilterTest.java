@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletRequest;
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletResponse;
-import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
+import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -41,12 +41,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ContentCachingWrappingFilterTest {
-    private static final String REQUEST_PATH = "/v1/accounts";
-
     @Mock
     private FilterChain filterChain;
     @Mock
-    private RequestPathResolver requestPathResolver;
+    private Xs2aEndpointChecker xs2aEndpointChecker;;
 
     @InjectMocks
     private ContentCachingWrappingFilter contentCachingWrappingFilter;
@@ -62,8 +60,8 @@ public class ContentCachingWrappingFilterTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        when(requestPathResolver.resolveRequestPath(mockRequest))
-            .thenReturn(REQUEST_PATH);
+        when(xs2aEndpointChecker.isXs2aEndpoint(mockRequest))
+            .thenReturn(true);
 
         // When
         contentCachingWrappingFilter.doFilter(mockRequest, mockResponse, filterChain);
@@ -73,5 +71,4 @@ public class ContentCachingWrappingFilterTest {
         assertTrue(capturedRequest.getValue() instanceof MultiReadHttpServletRequest);
         assertTrue(capturedResponse.getValue() instanceof MultiReadHttpServletResponse);
     }
-
 }

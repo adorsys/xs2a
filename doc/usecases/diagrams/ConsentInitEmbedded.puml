@@ -50,7 +50,7 @@ SPI-->XS2A: SpiAuthorisationStatus
 |||
 XS2A->SPI: Java Call AisConsentSpi
 |||
-SPI-->XS2A: List "SpiAuthenticationObject"
+SPI-->XS2A: List "AuthenticationObject"
 deactivate SPI
 |||
 XS2A->CMS: REST Call UpdateAisAuthorisation

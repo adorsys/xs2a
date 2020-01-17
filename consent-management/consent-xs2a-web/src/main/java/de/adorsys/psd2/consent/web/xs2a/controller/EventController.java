@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
+import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import io.swagger.annotations.Api;
@@ -33,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/events")
-@Api(value = "api/v1/events", tags = "Events", description = "Provides access to the consent management system for Events")
+@Api(value = "api/v1/events", tags = InternalCmsXs2aApiTagName.EVENTS)
 public class EventController {
     private final Xs2aEventServiceEncrypted eventService;
 

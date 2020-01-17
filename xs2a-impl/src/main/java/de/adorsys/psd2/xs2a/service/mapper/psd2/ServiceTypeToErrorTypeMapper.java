@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.psd2;
 
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;
@@ -23,8 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType.*;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
+import static de.adorsys.psd2.xs2a.core.mapper.ServiceType.*;
 
 @Component
 public class ServiceTypeToErrorTypeMapper {

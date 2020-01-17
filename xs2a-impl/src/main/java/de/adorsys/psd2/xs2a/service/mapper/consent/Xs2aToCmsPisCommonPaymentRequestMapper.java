@@ -20,11 +20,12 @@ import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
+import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
-import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
+import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -46,8 +47,8 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         paymentInfo.setInternalRequestId(internalRequestId);
         paymentInfo.setPaymentData(paymentData);
         paymentInfo.setCreationTimestamp(creationTimestamp);
-        paymentInfo.setTppNotificationUri(paymentInitiationParameters.getTppNotificationUri());
-        paymentInfo.setNotificationSupportedModes(paymentInitiationParameters.getNotificationSupportedModes());
+        paymentInfo.setTppNotificationUri(Optional.ofNullable(paymentInitiationParameters.getTppNotificationData()).map(TppNotificationData::getTppNotificationUri).orElse(null));
+        paymentInfo.setNotificationSupportedModes(Optional.ofNullable(paymentInitiationParameters.getTppNotificationData()).map(TppNotificationData::getNotificationModes).orElse(null));
         return paymentInfo;
     }
 
@@ -63,6 +64,16 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         paymentInfo.setAspspAccountId(response.getAspspAccountId());
         paymentInfo.setTppRedirectUri(paymentInitiationParameters.getTppRedirectUri());
         return paymentInfo;
+    }
+
+    public PisCommonPaymentRequest mapToCmsCommonPaymentRequest(CommonPayment commonPayment, String paymentProduct) {
+        PisCommonPaymentRequest request = new PisCommonPaymentRequest();
+        request.setPaymentId(commonPayment.getPaymentId());
+        request.setPaymentProduct(paymentProduct);
+        request.setPaymentType(commonPayment.getPaymentType());
+        // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
+        request.setTppInfo(new TppInfo());
+        return request;
     }
 
     public PisCommonPaymentRequest mapToCmsSinglePisCommonPaymentRequest(SinglePayment singlePayment, String paymentProduct) {
@@ -114,6 +125,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
 
                        pisPayment.setPaymentId(pmt.getPaymentId());
                        pisPayment.setEndToEndIdentification(pmt.getEndToEndIdentification());
+                       pisPayment.setInstructionIdentification(pmt.getInstructionIdentification());
                        pisPayment.setDebtorAccount(pmt.getDebtorAccount());
                        pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());
                        pisPayment.setCurrency(pmt.getInstructedAmount().getCurrency());
@@ -143,6 +155,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
 
                        pisPayment.setPaymentId(pmt.getPaymentId());
                        pisPayment.setEndToEndIdentification(pmt.getEndToEndIdentification());
+                       pisPayment.setInstructionIdentification(pmt.getInstructionIdentification());
                        pisPayment.setDebtorAccount(pmt.getDebtorAccount());
                        pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());
                        pisPayment.setCurrency(pmt.getInstructedAmount().getCurrency());

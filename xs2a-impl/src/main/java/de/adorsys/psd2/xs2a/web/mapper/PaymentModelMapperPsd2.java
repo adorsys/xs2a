@@ -16,20 +16,21 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
-import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
-import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import de.adorsys.psd2.xs2a.domain.pis.*;
-import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
@@ -38,83 +39,40 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
-import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class PaymentModelMapperPsd2 {
     private final CoreObjectsMapper coreObjectsMapper;
-    private final AccountModelMapper accountModelMapper;
     private final TppRedirectUriMapper tppRedirectUriMapper;
     private final AmountModelMapper amountModelMapper;
     private final HrefLinkMapper hrefLinkMapper;
-    private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final ScaMethodsMapper scaMethodsMapper;
-    private final Xs2aAddressMapper xs2aAddressMapper;
-    private final RemittanceMapper remittanceMapper;
-    private final PurposeCodeMapper purposeCodeMapper;
+    private final StandardPaymentProductsResolver standardPaymentProductsResolver;
+    private final Xs2aObjectMapper xs2aObjectMapper;
 
-    public Object mapToGetPaymentResponse(Object payment, PaymentType type, String paymentProduct) {
-        if (standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct)) {
-            return convertResponseToRawData(((CommonPayment) payment).getPaymentData());
-        }
+    public Object mapToGetPaymentResponse(Object payment, String paymentProduct) {
+        CommonPayment commonPayment = (CommonPayment) payment;
+        String rawData = convertResponseToRawData(commonPayment.getPaymentData());
 
-        if (type == SINGLE) {
-            SinglePayment xs2aPayment = (SinglePayment) payment;
-            PaymentInitiationWithStatusResponse paymentResponse = new PaymentInitiationWithStatusResponse();
-            paymentResponse.setEndToEndIdentification(xs2aPayment.getEndToEndIdentification());
-            paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getDebtorAccount()));
-            paymentResponse.setInstructedAmount(amountModelMapper.mapToAmount(xs2aPayment.getInstructedAmount()));
-            paymentResponse.setCreditorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getCreditorAccount()));
-            paymentResponse.setCreditorAgent(xs2aPayment.getCreditorAgent());
-            paymentResponse.setCreditorName(xs2aPayment.getCreditorName());
-            paymentResponse.setCreditorAddress(xs2aAddressMapper.mapToAddress(xs2aPayment.getCreditorAddress()));
-            paymentResponse.setRemittanceInformationUnstructured(xs2aPayment.getRemittanceInformationUnstructured());
-            paymentResponse.setTransactionStatus(mapToTransactionStatus(xs2aPayment.getTransactionStatus()));
-            paymentResponse.setUltimateDebtor(xs2aPayment.getUltimateDebtor());
-            paymentResponse.setUltimateCreditor(xs2aPayment.getUltimateCreditor());
-            paymentResponse.setPurposeCode(purposeCodeMapper.mapToPurposeCode(xs2aPayment.getPurposeCode()));
-            paymentResponse.setRemittanceInformationStructured(remittanceMapper.mapToRemittanceInformationStructured(xs2aPayment.getRemittanceInformationStructured()));
-            paymentResponse.setRequestedExecutionDate(xs2aPayment.getRequestedExecutionDate());
-            return paymentResponse;
-        } else if (type == PERIODIC) {
-            PeriodicPayment xs2aPayment = (PeriodicPayment) payment;
-            PeriodicPaymentInitiationWithStatusResponse paymentResponse = new PeriodicPaymentInitiationWithStatusResponse();
+        return standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct)
+                   ? rawData
+                   : enrichPaymentWithAdditionalData(rawData, commonPayment);
+    }
 
-            paymentResponse.setEndToEndIdentification(xs2aPayment.getEndToEndIdentification());
-            paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getDebtorAccount()));
-            paymentResponse.setInstructedAmount(amountModelMapper.mapToAmount(xs2aPayment.getInstructedAmount()));
-            paymentResponse.setCreditorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getCreditorAccount()));
-            paymentResponse.setCreditorAgent(xs2aPayment.getCreditorAgent());
-            paymentResponse.setCreditorName(xs2aPayment.getCreditorName());
-            paymentResponse.setCreditorAddress(xs2aAddressMapper.mapToAddress(xs2aPayment.getCreditorAddress()));
-            paymentResponse.setRemittanceInformationUnstructured(xs2aPayment.getRemittanceInformationUnstructured());
-            paymentResponse.setStartDate(xs2aPayment.getStartDate());
-            paymentResponse.setEndDate(xs2aPayment.getEndDate());
-            paymentResponse.setExecutionRule(mapToExecutionRule(xs2aPayment.getExecutionRule()).orElse(null));
-            paymentResponse.setFrequency(FrequencyCode.valueOf(xs2aPayment.getFrequency().name()));
-            paymentResponse.setDayOfExecution(mapToDayOfExecution(xs2aPayment.getDayOfExecution()).orElse(null));
-            paymentResponse.setTransactionStatus(mapToTransactionStatus(xs2aPayment.getTransactionStatus()));
-            paymentResponse.setUltimateDebtor(xs2aPayment.getUltimateDebtor());
-            paymentResponse.setUltimateCreditor(xs2aPayment.getUltimateCreditor());
-            paymentResponse.setPurposeCode(purposeCodeMapper.mapToPurposeCode(xs2aPayment.getPurposeCode()));
-            paymentResponse.setRemittanceInformationStructured(remittanceMapper.mapToRemittanceInformationStructured(xs2aPayment.getRemittanceInformationStructured()));
-            return paymentResponse;
-        } else {
-            BulkPayment xs2aPayment = (BulkPayment) payment;
-            BulkPaymentInitiationWithStatusResponse paymentResponse = new BulkPaymentInitiationWithStatusResponse();
-
-            paymentResponse.setBatchBookingPreferred(xs2aPayment.getBatchBookingPreferred());
-            paymentResponse.setRequestedExecutionDate(xs2aPayment.getRequestedExecutionDate());
-            paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference(xs2aPayment.getDebtorAccount()));
-            paymentResponse.setPayments(mapToBulkPartList(xs2aPayment.getPayments()));
-            paymentResponse.setTransactionStatus(mapToTransactionStatus(xs2aPayment.getTransactionStatus()));
-            return paymentResponse;
+    private Object enrichPaymentWithAdditionalData(String rawData, CommonPayment commonPayment) {
+        try {
+            Map<String, String> map = xs2aObjectMapper.readValue(rawData, Map.class);
+            map.put("transactionStatus", commonPayment.getTransactionStatus().toString());
+            return map;
+        } catch (JsonProcessingException e) {
+            log.warn("Can't convert payment to map {}", e.getMessage());
+            return rawData;
         }
     }
 
@@ -138,12 +96,14 @@ public class PaymentModelMapperPsd2 {
         response201.setChallengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()));
         response201.setLinks(hrefLinkMapper.mapToLinksMap(response.getLinks()));
         response201.setPsuMessage(response.getPsuMessage());
+        response201.setTppMessages(mapToTppMessage2XXList(response.getTppMessageInformation()));
+
         return response201;
     }
 
     public PaymentInitiationParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI,
                                                                      String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, PsuIdData psuData,
-                                                                     String tppNotificationUri, List<NotificationSupportedMode> notificationModes) {
+                                                                     TppNotificationData tppNotificationData) {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
         parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")));
         parameters.setPaymentProduct(Optional.ofNullable(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
@@ -151,8 +111,7 @@ public class PaymentModelMapperPsd2 {
         parameters.setTppRedirectUri(tppRedirectUriMapper.mapToTppRedirectUri(tpPRedirectURI, tpPNokRedirectURI));
         parameters.setTppExplicitAuthorisationPreferred(tppExplicitAuthorisationPreferred);
         parameters.setPsuData(psuData);
-        parameters.setTppNotificationUri(tppNotificationUri);
-        parameters.setNotificationSupportedModes(notificationModes);
+        parameters.setTppNotificationData(tppNotificationData);
 
         return parameters;
     }
@@ -175,6 +134,7 @@ public class PaymentModelMapperPsd2 {
         response.setChosenScaMethod(mapToChosenScaMethod(cancelPaymentResponse.getChosenScaMethod()));
         response.setChallengeData(coreObjectsMapper.mapToChallengeData(cancelPaymentResponse.getChallengeData()));
         response._links(hrefLinkMapper.mapToLinksMap(cancelPaymentResponse.getLinks()));
+        response.setTppMessages(mapToTppMessage2XXList(cancelPaymentResponse.getTppMessageInformation()));
         return response;
     }
 
@@ -182,27 +142,6 @@ public class PaymentModelMapperPsd2 {
         return Optional.ofNullable(responseObject)
                    .map(r -> TransactionStatus.valueOf(r.name()))
                    .orElse(null);
-    }
-
-    private List<PaymentInitiationBulkElementJson> mapToBulkPartList(List<SinglePayment> payments) {
-        return payments.stream()
-                   .map(this::mapToBulkPart)
-                   .collect(Collectors.toList());
-    }
-
-    private PaymentInitiationBulkElementJson mapToBulkPart(SinglePayment payment) {
-        PaymentInitiationBulkElementJson bulkPart = new PaymentInitiationBulkElementJson().endToEndIdentification(payment.getEndToEndIdentification());
-        bulkPart.setInstructedAmount(amountModelMapper.mapToAmount(payment.getInstructedAmount()));
-        bulkPart.setCreditorAccount(accountModelMapper.mapToAccountReference(payment.getCreditorAccount()));
-        bulkPart.setCreditorAgent(payment.getCreditorAgent());
-        bulkPart.setCreditorName(payment.getCreditorName());
-        bulkPart.setCreditorAddress(xs2aAddressMapper.mapToAddress(payment.getCreditorAddress()));
-        bulkPart.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        bulkPart.setUltimateDebtor(payment.getUltimateDebtor());
-        bulkPart.setUltimateCreditor(payment.getUltimateCreditor());
-        bulkPart.setPurposeCode(purposeCodeMapper.mapToPurposeCode(payment.getPurposeCode()));
-        bulkPart.setRemittanceInformationStructured(remittanceMapper.mapToRemittanceInformationStructured(payment.getRemittanceInformationStructured()));
-        return bulkPart;
     }
 
     private ChosenScaMethod mapToChosenScaMethod(Xs2aChosenScaMethod xs2aChosenScaMethod) {
@@ -224,15 +163,22 @@ public class PaymentModelMapperPsd2 {
         }
     }
 
-    private Optional<DayOfExecution> mapToDayOfExecution(PisDayOfExecution dayOfExecution) {
-        return Optional.ofNullable(dayOfExecution)
-                   .map(PisDayOfExecution::toString)
-                   .map(DayOfExecution::fromValue);
+    private List<TppMessage2XX> mapToTppMessage2XXList(Set<TppMessageInformation> tppMessages) {
+        if (CollectionUtils.isEmpty(tppMessages)) {
+            return null;
+        }
+        return tppMessages.stream()
+                   .map(this::mapToTppMessage2XX)
+                   .collect(Collectors.toList());
     }
 
-    private Optional<ExecutionRule> mapToExecutionRule(PisExecutionRule rule) {
-        return Optional.ofNullable(rule)
-                   .map(PisExecutionRule::toString)
-                   .map(ExecutionRule::fromValue);
+    private TppMessage2XX mapToTppMessage2XX(TppMessageInformation tppMessage) {
+        TppMessage2XX tppMessage2XX = new TppMessage2XX();
+        tppMessage2XX.setCategory(TppMessageCategory.fromValue(tppMessage.getCategory().name()));
+        tppMessage2XX.setCode(MessageCode2XX.WARNING);
+        tppMessage2XX.setPath(tppMessage.getPath());
+        tppMessage2XX.setText(tppMessage.getText());
+
+        return tppMessage2XX;
     }
 }

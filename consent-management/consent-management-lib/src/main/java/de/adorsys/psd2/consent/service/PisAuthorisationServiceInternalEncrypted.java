@@ -98,6 +98,7 @@ public class PisAuthorisationServiceInternalEncrypted implements PisAuthorisatio
     }
 
     @Override
+    @Transactional
     public CmsResponse<GetPisAuthorisationResponse> getPisAuthorisationById(String authorisationId) {
         return pisAuthorisationService.getPisAuthorisationById(authorisationId);
     }

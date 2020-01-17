@@ -18,12 +18,15 @@ package de.adorsys.psd2.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.domain.Links;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class CreateConsentResponse {
@@ -31,9 +34,9 @@ public class CreateConsentResponse {
 
     private final String consentId;
 
-    private final List<Xs2aAuthenticationObject> scaMethods;
+    private final List<AuthenticationObject> scaMethods;
 
-    private final Xs2aAuthenticationObject chosenScaMethod;
+    private final AuthenticationObject chosenScaMethod;
 
     private final ChallengeData challengeData;
 
@@ -52,4 +55,5 @@ public class CreateConsentResponse {
     private final String internalRequestId;
 
     private final List<NotificationSupportedMode> tppNotificationContentPreferred;
+    private Set<TppMessageInformation> tppMessageInformation;
 }

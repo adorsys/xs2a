@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.pis;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -44,8 +43,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,8 +77,6 @@ public class PisCommonDecoupledServiceTest {
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
-    private RequestProviderService requestProviderService;
-    @Mock
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
@@ -92,7 +87,6 @@ public class PisCommonDecoupledServiceTest {
     public void init() {
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
     }
 
@@ -249,10 +243,10 @@ public class PisCommonDecoupledServiceTest {
         return response;
     }
 
-    private static Xs2aAuthenticationObject buildXs2aAuthenticationObjectForDecoupledApproach(String authenticationMethodId) {
-        Xs2aAuthenticationObject xs2aAuthenticationObject = new Xs2aAuthenticationObject();
-        xs2aAuthenticationObject.setAuthenticationMethodId(authenticationMethodId);
-        return xs2aAuthenticationObject;
+    private static AuthenticationObject buildXs2aAuthenticationObjectForDecoupledApproach(String authenticationMethodId) {
+        AuthenticationObject authenticationObject = new AuthenticationObject();
+        authenticationObject.setAuthenticationMethodId(authenticationMethodId);
+        return authenticationObject;
     }
 
 }

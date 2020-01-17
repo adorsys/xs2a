@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
 import de.adorsys.psd2.xs2a.component.logger.TppLogger;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -30,14 +29,11 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class FundsConfirmationLoggingInterceptor extends HandlerInterceptorAdapter {
     private final TppService tppService;
-    private final RequestProviderService requestProviderService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         TppLogger.logRequest(request)
             .withTpp(tppService.getTppInfo())
-            .withInternalRequestId(requestProviderService.getInternalRequestId())
-            .withXRequestId()
             .withRequestUri()
             .perform();
 
@@ -48,8 +44,6 @@ public class FundsConfirmationLoggingInterceptor extends HandlerInterceptorAdapt
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         TppLogger.logResponse(response)
             .withTpp(tppService.getTppInfo())
-            .withInternalRequestId(requestProviderService.getInternalRequestId())
-            .withXRequestId()
             .withResponseStatus()
             .perform();
     }

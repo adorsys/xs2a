@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
@@ -35,10 +34,8 @@ public class GetPaymentInitiationAuthorisationScaStatusValidator extends Abstrac
     private final PisAuthorisationValidator pisAuthorisationValidator;
     private final OauthPaymentValidator oauthPaymentValidator;
 
-    public GetPaymentInitiationAuthorisationScaStatusValidator(RequestProviderService requestProviderService,
-                                                               PisAuthorisationValidator pisAuthorisationValidator,
+    public GetPaymentInitiationAuthorisationScaStatusValidator(PisAuthorisationValidator pisAuthorisationValidator,
                                                                OauthPaymentValidator oauthPaymentValidator) {
-        super(requestProviderService);
         this.pisAuthorisationValidator = pisAuthorisationValidator;
         this.oauthPaymentValidator = oauthPaymentValidator;
     }
@@ -47,7 +44,6 @@ public class GetPaymentInitiationAuthorisationScaStatusValidator extends Abstrac
      * Validates get payment initiation authorisation SCA status request
      *
      * @param paymentObject payment information object
-     *
      * @return valid result if the payment is valid, invalid result with appropriate error otherwise
      */
     @Override

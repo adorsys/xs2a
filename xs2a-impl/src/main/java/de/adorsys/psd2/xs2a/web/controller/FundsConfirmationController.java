@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.service.FundsConfirmationService;
 import de.adorsys.psd2.xs2a.service.mapper.FundsConfirmationModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
-import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +35,6 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@Api(value = "v1", description = "Provides access to the funds confirmation", tags = {"Confirmation of Funds Service"})
 public class FundsConfirmationController implements FundsConfirmationApi {
     private final ResponseMapper responseMapper;
     private final ResponseErrorMapper responseErrorMapper;

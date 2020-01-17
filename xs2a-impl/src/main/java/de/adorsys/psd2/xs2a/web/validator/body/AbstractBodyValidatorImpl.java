@@ -17,18 +17,16 @@
 package de.adorsys.psd2.xs2a.web.validator.body;
 
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.validator.payment.config.ValidationObject;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
-import de.adorsys.psd2.xs2a.web.validator.body.payment.config.ValidationObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
@@ -81,16 +79,6 @@ public class AbstractBodyValidatorImpl implements BodyValidator {
         if (fieldToCheck.length() > maxLength) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_OVERSIZE_FIELD, fieldName, maxLength));
         }
-    }
-
-    protected <T> Optional<T> mapBodyToInstance(HttpServletRequest request, MessageError messageError, Class<T> clazz) {
-        try {
-            return Optional.of(xs2aObjectMapper.readValue(request.getInputStream(), clazz));
-        } catch (IOException e) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
-        }
-
-        return Optional.empty();
     }
 
     protected String extractErrorField(String message) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,20 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.event.core.model.EventType;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfirmationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
@@ -54,8 +54,8 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 
 @Slf4j
 @Service
@@ -89,8 +89,7 @@ public class FundsConfirmationService {
 
             if (validationResult.hasError()) {
                 ErrorHolder errorHolder = validationResult.getErrorHolder();
-                log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds validation failed: {}",
-                         requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), errorHolder);
+                log.info("Check availability of funds validation failed: {}", errorHolder);
                 return ResponseObject.<FundsConfirmationResponse>builder()
                            .fail(new MessageError(errorHolder))
                            .build();
@@ -100,7 +99,7 @@ public class FundsConfirmationService {
         }
 
         PsuIdData psuIdData = requestProviderService.getPsuIdData();
-        log.info("X-Request-ID: [{}]. Corresponding PSU-ID {} was provided from request.", requestProviderService.getRequestId(), psuIdData);
+        log.info("Corresponding PSU-ID {} was provided from request.", psuIdData);
 
         // We don't transfer provider to the SPI level if there is no PIIS consent. Both PIIS consent and the provider
         // parameters are marked as @Nullable in SPI.
@@ -125,8 +124,8 @@ public class FundsConfirmationService {
         AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
 
         if (selector == null) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds failed, because while validate account reference no account identifier found in the request [{}].",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), accountReference);
+            log.info("Check availability of funds failed, because while validate account reference no account identifier found in the request [{}].",
+                     accountReference);
             return new PiisConsentValidationResult(ErrorHolder.builder(PIIS_400)
                                                        .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
                                                        .build());
@@ -157,8 +156,8 @@ public class FundsConfirmationService {
 
         if (fundsSufficientCheck.hasError()) {
             ErrorHolder error = spiErrorMapper.mapToErrorHolder(fundsSufficientCheck, ServiceType.PIIS);
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Check availability of funds failed, because perform funds sufficient check failed. Msg error: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), error);
+            log.info("Check availability of funds failed, because perform funds sufficient check failed. Msg error: {}",
+                     error);
             return new FundsConfirmationResponse(error);
         }
 

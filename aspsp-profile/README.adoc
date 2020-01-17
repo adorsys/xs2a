@@ -55,6 +55,7 @@ Attribute frequencyPerDay is mandatory for Account Information Consent request. 
 Not confirmed during this period of time AIS consents will be considered obsolete. The default value is set to 24 hours. |86 400 000 |milliseconds (1, 2,...)
 |maxConsentValidityDays |This field defines consent lifetime - maximum validity days of consent. When this value equals to 0 or empty, then the maximum lifetime of Consent is infinity. |0 |days (0, 1, ...)
 |accountOwnerInformationSupported |This field indicates if ASPSP supports account owner information in consent.
+If the parameter = FALSE, then XS2A sends the response with CONSENT_INVALID and text "An explicit consent of ownerName is not supported."
 
 |FALSE |TRUE, FALSE
 |*redirectLinkToOnlineBanking:* | | |
@@ -158,6 +159,18 @@ This force overrides multilevel SCA, signing baskets etc.|auto |explicit, auto, 
 The value for expiration time is counted with formula.
 "current time of authorisation creation + redirect url expiration time (set in ASPSP-profile)". |600 000 |milliseconds (1, 2,...)
 |authorisationExpirationTimeMs |This field contains the limit of an expiration time of authorisation resource set in milliseconds |86 400 000 |milliseconds (1, 2,...)
+|authorisationConfirmationRequestMandated |This field indicates if the authorisation confirmation is mandated.
+
+If parameter = FALSE, then authorisation confirmation is not supported.
+
+If parameter = TRUE, then each authorisation should be confirmed by Authorisation Confirmation Request. |FALSE |TRUE, FALSE
+
+|authorisationConfirmationCheckByXs2a |This field indicates where verification of Confirmation Code should be performed:
+
+If authorisationConfirmationCheckByXs2a = TRUE, then verification of Confirmation Code from request is performed on XS2A side.
+
+If authorisationConfirmationCheckByXs2a = FALSE, then verification of Confirmation Code from request should be done by ASPSP. |FALSE |TRUE, FALSE
+
 |forceXs2aBaseLinksUrl |This field defines availability to generate links using internal URL.
 
 If forceXs2aBaseLinksUrl = TRUE then links in responses (except "scaRedirect") shall be generated with the base URL set by xs2aBaseLinksUrl.
@@ -181,12 +194,17 @@ If parameter = FALSE, then no validation will occur.|TRUE |TRUE, FALSE
 
 If parameter = FALSE then XS2A sends the response with HTTP code 400 FORMAT_ERROR "Signing basket is not supported by ASPSP" |FALSE |TRUE, FALSE
 
-|authorisationConfirmationRequestMandated |This field indicates if the authorisation confirmation is mandated.
+|aspspNotificationsSupported |This field indicates if an ASPSP supports resource status notification services. Possible values:
 
-If parameter = FALSE then authorisation is supported by usual flow. if it is TRUE - each authorisation should be confirmed. |FALSE |TRUE, FALSE
+SCA: A notification on every change of the scaStatus attribute for all related authorisation processes.
 
-|authorisationConfirmationCheckByXs2a |This field indicates which part of application is responsible for authentication data checking in the authorisation process.
+PROCESS: A notification on all changes of consentStatus or transactionStatus attributes.
 
-If parameter = FALSE then it is SPI developer's duty to verify the authentication data. If it is TRUE then verification of this data is processed on XS2A side. |FALSE |TRUE, FALSE
+LAST: Only a notification on the last consentStatus or transactionStatus as available in the XS2A interface.
 
+NONE: if ASPSP doesn't support status notifications. |NONE |SCA, PROCESS, LAST, NONE
+
+|checkUriComplianceToDomainSupported |This field indicates whether ASPSP supports validation of TPP URIs with domain from certificate for compliance.
+
+If parameter = FALSE then TPP URIs should not be checked for compliance. If it is TRUE then TPP URIs should be checked. |FALSE |TRUE, FALSE
 |===

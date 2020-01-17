@@ -1,22 +1,33 @@
+/*
+ * Copyright 2018-2020 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.xs2a.service.validator;
 
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.UUID;
-
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_NO_PSU;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_401;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -24,8 +35,6 @@ import static org.mockito.Mockito.when;
 public class PisPsuDataUpdateAuthorisationCheckerValidatorTest {
     @Mock
     private PsuDataUpdateAuthorisationChecker psuDataUpdateAuthorisationChecker;
-    @Mock
-    private RequestProviderService requestProviderService;
     @InjectMocks
     private PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator;
 
@@ -34,13 +43,7 @@ public class PisPsuDataUpdateAuthorisationCheckerValidatorTest {
     private static final PsuIdData PSU_ID_DATA_2 = new PsuIdData("psu-id-2", null, null, null, null);
 
     private static final MessageError FORMAT_BOTH_PSUS_ABSENT_ERROR = new MessageError(ErrorType.PIS_400, of(FORMAT_ERROR_NO_PSU));
-    private static final MessageError CREDENTIALS_INVALID_ERROR = new MessageError(PIS_401, of(PSU_CREDENTIALS_INVALID));
-
-    @Before
-    public void setUp() {
-        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.randomUUID());
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-    }
+    private static final MessageError CREDENTIALS_INVALID_ERROR = new MessageError(ErrorType.PIS_401, of(PSU_CREDENTIALS_INVALID));
 
     @Test
     public void validate_withBothPsusAbsent_shouldReturnFormatError() {

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,6 +23,8 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -15,7 +33,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the response for a successful cancel payment request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-11T13:48:52.194360+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class PaymentInitiationCancelResponse202   {
   @JsonProperty("transactionStatus")
@@ -32,6 +50,10 @@ public class PaymentInitiationCancelResponse202   {
 
   @JsonProperty("_links")
   private Map _links = null;
+
+  @JsonProperty("tppMessages")
+  @Valid
+  private List<TppMessage2XX> tppMessages = null;
 
   public PaymentInitiationCancelResponse202 transactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
@@ -149,21 +171,50 @@ public class PaymentInitiationCancelResponse202   {
     this._links = _links;
   }
 
+    public PaymentInitiationCancelResponse202 tppMessages(List<TppMessage2XX> tppMessages) {
+        this.tppMessages = tppMessages;
+        return this;
+    }
+
+    public PaymentInitiationCancelResponse202 addTppMessagesItem(TppMessage2XX tppMessagesItem) {
+        if (this.tppMessages == null) {
+            this.tppMessages = new ArrayList<>();
+        }
+        this.tppMessages.add(tppMessagesItem);
+        return this;
+    }
+
+    /**
+     * Get tppMessages
+     * @return tppMessages
+     **/
+    @ApiModelProperty(value = "")
+
+    @Valid
+
+
+    @JsonProperty("tppMessages")
+    public List<TppMessage2XX> getTppMessages() {
+        return tppMessages;
+    }
+
+    public void setTppMessages(List<TppMessage2XX> tppMessages) {
+        this.tppMessages = tppMessages;
+    }
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    PaymentInitiationCancelResponse202 paymentInitiationCancelResponse202 = (PaymentInitiationCancelResponse202) o;
+}    PaymentInitiationCancelResponse202 paymentInitiationCancelResponse202 = (PaymentInitiationCancelResponse202) o;
     return Objects.equals(this.transactionStatus, paymentInitiationCancelResponse202.transactionStatus) &&
-        Objects.equals(this.scaMethods, paymentInitiationCancelResponse202.scaMethods) &&
-        Objects.equals(this.chosenScaMethod, paymentInitiationCancelResponse202.chosenScaMethod) &&
-        Objects.equals(this.challengeData, paymentInitiationCancelResponse202.challengeData) &&
-        Objects.equals(this._links, paymentInitiationCancelResponse202._links);
+    Objects.equals(this.scaMethods, paymentInitiationCancelResponse202.scaMethods) &&
+    Objects.equals(this.chosenScaMethod, paymentInitiationCancelResponse202.chosenScaMethod) &&
+    Objects.equals(this.challengeData, paymentInitiationCancelResponse202.challengeData) &&
+    Objects.equals(this._links, paymentInitiationCancelResponse202._links);
   }
 
   @Override
@@ -189,7 +240,7 @@ public class PaymentInitiationCancelResponse202   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

@@ -6,45 +6,222 @@
 
 === Using the CMS-PSU-API
 
-=== SCA Approaches REDIRECT
+CMS PSU API provides interfaces to be used by online-banking systems. Main purpose of these interfaces - providing
+access to internal data of business objects stored in CMS database. Access to this API is provided via REST requests.
+REST controllers classes are located in the `de.adorsys.psd2.consent.web.psu.controller` package.
 
-=== SCA Approaches
+CMS-PSU-API has 4 main parts which are implemented as separate REST controllers:
 
-=== SCA Approach EMBEDDED
+* ASPSP consent data part;
+* AIS consent part;
+* PIS payment part;
+* PIIS consent part.
+
+Below is the description of each controller with its endpoints and names of corresponding java source code methods.
+
+==== ASPSP consent data controller
+
+This controller has endpoints for handling ASPSP consent data.
+
+* *GET /psu-api/v1/aspsp-consent-data/consents/{consent-id}* - reads ASPSP consent data by provided consent/payment ID. Corresponding java method - `getAspspConsentData`;
+* *PUT /psu-api/v1/aspsp-consent-data/consents/{consent-id}* - updates ASPSP consent data by provided consent/payment ID. Java method - `updateAspspConsentData`;
+* *DELETE /psu-api/v1/aspsp-consent-data/consents/{consent-id}* - clears ASPSP consent data by provided consent/payment ID. Method - `deleteAspspConsentData`.
+
+More detailed ASPSP data handling is described
+xref:./Implementing SPI-API.adoc[here].
+
+==== AIS consent controller
+
+This controller has endpoints for working with AIS consent entities and their attributes.
+
+* *GET /psu-api/v1/ais/consent/{consent-id}* - returns AIS consent object by provided ID (ID should be internal). Corresponding java method is `getConsentByConsentId`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/authorisation/{authorisation-id}/psu-data* - updates PSU data for definite consent. Java - `updatePsuDataInConsent`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/authorisation/{authorisation-id}/status/{status}* - updates status of AIS consent authorisation. Java - `updateAuthorisationStatus`;
+* *GET /psu-api/v1/ais/consent/{consent-id}/authorisation/psus* - returns map consisting of PSU data IDs (keys) and statuses of their authorisations for the given consent (values). Method - `psuDataAuthorisations`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/confirm-consent* - switches the AIS consent status to `VALID`. Method name - `confirmConsent`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/reject-consent* - switches the AIS consent status to `REJECTED`. Method - `rejectConsent`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/revoke-consent* - switches the AIS consent status to `REVOKED_BY_PSU`. Method - `revokeConsent`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/authorise-partially-consent* - switches the AIS consent status to `PARTIALLY_AUTHORISED`. Method - `authorisePartiallyConsent`;
+* *PUT /psu-api/v1/ais/consent/{consent-id}/save-access* - stores the account accesses for the definite consent with proper status (not applicable to `REVOKED`, `CANCELLED` and `EXPIRED` consent statuses). To be used for bank offered consents only. Java method - `putAccountAccessInConsent`;
+* *GET /psu-api/v1/ais/consent/authorisation/{authorisation-id}* - returns authorisation object by its ID. Method - `getAuthorisationByAuthorisationId`;
+* *GET /psu-api/v1/ais/consent/consents* - returns list of AIS consents by provided `PSU-ID` header. Java method - `getConsentsForPsu`;
+* *GET /psu-api/v1/ais/consent/redirect/{redirect-id}* - returns AIS consent object by provided authorisation (redirect) ID. Method - `getConsentIdByRedirectId`.
+
+==== PIS payment controller
+
+This controller has endpoints for working with PIS payment entities and their attributes.
+
+* *GET /psu-api/v1/payment/{payment-id}* - returns PIS payment object by provided ID (ID should be internal). Corresponding java method is `getPaymentByPaymentId`;
+* *PUT /psu-api/v1/payment/{payment-id}/authorisation/{authorisation-id}/status/{status}* - updates status of PIS payment authorisation. Java method - `updateAuthorisationStatus`;
+* *GET /psu-api/v1/payment/{payment-id}/authorisation/psus* - returns map consisting of PSU data IDs (keys) and statuses of their authorisations for the given payment (values). Also, holds the type of authorisation for payment (`CREATED`/`CANCELLED`). Method for this - `psuAuthorisationStatuses`;
+* *PUT /psu-api/v1/payment/{payment-id}/status/{status}* - switches the PIS payment status. The status should be provided as a path variable. Method - `updatePaymentStatus`;
+* *GET /psu-api/v1/payment/authorisation/{authorisation-id}* - returns authorisation object by its ID; Method - `getAuthorisationByAuthorisationId`;
+* *PUT /psu-api/v1/payment/authorisation/{authorisation-id}/psu-data* - updates PSU data for definite authorisation. Method - `updatePsuInPayment`;
+* *GET /psu-api/v1/payment/cancellation/{payment-id}* - returns PIS payment object by provided cancellation ID. Used method - `getPaymentByPaymentIdForCancellation`;
+* *GET /psu-api/v1/payment/cancellation/redirect/{redirect-id}* - returns PIS payment object by provided cancellation authorisation (redirect) ID. Method - `getPaymentIdByRedirectIdForCancellation`;
+* *GET /psu-api/v1/payment/redirect/{redirect-id}* - returns PIS payment object by provided authorisation (redirect) ID. Method - `getPaymentIdByRedirectId`.
+
+==== PIIS consent controller
+
+This controller has endpoints for working with PIIS consent entities and their attributes.
+
+* *GET /psu-api/v1/piis/consents* - returns list of PIIS consent objects by provided header `PSU-ID`. Method name - `getConsentsForPsu`;
+* *GET /psu-api/v1/piis/consents/{consent-id}* - returns PIIS consent object by its ID. Method - `getConsent`;
+* *PUT /psu-api/v1/piis/consents/{consent-id}/revoke-consent* - revokes the definite PIIS consent (status switches to `REVOKED_BY_PSU`). In java - `revokeConsent`.
 
 === Using the CMS-ASPSP-API
 
-CMS-ASPSP-API is an API for banks to make particular changes in CMS and to get needed information from it.
+`CMS-ASPSP-API` is an API for banks to make particular changes in `CMS` and to get needed information from it.
+In order to do it, you can use several `CMS-ASPSP-API` REST controllers. They are located in the
+`de.adorsys.psd2.consent.web.aspsp.controller` package.
 
-In order to do it use next endpoints in CMS-ASPSP-API:
+`CMS-ASPSP-API` includes next interfaces:
+
+* Events interface;
+* FundsConfirmation Consent interface;
+* Consents/Payments export interface;
+* Payment Transaction interface;
+* Tpp locking interface;
+* Tpp info interface.
+
+`CMS-ASPSP-API` REST controllers provide next endpoints:
+
+* `GET aspsp-api/v1/events` - get events for dates.
+
+* `POST aspsp-api/v1/piis/consents` - create PIIS consent.
+* `GET aspsp-api/v1/piis/consents` - get PIIS consents for PSU.
+* `DELETE aspsp-api/v1/piis/consents/{consent-id}` - terminate PIIS consent.
 
 * `GET aspsp-api/v1/ais/consents/tpp/{tpp-id}` - get consents by TPP.
 * `GET aspsp-api/v1/ais/consents/psu` - get consents by PSU.
 * `GET aspsp-api/v1/ais/consents/account/{account-id}` - get consents by account.
-* `GET aspsp-api/v1/events` - get events for dates.
-* `POST aspsp-api/v1/piis/consents` - create PIIS consent.
-* `GET aspsp-api/v1/piis/consents` - get PIIS consents for PSU.
-* `DELETE aspsp-api/v1/piis/consents/{consent-id}` - terminate PIIS consent.
-* `GET aspsp-api/v1/piis/consents/tpp/{tpp-id}` - get PIIS consents by TPP.
-* `GET aspsp-api/v1/piis/consents/psu` - get PIIS consents by PSU.
-* `GET aspsp-api/v1/piis/consents/account/{account-id}` - get PIIS consents by account ID.
+
 * `GET aspsp-api/v1/pis/payments/tpp/{tpp-id}` - get payments by TPP.
 * `GET aspsp-api/v1/pis/payments/psu` - get payments by PSU.
 * `GET aspsp-api/v1/pis/payments/account/{account-id}` - get payments by account ID.
-* `PUT /aspsp-api/v1/pis/transaction-status/{payment-id}/status/{status}` - update payment status.
+
+* `GET aspsp-api/v1/piis/consents/tpp/{tpp-id}` - get PIIS consents by TPP.
+* `GET aspsp-api/v1/piis/consents/psu` - get PIIS consents by PSU.
+* `GET aspsp-api/v1/piis/consents/account/{account-id}` - get PIIS consents by account ID.
+
+* `PUT aspsp-api/v1/pis/transaction-status/{payment-id}/status/{status}` - update payment status.
+
 * `GET aspsp-api/v1/tpp/stop-list` - get TPP stop list record.
 * `PUT aspsp-api/v1/tpp/stop-list/block` - block TPP.
 * `DELETE aspsp-api/v1/tpp/stop-list/unblock` - unblock TPP.
-* `GET aspsp-api/v1/tpp/{tpp-id}` - get TPP info.
 
-`PUT /aspsp-api/v1/pis/transaction-status/{payment-id}/status/{status}`:
-on this endpoint you can update transaction status of payment by its payment ID.
+* `GET aspsp-api/v1/tpp/` - get TPP info.
+* `GET aspsp-api/v1/tpp/{tpp-id}` - get TPP info with path.
 
-In order to do this you should enter payment id and new transaction status as path variables,
-also you can pass instance id as header, but it is not required.
+==== Using the Events interface
 
-=== Using the Tpp locking interface
+==== Using the Funds Confirmation Consent interface
 
-=== Using the Consents/Payments export interface
+Funds Confirmation Consent interface (PIIS consent interface) allows ASPSP to manage consents for accessing Confirmation of Funds Service.
+It should be used only if ASPSP supports PIIS consents created by the ASPSP.
+This interface can be accessed either by REST endpoints in CMS or by Java methods in `de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService` (in case of using CMS in embedded mode).
 
-=== Using the FundsConfirmation Consent interface
+* `POST aspsp-api/v1/piis/consents` (or `CmsAspspPiisService#createConsent`) - creates new PIIS consent for given PSU.
+Request for creating new consent must contain PSU credentials data, TPP authorisation number, account reference information and `validUntil` date.
+If the consent was successfully created, its ID will be returned in the response.
+Because PSU can only have one PIIS consent for one account and TPP, previously existing PIIS consent for the same PSU, account and TPP will get revoked (its status will become `revokedByPsu`)
+
+* `GET aspsp-api/v1/piis/consents` (or `CmsAspspPiisService#getConsentsForPsu`) - returns list of all PIIS consents, associated with given PSU and optional instance ID.
+
+* `DELETE aspsp-api/v1/piis/consents/{consent-id}` (or `CmsAspspPiisService#terminateConsent`) - terminates PIIS consent by its ID and optional instance ID.
+Consent will get status `terminatedByAspsp`.
+Response will contain `true` if the consent was found and successfully terminated, `false` otherwise.
+
+==== Using the Consents/Payments export interface
+
+Consents/Payments export interfaces give an opportunity to get consent/payment by `TPP`, `PSU` or `account ID`.
+In order to do that, you need to request endpoints of one of the `CMS-ASPSP-API` REST controllers:
+
+* `CmsAspspAisExportController` - provides access to ais consents;
+* `CmsAspspPisExportController` - provides access to payments;
+* `CmsAspspPiisExportController` - provides access to piis consents.
+
+`CmsAspspAisExportController` export endpoints are:
+
+* `GET aspsp-api/v1/ais/consents/tpp/{tpp-id}` - get `consents` by `TPP`. Requesting this endpoint you'll get a list of
+`AIS consents` objects by given mandatory `TPP ID`, optional `creation date`, `PSU ID Data` and `instance ID`.
+Corresponding java method - `getConsentsByTpp`;
+
+* `GET aspsp-api/v1/ais/consents/psu` - get `consents` by `PSU`. Requesting this endpoint you'll get a list of
+`AIS consents` objects by given mandatory `PSU ID Data`, optional `creation date` and `instance ID`.
+Corresponding java method - `getConsentsByPsu`.
+
+* `GET aspsp-api/v1/ais/consents/account/{account-id}` - get `consents` by `account ID`. Requesting this endpoint
+you'll get a list of `AIS consents` objects by given mandatory `aspsp account id`, optional `creation date`
+and `instance ID`. Corresponding java method - `getConsentsByAccount`.
+
+`CmsAspspPisExportController` export endpoints are:
+
+* `GET aspsp-api/v1/pis/payments/tpp/{tpp-id}` - get `payments` by `TPP`. Requesting this endpoint you'll get a list of
+`payments` objects by given mandatory `TPP ID`, optional `creation date`, `PSU ID Data` and `instance ID`.
+Corresponding java method - `getPaymentsByTpp`.
+
+* `GET aspsp-api/v1/pis/payments/psu` - get `payments` by `PSU`. Requesting this endpoint you'll get a list of
+`payments` objects by given mandatory `PSU ID Data`, optional `creation date` and `instance ID`.
+Corresponding java method - `getPaymentsByPsu`.
+
+* `GET aspsp-api/v1/pis/payments/account/{account-id}` - get `payments` by `account ID`. Requesting this endpoint you'll
+get a list of `payments` objects by given mandatory `aspsp account id`, optional `creation date` and `instance ID`.
+Corresponding java method - `getPaymentsByAccountId`.
+
+`CmsAspspPiisExportController` export endpoints are:
+
+* `GET aspsp-api/v1/piis/consents/tpp/{tpp-id}` - get `PIIS consents` by `TPP`. Requesting this endpoint you'll
+get a list of `PIIS consents` by given mandatory `TPP ID`, optional `creation date`, `PSU ID Data` and `instance ID`.
+Corresponding java method - `getConsentsByTpp`.
+
+* `GET aspsp-api/v1/piis/consents/psu` - get `PIIS consents` by `PSU`. Requesting this endpoint you'll
+get a list of `PIIS consents` by given mandatory `PSU ID Data`, optional `creation date` and `instance ID`.
+Corresponding java method - `getConsentsByPsu`.
+
+* `GET aspsp-api/v1/piis/consents/account/{account-id}` - get `PIIS consents` by `account ID`. Requesting this endpoint
+you'll get a list of `PIIS consents` by given mandatory `aspsp account id`, optional `creation date` and `instance ID`.
+Corresponding java method - `getConsentsByAccountId`.
+
+==== Using the Payment Transaction interface
+
+Payment transaction interface serves for changing transaction status for payment in CMS database.
+In consists one REST controller -  `CmsAspspPisTransactionController`.
+
+`CmsAspspPisTransactionController` has one endpoint:
+
+* `PUT /aspsp-api/v1/pis/transaction-status/{payment-id}/status/{status}` - update `transaction status`.
+On this endpoint you can update `transaction status` of `payment` by its `payment ID`.
+In order to do this you should enter `payment id` and new `transaction status` as path variables,
+also you can pass `instance id` as header, but it is not required.
+
+==== Using the Tpp locking interface
+
+Tpp locking interface gives an access to `TPP stop list` and provides possibility to block and unblock `TPP` by
+`TPP authorisation number`. In order to do it, you can use `Tpp locking` REST controller - `CmsAspspStopListController`.
+
+`CmsAspspStopListController` endpoints are:
+
+* `GET aspsp-api/v1/tpp/stop-list` - get `TPP stop list` record. Requesting this endpoint you'll get `TPP stop list
+record` by mandatory `TPP authorisation number` and optional `instance ID`.
+Corresponding java method - `getTppStopListRecord`.
+
+* `PUT aspsp-api/v1/tpp/stop-list/block` - block `TPP`. Requesting this endpoint you'll block `TPP` by mandatory
+`TPP authorisation number`, optional `instance ID` and `lock period`. Corresponding java method - `blockTpp`.
+
+* `DELETE aspsp-api/v1/tpp/stop-list/unblock` - unblock `TPP`. Requesting this endpoint you'll unblock `TPP` by
+mandatory `TPP authorisation number` and optional `instance ID`. Corresponding java method - `unblockTpp`.
+
+==== Using the Tpp info interface
+
+Tpp info interface provide access to `TPP info`. In order to get it, you can use `Tpp info` REST controller -
+`CmsAspspTppInfoController`.
+
+`CmsAspspTppInfoController` endpoints are:
+
+* `GET aspsp-api/v1/tpp/` - get `TPP info`. Requesting this endpoint you'll get `TPP` info by mandatory
+`TPP authorisation number` and optional `instance ID`. Corresponding java method - `getTppInfo`.
+
+* `GET aspsp-api/v1/tpp/{tpp-id}` - get TPP info with path. Requesting this endpoint you'll get `TPP info` with path
+by mandatory `TPP ID`, `TPP authorisation number` and optional `instance ID`. Corresponding java method -
+`getTppInfoWithPath`.

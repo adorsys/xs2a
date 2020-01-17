@@ -18,11 +18,9 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import org.junit.Before;
@@ -41,9 +39,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORBIDDEN;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED_NO_TOKEN;
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -55,8 +53,8 @@ public class OauthModeFilterTest {
     private static final String XS2A_PATH = "/v1/payments";
     private static final String CUSTOM_PATH = "/custom-endpoint";
 
-    private static final TppErrorMessage TPP_ERROR_MESSAGE_UNAUTHORIZED = new TppErrorMessage(ERROR, UNAUTHORIZED_NO_TOKEN, String.format("Please retrieve token first from %s", IDP_URL));
-    private static final TppErrorMessage TPP_ERROR_MESSAGE_FORBIDDEN = new TppErrorMessage(ERROR, FORBIDDEN, "Token is not valid for the addressed service/resource");
+    private static final TppErrorMessage TPP_ERROR_MESSAGE_UNAUTHORIZED = new TppErrorMessage(ERROR, UNAUTHORIZED_NO_TOKEN, IDP_URL);
+    private static final TppErrorMessage TPP_ERROR_MESSAGE_FORBIDDEN = new TppErrorMessage(ERROR, FORBIDDEN);
     private static final String HTTP_METHOD = HttpMethod.POST.name();
 
     @InjectMocks
@@ -72,8 +70,6 @@ public class OauthModeFilterTest {
     private FilterChain chain;
     @Mock
     private RequestProviderService requestProviderService;
-    @Mock
-    private TppErrorMessageBuilder tppErrorMessageBuilder;
     @Mock
     private TppErrorMessageWriter tppErrorMessageWriter;
     @Mock
@@ -109,8 +105,6 @@ public class OauthModeFilterTest {
             .thenReturn(IDP_URL);
         when(aspspProfileService.getScaRedirectFlow())
             .thenReturn(ScaRedirectFlow.OAUTH_PRE_STEP);
-        when(tppErrorMessageBuilder.buildTppErrorMessageWithPlaceholder(MessageCategory.ERROR, UNAUTHORIZED_NO_TOKEN, IDP_URL))
-            .thenReturn(TPP_ERROR_MESSAGE_UNAUTHORIZED);
 
         ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);
@@ -132,8 +126,6 @@ public class OauthModeFilterTest {
             .thenReturn(TOKEN);
         when(aspspProfileService.getScaRedirectFlow())
             .thenReturn(ScaRedirectFlow.OAUTH);
-        when(tppErrorMessageBuilder.buildTppErrorMessage(MessageCategory.ERROR, FORBIDDEN))
-            .thenReturn(TPP_ERROR_MESSAGE_FORBIDDEN);
 
         ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);

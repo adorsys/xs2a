@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TppRequestLogBuilderTest {
@@ -61,16 +62,6 @@ public class TppRequestLogBuilderTest {
 
         // Then
         verify(httpServletRequest).getRequestURI();
-        verifyNoMoreInteractions(httpServletRequest);
-    }
-
-    @Test
-    public void withXRequestId_shouldAddXRequestId() {
-        // When
-        tppRequestLogBuilder.withXRequestId();
-
-        // Then
-        verify(httpServletRequest).getHeader(eq(X_REQUEST_ID_HEADER));
         verifyNoMoreInteractions(httpServletRequest);
     }
 }

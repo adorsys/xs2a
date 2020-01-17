@@ -140,7 +140,7 @@ IT Java8:
     - jabba use ${JAVA_VERSION}
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp failsafe:integration-test
+    - mvn -ntp failsafe:integration-test failsafe:verify
   variables:
     JAVA_VERSION: "system@1.8"
 
@@ -152,7 +152,7 @@ IT Java11:
     - jabba use ${JAVA_VERSION}
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp failsafe:integration-test
+    - mvn -ntp failsafe:integration-test failsafe:verify
   variables:
     JAVA_VERSION: "system@1.11"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
@@ -377,7 +377,6 @@ Push to DockerHub (release):
   stage: "Package"
   only:
     - tags
-  when: manual
   variables:
     DOCKER_TAG: ${CI_COMMIT_TAG}
   <<: *build_dockerhub_image

@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais;
 
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.AisAuthorisationValidator;
 import de.adorsys.xs2a.reader.JsonReader;

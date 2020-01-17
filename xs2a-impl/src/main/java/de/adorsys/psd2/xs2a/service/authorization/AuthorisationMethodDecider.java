@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.authorization;
 
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthorisationMethodDecider {
     private final AspspProfileServiceWrapper aspspProfileService;
-    private final RequestProviderService requestProviderService;
 
     /**
      * Decides whether explicit authorisation method will be used based on bank_profile configuration and
@@ -54,8 +52,7 @@ public class AuthorisationMethodDecider {
             explicit = StartAuthorisationMode.EXPLICIT.equals(startAuthorisationMode);
         }
 
-        log.info("InR-ID: [{}], X-Request-ID: [{}]. {} authorisation method chosen",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), explicit ? "EXPLICIT" : "IMPLICIT");
+        log.info("{} authorisation method chosen", explicit ? "EXPLICIT" : "IMPLICIT");
         return explicit;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,10 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
-import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
+import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.mapper.TppInfoRolesMapper;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aTppInfoMapper;
-import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
 import org.apache.commons.lang3.StringUtils;
@@ -50,8 +49,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 
 /**
  * The intent of this Class is to get the Qwac certificate from header, extract
@@ -66,7 +65,6 @@ import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 public class QwacCertificateFilter extends AbstractXs2aFilter {
     private final TppInfoHolder tppInfoHolder;
     private final RequestProviderService requestProviderService;
-    private final TppErrorMessageBuilder tppErrorMessageBuilder;
     private final TppRoleValidationService tppRoleValidationService;
     private final TppService tppService;
     private final AspspProfileServiceWrapper aspspProfileService;
@@ -74,11 +72,10 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
     private final TppInfoRolesMapper tppInfoRolesMapper;
     private final TppErrorMessageWriter tppErrorMessageWriter;
 
-    public QwacCertificateFilter(TppErrorMessageWriter tppErrorMessageWriter, RequestPathResolver requestPathResolver, TppInfoHolder tppInfoHolder, RequestProviderService requestProviderService, TppErrorMessageBuilder tppErrorMessageBuilder, TppRoleValidationService tppRoleValidationService, TppService tppService, AspspProfileServiceWrapper aspspProfileService, Xs2aTppInfoMapper xs2aTppInfoMapper, TppInfoRolesMapper tppInfoRolesMapper, TppErrorMessageWriter tppErrorMessageWriter1) {
-        super(tppErrorMessageWriter, requestPathResolver);
+    public QwacCertificateFilter(TppErrorMessageWriter tppErrorMessageWriter, Xs2aEndpointChecker xs2aEndpointChecker, TppInfoHolder tppInfoHolder, RequestProviderService requestProviderService, TppRoleValidationService tppRoleValidationService, TppService tppService, AspspProfileServiceWrapper aspspProfileService, Xs2aTppInfoMapper xs2aTppInfoMapper, TppInfoRolesMapper tppInfoRolesMapper, TppErrorMessageWriter tppErrorMessageWriter1) {
+        super(tppErrorMessageWriter, xs2aEndpointChecker);
         this.tppInfoHolder = tppInfoHolder;
         this.requestProviderService = requestProviderService;
-        this.tppErrorMessageBuilder = tppErrorMessageBuilder;
         this.tppRoleValidationService = tppRoleValidationService;
         this.tppService = tppService;
         this.aspspProfileService = aspspProfileService;
@@ -160,24 +157,21 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
     }
 
     private void buildCertificateInvalidNoAccessErrorResponse(HttpServletResponse response, CertificateValidationException e) throws IOException {
-        log.info("InR-ID: [{}], X-Request-ID: [{}], TPP unauthorised because CertificateValidationException: {}",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), e.getMessage());
+        log.info("TPP unauthorised because CertificateValidationException: {}", e.getMessage());
         setResponseStatusAndErrorCode(response, CERTIFICATE_INVALID_NO_ACCESS);
     }
 
     private void buildRoleInvalidErrorResponse(HttpServletResponse response, TppCertificateData tppCertificateData) throws IOException {
-        log.info("InR-ID: [{}], X-Request-ID: [{}], Access forbidden for TPP with authorisation number: [{}]",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), tppCertificateData.getPspAuthorisationNumber());
+        log.info("Access forbidden for TPP with authorisation number: [{}]", tppCertificateData.getPspAuthorisationNumber());
         setResponseStatusAndErrorCode(response, ROLE_INVALID);
     }
 
     private void buildCertificateExpiredErrorResponse(HttpServletResponse response) throws IOException {
-        log.info("InR-ID: [{}], X-Request-ID: [{}], TPP Certificate is expired",
-                 requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+        log.info("TPP Certificate is expired");
         setResponseStatusAndErrorCode(response, CERTIFICATE_EXPIRED);
     }
 
     private void setResponseStatusAndErrorCode(HttpServletResponse response, MessageErrorCode messageErrorCode) throws IOException {
-        tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, tppErrorMessageBuilder.buildTppErrorMessage(ERROR, messageErrorCode));
+        tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, new TppErrorMessage(ERROR, messageErrorCode));
     }
 }

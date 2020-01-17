@@ -263,6 +263,21 @@ After this operation the given consent's account reference data will be updated 
 
 === Implementation of FundsConfirmationSpi
 
+This interface is used for retrieving information from ASPSP in scope of Confirmation of Funds requests.
+
+*FundsConfirmationSpi* contains only one method that should be implemented - *performFundsSufficientCheck*, which is responsible for checking whether requested account has sufficient funds.
+The method returns *SpiFundsConfirmationResponse* as part of *SpiResponse* with information whether the requested amount can be booked on the account.
+
+*performFundsSufficientCheck* takes the following arguments:
+
+* *spiContextData* - information about the context of the call
+* *piisConsent* - optional PIIS consent object, will be absent if the request is done from a workflow without the consent
+* *spiFundsConfirmationRequest* - information about the account and transaction amount, provided by the TPP
+* *aspspConsentDataProvider* - optional ASPSP consent data provider, will be absent if the request is done from a workflow without the consent
+
+PIIS consent will be passed to the SPI method along with ASPSP consent data provider if the ASPSP supports PIIS consents.
+Otherwise both PIIS consent object and ASPSP consent data provider will be absent in the request to SPI.
+
 === Implementation of PaymentSpi(s)
 
 We distinguish between following interfaces: *SinglePaymentSpi*, *BulkPaymentSpi*, *PeriodicPaymentSpi*, *CommonPaymentSpi*, *PaymentAuthorisationSpi*, *PaymentCancellationSpi*.
@@ -414,7 +429,9 @@ Returns a *SpiPaymentExecutionResponse* object with appropriate transaction stat
 ==== CommonPaymentSpi
 
 The Interface is used for common payments SPI implementation.
-This interface will be called instead of other payment SPI interfaces for any payment product that doesn't belong to the pre-defined list of standard JSON payment products, regardless of payment service or content type.
+
+This interface will be called instead of other payment SPI interfaces if the affected payment is considered to be a common one.
+Depending on <<SPI_Developer_Guide.adoc#configuring-mapping-type-specific-payments-spi,mapping configuration of payments for SPI>> this can mean either all payments, or only payments with any payment product that doesn't belong to the pre-defined list of standard JSON payment products (regardless of payment service or content type).
 
 The following methods should be implemented:
 
@@ -532,10 +549,6 @@ It returns a positive or negative response as part of spiResponse. It contains t
 
 The Payment initiation depends heavily on the *Strong Customer Authentication (SCA)* approach implemented by the ASPSP. For now there are three Approaches implemented (REDIRECT, DECOUPLED and EMBEDDED).
 
-==== SCA Approach DECOUPLED
-
-==== SCA Approach EMBEDDED
-
 ==== SCA Approach REDIRECT
 
 Prerequisites in case of *consent for payment initiation*:
@@ -613,6 +626,84 @@ The Method *updateCommonPaymentCancellationPsuData* updates the cancellation for
 The Method *getCancellationAuthorisationScaStatus* with *PaymentId* and *CancellationId* (Resource identification of the related Payment Cancellation authorisation sub-resource) returns SCA status.
 
 The Method *getScaApproachServiceTypeProvider* provides SCA approach used in current service. It returns the ScaApproach *“Redirect”*.
+
+==== SCA Approach EMBEDDED
+
+Embedded SCA approach indicates that the whole authorisation process is going to be performed through the XS2A interface, without any redirect to the online banking.
+For this purposes, XS2A interface provides the following endpoints:
+
+* `PUT /v1/{payment-service}/{payment-product}/{paymentId}/authorisations/{authorisationId}` for payment initiation flow;
+* `PUT /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}` for payment cancellation flow;
+* `PUT /v1/consents/{consentId}/authorisations/{authorisationId}` for consent initiation flow.
+
+Embedded SCA Approach uses the same list of methods as Redirect SCA Approach:
+
+* *createCommonPaymentAuthorisation*;
+* *updateCommonPaymentPsuData*;
+* *getAuthorisationSubResources*;
+* *getAuthorisationScaStatus*;
+* *getScaApproachServiceTypeProvider*.
+
+After the successful authorisation start (either explicit or implicit), TPP should update the authorisation with data, provided by PSU.
+Depending on the amount of SCA methods PSU has, the amount of PSU data, has to be provided, differs.
+In case when PSU has zero SCA methods, only password should be provided.
+In case when PSU has one SCA method, the password should be provided as well as authentication data (e.g. TAN received by email or SMS).
+In case when PSU has more than one SCA method, PSU should first provide password, then select the preferred SCA method and then - the authentication data.
+For each PSU data update, the same update endpoint should be called, but with corresponding body.
+
+For example, PSU with two SCA methods initiates a payment.
+Assume that the payment was created and the authorisation has started.
+Now TPP should update PSU data three times:
+
+* first `PUT /v1/{payment-service}/{payment-product}/{paymentId}/authorisations/{authorisationId}` call with PSU password in HTTP body
+
+----
+{
+ 	"psuData": {
+ 		"password": "mypassword"
+ 	}
+}
+----
+
+* second `PUT /v1/{payment-service}/{payment-product}/{paymentId}/authorisations/{authorisationId}` call with selected SCA method in HTTP body
+
+----
+{
+    "authenticationMethodId": "selectedSCAMethod"
+}
+----
+
+* third `PUT /v1/{payment-service}/{payment-product}/{paymentId}/authorisations/{authorisationId}` call with authentication data in HTTP body
+
+----
+{
+	"scaAuthenticationData": "TANNumber"
+}
+----
+
+After this steps, the payment initiation authorisation process will be finished.
+
+==== SCA Approach DECOUPLED
+
+Decoupled SCA approach implies that authorsation will be performed with a help of dedicated mobile app, or any other application or device which is independent from the online banking frontend.
+The workflow of Decoupled SCA approach is a short version of Embedded SCA approach.
+After TPP updates PSU password via
+
+* `PUT /v1/{payment-service}/{payment-product}/{paymentId}/authorisations/{authorisationId}`,
+* `PUT /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}` or
+* `PUT /v1/consents/{consentId}/authorisations/{authorisationId}`
+
+endpoints, the response from ASPSP asks PSU to proceed authorisation in dedicated device.
+No further authorisation calls from TPP are needed.
+PSU uses the dedicated device and finishes authorisation process there.
+
+Decoupled SCA Approach uses the same list of methods as Redirect SCA Approach:
+
+* *createCommonPaymentAuthorisation*;
+* *updateCommonPaymentPsuData*;
+* *getAuthorisationSubResources*;
+* *getAuthorisationScaStatus*;
+* *getScaApproachServiceTypeProvider*.
 
 === Multicurrency Accounts
 

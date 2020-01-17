@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Lazy;
@@ -121,8 +121,8 @@ public class ScaApproachResolver {
         }
 
         if (!scaApproachResponse.isPresent()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Couldn't retrieve SCA approach from the authorisation with id: {} and type: {}",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), authorisationId, authorisationType);
+            log.info("Couldn't retrieve SCA approach from the authorisation with id: {} and type: {}",
+                     authorisationId, authorisationType);
             throw new IllegalArgumentException("Wrong authorisation id: " + authorisationId +
                                                    " or type: " + authorisationType);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,11 @@
 package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.MessageCategory;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -25,17 +30,10 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.authorization.pis.DecoupledPisScaAuthorisationService;
-import de.adorsys.psd2.xs2a.service.authorization.pis.EmbeddedPisScaAuthorisationService;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.pis.*;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.PisAuthorisationProcessorRequest;
@@ -43,20 +41,16 @@ import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
-import de.adorsys.psd2.xs2a.service.spi.payment.SpiPaymentServiceResolver;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
-import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -69,8 +63,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_401;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_400;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_401;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -98,10 +92,6 @@ public class PisAuthorisationProcessorServiceImplTest {
     @Mock
     private Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
     @Mock
-    private SpiPaymentServiceResolver spiPaymentServiceResolver;
-    @Mock
-    private SinglePaymentSpi singlePaymentSpi;
-    @Mock
     private PisAspspDataService pisAspspDataService;
     @Mock
     private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
@@ -122,11 +112,11 @@ public class PisAuthorisationProcessorServiceImplTest {
     @Mock
     private PaymentAuthorisationSpi paymentAuthorisationSpi;
     @Mock
-    private SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
-    @Mock
     private List<PisScaAuthorisationService> services;
     @Mock
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    @Mock
+    private PisExecutePaymentService pisExecutePaymentService;
 
     @Test
     public void updateAuthorisation_success() {
@@ -137,7 +127,7 @@ public class PisAuthorisationProcessorServiceImplTest {
 
         when(embeddedPisScaAuthorisationService.getScaApproachServiceType()).thenReturn(ScaApproach.EMBEDDED);
 
-        PisAuthorisationProcessorServiceImpl pisAuthorisationProcessorService = new PisAuthorisationProcessorServiceImpl(null, services, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        PisAuthorisationProcessorServiceImpl pisAuthorisationProcessorService = new PisAuthorisationProcessorServiceImpl(services, null, null, null, null, null, null, null, null, null, null, null, null);
 
         //When
         pisAuthorisationProcessorService.updateAuthorisation(buildAuthorisationProcessorRequest(), buildAuthorisationProcessorResponse());
@@ -155,10 +145,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(new SpiAvailableScaMethodsResponse(false, Collections.emptyList()))
                                                                                                      .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
+                                                                                                    .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
@@ -187,8 +176,6 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                           .payload(buildSpiAuthorizationCodeResult())
                                                                                                           .build());
-        when(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(buildSpiAuthenticationObjectSingleValueList().get(0))).thenReturn(buildXs2aAuthenticationObject());
-
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
 
@@ -200,7 +187,7 @@ public class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
         assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
-        assertThat(actual.getChosenScaMethod()).isEqualTo(buildXs2aAuthenticationObject());
+        assertThat(actual.getChosenScaMethod()).isEqualTo(buildAuthenticationObject());
         assertThat(actual.getChallengeData()).isEqualTo(buildChallengeData());
         verify(xs2aPisCommonPaymentService).saveAuthenticationMethods(eq(TEST_AUTHORISATION_ID), any());
     }
@@ -214,8 +201,6 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildMultipleScaMethodsResponse())
                                                                                                      .build());
-        when(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(buildSpiAuthenticationObjectList())).thenReturn(buildXs2aAuthenticationObjectList());
-
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
 
@@ -278,10 +263,9 @@ public class PisAuthorisationProcessorServiceImplTest {
                                                                    .payload(new SpiPsuAuthorisationResponse(true, SpiAuthorisationStatus.SUCCESS))
                                                                    .build();
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any())).thenReturn(spiResponse);
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
+                                                                                                    .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
@@ -305,10 +289,9 @@ public class PisAuthorisationProcessorServiceImplTest {
                                                                    .payload(new SpiPsuAuthorisationResponse(true, SpiAuthorisationStatus.SUCCESS))
                                                                    .build();
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any())).thenReturn(spiResponse);
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                                                    .build());
         when(spiErrorMapper.mapToErrorHolder(any(), any())).thenReturn(ErrorHolder.builder(TEST_ERROR_TYPE_400).build());
 
         // When
@@ -368,10 +351,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(response)
                                                                                                      .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
+                                                                                                    .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
@@ -398,10 +380,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(response)
                                                                                                      .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                                                    .build());
         when(spiErrorMapper.mapToErrorHolder(any(), any())).thenReturn(ErrorHolder.builder(TEST_ERROR_TYPE_400).build());
 
         // When
@@ -422,10 +403,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(new SpiAvailableScaMethodsResponse(false, Collections.emptyList()))
                                                                                                      .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                                                    .build());
         when(spiErrorMapper.mapToErrorHolder(any(), any())).thenReturn(ErrorHolder.builder(TEST_ERROR_TYPE_400).build());
 
         // When
@@ -494,10 +474,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                           .payload(result)
                                                                                                           .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
+                                                                                                    .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
@@ -528,10 +507,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                           .payload(result)
                                                                                                           .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                                                    .build());
         when(spiErrorMapper.mapToErrorHolder(any(), any())).thenReturn(ErrorHolder.builder(TEST_ERROR_TYPE_400).build());
 
         // When
@@ -581,10 +559,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(new SpiAvailableScaMethodsResponse(false, Collections.emptyList()))
                                                                                                      .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
+                                                                                                    .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
@@ -614,8 +591,6 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                           .payload(buildSpiAuthorizationCodeResult())
                                                                                                           .build());
-        when(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(buildSpiAuthenticationObjectSingleValueList().get(0))).thenReturn(buildXs2aAuthenticationObject());
-
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
 
@@ -627,7 +602,7 @@ public class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
         assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
-        assertThat(actual.getChosenScaMethod()).isEqualTo(buildXs2aAuthenticationObject());
+        assertThat(actual.getChosenScaMethod()).isEqualTo(buildAuthenticationObject());
         assertThat(actual.getChallengeData()).isEqualTo(buildChallengeData());
         verify(xs2aPisCommonPaymentService).saveAuthenticationMethods(eq(TEST_AUTHORISATION_ID), any());
     }
@@ -641,8 +616,6 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildMultipleScaMethodsResponse())
                                                                                                      .build());
-        when(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(buildSpiAuthenticationObjectList())).thenReturn(buildXs2aAuthenticationObjectList());
-
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
 
@@ -705,10 +678,9 @@ public class PisAuthorisationProcessorServiceImplTest {
                                                                    .payload(new SpiPsuAuthorisationResponse(true, SpiAuthorisationStatus.SUCCESS))
                                                                    .build();
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any())).thenReturn(spiResponse);
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
+                                                                                                    .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
@@ -732,10 +704,9 @@ public class PisAuthorisationProcessorServiceImplTest {
                                                                    .payload(new SpiPsuAuthorisationResponse(true, SpiAuthorisationStatus.SUCCESS))
                                                                    .build();
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any())).thenReturn(spiResponse);
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                                                    .build());
         when(spiErrorMapper.mapToErrorHolder(any(), any())).thenReturn(ErrorHolder.builder(TEST_ERROR_TYPE_400).build());
 
         // When
@@ -795,10 +766,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(response)
                                                                                                      .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
+                                                                                                    .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
@@ -825,10 +795,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(response)
                                                                                                      .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                                                    .build());
         when(spiErrorMapper.mapToErrorHolder(any(), any())).thenReturn(ErrorHolder.builder(TEST_ERROR_TYPE_400).build());
 
         // When
@@ -849,10 +818,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(new SpiAvailableScaMethodsResponse(false, Collections.emptyList()))
                                                                                                      .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                                                    .build());
         when(spiErrorMapper.mapToErrorHolder(any(), any())).thenReturn(ErrorHolder.builder(TEST_ERROR_TYPE_400).build());
 
         // When
@@ -921,10 +889,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                           .payload(result)
                                                                                                           .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
+                                                                                                    .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
@@ -955,10 +922,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                           .payload(result)
                                                                                                           .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                            .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
-                                                                                            .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                    .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                                                    .build());
         when(spiErrorMapper.mapToErrorHolder(any(), any())).thenReturn(ErrorHolder.builder(TEST_ERROR_TYPE_400).build());
 
         // When
@@ -1021,7 +987,6 @@ public class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
         assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
-        verify(spiToXs2aAuthenticationObjectMapper).mapToXs2aAuthenticationObject(buildSpiAuthorizationCodeResult().getSelectedScaMethod());
     }
 
     @Test
@@ -1091,10 +1056,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), eq(TEST_SPI_SINGLE_PAYMENT), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                                                 .payload(spiAuthorizationCodeResult)
                                                                                                                                 .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), eq(TEST_SPI_SINGLE_PAYMENT), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                                                  .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
-                                                                                                                  .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), eq(TEST_SPI_SINGLE_PAYMENT), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                                          .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
+                                                                                                                          .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuAuthenticated(buildAuthorisationProcessorRequest());
@@ -1120,11 +1084,10 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), eq(TEST_SPI_SINGLE_PAYMENT), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                                                 .payload(spiAuthorizationCodeResult)
                                                                                                                                 .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
         SpiResponse<SpiPaymentExecutionResponse> spiResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                    .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
                                                                    .build();
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), eq(TEST_SPI_SINGLE_PAYMENT), any())).thenReturn(spiResponse);
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), eq(TEST_SPI_SINGLE_PAYMENT), any())).thenReturn(spiResponse);
         when(spiErrorMapper.mapToErrorHolder(eq(spiResponse), any())).thenReturn(ErrorHolder.builder(TEST_ERROR_TYPE_400).build());
 
         // When
@@ -1146,10 +1109,9 @@ public class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), eq(TEST_SPI_SINGLE_PAYMENT), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                                                 .payload(spiAuthorizationCodeResult)
                                                                                                                                 .build());
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
-        when(singlePaymentSpi.executePaymentWithoutSca(any(), eq(TEST_SPI_SINGLE_PAYMENT), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                                                                                  .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_MULTILEVEL_SCA))
-                                                                                                                  .build());
+        when(pisExecutePaymentService.executePaymentWithoutSca(any(), eq(TEST_SPI_SINGLE_PAYMENT), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                                                                                          .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_MULTILEVEL_SCA))
+                                                                                                                          .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuAuthenticated(buildAuthorisationProcessorRequest());
@@ -1169,11 +1131,10 @@ public class PisAuthorisationProcessorServiceImplTest {
     @Test
     public void doScaMethodSelected_success() {
         // Given
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
         SpiResponse<SpiPaymentExecutionResponse> spiResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
                                                                    .build();
-        when(singlePaymentSpi.verifyScaAuthorisationAndExecutePayment(any(), any(), any(), any())).thenReturn(spiResponse);
+        when(pisExecutePaymentService.verifyScaAuthorisationAndExecutePayment(any(), any(), any(), any())).thenReturn(spiResponse);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaMethodSelected(buildAuthorisationProcessorRequest());
@@ -1192,11 +1153,10 @@ public class PisAuthorisationProcessorServiceImplTest {
     @Test
     public void doScaMethodSelected_multilevel_sca_success() {
         // Given
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
         SpiResponse<SpiPaymentExecutionResponse> spiResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_MULTILEVEL_SCA))
                                                                    .build();
-        when(singlePaymentSpi.verifyScaAuthorisationAndExecutePayment(any(), any(), any(), any())).thenReturn(spiResponse);
+        when(pisExecutePaymentService.verifyScaAuthorisationAndExecutePayment(any(), any(), any(), any())).thenReturn(spiResponse);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaMethodSelected(buildAuthorisationProcessorRequest());
@@ -1215,11 +1175,10 @@ public class PisAuthorisationProcessorServiceImplTest {
     @Test
     public void doScaMethodSelected_verifySca_fail_failure() {
         // Given
-        when(spiPaymentServiceResolver.getPaymentService(any(), any())).thenReturn(singlePaymentSpi);
         SpiResponse<SpiPaymentExecutionResponse> spiResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                    .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
                                                                    .build();
-        when(singlePaymentSpi.verifyScaAuthorisationAndExecutePayment(any(), any(), any(), any())).thenReturn(spiResponse);
+        when(pisExecutePaymentService.verifyScaAuthorisationAndExecutePayment(any(), any(), any(), any())).thenReturn(spiResponse);
         when(spiErrorMapper.mapToErrorHolder(eq(spiResponse), any())).thenReturn(ErrorHolder.builder(TEST_ERROR_TYPE_400)
                                                                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                                                                                      .build());
@@ -1304,7 +1263,7 @@ public class PisAuthorisationProcessorServiceImplTest {
 
     private SpiAuthorizationCodeResult buildSpiAuthorizationCodeResult() {
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
-        SpiAuthenticationObject method = new SpiAuthenticationObject();
+        AuthenticationObject method = new AuthenticationObject();
         method.setAuthenticationMethodId(TEST_AUTHENTICATION_METHOD_ID);
         method.setAuthenticationType(TEST_AUTHENTICATION_TYPE);
         spiAuthorizationCodeResult.setSelectedScaMethod(method);
@@ -1332,27 +1291,27 @@ public class PisAuthorisationProcessorServiceImplTest {
         return new SpiAvailableScaMethodsResponse(false, buildSpiAuthenticationObjectList());
     }
 
-    private List<Xs2aAuthenticationObject> buildXs2aAuthenticationObjectList() {
-        List<Xs2aAuthenticationObject> xs2aAuthenticationObjects = new ArrayList<>();
-        Xs2aAuthenticationObject sms = new Xs2aAuthenticationObject();
+    private List<AuthenticationObject> buildXs2aAuthenticationObjectList() {
+        List<AuthenticationObject> authenticationObjects = new ArrayList<>();
+        AuthenticationObject sms = new AuthenticationObject();
         sms.setAuthenticationType("SMS_OTP");
         sms.setAuthenticationMethodId("sms");
-        xs2aAuthenticationObjects.add(sms);
-        Xs2aAuthenticationObject push = new Xs2aAuthenticationObject();
+        authenticationObjects.add(sms);
+        AuthenticationObject push = new AuthenticationObject();
         push.setAuthenticationType("PUSH_OTP");
         push.setAuthenticationMethodId("push");
         push.setDecoupled(true);
-        xs2aAuthenticationObjects.add(push);
-        return xs2aAuthenticationObjects;
+        authenticationObjects.add(push);
+        return authenticationObjects;
     }
 
-    private List<SpiAuthenticationObject> buildSpiAuthenticationObjectList() {
-        List<SpiAuthenticationObject> spiAuthenticationObjects = new ArrayList<>();
-        SpiAuthenticationObject sms = new SpiAuthenticationObject();
+    private List<AuthenticationObject> buildSpiAuthenticationObjectList() {
+        List<AuthenticationObject> spiAuthenticationObjects = new ArrayList<>();
+        AuthenticationObject sms = new AuthenticationObject();
         sms.setAuthenticationType("SMS_OTP");
         sms.setAuthenticationMethodId("sms");
         spiAuthenticationObjects.add(sms);
-        SpiAuthenticationObject push = new SpiAuthenticationObject();
+        AuthenticationObject push = new AuthenticationObject();
         push.setAuthenticationType("PUSH_OTP");
         push.setAuthenticationMethodId("push");
         push.setDecoupled(true);
@@ -1364,16 +1323,16 @@ public class PisAuthorisationProcessorServiceImplTest {
         return new SpiAvailableScaMethodsResponse(false, buildSpiAuthenticationObjectSingleValueList());
     }
 
-    private Xs2aAuthenticationObject buildXs2aAuthenticationObject() {
-        Xs2aAuthenticationObject sms = new Xs2aAuthenticationObject();
+    private AuthenticationObject buildAuthenticationObject() {
+        AuthenticationObject sms = new AuthenticationObject();
         sms.setAuthenticationType("SMS_OTP");
         sms.setAuthenticationMethodId("sms");
         return sms;
     }
 
-    private List<SpiAuthenticationObject> buildSpiAuthenticationObjectSingleValueList() {
-        List<SpiAuthenticationObject> spiAuthenticationObjects = new ArrayList<>();
-        SpiAuthenticationObject sms = new SpiAuthenticationObject();
+    private List<AuthenticationObject> buildSpiAuthenticationObjectSingleValueList() {
+        List<AuthenticationObject> spiAuthenticationObjects = new ArrayList<>();
+        AuthenticationObject sms = new AuthenticationObject();
         sms.setAuthenticationType("SMS_OTP");
         sms.setAuthenticationMethodId("sms");
         spiAuthenticationObjects.add(sms);

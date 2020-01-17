@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.consent.web.psu.PsuHeadersDescription;
+import de.adorsys.psd2.consent.web.psu.config.CmsPsuApiTagName;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -42,7 +43,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "psu-api/v1/ais/consent")
-@Api(value = "psu-api/v1/ais/consent", tags = {"PSU AIS Consents"})
+@Api(value = "psu-api/v1/ais/consent", tags = CmsPsuApiTagName.PSU_AIS_CONSENTS)
 public class CmsPsuAisController {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 

@@ -19,6 +19,8 @@ package de.adorsys.psd2.xs2a.web.controller;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
@@ -29,11 +31,9 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.header.ConsentHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
@@ -56,7 +56,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -124,12 +124,12 @@ public class ConsentControllerTest {
         Consents consents = getConsents();
 
         //When:
-        ResponseEntity responseEntity = consentController.createConsent(null, consents,
-                                                                        null, null, null, CORRECT_PSU_ID, null, null,
+        ResponseEntity responseEntity = consentController.createConsent(null, null, consents, null, null,
+                                                                        new byte[]{}, CORRECT_PSU_ID, null, null,
                                                                         null, false, null, null,
-                                                                        EXPLICIT_PREFERRED, null, null, null, null,
+                                                                        EXPLICIT_PREFERRED, null, null, null, null, null,
                                                                         null, null, null, null, null,
-                                                                        null, null, null);
+                                                                        null);
         ConsentsResponse201 resp = (ConsentsResponse201) responseEntity.getBody();
 
         //Then:
@@ -146,12 +146,12 @@ public class ConsentControllerTest {
         Consents consents = getConsents();
 
         //When:
-        consentController.createConsent(null, consents,
-                                        null, null, null, CORRECT_PSU_ID, null, null,
+        consentController.createConsent(null, null, consents, null, null,
+                                        new byte[]{}, CORRECT_PSU_ID, null, null,
                                         null, false, null, null,
-                                        EXPLICIT_PREFERRED, null, null, null, null,
+                                        EXPLICIT_PREFERRED, null, null, null, null, null,
                                         null, null, null, null, null,
-                                        null, null, null);
+                                        null);
     }
 
     @Test
@@ -161,12 +161,12 @@ public class ConsentControllerTest {
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         Consents consents = getConsents();
         //When:
-        ResponseEntity responseEntity = consentController.createConsent(null, consents,
-                                                                        null, null, null, WRONG_PSU_ID, null, null,
+        ResponseEntity responseEntity = consentController.createConsent(null, null, consents, null, null,
+                                                                        new byte[]{}, WRONG_PSU_ID, null, null,
                                                                         null, false, null, null,
-                                                                        EXPLICIT_PREFERRED, null, null, null, null,
+                                                                        EXPLICIT_PREFERRED, null, null, null, null, null,
                                                                         null, null, null, null, null,
-                                                                        null, null, null);
+                                                                        null);
         //Then:
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -248,7 +248,7 @@ public class ConsentControllerTest {
 
     @Test
     public void getAccountConsentsInformationById_Success() {
-        doReturn(new ResponseEntity<>(getConsentInformationResponse(CONSENT_ID).getBody(), HttpStatus.OK))
+        doReturn(new ResponseEntity<>(getConsentInformationResponse().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
         //When:
         ResponseEntity responseEntity = consentController.getConsentInformation(CONSENT_ID, null,
@@ -377,12 +377,7 @@ public class ConsentControllerTest {
                    : ResponseObject.<AccountConsent>builder().body(accountConsent).build();
     }
 
-    private ResponseObject<ConsentInformationResponse200Json> getConsentInformationResponse(String consentId) {
-        if (consentId.equals(WRONG_CONSENT_ID)) {
-            return ResponseObject.<ConsentInformationResponse200Json>builder()
-                       .fail(MESSAGE_ERROR_AIS_404)
-                       .build();
-        }
+    private ResponseObject<ConsentInformationResponse200Json> getConsentInformationResponse() {
 
         ConsentInformationResponse200Json consent = new ConsentInformationResponse200Json();
         AccountAccess access = new AccountAccess();

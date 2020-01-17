@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -14,7 +30,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Exchange Rate.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-11T13:48:52.194360+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class PaymentExchangeRate   {
   @JsonProperty("unitCurrency")
@@ -152,18 +168,17 @@ public class PaymentExchangeRate   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    PaymentExchangeRate paymentExchangeRate = (PaymentExchangeRate) o;
+}    PaymentExchangeRate paymentExchangeRate = (PaymentExchangeRate) o;
     return Objects.equals(this.unitCurrency, paymentExchangeRate.unitCurrency) &&
-        Objects.equals(this.exchangeRate, paymentExchangeRate.exchangeRate) &&
-        Objects.equals(this.contractIdentification, paymentExchangeRate.contractIdentification) &&
-        Objects.equals(this.rateType, paymentExchangeRate.rateType);
+    Objects.equals(this.exchangeRate, paymentExchangeRate.exchangeRate) &&
+    Objects.equals(this.contractIdentification, paymentExchangeRate.contractIdentification) &&
+    Objects.equals(this.rateType, paymentExchangeRate.rateType);
   }
 
   @Override
@@ -188,7 +203,7 @@ public class PaymentExchangeRate   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

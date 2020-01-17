@@ -51,4 +51,5 @@ public class CommonAspspProfileSetting {
     private List<NotificationSupportedMode> aspspNotificationsSupported = new ArrayList<>();
     private boolean authorisationConfirmationRequestMandated;
     private boolean authorisationConfirmationCheckByXs2a;
+    private boolean checkUriComplianceToDomainSupported;
 }

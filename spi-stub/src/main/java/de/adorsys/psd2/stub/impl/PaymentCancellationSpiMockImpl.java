@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.stub.impl;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -85,12 +86,12 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
     @Override
     public SpiResponse<SpiAvailableScaMethodsResponse> requestAvailableScaMethods(@NotNull SpiContextData contextData, SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("PaymentCancellationSpi#requestAvailableScaMethods: contextData {}, businessObject {}, aspspConsentData ()", contextData, businessObject, aspspConsentDataProvider.loadAspspConsentData());
-        List<SpiAuthenticationObject> spiScaMethods = new ArrayList<>();
-        SpiAuthenticationObject sms = new SpiAuthenticationObject();
+        List<AuthenticationObject> spiScaMethods = new ArrayList<>();
+        AuthenticationObject sms = new AuthenticationObject();
         sms.setAuthenticationType("SMS_OTP");
         sms.setAuthenticationMethodId("sms");
         spiScaMethods.add(sms);
-        SpiAuthenticationObject push = new SpiAuthenticationObject();
+        AuthenticationObject push = new AuthenticationObject();
         push.setAuthenticationType("PUSH_OTP");
         push.setAuthenticationMethodId("push");
         push.setDecoupled(true);
@@ -106,7 +107,7 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
     public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiContextData contextData, @NotNull String authenticationMethodId, @NotNull SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("PaymentCancellationSpi#requestAuthorisationCode: contextData {}, authenticationMethodId {}, businessObject {}, aspspConsentData {}", contextData, authenticationMethodId, businessObject, aspspConsentDataProvider.loadAspspConsentData());
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
-        SpiAuthenticationObject method = new SpiAuthenticationObject();
+        AuthenticationObject method = new AuthenticationObject();
         method.setAuthenticationMethodId("sms");
         method.setAuthenticationType("SMS_OTP");
         spiAuthorizationCodeResult.setSelectedScaMethod(method);

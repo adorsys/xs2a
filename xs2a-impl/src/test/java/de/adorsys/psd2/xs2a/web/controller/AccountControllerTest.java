@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,24 +22,24 @@ import de.adorsys.psd2.model.AccountDetails;
 import de.adorsys.psd2.model.AccountList;
 import de.adorsys.psd2.model.AccountReport;
 import de.adorsys.psd2.model.ReadAccountBalanceResponse200;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
+import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ais.AccountDetailsService;
 import de.adorsys.psd2.xs2a.service.ais.AccountListService;
 import de.adorsys.psd2.xs2a.service.ais.BalanceService;
 import de.adorsys.psd2.xs2a.service.ais.TransactionService;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
-import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
-import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,12 +63,9 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
-import java.util.UUID;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_EXPIRED;
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 import static junit.framework.TestCase.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -118,10 +115,7 @@ public class AccountControllerTest {
     @Mock
     private ResponseErrorMapper responseErrorMapper;
     @Mock
-    private TppErrorMessageBuilder tppErrorMessageBuilder;
-    @Mock
     private TppErrorMessageWriter tppErrorMessageWriter;
-
 
     @Before
     public void setUp() {
@@ -363,7 +357,7 @@ public class AccountControllerTest {
         when(response.getOutputStream()).thenReturn(servletOutputStream);
 
         // When
-        accountController.downloadTransactions(UUID.randomUUID(), CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
+        accountController.downloadTransactions(CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
 
         // Then
         verify(response, times(1)).addHeader(anyString(), anyString());
@@ -373,13 +367,11 @@ public class AccountControllerTest {
     @Test
     public void downloadTransactions_spiError() throws IOException {
         // Given
-        TppErrorMessage tppErrorMessage = new TppErrorMessage(ERROR, CERTIFICATE_EXPIRED, "Certificate is expired");
 
         when(transactionService.downloadTransactions(CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID)).thenReturn(buildTransactionDownloadResponseError());
-        when(tppErrorMessageBuilder.buildTppErrorMessage(ERROR, FORMAT_ERROR)).thenReturn(tppErrorMessage);
 
         // When
-        accountController.downloadTransactions(UUID.randomUUID(), CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
+        accountController.downloadTransactions(CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
 
         // Then
         verify(response, times(1)).flushBuffer();
@@ -524,5 +516,4 @@ public class AccountControllerTest {
                    .fail(new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR)))
                    .build();
     }
-
 }

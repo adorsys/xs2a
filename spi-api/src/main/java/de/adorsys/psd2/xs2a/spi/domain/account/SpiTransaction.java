@@ -36,9 +36,11 @@ public class SpiTransaction {
     private final List<SpiExchangeRate> exchangeRate;
     private final String creditorName;
     private final SpiAccountReference creditorAccount;
+    private final String creditorAgent;
     private final String ultimateCreditor;
     private final String debtorName;
     private final SpiAccountReference debtorAccount;
+    private final String debtorAgent;
     private final String ultimateDebtor;
     private final String remittanceInformationUnstructured;
     private final String remittanceInformationStructured;
@@ -46,6 +48,7 @@ public class SpiTransaction {
     private final String bankTransactionCodeCode;
     private final String proprietaryBankTransactionCode;
     private final SpiAdditionalInformationStructured additionalInformationStructured;
+    private final SpiAccountBalance balanceAfterTransaction;
 
     public boolean isBookedTransaction() {
         return bookingDate != null;

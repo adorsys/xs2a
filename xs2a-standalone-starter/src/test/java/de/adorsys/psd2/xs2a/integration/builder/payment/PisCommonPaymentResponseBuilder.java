@@ -16,11 +16,9 @@
 
 package de.adorsys.psd2.xs2a.integration.builder.payment;
 
-import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
@@ -29,20 +27,18 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiCommonPaymentInitiati
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.xs2a.reader.JsonReader;
 
-import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Currency;
 import java.util.List;
 
 public class PisCommonPaymentResponseBuilder {
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
     private static final PaymentType PAYMENT_TYPE = PaymentType.SINGLE;
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
-    private static final String PAYMENT_CURRENCY_CODE = "EUR";
-    private static final BigDecimal PAYMENT_AMOUNT = BigDecimal.TEN;
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
+    private static final JsonReader JSON_READER = new JsonReader();
 
     public static PisCommonPaymentResponse buildPisCommonPaymentResponseWithAuthorisation(Authorisation authorisation) {
         PisCommonPaymentResponse response = buildPisCommonPaymentResponse();
@@ -67,14 +63,8 @@ public class PisCommonPaymentResponseBuilder {
     }
 
     public static PisCommonPaymentResponse buildPisCommonPaymentResponseWithPayment() {
-        PisPayment pisPayment = new PisPayment();
-        pisPayment.setCurrency(Currency.getInstance(PAYMENT_CURRENCY_CODE));
-        pisPayment.setAmount(PAYMENT_AMOUNT);
-        pisPayment.setDebtorAccount(new AccountReference());
-        pisPayment.setCreditorAccount(new AccountReference());
-
         PisCommonPaymentResponse pisCommonPaymentResponse = buildPisCommonPaymentResponse();
-        pisCommonPaymentResponse.setPayments(Collections.singletonList(pisPayment));
+        pisCommonPaymentResponse.setPaymentData(JSON_READER.getBytesFromFile("json/payment/single-payment-part.json"));
         return pisCommonPaymentResponse;
     }
 

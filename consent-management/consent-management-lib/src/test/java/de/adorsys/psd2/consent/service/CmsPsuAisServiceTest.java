@@ -661,6 +661,15 @@ public class CmsPsuAisServiceTest {
         assertFalse(saved);
     }
 
+    @Test
+    public void saveAccountAccessInConsent_InvalidValidUntil() {
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.of(aisConsent));
+        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, LocalDate.now().minusDays(1), 1, null, null);
+
+        boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, DEFAULT_SERVICE_INSTANCE_ID);
+        assertFalse(saved);
+    }
+
     private void verifyCmsAisConsentResponse(CmsAisConsentResponse cmsAisConsentResponse) {
         assertEquals(mockCmsAisAccountConsent, cmsAisConsentResponse.getAccountConsent());
         assertEquals(AUTHORISATION_ID, cmsAisConsentResponse.getAuthorisationId());

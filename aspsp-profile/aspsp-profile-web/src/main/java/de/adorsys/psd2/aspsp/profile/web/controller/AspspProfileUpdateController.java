@@ -18,6 +18,7 @@ package de.adorsys.psd2.aspsp.profile.web.controller;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileUpdateService;
+import de.adorsys.psd2.aspsp.profile.web.config.AspspProfileApiTagName;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,8 +40,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/aspsp-profile/for-debug")
-@Api(value = "Update aspsp profile ", tags = "Update aspsp profile.  Only for DEBUG!",
-    description = "Provides access to update aspsp profile")
+@Api(value = "Update aspsp profile ", tags = AspspProfileApiTagName.UPDATE_ASPSP_PROFILE)
 public class AspspProfileUpdateController {
     private final AspspProfileUpdateService aspspProfileService;
 

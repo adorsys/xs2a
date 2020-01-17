@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,6 @@ public class RequestResponseLogMessage {
     }
 
     public static class RequestResponseLogMessageBuilder {
-        private static final String INTERNAL_REQUEST_ID = "InR-ID";
         private static final String URI = "uri";
         private static final String REQUEST_HEADERS = "requestHeaders";
         private static final String RESPONSE_HEADERS = "responseHeaders";
@@ -70,11 +69,6 @@ public class RequestResponseLogMessage {
         private RequestResponseLogMessageBuilder(HttpServletRequest request, HttpServletResponse response) {
             this.request = request;
             this.response = response;
-        }
-
-        public RequestResponseLogMessageBuilder withInternalRequestId(@NotNull UUID internalRequestId) {
-            logParams.put(INTERNAL_REQUEST_ID, internalRequestId.toString());
-            return this;
         }
 
         /**

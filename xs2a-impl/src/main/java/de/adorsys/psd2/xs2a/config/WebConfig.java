@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.config;
 
 import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.validator.signature.DigestVerifier;
 import de.adorsys.psd2.validator.signature.SignatureVerifier;
@@ -29,14 +30,13 @@ import de.adorsys.psd2.xs2a.domain.InternalRequestIdHolder;
 import de.adorsys.psd2.xs2a.domain.RedirectIdHolder;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
-import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
+import de.adorsys.psd2.xs2a.web.advice.Xs2aRestExceptionHandler;
 import de.adorsys.psd2.xs2a.web.interceptor.RequestValidationInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
@@ -49,6 +49,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -76,11 +77,16 @@ public class WebConfig implements WebMvcConfigurer {
     private final ErrorMapperContainer errorMapperContainer;
     private final Xs2aObjectMapper xs2aObjectMapper;
     private final RequestValidationInterceptor requestValidationInterceptor;
-    private final RequestProviderService requestProviderService;
     private final RedirectIdService redirectIdService;
     private final RequestResponseLogger requestResponseLogger;
     private final LoggingContextService loggingContextService;
     private final PathParameterExtractor pathParameterExtractor;
+    private final Xs2aRestExceptionHandler xs2aRestExceptionHandler;
+
+    @Override
+    public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
+        resolvers.add(0, xs2aRestExceptionHandler);
+    }
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -92,13 +98,13 @@ public class WebConfig implements WebMvcConfigurer {
         // Please, keep this interceptor's order, because it is important, that logging interceptors will be called before the validation ones to log all the requests (even wrong ones).
         // The interceptors are executed in the order in which they are declared for preHandle(...) and vice versa for postHandle(...).
         // Logging interceptors:
-        registry.addInterceptor(new AccountLoggingInterceptor(tppService, requestProviderService, loggingContextService, pathParameterExtractor)).addPathPatterns(ACCOUNTS_PATH);
-        registry.addInterceptor(new ConsentLoggingInterceptor(tppService, redirectIdService, requestProviderService, loggingContextService, pathParameterExtractor)).addPathPatterns(CONSENTS_PATH);
-        registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService, requestProviderService)).addPathPatterns(FUNDS_CONFIRMATION_PATH);
-        registry.addInterceptor(new PaymentLoggingInterceptor(tppService, redirectIdService, requestProviderService, loggingContextService, pathParameterExtractor)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
-        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService, redirectIdService, requestProviderService, pathParameterExtractor)).addPathPatterns(SIGNING_BASKETS_PATH);
-        registry.addInterceptor(new RequestResponseLoggingInterceptor(requestResponseLogger, requestProviderService)).addPathPatterns(getAllXs2aEndpointPaths());
-        registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, xs2aObjectMapper, requestProviderService))
+        registry.addInterceptor(new AccountLoggingInterceptor(tppService, loggingContextService, pathParameterExtractor)).addPathPatterns(ACCOUNTS_PATH);
+        registry.addInterceptor(new ConsentLoggingInterceptor(tppService, redirectIdService, loggingContextService, pathParameterExtractor)).addPathPatterns(CONSENTS_PATH);
+        registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService)).addPathPatterns(FUNDS_CONFIRMATION_PATH);
+        registry.addInterceptor(new PaymentLoggingInterceptor(tppService, redirectIdService, loggingContextService, pathParameterExtractor)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
+        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService, redirectIdService, pathParameterExtractor)).addPathPatterns(SIGNING_BASKETS_PATH);
+        registry.addInterceptor(new RequestResponseLoggingInterceptor(requestResponseLogger)).addPathPatterns(getAllXs2aEndpointPaths());
+        registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, xs2aObjectMapper))
             .addPathPatterns(getAllXs2aEndpointPaths());
         registry.addInterceptor(requestValidationInterceptor).addPathPatterns(getAllXs2aEndpointPaths());
     }

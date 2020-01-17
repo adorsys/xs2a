@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2018-2019 adorsys GmbH & Co KG
+  ~ Copyright 2018-2020 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>5.7</version>
+    <version>5.8</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>xs2a-core</module>
@@ -36,6 +36,9 @@
         <module>spi-stub</module>
         <module>json-reader</module>
         <module>xs2a-object-mapper</module>
+        <module>xs2a-core-payments</module>
+        <module>xs2a-payment-support</module>
+        <module>xs2a-logger</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -152,7 +155,7 @@
         <apache.commons.collections>4.1</apache.commons.collections>
         <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
         <hibernate.version>5.4.2.Final</hibernate.version>
-        <hibernate.validator.version>6.0.16.Final</hibernate.validator.version>
+        <hibernate.validator.version>6.1.0.Final</hibernate.validator.version>
         <javax.validation.api.version>2.0.1.Final</javax.validation.api.version>
         <jsr311.pi.version>1.1.1</jsr311.pi.version>
         <commons.io.version>2.6</commons.io.version>
@@ -187,7 +190,7 @@
         <javax.el-api.version>3.0.0</javax.el-api.version>
         <jaxb-api.version>2.3.0</jaxb-api.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
-        <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <classmate.version>1.4.0</classmate.version>
 
@@ -202,7 +205,7 @@
         <spring-aop.version>${spring.version}</spring-aop.version>
         <spring-webmvc.version>${spring.version}</spring-webmvc.version>
         <spring-core.version>${spring.version}</spring-core.version>
-        <spring-data-jpa.version>2.1.8.RELEASE</spring-data-jpa.version>
+        <spring-data-jpa.version>2.1.11.RELEASE</spring-data-jpa.version>
         <spring-boot.version>2.1.4.RELEASE</spring-boot.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
@@ -220,7 +223,10 @@
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.moduleName>${project.artifactId}</sonar.moduleName>
         <sonar.language>java</sonar.language>
-        <sonar.coverage.exclusions>**/*Entity.java,**/*TO.java,**/*Exception.java,**/*Config.java</sonar.coverage.exclusions>
+        <sonar.coverage.exclusions>**/*Entity.java,**/*TO.java,**/*BO.java,**/*PO.java,**/*Application.java,**/*Exception.java,
+            **/*Config.java,pom.xml,/xs2a-server-api/**/*,/xs2a-core-payments/**/*,**/consent-psu-api/**/*,**/consent-core-web/**/*,
+            **/consent-aspsp-api/**/*,**/spi-stub/**/*
+        </sonar.coverage.exclusions>
     </properties>
 
     <dependencyManagement>
@@ -754,12 +760,15 @@ Use it manually to generate javadocs. Don't commit it
                     <excludes>
                         <exclude>**/*MapperImpl.java</exclude>
                     </excludes>
+                    <excludeRoots>
+                        <excludeRoot>target/generated-sources/delombok</excludeRoot>
+                    </excludeRoots>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.2</version>
+                <version>0.8.5</version>
                 <configuration>
                     <destFile>${sonar.jacoco.reportPath}</destFile>
                     <dataFile>${sonar.jacoco.reportPath}</dataFile>

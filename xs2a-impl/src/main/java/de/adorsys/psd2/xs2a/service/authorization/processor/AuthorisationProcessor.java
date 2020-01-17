@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.processor;
 
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
@@ -24,7 +25,6 @@ import de.adorsys.psd2.xs2a.service.authorization.processor.service.AisAuthorisa
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.AuthorisationProcessorService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.PisAuthorisationProcessorServiceImpl;
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.PisCancellationAuthorisationProcessorServiceImpl;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import org.springframework.context.ApplicationContext;
 
 public abstract class AuthorisationProcessor {

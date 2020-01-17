@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.mapper.consent;
 
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
-import de.adorsys.psd2.xs2a.domain.pis.Remittance;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

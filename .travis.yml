@@ -38,6 +38,7 @@ script:
     sh -c "make pages" || travis_terminate 1
 
 before_deploy:
+  - gpg --version
   - echo $GPG_SECRET_KEY | base64 --decode | $GPG_EXECUTABLE --import || true
   - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust || true
 

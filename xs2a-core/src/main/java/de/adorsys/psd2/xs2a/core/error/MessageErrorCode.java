@@ -647,6 +647,7 @@ public enum MessageErrorCode {
             return UNAUTHORIZED_STRING;
         }
     },
+    // Please retrieve token first from %s
     UNAUTHORIZED_NO_TOKEN(401) {
         @Override
         public String getName() {

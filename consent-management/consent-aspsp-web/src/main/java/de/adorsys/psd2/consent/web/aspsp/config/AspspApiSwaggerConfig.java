@@ -44,6 +44,15 @@ public class AspspApiSwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                    .groupName("CMS-ASPSP-API")
                    .apiInfo(getApiInfo())
+                   .tags(
+                       CmsAspspApiTagHolder.ASPSP_EXPORT_AIS_CONSENTS,
+                       CmsAspspApiTagHolder.ASPSP_EVENTS,
+                       CmsAspspApiTagHolder.ASPSP_PIIS_CONSENTS,
+                       CmsAspspApiTagHolder.ASPSP_PIIS_CONSENTS_EXPORT,
+                       CmsAspspApiTagHolder.ASPSP_EXPORT_PAYMENTS,
+                       CmsAspspApiTagHolder.ASPSP_TPP_STOP_LIST,
+                       CmsAspspApiTagHolder.ASPSP_TPP_INFO
+                   )
                    .select()
                    .apis(RequestHandlerSelectors.basePackage("de.adorsys.psd2.consent.web.aspsp"))
                    .paths(Predicates.not(PathSelectors.regex("/error.*?")))

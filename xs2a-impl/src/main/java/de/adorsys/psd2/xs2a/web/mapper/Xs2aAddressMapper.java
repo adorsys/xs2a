@@ -17,8 +17,8 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.Address;
-import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
-import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
+import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
+import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;

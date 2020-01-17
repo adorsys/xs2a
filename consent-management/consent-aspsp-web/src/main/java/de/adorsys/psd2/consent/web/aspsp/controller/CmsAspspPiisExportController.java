@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisFundsExportService;
+import de.adorsys.psd2.consent.web.aspsp.config.CmsAspspApiTagName;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
@@ -32,7 +33,7 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-api/v1/piis/consents")
-@Api(value = "aspsp-api/v1/piis/consents", tags = "ASPSP PIIS Consents Export", description = "Provides access to the consent management system for exporting PIIS consents by ASPSP")
+@Api(value = "aspsp-api/v1/piis/consents", tags = CmsAspspApiTagName.ASPSP_PIIS_CONSENTS_EXPORT)
 public class CmsAspspPiisExportController {
     private final CmsAspspPiisFundsExportService cmsAspspPiisExportService;
 

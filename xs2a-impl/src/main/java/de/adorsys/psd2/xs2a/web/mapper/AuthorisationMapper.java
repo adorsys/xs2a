@@ -131,8 +131,8 @@ public class AuthorisationMapper {
                    .orElse(null);
     }
 
-    private UpdatePsuAuthenticationResponse buildUpdatePsuAuthenticationResponse(Links links, List<Xs2aAuthenticationObject> availableScaMethods,
-                                                                                 Xs2aAuthenticationObject chosenScaMethod, String psuMessage,
+    private UpdatePsuAuthenticationResponse buildUpdatePsuAuthenticationResponse(Links links, List<de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject> availableScaMethods,
+                                                                                 de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject chosenScaMethod, String psuMessage,
                                                                                  de.adorsys.psd2.xs2a.core.sca.ChallengeData challengeData, ScaStatus scaStatus) {
         return new UpdatePsuAuthenticationResponse()
                    ._links(hrefLinkMapper.mapToLinksMap(links))
@@ -147,8 +147,8 @@ public class AuthorisationMapper {
                    );
     }
 
-    private ChosenScaMethod mapToChosenScaMethod(Xs2aAuthenticationObject xs2aAuthenticationObject) {
-        return Optional.ofNullable(xs2aAuthenticationObject)
+    private ChosenScaMethod mapToChosenScaMethod(de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject authenticationObject) {
+        return Optional.ofNullable(authenticationObject)
                    .map(ch -> {
                        ChosenScaMethod method = new ChosenScaMethod();
                        method.setAuthenticationMethodId(ch.getAuthenticationMethodId());

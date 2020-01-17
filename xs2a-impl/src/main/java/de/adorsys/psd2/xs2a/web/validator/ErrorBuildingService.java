@@ -17,11 +17,12 @@
 package de.adorsys.psd2.xs2a.web.validator;
 
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
+import de.adorsys.psd2.xs2a.core.service.validator.ErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -36,7 +37,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 
 @Component
 @RequiredArgsConstructor
-public class ErrorBuildingService {
+public class ErrorBuildingService implements ErrorMessageBuilder {
 
     private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
     private final ServiceTypeToErrorTypeMapper errorTypeMapper;
@@ -53,14 +54,6 @@ public class ErrorBuildingService {
         response.getWriter().write(xs2aObjectMapper.writeValueAsString(createError(tppMessages)));
 
         response.flushBuffer();
-    }
-
-    public void enrichMessageError(MessageError messageError, MessageError validationMessageError) {
-        enrichMessageError(messageError, validationMessageError.getTppMessage());
-    }
-
-    public void enrichMessageError(MessageError messageError, TppMessageInformation tppMessageInformation) {
-        messageError.addTppMessage(tppMessageInformation);
     }
 
     public ErrorType buildErrorType() {
@@ -80,4 +73,13 @@ public class ErrorBuildingService {
         return new MessageError(errorType, tppMessages.toArray(new TppMessageInformation[tppMessages.size()]));
     }
 
+    @Override
+    public void enrichMessageError(MessageError messageError, MessageError validationMessageError) {
+        enrichMessageError(messageError, validationMessageError.getTppMessage());
+    }
+
+    @Override
+    public void enrichMessageError(MessageError messageError, TppMessageInformation tppMessageInformation) {
+        messageError.addTppMessage(tppMessageInformation);
+    }
 }

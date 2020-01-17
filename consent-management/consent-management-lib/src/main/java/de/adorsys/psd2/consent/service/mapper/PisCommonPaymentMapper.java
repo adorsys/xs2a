@@ -86,6 +86,7 @@ public class PisCommonPaymentMapper {
                        PisPaymentData pisPaymentData = new PisPaymentData();
                        pisPaymentData.setPaymentId(pm.getPaymentId());
                        pisPaymentData.setEndToEndIdentification(pm.getEndToEndIdentification());
+                       pisPaymentData.setInstructionIdentification(pm.getInstructionIdentification());
                        pisPaymentData.setDebtorAccount(accountReferenceMapper.mapToAccountReferenceEntity(pm.getDebtorAccount()));
                        pisPaymentData.setUltimateDebtor(pm.getUltimateDebtor());
                        pisPaymentData.setAmount(pm.getAmount());
@@ -176,12 +177,13 @@ public class PisCommonPaymentMapper {
         return pisPayments;
     }
 
-    private PisPayment mapToPisPayment(PisPaymentData payment) {
+    public PisPayment mapToPisPayment(PisPaymentData payment) {
         return Optional.ofNullable(payment)
                    .map(pm -> {
                        PisPayment pisPayment = new PisPayment();
                        pisPayment.setPaymentId(pm.getPaymentId());
                        pisPayment.setEndToEndIdentification(pm.getEndToEndIdentification());
+                       pisPayment.setInstructionIdentification(pm.getInstructionIdentification());
                        pisPayment.setDebtorAccount(accountReferenceMapper.mapToCmsAccountReference(pm.getDebtorAccount()));
                        pisPayment.setUltimateDebtor(pm.getUltimateDebtor());
                        pisPayment.setCurrency(pm.getCurrency());

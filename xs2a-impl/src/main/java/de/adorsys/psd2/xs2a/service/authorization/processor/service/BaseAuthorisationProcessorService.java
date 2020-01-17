@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,14 @@
 package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,12 +34,6 @@ import java.util.Optional;
 @Slf4j
 abstract class BaseAuthorisationProcessorService implements AuthorisationProcessorService {
     private static final String UNSUPPORTED_ERROR_MESSAGE = "Current SCA status is not supported";
-
-    private final RequestProviderService requestProviderService;
-
-    protected BaseAuthorisationProcessorService(RequestProviderService requestProviderService) {
-        this.requestProviderService = requestProviderService;
-    }
 
     @Override
     public AuthorisationProcessorResponse doScaStarted(AuthorisationProcessorRequest authorisationProcessorRequest) {
@@ -67,10 +60,8 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
         String businessObjectName = request.getServiceType() == ServiceType.AIS
                                         ? "Consent-ID"
                                         : "Payment-ID";
-        String messageToLog = String.format("InR-ID: [{}], X-Request-ID: [{}], %s [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s Error msg: [{}]", businessObjectName, message);
+        String messageToLog = String.format("%s [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s Error msg: [{}]", businessObjectName, message);
         log.info(messageToLog,
-                 requestProviderService.getInternalRequestId(),
-                 requestProviderService.getRequestId(),
                  request.getUpdateAuthorisationRequest().getBusinessObjectId(),
                  request.getUpdateAuthorisationRequest().getAuthorisationId(),
                  psuData != null ? psuData.getPsuId() : "-",
@@ -82,21 +73,19 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
         String businessObjectName = request.getServiceType() == ServiceType.AIS
                                         ? "Consent-ID"
                                         : "Payment-ID";
-        String messageToLog = String.format("InR-ID: [{}], X-Request-ID: [{}], %s [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s", businessObjectName, message);
+        String messageToLog = String.format("%s [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s", businessObjectName, message);
         log.info(messageToLog,
-                 requestProviderService.getInternalRequestId(),
-                 requestProviderService.getRequestId(),
                  request.getUpdateAuthorisationRequest().getBusinessObjectId(),
                  request.getUpdateAuthorisationRequest().getAuthorisationId(),
                  psuData != null ? psuData.getPsuId() : "-",
                  request.getScaApproach());
     }
 
-    boolean isSingleScaMethod(List<SpiAuthenticationObject> spiScaMethods) {
+    boolean isSingleScaMethod(List<AuthenticationObject> spiScaMethods) {
         return spiScaMethods.size() == 1;
     }
 
-    boolean isMultipleScaMethods(List<SpiAuthenticationObject> spiScaMethods) {
+    boolean isMultipleScaMethods(List<AuthenticationObject> spiScaMethods) {
         return spiScaMethods.size() > 1;
     }
 
@@ -108,7 +97,7 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
     }
 
     PsuIdData extractPsuIdData(UpdateAuthorisationRequest request,
-                                       GetPisAuthorisationResponse authorisationResponse) {
+                               GetPisAuthorisationResponse authorisationResponse) {
         PsuIdData psuDataInRequest = request.getPsuData();
         return isPsuExist(psuDataInRequest) ? psuDataInRequest : authorisationResponse.getPsuIdData();
     }

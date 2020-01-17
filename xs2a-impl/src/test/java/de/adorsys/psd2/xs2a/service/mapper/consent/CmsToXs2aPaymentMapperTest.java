@@ -20,17 +20,13 @@ import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
-import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
-import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
-import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
+import de.adorsys.psd2.xs2a.core.pis.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
-import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -58,6 +54,7 @@ public class CmsToXs2aPaymentMapperTest {
     private static final String PAYMENT_ID = "payment id";
     private static final String EXECUTION_ID = "execution id";
     private static final String END_TO_END_IDENTIFICATION = "RI-123456789";
+    private static final String INSTRUCTION_IDENTIFICATION = "INSTRUCTION_IDENTIFICATION";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
 
     private static final String DEBTOR_IBAN = "debtor iban";
@@ -123,6 +120,7 @@ public class CmsToXs2aPaymentMapperTest {
         assertNotNull(periodicPayment);
         assertEquals(PAYMENT_ID, periodicPayment.getPaymentId());
         assertEquals(END_TO_END_IDENTIFICATION, periodicPayment.getEndToEndIdentification());
+        assertEquals(INSTRUCTION_IDENTIFICATION, periodicPayment.getInstructionIdentification());
         assertEquals(DEBTOR_ACCOUNT_REFERENCE, periodicPayment.getDebtorAccount());
 
         Xs2aAmount instructedAmount = periodicPayment.getInstructedAmount();
@@ -189,6 +187,7 @@ public class CmsToXs2aPaymentMapperTest {
         assertNotNull(singlePayment);
         assertEquals(PAYMENT_ID, singlePayment.getPaymentId());
         assertEquals(END_TO_END_IDENTIFICATION, singlePayment.getEndToEndIdentification());
+        assertEquals(INSTRUCTION_IDENTIFICATION, singlePayment.getInstructionIdentification());
         assertEquals(DEBTOR_ACCOUNT_REFERENCE, singlePayment.getDebtorAccount());
 
         Xs2aAmount instructedAmount = singlePayment.getInstructedAmount();
@@ -253,6 +252,7 @@ public class CmsToXs2aPaymentMapperTest {
         assertNotNull(firstPayment);
         assertEquals(PAYMENT_ID, firstPayment.getPaymentId());
         assertEquals(END_TO_END_IDENTIFICATION, firstPayment.getEndToEndIdentification());
+        assertEquals(INSTRUCTION_IDENTIFICATION, firstPayment.getInstructionIdentification());
         assertEquals(DEBTOR_ACCOUNT_REFERENCE, firstPayment.getDebtorAccount());
 
         Xs2aAmount instructedAmount = firstPayment.getInstructedAmount();
@@ -321,6 +321,7 @@ public class CmsToXs2aPaymentMapperTest {
         pisPayment.setPaymentId(PAYMENT_ID);
         pisPayment.setExecutionId(EXECUTION_ID);
         pisPayment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
+        pisPayment.setInstructionIdentification(INSTRUCTION_IDENTIFICATION);
         pisPayment.setDebtorAccount(DEBTOR_ACCOUNT_REFERENCE);
         pisPayment.setUltimateDebtor(ULTIMATE_DEBTOR);
         pisPayment.setCurrency(CURRENCY);

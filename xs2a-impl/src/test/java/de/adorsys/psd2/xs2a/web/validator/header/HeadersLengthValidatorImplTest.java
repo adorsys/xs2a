@@ -16,20 +16,18 @@
 
 package de.adorsys.psd2.xs2a.web.validator.header;
 
+import de.adorsys.psd2.xs2a.core.domain.MessageCategory;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ContentType;
-import de.adorsys.psd2.xs2a.exception.MessageCategory;
-import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.HEADERS_MAX_LENGTHS;
 import static org.junit.Assert.*;
 
 public class HeadersLengthValidatorImplTest {
@@ -62,7 +60,7 @@ public class HeadersLengthValidatorImplTest {
     @Test
     public void validate_allLengthsAreCorrect() {
         // Given
-        HEADERS_MAX_LENGTHS.forEach((header, length) -> headers.put(header, StringUtils.repeat(ONE_CHAR, length)));
+        HeadersLengthValidatorImpl.headerMaxLengths.forEach((header, length) -> headers.put(header, StringUtils.repeat(ONE_CHAR, length)));
 
         // When
         validator.validate(headers, messageError);
@@ -74,7 +72,7 @@ public class HeadersLengthValidatorImplTest {
     @Test
     public void validate_allLengthsAreExceeded() {
         // Given
-        HEADERS_MAX_LENGTHS.forEach((header, length) -> headers.put(header, StringUtils.repeat(ONE_CHAR, length + 1)));
+        HeadersLengthValidatorImpl.headerMaxLengths.forEach((header, length) -> headers.put(header, StringUtils.repeat(ONE_CHAR, length + 1)));
 
         // When
         validator.validate(headers, messageError);
@@ -88,7 +86,7 @@ public class HeadersLengthValidatorImplTest {
 
     @Test
     public void check_that_headersList_contains_only_lowercase() {
-        for (String header : HEADERS_MAX_LENGTHS.keySet()) {
+        for (String header : HeadersLengthValidatorImpl.headerMaxLengths.keySet()) {
             assertEquals(header, header.toLowerCase());
         }
     }

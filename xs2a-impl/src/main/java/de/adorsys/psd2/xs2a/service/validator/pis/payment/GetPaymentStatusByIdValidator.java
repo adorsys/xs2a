@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ public class GetPaymentStatusByIdValidator extends AbstractPisValidator<GetPayme
     public GetPaymentStatusByIdValidator(RequestProviderService requestProviderService,
                                          OauthPaymentValidator oauthPaymentValidator,
                                          TransactionStatusAcceptHeaderValidator transactionStatusAcceptHeaderValidator) {
-        super(requestProviderService);
         this.requestProviderService = requestProviderService;
         this.oauthPaymentValidator = oauthPaymentValidator;
         this.transactionStatusAcceptHeaderValidator = transactionStatusAcceptHeaderValidator;

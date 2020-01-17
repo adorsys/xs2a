@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,9 @@ import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRespo
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -29,8 +32,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
@@ -41,7 +42,6 @@ import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationP
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.PisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.PisCancellationAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,8 +76,8 @@ public class PisAuthorisationService {
         CmsResponse<CreatePisAuthorisationResponse> cmsResponse = pisAuthorisationServiceEncrypted.createAuthorization(paymentId, request);
 
         if (cmsResponse.hasError()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS authorisation has failed: can't save authorisation to cms DB",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
+            log.info("Payment-ID [{}]. Create PIS authorisation has failed: can't save authorisation to cms DB",
+                     paymentId);
             return null;
         }
 
@@ -98,8 +98,8 @@ public class PisAuthorisationService {
             ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_404)
                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_AUTHORISATION))
                                           .build();
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed: authorisation is not found by id.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId());
+            log.info("Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed: authorisation is not found by id.",
+                     request.getPaymentId(), request.getAuthorisationId());
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, request.getPaymentId(), authorisationId, request.getPsuData());
 
         }
@@ -124,8 +124,8 @@ public class PisAuthorisationService {
         String authorisationId = request.getAuthorisationId();
         CmsResponse<GetPisAuthorisationResponse> pisCancellationAuthorisationResponse = pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(request.getAuthorisationId());
         if (pisCancellationAuthorisationResponse.hasError()) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS Payment Cancellation authorisation PSU Data has failed: authorisation is not found by id.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getPaymentId(), request.getAuthorisationId());
+            log.warn("Payment-ID [{}], Authorisation-ID [{}]. Updating PIS Payment Cancellation authorisation PSU Data has failed: authorisation is not found by id.",
+                     request.getPaymentId(), request.getAuthorisationId());
 
             ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_404)
                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_CANC_AUTHORISATION))
@@ -156,8 +156,8 @@ public class PisAuthorisationService {
         CmsResponse<CreatePisAuthorisationResponse> cmsResponse = pisAuthorisationServiceEncrypted.createAuthorizationCancellation(paymentId, request);
 
         if (cmsResponse.hasError()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Create PIS Payment Cancellation Authorisation has failed. Can't find Payment Data by id or Payment is Finalised.",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentId);
+            log.info("Payment-ID [{}]. Create PIS Payment Cancellation Authorisation has failed. Can't find Payment Data by id or Payment is Finalised.",
+                     paymentId);
             return null;
         }
 
@@ -250,8 +250,8 @@ public class PisAuthorisationService {
     public void updateAuthorisation(UpdateAuthorisationRequest request,
                                     AuthorisationProcessorResponse response) {
         if (response.hasError()) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed. Error msg: [{}]",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getBusinessObjectId(), request.getAuthorisationId(), response.getErrorHolder());
+            log.warn("Payment-ID [{}], Authorisation-ID [{}]. Updating PIS authorisation PSU Data has failed. Error msg: [{}]",
+                     request.getBusinessObjectId(), request.getAuthorisationId(), response.getErrorHolder());
         } else {
             doUpdatePisAuthorisation(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(response));
         }
@@ -260,8 +260,8 @@ public class PisAuthorisationService {
     public void updateCancellationAuthorisation(UpdateAuthorisationRequest request,
                                                 AuthorisationProcessorResponse response) {
         if (response.hasError()) {
-            log.warn("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}], Authorisation-ID [{}]. Updating PIS Payment Cancellation authorisation PSU Data has failed:. Error msg: [{}]",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), request.getBusinessObjectId(), request.getAuthorisationId(), response.getErrorHolder());
+            log.warn("Payment-ID [{}], Authorisation-ID [{}]. Updating PIS Payment Cancellation authorisation PSU Data has failed:. Error msg: [{}]",
+                     request.getBusinessObjectId(), request.getAuthorisationId(), response.getErrorHolder());
         } else {
             doUpdatePisCancellationAuthorisation(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(response));
         }

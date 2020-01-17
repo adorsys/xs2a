@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -28,10 +30,12 @@ import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
@@ -71,8 +75,7 @@ public class Xs2aAisConsentService {
         CmsResponse<CreateAisConsentResponse> response = aisConsentService.createConsent(createAisConsentRequest);
 
         if (response.hasError()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Consent cannot be created, because can't save to cms DB",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+            log.info("Consent cannot be created, because can't save to cms DB");
             return Optional.empty();
         }
 
@@ -91,8 +94,7 @@ public class Xs2aAisConsentService {
         CmsResponse<AisAccountConsent> consentById = aisConsentService.getAisAccountConsentById(consentId);
 
         if (consentById.hasError()) {
-            log.info("InR-ID: [{}], X-Request-ID: [{}]. Get consent by id failed due to CMS problems",
-                     requestProviderService.getInternalRequestId(), requestProviderService.getRequestId());
+            log.info("Get consent by id failed due to CMS problems");
             return Optional.empty();
         }
 
@@ -271,7 +273,7 @@ public class Xs2aAisConsentService {
      * @param methods         List of authentication methods to be saved
      * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
      */
-    public boolean saveAuthenticationMethods(String authorisationId, List<Xs2aAuthenticationObject> methods) {
+    public boolean saveAuthenticationMethods(String authorisationId, List<AuthenticationObject> methods) {
         CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
         return response.isSuccessful() && response.getPayload();
     }

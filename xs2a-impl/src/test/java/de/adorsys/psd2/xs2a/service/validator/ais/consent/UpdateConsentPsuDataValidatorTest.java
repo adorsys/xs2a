@@ -16,15 +16,15 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.AisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
@@ -41,11 +41,9 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType.AIS;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -75,13 +73,13 @@ public class UpdateConsentPsuDataValidatorTest {
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
 
     private static final MessageError FORMAT_BOTH_PSUS_ABSENT_ERROR =
-        new MessageError(AIS_400, TppMessageInformation.of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU));
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU));
 
     private static final MessageError CREDENTIALS_INVALID_ERROR =
-        new MessageError(AIS_401, of(PSU_CREDENTIALS_INVALID));
+        new MessageError(ErrorType.AIS_401, of(PSU_CREDENTIALS_INVALID));
 
     private static final MessageError AIS_SERVICE_INVALID =
-        new MessageError(AIS_400, of(SERVICE_INVALID_400));
+        new MessageError(ErrorType.AIS_400, of(SERVICE_INVALID_400));
 
     @Mock
     private AisConsentTppInfoValidator aisConsentTppInfoValidator;
@@ -248,7 +246,7 @@ public class UpdateConsentPsuDataValidatorTest {
         when(aisAuthorisationStatusValidator.validate(ScaStatus.RECEIVED))
             .thenReturn(ValidationResult.valid());
         when(authorisationStageCheckValidator.validate(updateRequest, ScaStatus.RECEIVED, AIS))
-            .thenReturn(ValidationResult.invalid(AIS_400, SERVICE_INVALID_400));
+            .thenReturn(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400));
 
         // When
         ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, updateRequest));
@@ -272,7 +270,7 @@ public class UpdateConsentPsuDataValidatorTest {
         when(aisAuthorisationStatusValidator.validate(ScaStatus.PSUIDENTIFIED))
             .thenReturn(ValidationResult.valid());
         when(authorisationStageCheckValidator.validate(updateRequest, ScaStatus.PSUIDENTIFIED, AIS))
-            .thenReturn(ValidationResult.invalid(AIS_400, SERVICE_INVALID_400));
+            .thenReturn(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400));
 
         // When
         ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, updateRequest));
@@ -296,7 +294,7 @@ public class UpdateConsentPsuDataValidatorTest {
         when(aisAuthorisationStatusValidator.validate(ScaStatus.PSUAUTHENTICATED))
             .thenReturn(ValidationResult.valid());
         when(authorisationStageCheckValidator.validate(updateRequest, ScaStatus.PSUAUTHENTICATED, AIS))
-            .thenReturn(ValidationResult.invalid(AIS_400, SERVICE_INVALID_400));
+            .thenReturn(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400));
 
         // When
         ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, updateRequest));
@@ -320,7 +318,7 @@ public class UpdateConsentPsuDataValidatorTest {
         when(aisAuthorisationStatusValidator.validate(ScaStatus.SCAMETHODSELECTED))
             .thenReturn(ValidationResult.valid());
         when(authorisationStageCheckValidator.validate(updateRequest, ScaStatus.SCAMETHODSELECTED, AIS))
-            .thenReturn(ValidationResult.invalid(AIS_400, SERVICE_INVALID_400));
+            .thenReturn(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400));
 
         // When
         ValidationResult validationResult = updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(accountConsent, updateRequest));

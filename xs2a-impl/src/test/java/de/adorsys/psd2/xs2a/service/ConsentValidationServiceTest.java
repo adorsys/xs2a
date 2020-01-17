@@ -16,10 +16,13 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.service.validator.TppNotificationDataValidator;
+import de.adorsys.psd2.xs2a.service.validator.TppUriHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.*;
@@ -35,16 +38,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentValidationServiceTest {
     private static final String PSU_ID = "123456789";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null, null);
     private static final String AUTHORISATION_ID = "authorisation id";
+    private static final String INVALID_DOMAIN_MESSAGE = "TPP URIs are not compliant with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate";
 
     @InjectMocks
     private ConsentValidationService service;
@@ -65,6 +71,10 @@ public class ConsentValidationServiceTest {
     private GetConsentAuthorisationsValidator getConsentAuthorisationsValidator;
     @Mock
     private GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
+    @Mock
+    private TppUriHeaderValidator tppUriHeaderValidator;
+    @Mock
+    private TppNotificationDataValidator tppNotificationDataValidator;
 
     private JsonReader jsonReader = new JsonReader();
     private AccountConsent accountConsent;
@@ -166,5 +176,68 @@ public class ConsentValidationServiceTest {
         verify(getConsentAuthorisationScaStatusValidator).validate(any(GetConsentAuthorisationScaStatusPO.class));
         assertEquals(accountConsent, getConsentAuthorisationScaStatusPOCaptor.getValue().getAccountConsent());
         assertEquals(AUTHORISATION_ID, getConsentAuthorisationScaStatusPOCaptor.getValue().getAuthorisationId());
+    }
+
+    @Test
+    public void buildWarningMessages_emptySet() {
+        // Given
+        Set<TppMessageInformation> emptySet = new HashSet<>();
+        CreateConsentReq createConsentReq = new CreateConsentReq();
+        when(tppUriHeaderValidator.buildWarningMessages(any()))
+            .thenReturn(emptySet);
+        when(tppNotificationDataValidator.buildWarningMessages(any()))
+            .thenReturn(emptySet);
+
+        // When
+        Set<TppMessageInformation> actual = service.buildWarningMessages(createConsentReq);
+
+        // Then
+        assertEquals(actual, emptySet);
+        verify(tppUriHeaderValidator, times(1)).buildWarningMessages(any());
+        verify(tppNotificationDataValidator, times(1)).buildWarningMessages(any());
+    }
+
+    @Test
+    public void buildWarningMessages_warningsFromUriHeaderValidator() {
+        // Given
+        Set<TppMessageInformation> emptySet = new HashSet<>();
+        Set<TppMessageInformation> uriHeaderValidatorSet = new HashSet<>();
+        uriHeaderValidatorSet.add(TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE));
+
+        CreateConsentReq createConsentReq = new CreateConsentReq();
+        when(tppUriHeaderValidator.buildWarningMessages(any()))
+            .thenReturn(uriHeaderValidatorSet);
+        when(tppNotificationDataValidator.buildWarningMessages(any()))
+            .thenReturn(emptySet);
+
+        // When
+        Set<TppMessageInformation> actual = service.buildWarningMessages(createConsentReq);
+
+        // Then
+        assertEquals(actual, uriHeaderValidatorSet);
+        verify(tppUriHeaderValidator, times(1)).buildWarningMessages(any());
+        verify(tppNotificationDataValidator, times(1)).buildWarningMessages(any());
+    }
+
+    @Test
+    public void buildWarningMessages_warningsNotificationDataValidator() {
+        // Given
+        Set<TppMessageInformation> emptySet = new HashSet<>();
+        Set<TppMessageInformation> notificationDataValidatorSet = new HashSet<>();
+        notificationDataValidatorSet.add(TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE));
+
+        CreateConsentReq createConsentReq = new CreateConsentReq();
+        when(tppUriHeaderValidator.buildWarningMessages(any()))
+            .thenReturn(emptySet);
+        when(tppNotificationDataValidator.buildWarningMessages(any()))
+            .thenReturn(notificationDataValidatorSet);
+
+        // When
+        Set<TppMessageInformation> actual = service.buildWarningMessages(createConsentReq);
+
+        // Then
+        assertEquals(actual, notificationDataValidatorSet);
+        verify(tppUriHeaderValidator, times(1)).buildWarningMessages(any());
+        verify(tppNotificationDataValidator, times(1)).buildWarningMessages(any());
     }
 }

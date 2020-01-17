@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,9 @@ package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.tpp.PiisTppInfoValidator;
+import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,12 +31,14 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_400;
 import static de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType.ALL_TPP;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -48,25 +48,23 @@ public class PiisConsentValidationTest {
     private static final String CREATE_WRONG_PIIS_CONSENT_JSON_PATH = "json/service/validator/tpp/wrong-piis-consent-request.json";
     private static final String AUTHORISATION_NUMBER = "12345987";
     private static final String DIFFERENT_AUTHORISATION_NUMBER = "different authorisation number";
-    private static final UUID X_REQUEST_ID = UUID.fromString("1af360bc-13cb-40ab-9aa0-cc0d6af4510c");
 
     private JsonReader jsonReader = new JsonReader();
 
-    @Mock
-    private PiisTppInfoValidator piisTppInfoValidator;
-    @Mock
-    private RequestProviderService requestProviderService;
-
     @InjectMocks
     private PiisConsentValidation piisConsentValidation;
+    @Mock
+    private TppService tppService;
+
+    private TppInfo buildTppInfo(String authorisationNumber) {
+        TppInfo tppInfo = new TppInfo();
+        tppInfo.setAuthorisationNumber(authorisationNumber);
+        return tppInfo;
+    }
 
     @Before
     public void setUp() {
-        when(piisTppInfoValidator.validateTpp(DIFFERENT_AUTHORISATION_NUMBER))
-            .thenReturn(ValidationResult.invalid(PIIS_400, CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE));
-
-        when(piisTppInfoValidator.validateTpp(AUTHORISATION_NUMBER)).thenReturn(ValidationResult.valid());
-        when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
+        when(tppService.getTppInfo()).thenReturn(buildTppInfo(AUTHORISATION_NUMBER));
     }
 
     @Test
@@ -89,21 +87,20 @@ public class PiisConsentValidationTest {
     }
 
     @Test
-    public void validatePiisConsentData_differentTpp_shouldReturnException() {
+    public void validatePiisConsentData_SeveralTppForOneAccount_successful() {
         // Given
-        PiisConsent validConsent = buildConsent();
-        PiisConsent wrongConsent = buildWrongPiisConsent();
-        validConsent.setTppAuthorisationNumber(DIFFERENT_AUTHORISATION_NUMBER);
+        List<PiisConsent> piisConsents = Arrays.asList(buildConsent(AUTHORISATION_NUMBER), buildConsent(DIFFERENT_AUTHORISATION_NUMBER));
+        Map<String, PiisConsent> piisConsentMap = piisConsents.stream().collect(Collectors.toMap(PiisConsent::getTppAuthorisationNumber, Function.identity()));
 
-        List<PiisConsent> piisConsents = new ArrayList<>();
-        piisConsents.add(validConsent);
-        piisConsents.add(wrongConsent);
-
-        // When
-        PiisConsentValidationResult validationResult = piisConsentValidation.validatePiisConsentData(piisConsents);
-
-        // Then
-        assertThatErrorIs(validationResult, CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE);
+        piisConsentMap.forEach((authNumber, piisConsent) -> {
+            // When
+            when(tppService.getTppInfo()).thenReturn(buildTppInfo(authNumber));
+            PiisConsentValidationResult validationResult = piisConsentValidation.validatePiisConsentData(piisConsents);
+            // Then
+            assertNotNull(validationResult);
+            assertFalse(validationResult.hasError());
+            assertEquals(validationResult.getConsent(), piisConsentMap.get(authNumber));
+        });
     }
 
     @Test
@@ -167,7 +164,7 @@ public class PiisConsentValidationTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.hasError());
         assertEquals(MessageErrorCode.NO_PIIS_ACTIVATION, validationResult.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode());
-        assertEquals(ErrorType.PIIS_400, validationResult.getErrorHolder().getErrorType());
+        assertEquals(PIIS_400, validationResult.getErrorHolder().getErrorType());
     }
 
     private PiisConsent buildWrongPiisConsent() {
@@ -178,10 +175,16 @@ public class PiisConsentValidationTest {
         return jsonReader.getObjectFromFile(CREATE_PIIS_CONSENT_JSON_PATH, PiisConsent.class);
     }
 
+    private PiisConsent buildConsent(String authorisationNumber) {
+        PiisConsent piisConsent = buildConsent();
+        piisConsent.setTppAuthorisationNumber(authorisationNumber);
+        return piisConsent;
+    }
+
     private void assertThatErrorIs(PiisConsentValidationResult validationResult, MessageErrorCode consentUnknown400) {
         assertNotNull(validationResult);
         assertTrue(validationResult.hasError());
         assertEquals(validationResult.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode(), consentUnknown400);
-        assertEquals(validationResult.getErrorHolder().getErrorType(), ErrorType.PIIS_400);
+        assertEquals(validationResult.getErrorHolder().getErrorType(), PIIS_400);
     }
 }

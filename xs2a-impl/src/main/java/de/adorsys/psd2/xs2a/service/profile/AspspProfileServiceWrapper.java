@@ -391,4 +391,13 @@ public class AspspProfileServiceWrapper {
     public boolean isAuthorisationConfirmationCheckByXs2a() {
         return readAspspSettings().getCommon().isAuthorisationConfirmationCheckByXs2a();
     }
+
+    /**
+     * Indicates whether ASPSP supports validation URIs with domain from certificate.
+     *
+     * @return true if ASPSP supports validation URIs with domain from certificate, false otherwise.
+     */
+    public boolean isCheckUriComplianceToDomainSupported() {
+        return readAspspSettings().getCommon().isCheckUriComplianceToDomainSupported();
+    }
 }

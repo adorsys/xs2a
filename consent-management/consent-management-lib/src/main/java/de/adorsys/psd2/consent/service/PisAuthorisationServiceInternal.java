@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
+import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.*;
 import de.adorsys.psd2.consent.api.service.PisAuthorisationService;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
@@ -71,6 +72,7 @@ public class PisAuthorisationServiceInternal implements PisAuthorisationService 
     private final PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
     private final ScaMethodMapper scaMethodMapper;
     private final CmsPsuService cmsPsuService;
+    private final CorePaymentsConvertService corePaymentsConvertService;
 
     /**
      * Create common payment authorization
@@ -214,8 +216,11 @@ public class PisAuthorisationServiceInternal implements PisAuthorisationService 
      * @return response contains authorisation data
      */
     @Override
+    @Transactional
     public CmsResponse<GetPisAuthorisationResponse> getPisAuthorisationById(String authorisationId) {
-        Optional<GetPisAuthorisationResponse> responseOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, PaymentAuthorisationType.CREATED)
+        Optional<PisAuthorization> pisAuthorizationOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, PaymentAuthorisationType.CREATED);
+        pisAuthorizationOptional.ifPresent(this::transferCorePaymentToCommonPayment);
+        Optional<GetPisAuthorisationResponse> responseOptional = pisAuthorizationOptional
                                                                      .map(pisCommonPaymentMapper::mapToGetPisAuthorizationResponse);
 
         if (responseOptional.isPresent()) {
@@ -231,6 +236,22 @@ public class PisAuthorisationServiceInternal implements PisAuthorisationService 
                    .build();
     }
 
+    void transferCorePaymentToCommonPayment(PisAuthorization pisAuthorization) {
+        PisCommonPaymentData pisCommonPaymentData = pisAuthorization.getPaymentData();
+        if (pisCommonPaymentData == null || pisCommonPaymentData.getPayment() != null) {
+            return;
+        }
+
+        List<PisPayment> pisPayments = pisCommonPaymentData.getPayments().stream()
+                                           .map(pisCommonPaymentMapper::mapToPisPayment)
+                                           .collect(Collectors.toList());
+        byte[] paymentData = corePaymentsConvertService.buildPaymentData(pisPayments, pisCommonPaymentData.getPaymentType());
+        if (paymentData != null) {
+            pisCommonPaymentData.setPayment(paymentData);
+            pisCommonPaymentDataRepository.save(pisCommonPaymentData);
+        }
+    }
+
     /**
      * Reads cancellation authorisation data by cancellation Id
      *
@@ -239,7 +260,9 @@ public class PisAuthorisationServiceInternal implements PisAuthorisationService 
      */
     @Override
     public CmsResponse<GetPisAuthorisationResponse> getPisCancellationAuthorisationById(String cancellationId) {
-        Optional<GetPisAuthorisationResponse> responseOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(cancellationId, PaymentAuthorisationType.CANCELLED)
+        Optional<PisAuthorization> pisAuthorizationOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(cancellationId, PaymentAuthorisationType.CANCELLED);
+        pisAuthorizationOptional.ifPresent(this::transferCorePaymentToCommonPayment);
+        Optional<GetPisAuthorisationResponse> responseOptional = pisAuthorizationOptional
                                                                      .map(pisCommonPaymentMapper::mapToGetPisAuthorizationResponse);
 
         if (responseOptional.isPresent()) {

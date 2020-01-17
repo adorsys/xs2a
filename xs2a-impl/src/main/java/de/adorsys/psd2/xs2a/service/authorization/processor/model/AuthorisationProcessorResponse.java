@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.processor.model;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -36,8 +36,8 @@ public class AuthorisationProcessorResponse implements AuthorisationResponse {
     protected String authorisationId;
 
     protected ScaStatus scaStatus;
-    protected List<Xs2aAuthenticationObject> availableScaMethods;
-    protected Xs2aAuthenticationObject chosenScaMethod;
+    protected List<AuthenticationObject> availableScaMethods;
+    protected AuthenticationObject chosenScaMethod;
     protected ChallengeData challengeData;
     protected Links links;
     protected String psuMessage;

@@ -16,7 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Generic validator for validating certain request according to some business rules
@@ -32,4 +36,15 @@ public interface BusinessValidator<T> {
      */
     @NotNull
     ValidationResult validate(@NotNull T object);
+
+    /**
+     * Checks some object according to some business rules and creates warning messages if there is inconsistency in the logic
+     *
+     * @param object business object to be validated
+     * @return empty set if the object doesn't have inconsistencies, set of warning messages  otherwise
+     */
+    @NotNull
+    default Set<TppMessageInformation> buildWarningMessages(@NotNull T object) {
+        return Collections.emptySet();
+    }
 }

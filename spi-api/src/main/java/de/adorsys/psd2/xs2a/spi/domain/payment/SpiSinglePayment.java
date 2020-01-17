@@ -33,6 +33,7 @@ import java.util.List;
 public class SpiSinglePayment implements SpiPayment {
     private String paymentId;
     private String endToEndIdentification;
+    private String instructionIdentification;
     private SpiAccountReference debtorAccount;
     private SpiAmount instructedAmount;
     private SpiAccountReference creditorAccount;

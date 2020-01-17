@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,6 +24,8 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,7 +34,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a successful consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-11T13:48:52.194360+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
 
 public class ConsentsResponse201   {
   @JsonProperty("consentStatus")
@@ -39,6 +57,10 @@ public class ConsentsResponse201   {
 
   @JsonProperty("psuMessage")
   private String psuMessage = null;
+
+  @JsonProperty("tppMessages")
+  @Valid
+  private List<TppMessage2XX> tppMessages = null;
 
   public ConsentsResponse201 consentStatus(ConsentStatus consentStatus) {
     this.consentStatus = consentStatus;
@@ -92,7 +114,38 @@ public class ConsentsResponse201   {
     return this;
   }
 
-  /**
+    public ConsentsResponse201 tppMessages(List<TppMessage2XX> tppMessages) {
+        this.tppMessages = tppMessages;
+        return this;
+    }
+
+    public ConsentsResponse201 addTppMessagesItem(TppMessage2XX tppMessagesItem) {
+        if (this.tppMessages == null) {
+            this.tppMessages = new ArrayList<>();
+        }
+        this.tppMessages.add(tppMessagesItem);
+        return this;
+    }
+
+    /**
+     * Get tppMessages
+     * @return tppMessages
+     **/
+    @ApiModelProperty(value = "")
+
+    @Valid
+
+
+    @JsonProperty("tppMessages")
+    public List<TppMessage2XX> getTppMessages() {
+        return tppMessages;
+    }
+
+    public void setTppMessages(List<TppMessage2XX> tppMessages) {
+        this.tppMessages = tppMessages;
+    }
+
+    /**
    * Get scaMethods
    * @return scaMethods
   **/
@@ -191,7 +244,7 @@ public class ConsentsResponse201   {
   **/
   @ApiModelProperty(value = "Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach.")
 
-@Size(max=512)
+@Size(max=500)
 
   @JsonProperty("psuMessage")
   public String getPsuMessage() {
@@ -204,7 +257,7 @@ public class ConsentsResponse201   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -218,6 +271,7 @@ public class ConsentsResponse201   {
         Objects.equals(this.chosenScaMethod, consentsResponse201.chosenScaMethod) &&
         Objects.equals(this.challengeData, consentsResponse201.challengeData) &&
         Objects.equals(this._links, consentsResponse201._links) &&
+        Objects.equals(this.tppMessages, consentsResponse201.tppMessages) &&
         Objects.equals(this.psuMessage, consentsResponse201.psuMessage);
   }
 
@@ -238,6 +292,7 @@ public class ConsentsResponse201   {
     sb.append("    challengeData: ").append(toIndentedString(challengeData)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
+    sb.append("    tppMessages: ").append(toIndentedString(tppMessages)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -246,7 +301,7 @@ public class ConsentsResponse201   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

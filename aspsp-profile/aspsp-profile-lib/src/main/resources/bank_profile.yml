@@ -63,3 +63,4 @@ setting:
       - NONE
     authorisationConfirmationRequestMandated: FALSE
     authorisationConfirmationCheckByXs2a: FALSE
+    checkUriComplianceToDomainSupported: FALSE

@@ -82,6 +82,7 @@ public class NewProfileConfigurationMapper {
                                                                                  true,
                                                                                  Collections.singletonList(NotificationSupportedMode.NONE),
                                                                                  false,
+                                                                                 false,
                                                                                  false);
 
         NewProfileConfiguration result = new NewProfileConfiguration();

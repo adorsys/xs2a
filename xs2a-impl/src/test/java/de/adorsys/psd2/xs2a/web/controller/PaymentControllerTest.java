@@ -19,6 +19,10 @@ package de.adorsys.psd2.xs2a.web.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
@@ -26,8 +30,10 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.HrefType;
-import de.adorsys.psd2.xs2a.domain.*;
+import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
@@ -37,13 +43,11 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationS
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.*;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
 import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.header.PaymentCancellationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.PaymentInitiationHeadersBuilder;
@@ -66,11 +70,11 @@ import org.springframework.http.ResponseEntity;
 import java.util.*;
 import java.util.function.Function;
 
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_403;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -91,6 +95,7 @@ public class PaymentControllerTest {
     private static final String TPP_NOTIFICATION_URI = "http://localhost/notifications";
     private static final String TPP_NOTIFICATION_CONTENT_PREFERRED = "status=SCA";
     private static final List<NotificationSupportedMode> TPP_NOTIFICATION_MODES = Collections.singletonList(NotificationSupportedMode.SCA);
+    private static final TppNotificationData TPP_NOTIFICATION_DATA =   new TppNotificationData(TPP_NOTIFICATION_MODES, TPP_NOTIFICATION_URI);
     private static final UUID REQUEST_ID = UUID.fromString("ddd36e05-d67a-4830-93ad-9462f71ae1e6");
     private static final String AUTHORISATION_ID = "3e96e9e0-9974-42aa-beb8-003e91416652";
     private static final String CANCELLATION_AUTHORISATION_ID = "d7ba791c-2231-4ed5-8232-cb1ad4cf7332";
@@ -100,9 +105,9 @@ public class PaymentControllerTest {
     private static final Object XML_SCT = new Object();
     private static final PeriodicPaymentInitiationXmlPart2StandingorderTypeJson JSON_STANDING_ORDER_TYPE = new PeriodicPaymentInitiationXmlPart2StandingorderTypeJson();
     private static final MessageError PIS_400_MESSAGE_ERROR = new MessageError(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR));
-    private static final MessageError PIS_404_MESSAGE_ERROR = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
+    private static final MessageError PIS_404_MESSAGE_ERROR = new MessageError(PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
     private static final boolean TPP_REDIRECT_PREFERRED_TRUE = true;
-    private static final PaymentInitationRequestResponse201 PAYMENT_OBJECT = new PaymentInitationRequestResponse201();
+    private static final byte[] PAYMENT_OBJECT = "payment object".getBytes();
     private static final ResponseHeaders RESPONSE_HEADERS = ResponseHeaders.builder().aspspScaApproach(ScaApproach.REDIRECT).build();
     private static final boolean EXPLICIT_PREFERRED_FALSE = false;
     private static final String PSU_DATA_PASSWORD_JSON_PATH = "json/web/controller/psuData-password.json";
@@ -150,8 +155,8 @@ public class PaymentControllerTest {
             .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_JSON, null)).build());
         when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(WRONG_PAYMENT_ID)))
             .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403)).build());
-        when(notificationSupportedModeService.getProcessedNotificationModes(any()))
-            .thenReturn(Collections.singletonList(NotificationSupportedMode.SCA));
+        when(notificationSupportedModeService.getTppNotificationData(any(), any()))
+            .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
     }
 
     @Test
@@ -175,7 +180,7 @@ public class PaymentControllerTest {
 
     @Test
     public void getPaymentById_Failure() {
-        when(responseErrorMapper.generateErrorResponse(createMessageError(ErrorType.PIS_404, RESOURCE_UNKNOWN_404))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
+        when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_404, RESOURCE_UNKNOWN_404))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
 
         // When
         ResponseEntity response = paymentController.getPaymentInformation(CORRECT_PAYMENT_SERVICE, WRONG_PAYMENT_ID,
@@ -211,10 +216,11 @@ public class PaymentControllerTest {
         // When
         ResponseEntity<PaymentInitiationStatusResponse200Json> actualResponse =
             (ResponseEntity<PaymentInitiationStatusResponse200Json>) paymentController.getPaymentInitiationStatus(
-                CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID, null, null,
-                null, null, null, null, null,
-                null, null, null, null, null,
-                null, null);
+                CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID, null,
+                null, null, null, null,
+                null, null, null, null,
+                null, null, null, null,
+                null, null, null, null);
 
         // Then
         HttpStatus actualHttpStatus = actualResponse.getStatusCode();
@@ -236,7 +242,7 @@ public class PaymentControllerTest {
             PaymentType.SINGLE.getValue(), PRODUCT, CORRECT_PAYMENT_ID, null, null,
             null, null, null, null, null,
             null, null, null, null, null,
-            null, null);
+            null, null, null, null, null);
 
         // Then
         HttpStatus actualHttpStatus = actualResponse.getStatusCode();
@@ -253,10 +259,11 @@ public class PaymentControllerTest {
         // When
         ResponseEntity<PaymentInitiationStatusResponse200Json> actualResponse =
             (ResponseEntity<PaymentInitiationStatusResponse200Json>) paymentController.getPaymentInitiationStatus(
-                CORRECT_PAYMENT_SERVICE, PRODUCT, WRONG_PAYMENT_ID, null, null,
-                null, null, null, null, null,
-                null, null, null, null, null,
-                null, null);
+                CORRECT_PAYMENT_SERVICE, PRODUCT, WRONG_PAYMENT_ID, null,
+                null, null, null, null,
+                null, null, null, null,
+                null, null, null, null,
+                null, null, null, null);
 
         // Then
         assertThat(actualResponse.getStatusCode()).isEqualTo(FORBIDDEN);
@@ -278,10 +285,11 @@ public class PaymentControllerTest {
 
         // When
         ResponseEntity<PaymentInitiationCancelResponse202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse202>) paymentController.cancelPayment(CORRECT_PAYMENT_SERVICE, PRODUCT,
-                                                                                                                                                               CORRECT_PAYMENT_ID, null, null,
-                                                                                                                                                               null, null, null, null, null,
-                                                                                                                                                               null, null,
-                                                                                                                                                               null, null, null, null, null, null, null, null, EXPLICIT_PREFERRED_FALSE);
+                                                                                                                                                               CORRECT_PAYMENT_ID, null, null, null,
+                                                                                                                                                               null, null, null, null, EXPLICIT_PREFERRED_FALSE, null,
+                                                                                                                                                               null, null, null,
+                                                                                                                                                               null, null, null,
+                                                                                                                                                               null, null, null);
 
         // Then
         assertThat(actualResult.getStatusCode()).isEqualTo(NO_CONTENT);
@@ -302,12 +310,13 @@ public class PaymentControllerTest {
         ResponseEntity<PaymentInitiationCancelResponse202> expectedResult = new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.ACTC), HttpStatus.ACCEPTED);
 
         // When
-        ResponseEntity<PaymentInitiationCancelResponse202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse202>) paymentController.cancelPayment(CORRECT_PAYMENT_SERVICE, PRODUCT,
-                                                                                                                                                               CORRECT_PAYMENT_ID, null, null, null,
-                                                                                                                                                               null, null, null, null, null,
-                                                                                                                                                               null, null,
-                                                                                                                                                               null, null, null, null, null,
-                                                                                                                                                               null, null, EXPLICIT_PREFERRED_FALSE);
+        ResponseEntity<PaymentInitiationCancelResponse202> actualResult =
+            (ResponseEntity<PaymentInitiationCancelResponse202>) paymentController.cancelPayment(CORRECT_PAYMENT_SERVICE, PRODUCT,
+                                                                                                 CORRECT_PAYMENT_ID, null, null, null,
+                                                                                                 null, null, null, null, EXPLICIT_PREFERRED_FALSE, null,
+                                                                                                 null, null, null,
+                                                                                                 null, null, null,
+                                                                                                 null, null, null);
 
         // Then
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -324,10 +333,10 @@ public class PaymentControllerTest {
         // Given
         ResponseEntity actualResult = paymentController.cancelPayment(CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                       CORRECT_PAYMENT_ID, REQUEST_ID, null, null,
-                                                                      null, null, null, null, null,
-                                                                      null, null,
-                                                                      null, null, null, null,
-                                                                      null, null, null, EXPLICIT_PREFERRED_FALSE);
+                                                                      null, null, null, null, EXPLICIT_PREFERRED_FALSE, null,
+                                                                      null, null, null,
+                                                                      null, null, null,
+                                                                      null, null, null);
 
         // Then
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -347,10 +356,10 @@ public class PaymentControllerTest {
         // When
         ResponseEntity actualResult = paymentController.cancelPayment(CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                       CORRECT_PAYMENT_ID, REQUEST_ID, null, null,
-                                                                      null, null, null, null,
-                                                                      null, null,
-                                                                      null, null, null, null, null,
-                                                                      null, null, null, EXPLICIT_PREFERRED_FALSE);
+                                                                      null, null, null, null, EXPLICIT_PREFERRED_FALSE, null,
+                                                                      null, null, null,
+                                                                      null, null, null,
+                                                                      null, null, null);
 
         // Then
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -703,7 +712,7 @@ public class PaymentControllerTest {
     public void initiatePayment_Failure_ErrorInServiceResponse() {
         // Given
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_URI, TPP_NOTIFICATION_MODES))
+                                                                  TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
 
         String rawRequestObject = "some body";
@@ -732,7 +741,7 @@ public class PaymentControllerTest {
     public void initiatePaymentForRaw_Success() {
         // Given
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_URI, TPP_NOTIFICATION_MODES))
+                                                                  TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
 
         String rawRequestObject = "some body";
@@ -765,10 +774,10 @@ public class PaymentControllerTest {
     public void initiatePayment_Failure_CreatePaymentHasError() {
         // Given
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_URI, TPP_NOTIFICATION_MODES))
+                                                                  TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
 
-        when(paymentModelMapperXs2a.mapToXs2aPayment(any(), eq(paymentInitiationParameters)))
+        when(paymentModelMapperXs2a.mapToXs2aPayment())
             .thenReturn(PAYMENT_OBJECT);
 
         // noinspection unchecked
@@ -795,10 +804,10 @@ public class PaymentControllerTest {
     public void initiatePayment_Success() {
         // Given
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_URI, TPP_NOTIFICATION_MODES))
+                                                                  TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
 
-        when(paymentModelMapperXs2a.mapToXs2aPayment(any(), eq(paymentInitiationParameters)))
+        when(paymentModelMapperXs2a.mapToXs2aPayment())
             .thenReturn(PAYMENT_OBJECT);
 
         when(xs2aPaymentService.createPayment(PAYMENT_OBJECT, paymentInitiationParameters))
@@ -867,7 +876,7 @@ public class PaymentControllerTest {
     public void initiatePayment_XML_Failure_CreatePaymentHasError() {
         // Given
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_URI, TPP_NOTIFICATION_MODES))
+                                                                  TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, XML_SCT, JSON_STANDING_ORDER_TYPE))
@@ -895,7 +904,7 @@ public class PaymentControllerTest {
     public void initiatePayment_XML_Success() {
         // Given
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_URI, TPP_NOTIFICATION_MODES))
+                                                                  TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, XML_SCT, JSON_STANDING_ORDER_TYPE))
@@ -928,7 +937,7 @@ public class PaymentControllerTest {
     @Test(expected = IllegalArgumentException.class)
     public void initiatePayment_XML_WithException() {
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_URI, TPP_NOTIFICATION_MODES))
+                                                                  TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, XML_SCT, JSON_STANDING_ORDER_TYPE))

@@ -84,6 +84,7 @@ public class CmsPsuPisMapperTest {
     private static final PisCommonPaymentData PIS_COMMON_PAYMENT_DATA_PERIODIC = buildPisCommonPaymentData(PAYMENT_TYPE_PERIODIC);
     private static final PisCommonPaymentData PIS_COMMON_PAYMENT_DATA_BULK = buildPisCommonPaymentData(PAYMENT_TYPE_BULK);
     private static final String END_TO_END_IDENTIFICATION = "END_TO_END_IDENTIFICATION";
+    private static final String INSTRUCTION_IDENTIFICATION = "INSTRUCTION_IDENTIFICATION";
     private static final AccountReferenceEntity DEBTOR_ACCOUNT = buildAccountReferenceEntity();
     private static final AccountReferenceEntity CREDITOR_ACCOUNT = buildAccountReferenceEntity();
     private static final CmsAccountReference DEBTOR_CMS_ACCOUNT = buildCmsAccountReference();
@@ -169,6 +170,7 @@ public class CmsPsuPisMapperTest {
         CmsSinglePayment singlePayment = (CmsSinglePayment) cmsPayment;
         assertEquals(PAYMENT_ID, singlePayment.getPaymentId());
         assertEquals(END_TO_END_IDENTIFICATION, singlePayment.getEndToEndIdentification());
+        assertEquals(INSTRUCTION_IDENTIFICATION, singlePayment.getInstructionIdentification());
         assertEquals(DEBTOR_CMS_ACCOUNT, singlePayment.getDebtorAccount());
 
         CmsAmount instructedAmount = singlePayment.getInstructedAmount();
@@ -203,6 +205,7 @@ public class CmsPsuPisMapperTest {
         CmsPeriodicPayment periodicPayment = (CmsPeriodicPayment) cmsPayment;
         assertEquals(PAYMENT_ID, periodicPayment.getPaymentId());
         assertEquals(END_TO_END_IDENTIFICATION, periodicPayment.getEndToEndIdentification());
+        assertEquals(INSTRUCTION_IDENTIFICATION, periodicPayment.getInstructionIdentification());
         assertEquals(DEBTOR_CMS_ACCOUNT, periodicPayment.getDebtorAccount());
 
         CmsAmount instructedAmount = periodicPayment.getInstructedAmount();
@@ -246,6 +249,7 @@ public class CmsPsuPisMapperTest {
         assertNotNull(singlePayment);
         assertEquals(PAYMENT_ID, singlePayment.getPaymentId());
         assertEquals(END_TO_END_IDENTIFICATION, singlePayment.getEndToEndIdentification());
+        assertEquals(INSTRUCTION_IDENTIFICATION, singlePayment.getInstructionIdentification());
         assertEquals(DEBTOR_CMS_ACCOUNT, singlePayment.getDebtorAccount());
 
         CmsAmount instructedAmount = singlePayment.getInstructedAmount();
@@ -313,6 +317,7 @@ public class CmsPsuPisMapperTest {
         PisPaymentData pisPaymentData = new PisPaymentData();
         pisPaymentData.setPaymentData(pisCommonPaymentData);
         pisPaymentData.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
+        pisPaymentData.setInstructionIdentification(INSTRUCTION_IDENTIFICATION);
         pisPaymentData.setPaymentId(PAYMENT_ID);
         pisPaymentData.setDebtorAccount(DEBTOR_ACCOUNT);
         pisPaymentData.setCurrency(CURRENCY);
