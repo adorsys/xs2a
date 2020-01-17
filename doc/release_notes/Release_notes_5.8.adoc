@@ -5,6 +5,17 @@
 * Allow custom payment validation
 * Migrate to common payment object
 * Implement auto reloading for profile
+* Feature: compatibility with new Berlin group yaml specification file
+* Move AuthenticationObject to xs2a-core
+* Feature: Add new data attribute instructionIdentification for all standard payment types
+* Bugfix: PIIS request not filtered by TPP consent
+* Handle errors only for XS2A endpoints
+* Replaced deprecated description property in swagger `@Api` annotation in `CMS` and `Profile` controllers
+* Updated Response Code And Message for cancellation already completed payment
+* Optional verification of URLs in headers according certificate domain
+* Adopt data type Max512Text to Max500Text
+* Fixing acceptance of past validUntil date provided through CMS-PSU-API
+* Log Request ID and Internal Request ID via SLF4J MDC
 
 == Allow custom payment validation
 
@@ -57,3 +68,61 @@ In case of using common implementations, all payments will be forwarded to `Comm
 From now on, there is the possibility of auto reloading the profile. By default, the profile isn't reloaded.
 The exact specification about needed timeframes, between each reload, is customizable in the `application.properties` via
 `aspsp-profile-reload.cron.expression` (as cron expression).
+
+== Feature: compatibility with new Berlin group yaml specification file
+
+All XS2A model files and REST controllers were updated in accordance with Berlin group yaml file version 1.3.5.
+
+== Move AuthenticationObject to xs2a-core
+
+Usages of `Xs2aAuthenticationObject` and `SpiAuthenticationObject` were substituted with `de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject`
+
+== Feature: Add new data attribute instructionIdentification for all standard payment types
+
+From now on, `instructionIdentification` field was added to all standard payment types.
+Also in case `instructionIdentification` field exceeds the maximum length of 35 symbols TPP will receive `400 Bad Request` error with `FORMAT_ERROR` code.
+New `instructionIdentification` field is stored in CMS database and is provided to SPI level.
+
+== Bugfix: PIIS request not filtered by TPP consent
+
+From now on, PIIS consents are correctly filtered by TPP during Funds Confirmation Request (`POST /v1/funds-confirmations`).
+
+== Handle errors only for XS2A endpoints
+
+From now on, `Xs2aRestExceptionHandler` handles exceptions only from XS2A endpoints.
+
+== Replaced deprecated description property in swagger `@Api` annotation in `CMS` and `Profile` controllers
+
+From now on, deprecated description property in swagger `@Api` is replaced with `tags` method in swagger
+configuration.
+
+== Updated Response Code And Message for cancellation already completed payment
+
+From now on, when Cancellation request is sent for already completed payment, the response error will be
+`400 RESOURCE_BLOCKED`.
+
+== Optional verification of URLs in headers according certificate domain
+From now on, URL validator is optional. And it can can be controlled by parameter `checkUriComplianceToDomainSupported` in ASPSP Profile.
+When this parameter is `TRUE` then verification will check differences between domain from TPP Certificate and headers with URL (TPP-Redirect-URI, TPP-Nok-Redirect-URI and TPP-Notification-URI).
+If TPP URIs are not compliant, then request is not rejected and response has tppMessages with text "TPP URIs are not compliant with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate".
+
+== Adopt data type Max512Text to Max500Text
+
+From now on, length of text fields in some TppMessage classes was changed from 512 characters to 500 (In accordance with Errata for BG specification).
+
+== Fixing acceptance of past validUntil date provided through CMS-PSU-API
+
+From now on, providing a validUntil date, that is prior to the current date gets rejected on
+calling `PUT /psu-api/v1/ais/consent/{consent-id}/save-access`.
+
+== Log Request ID and Internal Request ID via SLF4J MDC
+
+From now on, InR-ID and X-Request-ID values are provided to the logs via SLF4J's Mapped Diagnostic Context (MDC).
+These values are no longer provided explicitly in XS2A log messages, but they can be retrieved by the logging framework from MDC.
+This change also affects `access-log` and `request-log`, meaning that log messages in these loggers no longer contain InR-ID and X-Request-ID.
+
+Default log configuration file for Logback in XS2A has been changed to include these IDs.
+In case of using custom logging configuration, SPI developer should adjust existing configuration to get and display stored IDs from MDC.
+Internal Request ID(logged as InR-ID) and X-Request-ID are stored in the MDC under `internal-request-id` and `x-request-id` keys.
+
+These IDs are also propagated from XS2A to CMS and ASPSP profile services via `X-Request-ID` and `X-Internal-Request-ID` headers and can be retrieved from MDC using already mentioned keys.
