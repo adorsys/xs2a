@@ -391,7 +391,7 @@ public class AisAuthorisationServiceInternalTest {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setId(CONSENT_ID);
         aisConsent.setExternalId(externalId);
-        aisConsent.setExpireDate(validUntil);
+        aisConsent.setValidUntil(validUntil);
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
         aisConsent.setAuthorizations(aisConsentAuthorisationList);
         aisConsent.setPsuDataList(psuDataList);

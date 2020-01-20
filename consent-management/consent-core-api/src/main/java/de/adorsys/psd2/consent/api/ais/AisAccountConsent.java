@@ -39,6 +39,7 @@ public class AisAccountConsent {
     private AisAccountAccess aspspAccess;
     private boolean recurringIndicator;
     private LocalDate validUntil;
+    private LocalDate expireDate;
     private int frequencyPerDay;
     private LocalDate lastActionDate;
     private ConsentStatus consentStatus;

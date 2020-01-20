@@ -1430,17 +1430,17 @@ public class ConsentServiceTest {
     private AccountConsent getAccountConsent() {
         Xs2aAccountAccess access = getXs2aAccountAccess(Collections.singletonList(getXs2aReference()));
 
-        return new AccountConsent(CONSENT_ID, access, access, false, DATE, 4, null, ConsentStatus.VALID, false, false, Collections.singletonList(PSU_ID_DATA), tppInfo, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.MAX, Collections.singletonMap("/accounts", 0));
+        return new AccountConsent(CONSENT_ID, access, access, false, DATE, null, 4, null, ConsentStatus.VALID, false, false, Collections.singletonList(PSU_ID_DATA), tppInfo, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.MAX, Collections.singletonMap("/accounts", 0));
     }
 
     private AccountConsent getAccountConsentWithNullPsuIdData() {
         Xs2aAccountAccess access = getXs2aAccountAccess(Collections.singletonList(getXs2aReference()));
 
-        return new AccountConsent(CONSENT_ID, access, access, false, DATE, 4, null, ConsentStatus.VALID, false, false, Collections.emptyList(), tppInfo, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.MAX, Collections.singletonMap("/accounts", 0));
+        return new AccountConsent(CONSENT_ID, access, access, false, DATE, null, 4, null, ConsentStatus.VALID, false, false, Collections.emptyList(), tppInfo, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.MAX, Collections.singletonMap("/accounts", 0));
     }
 
     private AccountConsent getAccountConsentFinalised(Xs2aAccountAccess access) {
-        return new AccountConsent(CONSENT_ID, access, access, false, DATE, 4, null, ConsentStatus.REJECTED, false, false, null, tppInfo, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), STATUS_CHANGE_TIMESTAMP, Collections.emptyMap());
+        return new AccountConsent(CONSENT_ID, access, access, false, DATE, null, 4, null, ConsentStatus.REJECTED, false, false, null, tppInfo, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), STATUS_CHANGE_TIMESTAMP, Collections.emptyMap());
     }
 
     private CreateConsentReq getCreateConsentRequest(Xs2aAccountAccess access) {

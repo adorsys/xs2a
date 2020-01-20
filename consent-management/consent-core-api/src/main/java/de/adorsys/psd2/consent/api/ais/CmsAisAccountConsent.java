@@ -22,6 +22,7 @@ public class CmsAisAccountConsent {
     private AisAccountAccess access;
     private boolean recurringIndicator;
     private LocalDate validUntil;
+    private LocalDate expireDate;
     private int frequencyPerDay;
     private LocalDate lastActionDate;
     private ConsentStatus consentStatus;
