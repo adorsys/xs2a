@@ -142,7 +142,7 @@ public class AisConsentMapperTest {
         assertEquals(expectedAccess, aisAccountConsent.getAccess());
         assertEquals(aisConsent.getExternalId(), aisAccountConsent.getId());
         assertEquals(aisConsent.isRecurringIndicator(), aisAccountConsent.isRecurringIndicator());
-        assertEquals(aisConsent.getExpireDate(), aisAccountConsent.getValidUntil());
+        assertEquals(aisConsent.getValidUntil(), aisAccountConsent.getValidUntil());
         assertEquals(aisConsent.getAllowedFrequencyPerDay(), aisAccountConsent.getFrequencyPerDay());
         assertEquals(aisConsent.getLastActionDate(), aisAccountConsent.getLastActionDate());
         assertEquals(aisConsent.getConsentStatus(), aisAccountConsent.getConsentStatus());
@@ -168,7 +168,7 @@ public class AisConsentMapperTest {
         assertEquals(expectedAccess, aisAccountConsent.getAspspAccess());
         assertEquals(aisConsent.getExternalId(), aisAccountConsent.getId());
         assertEquals(aisConsent.isRecurringIndicator(), aisAccountConsent.isRecurringIndicator());
-        assertEquals(aisConsent.getExpireDate(), aisAccountConsent.getValidUntil());
+        assertEquals(aisConsent.getValidUntil(), aisAccountConsent.getValidUntil());
         assertEquals(aisConsent.getAllowedFrequencyPerDay(), aisAccountConsent.getFrequencyPerDay());
         assertEquals(aisConsent.getLastActionDate(), aisAccountConsent.getLastActionDate());
         assertEquals(aisConsent.getConsentStatus(), aisAccountConsent.getConsentStatus());
@@ -204,7 +204,7 @@ public class AisConsentMapperTest {
         aisConsent.setStatusChangeTimestamp(OffsetDateTime.now());
         aisConsent.setRecurringIndicator(true);
         aisConsent.setTppRedirectPreferred(true);
-        aisConsent.setExpireDate(LocalDate.now().plusDays(3));
+        aisConsent.setValidUntil(LocalDate.now().plusDays(3));
         aisConsent.setPsuDataList(Collections.singletonList(PSU_DATA));
         aisConsent.setTppInfo(TPP_INFO_ENTITY);
         aisConsent.setConsentStatus(ConsentStatus.VALID);
@@ -213,7 +213,6 @@ public class AisConsentMapperTest {
         aisConsent.setMultilevelScaRequired(true);
         aisConsent.setAisConsentRequestType(AisConsentRequestType.BANK_OFFERED);
         aisConsent.setLastActionDate(LocalDate.now());
-
         return aisConsent;
     }
 

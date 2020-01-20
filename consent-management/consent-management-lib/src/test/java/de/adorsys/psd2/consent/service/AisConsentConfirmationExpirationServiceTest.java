@@ -24,7 +24,6 @@ import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -36,7 +35,6 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -69,23 +67,6 @@ public class AisConsentConfirmationExpirationServiceTest {
         assertEquals(ConsentStatus.EXPIRED, aisConsent.getConsentStatus());
         assertEquals(TODAY, aisConsent.getExpireDate());
         assertEquals(TODAY, aisConsent.getLastActionDate());
-    }
-
-    @Test
-    public void isConsentExpiredOrFinalised_False() {
-        Stream.of(null,
-                  buildAisConsent(ConsentStatus.REJECTED, TOMORROW),
-                  buildAisConsent(ConsentStatus.RECEIVED, TOMORROW)) //Given
-            .map(expirationService::isConsentExpiredOrFinalised) //When
-            .forEach(Assert::assertFalse); //Then
-    }
-
-    @Test
-    public void isConsentExpiredOrFinalised_True() {
-        Stream.of(buildAisConsent(ConsentStatus.RECEIVED, YESTERDAY),
-                  buildNonReccuringAlreadyUsedAisConsent(ConsentStatus.RECEIVED, TOMORROW)) //Given
-            .map(expirationService::isConsentExpiredOrFinalised) //When
-            .forEach(Assert::assertTrue); //Then
     }
 
     @Test
@@ -144,15 +125,15 @@ public class AisConsentConfirmationExpirationServiceTest {
         assertEquals(ConsentStatus.REJECTED, aisConsentListCaptor.getValue().get(0).getConsentStatus());
     }
 
-    private AisConsent buildAisConsent(ConsentStatus consentStatus, LocalDate expireDate) {
+    private AisConsent buildAisConsent(ConsentStatus consentStatus, LocalDate validUntil) {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setConsentStatus(consentStatus);
-        aisConsent.setExpireDate(expireDate);
+        aisConsent.setValidUntil(validUntil);
         return aisConsent;
     }
 
-    private AisConsent buildNonReccuringAlreadyUsedAisConsent(ConsentStatus consentStatus, LocalDate expireDate) {
-        AisConsent aisConsent = buildAisConsent(consentStatus, expireDate);
+    private AisConsent buildNonReccuringAlreadyUsedAisConsent(ConsentStatus consentStatus, LocalDate validUntil) {
+        AisConsent aisConsent = buildAisConsent(consentStatus, validUntil);
         aisConsent.setRecurringIndicator(false);
         AisConsentUsage usage = new AisConsentUsage();
         usage.setUsageDate(YESTERDAY);

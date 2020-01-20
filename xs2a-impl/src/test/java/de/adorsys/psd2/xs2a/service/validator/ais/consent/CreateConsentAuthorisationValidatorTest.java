@@ -173,14 +173,14 @@ public class CreateConsentAuthorisationValidatorTest {
     }
 
     private AccountConsent buildAccountConsent(TppInfo tppInfo) {
-        return new AccountConsent("id", null, null, false, null, 0,
+        return new AccountConsent("id", null, null, false, null, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), tppInfo, null, false,
                                   Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
     }
 
     private AccountConsent buildAccountConsentWithPsuIdData(boolean isMultilevelSca) {
-        return new AccountConsent("id", null, null, false, null, 0,
+        return new AccountConsent("id", null, null, false, null, null, 0,
                                   null, null, false, false,
                                   Collections.singletonList(EMPTY_PSU_DATA), CreateConsentAuthorisationValidatorTest.TPP_INFO, null, isMultilevelSca,
                                   Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
@@ -191,7 +191,7 @@ public class CreateConsentAuthorisationValidatorTest {
         authorisation.setScaStatus(ScaStatus.FINALISED);
         authorisation.setPsuIdData(PSU_DATA);
 
-        return new AccountConsent("id", null, null, false, null, 0,
+        return new AccountConsent("id", null, null, false, null, null, 0,
                                   null, null, false, false,
                                   Collections.singletonList(PSU_DATA), CreateConsentAuthorisationValidatorTest.TPP_INFO, null, false,
                                   Collections.singletonList(authorisation), null, Collections.emptyMap(), OffsetDateTime.now());

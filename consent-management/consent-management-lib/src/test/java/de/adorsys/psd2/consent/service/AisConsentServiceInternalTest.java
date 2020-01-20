@@ -166,9 +166,7 @@ public class AisConsentServiceInternalTest {
             .thenReturn(aisConsent);
         when(consentMapper.mapToAisAccountConsent(aisConsent))
             .thenReturn(buildSpiAccountConsent());
-        when(aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(aisConsent))
-            .thenReturn(true);
-        doNothing().when(aisConsentConfirmationExpirationService).expireConsent(aisConsent);
+        when(aisConsentConfirmationExpirationService.expireConsent(aisConsent)).thenReturn(aisConsent);
 
         // When
         CmsResponse<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
@@ -206,9 +204,7 @@ public class AisConsentServiceInternalTest {
             .thenReturn(Optional.of(consent));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent))
             .thenReturn(consent);
-        when(aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent))
-            .thenReturn(true);
-        doNothing().when(aisConsentConfirmationExpirationService).expireConsent(consent);
+        when(aisConsentConfirmationExpirationService.expireConsent(consent)).thenReturn(consent);
 
         // When
         aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
@@ -309,7 +305,7 @@ public class AisConsentServiceInternalTest {
 
         // Then
         verify(aisConsentRepositoryImpl).verifyAndSave(argument.capture());
-        assertEquals(argument.getValue().getExpireDate(), validUntil);
+        assertEquals(argument.getValue().getValidUntil(), validUntil);
     }
 
     @Test
@@ -329,7 +325,7 @@ public class AisConsentServiceInternalTest {
 
         // Then
         verify(aisConsentRepositoryImpl).verifyAndSave(argument.capture());
-        assertEquals(argument.getValue().getExpireDate(), validUntil);
+        assertEquals(argument.getValue().getValidUntil(), validUntil);
     }
 
     @Test
@@ -349,7 +345,7 @@ public class AisConsentServiceInternalTest {
 
         // Then
         verify(aisConsentRepositoryImpl).verifyAndSave(argument.capture());
-        assertEquals(argument.getValue().getExpireDate(), LocalDate.now().plusDays(maxConsentValidityDays - 1));
+        assertEquals(argument.getValue().getValidUntil(), LocalDate.now().plusDays(maxConsentValidityDays - 1));
     }
 
     @Test
@@ -752,9 +748,7 @@ public class AisConsentServiceInternalTest {
             .thenReturn(Optional.of(consent));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent))
             .thenReturn(consent);
-        when(aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent))
-            .thenReturn(true);
-        doNothing().when(aisConsentConfirmationExpirationService).expireConsent(consent);
+        when(aisConsentConfirmationExpirationService.expireConsent(consent)).thenReturn(consent);
 
         // When
         aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, "/uri", false, null, null));
@@ -772,9 +766,7 @@ public class AisConsentServiceInternalTest {
             .thenReturn(Optional.of(consent));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent))
             .thenReturn(consent);
-        when(aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent))
-            .thenReturn(true);
-        doNothing().when(aisConsentConfirmationExpirationService).expireConsent(consent);
+        when(aisConsentConfirmationExpirationService.expireConsent(consent)).thenReturn(consent);
 
         // When
         CmsResponse<ConsentStatus> consentStatusById = aisConsentService.getConsentStatusById(EXTERNAL_CONSENT_ID);
@@ -854,7 +846,7 @@ public class AisConsentServiceInternalTest {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setId(CONSENT_ID);
         aisConsent.setExternalId(externalId);
-        aisConsent.setExpireDate(validUntil);
+        aisConsent.setValidUntil(validUntil);
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
         aisConsent.setAuthorizations(aisConsentAuthorisationList);
         aisConsent.setPsuDataList(psuDataList);
@@ -903,7 +895,7 @@ public class AisConsentServiceInternalTest {
     private AisAccountConsent buildSpiAccountConsent() {
         return new AisAccountConsent(aisConsent.getId().toString(),
                                      null, null, false,
-                                     null, 0,
+                                     null, null, 0,
                                      null, null,
                                      false, false, null, null, null, null, false, Collections.emptyList(), Collections.emptyMap(), OffsetDateTime.now(),
                                      OffsetDateTime.now());
@@ -914,7 +906,7 @@ public class AisConsentServiceInternalTest {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setId(CONSENT_ID);
         aisConsent.setExternalId(EXTERNAL_CONSENT_ID);
-        aisConsent.setExpireDate(LocalDate.now());
+        aisConsent.setValidUntil(LocalDate.now());
         aisConsent.setConsentStatus(ConsentStatus.REJECTED);
         return aisConsent;
     }

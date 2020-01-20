@@ -142,7 +142,7 @@ public class AccountAccessMultipleAccountsValidatorTest {
     }
 
     private AccountConsent updateRequestType(AccountConsent consent, AisConsentRequestType type) {
-        return new AccountConsent(consent.getId(), consent.getAccess(), consent.getAspspAccess(), consent.isRecurringIndicator(), consent.getValidUntil(), consent.getFrequencyPerDay(),
+        return new AccountConsent(consent.getId(), consent.getAccess(), consent.getAspspAccess(), consent.isRecurringIndicator(), consent.getValidUntil(), consent.getExpireDate(), consent.getFrequencyPerDay(),
                                   consent.getLastActionDate(), consent.getConsentStatus(), consent.isWithBalance(), consent.isTppRedirectPreferred(), consent.getPsuIdDataList(),
                                   consent.getTppInfo(), type, consent.isMultilevelScaRequired(), consent.getAuthorisations(), consent.getStatusChangeTimestamp(), consent.getUsageCounterMap(), consent.getCreationTimestamp());
     }

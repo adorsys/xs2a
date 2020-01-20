@@ -22,7 +22,10 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
@@ -70,7 +73,7 @@ public class ConsentScheduleTaskTest {
         List<AisConsent> availableConsents = new ArrayList<>();
         availableConsents.add(createConsent(RECEIVED));
         AisConsent consent = createConsent(VALID);
-        consent.setExpireDate(LocalDate.now().plusDays(1));
+        consent.setValidUntil(LocalDate.now().plusDays(1));
         availableConsents.add(consent);
         when(aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID))).thenReturn(availableConsents);
 
@@ -104,7 +107,7 @@ public class ConsentScheduleTaskTest {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setConsentStatus(consentStatus);
         aisConsent.setExternalId(consentStatus.toString());
-        aisConsent.setExpireDate(LocalDate.now().minusDays(1));
+        aisConsent.setValidUntil(LocalDate.now().minusDays(1));
         return aisConsent;
     }
 }

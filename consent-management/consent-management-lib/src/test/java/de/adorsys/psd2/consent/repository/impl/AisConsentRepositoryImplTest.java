@@ -158,7 +158,7 @@ public class AisConsentRepositoryImplTest {
         AisConsent aisConsent = jsonReader.getObjectFromFile("json/AisConsent.json", AisConsent.class);
 
         aisConsent.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
-        aisConsent.setExpireDate(LocalDate.now().plusDays(1));
+        aisConsent.setValidUntil(LocalDate.now().plusDays(1));
         aisConsent.setLastActionDate(LocalDate.now());
         aisConsent.setPsuDataList(Collections.singletonList(psuData));
         aisConsent.setConsentStatus(currentStatus);

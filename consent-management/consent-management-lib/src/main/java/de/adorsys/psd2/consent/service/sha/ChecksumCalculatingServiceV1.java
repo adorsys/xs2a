@@ -115,10 +115,9 @@ public class ChecksumCalculatingServiceV1 implements ChecksumCalculatingService 
         AisConsentSha aisConsentSha = new AisConsentSha();
         aisConsentSha.setRecurringIndicator(consent.isRecurringIndicator());
         aisConsentSha.setCombinedServiceIndicator(consent.isCombinedServiceIndicator());
-        aisConsentSha.setExpireDate(consent.getExpireDate());
+        aisConsentSha.setExpireDate(consent.getValidUntil());
         aisConsentSha.setTppFrequencyPerDay(consent.getTppFrequencyPerDay());
         aisConsentSha.setAccesses(mapToTppAccessSha(consent.getAccesses()));
-
         return aisConsentSha;
     }
 

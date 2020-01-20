@@ -356,6 +356,14 @@ public class AisConsentServiceInternal implements AisConsentService {
                    .build();
     }
 
+    private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
+        if (consent != null && consent.shouldConsentBeExpired()) {
+            return aisConsentConfirmationExpirationService.expireConsent(consent);
+        }
+
+        return consent;
+    }
+
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {
 
         AisConsent consent = new AisConsent();
@@ -364,7 +372,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setAllowedFrequencyPerDay(request.getAllowedFrequencyPerDay());
         consent.setTppFrequencyPerDay(request.getRequestedFrequencyPerDay());
         consent.setRequestDateTime(LocalDateTime.now());
-        consent.setExpireDate(adjustExpireDate(request.getValidUntil()));
+        consent.setValidUntil(adjustExpireDate(request.getValidUntil()));
         consent.setPsuDataList(psuDataMapper.mapToPsuDataList(Collections.singletonList(request.getPsuData())));
         consent.setTppInfo(tppInfoMapper.mapToTppInfoEntity(request.getTppInfo()));
         AuthorisationTemplateEntity authorisationTemplate = new AuthorisationTemplateEntity();
@@ -432,13 +440,6 @@ public class AisConsentServiceInternal implements AisConsentService {
     private Optional<AisConsent> getActualAisConsent(String consentId) {
         return aisConsentJpaRepository.findByExternalId(consentId)
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
-    }
-
-    private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
-        if (aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent)) {
-            aisConsentConfirmationExpirationService.expireConsent(consent);
-        }
-        return consent;
     }
 
     private boolean setStatusAndSaveConsent(AisConsent consent, ConsentStatus status) {
