@@ -25,6 +25,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -53,18 +54,14 @@ public class ConsentScheduleTask {
 
     private List<AisConsent> updateConsent(List<AisConsent> availableConsents) {
         return availableConsents.stream()
+                   .filter(AisConsent::isExpiredByDate)
                    .map(this::updateConsentParameters)
                    .collect(Collectors.toList());
     }
 
     private AisConsent updateConsentParameters(AisConsent consent) {
-        consent.setConsentStatus(updateConsentStatus(consent));
+        consent.setConsentStatus(ConsentStatus.EXPIRED);
+        consent.setExpireDate(LocalDate.now());
         return consent;
-    }
-
-    private ConsentStatus updateConsentStatus(AisConsent consent) {
-        return consent.isExpiredByDate()
-                   ? ConsentStatus.EXPIRED
-                   : consent.getConsentStatus();
     }
 }

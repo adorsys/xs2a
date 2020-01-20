@@ -317,14 +317,14 @@ public class AccountControllerIT {
 
     private AccountConsent buildAccountConsent(Map<String, Integer> usageCounter) {
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null);
-        return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, true, LocalDate.now().plusDays(1), 10,
+        return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, true, LocalDate.now().plusDays(1), null, 10,
                                   null, ConsentStatus.VALID, false, false,
                                   null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter);
     }
 
     private AccountConsent buildOneOffAccountConsent(Map<String, Integer> usageCounter) {
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null);
-        return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, false, LocalDate.now().plusDays(1), 10,
+        return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, false, LocalDate.now().plusDays(1), null, 10,
                                   null, ConsentStatus.VALID, false, false,
                                   null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter);
     }

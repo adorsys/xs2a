@@ -73,6 +73,7 @@ public class AisConsentBuilder {
                             new AisAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null),
                             cr.isRecurringIndicator(),
                             cr.getValidUntil(),
+                            null,
                             cr.getFrequencyPerDay(),
                             LocalDate.now(),
                             ConsentStatus.RECEIVED,

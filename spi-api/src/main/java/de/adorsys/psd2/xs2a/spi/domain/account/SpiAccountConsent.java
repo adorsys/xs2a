@@ -38,6 +38,7 @@ public class SpiAccountConsent {
     private SpiAccountAccess access;
     private boolean recurringIndicator;
     private LocalDate validUntil;
+    private LocalDate expireDate;
     private int frequencyPerDay;
     private LocalDate lastActionDate;
     private ConsentStatus consentStatus;
@@ -47,4 +48,24 @@ public class SpiAccountConsent {
     private TppInfo tppInfo;
     private AisConsentRequestType aisConsentRequestType;
     private OffsetDateTime statusChangeTimestamp;
+
+    // TODO delete this constructor in v.5.11 (it doesnt have expireDate parameter) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1161
+    public SpiAccountConsent(String id, SpiAccountAccess access, boolean recurringIndicator, LocalDate validUntil, int frequencyPerDay,
+                             LocalDate lastActionDate, ConsentStatus consentStatus, boolean withBalance, boolean tppRedirectPreferred,
+                             List<SpiPsuData> psuData, TppInfo tppInfo, AisConsentRequestType aisConsentRequestType, OffsetDateTime statusChangeTimestamp) {
+        this.id = id;
+        this.access = access;
+        this.recurringIndicator = recurringIndicator;
+        this.validUntil = validUntil;
+        this.expireDate = null;
+        this.frequencyPerDay = frequencyPerDay;
+        this.lastActionDate = lastActionDate;
+        this.consentStatus = consentStatus;
+        this.withBalance = withBalance;
+        this.tppRedirectPreferred = tppRedirectPreferred;
+        this.psuData = psuData;
+        this.tppInfo = tppInfo;
+        this.aisConsentRequestType = aisConsentRequestType;
+        this.statusChangeTimestamp = statusChangeTimestamp;
+    }
 }

@@ -1,0 +1,11 @@
+= Release notes v.4.8
+
+== Table of Contents
+
+* Fixing that expiration of an AIS consent changes its validUntil date
+
+== Fixing that expiration of an AIS consent changes its validUntil date
+
+From now on, expiration of an AIS consent does not change its `validUntil` date. A second value
+`expireDate` has been introduced, which indicates the date of expiration. The `expireDate` is properly
+propagated to SPI, CMS-PSU and CMS-ASPSP APIs.

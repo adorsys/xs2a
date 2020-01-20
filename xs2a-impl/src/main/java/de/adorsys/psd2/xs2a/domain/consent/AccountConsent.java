@@ -43,6 +43,7 @@ public class AccountConsent {
     private final boolean recurringIndicator;
 
     private final LocalDate validUntil;
+    private final LocalDate expireDate;
 
     private final int frequencyPerDay;
 

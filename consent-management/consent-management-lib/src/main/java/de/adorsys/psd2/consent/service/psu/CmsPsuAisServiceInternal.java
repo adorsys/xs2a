@@ -259,7 +259,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         AisConsentRequestType aisConsentRequestType = aisConsentRequestTypeService.getRequestTypeFromConsent(consent);
         consent.setAisConsentRequestType(aisConsentRequestType);
 
-        consent.setExpireDate(request.getValidUntil());
+        consent.setValidUntil(request.getValidUntil());
         consent.setAllowedFrequencyPerDay(request.getFrequencyPerDay());
         aisConsentUsageService.resetUsage(consent);
         aisConsentRepository.save(consent);
@@ -277,11 +277,10 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
-        if (aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent)) {
-            aisConsentConfirmationExpirationService.expireConsent(consent);
-        } else {
-            log.info("Get consent failed in checkAndUpdateOnExpiration method, because consent is null or expired or has finalised status.");
+        if (consent != null && consent.shouldConsentBeExpired()) {
+            return aisConsentConfirmationExpirationService.expireConsent(consent);
         }
+
         return consent;
     }
 

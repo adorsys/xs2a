@@ -72,11 +72,11 @@ public class AisConsentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void isConsentExpiredOrFinalised_False() {
-        Stream.of(null,
+    public void shouldConsentBeExpired_False() {
+        Stream.of(
                   buildAisConsent(ConsentStatus.REJECTED, TOMORROW),
                   buildAisConsent(ConsentStatus.RECEIVED, TOMORROW)) //Given
-            .map(expirationService::isConsentExpiredOrFinalised) //When
+            .map(AisConsent::shouldConsentBeExpired) //When
             .forEach(Assert::assertFalse); //Then
     }
 
@@ -84,7 +84,7 @@ public class AisConsentConfirmationExpirationServiceTest {
     public void isConsentExpiredOrFinalised_True() {
         Stream.of(buildAisConsent(ConsentStatus.RECEIVED, YESTERDAY),
                   buildNonReccuringAlreadyUsedAisConsent(ConsentStatus.RECEIVED, TOMORROW)) //Given
-            .map(expirationService::isConsentExpiredOrFinalised) //When
+            .map(AisConsent::shouldConsentBeExpired) //When
             .forEach(Assert::assertTrue); //Then
     }
 
@@ -144,15 +144,15 @@ public class AisConsentConfirmationExpirationServiceTest {
         assertEquals(ConsentStatus.REJECTED, aisConsentListCaptor.getValue().get(0).getConsentStatus());
     }
 
-    private AisConsent buildAisConsent(ConsentStatus consentStatus, LocalDate expireDate) {
+    private AisConsent buildAisConsent(ConsentStatus consentStatus, LocalDate validUntil) {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setConsentStatus(consentStatus);
-        aisConsent.setExpireDate(expireDate);
+        aisConsent.setValidUntil(validUntil);
         return aisConsent;
     }
 
-    private AisConsent buildNonReccuringAlreadyUsedAisConsent(ConsentStatus consentStatus, LocalDate expireDate) {
-        AisConsent aisConsent = buildAisConsent(consentStatus, expireDate);
+    private AisConsent buildNonReccuringAlreadyUsedAisConsent(ConsentStatus consentStatus, LocalDate validUntil) {
+        AisConsent aisConsent = buildAisConsent(consentStatus, validUntil);
         aisConsent.setRecurringIndicator(false);
         AisConsentUsage usage = new AisConsentUsage();
         usage.setUsageDate(YESTERDAY);
