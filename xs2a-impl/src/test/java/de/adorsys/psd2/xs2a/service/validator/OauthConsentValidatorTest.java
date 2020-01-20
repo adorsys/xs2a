@@ -44,10 +44,14 @@ public class OauthConsentValidatorTest {
     private static final String TOKEN = "token";
     private static final MessageError MESSAGE_ERROR = new MessageError(ErrorType.AIS_403, of(FORBIDDEN));
 
-    @InjectMocks private OauthConsentValidator oauthConsentValidator;
-    @Mock private RequestProviderService requestProviderService;
-    @Mock private AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    @Mock private ScaApproachResolver scaApproachResolver;
+    @InjectMocks
+    private OauthConsentValidator oauthConsentValidator;
+    @Mock
+    private RequestProviderService requestProviderService;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
+    @Mock
+    private ScaApproachResolver scaApproachResolver;
 
     @Test
     public void validate_invalid_tokenEmpty_approachRedirect_flowOauth_statusValid() {
@@ -132,7 +136,7 @@ public class OauthConsentValidatorTest {
     }
 
     private AccountConsent buildAccountConsent(ConsentStatus consentStatus) {
-        return new AccountConsent("id", null, null, false, null, 0,
+        return new AccountConsent("id", null, null, false, null, null, 0,
                                   null, consentStatus, false, false,
                                   Collections.emptyList(), null, null, false,
                                   Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());

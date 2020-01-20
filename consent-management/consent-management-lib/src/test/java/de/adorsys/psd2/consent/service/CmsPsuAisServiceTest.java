@@ -506,7 +506,7 @@ public class CmsPsuAisServiceTest {
         assertSame(aspspAccountAccessesChecked.size(), aspspAccountAccesses.size());
         assertSame(aspspAccountAccessesChecked.get(0).getAccountIdentifier(), iban);
         assertSame(aspspAccountAccessesChecked.get(0).getCurrency(), currency);
-        assertSame(argument.getValue().getExpireDate(), validUntil);
+        assertSame(argument.getValue().getValidUntil(), validUntil);
         assertEquals(argument.getValue().getAllowedFrequencyPerDay(), frequencyPerDay);
         assertEquals(getUsageCounter(argument.getValue()), frequencyPerDay);
         assertTrue(argument.getValue().isRecurringIndicator());
@@ -753,7 +753,7 @@ public class CmsPsuAisServiceTest {
         AisConsent aisConsent = jsonReader.getObjectFromFile("json/AisConsent.json", AisConsent.class);
 
         aisConsent.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
-        aisConsent.setExpireDate(LocalDate.now().plusDays(1));
+        aisConsent.setValidUntil(LocalDate.now().plusDays(1));
         aisConsent.setLastActionDate(LocalDate.now());
         aisConsent.setPsuDataList(Collections.singletonList(psuData));
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
@@ -769,10 +769,10 @@ public class CmsPsuAisServiceTest {
         return aisConsent;
     }
 
-    private AisConsent buildConsentByStatusAndExpireDate(ConsentStatus status, LocalDate expireDate) {
+    private AisConsent buildConsentByStatusAndExpireDate(ConsentStatus status, LocalDate validUntil) {
         AisConsent aisConsent = buildConsent();
         aisConsent.setConsentStatus(status);
-        aisConsent.setExpireDate(expireDate);
+        aisConsent.setValidUntil(validUntil);
         return aisConsent;
     }
 
@@ -787,7 +787,7 @@ public class CmsPsuAisServiceTest {
     private CmsAisAccountConsent buildSpiAccountConsent() {
         return new CmsAisAccountConsent(aisConsent.getId().toString(),
                                         null, false,
-                                        null, 0,
+                                        null, null, 0,
                                         null, null,
                                         false, false, null, null, null, null, false, Collections.emptyList(), Collections.emptyMap(), OffsetDateTime.now(),
                                         OffsetDateTime.now());

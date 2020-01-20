@@ -343,7 +343,7 @@ public class ConsentModelMapperTest {
     }
 
     private AccountConsent createConsent(Xs2aAccountAccess access) {
-        return new AccountConsent(CONSENT_ID, access, access, false, LocalDate.of(2019, 8, 22), 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
+        return new AccountConsent(CONSENT_ID, access, access, false, LocalDate.of(2019, 8, 22), null, 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
     }
 
     private TppInfo createTppInfo() {

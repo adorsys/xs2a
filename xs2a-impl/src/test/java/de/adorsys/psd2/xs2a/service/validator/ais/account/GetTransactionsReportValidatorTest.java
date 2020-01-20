@@ -374,7 +374,7 @@ public class GetTransactionsReportValidatorTest {
     }
 
     private AccountConsent buildAccountConsent(TppInfo tppInfo) {
-        return new AccountConsent("id", buildXs2aAccountAccess(), buildXs2aAccountAccess(), false, null, 0,
+        return new AccountConsent("id", buildXs2aAccountAccess(), buildXs2aAccountAccess(), false, null, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), tppInfo, null, false,
                                   Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());

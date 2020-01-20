@@ -1664,7 +1664,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     private AccountConsent buildAccountConsent() {
-        return new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, 1, null, null, false, false, null, null, null, false, null, null, null, null);
+        return new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, null, 1, null, null, false, false, null, null, null, false, null, null, null, null);
     }
 
     @Test(expected = UnsupportedOperationException.class)

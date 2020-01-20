@@ -342,7 +342,7 @@ public class UpdateConsentPsuDataValidatorTest {
     }
 
     private AccountConsent buildAccountConsent(TppInfo tppInfo, ScaStatus scaStatus, String authorisationId) {
-        return new AccountConsent("id", null, null, false, null, 0,
+        return new AccountConsent("id", null, null, false, null, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), tppInfo, null, false,
                                   buildAuthorization(scaStatus, authorisationId), null, Collections.emptyMap(), OffsetDateTime.now());

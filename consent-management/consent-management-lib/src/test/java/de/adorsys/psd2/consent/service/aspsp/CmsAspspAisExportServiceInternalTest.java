@@ -252,7 +252,7 @@ public class CmsAspspAisExportServiceInternalTest {
     private CmsAisAccountConsent buildAisAccountConsent() {
         return new CmsAisAccountConsent(EXTERNAL_CONSENT_ID,
                                         null, false,
-                                        null, 0,
+                                        null, null, 0,
                                         null, null,
                                         false, false, null, null, null, null, false, Collections.emptyList(), Collections.emptyMap(), CREATION_DATE_TIME, STATUS_CHANGE_DATE_TIME);
     }
@@ -260,7 +260,7 @@ public class CmsAspspAisExportServiceInternalTest {
     private AisConsent buildAisConsent() {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setExternalId(EXTERNAL_CONSENT_ID);
-        aisConsent.setExpireDate(LocalDate.now().plusDays(1));
+        aisConsent.setValidUntil(LocalDate.now().plusDays(1));
         aisConsent.setLastActionDate(LocalDate.now());
         aisConsent.setPsuDataList(Collections.singletonList(psuData));
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
