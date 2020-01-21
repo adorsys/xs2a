@@ -291,8 +291,8 @@ public class PaymentControllerTest {
 
     @Test
     public void cancelPayment_WithoutAuthorisation_Fail_FinalisedStatus() {
-        ResponseObject<CancelPaymentResponse> cancelPaymentResponse = getErrorOnPaymentCancellation();
-        ResponseEntity expectedResult = ResponseEntity.status(BAD_REQUEST).build();
+        ResponseObject<CancelPaymentResponse> cancelPaymentResponse = getError404();
+        ResponseEntity expectedResult = ResponseEntity.status(NOT_FOUND).build();
 
         when(responseErrorMapper.generateErrorResponse(cancelPaymentResponse.getError())).thenReturn(expectedResult);
 
@@ -1387,6 +1387,12 @@ public class PaymentControllerTest {
     private ResponseObject<CancelPaymentResponse> getErrorOnPaymentCancellation() {
         return ResponseObject.<CancelPaymentResponse>builder()
                    .fail(ErrorType.PIS_400, of(MessageErrorCode.FORMAT_ERROR))
+                   .build();
+    }
+
+    private ResponseObject<CancelPaymentResponse> getError404() {
+        return ResponseObject.<CancelPaymentResponse>builder()
+                   .fail(ErrorType.PIS_404, of(RESOURCE_UNKNOWN_404))
                    .build();
     }
 
