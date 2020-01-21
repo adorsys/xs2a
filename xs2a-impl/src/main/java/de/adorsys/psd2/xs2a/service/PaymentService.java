@@ -131,7 +131,7 @@ public class PaymentService {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get payment failed. PIS CommonPayment not found by ID",
                      internalRequestId, xRequestId, encryptedPaymentId);
             return ResponseObject.builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
+                       .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
@@ -184,7 +184,7 @@ public class PaymentService {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get Payment Status failed. PIS CommonPayment not found by ID",
                      internalRequestId, xRequestId, encryptedPaymentId);
             return ResponseObject.<GetPaymentStatusResponse>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
+                       .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
@@ -253,7 +253,7 @@ public class PaymentService {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Cancel payment has failed. Payment not found by ID.",
                      requestProviderService.getInternalRequestId(), requestProviderService.getRequestId(), paymentCancellationRequest.getEncryptedPaymentId());
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
+                       .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
