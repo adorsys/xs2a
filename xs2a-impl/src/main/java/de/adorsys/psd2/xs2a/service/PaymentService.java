@@ -133,7 +133,7 @@ public class PaymentService {
         if (!pisCommonPaymentOptional.isPresent()) {
             log.info("Payment-ID [{}]. Get payment failed. PIS CommonPayment not found by ID", encryptedPaymentId);
             return ResponseObject.builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
+                       .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
@@ -180,7 +180,7 @@ public class PaymentService {
         if (!pisCommonPaymentOptional.isPresent()) {
             log.info("Payment-ID [{}]. Get Payment Status failed. PIS CommonPayment not found by ID", encryptedPaymentId);
             return ResponseObject.<GetPaymentStatusResponse>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
+                       .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
@@ -246,7 +246,7 @@ public class PaymentService {
             log.info("Payment-ID [{}]. Cancel payment has failed. Payment not found by ID.",
                      paymentCancellationRequest.getEncryptedPaymentId());
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
+                       .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 

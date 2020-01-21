@@ -325,8 +325,8 @@ public class PaymentControllerTest {
 
     @Test
     public void cancelPayment_WithoutAuthorisation_Fail_FinalisedStatus() {
-        ResponseObject<CancelPaymentResponse> cancelPaymentResponse = getErrorOnPaymentCancellation();
-        ResponseEntity expectedResult = ResponseEntity.status(BAD_REQUEST).build();
+        ResponseObject<CancelPaymentResponse> cancelPaymentResponse = getErrorOnPaymentCancellation404();
+        ResponseEntity expectedResult = ResponseEntity.status(NOT_FOUND).build();
 
         when(responseErrorMapper.generateErrorResponse(cancelPaymentResponse.getError())).thenReturn(expectedResult);
 
@@ -350,9 +350,9 @@ public class PaymentControllerTest {
         when(paymentModelMapperPsd2.mapToPaymentCancellationRequest(PRODUCT, CORRECT_PAYMENT_SERVICE, CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), null, null))
             .thenReturn(paymentCancellationRequest);
         when(xs2aPaymentService.cancelPayment(paymentCancellationRequest)).thenReturn(getErrorOnPaymentCancellation());
-        when(responseErrorMapper.generateErrorResponse(createMessageError(ErrorType.PIS_400, FORMAT_ERROR))).thenReturn(ResponseEntity.status(BAD_REQUEST).build());
+        when(responseErrorMapper.generateErrorResponse(createMessageError(ErrorType.PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
 
-        ResponseEntity<PaymentInitiationCancelResponse202> expectedResult = ResponseEntity.badRequest().build();
+        ResponseEntity<PaymentInitiationCancelResponse202> expectedResult = ResponseEntity.status(FORBIDDEN).build();
         // When
         ResponseEntity actualResult = paymentController.cancelPayment(CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                       CORRECT_PAYMENT_ID, REQUEST_ID, null, null,
@@ -1430,7 +1430,13 @@ public class PaymentControllerTest {
 
     private ResponseObject<CancelPaymentResponse> getErrorOnPaymentCancellation() {
         return ResponseObject.<CancelPaymentResponse>builder()
-                   .fail(ErrorType.PIS_400, of(MessageErrorCode.FORMAT_ERROR))
+                   .fail(ErrorType.PIS_403, of(RESOURCE_UNKNOWN_403))
+                   .build();
+    }
+
+    private ResponseObject<CancelPaymentResponse> getErrorOnPaymentCancellation404() {
+        return ResponseObject.<CancelPaymentResponse>builder()
+                   .fail(ErrorType.PIS_404, of(RESOURCE_UNKNOWN_404))
                    .build();
     }
 
