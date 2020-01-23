@@ -4,18 +4,18 @@ Starting 1st of September 2019 XS2A Team is providing development within two bra
 
 *Stable branch 4.x*
 
-Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.4. Will be supported till 01.03.2020
+Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.5. Will be supported till 01.03.2020
 
 *Development branch 5.x*
 
 Development branch is oriented on implementation of new features and optional endpoints.
 No backward compatibility with 4.x is guaranteed. Will be released as Stable version 6.x on 13.03.2020
 
-[cols="3*.<"]
+[cols="5*.<"]
 |===
-|release date|version 4.x|version 5.x
+|release date|version 4.x|version 5.x|version 6.x|version 7.x
 
-|31.01.2020|4.9|5.9
+|31.01.2020|4.9|5.9| |
 
 a|
 
@@ -25,31 +25,51 @@ a|* Change error codes according to NISP Test Specification v1.3.5-1.4.2
 
 * Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
 
-* Fix javadoc warnings
-
 a|* All fixes and updates from v.4.9
 
-* Add endpoint Read Card Account list
+* New feature: Add endpoint Read Card Account list
+
+* New feature: Add endpoint Read Card Account details
+
+* New feature: Add endpoint Read Card Account Balance
+
+* New feature: Add endpoint Read Card Account Transaction list
 
 * Simplify checksum verification for read operations on account
 
 * Bugfix: Payment\Consent status doesn't change after ConfirmationCode validation in xs2a
 
-|14.02.2020|4.10|5.10
+* Refactor authorisation
 
 a|
 
 a|
+
+|14.02.2020|4.10|5.10| |
+
+a|
+
+a|* Bugfix: In case of XML format payments the response type is still "applications/json"
+
+* Fix javadoc warnings
 
 a|* All fixes and updates from v.4.10
 
 * Remove "owner_address_type" column from "ais_consent" table
 
-* Add a new optional header TPP-Rejection-NoFunds-Preferred
+* Adjust consent model in CMS
 
-* Add endpoint Read Card Account details
+* Adjust AIS consent validators in xs2a
 
-|28.02.2020|4.11|5.11
+* Adjust checksum service after consent model refactoring
+
+* Create new SPI method for handling consent wrapper
+
+a|
+
+a|
+
+|28.02.2020|4.11|5.11| |
 
 a|
 
@@ -57,23 +77,107 @@ a|
 
 a|* All fixes and updates from v.4.11
 
-* Add endpoint Read Card Account Balance
+* Add not null constraint for "valid_until" field in "ais_consent" table
 
-* Add endpoint Read Card Account Transaction list
+* Delete specific constructor in SpiAccountConsent
 
-|Further development| |
+* Migrate data of Funds Confirmation consent v1
+
+a|
+
+a|
+
+|13.03.2020| | |6.0|7.0
 
 a|
 
 a|
 
-a|* Update to Java 11
+a|
+
+a|
+
+a|* All fixes and updates from v.6.0
+
+* Update to Java 11
 
 * Complete common payment migration in CMS database
 
-* Extension of possibility returning several camt.05x files in one zip file
+* New feature: Funds Confirmation consent support in Profile
 
-* Create Resource Notification Push Service
+* New feature: Support yaml for Funds Confirmation consent
+
+* New feature: Establish FundsConfirmationConsent
+
+|27.03.2020| | |6.1|7.1
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|* All fixes and updates from v.6.1
+
+* New feature: Create Funds Confirmation consent validator
+
+* New feature: Get FundsConfirmationConsent Status + object
+
+* New feature: Revoke FundsConfirmationConsent
+
+* New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
+
+* New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
+
+|10.04.2020| | |6.2|7.2
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|* All fixes and updates from v.6.2
+
+* New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
+
+* New feature: Get SCA Status request for FundsConfirmationConsent
+
+* New feature: Create interfaces in cms-psu-api for FundsConfirmationConsent
+
+|24.04.2020| | |6.3|7.3
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|* All fixes and updates from v.6.3
+
+* New feature: FundsConfirmationConsent in Redirect approach with multilevel SCA
+
+* New feature: Add a new optional header TPP-Rejection-NoFunds-Preferred
+
+|Further development| | | |
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|* New feature: Extension of possibility returning several camt.05x files in one zip file
+
+* New feature: Create Resource Notification Push Service
 
 * _Support of Signing Basket:_
 
@@ -91,17 +195,7 @@ a|* Update to Java 11
 
 - Implement Get Authorisation Sub-resources for Signing Baskets
 
-- Add getBasketAuthorisationByAuthorisationId to CMS-PSU-API
-
-- Add getBasketIdByRedirectId to CMS-PSU-API
-
-- Add getBasketByBasketId to CMS-PSU-API
-
-- Add updatePSUInBasket to CMS-PSU-API
-
-- Add updateBasketStatus to CMS-PSU-API
-
-- Add updateBasketAuthorisationStatus to CMS-PSU-API
+- Create interfaces in cms-psu-api for Signing Basket
 
 - Implement Get Signing Basket Status Request
 
@@ -110,27 +204,5 @@ a|* Update to Java 11
 - Implement Get SCA Status request for Signing Baskets
 
 - Add calls to SPI for Signing Basket
-
-- Adjust xs2a-connector-examples for Signing Basket
-
-* _Support of FundsConfirmation Consent:_
-
-- Establish FundsConfirmationConsent
-
-- Get FundsConfirmationConsent Status + object
-
-- Revoke FundsConfirmationConsent
-
-- FundsConfirmationConsent in Redirect approach with multilevel SCA
-
-- FundsConfirmationConsent in Embedded approach with multilevel SCA
-
-- FundsConfirmationConsent in Decoupled approach with multilevel SCA
-
-- Get Authorisation Sub-resource request for FundsConfirmationConsent
-
-- Get SCA Status request for FundsConfirmationConsent
-
-- Create interfaces in cms-psu-api for FundsConfirmationConsent
 
 |===
