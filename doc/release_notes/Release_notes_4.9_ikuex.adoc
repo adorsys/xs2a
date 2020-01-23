@@ -1,0 +1,10 @@
+= Release notes v.4.9
+
+== Table of Contents
+
+* Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
+
+== Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
+
+Method `de.adorsys.psd2.consent.web.aspsp.controller.CmsAspspTppInfoController.getTppInfoWithPath` was removed.
+From now on, use `de.adorsys.psd2.consent.web.aspsp.controller.CmsAspspTppInfoController.getTppInfo` method instead.
