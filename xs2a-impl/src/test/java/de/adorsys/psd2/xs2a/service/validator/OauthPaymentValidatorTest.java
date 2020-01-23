@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,24 +37,28 @@ import java.util.stream.Stream;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORBIDDEN;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OauthPaymentValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class OauthPaymentValidatorTest {
     private static final String TOKEN = "token";
     private static final MessageError MESSAGE_ERROR = new MessageError(ErrorType.PIS_403, of(FORBIDDEN));
     private static final List<TransactionStatus> ALLOWED_WITHOUT_TOKEN = Stream.of(TransactionStatus.RCVD, TransactionStatus.PDNG, TransactionStatus.PATC).collect(Collectors.toList());
     private static final List<TransactionStatus> NOT_ALLOWED_WITHOUT_TOKEN = Stream.of(TransactionStatus.values()).filter(status -> !ALLOWED_WITHOUT_TOKEN.contains(status)).collect(Collectors.toList());
     private static final List<TransactionStatus> ALL_TRANSACTION_STATUSES = Stream.of(TransactionStatus.values()).collect(Collectors.toList());
 
-    @InjectMocks private OauthPaymentValidator oauthPaymentValidator;
-    @Mock private RequestProviderService requestProviderService;
-    @Mock private AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    @Mock private ScaApproachResolver scaApproachResolver;
+    @InjectMocks
+    private OauthPaymentValidator oauthPaymentValidator;
+    @Mock
+    private RequestProviderService requestProviderService;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
+    @Mock
+    private ScaApproachResolver scaApproachResolver;
 
     @Test
-    public void validate_invalid_tokenEmpty_approachRedirect_flowOauth() {
+    void validate_invalid_tokenEmpty_approachRedirect_flowOauth() {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);
@@ -64,7 +68,7 @@ public class OauthPaymentValidatorTest {
     }
 
     @Test
-    public void validate_invalid_tokenNull_approachRedirect_flowOauth() {
+    void validate_invalid_tokenNull_approachRedirect_flowOauth() {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);
@@ -74,7 +78,7 @@ public class OauthPaymentValidatorTest {
     }
 
     @Test
-    public void validate_valid_tokenPresent_approachRedirect_flowOauth() {
+    void validate_valid_tokenPresent_approachRedirect_flowOauth() {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);
@@ -83,7 +87,7 @@ public class OauthPaymentValidatorTest {
     }
 
     @Test
-    public void validate_valid_approachRedirect_flowOauthPreStep() {
+    void validate_valid_approachRedirect_flowOauthPreStep() {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH_PRE_STEP);
@@ -91,7 +95,7 @@ public class OauthPaymentValidatorTest {
     }
 
     @Test
-    public void validate_valid_approachEmbedded_flowOauth() {
+    void validate_valid_approachEmbedded_flowOauth() {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
         ALL_TRANSACTION_STATUSES.forEach(this::testForValid);

@@ -18,25 +18,25 @@ package de.adorsys.psd2.aspsp.profile.config;
 
 import de.adorsys.psd2.aspsp.profile.AspspProfileApplication;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(
     classes = AspspProfileApplication.class)
 @TestPropertySource(properties = {"bank_profile.path = classpath:bank_profile_no_sca_redirect_flow.yml"})
-public class BankProfileReaderConfigurationTest {
+class BankProfileReaderConfigurationTest {
     @Autowired
     private BankProfileReaderConfiguration bankProfileReaderConfiguration;
 
     @Test
-    public void profileConfigurationDefaultScaRedirectFlow() {
+    void profileConfigurationDefaultScaRedirectFlow() {
         //Given
         //When
         ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();

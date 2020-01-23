@@ -37,18 +37,18 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PisCommonDecoupledServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "c713a32c-15ff-4f90-afa0-34a500359844";
@@ -83,15 +83,15 @@ public class PisCommonDecoupledServiceTest {
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
     }
 
     @Test
-    public void proceedDecoupledInitiation_success() {
+    void proceedDecoupledInitiation_success() {
         // Given
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
@@ -105,7 +105,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledInitiation_failed() {
+    void proceedDecoupledInitiation_failed() {
         // Given
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
@@ -121,7 +121,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledInitiation_authenticationMethodId_success() {
+    void proceedDecoupledInitiation_authenticationMethodId_success() {
         // Given
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
@@ -135,7 +135,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledInitiation_authenticationMethodId_failed() {
+    void proceedDecoupledInitiation_authenticationMethodId_failed() {
         // Given
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
@@ -151,7 +151,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledCancellation_success() {
+    void proceedDecoupledCancellation_success() {
         // Given
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
@@ -165,7 +165,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledCancellation_failed() {
+    void proceedDecoupledCancellation_failed() {
         // Given
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
@@ -181,7 +181,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledCancellation_authenticationMethodId_success() {
+    void proceedDecoupledCancellation_authenticationMethodId_success() {
         // Given
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
@@ -195,7 +195,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledCancellation_authenticationMethodId_failed() {
+    void proceedDecoupledCancellation_authenticationMethodId_failed() {
         // Given
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);

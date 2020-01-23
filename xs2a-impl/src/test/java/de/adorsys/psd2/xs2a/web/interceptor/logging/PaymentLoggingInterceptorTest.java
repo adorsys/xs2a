@@ -23,12 +23,12 @@ import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,8 +36,8 @@ import java.util.Collections;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentLoggingInterceptorTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentLoggingInterceptorTest {
     private static final String TPP_IP = "1.1.1.1";
     private static final String TPP_INFO_JSON = "json/web/interceptor/logging/tpp-info.json";
     private static final String REQUEST_URI = "request_uri";
@@ -60,14 +60,30 @@ public class PaymentLoggingInterceptorTest {
 
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
+    }
+
+    @Test
+    void preHandle_pathVariableIsNull() {
+        when(pathParameterExtractor.extractParameters(any(HttpServletRequest.class))).thenReturn(null);
+
+        when(request.getRemoteAddr()).thenReturn(TPP_IP);
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+
+        interceptor.preHandle(request, response, null);
+
+        verify(pathParameterExtractor).extractParameters(any(HttpServletRequest.class));
+        verify(tppService).getTppInfo();
+        verify(request).getRemoteAddr();
+        verify(request).getRequestURI();
+    }
+
+    @Test
+    void preHandle_success() {
         when(pathParameterExtractor.extractParameters(any(HttpServletRequest.class))).thenReturn(Collections.emptyMap());
-    }
 
-    @Test
-    public void preHandle_pathVariableIsNull() {
         when(request.getRemoteAddr()).thenReturn(TPP_IP);
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
 
@@ -80,20 +96,7 @@ public class PaymentLoggingInterceptorTest {
     }
 
     @Test
-    public void preHandle_success() {
-        when(request.getRemoteAddr()).thenReturn(TPP_IP);
-        when(request.getRequestURI()).thenReturn(REQUEST_URI);
-
-        interceptor.preHandle(request, response, null);
-
-        verify(pathParameterExtractor).extractParameters(any(HttpServletRequest.class));
-        verify(tppService).getTppInfo();
-        verify(request).getRemoteAddr();
-        verify(request).getRequestURI();
-    }
-
-    @Test
-    public void afterCompletion() {
+    void afterCompletion() {
         when(response.getStatus()).thenReturn(HttpServletResponse.SC_OK);
         when(redirectIdService.getRedirectId()).thenReturn(REDIRECT_ID);
 

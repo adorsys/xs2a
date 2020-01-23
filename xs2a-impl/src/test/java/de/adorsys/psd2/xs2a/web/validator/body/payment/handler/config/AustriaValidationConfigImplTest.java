@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,22 @@
 package de.adorsys.psd2.xs2a.web.validator.body.payment.handler.config;
 
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AustriaValidationConfigImplTest {
+class AustriaValidationConfigImplTest {
     private JsonReader jsonReader = new JsonReader();
     private AustriaValidationConfigImpl actual;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         actual = new AustriaValidationConfigImpl();
     }
 
     @Test
-    public void checkConfiguration() {
+    void checkConfiguration() {
         AustriaValidationConfigImpl expected = jsonReader.getObjectFromFile("json/validation/austria-payment-validation-config.json",
                                                                             AustriaValidationConfigImpl.class);
         assertEquals(expected, actual);

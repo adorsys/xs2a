@@ -36,23 +36,23 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisConsentMapperTest {
+@ExtendWith(MockitoExtension.class)
+class AisConsentMapperTest {
     private static final String EXTERNAL_ID = "ed1d8022-1c38-49ae-898e-78f29234557c";
     private static final String ACCOUNT_IBAN = "DE89876442804656108109";
     private static final String RESOURCE_ID = "resource id";
@@ -65,8 +65,6 @@ public class AisConsentMapperTest {
     private static final String PSU_IP_ADDRESS = "PSU_IP_ADDRESS";
     private static final String TPP_AUTHORISATION_NUMBER = "TPP_AUTHORISATION_NUMBER";
     private static final String TPP_AUTHORITY_ID = "TPP_AUTHORITY_ID";
-    private static final String REDIRECT_URI = "REDIRECT_URI";
-    private static final String NOK_REDIRECT_URI = "NOK_REDIRECT_URI";
     private static final List<TppRole> TPP_ROLES = buildTppRoles();
     private static final TppInfoEntity TPP_INFO_ENTITY = buildTppInfoEntity();
     private static final TppInfo TPP_INFO = buildTppInfo();
@@ -88,15 +86,15 @@ public class AisConsentMapperTest {
     @InjectMocks
     private AisConsentMapper aisConsentMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(psuDataMapper.mapToPsuIdDataList(PSU_DATA_LIST)).thenReturn(PSU_ID_DATA_LIST);
         when(tppInfoMapper.mapToTppInfo(TPP_INFO_ENTITY)).thenReturn(TPP_INFO);
         when(psuDataMapper.mapToPsuIdData(PSU_DATA)).thenReturn(PSU_ID_DATA);
     }
 
     @Test
-    public void mapToAisAccountConsent_accountAccess_emptyAspspAccountAccesses() {
+    void mapToAisAccountConsent_accountAccess_emptyAspspAccountAccesses() {
         AisConsent aisConsent = buildAisConsentEmptyAspspAccesses();
 
         AisAccountAccess expectedAccess = buildAisAccountAccessAccounts();
@@ -108,7 +106,7 @@ public class AisConsentMapperTest {
     }
 
     @Test
-    public void mapToAisAccountConsent() {
+    void mapToAisAccountConsent() {
         // Given
         AisConsent aisConsent = buildAisConsent();
         AisAccountAccess expectedAccess = buildAisAccountAccessAccountsWithResourceId();
@@ -122,7 +120,7 @@ public class AisConsentMapperTest {
     }
 
     @Test
-    public void mapToCmsAisAccountConsent() {
+    void mapToCmsAisAccountConsent() {
         // Given
         AisConsent aisConsent = buildAisConsent();
         AisAccountAccess expectedAccess = buildAisAccountAccessAccountsWithResourceId();

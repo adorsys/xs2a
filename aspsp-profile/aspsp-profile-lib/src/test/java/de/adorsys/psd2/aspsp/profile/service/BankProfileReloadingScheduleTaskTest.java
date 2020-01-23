@@ -6,19 +6,19 @@ import de.adorsys.psd2.aspsp.profile.domain.ais.*;
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class BankProfileReloadingScheduleTaskTest {
+@ExtendWith(MockitoExtension.class)
+class BankProfileReloadingScheduleTaskTest {
     @Mock
     private BankProfileReadingService bankProfileReadingService;
     @Mock
@@ -27,14 +27,14 @@ public class BankProfileReloadingScheduleTaskTest {
     @InjectMocks
     private BankProfileReloadingScheduleTask bankProfileReloadingScheduleTask;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(bankProfileReadingService.getProfileConfiguration())
             .thenReturn(buildNewProfileConfiguration());
     }
 
     @Test
-    public void updateProfileConfiguration() {
+    void updateProfileConfiguration() {
         bankProfileReloadingScheduleTask.updateProfileConfiguration();
 
         ProfileConfiguration newProfileConfiguration = buildNewProfileConfiguration();

@@ -17,19 +17,19 @@
 package de.adorsys.psd2.xs2a.web;
 
 import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aEndpointCheckerTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aEndpointCheckerTest {
     private static final String XS2A_ENDPOINT = "/v1/accounts";
     private static final String NOT_XS2A_ENDPOINT = "/v1/gifts";
 
@@ -41,7 +41,7 @@ public class Xs2aEndpointCheckerTest {
     private MockHttpServletRequest request;
 
     @Test
-    public void isXs2aEndpoint_true() {
+    void isXs2aEndpoint_true() {
         // Given
         when(requestPathResolver.resolveRequestPath(request)).thenReturn(XS2A_ENDPOINT);
 
@@ -53,7 +53,7 @@ public class Xs2aEndpointCheckerTest {
     }
 
     @Test
-    public void isXs2aEndpoint_false() {
+    void isXs2aEndpoint_false() {
         // Given
         when(requestPathResolver.resolveRequestPath(request)).thenReturn(NOT_XS2A_ENDPOINT);
 

@@ -20,23 +20,23 @@ import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.service.CommonPaymentDataService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AspspPaymentServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class AspspPaymentServiceInternalTest {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
     private static final String PAYMENT_ID = "payment id";
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RJCT;
@@ -49,13 +49,13 @@ public class AspspPaymentServiceInternalTest {
     @Mock
     private CommonPaymentDataService commonPaymentDataService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         pisCommonPaymentData = buildPisCommonPaymentData();
     }
 
     @Test
-    public void updatePaymentStatus_Success() {
+    void updatePaymentStatus_Success() {
         // Given
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(Optional.of(pisCommonPaymentData));
         when(commonPaymentDataService.updateStatusInPaymentData(pisCommonPaymentData, TRANSACTION_STATUS)).thenReturn(true);
@@ -68,7 +68,7 @@ public class AspspPaymentServiceInternalTest {
     }
 
     @Test
-    public void updatePaymentStatus_Error() {
+    void updatePaymentStatus_Error() {
         // Given
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(Optional.empty());
 

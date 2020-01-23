@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,21 +27,20 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.link.CreateConsentLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdateConsentLinks;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ConsentAspectTest {
+@ExtendWith(MockitoExtension.class)
+class ConsentAspectTest {
     private static final String CONSENT_ID = "some consent id";
 
     @InjectMocks
@@ -60,18 +59,12 @@ public class ConsentAspectTest {
     @Mock
     private CreateConsentAuthorizationResponse createConsentAuthorisationResponse;
 
-    private AspspSettings aspspSettings;
-
-    @Before
-    public void setUp() {
-        JsonReader jsonReader = new JsonReader();
-        aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+    @Test
+    void invokeCreateAccountConsentAspect_success() {
+        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
         when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
         when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
-    }
 
-    @Test
-    public void invokeCreateAccountConsentAspect_success() {
         when(createConsentResponse.isMultilevelScaRequired()).thenReturn(true);
         when(authorisationMethodDecider.isExplicitMethod(true, true)).thenReturn(true);
 
@@ -86,8 +79,7 @@ public class ConsentAspectTest {
     }
 
     @Test
-    public void invokeCreateAccountConsentAspect_withError_shouldAddTextErrorMessage() {
-
+    void invokeCreateAccountConsentAspect_withError_shouldAddTextErrorMessage() {
         ResponseObject<CreateConsentResponse> responseObject = ResponseObject.<CreateConsentResponse>builder()
                                                                    .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                    .build();
@@ -98,7 +90,11 @@ public class ConsentAspectTest {
     }
 
     @Test
-    public void invokeCreateConsentPsuDataAspect_success() {
+    void invokeCreateConsentPsuDataAspect_success() {
+        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+
         when(updateConsentPsuDataResponse.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
 
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
@@ -112,7 +108,7 @@ public class ConsentAspectTest {
     }
 
     @Test
-    public void invokeCreateConsentPsuDataAspect_scaStatusIsNull_success() {
+    void invokeCreateConsentPsuDataAspect_scaStatusIsNull_success() {
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .body(updateConsentPsuDataResponse)
                                                                    .build();
@@ -124,7 +120,11 @@ public class ConsentAspectTest {
     }
 
     @Test
-    public void invokeCreateConsentPsuDataAspect_wrongResponseType() {
+    void invokeCreateConsentPsuDataAspect_wrongResponseType() {
+        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .body(createConsentAuthorisationResponse)
                                                                    .build();
@@ -135,7 +135,7 @@ public class ConsentAspectTest {
     }
 
     @Test
-    public void invokeCreateConsentPsuDataAspect_withError_shouldAddTextErrorMessage() {
+    void invokeCreateConsentPsuDataAspect_withError_shouldAddTextErrorMessage() {
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                    .build();
@@ -146,7 +146,11 @@ public class ConsentAspectTest {
     }
 
     @Test
-    public void invokeUpdateConsentPsuDataAspect_success() {
+    void invokeUpdateConsentPsuDataAspect_success() {
+        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+
         when(updateConsentPsuDataResponse.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
 
         ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
@@ -160,7 +164,7 @@ public class ConsentAspectTest {
     }
 
     @Test
-    public void invokeUpdateConsentPsuDataAspect_scaStatusIsNull_success() {
+    void invokeUpdateConsentPsuDataAspect_scaStatusIsNull_success() {
         ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                                                           .body(updateConsentPsuDataResponse)
                                                                           .build();
@@ -172,7 +176,7 @@ public class ConsentAspectTest {
     }
 
     @Test
-    public void invokeUpdateConsentPsuDataAspect_withError_shouldAddTextErrorMessage() {
+    void invokeUpdateConsentPsuDataAspect_withError_shouldAddTextErrorMessage() {
         ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                                                           .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                           .build();

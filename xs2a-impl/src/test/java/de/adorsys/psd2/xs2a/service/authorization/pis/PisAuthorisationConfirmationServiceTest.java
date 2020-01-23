@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -45,19 +44,19 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheck
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisAuthorisationConfirmationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class PisAuthorisationConfirmationServiceTest {
     private static final String PAYMENT_ID = "c713a32c-15ff-4f90-afa0-34a500359844";
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String CONFIRMATION_CODE = "123456";
@@ -68,8 +67,6 @@ public class PisAuthorisationConfirmationServiceTest {
     private PisAuthorisationConfirmationService pisAuthorisationConfirmationService;
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    @Mock
-    private RequestProviderService requestProviderService;
     @Mock
     private Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
     @Mock
@@ -90,7 +87,7 @@ public class PisAuthorisationConfirmationServiceTest {
     private SpiAspspConsentDataProvider aspspConsentDataProvider;
 
     @Test
-    public void processAuthorisationConfirmation_success_checkOnSpi() {
+    void processAuthorisationConfirmation_success_checkOnSpi() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
@@ -125,7 +122,7 @@ public class PisAuthorisationConfirmationServiceTest {
     }
 
     @Test
-    public void processAuthorisationConfirmation_success_checkOnXs2a() {
+    void processAuthorisationConfirmation_success_checkOnXs2a() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
@@ -147,7 +144,7 @@ public class PisAuthorisationConfirmationServiceTest {
     }
 
     @Test
-    public void processAuthorisationConfirmation_failed_NoAuthorisation() {
+    void processAuthorisationConfirmation_failed_NoAuthorisation() {
         // given
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
 
@@ -169,7 +166,7 @@ public class PisAuthorisationConfirmationServiceTest {
     }
 
     @Test
-    public void processAuthorisationConfirmation_failed_WrongScaStatus() {
+    void processAuthorisationConfirmation_failed_WrongScaStatus() {
         // given
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
 
@@ -195,7 +192,7 @@ public class PisAuthorisationConfirmationServiceTest {
     }
 
     @Test
-    public void processAuthorisationConfirmation_failed_wrongCode() {
+    void processAuthorisationConfirmation_failed_wrongCode() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
@@ -224,7 +221,7 @@ public class PisAuthorisationConfirmationServiceTest {
     }
 
     @Test
-    public void processAuthorisationConfirmation_failed_errorOnSpi() {
+    void processAuthorisationConfirmation_failed_errorOnSpi() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();

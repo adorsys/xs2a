@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,15 @@ import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class Xs2aToSpiPsuDataMapperTest {
+class Xs2aToSpiPsuDataMapperTest {
     private final static String PSU_ID = "psuId";
     private final static String PSU_ID_TYPE = "psuIdType";
     private final static String PSU_CORPORATE_ID = "psuCorporateId";
@@ -47,7 +47,7 @@ public class Xs2aToSpiPsuDataMapperTest {
     private final static Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper = new Xs2aToSpiPsuDataMapper();
 
     @Test
-    public void mapToSpiPsuData_WithAdditionalPsuData() {
+    void mapToSpiPsuData_WithAdditionalPsuData() {
         //Given
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_TYPE, PSU_IP_ADDRESS, buildAdditionalPsuData());
         SpiPsuData spiPsuDataExpected = buildSpiPsuDataWithAdditionalPsuData();
@@ -59,7 +59,7 @@ public class Xs2aToSpiPsuDataMapperTest {
     }
 
     @Test
-    public void mapToSpiPsuData_WithoutAdditionalPsuData() {
+    void mapToSpiPsuData_WithoutAdditionalPsuData() {
         //Given
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_TYPE, PSU_IP_ADDRESS);
         SpiPsuData spiPsuDataExpected = buildSpiPsuDataWithoutAdditionalPsuData();
@@ -71,7 +71,7 @@ public class Xs2aToSpiPsuDataMapperTest {
     }
 
     @Test
-    public void mapToSpiPsuData_WithoutPsuData() {
+    void mapToSpiPsuData_WithoutPsuData() {
         //Given
         SpiPsuData spiPsuDataExpected = buildEmptySpiPsuData();
         //When
@@ -82,7 +82,7 @@ public class Xs2aToSpiPsuDataMapperTest {
     }
 
     @Test
-    public void mapToSpiPsuDataList() {
+    void mapToSpiPsuDataList() {
         //Given
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_TYPE, PSU_IP_ADDRESS);
         SpiPsuData spiPsuDataExpected = buildSpiPsuDataWithoutAdditionalPsuData();
@@ -95,7 +95,7 @@ public class Xs2aToSpiPsuDataMapperTest {
     }
 
     @Test
-    public void mapToSpiPsuDataList_psuIdDataListIsNull() {
+    void mapToSpiPsuDataList_psuIdDataListIsNull() {
         //Given
         List<SpiPsuData> spiPsuDataListExpected = Collections.emptyList();
         //When

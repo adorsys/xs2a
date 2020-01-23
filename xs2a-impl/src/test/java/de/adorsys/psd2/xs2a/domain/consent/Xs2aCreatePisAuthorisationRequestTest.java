@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package de.adorsys.psd2.xs2a.domain.consent;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class Xs2aCreatePisAuthorisationRequestTest {
+class Xs2aCreatePisAuthorisationRequestTest {
     private static final String PAYMENT_ID = "payment id";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu id", null, null, null, null);
     private static final PsuIdData EMPTY_PSU_ID_DATA = new PsuIdData(null, null, null, null, null);
@@ -31,7 +31,7 @@ public class Xs2aCreatePisAuthorisationRequestTest {
     private static final String PASSWORD = "some password";
 
     @Test
-    public void hasNoUpdateData_withNoPsuIdData_shouldReturnTrue() {
+    void hasNoUpdateData_withNoPsuIdData_shouldReturnTrue() {
         // Given
         Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, EMPTY_PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, PASSWORD);
 
@@ -43,7 +43,7 @@ public class Xs2aCreatePisAuthorisationRequestTest {
     }
 
     @Test
-    public void hasNoUpdateData_withBlankPassword_shouldReturnTrue() {
+    void hasNoUpdateData_withBlankPassword_shouldReturnTrue() {
         // Given
         Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, "");
 
@@ -55,7 +55,7 @@ public class Xs2aCreatePisAuthorisationRequestTest {
     }
 
     @Test
-    public void hasNoUpdateData_withNullPassword_shouldReturnTrue() {
+    void hasNoUpdateData_withNullPassword_shouldReturnTrue() {
         // Given
         Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, null);
 
@@ -67,7 +67,7 @@ public class Xs2aCreatePisAuthorisationRequestTest {
     }
 
     @Test
-    public void hasNoUpdateData_withNoPsuIdDataAndNoPassword_shouldReturnTrue() {
+    void hasNoUpdateData_withNoPsuIdDataAndNoPassword_shouldReturnTrue() {
         // Given
         Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, EMPTY_PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, null);
 
@@ -79,7 +79,7 @@ public class Xs2aCreatePisAuthorisationRequestTest {
     }
 
     @Test
-    public void hasNoUpdateData_withPsuIdDataAndPassword_shouldReturnFalse() {
+    void hasNoUpdateData_withPsuIdDataAndPassword_shouldReturnFalse() {
         // Given
         Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, SINGLE, PASSWORD);
 

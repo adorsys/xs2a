@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@
 package de.adorsys.psd2.xs2a.service.validator;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PsuDataUpdateAuthorisationCheckerTest {
+class PsuDataUpdateAuthorisationCheckerTest {
     private static final String PSU_ID_1 = "First";
     private static final String PSU_ID_2 = "Second";
     private static final PsuDataUpdateAuthorisationChecker psuDataUpdateAuthorisationChecker = new PsuDataUpdateAuthorisationChecker();
 
     @Test
-    public void canPsuUpdateAuthorisationPsuAuthorisationNull() {
+    void canPsuUpdateAuthorisationPsuAuthorisationNull() {
         //When
         boolean canPsuUpdateAuthorisation = psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(buildPSU(PSU_ID_1), null);
         //Then
@@ -36,7 +36,7 @@ public class PsuDataUpdateAuthorisationCheckerTest {
     }
 
     @Test
-    public void canPsuUpdateAuthorisationPsuAuthorisationEmpty() {
+    void canPsuUpdateAuthorisationPsuAuthorisationEmpty() {
         //When
         boolean canPsuUpdateAuthorisation = psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(buildPSU(PSU_ID_1), buildPSU(null));
         //Then
@@ -44,7 +44,7 @@ public class PsuDataUpdateAuthorisationCheckerTest {
     }
 
     @Test
-    public void canPsuUpdateAuthorisationPsuRequestEmpty() {
+    void canPsuUpdateAuthorisationPsuRequestEmpty() {
         //When
         boolean canPsuUpdateAuthorisation = psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(buildPSU(null), buildPSU(PSU_ID_1));
         //Then
@@ -52,7 +52,7 @@ public class PsuDataUpdateAuthorisationCheckerTest {
     }
 
     @Test
-    public void canPsuUpdateAuthorisationPsuRequestEqualsPsuAuthorisation() {
+    void canPsuUpdateAuthorisationPsuRequestEqualsPsuAuthorisation() {
         //When
         boolean canPsuUpdateAuthorisation = psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(buildPSU(PSU_ID_1), buildPSU(PSU_ID_1));
         //Then
@@ -60,7 +60,7 @@ public class PsuDataUpdateAuthorisationCheckerTest {
     }
 
     @Test
-    public void canPsuUpdateAuthorisationPsuRequestNotEqualsPsuAuthorisation() {
+    void canPsuUpdateAuthorisationPsuRequestNotEqualsPsuAuthorisation() {
         //When
         boolean canPsuUpdateAuthorisation = psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(buildPSU(PSU_ID_1), buildPSU(PSU_ID_2));
         //Then
@@ -68,7 +68,7 @@ public class PsuDataUpdateAuthorisationCheckerTest {
     }
 
     @Test
-    public void canPsuUpdateAuthorisationNoPsuRequestNoPsuAuthorisation() {
+    void canPsuUpdateAuthorisationNoPsuRequestNoPsuAuthorisation() {
         //When
         boolean canPsuUpdateAuthorisation = psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(buildPSU(null), buildPSU(null));
         //Then
@@ -76,7 +76,7 @@ public class PsuDataUpdateAuthorisationCheckerTest {
     }
 
     @Test
-    public void canPsuUpdateAuthorisationNoPsuRequestPsuAuthorisationNull() {
+    void canPsuUpdateAuthorisationNoPsuRequestPsuAuthorisationNull() {
         //When
         boolean canPsuUpdateAuthorisation = psuDataUpdateAuthorisationChecker.canPsuUpdateAuthorisation(buildPSU(null), null);
         //Then
@@ -84,7 +84,7 @@ public class PsuDataUpdateAuthorisationCheckerTest {
     }
 
     @Test
-    public void areBothPsusAbsent_PsuAuthorisationNull() {
+    void areBothPsusAbsent_PsuAuthorisationNull() {
         //When
         boolean areBothPsusAbsent = psuDataUpdateAuthorisationChecker.areBothPsusAbsent(buildPSU(null), null);
         //Then
@@ -92,7 +92,7 @@ public class PsuDataUpdateAuthorisationCheckerTest {
     }
 
     @Test
-    public void areBothPsusAbsent_PsuAuthorisationEmpty() {
+    void areBothPsusAbsent_PsuAuthorisationEmpty() {
         //When
         boolean areBothPsusAbsent = psuDataUpdateAuthorisationChecker.areBothPsusAbsent(buildPSU(null), buildPSU(null));
         //Then
@@ -100,7 +100,7 @@ public class PsuDataUpdateAuthorisationCheckerTest {
     }
 
     @Test
-    public void areBothPsusAbsent_PsuAuthorisationPresent() {
+    void areBothPsusAbsent_PsuAuthorisationPresent() {
         //When
         boolean areBothPsusAbsent = psuDataUpdateAuthorisationChecker.areBothPsusAbsent(buildPSU(null), buildPSU(PSU_ID_1));
         //Then
@@ -108,7 +108,7 @@ public class PsuDataUpdateAuthorisationCheckerTest {
     }
 
     @Test
-    public void areBothPsusAbsent_PsuRequestPresent() {
+    void areBothPsusAbsent_PsuRequestPresent() {
         //When
         boolean areBothPsusAbsent = psuDataUpdateAuthorisationChecker.areBothPsusAbsent(buildPSU(PSU_ID_1), buildPSU(null));
         //Then
@@ -116,7 +116,7 @@ public class PsuDataUpdateAuthorisationCheckerTest {
     }
 
     @Test
-    public void areBothPsusAbsent_BothPsusPresent() {
+    void areBothPsusAbsent_BothPsusPresent() {
         //When
         boolean areBothPsusAbsent = psuDataUpdateAuthorisationChecker.areBothPsusAbsent(buildPSU(PSU_ID_1), buildPSU(PSU_ID_2));
         //Then

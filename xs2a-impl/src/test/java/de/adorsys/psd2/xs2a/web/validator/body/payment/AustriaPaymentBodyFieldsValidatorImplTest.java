@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,23 @@ package de.adorsys.psd2.xs2a.web.validator.body.payment;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.AustriaPaymentBodyFieldsValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.config.AustriaValidationConfigImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.config.DefaultPaymentValidationConfigImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AustriaPaymentBodyFieldsValidatorImplTest {
+class AustriaPaymentBodyFieldsValidatorImplTest {
 
     private AustriaPaymentBodyFieldsValidatorImpl validator;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         validator = new AustriaPaymentBodyFieldsValidatorImpl(null, null);
     }
 
     @Test
-    public void checkPaymentValidationConfig() {
+    void checkPaymentValidationConfig() {
         DefaultPaymentValidationConfigImpl validationConfig = validator.createPaymentValidationConfig();
         assertNotNull(validationConfig);
         assertTrue(validationConfig instanceof AustriaValidationConfigImpl);

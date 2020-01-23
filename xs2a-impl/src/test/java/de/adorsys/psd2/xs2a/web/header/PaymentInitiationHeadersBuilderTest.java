@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@ package de.adorsys.psd2.xs2a.web.header;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.NotificationModeResponseHeaders;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentInitiationHeadersBuilderTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentInitiationHeadersBuilderTest {
     private static final String AUTHORISATION_ID = "123";
     private static final String SELF_LINK = "http://v1/payments/some-payment-product/some-payment-id";
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
@@ -43,7 +43,7 @@ public class PaymentInitiationHeadersBuilderTest {
     private PaymentInitiationHeadersBuilder paymentInitiationHeadersBuilder;
 
     @Test
-    public void buildInitiatePaymentHeaders_withAuthorisationId_shouldReturnLocationAndScaApproachFromAuthorisation() {
+    void buildInitiatePaymentHeaders_withAuthorisationId_shouldReturnLocationAndScaApproachFromAuthorisation() {
         // Given
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);
@@ -64,7 +64,7 @@ public class PaymentInitiationHeadersBuilderTest {
     }
 
     @Test
-    public void buildInitiatePaymentHeaders_withoutAuthorisationId_shouldReturnLocationOnly() {
+    void buildInitiatePaymentHeaders_withoutAuthorisationId_shouldReturnLocationOnly() {
         // Given
         HttpHeaders expectedHttpHeaders = new HttpHeaders();
         expectedHttpHeaders.add(LOCATION_HEADER, SELF_LINK);
@@ -81,7 +81,7 @@ public class PaymentInitiationHeadersBuilderTest {
     }
 
     @Test
-    public void buildStartPaymentAuthorisationHeaders_shouldReturnScaApproachFromAuthorisation() {
+    void buildStartPaymentAuthorisationHeaders_shouldReturnScaApproachFromAuthorisation() {
         // Given
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);
@@ -100,7 +100,7 @@ public class PaymentInitiationHeadersBuilderTest {
     }
 
     @Test
-    public void buildUpdatePaymentInitiationPsuDataHeaders_shouldReturnScaApproachFromAuthorisation() {
+    void buildUpdatePaymentInitiationPsuDataHeaders_shouldReturnScaApproachFromAuthorisation() {
         // Given
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,11 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -38,19 +38,19 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Currency;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisScaAuthorisationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class AisScaAuthorisationServiceTest {
     @InjectMocks
     private AisScaAuthorisationService aisScaAuthorisationService;
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     @Test
-    public void isOneFactorAuthorisation_AllAvailableConsent_OneAccessTypeTrue_ScaRequiredFalse() {
+    void isOneFactorAuthorisation_AllAvailableConsent_OneAccessTypeTrue_ScaRequiredFalse() {
         //Given
         when(aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired()).thenReturn(false);
         AccountConsent consent = buildAvailableAccountConsent(true);
@@ -63,7 +63,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_AllAvailableConsent_OneAccessTypeTrue_ScaRequiredTrue() {
+    void isOneFactorAuthorisation_AllAvailableConsent_OneAccessTypeTrue_ScaRequiredTrue() {
         //Given
         when(aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired()).thenReturn(true);
         AccountConsent consent = buildAvailableAccountConsent(true);
@@ -76,7 +76,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_AllAvailableConsent_OneAccessTypeFalse() {
+    void isOneFactorAuthorisation_AllAvailableConsent_OneAccessTypeFalse() {
         //Given
         AccountConsent consent = buildAvailableAccountConsent(false);
 
@@ -88,7 +88,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_GlobalConsent_OneAccessTypeTrue_ScaRequiredFalse() {
+    void isOneFactorAuthorisation_GlobalConsent_OneAccessTypeTrue_ScaRequiredFalse() {
         //Given
         when(aspspProfileServiceWrapper.isScaByOneTimeGlobalConsentRequired()).thenReturn(false);
         AccountConsent consent = buildGlobalConsent(true);
@@ -101,7 +101,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_GlobalConsent_OneAccessTypeTrue_ScaRequiredTrue() {
+    void isOneFactorAuthorisation_GlobalConsent_OneAccessTypeTrue_ScaRequiredTrue() {
         //Given
         when(aspspProfileServiceWrapper.isScaByOneTimeGlobalConsentRequired()).thenReturn(true);
         AccountConsent consent = buildGlobalConsent(true);
@@ -114,7 +114,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_GlobalConsent_OneAccessTypeFalse() {
+    void isOneFactorAuthorisation_GlobalConsent_OneAccessTypeFalse() {
         //Given
         AccountConsent consent = buildGlobalConsent(false);
 
@@ -126,7 +126,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_BankOfferedConsent_OneAccessTypeTrue() {
+    void isOneFactorAuthorisation_BankOfferedConsent_OneAccessTypeTrue() {
         //Given
         AccountConsent consent = buildBankOfferedConsent(true);
 
@@ -138,7 +138,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_BankOfferedConsent_OneAccessTypeFalse() {
+    void isOneFactorAuthorisation_BankOfferedConsent_OneAccessTypeFalse() {
         //Given
         AccountConsent consent = buildBankOfferedConsent(false);
 
@@ -151,7 +151,7 @@ public class AisScaAuthorisationServiceTest {
 
 
     @Test
-    public void isOneFactorAuthorisation_DedicatedConsent_OneAccessTypeTrue_ScaRequiredTrue() {
+    void isOneFactorAuthorisation_DedicatedConsent_OneAccessTypeTrue_ScaRequiredTrue() {
         //Given
         AccountConsent consent = buildDedicatedConsent(true);
 
@@ -162,7 +162,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_DedicatedConsent_OneAccessTypeFalse_ScaRequiredTrue() {
+    void isOneFactorAuthorisation_DedicatedConsent_OneAccessTypeFalse_ScaRequiredTrue() {
         //Given
         AccountConsent consent = buildDedicatedConsent(false);
 
@@ -173,7 +173,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_DedicatedConsent_OneAccessTypeTrue_ScaRequiredFalse() {
+    void isOneFactorAuthorisation_DedicatedConsent_OneAccessTypeTrue_ScaRequiredFalse() {
         //Given
         AccountConsent consent = buildDedicatedConsent(true);
 

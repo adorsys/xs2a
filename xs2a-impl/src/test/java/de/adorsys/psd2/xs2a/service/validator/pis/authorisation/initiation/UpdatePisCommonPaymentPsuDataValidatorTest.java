@@ -35,29 +35,28 @@ import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCh
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationStatusValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType.PIS;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UpdatePisCommonPaymentPsuDataValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class UpdatePisCommonPaymentPsuDataValidatorTest {
     private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
 
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
@@ -68,7 +67,6 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     private static final String INVALID_AUTHORISATION_ID_FOR_ENDPOINT = "invalid authorisation id for endpoint";
     private static final String INVALID_AUTHORISATION_ID = "invalid authorisation id";
 
-    private static final UUID X_REQUEST_ID = UUID.fromString("1af360bc-13cb-40ab-9aa0-cc0d6af4510c");
     private static final String CORRECT_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String WRONG_PAYMENT_PRODUCT = "sepa-credit-transfers111";
 
@@ -106,33 +104,28 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     @InjectMocks
     private UpdatePisCommonPaymentPsuDataValidator updatePisCommonPaymentPsuDataValidator;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         // Inject pisTppInfoValidator via setter
         updatePisCommonPaymentPsuDataValidator.setPisValidators(pisTppInfoValidator);
-
-        when(pisTppInfoValidator.validateTpp(TPP_INFO))
-            .thenReturn(ValidationResult.valid());
-        when(pisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
-            .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
-
-        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
-            .thenReturn(true);
-        when(pisEndpointAccessCheckerService.isEndpointAccessible(INVALID_AUTHORISATION_ID_FOR_ENDPOINT, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
-            .thenReturn(false);
-        when(pisPsuDataUpdateAuthorisationCheckerValidator.validate(PSU_ID_DATA_1, PSU_ID_DATA_1))
-            .thenReturn(ValidationResult.valid());
-        when(authorisationStageCheckValidator.validate(any(), any(), eq(PIS)))
-            .thenReturn(ValidationResult.valid());
     }
 
     @Test
-    public void validate_withValidPaymentObject_shouldReturnValid() {
+    void validate_withValidPaymentObject_shouldReturnValid() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.RECEIVED);
         when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
             .thenReturn(ValidationResult.valid());
         when(pisAuthorisationStatusValidator.validate(ScaStatus.RECEIVED))
+            .thenReturn(ValidationResult.valid());
+
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
+            .thenReturn(true);
+        when(pisPsuDataUpdateAuthorisationCheckerValidator.validate(PSU_ID_DATA_1, PSU_ID_DATA_1))
+            .thenReturn(ValidationResult.valid());
+        when(authorisationStageCheckValidator.validate(any(), any(), eq(PIS)))
             .thenReturn(ValidationResult.valid());
 
         // When
@@ -147,10 +140,11 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidPaymentProduct_shouldReturnPaymentProductValidationError() {
+    void validate_withInvalidPaymentProduct_shouldReturnPaymentProductValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.RECEIVED);
         commonPaymentResponse.setPaymentProduct(WRONG_PAYMENT_PRODUCT);
+
         // When
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, AUTHORISATION_ID));
 
@@ -161,9 +155,11 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidTppInPayment_shouldReturnTppValidationError() {
+    void validate_withInvalidTppInPayment_shouldReturnTppValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, INVALID_TPP_INFO, ScaStatus.RECEIVED);
+
+        when(pisTppInfoValidator.validateTpp(INVALID_TPP_INFO)).thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
 
         // When
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, AUTHORISATION_ID));
@@ -177,9 +173,13 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidAuthorisationForEndpoint_shouldReturnValidationError() {
+    void validate_withInvalidAuthorisationForEndpoint_shouldReturnValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.RECEIVED);
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(INVALID_AUTHORISATION_ID_FOR_ENDPOINT, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
+            .thenReturn(false);
 
         // When
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, INVALID_AUTHORISATION_ID_FOR_ENDPOINT));
@@ -193,9 +193,13 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_withExpiredPaymentObject_shouldReturnValidationError() {
+    void validate_withExpiredPaymentObject_shouldReturnValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(REJECTED_TRANSACTION_STATUS, TPP_INFO, ScaStatus.RECEIVED);
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
+            .thenReturn(true);
 
         // When
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, AUTHORISATION_ID));
@@ -209,9 +213,11 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidTppAndExpiredPaymentAndInvalidAuthorisationForEndpoint_shouldReturnTppValidationErrorFirst() {
+    void validate_withInvalidTppAndExpiredPaymentAndInvalidAuthorisationForEndpoint_shouldReturnTppValidationErrorFirst() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(REJECTED_TRANSACTION_STATUS, INVALID_TPP_INFO, ScaStatus.RECEIVED);
+
+        when(pisTppInfoValidator.validateTpp(INVALID_TPP_INFO)).thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
 
         // When
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, INVALID_AUTHORISATION_ID_FOR_ENDPOINT));
@@ -225,13 +231,15 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidAuthorisation_shouldReturnAuthorisationValidationError() {
+    void validate_withInvalidAuthorisation_shouldReturnAuthorisationValidationError() {
         // Given
         when(pisEndpointAccessCheckerService.isEndpointAccessible(INVALID_AUTHORISATION_ID, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
             .thenReturn(true);
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.RECEIVED);
         when(pisAuthorisationValidator.validate(INVALID_AUTHORISATION_ID, commonPaymentResponse))
             .thenReturn(ValidationResult.invalid(INVALID_AUTHORISATION_ERROR));
+
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, INVALID_AUTHORISATION_ID));
@@ -245,13 +253,20 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidScaStatus_shouldReturnStatusValidationError() {
+    void validate_withInvalidScaStatus_shouldReturnStatusValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.FAILED);
         when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
             .thenReturn(ValidationResult.valid());
         when(pisAuthorisationStatusValidator.validate(ScaStatus.FAILED))
             .thenReturn(ValidationResult.invalid(STATUS_VALIDATION_ERROR));
+
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
+            .thenReturn(true);
+        when(pisPsuDataUpdateAuthorisationCheckerValidator.validate(PSU_ID_DATA_1, PSU_ID_DATA_1))
+            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1)));
@@ -265,11 +280,16 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_withNoAuthorisation_shouldReturnAuthorisationValidationError() {
+    void validate_withNoAuthorisation_shouldReturnAuthorisationValidationError() {
         //Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.RECEIVED, INVALID_AUTHORISATION_ID, PSU_ID_DATA_1);
         when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
             .thenReturn(ValidationResult.valid());
+
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
+            .thenReturn(true);
 
         //When
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1)));
@@ -281,7 +301,7 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_withBothPsusAbsent_shouldReturnFormatError() {
+    void validate_withBothPsusAbsent_shouldReturnFormatError() {
         //Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.RECEIVED, AUTHORISATION_ID, null);
         PsuIdData psuIdData = new PsuIdData(null, null, null, null, null);
@@ -291,6 +311,11 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
         when(pisPsuDataUpdateAuthorisationCheckerValidator.validate(psuIdData, null))
             .thenReturn(ValidationResult.invalid(FORMAT_BOTH_PSUS_ABSENT_ERROR));
 
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
+            .thenReturn(true);
+
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, psuIdData)));
 
         assertNotNull(validationResult);
@@ -299,7 +324,7 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_cantPsuUpdateAuthorisation_shouldReturnCredentialsInvalidError() {
+    void validate_cantPsuUpdateAuthorisation_shouldReturnCredentialsInvalidError() {
         //Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.RECEIVED, AUTHORISATION_ID, PSU_ID_DATA_2);
         when(pisPsuDataUpdateAuthorisationCheckerValidator.validate(PSU_ID_DATA_1, PSU_ID_DATA_2))
@@ -307,6 +332,11 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
 
         when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
             .thenReturn(ValidationResult.valid());
+
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
+            .thenReturn(true);
 
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1)));
 
@@ -316,7 +346,7 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_validationFailure_wrongAuthorisationStageDataProvided_received() {
+    void validate_validationFailure_wrongAuthorisationStageDataProvided_received() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.RECEIVED);
         when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
@@ -326,6 +356,13 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
         when(authorisationStageCheckValidator.validate(buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1), ScaStatus.RECEIVED, PIS))
             .thenReturn(ValidationResult.invalid(PIS_400, SERVICE_INVALID_400));
 
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
+            .thenReturn(true);
+        when(pisPsuDataUpdateAuthorisationCheckerValidator.validate(PSU_ID_DATA_1, PSU_ID_DATA_1))
+            .thenReturn(ValidationResult.valid());
+
         // When
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, AUTHORISATION_ID));
 
@@ -338,7 +375,7 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_validationFailure_wrongAuthorisationStageDataProvided_psuidentified() {
+    void validate_validationFailure_wrongAuthorisationStageDataProvided_psuidentified() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.PSUIDENTIFIED);
         when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
@@ -348,6 +385,13 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
         when(authorisationStageCheckValidator.validate(buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1), ScaStatus.PSUIDENTIFIED, PIS))
             .thenReturn(ValidationResult.invalid(PIS_400, SERVICE_INVALID_400));
 
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
+            .thenReturn(true);
+        when(pisPsuDataUpdateAuthorisationCheckerValidator.validate(PSU_ID_DATA_1, PSU_ID_DATA_1))
+            .thenReturn(ValidationResult.valid());
+
         // When
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, AUTHORISATION_ID));
 
@@ -360,7 +404,7 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_validationFailure_wrongAuthorisationStageDataProvided_psuauthenticated() {
+    void validate_validationFailure_wrongAuthorisationStageDataProvided_psuauthenticated() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.PSUAUTHENTICATED);
         when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
@@ -370,6 +414,13 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
         when(authorisationStageCheckValidator.validate(buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1), ScaStatus.PSUAUTHENTICATED, PIS))
             .thenReturn(ValidationResult.invalid(PIS_400, SERVICE_INVALID_400));
 
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
+            .thenReturn(true);
+        when(pisPsuDataUpdateAuthorisationCheckerValidator.validate(PSU_ID_DATA_1, PSU_ID_DATA_1))
+            .thenReturn(ValidationResult.valid());
+
         // When
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, AUTHORISATION_ID));
 
@@ -382,7 +433,7 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
     }
 
     @Test
-    public void validate_validationFailure_wrongAuthorisationStageDataProvided_scamethodselected() {
+    void validate_validationFailure_wrongAuthorisationStageDataProvided_scamethodselected() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.SCAMETHODSELECTED);
         when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
@@ -391,6 +442,13 @@ public class UpdatePisCommonPaymentPsuDataValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(authorisationStageCheckValidator.validate(buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1), ScaStatus.SCAMETHODSELECTED, PIS))
             .thenReturn(ValidationResult.invalid(PIS_400, SERVICE_INVALID_400));
+
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CREATED, CONFIRMATION_CODE_RECEIVED_FALSE))
+            .thenReturn(true);
+        when(pisPsuDataUpdateAuthorisationCheckerValidator.validate(PSU_ID_DATA_1, PSU_ID_DATA_1))
+            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, AUTHORISATION_ID));

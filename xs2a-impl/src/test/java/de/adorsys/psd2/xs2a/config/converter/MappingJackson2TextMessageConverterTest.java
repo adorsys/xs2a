@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@
 package de.adorsys.psd2.xs2a.config.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MappingJackson2TextMessageConverterTest {
+class MappingJackson2TextMessageConverterTest {
     @Test
-    public void checkSupportedMediaTypes() {
+    void checkSupportedMediaTypes() {
         ObjectMapper mockedObjectMapper = Mockito.mock(ObjectMapper.class);
         MappingJackson2TextMessageConverter messageConverter = new MappingJackson2TextMessageConverter(mockedObjectMapper);
         List<MediaType> supportedMediaTypes = messageConverter.getSupportedMediaTypes();

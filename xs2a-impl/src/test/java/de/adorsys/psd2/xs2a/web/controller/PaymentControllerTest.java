@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,13 +56,12 @@ import de.adorsys.psd2.xs2a.web.mapper.*;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -76,13 +75,13 @@ import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_404;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentControllerTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentControllerTest {
     private static final String CORRECT_PAYMENT_ID = "33333-444444-55555-55555";
     private static final String CORRECT_PAYMENT_ID_2 = "33333-444444-55555-66666";
     private static final String WRONG_PAYMENT_ID = "wrong_payment_id";
@@ -95,7 +94,7 @@ public class PaymentControllerTest {
     private static final String TPP_NOTIFICATION_URI = "http://localhost/notifications";
     private static final String TPP_NOTIFICATION_CONTENT_PREFERRED = "status=SCA";
     private static final List<NotificationSupportedMode> TPP_NOTIFICATION_MODES = Collections.singletonList(NotificationSupportedMode.SCA);
-    private static final TppNotificationData TPP_NOTIFICATION_DATA =   new TppNotificationData(TPP_NOTIFICATION_MODES, TPP_NOTIFICATION_URI);
+    private static final TppNotificationData TPP_NOTIFICATION_DATA = new TppNotificationData(TPP_NOTIFICATION_MODES, TPP_NOTIFICATION_URI);
     private static final UUID REQUEST_ID = UUID.fromString("ddd36e05-d67a-4830-93ad-9462f71ae1e6");
     private static final String AUTHORISATION_ID = "3e96e9e0-9974-42aa-beb8-003e91416652";
     private static final String CANCELLATION_AUTHORISATION_ID = "d7ba791c-2231-4ed5-8232-cb1ad4cf7332";
@@ -146,22 +145,12 @@ public class PaymentControllerTest {
 
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void setUp() {
+    @Test
+    void getPaymentById() {
+        // Given
         when(xs2aPaymentService.getPaymentById(eq(SINGLE), eq(PRODUCT), eq(CORRECT_PAYMENT_ID)))
             .thenReturn(ResponseObject.builder().body(getXs2aPayment()).build());
 
-        when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(CORRECT_PAYMENT_ID)))
-            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_JSON, null)).build());
-        when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(WRONG_PAYMENT_ID)))
-            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403)).build());
-        when(notificationSupportedModeService.getTppNotificationData(any(), any()))
-            .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
-    }
-
-    @Test
-    public void getPaymentById() {
-        // Given
         doReturn(new ResponseEntity<>(getPaymentInitiationResponse(de.adorsys.psd2.model.TransactionStatus.ACCP), OK))
             .when(responseMapper).ok(any());
 
@@ -179,7 +168,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentById_Failure() {
+    void getPaymentById_Failure() {
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_404, RESOURCE_UNKNOWN_404))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
 
         // When
@@ -205,7 +194,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationStatus_withJsonContentType_success() {
+    void getPaymentInitiationStatus_withJsonContentType_success() {
         // Given
         doReturn(new ResponseEntity<>(getPaymentInitiationStatus(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -229,7 +218,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationStatus_withCustomContentType_success() {
+    void getPaymentInitiationStatus_withCustomContentType_success() {
         // Given
         byte[] rawPaymentStatus = "some raw value".getBytes();
         doReturn(new ResponseEntity<>(rawPaymentStatus, HttpStatus.OK))
@@ -251,7 +240,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationStatus_WrongId() {
+    void getPaymentInitiationStatus_WrongId() {
         // Given
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
         when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, WRONG_PAYMENT_ID)).thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().fail(createMessageError(PIS_403, RESOURCE_UNKNOWN_403)).build());
@@ -270,7 +259,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void cancelPayment_WithoutAuthorisation_Success() {
+    void cancelPayment_WithoutAuthorisation_Success() {
         PisPaymentCancellationRequest paymentCancellationRequest = new PisPaymentCancellationRequest(SINGLE, PRODUCT, CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), null);
         when(paymentModelMapperPsd2.mapToPaymentCancellationRequest(PRODUCT, CORRECT_PAYMENT_SERVICE, CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), null, null))
             .thenReturn(paymentCancellationRequest);
@@ -297,7 +286,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void cancelPayment_WithAuthorisation_Success() {
+    void cancelPayment_WithAuthorisation_Success() {
         PisPaymentCancellationRequest paymentCancellationRequest = new PisPaymentCancellationRequest(SINGLE, PRODUCT, CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), null);
 
         when(responseMapper.accepted(any()))
@@ -343,7 +332,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void cancelPayment_WithAuthorisation_Fail_FinalisedStatus() {
+    void cancelPayment_WithAuthorisation_Fail_FinalisedStatus() {
         // Given
         PisPaymentCancellationRequest paymentCancellationRequest = new PisPaymentCancellationRequest(SINGLE, PRODUCT, CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), null);
 
@@ -366,7 +355,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationScaStatus_success() {
+    void getPaymentInitiationScaStatus_success() {
         // Given
         ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> responseObject = ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
                                                                                      .body(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED)
@@ -394,7 +383,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationScaStatus_IncorrectPaymentType() {
+    void getPaymentInitiationScaStatus_IncorrectPaymentType() {
         // Given
         when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
             .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
@@ -415,7 +404,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationScaStatus_failure() {
+    void getPaymentInitiationScaStatus_failure() {
         // Given
         when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(WRONG_PAYMENT_ID, AUTHORISATION_ID, SINGLE, PRODUCT))
             .thenReturn(buildScaStatusError());
@@ -436,7 +425,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentCancellationScaStatus_success() {
+    void getPaymentCancellationScaStatus_success() {
         // Given
         ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> responseObject = ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
                                                                                      .body(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED)
@@ -464,7 +453,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentCancellationScaStatus_IncorrectPaymentPaymentType() {
+    void getPaymentCancellationScaStatus_IncorrectPaymentPaymentType() {
         // Given
         when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
             .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
@@ -485,7 +474,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentCancellationScaStatus_failure() {
+    void getPaymentCancellationScaStatus_failure() {
         // Given
         when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PRODUCT))
             .thenReturn(buildScaStatusError());
@@ -506,7 +495,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationCancellationAuthorisationInformationClassCheck_success() {
+    void getPaymentInitiationCancellationAuthorisationInformationClassCheck_success() {
         // Given
         List<String> cancellationsList = Collections.singletonList(CORRECT_PAYMENT_ID);
         ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> cancellationResponseList = getCancellationResponseList(cancellationsList);
@@ -533,7 +522,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationCancellationAuthorisationInformationClassCheck_IncorrectPaymentType() {
+    void getPaymentInitiationCancellationAuthorisationInformationClassCheck_IncorrectPaymentType() {
         // Given
         when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
             .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
@@ -554,7 +543,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationCancellationAuthorisationInformation_MethodMapperCheck() {
+    void getPaymentInitiationCancellationAuthorisationInformation_MethodMapperCheck() {
         // noinspection unchecked
         ArgumentCaptor<Function<Xs2aPaymentCancellationAuthorisationSubResource, Cancellations>> argumentCaptor = ArgumentCaptor.forClass(Function.class);
 
@@ -584,7 +573,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationCancellationAuthorisationInformation_success() {
+    void getPaymentInitiationCancellationAuthorisationInformation_success() {
         // Given
         List<String> cancellationsList = Collections.singletonList(CORRECT_PAYMENT_ID);
         ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> cancellationResponseList = getCancellationResponseList(cancellationsList);
@@ -613,7 +602,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationCancellationAuthorisationInformationManyIds_success() {
+    void getPaymentInitiationCancellationAuthorisationInformationManyIds_success() {
         // Given
         List<String> cancellationsList = Arrays.asList(CORRECT_PAYMENT_ID, CORRECT_PAYMENT_ID_2);
         ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> cancellationResponseList = getCancellationResponseList(cancellationsList);
@@ -641,7 +630,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationCancellationAuthorisationInformationWithNull_success() {
+    void getPaymentInitiationCancellationAuthorisationInformationWithNull_success() {
         // Given
         List<String> cancellationsList = new ArrayList<>();
         ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> cancellationResponseList = getCancellationResponseNullList();
@@ -669,7 +658,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationCancellationAuthorisationInformation_error() {
+    void getPaymentInitiationCancellationAuthorisationInformation_error() {
         // Given
         when(responseErrorMapper.generateErrorResponse(any()))
             .thenReturn(ResponseEntity.status(FORBIDDEN).build());
@@ -692,7 +681,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void initiatePayment_Failure_PaymentServiceIsNotPresent() {
+    void initiatePayment_Failure_PaymentServiceIsNotPresent() {
         when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
             .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
 
@@ -709,8 +698,11 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void initiatePayment_Failure_ErrorInServiceResponse() {
+    void initiatePayment_Failure_ErrorInServiceResponse() {
         // Given
+        when(notificationSupportedModeService.getTppNotificationData(any(), any()))
+            .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
+
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
                                                                   TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
@@ -738,8 +730,11 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void initiatePaymentForRaw_Success() {
+    void initiatePaymentForRaw_Success() {
         // Given
+        when(notificationSupportedModeService.getTppNotificationData(any(), any()))
+            .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
+
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
                                                                   TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
@@ -771,8 +766,11 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void initiatePayment_Failure_CreatePaymentHasError() {
+    void initiatePayment_Failure_CreatePaymentHasError() {
         // Given
+        when(notificationSupportedModeService.getTppNotificationData(any(), any()))
+            .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
+
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
                                                                   TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
@@ -801,8 +799,11 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void initiatePayment_Success() {
+    void initiatePayment_Success() {
         // Given
+        when(notificationSupportedModeService.getTppNotificationData(any(), any()))
+            .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
+
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
                                                                   TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
@@ -836,7 +837,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void initiatePayment_IncorrectPaymentPaymentType() {
+    void initiatePayment_IncorrectPaymentPaymentType() {
         // Given
         when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
             .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
@@ -856,7 +857,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void initiatePayment_XML_Failure_PaymentServiceIsNotPresent() {
+    void initiatePayment_XML_Failure_PaymentServiceIsNotPresent() {
         // Given
         when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -873,8 +874,11 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void initiatePayment_XML_Failure_CreatePaymentHasError() {
+    void initiatePayment_XML_Failure_CreatePaymentHasError() {
         // Given
+        when(notificationSupportedModeService.getTppNotificationData(any(), any()))
+            .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
+
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
                                                                   TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
@@ -901,8 +905,11 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void initiatePayment_XML_Success() {
+    void initiatePayment_XML_Success() {
         // Given
+        when(notificationSupportedModeService.getTppNotificationData(any(), any()))
+            .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
+
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
                                                                   TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
@@ -934,8 +941,11 @@ public class PaymentControllerTest {
         assertThat(actual.getBody()).isEqualTo(expectedResponseObject);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void initiatePayment_XML_WithException() {
+    @Test
+    void initiatePayment_XML_WithException() {
+        when(notificationSupportedModeService.getTppNotificationData(any(), any()))
+            .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
+
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
                                                                   TPP_NOTIFICATION_DATA))
             .thenReturn(paymentInitiationParameters);
@@ -946,15 +956,15 @@ public class PaymentControllerTest {
         when(xs2aPaymentService.createPayment(PAYMENT_OBJECT, paymentInitiationParameters))
             .thenReturn(buildSuccessResponseObjectWithLinksNullType());
 
-        paymentController.initiatePayment(REQUEST_ID, PSU_IP_ADDRESS, CORRECT_PAYMENT_SERVICE, PRODUCT,
-                                          XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                          null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
-                                          TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
-                                          null, null, null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> paymentController.initiatePayment(REQUEST_ID, PSU_IP_ADDRESS, CORRECT_PAYMENT_SERVICE, PRODUCT,
+                                                                                             XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
+                                                                                             null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
+                                                                                             TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
+                                                                                             null, null, null, null, null));
     }
 
     @Test
-    public void startPaymentInitiationCancellationAuthorisation() {
+    void startPaymentInitiationCancellationAuthorisation() {
         // Given
         String password = "some password";
         Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
@@ -998,7 +1008,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void startPaymentInitiationCancellationAuthorisation_IncorrectPaymentType() {
+    void startPaymentInitiationCancellationAuthorisation_IncorrectPaymentType() {
         // Given
         Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
         });
@@ -1018,7 +1028,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void startPaymentInitiationCancellationAuthorisation_withServiceError_shouldReturnError() {
+    void startPaymentInitiationCancellationAuthorisation_withServiceError_shouldReturnError() {
         // Given
         String password = "some password";
 
@@ -1060,7 +1070,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void updatePaymentCancellationPsuData() {
+    void updatePaymentCancellationPsuData() {
         // Given
         Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
         });
@@ -1104,7 +1114,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void updatePaymentCancellationPsuData_IncorrectPaymentType() {
+    void updatePaymentCancellationPsuData_IncorrectPaymentType() {
         // Given
         Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
         });
@@ -1124,7 +1134,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void updatePaymentCancellationPsuData_withServiceError_shouldReturnError() {
+    void updatePaymentCancellationPsuData_withServiceError_shouldReturnError() {
         // Given
         MessageError serviceError = new MessageError(PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
 
@@ -1166,7 +1176,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void updatePaymentPsuData() {
+    void updatePaymentPsuData() {
         // Given
         Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
         });
@@ -1210,7 +1220,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void updatePaymentPsuData_IncorrectPaymentType() {
+    void updatePaymentPsuData_IncorrectPaymentType() {
         // Given
         Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
         });
@@ -1230,7 +1240,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void updatePaymentPsuData_withServiceError_shouldReturnError() {
+    void updatePaymentPsuData_withServiceError_shouldReturnError() {
         // Given
         MessageError serviceError = new MessageError(PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
 
@@ -1272,7 +1282,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationAuthorisation_IncorrectPaymentType() {
+    void getPaymentInitiationAuthorisation_IncorrectPaymentType() {
         // Given
         when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
             .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
@@ -1291,7 +1301,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationAuthorisation_Success() {
+    void getPaymentInitiationAuthorisation_Success() {
         // Given
         ResponseObject<Xs2aAuthorisationSubResources> responseObject = ResponseObject.<Xs2aAuthorisationSubResources>builder()
                                                                            .body(new Xs2aAuthorisationSubResources(getAuthorisations()))
@@ -1315,7 +1325,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getPaymentInitiationAuthorisation_ErrorInServiceResponse() {
+    void getPaymentInitiationAuthorisation_ErrorInServiceResponse() {
         // Given
         ResponseObject<Xs2aAuthorisationSubResources> responseObject = ResponseObject.<Xs2aAuthorisationSubResources>builder()
                                                                            .fail(PIS_404_MESSAGE_ERROR)
@@ -1338,7 +1348,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void startPaymentAuthorisation_IncorrectPaymentType() {
+    void startPaymentAuthorisation_IncorrectPaymentType() {
         // Given
         when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
             .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
@@ -1358,7 +1368,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void startPaymentAuthorisation_Success() {
+    void startPaymentAuthorisation_Success() {
         // Given
         String password = "some password";
         Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {

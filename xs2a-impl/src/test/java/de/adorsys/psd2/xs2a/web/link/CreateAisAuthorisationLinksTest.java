@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,17 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CreateAisAuthorisationLinksTest {
     private static final String HTTP_URL = "http://url";
     private static final String CONSENT_ID = "9mp1PaotpXSToNCi";
@@ -56,8 +56,8 @@ public class CreateAisAuthorisationLinksTest {
     private Links expectedLinks;
     private ScaRedirectFlow scaRedirectFlow;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         expectedLinks = new Links();
         scaRedirectFlow = ScaRedirectFlow.REDIRECT;
 
@@ -68,7 +68,7 @@ public class CreateAisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodAuthenticated_redirectScaApproachOauth() {
+    void isScaStatusMethodAuthenticated_redirectScaApproachOauth() {
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildConsentScaOauthRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
@@ -82,7 +82,7 @@ public class CreateAisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodAuthenticated_redirectScaApproach() {
+    void isScaStatusMethodAuthenticated_redirectScaApproach() {
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
@@ -95,7 +95,7 @@ public class CreateAisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodAuthenticated_redirectScaApproach_confirmation() {
+    void isScaStatusMethodAuthenticated_redirectScaApproach_confirmation() {
         // Given
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
@@ -114,7 +114,7 @@ public class CreateAisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodAuthenticated_embeddedScaApproach() {
+    void isScaStatusMethodAuthenticated_embeddedScaApproach() {
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
         links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false);
@@ -125,7 +125,7 @@ public class CreateAisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodAuthenticated_decoupledScaApproach() {
+    void isScaStatusMethodAuthenticated_decoupledScaApproach() {
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
         links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false);
@@ -136,7 +136,7 @@ public class CreateAisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodAuthenticated_oauthScaApproach() {
+    void isScaStatusMethodAuthenticated_oauthScaApproach() {
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.OAUTH);
 
         links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false);

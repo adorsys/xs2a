@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package de.adorsys.psd2.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class PeriodicPaymentInitiationWithStatusResponseTest {
+class PeriodicPaymentInitiationWithStatusResponseTest {
     private final Class clazz = PeriodicPaymentInitiationWithStatusResponse.class;
 
     @Test
-    public void checkFieldsForExistence() {
+    void checkFieldsForExistence() {
         try {
             CommonModelTest.checkUltimateDebtorField(clazz);
             CommonModelTest.checkUltimateCreditorField(clazz);

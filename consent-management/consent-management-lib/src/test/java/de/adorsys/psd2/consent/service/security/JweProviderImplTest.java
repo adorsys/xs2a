@@ -18,22 +18,22 @@ package de.adorsys.psd2.consent.service.security;
 
 import de.adorsys.psd2.consent.service.security.provider.jwe.JweCryptoProviderImpl;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class JweProviderImplTest {
+@ExtendWith(MockitoExtension.class)
+class JweProviderImplTest {
 
-    JweCryptoProviderImpl jweCryptoProvider = new JweCryptoProviderImpl("gQ8wkMeo93", 256, 32, "PBKDF2WithHmacSHA256");
+    private JweCryptoProviderImpl jweCryptoProvider = new JweCryptoProviderImpl("gQ8wkMeo93", 256, 32, "PBKDF2WithHmacSHA256");
 
     @Test
-    public void encryptionDecryptionJwe() {
+    void encryptionDecryptionJwe() {
         // Given
         String secretKey = RandomStringUtils.random(16, true, true);
 
@@ -43,19 +43,19 @@ public class JweProviderImplTest {
         Optional<EncryptedData> encryptData = jweCryptoProvider.encryptData(data.getBytes(), secretKey);
 
         // Then
-        assertThat(encryptData.isPresent()).isTrue();
-        assertThat(encryptData.get().getData().length > 0).isTrue();
+        assertTrue(encryptData.isPresent());
+        assertTrue(encryptData.get().getData().length > 0);
 
         // When
         Optional<DecryptedData> decryptData = jweCryptoProvider.decryptData(encryptData.get().getData(), secretKey);
 
-        assertThat(decryptData.isPresent()).isTrue();
-        assertThat(decryptData.get().getData().length > 0).isTrue();
-        assertThat(new String(decryptData.get().getData())).isEqualTo(data);
+        assertTrue(decryptData.isPresent());
+        assertTrue(decryptData.get().getData().length > 0);
+        assertEquals(data, new String(decryptData.get().getData()));
     }
 
     @Test
-    public void encryptionDecryptionJwe_wrong_password() {
+    void encryptionDecryptionJwe_wrong_password() {
         // Given
         String secretKey = RandomStringUtils.random(16, true, true);
         String wrongSecretKey = RandomStringUtils.random(16, true, true);
@@ -66,11 +66,11 @@ public class JweProviderImplTest {
         Optional<EncryptedData> encryptData = jweCryptoProvider.encryptData(data.getBytes(), secretKey);
 
         // Then
-        assertThat(encryptData.isPresent()).isTrue();
-        assertThat(encryptData.get().getData().length > 0).isTrue();
+        assertTrue(encryptData.isPresent());
+        assertTrue(encryptData.get().getData().length > 0);
 
         // When
         Optional<DecryptedData> decryptData = jweCryptoProvider.decryptData(encryptData.get().getData(), wrongSecretKey);
-        assertThat(decryptData.isPresent()).isFalse();
+        assertFalse(decryptData.isPresent());
     }
 }

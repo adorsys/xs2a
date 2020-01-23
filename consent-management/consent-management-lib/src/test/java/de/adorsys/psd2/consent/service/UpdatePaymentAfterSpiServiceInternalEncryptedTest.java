@@ -22,20 +22,20 @@ import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
+@ExtendWith(MockitoExtension.class)
+class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
     private static final String ENCRYPTED_PAYMENT_ID = "encrypted payment id";
     private static final String WRONG_ENCRYPTED_PAYMENT_ID = "wrong encrypted payment id";
     private static final String UNDECRYPTABLE_PAYMENT_ID = "undecryptable payment id";
@@ -51,13 +51,13 @@ public class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
     private SecurityDataService securityDataService;
     private TppRedirectUri tppRedirectUri;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         tppRedirectUri = new TppRedirectUri("ok_url", "nok_url");
     }
 
     @Test
-    public void updatePaymentStatus_success() {
+    void updatePaymentStatus_success() {
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(eq(DECRYPTED_PAYMENT_ID), any()))
             .thenReturn(CmsResponse.<Boolean>builder()
@@ -75,7 +75,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updatePaymentStatus_failure_wrongPaymentId() {
+    void updatePaymentStatus_failure_wrongPaymentId() {
         when(securityDataService.decryptId(WRONG_ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(WRONG_DECRYPTED_PAYMENT_ID));
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(eq(WRONG_DECRYPTED_PAYMENT_ID), any()))
             .thenReturn(CmsResponse.<Boolean>builder()
@@ -93,7 +93,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updatePaymentStatus_failure_decryptionFailed() {
+    void updatePaymentStatus_failure_decryptionFailed() {
         when(securityDataService.decryptId(UNDECRYPTABLE_PAYMENT_ID)).thenReturn(Optional.empty());
 
         // When
@@ -107,7 +107,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updatePaymentCancellationTppRedirectUri_success() {
+    void updatePaymentCancellationTppRedirectUri_success() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
         when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(eq(DECRYPTED_PAYMENT_ID), eq(tppRedirectUri)))
@@ -127,7 +127,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updatePaymentCancellationTppRedirectUri_failure_wrongPaymentId() {
+    void updatePaymentCancellationTppRedirectUri_failure_wrongPaymentId() {
         // Given
         when(securityDataService.decryptId(WRONG_ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(WRONG_DECRYPTED_PAYMENT_ID));
         when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(eq(WRONG_DECRYPTED_PAYMENT_ID), eq(tppRedirectUri)))
@@ -147,7 +147,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updatePaymentCancellationTppRedirectUri_failure_decryptionFailed() {
+    void updatePaymentCancellationTppRedirectUri_failure_decryptionFailed() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.empty());
 
@@ -163,7 +163,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updatePaymentCancellationInternalRequestId_success() {
+    void updatePaymentCancellationInternalRequestId_success() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
         when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(eq(DECRYPTED_PAYMENT_ID), eq(INTERNAL_REQUEST_ID)))

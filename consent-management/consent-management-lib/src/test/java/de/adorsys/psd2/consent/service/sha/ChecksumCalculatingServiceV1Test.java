@@ -19,14 +19,14 @@ package de.adorsys.psd2.consent.service.sha;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.sha.ChecksumConstant;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ChecksumCalculatingServiceV1Test {
+@ExtendWith(MockitoExtension.class)
+class ChecksumCalculatingServiceV1Test {
     private static final String VERSION_01 = "001";
     private static final byte[] WRONG_CHECKSUM = "checksum in consent".getBytes();
     private static final byte[] WRONG_CHECKSUM_WITH_DELIMITER = ("checksum in consent" + ChecksumConstant.DELIMITER).getBytes();
@@ -37,7 +37,7 @@ public class ChecksumCalculatingServiceV1Test {
     private final ChecksumCalculatingServiceV1 checksumCalculatingServiceV1 = new ChecksumCalculatingServiceV1();
 
     @Test
-    public void verifyConsentWithChecksum_success_tppAccesses() {
+    void verifyConsentWithChecksum_success_tppAccesses() {
         // given
         AisConsent aisConsent = buildConsentTpp();
 
@@ -45,11 +45,11 @@ public class ChecksumCalculatingServiceV1Test {
         boolean actualResult = checksumCalculatingServiceV1.verifyConsentWithChecksum(aisConsent, CHECKSUM_TPP_ACCESS);
 
         // then
-        assertThat(actualResult).isTrue();
+        assertTrue(actualResult);
     }
 
     @Test
-    public void verifyConsentWithChecksum_success_aspspAccesses() {
+    void verifyConsentWithChecksum_success_aspspAccesses() {
         // given
         AisConsent aisConsent = buildConsentAspsp();
 
@@ -57,12 +57,12 @@ public class ChecksumCalculatingServiceV1Test {
         boolean actualResult = checksumCalculatingServiceV1.verifyConsentWithChecksum(aisConsent, CHECKSUM_ASPSP_ACCESS);
 
         // then
-        assertThat(actualResult).isTrue();
+        assertTrue(actualResult);
     }
 
 
     @Test
-    public void verifyConsentWithChecksum_wrongChecksum() {
+    void verifyConsentWithChecksum_wrongChecksum() {
         // given
         AisConsent aisConsent = buildConsentTpp();
 
@@ -70,11 +70,11 @@ public class ChecksumCalculatingServiceV1Test {
         boolean actualResult = checksumCalculatingServiceV1.verifyConsentWithChecksum(aisConsent, WRONG_CHECKSUM);
 
         // then
-        assertThat(actualResult).isFalse();
+        assertFalse(actualResult);
     }
 
     @Test
-    public void verifyConsentWithChecksum_wrongChecksumWithDelimiter() {
+    void verifyConsentWithChecksum_wrongChecksumWithDelimiter() {
         // given
         AisConsent aisConsent = buildConsentTpp();
 
@@ -82,11 +82,11 @@ public class ChecksumCalculatingServiceV1Test {
         boolean actualResult = checksumCalculatingServiceV1.verifyConsentWithChecksum(aisConsent, WRONG_CHECKSUM_WITH_DELIMITER);
 
         // then
-        assertThat(actualResult).isFalse();
+        assertFalse(actualResult);
     }
 
     @Test
-    public void calculateChecksumForConsent_success() {
+    void calculateChecksumForConsent_success() {
         // given
         AisConsent aisConsent = buildConsentTpp();
 
@@ -94,11 +94,11 @@ public class ChecksumCalculatingServiceV1Test {
         byte[] actualResult = checksumCalculatingServiceV1.calculateChecksumForConsent(aisConsent);
 
         // then
-        assertThat(actualResult).isEqualTo(CHECKSUM_TPP_ACCESS);
+        assertArrayEquals(CHECKSUM_TPP_ACCESS, actualResult);
     }
 
     @Test
-    public void calculateChecksumForConsent_success_aspspAccesses() {
+    void calculateChecksumForConsent_success_aspspAccesses() {
         // given
         AisConsent aisConsent = buildConsentAspsp();
 
@@ -106,16 +106,16 @@ public class ChecksumCalculatingServiceV1Test {
         byte[] actualResult = checksumCalculatingServiceV1.calculateChecksumForConsent(aisConsent);
 
         // then
-        assertThat(actualResult).isEqualTo(CHECKSUM_ASPSP_ACCESS);
+        assertArrayEquals(CHECKSUM_ASPSP_ACCESS, actualResult);
     }
 
     @Test
-    public void getVersion_success() {
+    void getVersion_success() {
         // when
         String actualResult = checksumCalculatingServiceV1.getVersion();
 
         //then
-        assertThat(actualResult).isEqualTo(VERSION_01);
+        assertEquals(VERSION_01, actualResult);
     }
 
     private AisConsent buildConsentTpp() {

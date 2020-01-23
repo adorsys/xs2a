@@ -20,18 +20,18 @@ import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ais.AccountAdditionalInformationAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TppAccountAccessHolderTest {
+class TppAccountAccessHolderTest {
 
     @Test
-    public void tppAccountAccessHolder_noAdditionalInformation() {
+    void tppAccountAccessHolder_noAdditionalInformation() {
         //Given
         AisAccountAccessInfo aisAccountAccessInfo = new AisAccountAccessInfo();
         //When
@@ -42,7 +42,7 @@ public class TppAccountAccessHolderTest {
     }
 
     @Test
-    public void tppAccountAccessHolder_ownerName() {
+    void tppAccountAccessHolder_ownerName() {
         //Given
         AccountReferenceType accountReferenceType = AccountReferenceType.IBAN;
         String accountIdentifier = "IBAN";

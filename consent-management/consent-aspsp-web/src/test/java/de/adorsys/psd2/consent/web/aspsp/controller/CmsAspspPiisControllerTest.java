@@ -22,12 +22,12 @@ import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,8 +44,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspPiisControllerTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspPiisControllerTest {
     private final String CONSENT_ID = "03f0fccb-8462-43e8-9f7e-fce2887bcf38";
     private final String CREATE_PIIS_CONSENT_URL = "/aspsp-api/v1/piis/consents/";
     private final String DELETE_PIIS_CONSENT_URL = "/aspsp-api/v1/piis/consents/03f0fccb-8462-43e8-9f7e-fce2887bcf38";
@@ -69,8 +69,8 @@ public class CmsAspspPiisControllerTest {
     @Mock
     private CmsAspspPiisService cmsAspspPiisService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
 
         psuIdData = jsonReader.getObjectFromFile("json/psu-id-data.json", PsuIdData.class);
@@ -88,7 +88,7 @@ public class CmsAspspPiisControllerTest {
     }
 
     @Test
-    public void createConsent_Success() throws Exception {
+    void createConsent_Success() throws Exception {
         when(cmsAspspPiisService.createConsent(psuIdData, createPiisConsentRequest))
             .thenReturn(Optional.of(CONSENT_ID));
 
@@ -103,7 +103,7 @@ public class CmsAspspPiisControllerTest {
     }
 
     @Test
-    public void createConsent_BadRequest() throws Exception {
+    void createConsent_BadRequest() throws Exception {
         when(cmsAspspPiisService.createConsent(psuIdData, createPiisConsentRequest))
             .thenReturn(Optional.empty());
 
@@ -117,7 +117,7 @@ public class CmsAspspPiisControllerTest {
     }
 
     @Test
-    public void getConsentsForPsu_Success() throws Exception {
+    void getConsentsForPsu_Success() throws Exception {
         List<PiisConsent> consents = Collections.singletonList(piisConsent);
         when(cmsAspspPiisService.getConsentsForPsu(psuIdData, INSTANCE_ID))
             .thenReturn(consents);
@@ -132,7 +132,7 @@ public class CmsAspspPiisControllerTest {
     }
 
     @Test
-    public void terminateConsent_ReturnTrue() throws Exception {
+    void terminateConsent_ReturnTrue() throws Exception {
         when(cmsAspspPiisService.terminateConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(true);
 

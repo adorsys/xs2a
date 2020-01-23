@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,24 +19,24 @@ package de.adorsys.psd2.xs2a.service.validator;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class TppRoleValidationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class TppRoleValidationServiceTest {
 
     @InjectMocks
     private TppRoleValidationService tppRoleValidationService;
 
     @Test
-    public void shouldSuccess_when_correctRole() {
+    void shouldSuccess_when_correctRole() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.setRequestURI("/v1/accounts");
@@ -45,7 +45,7 @@ public class TppRoleValidationServiceTest {
     }
 
     @Test
-    public void shouldFail_when_wrongRole() {
+    void shouldFail_when_wrongRole() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.setRequestURI("/v1/payments/sepa");
@@ -54,7 +54,7 @@ public class TppRoleValidationServiceTest {
     }
 
     @Test
-    public void shouldSuccess_when_aspspRole_consentRequest() {
+    void shouldSuccess_when_aspspRole_consentRequest() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.setRequestURI("/v1/consents");
@@ -63,7 +63,7 @@ public class TppRoleValidationServiceTest {
     }
 
     @Test
-    public void shouldSuccess_when_aspspRole_paymentRequest() {
+    void shouldSuccess_when_aspspRole_paymentRequest() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.setRequestURI("/v1/payments/sepa");
@@ -72,7 +72,7 @@ public class TppRoleValidationServiceTest {
     }
 
     @Test
-    public void shouldSuccess_when_aspspRole_accountsRequest() {
+    void shouldSuccess_when_aspspRole_accountsRequest() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
         request.setRequestURI("/v1/accounts");

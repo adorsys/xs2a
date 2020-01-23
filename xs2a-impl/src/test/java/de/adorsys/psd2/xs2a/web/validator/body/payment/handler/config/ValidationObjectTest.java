@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,14 @@ package de.adorsys.psd2.xs2a.web.validator.body.payment.handler.config;
 
 import de.adorsys.psd2.validator.payment.config.Occurrence;
 import de.adorsys.psd2.validator.payment.config.ValidationObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ValidationObjectTest {
-
+class ValidationObjectTest {
     @Test
-    public void defaultValues() {
+    void defaultValues() {
         ValidationObject validationObject = new ValidationObject();
         assertEquals(0, validationObject.getMaxLength());
         assertEquals(Occurrence.OPTIONAL, validationObject.getUse());
@@ -34,7 +33,7 @@ public class ValidationObjectTest {
     }
 
     @Test
-    public void usages() {
+    void usages() {
         ValidationObject validationObject = new ValidationObject();
         assertEquals(Occurrence.OPTIONAL, validationObject.getUse());
         assertTrue(validationObject.isOptional());

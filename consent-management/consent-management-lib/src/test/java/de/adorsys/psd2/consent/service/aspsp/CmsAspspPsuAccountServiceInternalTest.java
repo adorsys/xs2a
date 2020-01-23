@@ -24,21 +24,22 @@ import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspPsuAccountServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspPsuAccountServiceInternalTest {
     private static final String PSU_ID = "PSU-ID-1";
     private final String INSTANCE_ID = "Instance id";
     private static final String ASPSP_ACCOUNT_ID = "aspsp account id";
@@ -59,14 +60,14 @@ public class CmsAspspPsuAccountServiceInternalTest {
     @Mock
     private PiisConsentEntitySpecification piisConsentEntitySpecification;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         aisConsent = jsonReader.getObjectFromFile("json/AisConsent.json", AisConsent.class);
         piisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
     }
 
     @Test
-    public void revokeAllConsents_Success_closeBothType() {
+    void revokeAllConsents_Success_closeBothType() {
         // given
         when(aisConsentSpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
@@ -80,13 +81,13 @@ public class CmsAspspPsuAccountServiceInternalTest {
         boolean actualResult = cmsAspspPsuAccountServiceInternal.revokeAllConsents(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID);
 
         //then
-        assertThat(actualResult).isTrue();
+        assertTrue(actualResult);
         verify(aisConsentJpaRepository, times(1)).save(aisConsent);
         verify(piisConsentRepository, times(1)).save(piisConsentEntity);
     }
 
     @Test
-    public void revokeAllConsents_Success_closeAis() {
+    void revokeAllConsents_Success_closeAis() {
         // given
         when(aisConsentSpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
@@ -100,13 +101,13 @@ public class CmsAspspPsuAccountServiceInternalTest {
         boolean actualResult = cmsAspspPsuAccountServiceInternal.revokeAllConsents(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID);
 
         //then
-        assertThat(actualResult).isTrue();
+        assertTrue(actualResult);
         verify(aisConsentJpaRepository, times(1)).save(aisConsent);
         verify(piisConsentRepository, never()).save(any());
     }
 
     @Test
-    public void revokeAllConsents_Success_closePiis() {
+    void revokeAllConsents_Success_closePiis() {
         // given
         when(aisConsentSpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
@@ -120,13 +121,13 @@ public class CmsAspspPsuAccountServiceInternalTest {
         boolean actualResult = cmsAspspPsuAccountServiceInternal.revokeAllConsents(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID);
 
         //then
-        assertThat(actualResult).isTrue();
+        assertTrue(actualResult);
         verify(aisConsentJpaRepository, never()).save(any());
         verify(piisConsentRepository, times(1)).save(piisConsentEntity);
     }
 
     @Test
-    public void revokeAllConsents_NoConsents() {
+    void revokeAllConsents_NoConsents() {
         // given
         when(aisConsentSpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
@@ -140,7 +141,7 @@ public class CmsAspspPsuAccountServiceInternalTest {
         boolean actualResult = cmsAspspPsuAccountServiceInternal.revokeAllConsents(ASPSP_ACCOUNT_ID, PSU_ID_DATA, INSTANCE_ID);
 
         //then
-        assertThat(actualResult).isFalse();
+        assertFalse(actualResult);
         verify(aisConsentJpaRepository, never()).save(any());
         verify(piisConsentRepository, never()).save(any());
     }

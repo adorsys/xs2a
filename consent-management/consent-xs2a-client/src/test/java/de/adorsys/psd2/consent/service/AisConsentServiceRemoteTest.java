@@ -23,22 +23,22 @@ import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisConsentServiceRemoteTest {
+@ExtendWith(MockitoExtension.class)
+class AisConsentServiceRemoteTest {
     private static final String URL = "http://some.url";
     private static final String CONSENT_ID = "some consent id";
 
@@ -52,7 +52,7 @@ public class AisConsentServiceRemoteTest {
     private AisConsentServiceRemote aisConsentServiceRemote;
 
     @Test
-    public void createConsent_shouldReturnResponse() {
+    void createConsent_shouldReturnResponse() {
         // Given
         when(remoteAisConsentUrls.createAisConsent()).thenReturn(URL);
         CreateAisConsentRequest createRequest = new CreateAisConsentRequest();
@@ -69,7 +69,7 @@ public class AisConsentServiceRemoteTest {
     }
 
     @Test
-    public void createConsent_withNullBodyInResponse_shouldReturnEmpty() {
+    void createConsent_withNullBodyInResponse_shouldReturnEmpty() {
         // Given
         when(remoteAisConsentUrls.createAisConsent()).thenReturn(URL);
         CreateAisConsentRequest createRequest = new CreateAisConsentRequest();

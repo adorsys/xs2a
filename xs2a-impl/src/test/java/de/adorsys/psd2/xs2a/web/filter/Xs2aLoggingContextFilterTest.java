@@ -20,13 +20,13 @@ import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.logger.context.RequestInfo;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -36,7 +36,7 @@ import java.io.IOException;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class Xs2aLoggingContextFilterTest {
     private static final String X_REQUEST_ID = "0d7f200e-09b4-46f5-85bd-f4ea89fccace";
     private static final String INTERNAL_REQUEST_ID = "9fe83704-6019-46fa-b8aa-53fb8fa667ea";
@@ -55,7 +55,7 @@ public class Xs2aLoggingContextFilterTest {
     private Xs2aLoggingContextFilter loggingContextFilter;
 
     @Test
-    public void doFilter_onXs2aEndpoint_shouldHandleLoggingContext() throws ServletException, IOException {
+    void doFilter_onXs2aEndpoint_shouldHandleLoggingContext() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -78,7 +78,7 @@ public class Xs2aLoggingContextFilterTest {
     }
 
     @Test
-    public void doFilter_onCustomEndpoint_shouldSkipFilter() throws ServletException, IOException {
+    void doFilter_onCustomEndpoint_shouldSkipFilter() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();

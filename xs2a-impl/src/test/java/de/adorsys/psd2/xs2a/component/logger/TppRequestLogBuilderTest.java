@@ -17,21 +17,19 @@
 package de.adorsys.psd2.xs2a.component.logger;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TppRequestLogBuilderTest {
-    private static final String X_REQUEST_ID_HEADER = "x-request-id";
-
+@ExtendWith(MockitoExtension.class)
+class TppRequestLogBuilderTest {
     @Mock
     private HttpServletRequest httpServletRequest;
     @Mock
@@ -41,7 +39,7 @@ public class TppRequestLogBuilderTest {
     private TppRequestLogBuilder tppRequestLogBuilder;
 
     @Test
-    public void withTpp_shouldAddTppIdAndIpAndRoles() {
+    void withTpp_shouldAddTppIdAndIpAndRoles() {
         // When
         tppRequestLogBuilder.withTpp(tppInfo);
 
@@ -56,7 +54,7 @@ public class TppRequestLogBuilderTest {
     }
 
     @Test
-    public void withRequestUri_shouldAddRequestUri() {
+    void withRequestUri_shouldAddRequestUri() {
         // When
         tppRequestLogBuilder.withRequestUri();
 

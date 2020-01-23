@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,13 @@ package de.adorsys.psd2.xs2a.domain.pis;
 
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BulkPaymentTest {
+class BulkPaymentTest {
     private static final AccountReference DEBTOR_ACCOUNT_1 = new AccountReference(AccountReferenceType.IBAN,
                                                                                   "debtor iban 1",
                                                                                   Currency.getInstance("EUR"));
@@ -36,7 +36,7 @@ public class BulkPaymentTest {
                                                                                   Currency.getInstance("EUR"));
 
     @Test
-    public void getAccountReferences_shouldReturnAllReferences() {
+    void getAccountReferences_shouldReturnAllReferences() {
         // Given
         BulkPayment bulkPayment = buildBulkPayment(Collections.singletonList(buildSinglePayment()));
 

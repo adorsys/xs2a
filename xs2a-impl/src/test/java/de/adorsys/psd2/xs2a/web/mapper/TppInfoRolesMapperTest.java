@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,25 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {TppInfoRolesMapper.class})
-public class TppInfoRolesMapperTest {
+class TppInfoRolesMapperTest {
     @Autowired
     private TppInfoRolesMapper tppInfoRolesMapper;
 
     @Test
-    public void mapToTppRoles() {
+    void mapToTppRoles() {
         //Given
         String header = "AISP, PISP, PIISP, ASPSP, UNKNOWN_ROLE";
         List<String> rolesList = Arrays.asList(header.split(","));

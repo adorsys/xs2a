@@ -26,23 +26,22 @@ import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCommonPaymentServiceInternalEncryptedTest {
+@ExtendWith(MockitoExtension.class)
+class PisCommonPaymentServiceInternalEncryptedTest {
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
     private static final String ENCRYPTED_PAYMENT_ID = "encrypted payment id";
     private static final String DECRYPTED_PAYMENT_ID = "1856e4fa-8af8-427b-85ec-4caf515ce074";
@@ -55,43 +54,17 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     @Mock
     private SecurityDataService securityDataService;
 
-    @Before
-    public void setUp() {
+    @Test
+    void createCommonPayment_success() {
+        // Given
+        PisPaymentInfo request = buildPisPaymentInfoRequest();
+        CreatePisCommonPaymentResponse expected = buildCreatePisCommonPaymentResponse(ENCRYPTED_PAYMENT_ID);
         when(securityDataService.encryptId(DECRYPTED_PAYMENT_ID))
             .thenReturn(Optional.of(ENCRYPTED_PAYMENT_ID));
-        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID))
-            .thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
-        when(securityDataService.encryptId(DECRYPTED_PAYMENT_ID))
-            .thenReturn(Optional.of(ENCRYPTED_PAYMENT_ID));
-        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID))
-            .thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
         when(pisCommonPaymentService.createCommonPayment(buildPisPaymentInfoRequest()))
             .thenReturn(CmsResponse.<CreatePisCommonPaymentResponse>builder()
                             .payload(buildCreatePisCommonPaymentResponse(DECRYPTED_PAYMENT_ID))
                             .build());
-        when(pisCommonPaymentService.getPisCommonPaymentStatusById(DECRYPTED_PAYMENT_ID))
-            .thenReturn(CmsResponse.<TransactionStatus>builder()
-                            .payload(TRANSACTION_STATUS)
-                            .build());
-        when(pisCommonPaymentService.getCommonPaymentById(DECRYPTED_PAYMENT_ID))
-            .thenReturn(CmsResponse.<PisCommonPaymentResponse>builder()
-                            .payload(buildPisCommonPaymentResponse(DECRYPTED_PAYMENT_ID))
-                            .build());
-        when(pisCommonPaymentService.updateCommonPaymentStatusById(DECRYPTED_PAYMENT_ID, TRANSACTION_STATUS))
-            .thenReturn(CmsResponse.<Boolean>builder()
-                            .payload(true)
-                            .build());
-        when(pisCommonPaymentService.getPsuDataListByPaymentId(DECRYPTED_PAYMENT_ID))
-            .thenReturn(CmsResponse.<List<PsuIdData>>builder()
-                            .payload(buildPsuIdDataList())
-                            .build());
-    }
-
-    @Test
-    public void createCommonPayment_success() {
-        // Given
-        PisPaymentInfo request = buildPisPaymentInfoRequest();
-        CreatePisCommonPaymentResponse expected = buildCreatePisCommonPaymentResponse(ENCRYPTED_PAYMENT_ID);
 
         // When
         CmsResponse<CreatePisCommonPaymentResponse> actual = pisCommonPaymentServiceInternalEncrypted.createCommonPayment(request);
@@ -104,7 +77,7 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void createCommonPayment_technicalError() {
+    void createCommonPayment_technicalError() {
         PisPaymentInfo request = buildPisPaymentInfoRequest();
         when(pisCommonPaymentService.createCommonPayment(buildPisPaymentInfoRequest()))
             .thenReturn(CmsResponse.<CreatePisCommonPaymentResponse>builder()
@@ -119,7 +92,12 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getPisCommonPaymentStatusById_success() {
+    void getPisCommonPaymentStatusById_success() {
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
+        when(pisCommonPaymentService.getPisCommonPaymentStatusById(DECRYPTED_PAYMENT_ID))
+            .thenReturn(CmsResponse.<TransactionStatus>builder()
+                            .payload(TRANSACTION_STATUS)
+                            .build());
         // When
         CmsResponse<TransactionStatus> actual = pisCommonPaymentServiceInternalEncrypted.getPisCommonPaymentStatusById(ENCRYPTED_PAYMENT_ID);
 
@@ -131,7 +109,7 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getPisCommonPaymentStatusById_technicalError() {
+    void getPisCommonPaymentStatusById_technicalError() {
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.empty());
 
         CmsResponse<TransactionStatus> actual = pisCommonPaymentServiceInternalEncrypted.getPisCommonPaymentStatusById(ENCRYPTED_PAYMENT_ID);
@@ -141,9 +119,14 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getCommonPaymentById_success() {
+    void getCommonPaymentById_success() {
         // Given
         PisCommonPaymentResponse expected = buildPisCommonPaymentResponse(DECRYPTED_PAYMENT_ID);
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
+        when(pisCommonPaymentService.getCommonPaymentById(DECRYPTED_PAYMENT_ID))
+            .thenReturn(CmsResponse.<PisCommonPaymentResponse>builder()
+                            .payload(buildPisCommonPaymentResponse(DECRYPTED_PAYMENT_ID))
+                            .build());
 
         // When
         CmsResponse<PisCommonPaymentResponse> actual = pisCommonPaymentServiceInternalEncrypted.getCommonPaymentById(ENCRYPTED_PAYMENT_ID);
@@ -156,7 +139,7 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getCommonPaymentById_technicalError() {
+    void getCommonPaymentById_technicalError() {
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.empty());
 
         CmsResponse<PisCommonPaymentResponse> actual = pisCommonPaymentServiceInternalEncrypted.getCommonPaymentById(ENCRYPTED_PAYMENT_ID);
@@ -166,7 +149,12 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateCommonPaymentStatusById_success() {
+    void updateCommonPaymentStatusById_success() {
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
+        when(pisCommonPaymentService.updateCommonPaymentStatusById(DECRYPTED_PAYMENT_ID, TRANSACTION_STATUS))
+            .thenReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
+                            .build());
         // When
         CmsResponse<Boolean> actual = pisCommonPaymentServiceInternalEncrypted.updateCommonPaymentStatusById(ENCRYPTED_PAYMENT_ID, TRANSACTION_STATUS);
 
@@ -178,7 +166,7 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateCommonPaymentStatusById_technicalError() {
+    void updateCommonPaymentStatusById_technicalError() {
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.empty());
 
         CmsResponse<Boolean> actual = pisCommonPaymentServiceInternalEncrypted.updateCommonPaymentStatusById(ENCRYPTED_PAYMENT_ID, TRANSACTION_STATUS);
@@ -189,7 +177,9 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getDecryptedId_success() {
+    void getDecryptedId_success() {
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
+
         // When
         CmsResponse<String> actual = pisCommonPaymentServiceInternalEncrypted.getDecryptedId(ENCRYPTED_PAYMENT_ID);
 
@@ -200,7 +190,7 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getDecryptedId_technicalError() {
+    void getDecryptedId_technicalError() {
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.empty());
 
         CmsResponse<String> actual = pisCommonPaymentServiceInternalEncrypted.getDecryptedId(ENCRYPTED_PAYMENT_ID);
@@ -210,9 +200,10 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateCommonPayment_success() {
+    void updateCommonPayment_success() {
         // Given
         PisCommonPaymentRequest request = buildPisCommonPaymentRequest();
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
 
         // When
         pisCommonPaymentServiceInternalEncrypted.updateCommonPayment(request, ENCRYPTED_PAYMENT_ID);
@@ -223,9 +214,14 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getPsuDataListByPaymentId_success() {
+    void getPsuDataListByPaymentId_success() {
         // Given
         List<PsuIdData> expected = buildPsuIdDataList();
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
+        when(pisCommonPaymentService.getPsuDataListByPaymentId(DECRYPTED_PAYMENT_ID))
+            .thenReturn(CmsResponse.<List<PsuIdData>>builder()
+                            .payload(buildPsuIdDataList())
+                            .build());
 
         // When
         CmsResponse<List<PsuIdData>> actual = pisCommonPaymentServiceInternalEncrypted.getPsuDataListByPaymentId(ENCRYPTED_PAYMENT_ID);
@@ -238,8 +234,9 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateMultilevelSca_True() {
+    void updateMultilevelSca_True() {
         // Given
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
         when(pisCommonPaymentService.updateMultilevelSca(DECRYPTED_PAYMENT_ID, true))
             .thenReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
@@ -256,7 +253,7 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateMultilevelSca_technicalError() {
+    void updateMultilevelSca_technicalError() {
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.empty());
 
         CmsResponse<Boolean> actual = pisCommonPaymentServiceInternalEncrypted.updateMultilevelSca(ENCRYPTED_PAYMENT_ID, true);
@@ -266,7 +263,7 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getPsuDataListByPaymentId_technicalError() {
+    void getPsuDataListByPaymentId_technicalError() {
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.empty());
 
         CmsResponse<List<PsuIdData>> actual = pisCommonPaymentServiceInternalEncrypted.getPsuDataListByPaymentId(ENCRYPTED_PAYMENT_ID);

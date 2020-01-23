@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,25 +34,25 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.link.PaymentCancellationLinks;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentCancellationAspectTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentCancellationAspectTest {
     private static final String HTTP_URL = "http://base.url";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
-    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType","psuIpAddress");
+    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
     private CancelPaymentResponse response;
 
@@ -72,22 +72,11 @@ public class PaymentCancellationAspectTest {
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
-    private AspspSettings aspspSettings;
     private ResponseObject<CancelPaymentResponse> responseObject;
     private PisPaymentCancellationRequest paymentCancellationRequest;
 
-    @Before
-    public void setUp() {
-        JsonReader jsonReader = new JsonReader();
-        aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
-        when(cancellationScaNeededDecider.isScaRequired(true)).thenReturn(true);
-
-        when(authorisationMethodDecider.isExplicitMethod(false, false)).thenReturn(false);
-        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
-
+    @BeforeEach
+    void setUp() {
         response = new CancelPaymentResponse();
         response.setStartAuthorisationRequired(true);
         response.setAuthorizationId(AUTHORISATION_ID);
@@ -102,7 +91,7 @@ public class PaymentCancellationAspectTest {
     }
 
     @Test
-    public void cancelPayment_status_RJCT() {
+    void cancelPayment_status_RJCT() {
         // Given
         response.setTransactionStatus(TransactionStatus.RJCT);
 
@@ -118,7 +107,17 @@ public class PaymentCancellationAspectTest {
     }
 
     @Test
-    public void cancelPayment_success() {
+    void cancelPayment_success() {
+        JsonReader jsonReader = new JsonReader();
+        AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+        when(cancellationScaNeededDecider.isScaRequired(true)).thenReturn(true);
+
+        when(authorisationMethodDecider.isExplicitMethod(false, false)).thenReturn(false);
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
+
         PaymentCancellationLinks links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, false, ScaRedirectFlow.REDIRECT, false);
 
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
@@ -131,7 +130,7 @@ public class PaymentCancellationAspectTest {
     }
 
     @Test
-    public void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
+    void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
         // When
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,30 +19,30 @@ package de.adorsys.psd2.xs2a.web.validator.header;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TppExplicitAuthorisationPreferredHeaderValidatorImplTest {
+class TppExplicitAuthorisationPreferredHeaderValidatorImplTest {
 
     private TppExplicitAuthorisationPreferredHeaderValidatorImpl validator;
     private MessageError messageError;
     private Map<String, String> headers;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         validator = new TppExplicitAuthorisationPreferredHeaderValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400));
         messageError = new MessageError();
         headers = new HashMap<>();
     }
 
     @Test
-    public void validate_success() {
+    void validate_success() {
         validator.validate(headers, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
 
@@ -56,7 +56,7 @@ public class TppExplicitAuthorisationPreferredHeaderValidatorImplTest {
     }
 
     @Test
-    public void checkBooleanFormat_error() {
+    void checkBooleanFormat_error() {
         headers.put(validator.getHeaderName(), "wrong_format");
         validator.validate(headers, messageError);
 

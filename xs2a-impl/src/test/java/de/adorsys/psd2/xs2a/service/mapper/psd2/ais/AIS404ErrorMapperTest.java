@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,22 +22,22 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import java.util.function.Function;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AIS404ErrorMapperTest {
+@ExtendWith(MockitoExtension.class)
+class AIS404ErrorMapperTest {
     private static final String ERROR_JSON_PATH = "json/service/mapper/psd2/ais/Error404NGAIS.json";
     private static final String ERROR_CUSTOM_TEXT_JSON_PATH = "json/service/mapper/psd2/ais/Error404NGAIS-custom-text.json";
     private static final String CUSTOM_ERROR_TEXT = "Custom text";
@@ -53,7 +53,7 @@ public class AIS404ErrorMapperTest {
     private AIS404ErrorMapper ais404ErrorMapper;
 
     @Test
-    public void getErrorStatus_shouldReturn404() {
+    void getErrorStatus_shouldReturn404() {
         // When
         HttpStatus errorStatus = ais404ErrorMapper.getErrorStatus();
 
@@ -62,7 +62,7 @@ public class AIS404ErrorMapperTest {
     }
 
     @Test
-    public void getMapper_shouldReturnCorrectErrorMapper() {
+    void getMapper_shouldReturnCorrectErrorMapper() {
         when(messageService.getMessage(RESOURCE_UNKNOWN_404.name()))
             .thenReturn("Some %s");
 
@@ -78,7 +78,7 @@ public class AIS404ErrorMapperTest {
     }
 
     @Test
-    public void getMapper_withNoTextInTppMessage_shouldGetTextFromMessageService() {
+    void getMapper_withNoTextInTppMessage_shouldGetTextFromMessageService() {
         when(messageService.getMessage(RESOURCE_UNKNOWN_404.name()))
             .thenReturn(CUSTOM_ERROR_TEXT);
 

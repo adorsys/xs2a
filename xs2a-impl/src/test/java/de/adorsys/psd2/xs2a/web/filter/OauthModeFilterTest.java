@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpMethod;
 
 import javax.servlet.FilterChain;
@@ -42,12 +42,12 @@ import java.io.PrintWriter;
 import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORBIDDEN;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED_NO_TOKEN;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OauthModeFilterTest {
+@ExtendWith(MockitoExtension.class)
+class OauthModeFilterTest {
     private static final String TOKEN = "Bearer 111111";
     private static final String IDP_URL = "http://localhost:4200/idp/";
     private static final String XS2A_PATH = "/v1/payments";
@@ -79,18 +79,16 @@ public class OauthModeFilterTest {
     @Mock
     private RequestPathResolver requestPathResolver;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(ScaApproach.REDIRECT);
         when(requestPathResolver.resolveRequestPath(request))
             .thenReturn(XS2A_PATH);
-        when(request.getMethod())
-            .thenReturn(HTTP_METHOD);
     }
 
     @Test
-    public void doFilter_success() throws IOException, ServletException {
+    void doFilter_success() throws IOException, ServletException {
         // When
         oauthModeFilter.doFilter(request, response, chain);
 
@@ -99,8 +97,11 @@ public class OauthModeFilterTest {
     }
 
     @Test
-    public void doFilter_preStepWithoutToken_shouldReturnUnauthorised() throws IOException, ServletException {
+    void doFilter_preStepWithoutToken_shouldReturnUnauthorised() throws IOException, ServletException {
         // Given
+        when(request.getMethod())
+            .thenReturn(HTTP_METHOD);
+
         when(aspspProfileService.getOauthConfigurationUrl())
             .thenReturn(IDP_URL);
         when(aspspProfileService.getScaRedirectFlow())
@@ -120,8 +121,11 @@ public class OauthModeFilterTest {
     }
 
     @Test
-    public void doFilter_integratedWithToken_shouldReturnForbidden() throws IOException, ServletException {
+    void doFilter_integratedWithToken_shouldReturnForbidden() throws IOException, ServletException {
         // Given
+        when(request.getMethod())
+            .thenReturn(HTTP_METHOD);
+
         when(requestProviderService.getOAuth2Token())
             .thenReturn(TOKEN);
         when(aspspProfileService.getScaRedirectFlow())
@@ -141,7 +145,7 @@ public class OauthModeFilterTest {
     }
 
     @Test
-    public void doFilter_onCustomEndpointAndRedirectFlow_shouldSkipFilter() throws ServletException, IOException {
+    void doFilter_onCustomEndpointAndRedirectFlow_shouldSkipFilter() throws ServletException, IOException {
         // Given
         when(requestPathResolver.resolveRequestPath(request))
             .thenReturn(CUSTOM_PATH);
@@ -151,11 +155,11 @@ public class OauthModeFilterTest {
 
         // Then
         verify(chain).doFilter(request, response);
-        verifyZeroInteractions(tppErrorMessageWriter, requestProviderService);
+        verifyNoMoreInteractions(tppErrorMessageWriter, requestProviderService);
     }
 
     @Test
-    public void doFilter_onCustomEndpointAndOauthPreStepFlow_shouldSkipFilter() throws ServletException, IOException {
+    void doFilter_onCustomEndpointAndOauthPreStepFlow_shouldSkipFilter() throws ServletException, IOException {
         // Given
         when(requestPathResolver.resolveRequestPath(request))
             .thenReturn(CUSTOM_PATH);
@@ -169,6 +173,6 @@ public class OauthModeFilterTest {
 
         // Then
         verify(chain).doFilter(request, response);
-        verifyZeroInteractions(tppErrorMessageWriter, requestProviderService);
+        verifyNoMoreInteractions(tppErrorMessageWriter, requestProviderService);
     }
 }

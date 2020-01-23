@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,34 +17,34 @@
 package de.adorsys.psd2.mapper;
 
 import de.adorsys.psd2.consent.api.pis.CmsCommonPayment;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class CmsCommonPaymentMapperImplTest {
+class CmsCommonPaymentMapperImplTest {
 
     private CmsCommonPaymentMapperImpl mapper;
     private CmsCommonPayment cmsCommonPayment;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         mapper = new CmsCommonPaymentMapperImpl();
         cmsCommonPayment = new CmsCommonPayment("payment product");
     }
 
     @Test
-    public void mapToCmsSinglePayment() {
-       assertSame(cmsCommonPayment, mapper.mapToCmsSinglePayment(cmsCommonPayment));
+    void mapToCmsSinglePayment() {
+        assertSame(cmsCommonPayment, mapper.mapToCmsSinglePayment(cmsCommonPayment));
     }
 
     @Test
-    public void mapToCmsBulkPayment() {
+    void mapToCmsBulkPayment() {
         assertSame(cmsCommonPayment, mapper.mapToCmsBulkPayment(cmsCommonPayment));
     }
 
     @Test
-    public void mapToCmsPeriodicPayment() {
+    void mapToCmsPeriodicPayment() {
         assertSame(cmsCommonPayment, mapper.mapToCmsPeriodicPayment(cmsCommonPayment));
     }
 }

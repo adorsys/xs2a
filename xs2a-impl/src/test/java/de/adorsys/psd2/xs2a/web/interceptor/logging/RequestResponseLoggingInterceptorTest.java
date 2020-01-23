@@ -18,11 +18,11 @@ package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogMessage;
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,8 +30,8 @@ import java.util.UUID;
 
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RequestResponseLoggingInterceptorTest {
+@ExtendWith(MockitoExtension.class)
+class RequestResponseLoggingInterceptorTest {
     @Mock
     private HttpServletRequest httpServletRequest;
     @Mock
@@ -42,7 +42,7 @@ public class RequestResponseLoggingInterceptorTest {
     private RequestResponseLoggingInterceptor requestResponseLoggingInterceptor;
 
     @Test
-    public void afterCompletion_shouldLogRequestAndResponse() {
+    void afterCompletion_shouldLogRequestAndResponse() {
         // Given
         UUID internalRequestId = UUID.fromString("b87028ad-6925-41fa-b892-88912606a2f4");
 

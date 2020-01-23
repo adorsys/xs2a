@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,18 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AuthorisationPsuDataCheckerTest {
+@ExtendWith(MockitoExtension.class)
+class AuthorisationPsuDataCheckerTest {
 
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("PSU ID", null, null, null, null);
     private static final PsuIdData PSU_ID_DATA_2 = new PsuIdData("PSU ID 2", null, null, null, null);
@@ -39,7 +39,7 @@ public class AuthorisationPsuDataCheckerTest {
 
 
     @Test
-    public void isPsuDataWrong_withoutMultilevelSca_samePsuId_shouldReturnFalse() {
+    void isPsuDataWrong_withoutMultilevelSca_samePsuId_shouldReturnFalse() {
         // When
         boolean result = authorisationPsuDataChecker.isPsuDataWrong(false, Collections.singletonList(PSU_ID_DATA), PSU_ID_DATA);
 
@@ -48,7 +48,7 @@ public class AuthorisationPsuDataCheckerTest {
     }
 
     @Test
-    public void isPsuDataWrong_withoutMultilevelSca_differentPsuId_shouldReturnTrue() {
+    void isPsuDataWrong_withoutMultilevelSca_differentPsuId_shouldReturnTrue() {
         // When
         boolean result = authorisationPsuDataChecker.isPsuDataWrong(false, Collections.singletonList(PSU_ID_DATA), PSU_ID_DATA_2);
 
@@ -57,7 +57,7 @@ public class AuthorisationPsuDataCheckerTest {
     }
 
     @Test
-    public void isPsuDataWrong_withMultilevelSca_samePsuId_shouldReturnFalse() {
+    void isPsuDataWrong_withMultilevelSca_samePsuId_shouldReturnFalse() {
         // When
         boolean result = authorisationPsuDataChecker.isPsuDataWrong(true, Collections.singletonList(PSU_ID_DATA), PSU_ID_DATA);
 
@@ -66,7 +66,7 @@ public class AuthorisationPsuDataCheckerTest {
     }
 
     @Test
-    public void isPsuDataWrong_withMultilevelSca_differentPsuId_shouldReturnFalse() {
+    void isPsuDataWrong_withMultilevelSca_differentPsuId_shouldReturnFalse() {
         // When
         boolean result = authorisationPsuDataChecker.isPsuDataWrong(true, Collections.singletonList(PSU_ID_DATA), PSU_ID_DATA_2);
 

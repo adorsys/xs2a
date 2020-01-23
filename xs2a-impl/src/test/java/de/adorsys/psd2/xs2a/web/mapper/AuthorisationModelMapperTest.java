@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,26 +27,26 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AuthorisationModelMapperImpl.class, AuthorisationModelMapperTest.TestConfiguration.class})
-public class AuthorisationModelMapperTest {
+class AuthorisationModelMapperTest {
     @Autowired
     private AuthorisationModelMapper authorisationModelMapper;
 
@@ -62,8 +62,8 @@ public class AuthorisationModelMapperTest {
 
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(mockCoreObjectsMapper.mapToModelScaStatus(ScaStatus.RECEIVED)).thenReturn(de.adorsys.psd2.model.ScaStatus.RECEIVED);
 
         //noinspection unchecked
@@ -85,15 +85,15 @@ public class AuthorisationModelMapperTest {
         when(mockCoreObjectsMapper.mapToChallengeData(xs2aChallengeData)).thenReturn(modelChallengeData);
     }
 
-    @After
-    public void resetMocks() {
+    @AfterEach
+    void resetMocks() {
         // Resetting is necessary because these mocks are injected into the mapper as singleton beans
         // and are not being recreated after each test
         Mockito.reset(mockHrefLinkMapper, mockCoreObjectsMapper, mockCoreObjectsMapper, mockChosenScaMethodMapper);
     }
 
     @Test
-    public void mapToStartScaProcessResponse_withConsentResponse() {
+    void mapToStartScaProcessResponse_withConsentResponse() {
         // Given
         CreateConsentAuthorizationResponse objectFromFile = jsonReader.getObjectFromFile("json/web/mapper/CreateConsentAuthorizationResponse.json", CreateConsentAuthorizationResponse.class);
         StartScaprocessResponse expected = jsonReader.getObjectFromFile("json/web/mapper/ConsentStartScaProcessResponse.json", StartScaprocessResponse.class);
@@ -114,7 +114,7 @@ public class AuthorisationModelMapperTest {
     }
 
     @Test
-    public void mapToStartScaProcessResponse_withNullConsentResponse_shouldReturnNull() {
+    void mapToStartScaProcessResponse_withNullConsentResponse_shouldReturnNull() {
         // When
         StartScaprocessResponse actual = authorisationModelMapper.mapToStartScaProcessResponse((CreateConsentAuthorizationResponse) null);
 
@@ -123,7 +123,7 @@ public class AuthorisationModelMapperTest {
     }
 
     @Test
-    public void mapToStartScaProcessResponse_withPaymentResponse() {
+    void mapToStartScaProcessResponse_withPaymentResponse() {
         // Given
         Xs2aCreatePisAuthorisationResponse objectFromFile = jsonReader.getObjectFromFile("json/web/mapper/Xs2aCreatePisAuthorisationResponse.json", Xs2aCreatePisAuthorisationResponse.class);
         StartScaprocessResponse expected = jsonReader.getObjectFromFile("json/web/mapper/PaymentStartScaProcessResponse.json", StartScaprocessResponse.class);
@@ -143,7 +143,7 @@ public class AuthorisationModelMapperTest {
     }
 
     @Test
-    public void mapToStartScaProcessResponse_withNullPaymentResponse_shouldReturnNull() {
+    void mapToStartScaProcessResponse_withNullPaymentResponse_shouldReturnNull() {
         // When
         StartScaprocessResponse actual = authorisationModelMapper.mapToStartScaProcessResponse((Xs2aCreatePisAuthorisationResponse) null);
 
@@ -152,7 +152,7 @@ public class AuthorisationModelMapperTest {
     }
 
     @Test
-    public void mapToStartCancellationScaProcessResponse_withPaymentResponse() {
+    void mapToStartCancellationScaProcessResponse_withPaymentResponse() {
         // Given
         Xs2aCreatePisCancellationAuthorisationResponse objectFromFile = jsonReader.getObjectFromFile("json/web/mapper/Xs2aCreatePisCancellationAuthorisationResponse.json", Xs2aCreatePisCancellationAuthorisationResponse.class);
         StartCancellationScaProcessResponse expected = jsonReader.getObjectFromFile("json/web/mapper/StartCancellationScaProcessResponse.json", StartCancellationScaProcessResponse.class);
@@ -172,7 +172,7 @@ public class AuthorisationModelMapperTest {
     }
 
     @Test
-    public void mapToStartCancellationScaProcessResponse_withNullPaymentResponse_shouldReturnNull() {
+    void mapToStartCancellationScaProcessResponse_withNullPaymentResponse_shouldReturnNull() {
         // When
         StartCancellationScaProcessResponse actual = authorisationModelMapper.mapToStartCancellationScaProcessResponse(null);
 
@@ -181,7 +181,7 @@ public class AuthorisationModelMapperTest {
     }
 
     @Test
-    public void mapToUpdateCancellationPsuAuthenticationResponse() {
+    void mapToUpdateCancellationPsuAuthenticationResponse() {
         // Given
         Xs2aUpdatePisCommonPaymentPsuDataResponse objectFromFile = jsonReader.getObjectFromFile("json/web/mapper/Xs2aUpdatePisCommonPaymentPsuDataResponse.json", Xs2aUpdatePisCommonPaymentPsuDataResponse.class);
         UpdateCancellationPsuAuthenticationResponse expected = jsonReader.getObjectFromFile("json/web/mapper/UpdateCancellationPsuAuthenticationResponse.json", UpdateCancellationPsuAuthenticationResponse.class);
@@ -205,7 +205,7 @@ public class AuthorisationModelMapperTest {
     }
 
     @Test
-    public void mapToUpdateCancellationPsuAuthenticationResponse_withNullXs2aResponse_shouldReturnNull() {
+    void mapToUpdateCancellationPsuAuthenticationResponse_withNullXs2aResponse_shouldReturnNull() {
         // When
         UpdateCancellationPsuAuthenticationResponse actual = authorisationModelMapper.mapToUpdateCancellationPsuAuthenticationResponse(null);
 
@@ -214,7 +214,7 @@ public class AuthorisationModelMapperTest {
     }
 
     @Test
-    public void mapToStartOrUpdateCancellationResponse_withCreateResponse_shouldReturnStartResponse() {
+    void mapToStartOrUpdateCancellationResponse_withCreateResponse_shouldReturnStartResponse() {
         // Given
         Xs2aCreatePisCancellationAuthorisationResponse objectFromFile = jsonReader.getObjectFromFile("json/web/mapper/Xs2aCreatePisCancellationAuthorisationResponse.json", Xs2aCreatePisCancellationAuthorisationResponse.class);
         StartCancellationScaProcessResponse expected = jsonReader.getObjectFromFile("json/web/mapper/StartCancellationScaProcessResponse.json", StartCancellationScaProcessResponse.class);
@@ -237,7 +237,7 @@ public class AuthorisationModelMapperTest {
     }
 
     @Test
-    public void mapToStartOrUpdateCancellationResponse_withUpdateResponse_shouldReturnUpdateResponse() {
+    void mapToStartOrUpdateCancellationResponse_withUpdateResponse_shouldReturnUpdateResponse() {
         // Given
         Xs2aUpdatePisCommonPaymentPsuDataResponse objectFromFile = jsonReader.getObjectFromFile("json/web/mapper/Xs2aUpdatePisCommonPaymentPsuDataResponse.json", Xs2aUpdatePisCommonPaymentPsuDataResponse.class);
         UpdateCancellationPsuAuthenticationResponse expected = jsonReader.getObjectFromFile("json/web/mapper/UpdateCancellationPsuAuthenticationResponse.json", UpdateCancellationPsuAuthenticationResponse.class);
@@ -264,7 +264,7 @@ public class AuthorisationModelMapperTest {
     }
 
     @Test
-    public void mapToStartOrUpdateCancellationResponse_withNullCancellationResponse_shouldReturnNull() {
+    void mapToStartOrUpdateCancellationResponse_withNullCancellationResponse_shouldReturnNull() {
         // When
         Object actual = authorisationModelMapper.mapToStartOrUpdateCancellationResponse(null);
 
@@ -273,24 +273,24 @@ public class AuthorisationModelMapperTest {
     }
 
     @Configuration
-    public static class TestConfiguration {
+    static class TestConfiguration {
         @Bean
-        public HrefLinkMapper mockHrefLinkMapper() {
+        HrefLinkMapper mockHrefLinkMapper() {
             return mock(HrefLinkMapper.class);
         }
 
         @Bean
-        public CoreObjectsMapper mockCoreObjectsMapper() {
+        CoreObjectsMapper mockCoreObjectsMapper() {
             return mock(CoreObjectsMapper.class);
         }
 
         @Bean
-        public ScaMethodsMapper mockScaMethodsMapper() {
+        ScaMethodsMapper mockScaMethodsMapper() {
             return mock(ScaMethodsMapper.class);
         }
 
         @Bean
-        public ChosenScaMethodMapper mockChosenScaMethodMapper() {
+        ChosenScaMethodMapper mockChosenScaMethodMapper() {
             return mock(ChosenScaMethodMapper.class);
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,51 +19,51 @@ package de.adorsys.psd2.xs2a.web.validator.header;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class AcceptHeaderValidatorImplTest {
+class AcceptHeaderValidatorImplTest {
     private static final String[] ACCEPT_HEADER_NAME = {"Accept"};
 
     private AcceptHeaderValidatorImpl validator;
     private MessageError messageError;
     private Map<String, String> headers;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         validator = new AcceptHeaderValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400));
         messageError = new MessageError();
         headers = new HashMap<>();
     }
 
     @Test
-    public void validate_headerIsNotPresented_success() {
+    void validate_headerIsNotPresented_success() {
         validator.validate(headers, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validate_headerIsPresented_success() {
+    void validate_headerIsPresented_success() {
         headers.put(validator.getHeaderName(), MediaType.APPLICATION_JSON_VALUE);
         validator.validate(headers, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validate_manyHeaders_success() {
+    void validate_manyHeaders_success() {
         headers.put(validator.getHeaderName(), "application/json, application/xml");
         validator.validate(headers, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validate_blankHeader_error() {
+    void validate_blankHeader_error() {
         headers.put(validator.getHeaderName(), "");
         validator.validate(headers, messageError);
 

@@ -21,23 +21,22 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisPaymentControllerTest {
+@ExtendWith(MockitoExtension.class)
+class PisPaymentControllerTest {
     private static final String PAYMENT_ID = "33333-999999999";
     private static final String TPP_OK_REDIRECT_ORI = "TPP-Redirect-URI-cancel";
     private static final String TPP_NOK_REDIRECT_ORI = "TPP-Nok-Redirect-URI-cancel";
@@ -57,48 +56,49 @@ public class PisPaymentControllerTest {
     private ArgumentCaptor<String> cancellationInternalRequestIdCaptor;
 
     @Test
-    public void updatePaymentCancellationTppRedirectUri() {
+    void updatePaymentCancellationTppRedirectUri() {
         when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(eq(PAYMENT_ID), tppRedirectUriCaptor.capture()))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         ResponseEntity<Void> response = pisPaymentController.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, TPP_OK_REDIRECT_ORI, TPP_NOK_REDIRECT_ORI);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        Assert.assertEquals(TPP_OK_REDIRECT_ORI, tppRedirectUriCaptor.getValue().getUri());
-        Assert.assertEquals(TPP_NOK_REDIRECT_ORI, tppRedirectUriCaptor.getValue().getNokUri());
+        assertEquals(TPP_OK_REDIRECT_ORI, tppRedirectUriCaptor.getValue().getUri());
+        assertEquals(TPP_NOK_REDIRECT_ORI, tppRedirectUriCaptor.getValue().getNokUri());
     }
 
     @Test
-    public void updatePaymentCancellationTppRedirectUri_Fail() {
+    void updatePaymentCancellationTppRedirectUri_Fail() {
         when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(eq(PAYMENT_ID), tppRedirectUriCaptor.capture()))
             .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         ResponseEntity<Void> response = pisPaymentController.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, TPP_OK_REDIRECT_ORI, TPP_NOK_REDIRECT_ORI);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
-        Assert.assertEquals(TPP_OK_REDIRECT_ORI, tppRedirectUriCaptor.getValue().getUri());
-        Assert.assertEquals(TPP_NOK_REDIRECT_ORI, tppRedirectUriCaptor.getValue().getNokUri());
+
+        assertEquals(TPP_OK_REDIRECT_ORI, tppRedirectUriCaptor.getValue().getUri());
+        assertEquals(TPP_NOK_REDIRECT_ORI, tppRedirectUriCaptor.getValue().getNokUri());
     }
 
     @Test
-    public void updatePaymentCancellationInternalRequestId() {
+    void updatePaymentCancellationInternalRequestId() {
         when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(eq(PAYMENT_ID), cancellationInternalRequestIdCaptor.capture()))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         ResponseEntity<Void> response = pisPaymentController.updatePaymentCancellationInternalRequestId(PAYMENT_ID, INTERNAL_REQUEST_ID);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        Assert.assertEquals(INTERNAL_REQUEST_ID, cancellationInternalRequestIdCaptor.getValue());
+        assertEquals(INTERNAL_REQUEST_ID, cancellationInternalRequestIdCaptor.getValue());
     }
 
     @Test
-    public void updatePaymentCancellationInternalRequestId_Fail() {
+    void updatePaymentCancellationInternalRequestId_Fail() {
         when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(eq(PAYMENT_ID), cancellationInternalRequestIdCaptor.capture()))
             .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         ResponseEntity<Void> response = pisPaymentController.updatePaymentCancellationInternalRequestId(PAYMENT_ID, INTERNAL_REQUEST_ID);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
-        Assert.assertEquals(INTERNAL_REQUEST_ID, cancellationInternalRequestIdCaptor.getValue());
+        assertEquals(INTERNAL_REQUEST_ID, cancellationInternalRequestIdCaptor.getValue());
     }
 }

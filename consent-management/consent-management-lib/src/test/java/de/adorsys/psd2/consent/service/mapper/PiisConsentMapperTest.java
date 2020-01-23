@@ -22,30 +22,30 @@ import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {PiisConsentMapper.class, PsuDataMapper.class, TppInfoMapperImpl.class,
     AccountReferenceMapper.class})
-public class PiisConsentMapperTest {
+class PiisConsentMapperTest {
     @Autowired
     private PiisConsentMapper piisConsentMapper;
 
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToPiisConsent() {
+    void mapToPiisConsent() {
         PiisConsentEntity piisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
         PiisConsent actualPiisConsent = piisConsentMapper.mapToPiisConsent(piisConsentEntity);
 
@@ -54,7 +54,7 @@ public class PiisConsentMapperTest {
     }
 
     @Test
-    public void mapToPiisConsentList() {
+    void mapToPiisConsentList() {
         PiisConsentEntity piisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
         List<PiisConsent> actualPiisConsentList = piisConsentMapper.mapToPiisConsentList(Collections.singletonList(piisConsentEntity));
 
@@ -65,7 +65,7 @@ public class PiisConsentMapperTest {
     }
 
     @Test
-    public void mapToPiisConsentEntity() {
+    void mapToPiisConsentEntity() {
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
         CreatePiisConsentRequest createPiisConsentRequest = jsonReader.getObjectFromFile("json/service/mapper/create-piis-consent-request.json", CreatePiisConsentRequest.class);
 
@@ -84,7 +84,7 @@ public class PiisConsentMapperTest {
     }
 
     @Test
-    public void mapToPiisConsentEntity_noTppInfoAndAuthorisationNumber_accessTypeAllTpp() {
+    void mapToPiisConsentEntity_noTppInfoAndAuthorisationNumber_accessTypeAllTpp() {
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
         CreatePiisConsentRequest createPiisConsentRequest = jsonReader.getObjectFromFile("json/service/mapper/create-piis-consent-request.json", CreatePiisConsentRequest.class);
         createPiisConsentRequest.setTppAuthorisationNumber(null);

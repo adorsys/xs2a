@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,28 +22,27 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.query.account.BookingStatusQueryParameterParamsValidatorImpl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class BookingStatusQueryParameterValidatorImplTest {
+@ExtendWith(MockitoExtension.class)
+class BookingStatusQueryParameterValidatorImplTest {
     private static final String BOOKING_STATUS_PARAMETER_NAME = "bookingStatus";
     private static final MessageError MISSING_VALUE_ERROR =
         new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_ABSENT_PARAMETER, BOOKING_STATUS_PARAMETER_NAME));
     private static final MessageError BLANK_VALUE_ERROR =
         new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_BLANK_PARAMETER, BOOKING_STATUS_PARAMETER_NAME));
     private static final TppMessageInformation TPP_MESSAGE_INFORMATION =
-    TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_INVALID_PARAMETER_VALUE, BOOKING_STATUS_PARAMETER_NAME);
+        TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_INVALID_PARAMETER_VALUE, BOOKING_STATUS_PARAMETER_NAME);
     private static final MessageError INVALID_VALUE_ERROR =
         new MessageError(ErrorType.AIS_400, TPP_MESSAGE_INFORMATION);
 
@@ -56,14 +55,8 @@ public class BookingStatusQueryParameterValidatorImplTest {
 
     private Map<String, List<String>> queryParams = new HashMap<>();
 
-    @Before
-    public void setUp() {
-        when(errorBuildingService.buildErrorType())
-            .thenReturn(ErrorType.AIS_400);
-    }
-
     @Test
-    public void validate_withCorrectValue_shouldNotEnrichError() {
+    void validate_withCorrectValue_shouldNotEnrichError() {
         // Given
         queryParams.put(BOOKING_STATUS_PARAMETER_NAME, Collections.singletonList("booked"));
 
@@ -77,8 +70,10 @@ public class BookingStatusQueryParameterValidatorImplTest {
     }
 
     @Test
-    public void validate_withMissingParameter_shouldEnrichError() {
+    void validate_withMissingParameter_shouldEnrichError() {
         // Given
+        when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.AIS_400);
+
         ArgumentCaptor<MessageError> messageErrorCaptor = ArgumentCaptor.forClass(MessageError.class);
 
         // When
@@ -93,8 +88,10 @@ public class BookingStatusQueryParameterValidatorImplTest {
     }
 
     @Test
-    public void validate_withBlankValue_shouldEnrichError() {
+    void validate_withBlankValue_shouldEnrichError() {
         // Given
+        when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.AIS_400);
+
         queryParams.put(BOOKING_STATUS_PARAMETER_NAME, Collections.singletonList(""));
         ArgumentCaptor<MessageError> messageErrorCaptor = ArgumentCaptor.forClass(MessageError.class);
 
@@ -110,7 +107,7 @@ public class BookingStatusQueryParameterValidatorImplTest {
     }
 
     @Test
-    public void validate_withInvalidValue_shouldEnrichError() {
+    void validate_withInvalidValue_shouldEnrichError() {
         // Given
         queryParams.put(BOOKING_STATUS_PARAMETER_NAME, Collections.singletonList("invalid value"));
         ArgumentCaptor<TppMessageInformation> errorTextCaptor = ArgumentCaptor.forClass(TppMessageInformation.class);
@@ -128,8 +125,10 @@ public class BookingStatusQueryParameterValidatorImplTest {
     }
 
     @Test
-    public void validate_withMultipleValues_shouldEnrichError() {
+    void validate_withMultipleValues_shouldEnrichError() {
         // Given
+        when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.AIS_400);
+
         queryParams.put(BOOKING_STATUS_PARAMETER_NAME, Arrays.asList("booked", "pending"));
         ArgumentCaptor<MessageError> messageErrorCaptor = ArgumentCaptor.forClass(MessageError.class);
 

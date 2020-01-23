@@ -23,12 +23,11 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,11 +38,11 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_400;
 import static de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType.ALL_TPP;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PiisConsentValidationTest {
+@ExtendWith(MockitoExtension.class)
+class PiisConsentValidationTest {
     private static final String CREATE_PIIS_CONSENT_JSON_PATH = "json/service/validator/tpp/piis-consent-request.json";
     private static final String CREATE_WRONG_PIIS_CONSENT_JSON_PATH = "json/service/validator/tpp/wrong-piis-consent-request.json";
     private static final String AUTHORISATION_NUMBER = "12345987";
@@ -62,13 +61,8 @@ public class PiisConsentValidationTest {
         return tppInfo;
     }
 
-    @Before
-    public void setUp() {
-        when(tppService.getTppInfo()).thenReturn(buildTppInfo(AUTHORISATION_NUMBER));
-    }
-
     @Test
-    public void validatePiisConsentData_validList_successful() {
+    void validatePiisConsentData_validList_successful() {
         // Given
         PiisConsent validConsent = buildConsent();
         PiisConsent wrongConsent = buildWrongPiisConsent();
@@ -76,6 +70,8 @@ public class PiisConsentValidationTest {
         List<PiisConsent> piisConsents = new ArrayList<>();
         piisConsents.add(validConsent);
         piisConsents.add(wrongConsent);
+
+        when(tppService.getTppInfo()).thenReturn(buildTppInfo(AUTHORISATION_NUMBER));
 
         // When
         PiisConsentValidationResult validationResult = piisConsentValidation.validatePiisConsentData(piisConsents);
@@ -87,7 +83,7 @@ public class PiisConsentValidationTest {
     }
 
     @Test
-    public void validatePiisConsentData_SeveralTppForOneAccount_successful() {
+    void validatePiisConsentData_SeveralTppForOneAccount_successful() {
         // Given
         List<PiisConsent> piisConsents = Arrays.asList(buildConsent(AUTHORISATION_NUMBER), buildConsent(DIFFERENT_AUTHORISATION_NUMBER));
         Map<String, PiisConsent> piisConsentMap = piisConsents.stream().collect(Collectors.toMap(PiisConsent::getTppAuthorisationNumber, Function.identity()));
@@ -104,7 +100,7 @@ public class PiisConsentValidationTest {
     }
 
     @Test
-    public void validatePiisConsentData_allTppConsent_successful() {
+    void validatePiisConsentData_allTppConsent_successful() {
         // Given
         PiisConsent validConsent = buildConsent();
         validConsent.setTppAccessType(ALL_TPP);
@@ -122,7 +118,7 @@ public class PiisConsentValidationTest {
     }
 
     @Test
-    public void validatePiisConsentData_allTppConsent_shouldReturnException() {
+    void validatePiisConsentData_allTppConsent_shouldReturnException() {
         // Given
         PiisConsent validConsent = buildConsent();
         validConsent.setTppAccessType(null);
@@ -138,7 +134,7 @@ public class PiisConsentValidationTest {
     }
 
     @Test
-    public void validatePiisConsentData_wrongList_shouldReturnError() {
+    void validatePiisConsentData_wrongList_shouldReturnError() {
         // Given
         PiisConsent wrongConsent = buildWrongPiisConsent();
 
@@ -153,7 +149,7 @@ public class PiisConsentValidationTest {
     }
 
     @Test
-    public void validatePiisConsentData_emptyList_shouldReturnError() {
+    void validatePiisConsentData_emptyList_shouldReturnError() {
         // Given
         List<PiisConsent> piisConsents = new ArrayList<>();
 
@@ -184,7 +180,7 @@ public class PiisConsentValidationTest {
     private void assertThatErrorIs(PiisConsentValidationResult validationResult, MessageErrorCode consentUnknown400) {
         assertNotNull(validationResult);
         assertTrue(validationResult.hasError());
-        assertEquals(validationResult.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode(), consentUnknown400);
-        assertEquals(validationResult.getErrorHolder().getErrorType(), PIIS_400);
+        assertEquals(consentUnknown400, validationResult.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode());
+        assertEquals(PIIS_400, validationResult.getErrorHolder().getErrorType());
     }
 }

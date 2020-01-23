@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,16 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_PATH_PARAMETER_INVALID;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class TransactionListDownloadPathParamsValidatorImplTest {
+class TransactionListDownloadPathParamsValidatorImplTest {
 
     private static final String CORRECT_BASE64_STRING = "dGVzdA==";
     private static final String WRONG_BASE64_STRING = "wrong base64";
@@ -38,15 +38,15 @@ public class TransactionListDownloadPathParamsValidatorImplTest {
     private TransactionListDownloadPathParamsValidatorImpl transactionListDownloadPathParamsValidator;
     private MessageError messageError;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         messageError = new MessageError();
         ErrorBuildingService errorBuildingService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
         transactionListDownloadPathParamsValidator = new TransactionListDownloadPathParamsValidatorImpl(errorBuildingService);
     }
 
     @Test
-    public void validate_success() {
+    void validate_success() {
         // Given
         Map<String, String> pathParametersMap = new HashMap<>();
         pathParametersMap.put(DOWNLOAD_ID, CORRECT_BASE64_STRING);
@@ -59,7 +59,7 @@ public class TransactionListDownloadPathParamsValidatorImplTest {
     }
 
     @Test
-    public void validate_wrongBase64_shouldFail() {
+    void validate_wrongBase64_shouldFail() {
         // Given
         Map<String, String> pathParametersMap = new HashMap<>();
         pathParametersMap.put(DOWNLOAD_ID, WRONG_BASE64_STRING);

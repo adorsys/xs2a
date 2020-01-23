@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package de.adorsys.psd2.xs2a.core.profile;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Currency;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class AccountReferenceTest {
+class AccountReferenceTest {
 
     private static final String ACCOUNT_REFERENCE_VALUE = "111";
     private static final String RESOURCE_ID = "resource_id";
@@ -32,15 +32,15 @@ public class AccountReferenceTest {
 
     private AccountReference accountReference;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         accountReference = new AccountReference(null, null, CURRENCY, RESOURCE_ID, ASPSP_ACCOUNT_ID);
         assertEquals(RESOURCE_ID, accountReference.getResourceId());
         assertEquals(ASPSP_ACCOUNT_ID, accountReference.getAspspAccountId());
     }
 
     @Test
-    public void createWithSpecificAccountReferenceType_iban() {
+    void createWithSpecificAccountReferenceType_iban() {
         accountReference = new AccountReference(AccountReferenceType.IBAN, ACCOUNT_REFERENCE_VALUE, CURRENCY);
         assertEquals(ACCOUNT_REFERENCE_VALUE, accountReference.getIban());
         assertNull(accountReference.getBban());
@@ -50,7 +50,7 @@ public class AccountReferenceTest {
     }
 
     @Test
-    public void createWithSpecificAccountReferenceType_bban() {
+    void createWithSpecificAccountReferenceType_bban() {
         accountReference = new AccountReference(AccountReferenceType.BBAN, ACCOUNT_REFERENCE_VALUE, CURRENCY);
         assertEquals(ACCOUNT_REFERENCE_VALUE, accountReference.getBban());
         assertNull(accountReference.getIban());
@@ -60,7 +60,7 @@ public class AccountReferenceTest {
     }
 
     @Test
-    public void createWithSpecificAccountReferenceType_pan() {
+    void createWithSpecificAccountReferenceType_pan() {
         accountReference = new AccountReference(AccountReferenceType.PAN, ACCOUNT_REFERENCE_VALUE, CURRENCY);
         assertEquals(ACCOUNT_REFERENCE_VALUE, accountReference.getPan());
         assertNull(accountReference.getIban());
@@ -70,7 +70,7 @@ public class AccountReferenceTest {
     }
 
     @Test
-    public void createWithSpecificAccountReferenceType_maskedPan() {
+    void createWithSpecificAccountReferenceType_maskedPan() {
         accountReference = new AccountReference(AccountReferenceType.MASKED_PAN, ACCOUNT_REFERENCE_VALUE, CURRENCY);
         assertEquals(ACCOUNT_REFERENCE_VALUE, accountReference.getMaskedPan());
         assertNull(accountReference.getIban());
@@ -80,7 +80,7 @@ public class AccountReferenceTest {
     }
 
     @Test
-    public void createWithSpecificAccountReferenceType_msisdn() {
+    void createWithSpecificAccountReferenceType_msisdn() {
         accountReference = new AccountReference(AccountReferenceType.MSISDN, ACCOUNT_REFERENCE_VALUE, CURRENCY);
         assertEquals(ACCOUNT_REFERENCE_VALUE, accountReference.getMsisdn());
         assertNull(accountReference.getIban());
@@ -89,13 +89,13 @@ public class AccountReferenceTest {
         assertNull(accountReference.getMaskedPan());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getUsedAccountReferenceSelector_exception() {
-        accountReference.getUsedAccountReferenceSelector();
+    @Test
+    void getUsedAccountReferenceSelector_exception() {
+        assertThrows(IllegalArgumentException.class, () -> accountReference.getUsedAccountReferenceSelector());
     }
 
     @Test
-    public void getUsedAccountReferenceSelector() {
+    void getUsedAccountReferenceSelector() {
         accountReference.setMaskedPan("masked pan");
         AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
         assertEquals(AccountReferenceType.MASKED_PAN, selector.getAccountReferenceType());
@@ -123,7 +123,7 @@ public class AccountReferenceTest {
     }
 
     @Test
-    public void getUsedAccountReferenceFields() {
+    void getUsedAccountReferenceFields() {
         assertTrue(accountReference.getUsedAccountReferenceFields().isEmpty());
 
         accountReference.setMaskedPan("masked pan");

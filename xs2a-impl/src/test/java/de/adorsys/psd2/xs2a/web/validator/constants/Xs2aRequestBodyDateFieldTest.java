@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 
 package de.adorsys.psd2.xs2a.web.validator.constants;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Xs2aRequestBodyDateFieldTest {
+
+class Xs2aRequestBodyDateFieldTest {
 
     @Test
-    public void checkDateFieldFormats() {
-        assertEquals("Check amount of described fields", 5, Xs2aRequestBodyDateField.values().length);
+    void checkDateFieldFormats() {
+        assertEquals(5, Xs2aRequestBodyDateField.values().length);
 
         assertEquals("requestedExecutionDate", Xs2aRequestBodyDateField.REQUESTED_EXECUTION_DATE.getFieldName());
         assertEquals(Xs2aBodyDateFormatter.ISO_DATE, Xs2aRequestBodyDateField.REQUESTED_EXECUTION_DATE.getFormatter());

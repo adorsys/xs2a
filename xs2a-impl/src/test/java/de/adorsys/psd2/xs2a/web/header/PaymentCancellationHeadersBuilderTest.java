@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,18 @@ package de.adorsys.psd2.xs2a.web.header;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentCancellationHeadersBuilderTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentCancellationHeadersBuilderTest {
     private static final String AUTHORISATION_ID = "123";
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private static final String ASPSP_SCA_APPROACH_HEADER = "Aspsp-Sca-Approach";
@@ -40,7 +40,7 @@ public class PaymentCancellationHeadersBuilderTest {
     private PaymentCancellationHeadersBuilder paymentCancellationHeadersBuilder;
 
     @Test
-    public void buildStartPaymentCancellationAuthorisationHeaders_shouldReturnScaApproachFromAuthorisation() {
+    void buildStartPaymentCancellationAuthorisationHeaders_shouldReturnScaApproachFromAuthorisation() {
         // Given
         when(scaApproachResolver.getCancellationScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);
@@ -59,7 +59,7 @@ public class PaymentCancellationHeadersBuilderTest {
     }
 
     @Test
-    public void buildUpdatePaymentCancellationPsuDataHeaders_shouldReturnScaApproachFromAuthorisation() {
+    void buildUpdatePaymentCancellationPsuDataHeaders_shouldReturnScaApproachFromAuthorisation() {
         // Given
         when(scaApproachResolver.getCancellationScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);

@@ -28,22 +28,22 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.PaymentModelMapper;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Currency;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentAccountReferenceExtractorTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentAccountReferenceExtractorTest {
     private static final String SINGLE_PAYMENT_JSON_PATH = "json/service/validator/pis/payment/raw/single-payment.json";
     private static final String SINGLE_PAYMENT_XS2A_JSON_PATH = "json/service/validator/pis/payment/raw/xs2a-single-payment.json";
     private static final String PERIODIC_PAYMENT_JSON_PATH = "json/service/validator/pis/payment/raw/periodic-payment.json";
@@ -61,15 +61,15 @@ public class PaymentAccountReferenceExtractorTest {
 
     private PaymentAccountReferenceExtractor paymentAccountReferenceExtractor;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         xs2aObjectMapper.findAndRegisterModules();
 
         paymentAccountReferenceExtractor = new PaymentAccountReferenceExtractor(xs2aObjectMapper, paymentModelMapper);
     }
 
     @Test
-    public void extractAccountReferences_singlePayment() {
+    void extractAccountReferences_singlePayment() {
         // Given
         byte[] rawBody = jsonReader.getBytesFromFile(SINGLE_PAYMENT_JSON_PATH);
         PaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile(SINGLE_PAYMENT_JSON_PATH, PaymentInitiationJson.class);
@@ -89,7 +89,7 @@ public class PaymentAccountReferenceExtractorTest {
     }
 
     @Test
-    public void extractAccountReferences_periodicPayment() {
+    void extractAccountReferences_periodicPayment() {
         // Given
         byte[] rawBody = jsonReader.getBytesFromFile(PERIODIC_PAYMENT_JSON_PATH);
         PeriodicPaymentInitiationJson periodicPaymentInitiationJson = jsonReader.getObjectFromFile(PERIODIC_PAYMENT_JSON_PATH, PeriodicPaymentInitiationJson.class);
@@ -109,7 +109,7 @@ public class PaymentAccountReferenceExtractorTest {
     }
 
     @Test
-    public void extractAccountReferences_bulkPayment() {
+    void extractAccountReferences_bulkPayment() {
         // Given
         byte[] rawBody = jsonReader.getBytesFromFile(BULK_PAYMENT_JSON_PATH);
         BulkPaymentInitiationJson bulkPaymentInitiationJson = jsonReader.getObjectFromFile(BULK_PAYMENT_JSON_PATH, BulkPaymentInitiationJson.class);
@@ -129,7 +129,7 @@ public class PaymentAccountReferenceExtractorTest {
     }
 
     @Test
-    public void extractAccountReferences_malformedBody() {
+    void extractAccountReferences_malformedBody() {
         // Given
         byte[] rawBody = jsonReader.getBytesFromFile(MALFORMED_BODY_JSON_PATH);
 

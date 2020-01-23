@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,25 @@ package de.adorsys.psd2.xs2a.web.mapper;
 import de.adorsys.psd2.model.Address;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Xs2aAddressMapperImpl.class})
-public class Xs2aAddressMapperTest {
+class Xs2aAddressMapperTest {
 
     @Autowired
     private Xs2aAddressMapper xs2aAddressMapper;
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToXs2aAddress_success() {
+    void mapToXs2aAddress_success() {
         Xs2aAddress xs2aAddress = xs2aAddressMapper.mapToXs2aAddress(
             jsonReader.getObjectFromFile("json/service/mapper/address.json", Address.class));
 
@@ -46,13 +46,13 @@ public class Xs2aAddressMapperTest {
     }
 
     @Test
-    public void mapToXs2aAddress_nullValue() {
+    void mapToXs2aAddress_nullValue() {
         Xs2aAddress xs2aAddress = xs2aAddressMapper.mapToXs2aAddress(null);
         assertNull(xs2aAddress);
     }
 
     @Test
-    public void mapToAddress_success() {
+    void mapToAddress_success() {
         Address address = xs2aAddressMapper.mapToAddress(
             jsonReader.getObjectFromFile("json/service/mapper/expected-address.json", Xs2aAddress.class));
 
@@ -61,7 +61,7 @@ public class Xs2aAddressMapperTest {
     }
 
     @Test
-    public void mapToAddress_nullValue() {
+    void mapToAddress_nullValue() {
         Address address = xs2aAddressMapper.mapToAddress(null);
         assertNull(address);
     }

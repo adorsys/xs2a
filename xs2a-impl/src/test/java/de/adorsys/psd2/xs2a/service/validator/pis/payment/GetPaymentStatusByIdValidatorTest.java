@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,20 +26,20 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class GetPaymentStatusByIdValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class GetPaymentStatusByIdValidatorTest {
     private static final PaymentType PAYMENT_TYPE = PaymentType.SINGLE;
     private static final PaymentType INVALID_PAYMENT_TYPE = PaymentType.BULK;
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
@@ -71,30 +71,24 @@ public class GetPaymentStatusByIdValidatorTest {
     @InjectMocks
     private GetPaymentStatusByIdValidator getPaymentStatusByIdValidator;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         // Inject pisTppInfoValidator via setter
         getPaymentStatusByIdValidator.setPisValidators(pisTppInfoValidator);
-
-        when(pisTppInfoValidator.validateTpp(TPP_INFO))
-            .thenReturn(ValidationResult.valid());
-        when(pisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
-            .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
-
-        when(requestProviderService.getAcceptHeader())
-            .thenReturn(JSON_ACCEPT_HEADER);
-
-        when(transactionStatusAcceptHeaderValidator.validate(JSON_ACCEPT_HEADER))
-            .thenReturn(ValidationResult.valid());
-        when(transactionStatusAcceptHeaderValidator.validate(XML_ACCEPT_HEADER))
-            .thenReturn(ValidationResult.invalid(ACCEPT_HEADER_VALIDATION_ERROR));
     }
 
     @Test
-    public void validate_withValidPaymentObject_shouldReturnValid() {
+    void validate_withValidPaymentObject_shouldReturnValid() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
         when(oauthPaymentValidator.validate(commonPaymentResponse))
+            .thenReturn(ValidationResult.valid());
+
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(requestProviderService.getAcceptHeader()).thenReturn(JSON_ACCEPT_HEADER);
+
+        when(transactionStatusAcceptHeaderValidator.validate(JSON_ACCEPT_HEADER))
             .thenReturn(ValidationResult.valid());
 
         // When
@@ -109,9 +103,10 @@ public class GetPaymentStatusByIdValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidTppInPayment_shouldReturnTppValidationError() {
+    void validate_withInvalidTppInPayment_shouldReturnTppValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(INVALID_TPP_INFO);
+        when(pisTppInfoValidator.validateTpp(INVALID_TPP_INFO)).thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
 
         // When
         ValidationResult validationResult = getPaymentStatusByIdValidator.validate(new GetPaymentStatusByIdPO(commonPaymentResponse, PAYMENT_TYPE, PAYMENT_PRODUCT));
@@ -125,7 +120,7 @@ public class GetPaymentStatusByIdValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidPaymentObject_shouldReturnGetCommonPaymentValidationError() {
+    void validate_withInvalidPaymentObject_shouldReturnGetCommonPaymentValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
 
@@ -140,7 +135,7 @@ public class GetPaymentStatusByIdValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidTppAndPaymentObject_shouldReturnTypeAndProductValidationErrorFirst() {
+    void validate_withInvalidTppAndPaymentObject_shouldReturnTypeAndProductValidationErrorFirst() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(INVALID_TPP_INFO);
 
@@ -155,7 +150,7 @@ public class GetPaymentStatusByIdValidatorTest {
     }
 
     @Test
-    public void validate_withWrongPaymentProduct_shouldReturnPaymentProductValidationError() {
+    void validate_withWrongPaymentProduct_shouldReturnPaymentProductValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
 
@@ -169,11 +164,15 @@ public class GetPaymentStatusByIdValidatorTest {
     }
 
     @Test
-    public void validate_withNotSupportedAcceptHeader_shouldReturnAcceptHeaderValidationError() {
+    void validate_withNotSupportedAcceptHeader_shouldReturnAcceptHeaderValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
-        when(requestProviderService.getAcceptHeader())
-            .thenReturn(XML_ACCEPT_HEADER);
+        when(requestProviderService.getAcceptHeader()).thenReturn(XML_ACCEPT_HEADER);
+
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(transactionStatusAcceptHeaderValidator.validate(XML_ACCEPT_HEADER))
+            .thenReturn(ValidationResult.invalid(ACCEPT_HEADER_VALIDATION_ERROR));
 
         // When
         ValidationResult validationResult = getPaymentStatusByIdValidator.validate(new GetPaymentStatusByIdPO(commonPaymentResponse, PAYMENT_TYPE, PAYMENT_PRODUCT));

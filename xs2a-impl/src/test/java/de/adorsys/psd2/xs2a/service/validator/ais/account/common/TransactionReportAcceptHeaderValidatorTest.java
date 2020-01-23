@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +23,21 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.REQUESTED_FORMATS_INVALID;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TransactionReportAcceptHeaderValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class TransactionReportAcceptHeaderValidatorTest {
 
     private static final MessageError REQUESTED_FORMATS_INVALID_ERROR =
         new MessageError(ErrorType.AIS_406, TppMessageInformation.of(REQUESTED_FORMATS_INVALID));
@@ -48,30 +48,36 @@ public class TransactionReportAcceptHeaderValidatorTest {
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     private JsonReader jsonReader = new JsonReader();
+    private AspspSettings aspspSettings;
 
-    @Before
-    public void setUp() {
-        AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.getSupportedTransactionApplicationTypes()).thenReturn(aspspSettings.getAis()
-                                                                                                  .getTransactionParameters()
-                                                                                                  .getSupportedTransactionApplicationTypes());
+    @BeforeEach
+    void setUp() {
+        aspspSettings = jsonReader.getObjectFromFile("json/aspsp-settings.json", AspspSettings.class);
     }
 
     @Test
-    public void validate_success() {
+    void validate_success() {
+        when(aspspProfileServiceWrapper.getSupportedTransactionApplicationTypes()).thenReturn(aspspSettings.getAis()
+                                                                                                  .getTransactionParameters()
+                                                                                                  .getSupportedTransactionApplicationTypes());
+
         ValidationResult actual = validator.validate(MediaType.APPLICATION_JSON_VALUE);
         assertTrue(actual.isValid());
     }
 
     @Test
-    public void validate_error() {
+    void validate_error() {
+        when(aspspProfileServiceWrapper.getSupportedTransactionApplicationTypes()).thenReturn(aspspSettings.getAis()
+                                                                                                  .getTransactionParameters()
+                                                                                                  .getSupportedTransactionApplicationTypes());
+
         ValidationResult actual = validator.validate(MediaType.APPLICATION_PDF_VALUE);
         assertTrue(actual.isNotValid());
         assertEquals(REQUESTED_FORMATS_INVALID_ERROR, actual.getMessageError());
     }
 
     @Test
-    public void validate_acceptHeaderIsNotPresented_success() {
+    void validate_acceptHeaderIsNotPresented_success() {
         ValidationResult actual = validator.validate(null);
         assertTrue(actual.isValid());
 

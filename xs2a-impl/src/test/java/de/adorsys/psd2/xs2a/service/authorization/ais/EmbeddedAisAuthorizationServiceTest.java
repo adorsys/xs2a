@@ -24,12 +24,11 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
@@ -37,8 +36,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class EmbeddedAisAuthorizationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class EmbeddedAisAuthorizationServiceTest {
     private static final ScaStatus STARTED_SCA_STATUS = ScaStatus.RECEIVED;
     private static final ScaStatus STARTED_XS2A_SCA_STATUS = ScaStatus.RECEIVED;
     private static final String PSU_ID = "Test psuId";
@@ -67,16 +66,8 @@ public class EmbeddedAisAuthorizationServiceTest {
     @Mock
     private AccountConsent consent;
 
-    @Before
-    public void setUp() {
-        when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
-            .thenReturn(Optional.of(SCA_STATUS));
-        when(aisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
-            .thenReturn(Optional.empty());
-    }
-
     @Test
-    public void createConsentAuthorization_wrongConsentId_fail() {
+    void createConsentAuthorization_wrongConsentId_fail() {
         // Given
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
@@ -89,7 +80,7 @@ public class EmbeddedAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_success() {
+    void getAccountConsentAuthorizationById_success() {
         // Given
         when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(Optional.of(consentAuthorization));
@@ -103,7 +94,7 @@ public class EmbeddedAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_wrongId_fail() {
+    void getAccountConsentAuthorizationById_wrongId_fail() {
         // Given
         when(aisConsentService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID, WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
@@ -116,7 +107,7 @@ public class EmbeddedAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getScaApproachServiceType_success() {
+    void getScaApproachServiceType_success() {
         // When
         ScaApproach actualResponse = authorizationService.getScaApproachServiceType();
 
@@ -125,7 +116,7 @@ public class EmbeddedAisAuthorizationServiceTest {
     }
 
     @Test
-    public void createConsentAuthorization_Success() {
+    void createConsentAuthorization_Success() {
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
@@ -143,7 +134,7 @@ public class EmbeddedAisAuthorizationServiceTest {
 
 
     @Test
-    public void createConsentAuthorization_wrongId_Failure() {
+    void createConsentAuthorization_wrongId_Failure() {
         //Given
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(Optional.empty());
 
@@ -155,7 +146,7 @@ public class EmbeddedAisAuthorizationServiceTest {
     }
 
     @Test
-    public void createConsentAuthorizationNoPsuAuthentification_Success() {
+    void createConsentAuthorizationNoPsuAuthentification_Success() {
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
@@ -172,7 +163,7 @@ public class EmbeddedAisAuthorizationServiceTest {
     }
 
     @Test
-    public void createConsentAuthorizationNoPsuIdentification_Success() {
+    void createConsentAuthorizationNoPsuIdentification_Success() {
         PsuIdData psuIdData = new PsuIdData(null, null, null, null, null);
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, psuIdData))
             .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
@@ -189,18 +180,20 @@ public class EmbeddedAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_success() {
+    void getAuthorisationScaStatus_success() {
+        when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+            .thenReturn(Optional.of(SCA_STATUS));
+
         // When
         Optional<ScaStatus> actual = authorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
 
         // Then
         assertThat(actual.isPresent()).isTrue();
-        //noinspection OptionalGetWithoutIsPresent
         assertThat(actual.get()).isEqualTo(SCA_STATUS);
     }
 
     @Test
-    public void getAuthorisationScaStatus_failure_wrongId() {
+    void getAuthorisationScaStatus_failure_wrongId() {
         // When
         Optional<ScaStatus> actual = authorizationService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID);
 

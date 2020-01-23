@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package de.adorsys.psd2.xs2a.web.validator.header;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,8 +31,8 @@ import java.util.Map;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_BOOLEAN_VALUE;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AbstractHeaderValidatorImplTest {
+@ExtendWith(MockitoExtension.class)
+class AbstractHeaderValidatorImplTest {
 
     @Mock
     private ErrorBuildingService errorBuildingService;
@@ -40,22 +40,22 @@ public class AbstractHeaderValidatorImplTest {
     private MessageError messageError;
     private Map<String, String> headers;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         validator = new TppRedirectPreferredHeaderValidatorImpl(errorBuildingService);
         messageError = new MessageError();
         headers = new HashMap<>();
     }
 
     @Test
-    public void checkBooleanFormat_headerIsNotPresented() {
+    void checkBooleanFormat_headerIsNotPresented() {
         validator.checkBooleanFormat(headers, messageError);
 
         verify(errorBuildingService, never()).enrichMessageError(any(MessageError.class), any(TppMessageInformation.class));
     }
 
     @Test
-    public void checkBooleanFormat_success() {
+    void checkBooleanFormat_success() {
         headers.put(validator.getHeaderName(), "true");
         validator.checkBooleanFormat(headers, messageError);
 
@@ -71,7 +71,7 @@ public class AbstractHeaderValidatorImplTest {
     }
 
     @Test
-    public void checkBooleanFormat_error() {
+    void checkBooleanFormat_error() {
         headers.put(validator.getHeaderName(), "wrong_format");
         validator.checkBooleanFormat(headers, messageError);
 

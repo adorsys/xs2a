@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,18 +25,18 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UpdatePisPsuDataLinksTest {
+@ExtendWith(MockitoExtension.class)
+class UpdatePisPsuDataLinksTest {
     private static final String HTTP_URL = "http://url";
     private static final PaymentType PAYMENT_SERVICE = PaymentType.SINGLE;
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
@@ -52,8 +52,8 @@ public class UpdatePisPsuDataLinksTest {
 
     private Links expectedLinks;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         expectedLinks = new Links();
 
         JsonReader jsonReader = new JsonReader();
@@ -67,7 +67,7 @@ public class UpdatePisPsuDataLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodAuthenticated() {
+    void isScaStatusMethodAuthenticated() {
         links = new UpdatePisPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.PSUAUTHENTICATED, authenticationObject);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
@@ -76,7 +76,7 @@ public class UpdatePisPsuDataLinksTest {
     }
 
     @Test
-    public void isAnotherScaStatus_failed() {
+    void isAnotherScaStatus_failed() {
         links = new UpdatePisPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.FAILED, authenticationObject);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
@@ -84,7 +84,7 @@ public class UpdatePisPsuDataLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodSelectedAndEmbeddedApproach() {
+    void isScaStatusMethodSelectedAndEmbeddedApproach() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
 
         links = new UpdatePisPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.SCAMETHODSELECTED, authenticationObject);
@@ -95,7 +95,7 @@ public class UpdatePisPsuDataLinksTest {
     }
 
     @Test
-    public void isScaStatusFinalised() {
+    void isScaStatusFinalised() {
         links = new UpdatePisPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.FINALISED, authenticationObject);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
@@ -104,7 +104,7 @@ public class UpdatePisPsuDataLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodIdentified() {
+    void isScaStatusMethodIdentified() {
         links = new UpdatePisPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.PSUIDENTIFIED, authenticationObject);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,27 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.util.Currency;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpiToXs2aAmountMapperImpl.class})
-public class SpiToXs2aAmountMapperTest {
+class SpiToXs2aAmountMapperTest {
 
     @Autowired
     private SpiToXs2aAmountMapper mapper;
 
     @Test
-    public void mapToXs2aAmount() {
+    void mapToXs2aAmount() {
         SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.TEN);
         Xs2aAmount xs2aAmount = mapper.mapToXs2aAmount(spiAmount);
 
@@ -47,7 +47,7 @@ public class SpiToXs2aAmountMapperTest {
     }
 
     @Test
-    public void mapToXs2aAmount_nullValue() {
+    void mapToXs2aAmount_nullValue() {
         assertNull(mapper.mapToXs2aAmount(null));
     }
 }

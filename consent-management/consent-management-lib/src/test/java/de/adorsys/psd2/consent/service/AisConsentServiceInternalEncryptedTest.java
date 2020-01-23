@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,24 +27,23 @@ import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisConsentServiceInternalEncryptedTest {
+@ExtendWith(MockitoExtension.class)
+class AisConsentServiceInternalEncryptedTest {
     private static final String ENCRYPTED_CONSENT_ID = "encrypted consent id";
     private static final String UNDECRYPTABLE_CONSENT_ID = "undecryptable consent id";
     private static final String DECRYPTED_CONSENT_ID = "255574b2-f115-4f3c-8d77-c1897749c060";
@@ -59,49 +58,16 @@ public class AisConsentServiceInternalEncryptedTest {
     @Mock
     private SecurityDataService securityDataService;
 
-    @Before
-    public void setUp() throws WrongChecksumException {
-        when(securityDataService.encryptId(DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(ENCRYPTED_CONSENT_ID));
-        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
-        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID))
-            .thenReturn(Optional.empty());
-        when(securityDataService.encryptId(UNENCRYPTABLE_CONSENT_ID))
-            .thenReturn(Optional.empty());
-
+    @Test
+    void createConsent_success() throws WrongChecksumException {
+        // Given
+        CreateAisConsentRequest request = buildCreateAisConsentRequest();
+        CreateAisConsentResponse expected = new CreateAisConsentResponse(ENCRYPTED_CONSENT_ID, buildAisAccountConsent(), MODES);
+        when(securityDataService.encryptId(DECRYPTED_CONSENT_ID)).thenReturn(Optional.of(ENCRYPTED_CONSENT_ID));
         when(aisConsentService.createConsent(any()))
             .thenReturn(CmsResponse.<CreateAisConsentResponse>builder()
                             .payload(new CreateAisConsentResponse(DECRYPTED_CONSENT_ID, buildAisAccountConsent(), MODES))
                             .build());
-        when(aisConsentService.getConsentStatusById(DECRYPTED_CONSENT_ID))
-            .thenReturn(CmsResponse.<ConsentStatus>builder()
-                            .payload(CONSENT_STATUS)
-                            .build());
-        when(aisConsentService.updateConsentStatusById(DECRYPTED_CONSENT_ID, CONSENT_STATUS))
-            .thenReturn(CmsResponse.<Boolean>builder()
-                            .payload(true)
-                            .build());
-        when(aisConsentService.updateAspspAccountAccess(eq(DECRYPTED_CONSENT_ID), any()))
-            .thenReturn(CmsResponse.<String>builder()
-                            .payload(DECRYPTED_CONSENT_ID)
-                            .build());
-        when(aisConsentService.getAisAccountConsentById(DECRYPTED_CONSENT_ID))
-            .thenReturn(CmsResponse.<AisAccountConsent>builder()
-                            .payload(buildAisAccountConsent())
-                            .build());
-
-        when(aisConsentService.getPsuDataByConsentId(DECRYPTED_CONSENT_ID))
-            .thenReturn(CmsResponse.<List<PsuIdData>>builder()
-                            .payload(Collections.singletonList(buildPsuIdData()))
-                            .build());
-    }
-
-    @Test
-    public void createConsent_success() throws WrongChecksumException {
-        // Given
-        CreateAisConsentRequest request = buildCreateAisConsentRequest();
-        CreateAisConsentResponse expected = new CreateAisConsentResponse(ENCRYPTED_CONSENT_ID, buildAisAccountConsent(), MODES);
 
         // When
         CmsResponse<CreateAisConsentResponse> actualResponse = aisConsentServiceInternalEncrypted.createConsent(request);
@@ -115,7 +81,7 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void createConsent_failure_internalServiceFailed() throws WrongChecksumException {
+    void createConsent_failure_internalServiceFailed() throws WrongChecksumException {
         when(aisConsentService.createConsent(any()))
             .thenReturn(CmsResponse.<CreateAisConsentResponse>builder()
                             .error(CmsError.LOGICAL_ERROR)
@@ -135,7 +101,7 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void createConsent_failure_encryptionFailed() throws WrongChecksumException {
+    void createConsent_failure_encryptionFailed() throws WrongChecksumException {
         // Given
         CreateAisConsentRequest request = buildCreateAisConsentRequest();
         when(aisConsentService.createConsent(any()))
@@ -154,7 +120,13 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getConsentStatusById_success() {
+    void getConsentStatusById_success() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(aisConsentService.getConsentStatusById(DECRYPTED_CONSENT_ID))
+            .thenReturn(CmsResponse.<ConsentStatus>builder()
+                            .payload(CONSENT_STATUS)
+                            .build());
+
         // When
         CmsResponse<ConsentStatus> actual = aisConsentServiceInternalEncrypted.getConsentStatusById(ENCRYPTED_CONSENT_ID);
 
@@ -166,7 +138,8 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getConsentStatusById_internalServiceFailed() {
+    void getConsentStatusById_internalServiceFailed() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentService.getConsentStatusById(any()))
             .thenReturn(CmsResponse.<ConsentStatus>builder()
                             .error(CmsError.LOGICAL_ERROR)
@@ -183,7 +156,7 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getConsentStatusById_decryptionFailed() {
+    void getConsentStatusById_decryptionFailed() {
         // When
         CmsResponse<ConsentStatus> actual = aisConsentServiceInternalEncrypted.getConsentStatusById(UNDECRYPTABLE_CONSENT_ID);
 
@@ -195,7 +168,12 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateConsentStatusById_success() throws WrongChecksumException {
+    void updateConsentStatusById_success() throws WrongChecksumException {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(aisConsentService.updateConsentStatusById(DECRYPTED_CONSENT_ID, CONSENT_STATUS))
+            .thenReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
+                            .build());
         // When
         CmsResponse<Boolean> actual = aisConsentServiceInternalEncrypted.updateConsentStatusById(ENCRYPTED_CONSENT_ID, CONSENT_STATUS);
 
@@ -207,7 +185,8 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateConsentStatusById_internalServiceFailed() throws WrongChecksumException {
+    void updateConsentStatusById_internalServiceFailed() throws WrongChecksumException {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentService.updateConsentStatusById(any(), any()))
             .thenReturn(CmsResponse.<Boolean>builder()
                             .error(CmsError.LOGICAL_ERROR)
@@ -224,7 +203,7 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateConsentStatusById_decryptionFailed() throws WrongChecksumException {
+    void updateConsentStatusById_decryptionFailed() throws WrongChecksumException {
         // When
         CmsResponse<Boolean> actual = aisConsentServiceInternalEncrypted.updateConsentStatusById(UNDECRYPTABLE_CONSENT_ID, CONSENT_STATUS);
 
@@ -236,9 +215,14 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAisAccountConsentById_success() {
+    void getAisAccountConsentById_success() {
         // Given
         AisAccountConsent expected = buildAisAccountConsent();
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(aisConsentService.getAisAccountConsentById(DECRYPTED_CONSENT_ID))
+            .thenReturn(CmsResponse.<AisAccountConsent>builder()
+                            .payload(buildAisAccountConsent())
+                            .build());
 
         // When
         CmsResponse<AisAccountConsent> actual = aisConsentServiceInternalEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID);
@@ -251,7 +235,8 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAisAccountConsentById_internalServiceFailed() {
+    void getAisAccountConsentById_internalServiceFailed() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentService.getAisAccountConsentById(any()))
             .thenReturn(CmsResponse.<AisAccountConsent>builder()
                             .error(CmsError.LOGICAL_ERROR)
@@ -268,7 +253,7 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAisAccountConsentById_decryptionFailed() {
+    void getAisAccountConsentById_decryptionFailed() {
         // When
         CmsResponse<AisAccountConsent> actual = aisConsentServiceInternalEncrypted.getAisAccountConsentById(UNDECRYPTABLE_CONSENT_ID);
 
@@ -280,9 +265,10 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void checkConsentAndSaveActionLog_success() throws WrongChecksumException {
+    void checkConsentAndSaveActionLog_success() throws WrongChecksumException {
         // Given
         AisConsentActionRequest request = buildAisActionRequest(ENCRYPTED_CONSENT_ID);
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
 
         // When
         aisConsentServiceInternalEncrypted.checkConsentAndSaveActionLog(request);
@@ -293,7 +279,7 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void checkConsentAndSaveActionLog_decryptionFailed() throws WrongChecksumException {
+    void checkConsentAndSaveActionLog_decryptionFailed() throws WrongChecksumException {
         // Given
         AisConsentActionRequest request = buildAisActionRequest(UNDECRYPTABLE_CONSENT_ID);
 
@@ -305,9 +291,15 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateAccountAccess_success() throws WrongChecksumException {
+    void updateAccountAccess_success() throws WrongChecksumException {
         // Given
         AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
+        when(securityDataService.encryptId(DECRYPTED_CONSENT_ID)).thenReturn(Optional.of(ENCRYPTED_CONSENT_ID));
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(aisConsentService.updateAspspAccountAccess(eq(DECRYPTED_CONSENT_ID), any()))
+            .thenReturn(CmsResponse.<String>builder()
+                            .payload(DECRYPTED_CONSENT_ID)
+                            .build());
 
         // When
         CmsResponse<String> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, accountAccessInfo);
@@ -320,7 +312,8 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateAccountAccess_internalServiceFailed() throws WrongChecksumException {
+    void updateAccountAccess_internalServiceFailed() throws WrongChecksumException {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentService.updateAspspAccountAccess(any(), any()))
             .thenReturn(CmsResponse.<String>builder()
                             .error(CmsError.LOGICAL_ERROR)
@@ -340,7 +333,7 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateAccountAccess_decryptionFailed() throws WrongChecksumException {
+    void updateAccountAccess_decryptionFailed() throws WrongChecksumException {
         // Given
         AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
 
@@ -355,10 +348,14 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getPsuDataByConsentId_success() {
+    void getPsuDataByConsentId_success() {
         // Given
-
         List<PsuIdData> expected = Collections.singletonList(buildPsuIdData());
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(aisConsentService.getPsuDataByConsentId(DECRYPTED_CONSENT_ID))
+            .thenReturn(CmsResponse.<List<PsuIdData>>builder()
+                            .payload(Collections.singletonList(buildPsuIdData()))
+                            .build());
 
         // When
         CmsResponse<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
@@ -371,7 +368,8 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getPsuDataByConsentId_internalServiceFailed() {
+    void getPsuDataByConsentId_internalServiceFailed() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentService.getPsuDataByConsentId(any()))
             .thenReturn(CmsResponse.<List<PsuIdData>>builder()
                             .error(CmsError.LOGICAL_ERROR)
@@ -388,7 +386,7 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getPsuDataByConsentId_decryptionFailed() {
+    void getPsuDataByConsentId_decryptionFailed() {
         // When
         CmsResponse<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(UNDECRYPTABLE_CONSENT_ID);
 

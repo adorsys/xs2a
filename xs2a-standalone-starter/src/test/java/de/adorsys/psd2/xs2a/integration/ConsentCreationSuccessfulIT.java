@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,9 +47,9 @@ import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentBuilder;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,7 +58,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -81,7 +81,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -131,8 +131,8 @@ public class ConsentCreationSuccessfulIT {
     @MockBean
     private AspspDataService aspspDataService;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         HashMap<String, String> headerMap = new HashMap<>();
         headerMap.put("Content-Type", "application/json");
         headerMap.put("x-request-id", "2f77a125-aa7a-45c0-b414-cea25a116035");
@@ -167,126 +167,126 @@ public class ConsentCreationSuccessfulIT {
     // =============== IMPLICIT MODE
     //
     @Test
-    public void creation_dedicated_consent_implicit_embedded_successful() throws Exception {
+    void creation_dedicated_consent_implicit_embedded_successful() throws Exception {
         consentCreation_successful(httpHeadersImplicit, ScaApproach.EMBEDDED, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_EMBEDDED_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_dedicated_consent_implicit_redirect_successful() throws Exception {
+    void creation_dedicated_consent_implicit_redirect_successful() throws Exception {
         consentCreation_successful(httpHeadersImplicit, ScaApproach.REDIRECT, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_dedicated_consent_implicit_redirect_oauth_successful() throws Exception {
+    void creation_dedicated_consent_implicit_redirect_oauth_successful() throws Exception {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithScaRedirectFlow(ScaRedirectFlow.OAUTH));
         consentCreation_successful(httpHeadersImplicit, ScaApproach.REDIRECT, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_REDIRECT_OAUTH_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_global_consent_implicit_embedded_successful() throws Exception {
+    void creation_global_consent_implicit_embedded_successful() throws Exception {
         consentCreation_successful(httpHeadersImplicit, ScaApproach.EMBEDDED, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_EMBEDDED_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_global_consent_implicit_redirect_successful() throws Exception {
+    void creation_global_consent_implicit_redirect_successful() throws Exception {
         consentCreation_successful(httpHeadersImplicit, ScaApproach.REDIRECT, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_bank_offered_consent_implicit_redirect_successful() throws Exception {
+    void creation_bank_offered_consent_implicit_redirect_successful() throws Exception {
         consentCreation_successful(httpHeadersImplicit, ScaApproach.REDIRECT, BANK_OFFERED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_all_available_account_consent_implicit_embedded_successful() throws Exception {
+    void creation_all_available_account_consent_implicit_embedded_successful() throws Exception {
         consentCreation_successful(httpHeadersImplicit, ScaApproach.EMBEDDED, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_EMBEDDED_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_all_available_account_consent_implicit_redirect_successful() throws Exception {
+    void creation_all_available_account_consent_implicit_redirect_successful() throws Exception {
         consentCreation_successful(httpHeadersImplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_all_available_with_balances_account_consent_implicit_redirect_successful() throws Exception {
+    void creation_all_available_with_balances_account_consent_implicit_redirect_successful() throws Exception {
         consentCreation_successful(httpHeadersImplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_WITH_BALANCES_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     // =============== EXPLICIT MODE
     //
     @Test
-    public void creation_dedicated_consent_explicit_embedded_successful() throws Exception {
+    void creation_dedicated_consent_explicit_embedded_successful() throws Exception {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_dedicated_consent_explicit_embedded_signingBasket_successful() throws Exception {
+    void creation_dedicated_consent_explicit_embedded_signingBasket_successful() throws Exception {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationModeAndSigningBasketSupported(EXPLICIT, true));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_SIGNING_BASKET_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_dedicated_consent_explicit_redirect_successful() throws Exception {
+    void creation_dedicated_consent_explicit_redirect_successful() throws Exception {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_global_consent_explicit_embedded_successful() throws Exception {
+    void creation_global_consent_explicit_embedded_successful() throws Exception {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_global_consent_explicit_embedded_signingBasket_successful() throws Exception {
+    void creation_global_consent_explicit_embedded_signingBasket_successful() throws Exception {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationModeAndSigningBasketSupported(EXPLICIT, true));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_SIGNING_BASKET_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_global_consent_explicit_redirect_successful() throws Exception {
+    void creation_global_consent_explicit_redirect_successful() throws Exception {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_bank_offered_consent_explicit_redirect_successful() throws Exception {
+    void creation_bank_offered_consent_explicit_redirect_successful() throws Exception {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, BANK_OFFERED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_all_available_account_consent_explicit_embedded_successful() throws Exception {
+    void creation_all_available_account_consent_explicit_embedded_successful() throws Exception {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_all_available_account_consent_explicit_embedded_signingBasket_successful() throws Exception {
+    void creation_all_available_account_consent_explicit_embedded_signingBasket_successful() throws Exception {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationModeAndSigningBasketSupported(EXPLICIT, true));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_SIGNING_BASKET_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_all_available_account_consent_explicit_redirect_successful() throws Exception {
+    void creation_all_available_account_consent_explicit_redirect_successful() throws Exception {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
-    public void creation_all_available_with_balances_account_consent_explicit_redirect_successful() throws Exception {
+    void creation_all_available_with_balances_account_consent_explicit_redirect_successful() throws Exception {
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_WITH_BALANCES_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);

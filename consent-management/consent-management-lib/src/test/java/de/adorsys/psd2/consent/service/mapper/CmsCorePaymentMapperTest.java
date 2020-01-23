@@ -21,27 +21,27 @@ import de.adorsys.psd2.core.payment.model.BulkPaymentInitiationJson;
 import de.adorsys.psd2.core.payment.model.PaymentInitiationJson;
 import de.adorsys.psd2.core.payment.model.PeriodicPaymentInitiationJson;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class CmsCorePaymentMapperTest {
+class CmsCorePaymentMapperTest {
 
     private CmsCorePaymentMapper mapper;
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         mapper = new CmsCorePaymentMapper();
     }
 
     @Test
-    public void mapToPaymentInitiationJson() {
+    void mapToPaymentInitiationJson() {
         PisPayment pisPayment = jsonReader.getObjectFromFile("json/service/mapper/pis-payment.json", PisPayment.class);
         PaymentInitiationJson actual = mapper.mapToPaymentInitiationJson(pisPayment);
 
@@ -50,12 +50,12 @@ public class CmsCorePaymentMapperTest {
     }
 
     @Test
-    public void mapToPaymentInitiationJsonList_emptyValueValue() {
+    void mapToPaymentInitiationJsonList_emptyValueValue() {
         assertNull(mapper.mapToPaymentInitiationJson(Collections.emptyList()));
     }
 
     @Test
-    public void mapToPaymentInitiationJsonList() {
+    void mapToPaymentInitiationJsonList() {
         PisPayment pisPayment = jsonReader.getObjectFromFile("json/service/mapper/pis-payment.json", PisPayment.class);
         PaymentInitiationJson actual = mapper.mapToPaymentInitiationJson(Arrays.asList(pisPayment, new PisPayment()));
 
@@ -64,7 +64,7 @@ public class CmsCorePaymentMapperTest {
     }
 
     @Test
-    public void mapToBulkPaymentInitiationJson() {
+    void mapToBulkPaymentInitiationJson() {
         PisPayment pisPayment = jsonReader.getObjectFromFile("json/service/mapper/pis-payment.json", PisPayment.class);
         BulkPaymentInitiationJson actual = mapper.mapToBulkPaymentInitiationJson(Collections.singletonList(pisPayment));
 
@@ -73,12 +73,12 @@ public class CmsCorePaymentMapperTest {
     }
 
     @Test
-    public void mapToBulkPaymentInitiationJson_nullValue() {
+    void mapToBulkPaymentInitiationJson_nullValue() {
         assertNull(mapper.mapToBulkPaymentInitiationJson(null));
     }
 
     @Test
-    public void mapToPeriodicPaymentInitiationJson() {
+    void mapToPeriodicPaymentInitiationJson() {
         PisPayment pisPayment = jsonReader.getObjectFromFile("json/service/mapper/pis-payment.json", PisPayment.class);
         PeriodicPaymentInitiationJson actual = mapper.mapToPeriodicPaymentInitiationJson(Collections.singletonList(pisPayment));
 
@@ -87,7 +87,7 @@ public class CmsCorePaymentMapperTest {
     }
 
     @Test
-    public void mapToPeriodicPaymentInitiationJson_nullValue() {
+    void mapToPeriodicPaymentInitiationJson_nullValue() {
         assertNull(mapper.mapToPeriodicPaymentInitiationJson(null));
     }
 }

@@ -24,12 +24,12 @@ import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -38,12 +38,12 @@ import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspAisExportServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspAisExportServiceInternalTest {
     private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
     private static final String WRONG_TPP_AUTHORISATION_NUMBER = "wrong authorisation number";
     private static final LocalDate CREATION_DATE_FROM = LocalDate.of(2019, 1, 1);
@@ -70,17 +70,15 @@ public class CmsAspspAisExportServiceInternalTest {
     @Mock
     private AisConsentMapper aisConsentMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         psuIdData = buildPsuIdData(PSU_ID);
         wrongPsuIdData = buildPsuIdData(WRONG_PSU_ID);
         psuData = buildPsuData();
-
-        when(aisConsentMapper.mapToCmsAisAccountConsent(buildAisConsent())).thenReturn(buildAisAccountConsent());
     }
 
     @Test
-    public void exportConsentsByTpp_success() {
+    void exportConsentsByTpp_success() {
         // Given
         when(aisConsentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(
             TPP_AUTHORISATION_NUMBER,
@@ -93,6 +91,7 @@ public class CmsAspspAisExportServiceInternalTest {
         when(aisConsentJpaRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildAisConsent()));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
+        when(aisConsentMapper.mapToCmsAisAccountConsent(buildAisConsent())).thenReturn(buildAisAccountConsent());
 
         // When
         Collection<CmsAisAccountConsent> aisConsents =
@@ -108,7 +107,7 @@ public class CmsAspspAisExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByTpp_failure_wrongTppAuthorisationNumber() {
+    void exportConsentsByTpp_failure_wrongTppAuthorisationNumber() {
         // Given
         // When
         Collection<CmsAisAccountConsent> aisConsents =
@@ -123,7 +122,7 @@ public class CmsAspspAisExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByTpp_failure_nullTppAuthorisationNumber() {
+    void exportConsentsByTpp_failure_nullTppAuthorisationNumber() {
         // When
         Collection<CmsAisAccountConsent> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByTpp(null, CREATION_DATE_FROM,
@@ -136,7 +135,7 @@ public class CmsAspspAisExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByPsu_success() {
+    void exportConsentsByPsu_success() {
         // Given
         when(aisConsentSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
                                                                                CREATION_DATE_FROM,
@@ -145,6 +144,7 @@ public class CmsAspspAisExportServiceInternalTest {
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(aisConsentJpaRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
+        when(aisConsentMapper.mapToCmsAisAccountConsent(buildAisConsent())).thenReturn(buildAisAccountConsent());
 
         // When
         Collection<CmsAisAccountConsent> aisConsents =
@@ -159,7 +159,7 @@ public class CmsAspspAisExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByPsu_failure_wrongPsuIdData() {
+    void exportConsentsByPsu_failure_wrongPsuIdData() {
         // Given
         // When
         Collection<CmsAisAccountConsent> aisConsents =
@@ -173,7 +173,7 @@ public class CmsAspspAisExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByPsu_failure_nullPsuIdData() {
+    void exportConsentsByPsu_failure_nullPsuIdData() {
         // When
         Collection<CmsAisAccountConsent> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByPsu(null, CREATION_DATE_FROM,
@@ -186,7 +186,7 @@ public class CmsAspspAisExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByPsu_failure_emptyPsuIdData() {
+    void exportConsentsByPsu_failure_emptyPsuIdData() {
         // Given
         PsuIdData emptyPsuIdData = buildEmptyPsuIdData();
 
@@ -201,7 +201,7 @@ public class CmsAspspAisExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByAccountId_success() {
+    void exportConsentsByAccountId_success() {
         // Given
         when(aisConsentSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
                                                                                     CREATION_DATE_FROM,
@@ -210,6 +210,7 @@ public class CmsAspspAisExportServiceInternalTest {
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(aisConsentJpaRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
+        when(aisConsentMapper.mapToCmsAisAccountConsent(buildAisConsent())).thenReturn(buildAisAccountConsent());
 
         // When
         Collection<CmsAisAccountConsent> aisConsents =
@@ -224,7 +225,7 @@ public class CmsAspspAisExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByAccountId_failure_wrongAspspAccountId() {
+    void exportConsentsByAccountId_failure_wrongAspspAccountId() {
         // Given
         // When
         Collection<CmsAisAccountConsent> aisConsents =

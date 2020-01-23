@@ -17,12 +17,12 @@
 package de.adorsys.psd2.validator.signature.impl;
 
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DigestVerifierImplTest {
+class DigestVerifierImplTest {
     private static final JsonReader jsonReader = new JsonReader();
     private static final String CORRECT_DIGEST = "SHA-256=x2iyTnu8glTS4NQk/X7jdpga/v4+AuxVRteArO42n9c=";
     private static final String WRONG_ALGORITHM_DIGEST = "SHA-512=x2iyTnu8glTS4NQk/X7jdpga/v4+AuxVRteArO42n9c=";
@@ -31,13 +31,13 @@ public class DigestVerifierImplTest {
 
     private DigestVerifierImpl digestVerifier;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         digestVerifier = new DigestVerifierImpl();
     }
 
     @Test
-    public void verify_success() {
+    void verify_success() {
         // when
         boolean actualResult = digestVerifier.verify(CORRECT_DIGEST, getBody());
 
@@ -46,7 +46,7 @@ public class DigestVerifierImplTest {
     }
 
     @Test
-    public void verify_wrong_digest() {
+    void verify_wrong_digest() {
         // when
         boolean actualResult = digestVerifier.verify(WRONG_DIGEST, getBody());
 
@@ -55,7 +55,7 @@ public class DigestVerifierImplTest {
     }
 
     @Test
-    public void verify_null_digest() {
+    void verify_null_digest() {
         // when
         boolean actualResult = digestVerifier.verify(null, getBody());
 
@@ -64,7 +64,7 @@ public class DigestVerifierImplTest {
     }
 
     @Test
-    public void verify_wrong_algorithm() {
+    void verify_wrong_algorithm() {
         // when
         boolean actualResult = digestVerifier.verify(WRONG_ALGORITHM_DIGEST, getBody());
 
@@ -73,7 +73,7 @@ public class DigestVerifierImplTest {
     }
 
     @Test
-    public void verify_empty_algorithm() {
+    void verify_empty_algorithm() {
         // when
         boolean actualResult = digestVerifier.verify(EMPTY_ALGORITHM_DIGEST, getBody());
 

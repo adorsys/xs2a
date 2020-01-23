@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,17 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.AisAuthorisationProcessorServiceImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AuthorisationChainResponsibilityServiceTest {
+@ExtendWith(MockitoExtension.class)
+class AuthorisationChainResponsibilityServiceTest {
 
     @InjectMocks
     private AuthorisationChainResponsibilityService service;
@@ -44,7 +44,7 @@ public class AuthorisationChainResponsibilityServiceTest {
     private AisAuthorisationProcessorServiceImpl aisAuthorisationProcessorServiceImpl;
 
     @Test
-    public void apply() {
+    void apply() {
         AccountConsentAuthorization authorization = new AccountConsentAuthorization();
         AisAuthorisationProcessorRequest request = new AisAuthorisationProcessorRequest(ScaApproach.EMBEDDED,
                                                                                         ScaStatus.RECEIVED,

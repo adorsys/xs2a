@@ -19,20 +19,20 @@ package de.adorsys.psd2.consent.service.mapper;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CmsAuthorisationMapperTest {
+class CmsAuthorisationMapperTest {
     private CmsAuthorisationMapper cmsAuthorisationMapper = new CmsAuthorisationMapper(new PsuDataMapper());
 
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToAuthorisations() {
+    void mapToAuthorisations() {
         // Given
         PisAuthorization pisAuthorisation = jsonReader.getObjectFromFile("json/service/mapper/pis-authorisation.json", PisAuthorization.class);
         Authorisation expectedAuthorisation = jsonReader.getObjectFromFile("json/service/mapper/authorisation.json", Authorisation.class);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,16 @@ package de.adorsys.psd2.xs2a.web.validator.header;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class XRequestIdHeaderValidatorImplTest {
+class XRequestIdHeaderValidatorImplTest {
 
     private static final String X_REQUEST_ID_HEADER = UUID.randomUUID().toString();
     private static final String[] X_REQUEST_ID_HEADER_NAME = {"x-request-id"};
@@ -37,22 +37,22 @@ public class XRequestIdHeaderValidatorImplTest {
     private MessageError messageError;
     private Map<String, String> headers;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         validator = new XRequestIdHeaderValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400));
         messageError = new MessageError();
         headers = new HashMap<>();
     }
 
     @Test
-    public void validate_success() {
+    void validate_success() {
         headers.put(validator.getHeaderName(), X_REQUEST_ID_HEADER);
         validator.validate(headers, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validate_absentHeaderError() {
+    void validate_absentHeaderError() {
         validator.validate(headers, messageError);
 
         assertEquals(MessageErrorCode.FORMAT_ERROR_ABSENT_HEADER, messageError.getTppMessage().getMessageErrorCode());
@@ -60,7 +60,7 @@ public class XRequestIdHeaderValidatorImplTest {
     }
 
     @Test
-    public void validate_nullHeaderError() {
+    void validate_nullHeaderError() {
         headers.put(validator.getHeaderName(), null);
         validator.validate(headers, messageError);
 
@@ -69,7 +69,7 @@ public class XRequestIdHeaderValidatorImplTest {
     }
 
     @Test
-    public void validate_blankHeaderError() {
+    void validate_blankHeaderError() {
         headers.put(validator.getHeaderName(), "");
         validator.validate(headers, messageError);
 
@@ -78,7 +78,7 @@ public class XRequestIdHeaderValidatorImplTest {
     }
 
     @Test
-    public void validate_wrongFormatError() {
+    void validate_wrongFormatError() {
         headers.put(validator.getHeaderName(), "wrong_format");
         validator.validate(headers, messageError);
 

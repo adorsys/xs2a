@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,18 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MediaTypeMapperTest {
+class MediaTypeMapperTest {
     private MediaTypeMapper mediaTypeMapper = new MediaTypeMapper();
 
     @Test
-    public void mapToMediaType_withStandardContentType() {
+    void mapToMediaType_withStandardContentType() {
         // When
         MediaType mediaType = mediaTypeMapper.mapToMediaType("application/json");
 
@@ -35,7 +36,7 @@ public class MediaTypeMapperTest {
     }
 
     @Test
-    public void mapToMediaType_withCustomContentType() {
+    void mapToMediaType_withCustomContentType() {
         // Given
         MediaType expectedMediaType = new MediaType("custom", "type");
 
@@ -46,9 +47,9 @@ public class MediaTypeMapperTest {
         assertEquals(expectedMediaType, mediaType);
     }
 
-    @Test(expected = InvalidMediaTypeException.class)
-    public void mapToMediaType_withInvalidContentType() {
+    @Test
+    void mapToMediaType_withInvalidContentType() {
         // When
-        mediaTypeMapper.mapToMediaType("invalid");
+        assertThrows(InvalidMediaTypeException.class, () -> mediaTypeMapper.mapToMediaType("invalid"));
     }
 }

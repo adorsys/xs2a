@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,18 +40,18 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResp
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CommonPaymentInitiationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CommonPaymentInitiationServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
     private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
@@ -83,15 +83,15 @@ public class CommonPaymentInitiationServiceTest {
     @InjectMocks
     private CommonPaymentInitiationService commonPaymentService;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
         when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
             .thenReturn(initialSpiAspspConsentDataProvider);
     }
 
     @Test
-    public void createCommonPayment_success() {
+    void createCommonPayment_success() {
         when(xs2aToSpiPaymentInfo.mapToSpiPaymentRequest(COMMON_PAYMENT, PRODUCT))
             .thenReturn(SPI_PAYMENT_INFO);
         when(commonPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, initialSpiAspspConsentDataProvider))
@@ -109,7 +109,7 @@ public class CommonPaymentInitiationServiceTest {
     }
 
     @Test
-    public void createCommonPayment_commonPaymentSpi_initiatePayment_failed() {
+    void createCommonPayment_commonPaymentSpi_initiatePayment_failed() {
         // Given
         SpiResponse<SpiPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiPaymentInitiationResponse>builder()
                                                                                 .error(FORMAT_ERROR)

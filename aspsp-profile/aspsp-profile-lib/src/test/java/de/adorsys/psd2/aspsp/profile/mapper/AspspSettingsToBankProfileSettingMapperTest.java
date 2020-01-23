@@ -19,18 +19,18 @@ package de.adorsys.psd2.aspsp.profile.mapper;
 import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AspspSettingsToBankProfileSettingMapperImpl.class})
-public class AspspSettingsToBankProfileSettingMapperTest {
+ class AspspSettingsToBankProfileSettingMapperTest {
 
     @Autowired
     private AspspSettingsToBankProfileSettingMapper mapper;
@@ -40,15 +40,15 @@ public class AspspSettingsToBankProfileSettingMapperTest {
     private BankProfileSetting expectedBankProfileSetting;
     private AspspSettings aspspSettings;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+     void setUp() {
         initialBankProfileSetting = jsonReader.getObjectFromFile("json/mapper/initial-bank-profile-setting.json", BankProfileSetting.class);
         expectedBankProfileSetting = jsonReader.getObjectFromFile("json/mapper/expected-bank-profile-setting.json", BankProfileSetting.class);
         aspspSettings = jsonReader.getObjectFromFile("json/mapper/aspsp-settings.json", AspspSettings.class);
     }
 
     @Test
-    public void updateBankProfileSetting_success() {
+     void updateBankProfileSetting_success() {
         mapper.updateBankProfileSetting(aspspSettings, initialBankProfileSetting);
         assertEquals(expectedBankProfileSetting, initialBankProfileSetting);
     }

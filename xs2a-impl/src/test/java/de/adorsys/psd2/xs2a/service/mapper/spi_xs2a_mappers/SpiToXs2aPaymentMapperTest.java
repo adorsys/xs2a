@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,18 +26,18 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiation
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpiToXs2aPaymentMapperImpl.class})
-public class SpiToXs2aPaymentMapperTest {
+class SpiToXs2aPaymentMapperTest {
 
     @Autowired
     private SpiToXs2aPaymentMapper mapper;
@@ -46,7 +46,7 @@ public class SpiToXs2aPaymentMapperTest {
         mock(InitialSpiAspspConsentDataProvider.class);
 
     @Test
-    public void mapSingleToCommonPaymentInitiateResponse_success() {
+    void mapSingleToCommonPaymentInitiateResponse_success() {
         SpiSinglePaymentInitiationResponse singlePaymentInitiationResponse =
             jsonReader.getObjectFromFile("json/service/mapper/single-payment-initial-response.json", SpiSinglePaymentInitiationResponse.class);
 
@@ -61,7 +61,7 @@ public class SpiToXs2aPaymentMapperTest {
     }
 
     @Test
-    public void mapSingleToCommonPaymentInitiateResponse_transactionFeeIndicatorIsNotSupported() {
+    void mapSingleToCommonPaymentInitiateResponse_transactionFeeIndicatorIsNotSupported() {
         SpiSinglePaymentInitiationResponse singlePaymentInitiationResponse =
             jsonReader.getObjectFromFile("json/service/mapper/single-payment-initial-response.json", SpiSinglePaymentInitiationResponse.class);
         singlePaymentInitiationResponse.setSpiTransactionFeeIndicator(null);
@@ -78,7 +78,7 @@ public class SpiToXs2aPaymentMapperTest {
     }
 
     @Test
-    public void mapToPaymentInitiateResponse_Single() {
+    void mapToPaymentInitiateResponse_Single() {
         SpiSinglePaymentInitiationResponse spiSinglePaymentInitiationResponse =
             jsonReader.getObjectFromFile("json/service/mapper/single-payment-initial-response.json", SpiSinglePaymentInitiationResponse.class);
 
@@ -93,7 +93,7 @@ public class SpiToXs2aPaymentMapperTest {
     }
 
     @Test
-    public void mapToPaymentInitiateResponse_Periodic() {
+    void mapToPaymentInitiateResponse_Periodic() {
         SpiPeriodicPaymentInitiationResponse spiPeriodicPaymentInitiationResponse =
             jsonReader.getObjectFromFile("json/service/mapper/periodic-payment-initial-response.json", SpiPeriodicPaymentInitiationResponse.class);
 
@@ -108,7 +108,7 @@ public class SpiToXs2aPaymentMapperTest {
     }
 
     @Test
-    public void mapToPaymentInitiateResponse_Bulk() {
+    void mapToPaymentInitiateResponse_Bulk() {
         SpiBulkPaymentInitiationResponse spiBulkPaymentInitiationResponse =
             jsonReader.getObjectFromFile("json/service/mapper/bulk-payment-initial-response.json", SpiBulkPaymentInitiationResponse.class);
 

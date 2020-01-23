@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,19 +26,19 @@ import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CreatePisAuthorisationLinksTest {
+@ExtendWith(MockitoExtension.class)
+class CreatePisAuthorisationLinksTest {
     private static final String HTTP_URL = "http://url";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
@@ -60,8 +60,8 @@ public class CreatePisAuthorisationLinksTest {
     private Links expectedLinks;
     private JsonReader jsonReader;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         jsonReader = new JsonReader();
         psuIdData = jsonReader.getObjectFromFile("json/link/empty.json", PsuIdData.class);
         expectedLinks = new Links();
@@ -70,7 +70,7 @@ public class CreatePisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndPsuDataIsEmpty() {
+    void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndPsuDataIsEmpty() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
 
         links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, request, AUTHORISATION_ID, null, null, false);
@@ -81,7 +81,7 @@ public class CreatePisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndPsyDataIsNotEmpty() {
+    void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndPsyDataIsNotEmpty() {
         psuIdData = jsonReader.getObjectFromFile("json/link/psu-id-data.json", PsuIdData.class);
         request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, psuIdData, PAYMENT_PRODUCT, SINGLE, "");
 
@@ -95,7 +95,7 @@ public class CreatePisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndPsuDataIsEmpty() {
+    void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndPsuDataIsEmpty() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
 
         links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, request, AUTHORISATION_ID, null, null, false);
@@ -106,7 +106,7 @@ public class CreatePisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndPsyDataIsNotEmpty() {
+    void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndPsyDataIsNotEmpty() {
         psuIdData = jsonReader.getObjectFromFile("json/link/psu-id-data.json", PsuIdData.class);
         request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, psuIdData, PAYMENT_PRODUCT, SINGLE, "");
 
@@ -120,7 +120,7 @@ public class CreatePisAuthorisationLinksTest {
     }
 
     @Test
-    public void scaApproachRedirect() {
+    void scaApproachRedirect() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildPaymentScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
@@ -133,7 +133,7 @@ public class CreatePisAuthorisationLinksTest {
     }
 
     @Test
-    public void scaApproachOAuth() {
+    void scaApproachOAuth() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.OAUTH);
 
         links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, request, AUTHORISATION_ID, null, null, false);

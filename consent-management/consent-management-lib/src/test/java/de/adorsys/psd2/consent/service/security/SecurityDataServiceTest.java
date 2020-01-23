@@ -20,22 +20,22 @@ import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProviderHolder;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 
 import java.util.Base64;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SecurityDataServiceTest {
+@ExtendWith(MockitoExtension.class)
+class SecurityDataServiceTest {
     private static final String SERVER_KEY = "Some secret key";
     private static final String SEPARATOR = "_=_";
 
@@ -59,28 +59,17 @@ public class SecurityDataServiceTest {
     @Mock
     private Environment environment;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         environment = mock(Environment.class);
 
         when(environment.getProperty("server_key")).thenReturn(SERVER_KEY);
 
         securityDataService = new SecurityDataService(environment, cryptoProviderHolder);
-
-        when(cryptoProviderHolder.getProviderById(CRYPTO_PROVIDER_ID))
-            .thenReturn(Optional.of(CRYPTO_PROVIDER));
-
-        when(cryptoProviderHolder.getProviderById(CRYPTO_PROVIDER_DATA))
-            .thenReturn(Optional.of(CRYPTO_PROVIDER));
-
-        when(cryptoProviderHolder.getProviderById(FAILING_CRYPTO_PROVIDER_ID))
-            .thenReturn(Optional.of(FAILING_CRYPTO_PROVIDER));
-        when(cryptoProviderHolder.getProviderById(NON_EXISTING_CRYPT_PROVIDER_ID))
-            .thenReturn(Optional.empty());
     }
 
     @Test
-    public void getEncryptedId_Success() {
+    void getEncryptedId_Success() {
         // Given
         when(cryptoProviderHolder.getDefaultIdProvider())
             .thenReturn(CRYPTO_PROVIDER);
@@ -91,13 +80,13 @@ public class SecurityDataServiceTest {
         Optional<String> actual = securityDataService.encryptId(CONSENT_ID);
 
         // Then
-        assertThat(actual.isPresent()).isTrue();
+        assertTrue(actual.isPresent());
 
         // When
         String encryptedId = actual.get();
 
         // Then
-        assertThat(encryptedId).endsWith(SEPARATOR + CRYPTO_PROVIDER_ID);
+        assertTrue(encryptedId.endsWith(SEPARATOR + CRYPTO_PROVIDER_ID));
 
         // When
         String[] splitId = decryptAndSplitConsentId(encryptedId);
@@ -105,12 +94,12 @@ public class SecurityDataServiceTest {
         String consentKey = splitId[1];
 
         // Then
-        assertThat(consentId).isEqualTo(CONSENT_ID);
-        assertThat(consentKey.length()).isEqualTo(CONSENT_KEY_LENGTH);
+        assertEquals(CONSENT_ID, consentId);
+        assertEquals(CONSENT_KEY_LENGTH, consentKey.length());
     }
 
     @Test
-    public void getEncryptedId_Failure_EncryptionError() {
+    void getEncryptedId_Failure_EncryptionError() {
         // Given
         when(cryptoProviderHolder.getDefaultIdProvider())
             .thenReturn(FAILING_CRYPTO_PROVIDER);
@@ -122,11 +111,13 @@ public class SecurityDataServiceTest {
         Optional<String> actual = securityDataService.encryptId(CONSENT_ID);
 
         // Then
-        assertThat(actual.isPresent()).isFalse();
+        assertFalse(actual.isPresent());
     }
 
     @Test
-    public void getConsentId_Success() {
+    void getConsentId_Success() {
+        when(cryptoProviderHolder.getProviderById(CRYPTO_PROVIDER_ID)).thenReturn(Optional.of(CRYPTO_PROVIDER));
+
         // Given
         String encrypted = getEncryptedConsentId(CRYPTO_PROVIDER_ID);
 
@@ -134,48 +125,52 @@ public class SecurityDataServiceTest {
         Optional<String> actual = securityDataService.decryptId(encrypted);
 
         // Then
-        assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get()).isEqualTo(CONSENT_ID);
+        assertTrue(actual.isPresent());
+        assertEquals(CONSENT_ID, actual.get());
     }
 
     @Test
-    public void getConsentId_Failure_WrongExternalIdFormat() {
+    void getConsentId_Failure_WrongExternalIdFormat() {
         // When
         Optional<String> actual = securityDataService.decryptId(CONSENT_ID);
 
         // Then
-        assertThat(actual.isPresent()).isFalse();
+        assertFalse(actual.isPresent());
     }
 
     @Test
-    public void getConsentId_Failure_NonExistingAlgorithm() {
+    void getConsentId_Failure_NonExistingAlgorithm() {
         // Given
         String encrypted = getEncryptedConsentId(NON_EXISTING_CRYPT_PROVIDER_ID);
+        when(cryptoProviderHolder.getProviderById(NON_EXISTING_CRYPT_PROVIDER_ID)).thenReturn(Optional.empty());
 
         // When
         Optional<String> actual = securityDataService.decryptId(encrypted);
 
         // Then
-        assertThat(actual.isPresent()).isFalse();
+        assertFalse(actual.isPresent());
     }
 
     @Test
-    public void getConsentId_Failure_DecryptionError() {
+    void getConsentId_Failure_DecryptionError() {
         // Given
         String encrypted = getEncryptedConsentId(FAILING_CRYPTO_PROVIDER_ID);
+        when(cryptoProviderHolder.getProviderById(FAILING_CRYPTO_PROVIDER_ID)).thenReturn(Optional.of(FAILING_CRYPTO_PROVIDER));
 
         // When
         Optional<String> actual = securityDataService.decryptId(encrypted);
 
         // Then
-        assertThat(actual.isPresent()).isFalse();
+        assertFalse(actual.isPresent());
     }
 
     @Test
-    public void encryptConsentData_Success() {
+    void encryptConsentData_Success() {
         // Given
         String encryptedId = getEncryptedConsentId(CRYPTO_PROVIDER_ID);
         byte[] dataWithKey = ArrayUtils.addAll(CONSENT_DATA, CONSENT_KEY.getBytes());
+        when(cryptoProviderHolder.getProviderById(CRYPTO_PROVIDER_ID)).thenReturn(Optional.of(CRYPTO_PROVIDER));
+        when(cryptoProviderHolder.getProviderById(CRYPTO_PROVIDER_DATA)).thenReturn(Optional.of(CRYPTO_PROVIDER));
 
         EncryptedData expected = new EncryptedData(dataWithKey);
 
@@ -183,51 +178,57 @@ public class SecurityDataServiceTest {
         Optional<EncryptedData> actual = securityDataService.encryptConsentData(encryptedId, CONSENT_DATA);
 
         // Then
-        assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get()).isEqualTo(expected);
+        assertTrue(actual.isPresent());
+        assertEquals(expected, actual.get());
     }
 
     @Test
-    public void encryptConsentData_Failure_NonExistingAlgorithm() {
+    void encryptConsentData_Failure_NonExistingAlgorithm() {
         // Given
         String encryptedId = getEncryptedConsentId(NON_EXISTING_CRYPT_PROVIDER_ID);
+        when(cryptoProviderHolder.getProviderById(NON_EXISTING_CRYPT_PROVIDER_ID)).thenReturn(Optional.empty());
 
         // When
         Optional<EncryptedData> actual = securityDataService.encryptConsentData(encryptedId, CONSENT_DATA);
 
         // Then
-        assertThat(actual.isPresent()).isFalse();
+        assertFalse(actual.isPresent());
     }
 
     @Test
-    public void encryptConsentData_Failure_DecryptionError() {
+    void encryptConsentData_Failure_DecryptionError() {
         // Given
         String encryptedId = getEncryptedConsentId(FAILING_CRYPTO_PROVIDER_ID);
+        when(cryptoProviderHolder.getProviderById(FAILING_CRYPTO_PROVIDER_ID)).thenReturn(Optional.of(FAILING_CRYPTO_PROVIDER));
 
         // When
         Optional<EncryptedData> actual = securityDataService.encryptConsentData(encryptedId, CONSENT_DATA);
 
         // Then
-        assertThat(actual.isPresent()).isFalse();
+        assertFalse(actual.isPresent());
     }
 
     @Test
-    public void decryptConsentData_Success() {
+    void decryptConsentData_Success() {
         // Given
         String encryptedId = getEncryptedConsentId(CRYPTO_PROVIDER_ID);
         byte[] encryptedConsentData = CRYPTO_PROVIDER.encryptData(CONSENT_DATA, CONSENT_KEY).get().getData();
         DecryptedData expected = new DecryptedData(CONSENT_DATA);
+        when(cryptoProviderHolder.getProviderById(CRYPTO_PROVIDER_ID)).thenReturn(Optional.of(CRYPTO_PROVIDER));
+        when(cryptoProviderHolder.getProviderById(CRYPTO_PROVIDER_DATA)).thenReturn(Optional.of(CRYPTO_PROVIDER));
 
         // When
         Optional<DecryptedData> actual = securityDataService.decryptConsentData(encryptedId, encryptedConsentData);
 
         // Then
-        assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get()).isEqualTo(expected);
+        assertTrue(actual.isPresent());
+        assertEquals(expected, actual.get());
     }
 
     @Test
-    public void decryptConsentData_Failure_NonExistingAlgorithm() {
+    void decryptConsentData_Failure_NonExistingAlgorithm() {
+        when(cryptoProviderHolder.getProviderById(NON_EXISTING_CRYPT_PROVIDER_ID)).thenReturn(Optional.empty());
+
         // Given
         String encryptedId = getEncryptedConsentId(NON_EXISTING_CRYPT_PROVIDER_ID);
         byte[] encryptedConsentData = CRYPTO_PROVIDER.encryptData(CONSENT_DATA, CONSENT_KEY).get().getData();
@@ -236,20 +237,21 @@ public class SecurityDataServiceTest {
         Optional<DecryptedData> actual = securityDataService.decryptConsentData(encryptedId, encryptedConsentData);
 
         // Then
-        assertThat(actual.isPresent()).isFalse();
+        assertFalse(actual.isPresent());
     }
 
     @Test
-    public void decryptConsentData_Failure_DecryptionError() {
+    void decryptConsentData_Failure_DecryptionError() {
         // Given
         String encryptedId = getEncryptedConsentId(FAILING_CRYPTO_PROVIDER_ID);
         byte[] encryptedConsentData = CRYPTO_PROVIDER.encryptData(CONSENT_DATA, CONSENT_KEY).get().getData();
+        when(cryptoProviderHolder.getProviderById(FAILING_CRYPTO_PROVIDER_ID)).thenReturn(Optional.of(FAILING_CRYPTO_PROVIDER));
 
         // When
         Optional<DecryptedData> actual = securityDataService.decryptConsentData(encryptedId, encryptedConsentData);
 
         // Then
-        assertThat(actual.isPresent()).isFalse();
+        assertFalse(actual.isPresent());
     }
 
     private String getEncryptedConsentId(String cryptoProviderId) {

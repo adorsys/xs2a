@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,26 @@
 package de.adorsys.psd2.xs2a.validator.payment;
 
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CountryPaymentValidatorResolverTest {
-
-    @Autowired
+@ExtendWith(MockitoExtension.class)
+class CountryPaymentValidatorResolverTest {
     private CountryPaymentValidatorResolver resolver;
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         DefaultPaymentValidatorHolder defaultPaymentValidatorHolder = new DefaultPaymentValidatorHolder(null, null);
         AustriaPaymentValidatorHolder austriaPaymentValidatorHolder = new AustriaPaymentValidatorHolder(null, null);
         resolver = new CountryPaymentValidatorResolver(aspspProfileServiceWrapper,
@@ -47,31 +44,31 @@ public class CountryPaymentValidatorResolverTest {
     }
 
     @Test
-    public void getValidationConfig_nullValue() {
+    void getValidationConfig_nullValue() {
         when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn(null);
         assertTrue(resolver.getCountryValidatorHolder() instanceof DefaultPaymentValidatorHolder);
     }
 
     @Test
-    public void getValidationConfig_emptyValue() {
+    void getValidationConfig_emptyValue() {
         when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn("");
         assertTrue(resolver.getCountryValidatorHolder() instanceof DefaultPaymentValidatorHolder);
     }
 
     @Test
-    public void getValidationConfig_wrongValue() {
+    void getValidationConfig_wrongValue() {
         when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn("wrong value");
         assertTrue(resolver.getCountryValidatorHolder() instanceof DefaultPaymentValidatorHolder);
     }
 
     @Test
-    public void getValidationConfig_DE() {
+    void getValidationConfig_DE() {
         when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn("dE");
         assertTrue(resolver.getCountryValidatorHolder() instanceof DefaultPaymentValidatorHolder);
     }
 
     @Test
-    public void getValidationConfig_AT() {
+    void getValidationConfig_AT() {
         when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn("At");
         assertTrue(resolver.getCountryValidatorHolder() instanceof AustriaPaymentValidatorHolder);
     }

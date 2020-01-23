@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +35,11 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountRefe
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -50,11 +50,11 @@ import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AccountHelperServiceTest {
+@ExtendWith(MockitoExtension.class)
+class AccountHelperServiceTest {
     private static final String ACCOUNT_ID = "accountId";
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String IBAN = "Test IBAN";
@@ -100,7 +100,7 @@ public class AccountHelperServiceTest {
     }
 
     @Test
-    public void findAccountReference_WithNullAccountAccessType() {
+    void findAccountReference_WithNullAccountAccessType() {
         // Given
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE)).thenReturn(SPI_ACCOUNT_REFERENCE);
         // When
@@ -114,7 +114,7 @@ public class AccountHelperServiceTest {
     }
 
     @Test
-    public void getSpiContextData() {
+    void getSpiContextData() {
         // Given
         when(requestProviderService.getPsuIdData()).thenReturn(PSU_ID_DATA);
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA)).thenReturn(SPI_CONTEXT_DATA);
@@ -129,7 +129,7 @@ public class AccountHelperServiceTest {
     }
 
     @Test
-    public void createActionStatus_WithThreeArguments() {
+    void createActionStatus_WithThreeArguments() {
         // When
         ActionStatus actual = accountHelperService.createActionStatus(WITH_BALANCE, TYPE_ACCESS_ACCOUNT, RESPONSE_OBJECT);
         // Then
@@ -137,7 +137,7 @@ public class AccountHelperServiceTest {
     }
 
     @Test
-    public void createActionStatus_WithThreeArgumentsAndError() {
+    void createActionStatus_WithThreeArgumentsAndError() {
         // Given
         when(errorToActionStatusMapper.mapActionStatusError(CONSENT_INVALID, WITH_BALANCE, TYPE_ACCESS_ACCOUNT)).thenReturn(ACTION_STATUS_CONSENT_INVALID_STATUS);
         // When
@@ -147,7 +147,7 @@ public class AccountHelperServiceTest {
     }
 
     @Test
-    public void needsToUpdateUsage_returnTrue() {
+    void needsToUpdateUsage_returnTrue() {
         // When
         boolean actual = accountHelperService.needsToUpdateUsage(ACCOUNT_CONSENT);
         // Then
@@ -155,7 +155,7 @@ public class AccountHelperServiceTest {
     }
 
     @Test
-    public void needsToUpdateUsage_returnFalse() {
+    void needsToUpdateUsage_returnFalse() {
         // Given
         when(requestProviderService.isRequestFromTPP()).thenReturn(false);
         // When

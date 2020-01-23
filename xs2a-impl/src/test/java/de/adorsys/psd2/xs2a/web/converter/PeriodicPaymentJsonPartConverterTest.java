@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,26 @@
 
 package de.adorsys.psd2.xs2a.web.converter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.DayOfExecution;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PeriodicPaymentJsonPartConverterTest {
+@ExtendWith(MockitoExtension.class)
+class PeriodicPaymentJsonPartConverterTest {
     private static final String SERIALISED_BODY = "properly serialised body";
     private static final String MALFORMED_SERIALISED_BODY = "malformed body";
 
@@ -45,17 +45,12 @@ public class PeriodicPaymentJsonPartConverterTest {
     @InjectMocks
     private PeriodicPaymentJsonPartConverter periodicPaymentJsonPartConverter;
 
-    @Before
-    public void setUp() throws IOException {
+    @Test
+    void convert_withCorrectBody_shouldReturnObject() throws IOException {
+        // Given
         when(xs2aObjectMapper.readValue(SERIALISED_BODY, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class))
             .thenReturn(buildPeriodicPaymentJson());
-        when(xs2aObjectMapper.readValue(MALFORMED_SERIALISED_BODY, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class))
-            .thenReturn(null);
-    }
 
-    @Test
-    public void convert_withCorrectBody_shouldReturnObject() throws IOException {
-        // Given
         PeriodicPaymentInitiationXmlPart2StandingorderTypeJson expected = buildPeriodicPaymentJson();
 
         // When
@@ -67,7 +62,11 @@ public class PeriodicPaymentJsonPartConverterTest {
     }
 
     @Test
-    public void convert_withMalformedBody_shouldReturnNull() {
+    void convert_withMalformedBody_shouldReturnNull() throws JsonProcessingException {
+        // Given
+        when(xs2aObjectMapper.readValue(MALFORMED_SERIALISED_BODY, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson.class))
+            .thenReturn(null);
+
         // When
         PeriodicPaymentInitiationXmlPart2StandingorderTypeJson actualResult = periodicPaymentJsonPartConverter.convert(MALFORMED_SERIALISED_BODY);
 
@@ -76,7 +75,7 @@ public class PeriodicPaymentJsonPartConverterTest {
     }
 
     @Test
-    public void convert_withNullString_shouldReturnNull() {
+    void convert_withNullString_shouldReturnNull() {
         // When
         PeriodicPaymentInitiationXmlPart2StandingorderTypeJson actualResult = periodicPaymentJsonPartConverter.convert(null);
 

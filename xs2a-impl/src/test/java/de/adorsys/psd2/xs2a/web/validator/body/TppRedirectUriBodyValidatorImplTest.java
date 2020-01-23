@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,19 +26,19 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_REDIRECT_URI;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TppRedirectUriBodyValidatorImplTest {
+@ExtendWith(MockitoExtension.class)
+class TppRedirectUriBodyValidatorImplTest {
 
     @Mock
     private ScaApproachResolver scaApproachResolver;
@@ -49,18 +49,16 @@ public class TppRedirectUriBodyValidatorImplTest {
     private MessageError messageError;
     private MockHttpServletRequest request;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         messageError = new MessageError();
         ErrorBuildingService errorBuildingService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
         tppRedirectUriBodyValidator = new TppRedirectUriBodyValidatorImpl(scaApproachResolver, aspspProfileServiceWrapper, errorBuildingService);
         request = new MockHttpServletRequest();
-
-        when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.REDIRECT);
     }
 
     @Test
-    public void validate_NotRedirect_success() {
+    void validate_NotRedirect_success() {
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
         tppRedirectUriBodyValidator.validate(request, messageError);
@@ -70,7 +68,9 @@ public class TppRedirectUriBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_RedirectApproach_success() {
+    void validate_RedirectApproach_success() {
+        when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.REDIRECT);
+
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         request.addHeader(TPP_REDIRECT_URI, "some.url");
 
@@ -81,7 +81,7 @@ public class TppRedirectUriBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_oAuthApproach_sucess() {
+    void validate_oAuthApproach_success() {
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
 
@@ -92,7 +92,9 @@ public class TppRedirectUriBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_RedirectApproachAndRedirectPreferredHeaderTrue_TppRedirectUriIsBotContain_error() {
+    void validate_RedirectApproachAndRedirectPreferredHeaderTrue_TppRedirectUriIsBotContain_error() {
+        when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.REDIRECT);
+
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
 
         tppRedirectUriBodyValidator.validate(request, messageError);
@@ -104,7 +106,9 @@ public class TppRedirectUriBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_RedirectApproachAndRedirectPreferredHeaderTrue_TppRedirectUriIsBlank_error() {
+    void validate_RedirectApproachAndRedirectPreferredHeaderTrue_TppRedirectUriIsBlank_error() {
+        when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.REDIRECT);
+
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         request.addHeader(TPP_REDIRECT_URI, "");
 

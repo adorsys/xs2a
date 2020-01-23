@@ -41,12 +41,12 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -59,8 +59,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ReadSinglePaymentServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ReadSinglePaymentServiceTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String END_TO_END_IDENTIFICATION = "PAYMENT_ID";
     private static final String CREDITOR_AGENT = "AAAADEBBXXX";
@@ -100,13 +100,17 @@ public class ReadSinglePaymentServiceTest {
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private PisCommonPaymentResponse pisCommonPaymentResponse;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         pisCommonPaymentResponse = new PisCommonPaymentResponse();
         pisCommonPaymentResponse.setPayments(PIS_PAYMENTS);
         pisCommonPaymentResponse.setPaymentProduct(PRODUCT);
         pisCommonPaymentResponse.setPaymentData(PAYMENT_BODY);
+    }
 
+    @Test
+    void getPayment_success() {
+        // Given
         when(spiPaymentFactory.createSpiSinglePayment(pisCommonPaymentResponse)).thenReturn(Optional.of(SPI_SINGLE_PAYMENT));
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
         when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ACCEPT_MEDIA_TYPE, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
@@ -116,11 +120,7 @@ public class ReadSinglePaymentServiceTest {
         when(spiToXs2aPaymentMapperSupport.mapToSinglePayment(SPI_SINGLE_PAYMENT)).thenReturn(SINGLE_PAYMENT);
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
             .thenReturn(spiAspspConsentDataProvider);
-    }
 
-    @Test
-    public void getPayment_success() {
-        // Given
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ENCRYPTED_PAYMENT_ID, TransactionStatus.RCVD)).thenReturn(true);
 
         // When
@@ -134,7 +134,18 @@ public class ReadSinglePaymentServiceTest {
     }
 
     @Test
-    public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_failed() {
+    void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_failed() {
+        // Given
+        when(spiPaymentFactory.createSpiSinglePayment(pisCommonPaymentResponse)).thenReturn(Optional.of(SPI_SINGLE_PAYMENT));
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
+        when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ACCEPT_MEDIA_TYPE, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiSinglePayment>builder()
+                            .payload(SPI_SINGLE_PAYMENT)
+                            .build());
+        when(spiToXs2aPaymentMapperSupport.mapToSinglePayment(SPI_SINGLE_PAYMENT)).thenReturn(SINGLE_PAYMENT);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
+            .thenReturn(spiAspspConsentDataProvider);
+
         // When
         PaymentInformationResponse<CommonPayment> actualResponse = readSinglePaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID, ACCEPT_MEDIA_TYPE);
 
@@ -146,8 +157,17 @@ public class ReadSinglePaymentServiceTest {
     }
 
     @Test
-    public void getPayment_singlePaymentSpi_getPaymentById_failed() {
+    void getPayment_singlePaymentSpi_getPaymentById_failed() {
         // Given
+        when(spiPaymentFactory.createSpiSinglePayment(pisCommonPaymentResponse)).thenReturn(Optional.of(SPI_SINGLE_PAYMENT));
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
+        when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ACCEPT_MEDIA_TYPE, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiSinglePayment>builder()
+                            .payload(SPI_SINGLE_PAYMENT)
+                            .build());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
+            .thenReturn(spiAspspConsentDataProvider);
+
         SpiResponse<SpiSinglePayment> spiResponseError = SpiResponse.<SpiSinglePayment>builder()
                                                              .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                              .build();
@@ -170,7 +190,7 @@ public class ReadSinglePaymentServiceTest {
     }
 
     @Test
-    public void getPayment_emptyPaymentData() {
+    void getPayment_emptyPaymentData() {
         // Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_400)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_PAYMENT_NOT_FOUND))
@@ -189,8 +209,10 @@ public class ReadSinglePaymentServiceTest {
     }
 
     @Test
-    public void getPayment_spiPaymentFactory_createSpiSinglePayment_failed() {
+    void getPayment_spiPaymentFactory_createSpiSinglePayment_failed() {
         // Given
+        when(spiPaymentFactory.createSpiSinglePayment(pisCommonPaymentResponse)).thenReturn(Optional.of(SPI_SINGLE_PAYMENT));
+
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                         .build();

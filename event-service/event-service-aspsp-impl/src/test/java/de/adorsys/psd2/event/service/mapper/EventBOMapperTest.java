@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,25 @@
 
 package de.adorsys.psd2.event.service.mapper;
 
-import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.event.persist.model.ReportEvent;
 import de.adorsys.psd2.event.service.model.AspspEvent;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AspspEventMapperImpl.class, Xs2aObjectMapper.class})
-public class EventBOMapperTest {
+class EventBOMapperTest {
 
     private static final String PAYLOAD = "payload";
 
@@ -45,13 +45,13 @@ public class EventBOMapperTest {
     private Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
     private byte[] payloadAsBytes;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         payloadAsBytes = xs2aObjectMapper.writeValueAsBytes(PAYLOAD);
     }
 
     @Test
-    public void toAspspEvent() {
+    void toAspspEvent() {
         ReportEvent reportEvent = jsonReader.getObjectFromFile("json/aspsp-event-po.json", ReportEvent.class);
         reportEvent.setPayload(payloadAsBytes);
 
@@ -62,14 +62,14 @@ public class EventBOMapperTest {
     }
 
     @Test
-    public void toAspspEvent_nullValue() {
+    void toAspspEvent_nullValue() {
         AspspEvent actualAspspEvent = mapper.toAspspEvent(null);
 
         assertNull(actualAspspEvent);
     }
 
     @Test
-    public void toAspspEventList() {
+    void toAspspEventList() {
         ReportEvent reportEvent = jsonReader.getObjectFromFile("json/aspsp-event-po.json", ReportEvent.class);
         reportEvent.setPayload(payloadAsBytes);
 
@@ -81,7 +81,7 @@ public class EventBOMapperTest {
     }
 
     @Test
-    public void toAspspEventBOList_nullValue() {
+    void toAspspEventBOList_nullValue() {
         List<AspspEvent> actualAspspEventList = mapper.toAspspEventList(null);
         assertNotNull(actualAspspEventList);
         assertTrue(actualAspspEventList.isEmpty());

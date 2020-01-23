@@ -36,24 +36,24 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCommonPaymentServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class PisCommonPaymentServiceInternalTest {
 
     @InjectMocks
     private PisCommonPaymentServiceInternal pisCommonPaymentService;
@@ -77,13 +77,13 @@ public class PisCommonPaymentServiceInternalTest {
     private static final String PAYMENT_ID = "5bbde955ca10e8e4035a10c2";
     private static final JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         pisCommonPaymentData = buildPisCommonPaymentData();
     }
 
     @Test
-    public void createCommonPayment_checkUpdateTppRoles() {
+    void createCommonPayment_checkUpdateTppRoles() {
         // Given
         List<TppRole> roles = Arrays.asList(TppRole.AISP, TppRole.PISP, TppRole.PIISP);
         ArgumentCaptor<PisCommonPaymentData> argument = ArgumentCaptor.forClass(PisCommonPaymentData.class);
@@ -112,7 +112,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void updateMultilevelSca_ShouldReturnTrue() {
+    void updateMultilevelSca_ShouldReturnTrue() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
         when(pisCommonPaymentDataRepository.save(pisCommonPaymentData)).thenReturn(pisCommonPaymentData);
@@ -126,7 +126,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void updateMultilevelSca_ShouldReturnFalse() {
+    void updateMultilevelSca_ShouldReturnFalse() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.empty());
 
@@ -139,7 +139,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void getPisCommonPaymentStatusById_success() {
+    void getPisCommonPaymentStatusById_success() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisCommonPaymentData))
@@ -154,7 +154,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void getPisCommonPaymentStatusById_logicalError() {
+    void getPisCommonPaymentStatusById_logicalError() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisCommonPaymentData))
@@ -169,7 +169,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void getCommonPaymentById_success() {
+    void getCommonPaymentById_success() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisCommonPaymentData))
@@ -187,7 +187,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void getCommonPaymentById_logicalError() {
+    void getCommonPaymentById_logicalError() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisCommonPaymentData))
@@ -204,7 +204,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void updateCommonPaymentStatusById_success() {
+    void updateCommonPaymentStatusById_success() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisCommonPaymentData))
@@ -221,7 +221,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void updateCommonPaymentStatusById_transactionStatusIsFinalised() {
+    void updateCommonPaymentStatusById_transactionStatusIsFinalised() {
         // Given
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.ACCC);
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
@@ -240,7 +240,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void updateCommonPayment() {
+    void updateCommonPayment() {
         // Given
         PisCommonPaymentRequest request = new PisCommonPaymentRequest();
         PisPaymentInfo pisPaymentInfo = new PisPaymentInfo();
@@ -261,7 +261,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void getPsuDataListByPaymentId_success() {
+    void getPsuDataListByPaymentId_success() {
         // Given
         PisPaymentData pisPaymentData = new PisPaymentData();
         pisPaymentData.setPaymentData(pisCommonPaymentData);
@@ -278,7 +278,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void getPsuDataListByPaymentId_logicalError() {
+    void getPsuDataListByPaymentId_logicalError() {
         // Given
         PisPaymentData pisPaymentData = new PisPaymentData();
         pisPaymentData.setPaymentData(pisCommonPaymentData);
@@ -295,7 +295,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void transferCorePaymentToCommonPayment_success() {
+    void transferCorePaymentToCommonPayment_success() {
         PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
         PisPaymentData pisPaymentData = new PisPaymentData();
         pisCommonPaymentData.setPayments(Collections.singletonList(pisPaymentData));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,22 +24,21 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aToSpiPaymentMapperTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aToSpiPaymentMapperTest {
     private static final String PSU_ID = "psu Id";
     private static final String PSU_ID_TYPE = "psuId Type";
     private static final String PSU_CORPORATE_ID = "psu Corporate Id";
@@ -55,8 +54,8 @@ public class Xs2aToSpiPaymentMapperTest {
 
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS);
         SpiPsuData spiPsuData = SpiPsuData.builder()
                                     .psuId(PSU_ID)
@@ -65,13 +64,13 @@ public class Xs2aToSpiPaymentMapperTest {
                                     .psuCorporateIdType(PSU_CORPORATE_ID_TYPE)
                                     .psuIpAddress(PSU_IP_ADDRESS)
                                     .build();
-        psuDataList.addAll(Arrays.asList(psuIdData));
-        spiPsuDataList.addAll(Arrays.asList(spiPsuData));
+        psuDataList.addAll(Collections.singletonList(psuIdData));
+        spiPsuDataList.addAll(Collections.singletonList(spiPsuData));
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList)).thenReturn(spiPsuDataList);
     }
 
     @Test
-    public void mapToSpiPayment() {
+    void mapToSpiPayment() {
         //Given
         PisPaymentInfo paymentInfo = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/pis-payment-info.json", PisPaymentInfo.class);
         GetPisAuthorisationResponse getPisAuthorisationResponse = new GetPisAuthorisationResponse();

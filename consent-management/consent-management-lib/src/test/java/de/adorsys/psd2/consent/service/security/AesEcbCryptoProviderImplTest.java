@@ -19,18 +19,18 @@ package de.adorsys.psd2.consent.service.security;
 
 import de.adorsys.psd2.consent.service.security.provider.aes.AesEcbCryptoProviderImpl;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class AesEcbCryptoProviderImplTest {
+@ExtendWith(MockitoExtension.class)
+class AesEcbCryptoProviderImplTest {
     private final String SERVER_KEY_16 = "mvLBiZsiTbGwrfJB";
     private final String SERVER_KEY_3 = "mvL";
     private final String SERVER_KEY_80 = "mvLBiZsiTbGwrfJBmvLBiZsiTbGwrfJBmvLBiZsiTbGwrfJBmvLBiZsiTbGwrfJBmvLBiZsiTbGwrfJB";
@@ -38,22 +38,22 @@ public class AesEcbCryptoProviderImplTest {
     AesEcbCryptoProviderImpl aesGcmCryptoProvider = new AesEcbCryptoProviderImpl("bS6p6XvTWI", "AES/ECB/PKCS5Padding", 256, 65536, "PBKDF2WithHmacSHA256");
 
     @Test
-    public void encryptionDecryptionTest_password_16char() {
+    void encryptionDecryptionTest_password_16char() {
         encryptionDecryptionTest(SERVER_KEY_16);
     }
 
     @Test
-    public void encryptionDecryptionTest_password_3char() {
+    void encryptionDecryptionTest_password_3char() {
         encryptionDecryptionTest(SERVER_KEY_3);
     }
 
     @Test
-    public void encryptionDecryptionTest_password_80char() {
+    void encryptionDecryptionTest_password_80char() {
         encryptionDecryptionTest(SERVER_KEY_80);
     }
 
     @Test
-    public void encryptionDecryptionTest_wrong_password() {
+    void encryptionDecryptionTest_wrong_password() {
         // Given
         String consentKey = RandomStringUtils.random(16, true, true);
         String externalId = UUID.randomUUID().toString();
@@ -65,12 +65,12 @@ public class AesEcbCryptoProviderImplTest {
         Optional<EncryptedData> encryptData = aesGcmCryptoProvider.encryptData(data.getBytes(), correctPassword);
 
         // Then
-        assertThat(encryptData.isPresent()).isTrue();
-        assertThat(encryptData.get().getData().length > 0).isTrue();
+        assertTrue(encryptData.isPresent());
+        assertTrue(encryptData.get().getData().length > 0);
 
         // When
         Optional<DecryptedData> decryptData = aesGcmCryptoProvider.decryptData(encryptData.get().getData(), wrongPassword);
-        assertThat(decryptData.isPresent()).isFalse();
+        assertFalse(decryptData.isPresent());
     }
 
     private void encryptionDecryptionTest(String password) {
@@ -83,14 +83,14 @@ public class AesEcbCryptoProviderImplTest {
         Optional<EncryptedData> encryptData = aesGcmCryptoProvider.encryptData(data.getBytes(), password);
 
         // Then
-        assertThat(encryptData.isPresent()).isTrue();
-        assertThat(encryptData.get().getData().length > 0).isTrue();
+        assertTrue(encryptData.isPresent());
+        assertTrue(encryptData.get().getData().length > 0);
 
         // When
         Optional<DecryptedData> decryptData = aesGcmCryptoProvider.decryptData(encryptData.get().getData(), password);
 
-        assertThat(decryptData.isPresent()).isTrue();
-        assertThat(decryptData.get().getData().length > 0).isTrue();
-        assertThat(new String(decryptData.get().getData())).isEqualTo(data);
+        assertTrue(decryptData.isPresent());
+        assertTrue(decryptData.get().getData().length > 0);
+        assertEquals(data, new String(decryptData.get().getData()));
     }
 }

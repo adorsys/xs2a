@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,19 @@
 
 package de.adorsys.psd2.xs2a.web.request;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RequestPathResolverTest {
+class RequestPathResolverTest {
     private static final String HTTP_METHOD = HttpMethod.GET.name();
 
     private RequestPathResolver requestPathResolver = new RequestPathResolver();
 
     @Test
-    public void resolveRequestPath() {
+    void resolveRequestPath() {
         // Given
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest(HTTP_METHOD, "/v1/consents");
 
@@ -40,7 +40,7 @@ public class RequestPathResolverTest {
     }
 
     @Test
-    public void resolveRequestPath_withContextPath_shouldReturnPathWithoutContext() {
+    void resolveRequestPath_withContextPath_shouldReturnPathWithoutContext() {
         // Given
         String contextPath = "/custom-context";
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest(HttpMethod.GET.name(), contextPath + "/v1/consents");

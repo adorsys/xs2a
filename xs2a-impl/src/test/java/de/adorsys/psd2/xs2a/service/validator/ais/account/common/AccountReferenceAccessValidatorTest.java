@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,15 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class AccountReferenceAccessValidatorTest {
+class AccountReferenceAccessValidatorTest {
 
     private static final String ACCOUNT_ID = "11111-999999999";
     private static final String WRONG_ACCOUNT_ID = "wrong_account_id";
@@ -39,8 +39,8 @@ public class AccountReferenceAccessValidatorTest {
     private Xs2aAccountAccess accountAccess;
     private AccountReference accountReference;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         validator = new AccountReferenceAccessValidator();
         jsonReader = new JsonReader();
 
@@ -49,14 +49,14 @@ public class AccountReferenceAccessValidatorTest {
     }
 
     @Test
-    public void validate_success() {
+    void validate_success() {
         accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access.json", Xs2aAccountAccess.class);
         ValidationResult validationResult = validator.validate(accountAccess, Collections.singletonList(accountReference), ACCOUNT_ID);
         assertTrue(validationResult.isValid());
     }
 
     @Test
-    public void validate_notValidByAccountId() {
+    void validate_notValidByAccountId() {
         accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access.json", Xs2aAccountAccess.class);
         ValidationResult validationResult = validator.validate(accountAccess, Collections.singletonList(accountReference), WRONG_ACCOUNT_ID);
 
@@ -66,7 +66,7 @@ public class AccountReferenceAccessValidatorTest {
     }
 
     @Test
-    public void validate_notValidAvailableAccount() {
+    void validate_notValidAvailableAccount() {
         accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access-available_accounts.json", Xs2aAccountAccess.class);
         ValidationResult validationResult = validator.validate(accountAccess, Collections.emptyList(), ACCOUNT_ID);
 
@@ -76,7 +76,7 @@ public class AccountReferenceAccessValidatorTest {
     }
 
     @Test
-    public void validate_notValidAvailableAccountWithValances() {
+    void validate_notValidAvailableAccountWithValances() {
         accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access-available_accounts_with_balances.json", Xs2aAccountAccess.class);
         ValidationResult validationResult = validator.validate(accountAccess, Collections.emptyList(), ACCOUNT_ID);
 
@@ -86,7 +86,7 @@ public class AccountReferenceAccessValidatorTest {
     }
 
     @Test
-    public void validate_AccountReferenceWithoutResourceId() {
+    void validate_AccountReferenceWithoutResourceId() {
         AccountReference accountReference = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-reference-without-resource-id.json", AccountReference.class);
         ValidationResult validationResult = validator.validate(this.accountAccess, Collections.singletonList(accountReference), ACCOUNT_ID);
 

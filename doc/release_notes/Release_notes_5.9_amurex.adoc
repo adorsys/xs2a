@@ -1,0 +1,6 @@
+= Release notes v.5.9
+
+== Table of Contents
+* Migrate to jUnit 5.x and Mockito 3.x
+
+From now on, project uses jUnit 5.x and Mockito 3.x for testing.

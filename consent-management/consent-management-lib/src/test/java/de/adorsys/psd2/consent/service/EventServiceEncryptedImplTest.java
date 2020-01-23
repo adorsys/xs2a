@@ -20,22 +20,22 @@ import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.event.service.Xs2aEventService;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.event.service.model.PsuIdDataBO;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class EventServiceEncryptedImplTest {
+@ExtendWith(MockitoExtension.class)
+class EventServiceEncryptedImplTest {
     private static final String ENCRYPTED_CONSENT_ID = "encrypted consent id";
     private static final String UNDECRYPTABLE_CONSENT_ID = "undecryptable consent id";
     private static final String DECRYPTED_CONSENT_ID = "255574b2-f115-4f3c-8d77-c1897749c060";
@@ -61,14 +61,14 @@ public class EventServiceEncryptedImplTest {
     private EventBO decryptedEvent;
     private EventBO event;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         decryptedEvent = buildEvent(DECRYPTED_CONSENT_ID, DECRYPTED_PAYMENT_ID);
         event = buildEvent(ENCRYPTED_CONSENT_ID, ENCRYPTED_PAYMENT_ID);
     }
 
     @Test
-    public void recordEvent_success() {
+    void recordEvent_success() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
         when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
@@ -83,7 +83,7 @@ public class EventServiceEncryptedImplTest {
     }
 
     @Test
-    public void recordEvent_fail_recordingFailed() {
+    void recordEvent_fail_recordingFailed() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
         when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
@@ -98,7 +98,7 @@ public class EventServiceEncryptedImplTest {
     }
 
     @Test
-    public void recordEvent_fail_decryptionFailed() {
+    void recordEvent_fail_decryptionFailed() {
         // Given
         EventBO event = buildEvent(UNDECRYPTABLE_CONSENT_ID, UNDECRYPTABLE_PAYMENT_ID);
         when(securityDataService.decryptId(UNDECRYPTABLE_PAYMENT_ID)).thenReturn(Optional.empty());
@@ -114,7 +114,7 @@ public class EventServiceEncryptedImplTest {
     }
 
     @Test
-    public void recordEvent_CheckEventBuilder() {
+    void recordEvent_CheckEventBuilder() {
         // Given
         ArgumentCaptor<EventBO> argumentCaptor = ArgumentCaptor.forClass(EventBO.class);
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));

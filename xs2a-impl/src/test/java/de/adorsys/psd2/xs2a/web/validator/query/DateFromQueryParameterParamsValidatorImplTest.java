@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.query.account.DateFromQueryParameterParamsValidatorImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -34,14 +34,14 @@ import java.util.List;
 import java.util.Map;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_ABSENT_PARAMETER;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DateFromQueryParameterParamsValidatorImplTest {
+@ExtendWith(MockitoExtension.class)
+class DateFromQueryParameterParamsValidatorImplTest {
     private static final String DATE_FROM_PARAMETER_NAME = "dateFrom";
     private static final String ENTRY_REFERENCE_FROM_PARAMETER_NAME = "entryReferenceFrom";
     private static final String DELTA_LIST_PARAMETER_NAME = "deltaList";
@@ -60,7 +60,7 @@ public class DateFromQueryParameterParamsValidatorImplTest {
     private ErrorBuildingService errorBuildingService;
 
     @Test
-    public void validate_withCorrectValue_shouldNotEnrichError() {
+    void validate_withCorrectValue_shouldNotEnrichError() {
         //Given
         queryParams.put(DATE_FROM_PARAMETER_NAME, Collections.singletonList(DATE_FROM_TEST));
         //When
@@ -70,7 +70,7 @@ public class DateFromQueryParameterParamsValidatorImplTest {
     }
 
     @Test
-    public void validate_withCorrectValueAndEntryReferenceFromAndDeltaList_shouldNotEnrichError() {
+    void validate_withCorrectValueAndEntryReferenceFromAndDeltaList_shouldNotEnrichError() {
         //Given
         queryParams.put(DATE_FROM_PARAMETER_NAME, Collections.singletonList(LocalDate.now().toString()));
         queryParams.put(ENTRY_REFERENCE_FROM_PARAMETER_NAME, Collections.singletonList(ENTRY_REFERENCE_TEST));
@@ -82,7 +82,7 @@ public class DateFromQueryParameterParamsValidatorImplTest {
     }
 
     @Test
-    public void validate_withCorrectValueAndEntryReferenceFrom_shouldNotEnrichError() {
+    void validate_withCorrectValueAndEntryReferenceFrom_shouldNotEnrichError() {
         //Given
         queryParams.put(DATE_FROM_PARAMETER_NAME, Collections.singletonList(LocalDate.now().toString()));
         queryParams.put(ENTRY_REFERENCE_FROM_PARAMETER_NAME, Collections.singletonList(ENTRY_REFERENCE_TEST));
@@ -93,7 +93,7 @@ public class DateFromQueryParameterParamsValidatorImplTest {
     }
 
     @Test
-    public void validate_withCorrectValueAndEntryDeltaList_shouldNotEnrichError() {
+    void validate_withCorrectValueAndEntryDeltaList_shouldNotEnrichError() {
         //Given
         queryParams.put(DATE_FROM_PARAMETER_NAME, Collections.singletonList(LocalDate.now().toString()));
         queryParams.put(DELTA_LIST_PARAMETER_NAME, Collections.singletonList(DELTA_LIST_TEST));
@@ -104,7 +104,7 @@ public class DateFromQueryParameterParamsValidatorImplTest {
     }
 
     @Test
-    public void validate_withMissingParameterAndEntryReferenceFrom_shouldNotEnrichError() {
+    void validate_withMissingParameterAndEntryReferenceFrom_shouldNotEnrichError() {
         //Given
         queryParams.put(ENTRY_REFERENCE_FROM_PARAMETER_NAME, Collections.singletonList(ENTRY_REFERENCE_TEST));
         //When
@@ -114,7 +114,7 @@ public class DateFromQueryParameterParamsValidatorImplTest {
     }
 
     @Test
-    public void validate_withMissingParameterAndEntryDeltaList_shouldNotEnrichError() {
+    void validate_withMissingParameterAndEntryDeltaList_shouldNotEnrichError() {
         //Given
         queryParams.put(DELTA_LIST_PARAMETER_NAME, Collections.singletonList(DELTA_LIST_TEST));
         //When
@@ -124,7 +124,7 @@ public class DateFromQueryParameterParamsValidatorImplTest {
     }
 
     @Test
-    public void validate_withMissingParameter_shouldEnrichError() {
+    void validate_withMissingParameter_shouldEnrichError() {
         //Given
         ArgumentCaptor<TppMessageInformation> captor = ArgumentCaptor.forClass(TppMessageInformation.class);
         //When
