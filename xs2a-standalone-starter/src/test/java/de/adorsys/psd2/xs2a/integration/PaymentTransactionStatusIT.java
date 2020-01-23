@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +44,9 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusRespo
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,7 +55,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -74,7 +74,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -84,7 +84,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class PaymentTransactionStatusIT {
+class PaymentTransactionStatusIT {
     private static final String JSON_CONTENT_TYPE = "application/json";
     private static final String XML_CONTENT_TYPE = "application/xml";
     private static final String ACCEPT_HEADER = "accept";
@@ -120,8 +120,8 @@ public class PaymentTransactionStatusIT {
     @MockBean
     private UpdatePaymentAfterSpiServiceEncrypted updatePaymentStatusAfterSpiServiceEncrypted;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         httpHeaders.add("x-request-id", X_REQUEST_ID.toString());
         httpHeaders.add("PSU-ID", "PSU-123");
         httpHeaders.add("PSU-ID-Type", "Some type");
@@ -157,7 +157,7 @@ public class PaymentTransactionStatusIT {
     }
 
     @Test
-    public void getTransactionStatus() throws Exception {
+    void getTransactionStatus() throws Exception {
         // Given
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetTransactionStatusUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPTED_PAYMENT_ID));
         httpHeaders.add(ACCEPT_HEADER, JSON_CONTENT_TYPE);
@@ -175,7 +175,7 @@ public class PaymentTransactionStatusIT {
     }
 
     @Test
-    public void getTransactionStatus_raw() throws Exception {
+    void getTransactionStatus_raw() throws Exception {
         // Given
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetTransactionStatusUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPTED_PAYMENT_ID));
         httpHeaders.add(ACCEPT_HEADER, XML_CONTENT_TYPE);
@@ -194,7 +194,7 @@ public class PaymentTransactionStatusIT {
     }
 
     @Test
-    public void getTransactionStatusNoContentType() throws Exception {
+    void getTransactionStatusNoContentType() throws Exception {
         // Given
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetTransactionStatusUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPTED_PAYMENT_ID));
         requestBuilder.headers(httpHeaders);

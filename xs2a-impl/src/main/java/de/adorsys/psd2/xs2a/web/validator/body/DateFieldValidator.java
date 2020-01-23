@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.format.DateTimeParseException;
-import java.util.EnumSet;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_DAY_OF_EXECUTION;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_DATE_FIELD;
@@ -44,7 +44,7 @@ public class DateFieldValidator {
     private final LocalDateConverter localDateConverter;
     private final FieldExtractor fieldExtractor;
 
-    public MessageError validateDateFormat(HttpServletRequest request, EnumSet<Xs2aRequestBodyDateField> fields, MessageError messageError) {
+    public MessageError validateDateFormat(HttpServletRequest request, Set<Xs2aRequestBodyDateField> fields, MessageError messageError) {
         return validateRawDataDates(request, fields, messageError);
     }
 
@@ -53,7 +53,7 @@ public class DateFieldValidator {
             .ifPresent(day -> validateDayOfExecutionValue(day, messageError));
     }
 
-    public MessageError validateRawDataDates(HttpServletRequest request, EnumSet<Xs2aRequestBodyDateField> fields, MessageError messageError) {
+    public MessageError validateRawDataDates(HttpServletRequest request, Set<Xs2aRequestBodyDateField> fields, MessageError messageError) {
         for (Xs2aRequestBodyDateField field : fields) {
             fieldExtractor.extractField(request, field.getFieldName(), messageError)
                 .ifPresent(date -> convert(field.getFieldName(), date, field.getFormatter(), messageError));

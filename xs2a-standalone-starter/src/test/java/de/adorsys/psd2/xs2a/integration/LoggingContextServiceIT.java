@@ -24,9 +24,9 @@ import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,7 +37,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
@@ -54,7 +54,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -62,7 +62,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
     WebConfig.class,
     Xs2aInterfaceConfig.class
 })
-public class LoggingContextServiceIT {
+class LoggingContextServiceIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String CREATE_CONSENT_REQUEST_JSON_PATH = "/json/account/req/DedicatedConsent.json";
     private static final String ASPSP_PROFILE_SCA_APPROACHES_JSON_PATH = "json/aspsp-profile/sca-approaches.json";
@@ -87,8 +87,8 @@ public class LoggingContextServiceIT {
 
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         httpHeadersImplicit.add("Content-Type", "application/json");
         httpHeadersImplicit.add("x-request-id", "2f77a125-aa7a-45c0-b414-cea25a116035");
 
@@ -98,7 +98,7 @@ public class LoggingContextServiceIT {
     }
 
     @Test
-    public void loggingContextService_shouldStoreInfoBeforeGetting() throws Exception {
+    void loggingContextService_shouldStoreInfoBeforeGetting() throws Exception {
         String requestUrl = UrlBuilder.buildConsentCreation();
         MockHttpServletRequestBuilder requestBuilder = post(requestUrl);
         requestBuilder.headers(httpHeadersImplicit);

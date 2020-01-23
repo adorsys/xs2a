@@ -20,8 +20,8 @@ import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.event.service.AspspEventService;
 import de.adorsys.psd2.event.service.model.AspspEvent;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpHeaders;
@@ -35,14 +35,12 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class CmsAspspEventControllerTest {
+class CmsAspspEventControllerTest {
 
     private static final String START = "2019-07-11T11:51:00Z";
     private static final String END = "2019-07-11T20:00:00Z";
@@ -56,14 +54,13 @@ public class CmsAspspEventControllerTest {
     private JsonReader jsonReader = new JsonReader();
     private HttpHeaders httpHeaders = new HttpHeaders();
     private MockMvc mockMvc;
-    private AspspEvent event;
     private List<AspspEvent> events;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
 
-        event = jsonReader.getObjectFromFile("json/aspsp-event.json", AspspEvent.class);
+        AspspEvent event = jsonReader.getObjectFromFile("json/aspsp-event.json", AspspEvent.class);
         events = Collections.singletonList(event);
 
         httpHeaders.add("start-date", START);
@@ -77,7 +74,7 @@ public class CmsAspspEventControllerTest {
     }
 
     @Test
-    public void getEventsForDates_success() throws Exception {
+    void getEventsForDates_success() throws Exception {
         when(aspspEventService.getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID))
             .thenReturn(events);
 
@@ -93,7 +90,7 @@ public class CmsAspspEventControllerTest {
     }
 
     @Test
-    public void getEventsForDates_withoutInstanceId() throws Exception {
+    void getEventsForDates_withoutInstanceId() throws Exception {
         when(aspspEventService.getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID))
             .thenReturn(events);
 

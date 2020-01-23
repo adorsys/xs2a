@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,12 @@ import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingService;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -38,12 +38,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisConsentRepositoryImplTest {
+@ExtendWith(MockitoExtension.class)
+class AisConsentRepositoryImplTest {
     private static final String CORRECT_PSU_ID = "987654321";
     private static final byte[] CHECKSUM = "checksum in consent".getBytes();
 
@@ -60,8 +61,8 @@ public class AisConsentRepositoryImplTest {
     @Mock
     private ChecksumCalculatingService checksumCalculatingService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(calculatingFactory.getServiceByChecksum(any())).thenReturn(Optional.of(checksumCalculatingService));
 
         psuData = buildPsuData(CORRECT_PSU_ID);
@@ -69,7 +70,7 @@ public class AisConsentRepositoryImplTest {
     }
 
     @Test
-    public void verifyAndSave_ReceivedToValidStatus_success() throws WrongChecksumException {
+    void verifyAndSave_ReceivedToValidStatus_success() throws WrongChecksumException {
         // given
         AisConsent aisConsent = buildConsent(ConsentStatus.RECEIVED, ConsentStatus.VALID);
         when(aisConsentRepository.save(aisConsent)).thenReturn(aisConsent);
@@ -78,24 +79,26 @@ public class AisConsentRepositoryImplTest {
         AisConsent actualResult = aisConsentVerifyingRepository.verifyAndSave(aisConsent);
 
         // then
-        assertThat(actualResult).isEqualTo(aisConsent);
+        assertEquals(aisConsent, actualResult);
         verify(aisConsentRepository, times(1)).save(aisConsent);
     }
 
-    @Test(expected = WrongChecksumException.class)
-    public void verifyAndSave_failedSha() throws WrongChecksumException {
-        // given
+    @Test
+    void verifyAndSave_failedSha() {
+        // Given
         AisConsent aisConsent = buildConsent(ConsentStatus.VALID, ConsentStatus.VALID);
         aisConsent.setChecksum(CHECKSUM);
         when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM)).thenReturn(false);
 
-        // when
-        aisConsentVerifyingRepository.verifyAndSave(aisConsent);
+        // When
+        assertThrows(WrongChecksumException.class, () -> aisConsentVerifyingRepository.verifyAndSave(aisConsent));
+
+        // Then
         verify(aisConsentRepository, times(0)).save(aisConsent);
     }
 
     @Test
-    public void verifyAndSave_correctSha() throws WrongChecksumException {
+    void verifyAndSave_correctSha() throws WrongChecksumException {
         // given
         AisConsent aisConsent = buildConsent(ConsentStatus.VALID, ConsentStatus.VALID);
         aisConsent.setChecksum(CHECKSUM);
@@ -106,12 +109,12 @@ public class AisConsentRepositoryImplTest {
         AisConsent actualResult = aisConsentVerifyingRepository.verifyAndSave(aisConsent);
 
         // then
-        assertThat(actualResult).isEqualTo(aisConsent);
+        assertEquals(aisConsent, actualResult);
         verify(aisConsentRepository, times(1)).save(aisConsent);
     }
 
     @Test
-    public void verifyAndUpdate_success() throws WrongChecksumException {
+    void verifyAndUpdate_success() throws WrongChecksumException {
         // given
         AisConsent aisConsent = buildConsent(ConsentStatus.VALID, ConsentStatus.VALID);
         aisConsent.setChecksum(CHECKSUM);
@@ -122,24 +125,26 @@ public class AisConsentRepositoryImplTest {
         AisConsent actualResult = aisConsentVerifyingRepository.verifyAndUpdate(aisConsent);
 
         // then
-        assertThat(actualResult).isEqualTo(aisConsent);
+        assertEquals(aisConsent, actualResult);
         verify(aisConsentRepository, times(1)).save(aisConsent);
     }
 
-    @Test(expected = WrongChecksumException.class)
-    public void verifyAndUpdate_failedSha() throws WrongChecksumException {
-        // given
+    @Test
+    void verifyAndUpdate_failedSha() {
+        // Given
         AisConsent aisConsent = buildConsent(ConsentStatus.VALID, ConsentStatus.VALID);
         aisConsent.setChecksum(CHECKSUM);
         when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM)).thenReturn(false);
 
-        // when
-        aisConsentVerifyingRepository.verifyAndUpdate(aisConsent);
+        // When
+        assertThrows(WrongChecksumException.class, () -> aisConsentVerifyingRepository.verifyAndUpdate(aisConsent));
+
+        // Then
         verify(aisConsentRepository, times(0)).save(aisConsent);
     }
 
     @Test
-    public void verifyAndSaveAll_success() throws WrongChecksumException {
+    void verifyAndSaveAll_success() throws WrongChecksumException {
         // given
         AisConsent aisConsent = buildConsent(ConsentStatus.VALID, ConsentStatus.VALID);
         aisConsent.setChecksum(CHECKSUM);
@@ -151,7 +156,7 @@ public class AisConsentRepositoryImplTest {
         List<AisConsent> actualResult = aisConsentVerifyingRepository.verifyAndSaveAll(asList);
 
         // then
-        assertThat(actualResult).isEqualTo(asList);
+        assertEquals(asList, actualResult);
         verify(aisConsentRepository, times(1)).save(aisConsent);
     }
 

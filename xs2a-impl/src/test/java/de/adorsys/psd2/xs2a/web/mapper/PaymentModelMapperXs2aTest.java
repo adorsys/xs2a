@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,18 @@ import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJ
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Xs2aObjectMapper.class})
 public class PaymentModelMapperXs2aTest {
 
@@ -48,14 +49,14 @@ public class PaymentModelMapperXs2aTest {
     private JsonReader jsonReader = new JsonReader();
 
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         mockHttpServletRequest = new MockHttpServletRequest();
         paymentModelMapper = new PaymentModelMapperXs2a(mockHttpServletRequest, xs2aObjectMapper);
     }
 
     @Test
-    public void mapToXs2aPayment() {
+    void mapToXs2aPayment() {
         mockHttpServletRequest.setContent(CONTENT.getBytes());
 
         byte[] actual = paymentModelMapper.mapToXs2aPayment();
@@ -64,7 +65,7 @@ public class PaymentModelMapperXs2aTest {
     }
 
     @Test
-    public void mapToXs2aRawPayment_notPeriodic() {
+    void mapToXs2aRawPayment_notPeriodic() {
         PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
         requestParameters.setPaymentType(PaymentType.SINGLE);
 
@@ -76,7 +77,7 @@ public class PaymentModelMapperXs2aTest {
     }
 
     @Test
-    public void mapToXs2aRawPayment_periodic() {
+    void mapToXs2aRawPayment_periodic() {
         PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
         requestParameters.setPaymentType(PaymentType.PERIODIC);
 
@@ -91,8 +92,8 @@ public class PaymentModelMapperXs2aTest {
         assertEquals(expected, new String(actual));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void mapToXs2aRawPayment_exceptionWhenXmlPartIsNull() {
+    @Test
+    void mapToXs2aRawPayment_exceptionWhenXmlPartIsNull() {
         PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
         requestParameters.setPaymentType(PaymentType.PERIODIC);
 
@@ -101,7 +102,7 @@ public class PaymentModelMapperXs2aTest {
         jsonStandingOrderType.setExecutionRule(ExecutionRule.FOLLOWING);
         jsonStandingOrderType.setFrequency(FrequencyCode.MONTHLY);
 
-       paymentModelMapper.mapToXs2aRawPayment(requestParameters, null, jsonStandingOrderType);
+        assertThrows(IllegalArgumentException.class, () -> paymentModelMapper.mapToXs2aRawPayment(requestParameters, null, jsonStandingOrderType));
     }
 
 }

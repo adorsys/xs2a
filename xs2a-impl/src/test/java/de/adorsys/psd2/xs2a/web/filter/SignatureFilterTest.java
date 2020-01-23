@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,12 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -45,8 +45,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SignatureFilterTest {
+@ExtendWith(MockitoExtension.class)
+class SignatureFilterTest {
     private static final JsonReader jsonReader = new JsonReader();
 
     private static final String POST_METHOD = "POST";
@@ -73,9 +73,8 @@ public class SignatureFilterTest {
 
     private String body;
 
-    @Before
-    public void setUp() {
-        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+    @BeforeEach
+    void setUp() {
         fillDefaultHeaders();
         body = "correct json body";
 
@@ -83,8 +82,10 @@ public class SignatureFilterTest {
     }
 
     @Test
-    public void doFilter_success() throws IOException, ServletException {
+    void doFilter_success() throws IOException, ServletException {
         // given
+        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         String fullUrl = mockRequest.getRequestURL().toString();
@@ -101,8 +102,10 @@ public class SignatureFilterTest {
     }
 
     @Test
-    public void doFilter_invalid_digest() throws IOException, ServletException {
+    void doFilter_invalid_digest() throws IOException, ServletException {
         // given
+        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         mockResponseCode(mockResponse, HttpServletResponse.SC_BAD_REQUEST);
@@ -118,8 +121,10 @@ public class SignatureFilterTest {
     }
 
     @Test
-    public void doFilter_invalid_signature() throws IOException, ServletException {
+    void doFilter_invalid_signature() throws IOException, ServletException {
         // given
+        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         String fullUrl = mockRequest.getRequestURL().toString();
@@ -137,8 +142,10 @@ public class SignatureFilterTest {
     }
 
     @Test
-    public void doFilter_SignatureRequired_Off() throws IOException, ServletException {
+    void doFilter_SignatureRequired_Off() throws IOException, ServletException {
         // given
+        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         when(aspspProfileService.getTppSignatureRequired()).thenReturn(false);
@@ -154,8 +161,10 @@ public class SignatureFilterTest {
     }
 
     @Test
-    public void doFilter_HeaderEmpty_xRequestId() throws IOException, ServletException {
+    void doFilter_HeaderEmpty_xRequestId() throws IOException, ServletException {
         // given
+        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+
         headerMap.remove("x-request-id");
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -172,8 +181,10 @@ public class SignatureFilterTest {
     }
 
     @Test
-    public void doFilter_HeaderEmpty_signature() throws IOException, ServletException {
+    void doFilter_HeaderEmpty_signature() throws IOException, ServletException {
         // given
+        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+
         headerMap.remove("signature");
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -190,8 +201,10 @@ public class SignatureFilterTest {
     }
 
     @Test
-    public void doFilter_HeaderEmpty_signature_certificate() throws IOException, ServletException {
+    void doFilter_HeaderEmpty_signature_certificate() throws IOException, ServletException {
         // given
+        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+
         headerMap.remove("tpp-signature-certificate");
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -208,8 +221,10 @@ public class SignatureFilterTest {
     }
 
     @Test
-    public void doFilter_HeaderEmpty_signature_digest() throws IOException, ServletException {
+    void doFilter_HeaderEmpty_signature_digest() throws IOException, ServletException {
         // given
+        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+
         headerMap.remove("digest");
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -226,8 +241,10 @@ public class SignatureFilterTest {
     }
 
     @Test
-    public void doFilter_HeaderEmpty_date() throws IOException, ServletException {
+    void doFilter_HeaderEmpty_date() throws IOException, ServletException {
         // given
+        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+
         headerMap.remove("date");
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -244,7 +261,7 @@ public class SignatureFilterTest {
     }
 
     @Test
-    public void doFilter_onCustomEndpoint_shouldSkipFilter() throws ServletException, IOException {
+    void doFilter_onCustomEndpoint_shouldSkipFilter() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -256,7 +273,7 @@ public class SignatureFilterTest {
 
         // Then
         verify(chain).doFilter(mockRequest, mockResponse);
-        verifyZeroInteractions(aspspProfileService, requestProviderService);
+        verifyNoMoreInteractions(aspspProfileService, requestProviderService);
     }
 
     private MockHttpServletRequest getCorrectRequest(Map<String, String> headerMap, String body, String method) {

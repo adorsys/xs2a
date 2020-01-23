@@ -123,7 +123,7 @@ public abstract class PaymentUpdateAuthorisationBase {
         //Given
         String request = IOUtils.resourceToString(AUTH_REQ, UTF_8);
         PsuIdData psuIdDataAuthorisation = buildPsuIdDataAuthorisation(psuIdAuthorisation);
-        HttpHeadersIT httpHeaders = buildHttpHeaders(psuIdHeader);
+        HttpHeadersMock httpHeaders = buildHttpHeaders(psuIdHeader);
 
         List<Authorisation> authorisationList = Collections.singletonList(buildAuthorisation(psuIdDataAuthorisation));
         PisCommonPaymentResponse pisCommonPaymentResponse = buildPisCommonPaymentResponse(authorisationList);
@@ -144,8 +144,8 @@ public abstract class PaymentUpdateAuthorisationBase {
 
     abstract String buildRequestUrl();
 
-    private HttpHeadersIT buildHttpHeaders(String psuIdHeader) {
-        HttpHeadersIT httpHeadersBase = HttpHeadersBuilder.buildHttpHeaders();
+    private HttpHeadersMock buildHttpHeaders(String psuIdHeader) {
+        HttpHeadersMock httpHeadersBase = HttpHeadersBuilder.buildHttpHeaders();
         return Optional.ofNullable(psuIdHeader)
                    .map(httpHeadersBase::addPsuIdHeader)
                    .orElse(httpHeadersBase);

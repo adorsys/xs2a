@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,25 +20,25 @@ import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class NotConfirmedConsentExpirationScheduleTaskTest {
+@ExtendWith(MockitoExtension.class)
+class NotConfirmedConsentExpirationScheduleTaskTest {
 
     @InjectMocks
     private NotConfirmedConsentExpirationScheduleTask scheduleTask;
@@ -52,7 +52,7 @@ public class NotConfirmedConsentExpirationScheduleTaskTest {
     private ArgumentCaptor<ArrayList<AisConsent>> consentsCaptor;
 
     @Test
-    public void obsoleteNotConfirmedConsentIfExpired() {
+    void obsoleteNotConfirmedConsentIfExpired() {
         List<AisConsent> aisConsents = new ArrayList<>();
         aisConsents.add(new AisConsent());
         aisConsents.add(new AisConsent());
@@ -73,7 +73,7 @@ public class NotConfirmedConsentExpirationScheduleTaskTest {
     }
 
     @Test
-    public void obsoleteNotConfirmedConsentIfExpired_emptyList() {
+    void obsoleteNotConfirmedConsentIfExpired_emptyList() {
         when(aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED)))
             .thenReturn(Collections.emptyList());
 

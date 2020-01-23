@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,22 +25,22 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORBIDDEN;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OauthConsentValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class OauthConsentValidatorTest {
     private static final String TOKEN = "token";
     private static final MessageError MESSAGE_ERROR = new MessageError(ErrorType.AIS_403, of(FORBIDDEN));
 
@@ -54,7 +54,7 @@ public class OauthConsentValidatorTest {
     private ScaApproachResolver scaApproachResolver;
 
     @Test
-    public void validate_invalid_tokenEmpty_approachRedirect_flowOauth_statusValid() {
+    void validate_invalid_tokenEmpty_approachRedirect_flowOauth_statusValid() {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);
@@ -69,7 +69,7 @@ public class OauthConsentValidatorTest {
     }
 
     @Test
-    public void validate_invalid_tokenNull_approachRedirect_flowOauth_statusValid() {
+    void validate_invalid_tokenNull_approachRedirect_flowOauth_statusValid() {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);
@@ -84,7 +84,7 @@ public class OauthConsentValidatorTest {
     }
 
     @Test
-    public void validate_valid_tokenPresent_approachRedirect_flowOauth_statusValid() {
+    void validate_valid_tokenPresent_approachRedirect_flowOauth_statusValid() {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);
@@ -98,7 +98,7 @@ public class OauthConsentValidatorTest {
     }
 
     @Test
-    public void validate_valid_approachRedirect_flowOauthPreStep_statusValid() {
+    void validate_valid_approachRedirect_flowOauthPreStep_statusValid() {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH_PRE_STEP);
@@ -111,7 +111,7 @@ public class OauthConsentValidatorTest {
     }
 
     @Test
-    public void validate_valid_approachEmbedded_flowOauth_statusValid() {
+    void validate_valid_approachEmbedded_flowOauth_statusValid() {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
         AccountConsent accountConsent = buildAccountConsent(ConsentStatus.VALID);
@@ -123,7 +123,7 @@ public class OauthConsentValidatorTest {
     }
 
     @Test
-    public void validate_valid_approachRedirect_flowOauth_statusReceived() {
+    void validate_valid_approachRedirect_flowOauth_statusReceived() {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);

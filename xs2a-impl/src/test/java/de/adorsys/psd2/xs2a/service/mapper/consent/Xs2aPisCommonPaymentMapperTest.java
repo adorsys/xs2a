@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,18 +28,18 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aPisCommonPaymentMapperTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aPisCommonPaymentMapperTest {
     private final static JsonReader jsonReader = new JsonReader();
     private static final PaymentType PAYMENT_TYPE = PaymentType.SINGLE;
     private static PsuIdData psuData;
@@ -48,8 +48,8 @@ public class Xs2aPisCommonPaymentMapperTest {
     @InjectMocks
     private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         psuData =
             jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/psu-data.json", PsuIdData.class);
         createPisAuthorisationResponse =
@@ -58,7 +58,7 @@ public class Xs2aPisCommonPaymentMapperTest {
     }
 
     @Test
-    public void mapToCmsUpdateCommonPaymentPsuDataReq() {
+    void mapToCmsUpdateCommonPaymentPsuDataReq() {
         UpdatePisCommonPaymentPsuDataRequest expected =
             jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/update-pis-common-payment-psu-data-request.json",
                                          UpdatePisCommonPaymentPsuDataRequest.class);
@@ -73,7 +73,7 @@ public class Xs2aPisCommonPaymentMapperTest {
     }
 
     @Test
-    public void buildSpiScaConfirmation() {
+    void buildSpiScaConfirmation() {
         SpiScaConfirmation expected =
             jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-sca-confirmation.json",
                                          SpiScaConfirmation.class);
@@ -90,7 +90,7 @@ public class Xs2aPisCommonPaymentMapperTest {
     }
 
     @Test
-    public void mapToXs2aPisCommonPayment() {
+    void mapToXs2aPisCommonPayment() {
         Xs2aPisCommonPayment expected =
             jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-pis-common-payment.json",
                                          Xs2aPisCommonPayment.class);
@@ -105,7 +105,7 @@ public class Xs2aPisCommonPaymentMapperTest {
     }
 
     @Test
-    public void mapToXs2aCreatePisCancellationAuthorisationResponse() {
+    void mapToXs2aCreatePisCancellationAuthorisationResponse() {
         Xs2aCreatePisCancellationAuthorisationResponse expected =
             jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-create-pis-cancellation-authorisation-response.json",
                                          Xs2aCreatePisCancellationAuthorisationResponse.class);
@@ -118,14 +118,14 @@ public class Xs2aPisCommonPaymentMapperTest {
     }
 
     @Test
-    public void mapToXs2aCreatePisCancellationAuthorisationResponse_ShouldReturnEmpty() {
+    void mapToXs2aCreatePisCancellationAuthorisationResponse_ShouldReturnEmpty() {
         Optional<Xs2aCreatePisCancellationAuthorisationResponse> expected = Optional.empty();
         Optional<Xs2aCreatePisCancellationAuthorisationResponse> actual = xs2aPisCommonPaymentMapper.mapToXs2aCreatePisCancellationAuthorisationResponse(null, null);
         assertEquals(expected, actual);
     }
 
     @Test
-    public void mapToXsa2CreatePisAuthorisationResponse() {
+    void mapToXsa2CreatePisAuthorisationResponse() {
         Xs2aCreatePisAuthorisationResponse expected =
             jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-create-pis-authorisation-response.json",
                                          Xs2aCreatePisAuthorisationResponse.class);
@@ -137,7 +137,7 @@ public class Xs2aPisCommonPaymentMapperTest {
     }
 
     @Test
-    public void mapToXsa2CreatePisAuthorisationResponse_ShouldReturnEmpty() {
+    void mapToXsa2CreatePisAuthorisationResponse_ShouldReturnEmpty() {
         Optional<Xs2aCreatePisAuthorisationResponse> expected = Optional.empty();
         Optional<Xs2aCreatePisAuthorisationResponse> actual = xs2aPisCommonPaymentMapper.mapToXsa2CreatePisAuthorisationResponse(null, null);
         assertEquals(expected, actual);

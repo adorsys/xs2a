@@ -20,29 +20,27 @@ import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.TppStopListEntity;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
-import de.adorsys.psd2.consent.service.aspsp.CmsAspspTppServiceInternal;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.mapper.TppStopListMapper;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppStopListRecord;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspTppServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspTppServiceInternalTest {
     private final String AUTHORISATION_NUMBER = "Authorisation number";
     private final Duration BLOCKING_DURATION = Duration.ofMillis(15000);
     private final String AUTHORISATION_NUMBER_NOT_EXISTING = "Not existing Authorisation number";
-    private final String AUTHORITY_ID_NOT_EXISTING = "Not existing Authority id";
     private final String INSTANCE_ID = "Instance id";
 
     @InjectMocks
@@ -67,7 +65,7 @@ public class CmsAspspTppServiceInternalTest {
     private TppInfo tppInfo;
 
     @Test
-    public void getTppStopListRecord_Fail_TppEntityIsNotExistInDB() {
+    void getTppStopListRecord_Fail_TppEntityIsNotExistInDB() {
         when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
@@ -77,7 +75,7 @@ public class CmsAspspTppServiceInternalTest {
     }
 
     @Test
-    public void getTppStopListRecord_Success_TppEntityIsExistInDB() {
+    void getTppStopListRecord_Success_TppEntityIsExistInDB() {
         when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER, INSTANCE_ID))
             .thenReturn(Optional.of(tppStopListEntity));
 
@@ -91,7 +89,7 @@ public class CmsAspspTppServiceInternalTest {
     }
 
     @Test
-    public void blockTpp_Success_TppEntityIsExistInDB() {
+    void blockTpp_Success_TppEntityIsExistInDB() {
         when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER, INSTANCE_ID))
             .thenReturn(Optional.of(tppStopListEntity));
 
@@ -108,11 +106,11 @@ public class CmsAspspTppServiceInternalTest {
     }
 
     @Test
-    public void blockTpp_Success_TppEntityIsNotExistInDB() {
+    void blockTpp_Success_TppEntityIsNotExistInDB() {
         when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
-        TppStopListEntity entityToBeBlocked = buildBlockedTppStopListEntity(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING, INSTANCE_ID, null);
+        TppStopListEntity entityToBeBlocked = buildBlockedTppStopListEntity(AUTHORISATION_NUMBER_NOT_EXISTING, null);
 
         when(stopListRepository.save(entityToBeBlocked))
             .thenReturn(entityToBeBlocked);
@@ -124,7 +122,7 @@ public class CmsAspspTppServiceInternalTest {
     }
 
     @Test
-    public void unblockTpp_Success_TppEntityIsNotExistInDB() {
+    void unblockTpp_Success_TppEntityIsNotExistInDB() {
         when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
@@ -135,7 +133,7 @@ public class CmsAspspTppServiceInternalTest {
     }
 
     @Test
-    public void unblockTpp_Success_TppEntityIsExistInDB() {
+    void unblockTpp_Success_TppEntityIsExistInDB() {
         when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER, INSTANCE_ID))
             .thenReturn(Optional.of(tppStopListEntity));
 
@@ -152,7 +150,7 @@ public class CmsAspspTppServiceInternalTest {
     }
 
     @Test
-    public void getTppInfoRecord_Fail_TppEntityIsNotExistInDB() {
+    void getTppInfoRecord_Fail_TppEntityIsNotExistInDB() {
         when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
@@ -162,7 +160,7 @@ public class CmsAspspTppServiceInternalTest {
     }
 
     @Test
-    public void getTppInfoRecord_Success_TppEntityIsExistInDB() {
+    void getTppInfoRecord_Success_TppEntityIsExistInDB() {
         when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER, INSTANCE_ID))
             .thenReturn(Optional.of(tppInfoEntity));
 
@@ -175,7 +173,7 @@ public class CmsAspspTppServiceInternalTest {
         assertEquals(tppInfo, result.get());
     }
 
-    private TppStopListEntity buildBlockedTppStopListEntity(String authorisationNumber, String authorityId, String instanceId, Duration blockingDuration) {
+    private TppStopListEntity buildBlockedTppStopListEntity(String authorisationNumber, Duration blockingDuration) {
         TppStopListEntity entity = new TppStopListEntity();
         entity.setTppAuthorisationNumber(authorisationNumber);
         entity.block(blockingDuration);

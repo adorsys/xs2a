@@ -17,15 +17,15 @@
 package de.adorsys.psd2.validator.signature.impl;
 
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SignatureVerifierImplTest {
+class SignatureVerifierImplTest {
     private static final JsonReader jsonReader = new JsonReader();
 
     private SignatureVerifierImpl signatureVerifier = new SignatureVerifierImpl();
@@ -34,13 +34,13 @@ public class SignatureVerifierImplTest {
     private static final String URI = "/request-uri/example";
     private Map<String, String> headerMap = new HashMap();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         fillDefaultHeaders();
     }
 
     @Test
-    public void verify_success_POST() {
+    void verify_success_POST() {
         // when
         boolean actualResult = signatureVerifier.verify(signature(), certificate(), headerMap, POST_METHOD, URI);
 
@@ -49,7 +49,7 @@ public class SignatureVerifierImplTest {
     }
 
     @Test
-    public void verify_success_GET() {
+    void verify_success_GET() {
         // when
         boolean actualResult = signatureVerifier.verify(signature(), certificate(), headerMap, GET_METHOD, URI);
 
@@ -58,7 +58,7 @@ public class SignatureVerifierImplTest {
     }
 
     @Test
-    public void verify_emptySomeHeaders() {
+    void verify_emptySomeHeaders() {
         headerMap.remove("x-request-id");
         headerMap.remove("psu-ip-address");
 
@@ -70,7 +70,7 @@ public class SignatureVerifierImplTest {
     }
 
     @Test
-    public void verify_wrongSignatureHash() {
+    void verify_wrongSignatureHash() {
         // when
         boolean actualResult = signatureVerifier.verify(wrongSignatureHash(), certificate(), headerMap, POST_METHOD, URI);
 
@@ -79,7 +79,7 @@ public class SignatureVerifierImplTest {
     }
 
     @Test
-    public void verify_wrongSignatureHeader() {
+    void verify_wrongSignatureHeader() {
         // when
         boolean actualResult = signatureVerifier.verify(signatureWrongHeaders(), certificate(), headerMap, POST_METHOD, URI);
 
@@ -88,7 +88,7 @@ public class SignatureVerifierImplTest {
     }
 
     @Test
-    public void verify_wrongSignatureKeyId() {
+    void verify_wrongSignatureKeyId() {
         // when
         boolean actualResult = signatureVerifier.verify(signatureWrongKeyId(), certificate(), headerMap, POST_METHOD, URI);
 
@@ -97,9 +97,9 @@ public class SignatureVerifierImplTest {
     }
 
     @Test
-    public void verify_wrongTppCertificate() {
+    void verify_wrongTppCertificate() {
         // when
-        boolean actualResult = signatureVerifier.verify(signature(), wrong_certificate(), headerMap, POST_METHOD, URI);
+        boolean actualResult = signatureVerifier.verify(signature(), wrongCertificate(), headerMap, POST_METHOD, URI);
 
         // then
         assertThat(actualResult).isFalse();
@@ -137,7 +137,7 @@ public class SignatureVerifierImplTest {
         return jsonReader.getStringFromFile("signature/signature_wrong_hash.txt");
     }
 
-    private String wrong_certificate() {
+    private String wrongCertificate() {
         return jsonReader.getStringFromFile("signature/wrong_tpp_signature_certificate.txt");
     }
 }

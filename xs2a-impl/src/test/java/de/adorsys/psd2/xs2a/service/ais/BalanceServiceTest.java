@@ -53,13 +53,13 @@ import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -74,8 +74,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class BalanceServiceTest {
+@ExtendWith(MockitoExtension.class)
+class BalanceServiceTest {
     private static final JsonReader jsonReader = new JsonReader();
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String CONSENT_ID = "Test consentId";
@@ -125,25 +125,16 @@ public class BalanceServiceTest {
     @Mock
     private LoggingContextService loggingContextService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         accountConsent = createConsent(createAccountAccess());
         spiAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json", SpiAccountReference.class);
         spiAspspConsentDataProvider = spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID);
         commonAccountBalanceRequestObject = buildCommonAccountBalanceRequestObject();
-
-        when(getBalancesReportValidator.validate(any(CommonAccountBalanceRequestObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
-
-        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
-        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
     }
 
     @Test
-    public void getBalancesReport_Failure_NoAccountConsent() {
+    void getBalancesReport_Failure_NoAccountConsent() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.empty());
@@ -156,8 +147,9 @@ public class BalanceServiceTest {
     }
 
     @Test
-    public void getBalancesReport_Failure_AllowedAccountDataHasError() {
+    void getBalancesReport_Failure_AllowedAccountDataHasError() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
         when(getBalancesReportValidator.validate(commonAccountBalanceRequestObject))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
@@ -169,8 +161,15 @@ public class BalanceServiceTest {
     }
 
     @Test
-    public void getBalancesReport_Failure_SpiResponseHasError() {
+    void getBalancesReport_Failure_SpiResponseHasError() {
         // Given
+        when(getBalancesReportValidator.validate(any(CommonAccountBalanceRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
+
+        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+
         when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildErrorSpiResponse(Collections.emptyList()));
 
@@ -191,8 +190,9 @@ public class BalanceServiceTest {
     }
 
     @Test
-    public void getBalancesReport_Failure_ConsentNotContainsAccountReference() {
+    void getBalancesReport_Failure_ConsentNotContainsAccountReference() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
         when(getBalancesReportValidator.validate(commonAccountBalanceRequestObject))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
@@ -204,19 +204,24 @@ public class BalanceServiceTest {
     }
 
     @Test
-    public void getBalancesReport_Success() {
+    void getBalancesReport_Success() {
         // Given
+        when(getBalancesReportValidator.validate(any(CommonAccountBalanceRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
+
+        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
+
         when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
 
         when(balanceReportMapper.mapToXs2aBalancesReport(spiAccountReference, Collections.emptyList()))
             .thenReturn(xs2aBalancesReport);
 
-        when(xs2aBalancesReport.getXs2aAccountReference())
-            .thenReturn(XS2A_ACCOUNT_REFERENCE);
-
-        when(consentMapper.mapToSpiAccountConsent(any()))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(xs2aBalancesReport.getXs2aAccountReference()).thenReturn(XS2A_ACCOUNT_REFERENCE);
+        when(consentMapper.mapToSpiAccountConsent(any())).thenReturn(SPI_ACCOUNT_CONSENT);
 
         ResponseObject<Xs2aBalancesReport> actualResponse = balanceService.getBalancesReport(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
 
@@ -228,8 +233,16 @@ public class BalanceServiceTest {
     }
 
     @Test
-    public void getBalancesReport_Success_ShouldRecordEvent() {
+    void getBalancesReport_Success_ShouldRecordEvent() {
         // Given
+        when(getBalancesReportValidator.validate(any(CommonAccountBalanceRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
+
+        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
+
         when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
         when(balanceReportMapper.mapToXs2aBalancesReport(spiAccountReference, Collections.emptyList()))
@@ -247,8 +260,10 @@ public class BalanceServiceTest {
     }
 
     @Test
-    public void getBalancesReport_withInvalidConsent_shouldReturnValidationError() {
+    void getBalancesReport_withInvalidConsent_shouldReturnValidationError() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
+
         when(getBalancesReportValidator.validate(any(CommonAccountBalanceRequestObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
@@ -261,8 +276,16 @@ public class BalanceServiceTest {
     }
 
     @Test
-    public void getBalancesReport_shouldRecordStatusIntoLoggingContext() {
+    void getBalancesReport_shouldRecordStatusIntoLoggingContext() {
         // Given
+        when(getBalancesReportValidator.validate(any(CommonAccountBalanceRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
+
+        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
+
         when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
         when(balanceReportMapper.mapToXs2aBalancesReport(spiAccountReference, Collections.emptyList()))

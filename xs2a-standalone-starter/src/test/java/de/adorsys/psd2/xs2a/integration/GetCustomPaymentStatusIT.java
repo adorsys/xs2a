@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,16 +33,16 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -57,7 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -67,43 +67,43 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class GetCustomPaymentStatusIT extends CustomPaymentTestParent {
+class GetCustomPaymentStatusIT extends CustomPaymentTestParent {
 
-    @Before
-    public void init() {
+    @BeforeEach
+    protected void init() {
         super.init();
     }
 
     //Single
     @Test
-    public void single_Xml() throws Exception {
+    void single_Xml() throws Exception {
         getPaymentStatus(PaymentType.SINGLE, MediaType.APPLICATION_XML);
     }
 
     @Test
-    public void single_Json() throws Exception {
+    void single_Json() throws Exception {
         getPaymentStatus(PaymentType.SINGLE, MediaType.APPLICATION_JSON);
     }
 
     //Periodic
     @Test
-    public void periodic_Xml() throws Exception {
+    void periodic_Xml() throws Exception {
         getPaymentStatus(PaymentType.PERIODIC, MediaType.APPLICATION_XML);
     }
 
     @Test
-    public void periodic_Json() throws Exception {
+    void periodic_Json() throws Exception {
         getPaymentStatus(PaymentType.PERIODIC, MediaType.APPLICATION_JSON);
     }
 
     //Bulk
     @Test
-    public void bulk_Xml() throws Exception {
+    void bulk_Xml() throws Exception {
         getPaymentStatus(PaymentType.BULK, MediaType.APPLICATION_XML);
     }
 
     @Test
-    public void bulk_Json() throws Exception {
+    void bulk_Json() throws Exception {
         getPaymentStatus(PaymentType.BULK, MediaType.APPLICATION_JSON);
     }
 

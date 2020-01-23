@@ -45,26 +45,26 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.collections4.IteratorUtils;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.PATC;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisAuthorisationServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class PisAuthorisationServiceInternalTest {
     @InjectMocks
     private PisAuthorisationServiceInternal pisAuthorisationServiceInternal;
     @Mock
@@ -112,9 +112,8 @@ public class PisAuthorisationServiceInternalTest {
     private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PSU_ID_DATA, ScaApproach.REDIRECT, TPP_REDIRECT_URIs);
     private static final JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void setUp() {
-        when(psuDataMapper.mapToPsuData(any(PsuIdData.class))).thenCallRealMethod();
+    @BeforeEach
+    void setUp() {
         pisAuthorization = buildPisAuthorisation(EXTERNAL_ID, PaymentAuthorisationType.CREATED);
         PisCommonPaymentData pisCommonPaymentData = buildPisCommonPaymentData();
         pisPaymentData = buildPaymentData(pisCommonPaymentData);
@@ -123,7 +122,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_success() {
+    void getAuthorisationScaStatus_success() {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CREATED)).thenReturn(Optional.of(pisAuthorization));
 
         // When
@@ -135,7 +134,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_failed() {
+    void getAuthorisationScaStatus_failed() {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CREATED)).thenReturn(Optional.of(pisAuthorization));
         when(pisCommonPaymentConfirmationExpirationService.isPaymentDataOnConfirmationExpired(pisAuthorization.getPaymentData())).thenReturn(true);
         when(pisCommonPaymentConfirmationExpirationService.updatePaymentDataOnConfirmationExpiration(pisAuthorization.getPaymentData()))
@@ -150,7 +149,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_logicalError_wrongPaymentId() {
+    void getAuthorisationScaStatus_logicalError_wrongPaymentId() {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CREATED)).thenReturn(Optional.of(pisAuthorization));
         when(pisCommonPaymentConfirmationExpirationService.isPaymentDataOnConfirmationExpired(pisAuthorization.getPaymentData())).thenReturn(false);
 
@@ -163,7 +162,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_logicalError_authorisationNotFound() {
+    void getAuthorisationScaStatus_logicalError_authorisationNotFound() {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CREATED)).thenReturn(Optional.empty());
 
         // When
@@ -175,7 +174,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_failure_wrongPaymentId() {
+    void getAuthorisationScaStatus_failure_wrongPaymentId() {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CREATED)).thenReturn(Optional.empty());
 
         // When
@@ -188,7 +187,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_failure_wrongAuthorisationId() {
+    void getAuthorisationScaStatus_failure_wrongAuthorisationId() {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(WRONG_AUTHORISATION_ID, PaymentAuthorisationType.CREATED)).thenReturn(Optional.empty());
 
         // When
@@ -201,7 +200,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationByPaymentIdSuccess() {
+    void getAuthorisationByPaymentIdSuccess() {
         //When
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisPaymentData.getPaymentData())).thenReturn(pisPaymentData.getPaymentData());
@@ -216,7 +215,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationByPaymentIdWrongPaymentId() {
+    void getAuthorisationByPaymentIdWrongPaymentId() {
         //When
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
@@ -229,7 +228,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationByPaymentIdWrongTransactionStatus() {
+    void getAuthorisationByPaymentIdWrongTransactionStatus() {
         //When
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS)).thenReturn(Optional.empty());
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS)).thenReturn(Optional.empty());
@@ -242,7 +241,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void updateConsentAuthorisation_FinalisedStatus_Fail() {
+    void updateConsentAuthorisation_FinalisedStatus_Fail() {
         //Given
         ScaStatus actualScaStatus = ScaStatus.FINALISED;
 
@@ -261,7 +260,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void updateConsentAuthorisation_technicalError_emptyAuthorisation() {
+    void updateConsentAuthorisation_technicalError_emptyAuthorisation() {
         //Given
         ScaStatus expectedScaStatus = ScaStatus.RECEIVED;
 
@@ -279,7 +278,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getPisAuthorisationById_success() {
+    void getPisAuthorisationById_success() {
         PisAuthorization pisAuthorization = new PisAuthorization();
         GetPisAuthorisationResponse getPisAuthorisationResponse = new GetPisAuthorisationResponse();
 
@@ -294,7 +293,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getPisAuthorisationById_logicalError_authorisationNotFound() {
+    void getPisAuthorisationById_logicalError_authorisationNotFound() {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .thenReturn(Optional.empty());
 
@@ -307,7 +306,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getPisCancellationAuthorisationById_success() {
+    void getPisCancellationAuthorisationById_success() {
         PisAuthorization pisAuthorization = new PisAuthorization();
         GetPisAuthorisationResponse getPisAuthorisationResponse = new GetPisAuthorisationResponse();
 
@@ -322,7 +321,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getPisCancellationAuthorisationById_logicalError_authorisationNotFound() {
+    void getPisCancellationAuthorisationById_logicalError_authorisationNotFound() {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
             .thenReturn(Optional.empty());
 
@@ -335,7 +334,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_decoupled_success() {
+    void isAuthenticationMethodDecoupled_decoupled_success() {
         ScaMethod scaMethod = new ScaMethod();
         scaMethod.setAuthenticationMethodId(AUTHORISATION_METHOD_ID);
         scaMethod.setDecoupled(true);
@@ -351,7 +350,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_emptyAvailableScaMethods() {
+    void isAuthenticationMethodDecoupled_emptyAvailableScaMethods() {
         pisAuthorization.setAvailableScaMethods(Collections.emptyList());
 
         when(pisAuthorisationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(pisAuthorization));
@@ -364,7 +363,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void saveAuthenticationMethods_success() {
+    void saveAuthenticationMethods_success() {
         when(pisAuthorisationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(pisAuthorization));
         when(scaMethodMapper.mapToScaMethods(any())).thenReturn(Collections.emptyList());
         when(pisAuthorisationRepository.save(pisAuthorization)).thenReturn(pisAuthorization);
@@ -376,7 +375,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void saveAuthenticationMethods_authorisationNotFound() {
+    void saveAuthenticationMethods_authorisationNotFound() {
         when(pisAuthorisationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.empty());
 
         CmsResponse<Boolean> actual = pisAuthorisationServiceInternal.saveAuthenticationMethods(AUTHORISATION_ID, Collections.emptyList());
@@ -386,7 +385,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void updateScaApproach_success() {
+    void updateScaApproach_success() {
         when(pisAuthorisationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(pisAuthorization));
         when(pisAuthorisationRepository.save(pisAuthorization)).thenReturn(pisAuthorization);
 
@@ -399,7 +398,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void updateScaApproach_authorisationNotFound() {
+    void updateScaApproach_authorisationNotFound() {
         when(pisAuthorisationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.empty());
 
         CmsResponse<Boolean> actual = pisAuthorisationServiceInternal.updateScaApproach(AUTHORISATION_ID, ScaApproach.EMBEDDED);
@@ -409,7 +408,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void updateConsentAuthorisation_Success() {
+    void updateConsentAuthorisation_Success() {
         //Given
         PsuIdData psuIdData = new PsuIdData("new id", "new type", "new corporate ID", "new corporate type", "new psu ip address");
         ArgumentCaptor<PisAuthorization> argument = ArgumentCaptor.forClass(PisAuthorization.class);
@@ -433,7 +432,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void updatePisAuthorisation_receivedStatus_shouldUpdatePsuDataInPayment() {
+    void updatePisAuthorisation_receivedStatus_shouldUpdatePsuDataInPayment() {
         //Given
         ArgumentCaptor<PisAuthorization> savedAuthorisationCaptor = ArgumentCaptor.forClass(PisAuthorization.class);
         UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest =
@@ -466,10 +465,10 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void updatePisAuthorisation_shouldClosePreviousAuthorisations() {
+    void updatePisAuthorisation_shouldClosePreviousAuthorisations() {
         //Given
         @SuppressWarnings("unchecked")
-        ArgumentCaptor<Iterable<PisAuthorization>> savedAuthorisationsCaptor = ArgumentCaptor.forClass((Class) Iterable.class);
+        ArgumentCaptor<Iterable<PisAuthorization>> savedAuthorisationsCaptor = ArgumentCaptor.forClass(Iterable.class);
         UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest =
             buildUpdatePisCommonPaymentPsuDataRequest(ScaStatus.FINALISED, PSU_ID_DATA);
         List<PsuData> psuDataList = Collections.singletonList(PSU_DATA);
@@ -511,7 +510,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void updateConsentCancellationAuthorisation_FinalisedStatus_Fail() {
+    void updateConsentCancellationAuthorisation_FinalisedStatus_Fail() {
         //Given
         ScaStatus expectedScaStatus = ScaStatus.RECEIVED;
         ScaStatus actualScaStatus = ScaStatus.FINALISED;
@@ -531,7 +530,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void updateConsentCancellationAuthorisation_logicalError_emptyAuthorisation() {
+    void updateConsentCancellationAuthorisation_logicalError_emptyAuthorisation() {
         //Given
         UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest = buildUpdatePisCommonPaymentPsuDataRequest(ScaStatus.RECEIVED);
 
@@ -547,10 +546,9 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void createAuthorizationWithClosingPreviousAuthorisations_success() {
+    void createAuthorizationWithClosingPreviousAuthorisations_success() {
         //Given
         ArgumentCaptor<PisAuthorization> argument = ArgumentCaptor.forClass(PisAuthorization.class);
-        //noinspection unchecked
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
         when(pisAuthorisationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
         when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID, Arrays.asList(RCVD, PATC))).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
@@ -572,7 +570,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void createAuthorizationWithClosingPreviousAuthorisationsTppRedirectLinksFromAuthorisationTemplate_success() {
+    void createAuthorizationWithClosingPreviousAuthorisationsTppRedirectLinksFromAuthorisationTemplate_success() {
         //Given
         AuthorisationTemplateEntity authorisationTemplateEntity = buildAuthorisationTemplateEntity();
         PisCommonPaymentData paymentData = buildPisCommonPaymentData(authorisationTemplateEntity);
@@ -600,7 +598,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void createAuthorizationCancellation_logicalError_transactionStatusNotFinalised() {
+    void createAuthorizationCancellation_logicalError_transactionStatusNotFinalised() {
         //Given
         AuthorisationTemplateEntity authorisationTemplateEntity = buildAuthorisationTemplateEntity();
         PisCommonPaymentData paymentData = buildPisCommonPaymentData(authorisationTemplateEntity);
@@ -620,7 +618,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void createAuthorizationCancellationWithClosingPreviousAuthorisationsTppRedirectLinksFromAuthorisationTemplate_success() {
+    void createAuthorizationCancellationWithClosingPreviousAuthorisationsTppRedirectLinksFromAuthorisationTemplate_success() {
         //Given
         AuthorisationTemplateEntity authorisationTemplateEntity = buildAuthorisationTemplateEntity();
         PisCommonPaymentData paymentData = buildPisCommonPaymentData(authorisationTemplateEntity);
@@ -647,7 +645,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationScaApproach() {
+    void getAuthorisationScaApproach() {
         PisAuthorization pisAuthorization = new PisAuthorization();
         pisAuthorization.setScaApproach(ScaApproach.DECOUPLED);
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
@@ -662,7 +660,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationScaApproach_emptyAuthorisation() {
+    void getAuthorisationScaApproach_emptyAuthorisation() {
         when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .thenReturn(Optional.empty());
 
@@ -681,7 +679,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void createAuthorizationCancellation_success() {
+    void createAuthorizationCancellation_success() {
         CreatePisAuthorisationRequest createPisAuthorisationRequest = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CANCELLED, PSU_ID_DATA, ScaApproach.REDIRECT, new TppRedirectUri("", ""));
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
 
@@ -699,7 +697,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void createAuthorizationCancellation_logicalError_emptyList() {
+    void createAuthorizationCancellation_logicalError_emptyList() {
         CreatePisAuthorisationRequest createPisAuthorisationRequest = new CreatePisAuthorisationRequest(PaymentAuthorisationType.CANCELLED, PSU_ID_DATA, ScaApproach.REDIRECT, new TppRedirectUri("", ""));
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(Collections.emptyList()));
 
@@ -710,7 +708,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void updatePisAuthorisationStatus_success() {
+    void updatePisAuthorisationStatus_success() {
         PisAuthorization pisAuthorization = new PisAuthorization();
         when(pisAuthorisationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(pisAuthorization));
         when(pisAuthorisationRepository.save(pisAuthorization)).thenReturn(pisAuthorization);
@@ -727,7 +725,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void updatePisAuthorisationStatus_authorisationNotFound() {
+    void updatePisAuthorisationStatus_authorisationNotFound() {
         when(pisAuthorisationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.empty());
 
         CmsResponse<Boolean> actual = pisAuthorisationServiceInternal.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.RECEIVED);
@@ -740,7 +738,7 @@ public class PisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void transferCorePaymentToCommonPayment_success() {
+    void transferCorePaymentToCommonPayment_success() {
         PisAuthorization pisAuthorisation = new PisAuthorization();
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisAuthorisation.setPaymentData(pisCommonPaymentData);

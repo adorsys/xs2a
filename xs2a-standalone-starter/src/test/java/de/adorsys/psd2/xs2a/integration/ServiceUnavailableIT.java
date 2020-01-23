@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package de.adorsys.psd2.xs2a.integration;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
@@ -64,12 +65,12 @@ import de.adorsys.psd2.xs2a.web.filter.OauthModeFilter;
 import de.adorsys.psd2.xs2a.web.filter.QwacCertificateFilter;
 import de.adorsys.psd2.xs2a.web.filter.SignatureFilter;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -80,7 +81,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -89,6 +90,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.Filter;
+import java.io.IOException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -112,7 +114,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -124,7 +126,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     AisConsentSpiMockImpl.class
 })
 @TestPropertySource(locations = "/qwac.properties")
-public class ServiceUnavailableIT {
+class ServiceUnavailableIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String AUTH_REQ = "/json/payment/req/auth_request.json";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
@@ -178,29 +180,21 @@ public class ServiceUnavailableIT {
     private String qwacCertificateMock;
     private Supplier<ResourceAccessException> resourceAccessExceptionSupplier = () -> new ResourceAccessException("");
 
-    @Rule
-    public TestWatcher watcher = new TestWatcher() {
-
-        @Override
-        protected void starting(Description description) {
-            try {
-                onStartingTest(description);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
+    @RegisterExtension
+    final BeforeEachCallback resourceAvailableCallback = this::onStartingTest;
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     public @interface ResourceAvailable {
         boolean profile() default true;
+
         boolean cms() default true;
+
         boolean connector() default true;
     }
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         HashMap<String, String> headerMap = new HashMap<>();
         headerMap.put("Content-Type", "application/json");
         headerMap.put("Accept", "application/json");
@@ -217,72 +211,76 @@ public class ServiceUnavailableIT {
         httpHeadersImplicit.setAll(headerMap);
     }
 
-    private void onStartingTest(Description description) throws Exception {
-        ResourceAvailable resourceAvailable = description.getAnnotation(ResourceAvailable.class);
+    private void onStartingTest(ExtensionContext extensionContext) throws Exception {
+        Optional<ResourceAvailable> resourceAvailableOptional = extensionContext.getElement()
+                                                                    .map(e -> e.getAnnotation(ResourceAvailable.class));
         makePreparationsCommon();
-        if (resourceAvailable == null) {
-            makePreparationsCms(false);
-            makePreparationsProfile(false);
-            makePreparationsConnector(false);
-        } else {
+
+        if (resourceAvailableOptional.isPresent()) {
+            ResourceAvailable resourceAvailable = resourceAvailableOptional.get();
             makePreparationsCms(!resourceAvailable.cms());
             makePreparationsProfile(!resourceAvailable.profile());
             makePreparationsConnector(!resourceAvailable.connector());
+            return;
         }
+
+        makePreparationsCms(false);
+        makePreparationsProfile(false);
+        makePreparationsConnector(false);
     }
 
     @Test
     @ResourceAvailable(profile = false)
-    public void aspsp_profile_not_accessible_in_qwac_filter() throws Exception {
+    void aspsp_profile_not_accessible_in_qwac_filter() throws Exception {
         MockMvc mockMvc = buildMockMvcWithFilters(qwacCertificateFilter);
         create_consent_service_unavailable_test(mockMvc);
     }
 
     @Test
     @ResourceAvailable(profile = false)
-    public void aspsp_profile_not_accessible_in_oauth_filter() throws Exception {
+    void aspsp_profile_not_accessible_in_oauth_filter() throws Exception {
         MockMvc mockMvc = buildMockMvcWithFilters(oauthModeFilter);
         create_consent_service_unavailable_test(mockMvc);
     }
 
     @Test
     @ResourceAvailable(profile = false)
-    public void aspsp_profile_not_accessible_in_signature_filter() throws Exception {
+    void aspsp_profile_not_accessible_in_signature_filter() throws Exception {
         MockMvc mockMvc = buildMockMvcWithFilters(signatureFilter);
         create_consent_service_unavailable_test(mockMvc);
     }
 
     @Test
     @ResourceAvailable(profile = false)
-    public void aspsp_profile_not_accessible_in_interceptor() throws Exception {
+    void aspsp_profile_not_accessible_in_interceptor() throws Exception {
         MockMvc mockMvc = buildMockMvcWithoutCustomFilters();
         create_consent_service_unavailable_test(mockMvc);
     }
 
     @Test
     @ResourceAvailable(profile = false)
-    public void aspsp_profile_not_accessible_in_application() throws Exception {
+    void aspsp_profile_not_accessible_in_application() throws Exception {
         MockMvc mockMvc = buildMockMvcNoFiltersNoInterceptors();
         create_consent_service_unavailable_test(mockMvc);
     }
 
     @Test
     @ResourceAvailable(cms = false)
-    public void cms_not_accessible_in_interceptor() throws Exception {
+    void cms_not_accessible_in_interceptor() throws Exception {
         MockMvc mockMvc = buildMockMvcWithoutCustomFilters();
         create_consent_service_unavailable_test(mockMvc);
     }
 
     @Test
     @ResourceAvailable(cms = false)
-    public void cms_not_accessible_in_application() throws Exception {
+    void cms_not_accessible_in_application() throws Exception {
         MockMvc mockMvc = buildMockMvcNoFiltersNoInterceptors();
         create_consent_service_unavailable_test(mockMvc);
     }
 
     @Test
     @ResourceAvailable(connector = false)
-    public void connector_not_accessible_in_application() throws Exception {
+    void connector_not_accessible_in_application() throws Exception {
         update_consent_service_unavailable_test(mockMvc);
     }
 
@@ -326,7 +324,7 @@ public class ServiceUnavailableIT {
     }
 
     //Preparations
-    private void makePreparationsCms(boolean throwException) throws Exception {
+    private void makePreparationsCms(boolean throwException) throws IOException, WrongChecksumException {
         givenReturnOrThrowException(
             aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(any(String.class), any(AisConsentAuthorizationRequest.class)),
             buildCmsResponse(buildCmsResponse(buildCreateAisConsentAuthorizationResponse())),

@@ -24,17 +24,17 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCheckAuthorisationConfirmationServiceCommonImplTest {
+@ExtendWith(MockitoExtension.class)
+class PisCheckAuthorisationConfirmationServiceCommonImplTest {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
 
     @Mock
@@ -46,7 +46,7 @@ public class PisCheckAuthorisationConfirmationServiceCommonImplTest {
     private PisCheckAuthorisationConfirmationServiceCommonImpl pisCheckAuthorisationConfirmationServiceCommon;
 
     @Test
-    public void checkConfirmationCode() {
+    void checkConfirmationCode() {
         // Given
         SpiContextData spiContextData = new SpiContextData(null, null, null, null, null);
         SpiConfirmationCode spiConfirmationCode = new SpiConfirmationCode("some code");

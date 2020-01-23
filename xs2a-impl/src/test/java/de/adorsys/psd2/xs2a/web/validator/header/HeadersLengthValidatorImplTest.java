@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +22,15 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ContentType;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class HeadersLengthValidatorImplTest {
+class HeadersLengthValidatorImplTest {
 
     private static final String ONE_CHAR = "A";
 
@@ -38,15 +38,15 @@ public class HeadersLengthValidatorImplTest {
     private MessageError messageError;
     private Map<String, String> headers;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         validator = new HeadersLengthValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400));
         messageError = new MessageError();
         headers = new HashMap<>();
     }
 
     @Test
-    public void validate_success() {
+    void validate_success() {
         // Given
         headers.put(validator.getHeaderName(), ContentType.JSON.getType());
 
@@ -58,7 +58,7 @@ public class HeadersLengthValidatorImplTest {
     }
 
     @Test
-    public void validate_allLengthsAreCorrect() {
+    void validate_allLengthsAreCorrect() {
         // Given
         HeadersLengthValidatorImpl.headerMaxLengths.forEach((header, length) -> headers.put(header, StringUtils.repeat(ONE_CHAR, length)));
 
@@ -70,7 +70,7 @@ public class HeadersLengthValidatorImplTest {
     }
 
     @Test
-    public void validate_allLengthsAreExceeded() {
+    void validate_allLengthsAreExceeded() {
         // Given
         HeadersLengthValidatorImpl.headerMaxLengths.forEach((header, length) -> headers.put(header, StringUtils.repeat(ONE_CHAR, length + 1)));
 
@@ -85,7 +85,7 @@ public class HeadersLengthValidatorImplTest {
     }
 
     @Test
-    public void check_that_headersList_contains_only_lowercase() {
+    void check_that_headersList_contains_only_lowercase() {
         for (String header : HeadersLengthValidatorImpl.headerMaxLengths.keySet()) {
             assertEquals(header, header.toLowerCase());
         }

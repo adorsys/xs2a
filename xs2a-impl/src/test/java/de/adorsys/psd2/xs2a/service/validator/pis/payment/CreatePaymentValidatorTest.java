@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,23 +31,22 @@ import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
 import de.adorsys.psd2.xs2a.validator.payment.CountryPaymentValidatorResolver;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CreatePaymentValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class CreatePaymentValidatorTest {
     private static final PsuIdData PSU_DATA =
         new PsuIdData("psu id", null, null, null, null);
     private static final PsuIdData EMPTY_PSU_DATA =
@@ -79,8 +78,10 @@ public class CreatePaymentValidatorTest {
     @InjectMocks
     private CreatePaymentValidator createPaymentValidator;
 
-    @Before
-    public void setUp() {
+    @Test
+    void validate_withValidSinglePayment_shouldReturnValid() {
+        PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PSU_DATA, PaymentType.SINGLE);
+
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
         when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
             .thenReturn(ValidationResult.valid());
@@ -90,13 +91,6 @@ public class CreatePaymentValidatorTest {
             .thenReturn(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid());
         when(validationResultMapper.mapToXs2aValidationResult(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid()))
             .thenReturn(ValidationResult.valid());
-        when(validationResultMapper.mapToXs2aValidationResult(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.invalid(BUSINESS_VALIDATION_ERROR)))
-            .thenReturn(ValidationResult.invalid(BUSINESS_VALIDATION_ERROR));
-    }
-
-    @Test
-    public void validate_withValidSinglePayment_shouldReturnValid() {
-        PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PSU_DATA, PaymentType.SINGLE);
 
         // When
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(buildPayment(), paymentInitiationParameters));
@@ -111,10 +105,18 @@ public class CreatePaymentValidatorTest {
     }
 
     @Test
-    public void validate_withValidPeriodicPayment_shouldReturnValid() {
+    void validate_withValidPeriodicPayment_shouldReturnValid() {
         // Given
-
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PSU_DATA, PaymentType.PERIODIC);
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
+            .thenReturn(ValidationResult.valid());
+        when(countryPaymentValidatorResolver.getPaymentBusinessValidator())
+            .thenReturn(paymentBusinessValidator);
+        when(paymentBusinessValidator.validate(any(), anyString(), any()))
+            .thenReturn(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid());
+        when(validationResultMapper.mapToXs2aValidationResult(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid()))
+            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(buildPayment(), paymentInitiationParameters));
@@ -129,10 +131,18 @@ public class CreatePaymentValidatorTest {
     }
 
     @Test
-    public void validate_withValidBulkPayment_shouldReturnValid() {
+    void validate_withValidBulkPayment_shouldReturnValid() {
         // Given
-
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PSU_DATA, PaymentType.BULK);
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
+            .thenReturn(ValidationResult.valid());
+        when(countryPaymentValidatorResolver.getPaymentBusinessValidator())
+            .thenReturn(paymentBusinessValidator);
+        when(paymentBusinessValidator.validate(any(), anyString(), any()))
+            .thenReturn(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid());
+        when(validationResultMapper.mapToXs2aValidationResult(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid()))
+            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(buildPayment(), paymentInitiationParameters));
@@ -147,11 +157,20 @@ public class CreatePaymentValidatorTest {
     }
 
     @Test
-    public void validate_withValidRawPayment_shouldReturnValid() {
+    void validate_withValidRawPayment_shouldReturnValid() {
         // Given
         String rawPaymentProduct = "raw";
 
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PSU_DATA, PaymentType.SINGLE, rawPaymentProduct);
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
+            .thenReturn(ValidationResult.valid());
+        when(countryPaymentValidatorResolver.getPaymentBusinessValidator())
+            .thenReturn(paymentBusinessValidator);
+        when(paymentBusinessValidator.validate(any(), anyString(), any()))
+            .thenReturn(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid());
+        when(validationResultMapper.mapToXs2aValidationResult(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid()))
+            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(buildPayment(), paymentInitiationParameters));
@@ -166,10 +185,12 @@ public class CreatePaymentValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidPsuData_shouldReturnErrorFromValidator() {
+    void validate_withInvalidPsuData_shouldReturnErrorFromValidator() {
         //Given
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
             .thenReturn(ValidationResult.invalid(PSU_DATA_VALIDATION_ERROR));
+        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
+            .thenReturn(ValidationResult.valid());
 
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(EMPTY_PSU_DATA, PaymentType.SINGLE);
 
@@ -183,10 +204,17 @@ public class CreatePaymentValidatorTest {
     }
 
     @Test
-    public void validate_withBusinessValidationError_shouldReturnErrorFromValidator() {
+    void validate_withBusinessValidationError_shouldReturnErrorFromValidator() {
         //Given
         when(paymentBusinessValidator.validate(any(), anyString(), any()))
             .thenReturn(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.invalid(BUSINESS_VALIDATION_ERROR));
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
+            .thenReturn(ValidationResult.valid());
+        when(countryPaymentValidatorResolver.getPaymentBusinessValidator())
+            .thenReturn(paymentBusinessValidator);
+        when(validationResultMapper.mapToXs2aValidationResult(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.invalid(BUSINESS_VALIDATION_ERROR)))
+            .thenReturn(ValidationResult.invalid(BUSINESS_VALIDATION_ERROR));
 
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(EMPTY_PSU_DATA, PaymentType.SINGLE);
 
@@ -200,7 +228,7 @@ public class CreatePaymentValidatorTest {
     }
 
     @Test
-    public void buildWarningMessages_emptySet() {
+    void buildWarningMessages_emptySet() {
         // Given
         Set<TppMessageInformation> emptySet = new HashSet<>();
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(EMPTY_PSU_DATA, PaymentType.SINGLE);
@@ -221,7 +249,7 @@ public class CreatePaymentValidatorTest {
     }
 
     @Test
-    public void buildWarningMessages_warningsFromUriHeaderValidator() {
+    void buildWarningMessages_warningsFromUriHeaderValidator() {
         // Given
         Set<TppMessageInformation> emptySet = new HashSet<>();
         Set<TppMessageInformation> uriHeaderValidatorSet = new HashSet<>();

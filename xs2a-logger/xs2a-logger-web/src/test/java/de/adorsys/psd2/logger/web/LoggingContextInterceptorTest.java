@@ -18,14 +18,14 @@ package de.adorsys.psd2.logger.web;
 
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.logger.context.RequestInfo;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -33,14 +33,14 @@ import org.springframework.http.client.ClientHttpResponse;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class LoggingContextInterceptorTest {
+@ExtendWith(MockitoExtension.class)
+class LoggingContextInterceptorTest {
     private static final String INTERNAL_REQUEST_ID_HEADER_NAME = "X-Internal-Request-ID";
     private static final String X_REQUEST_ID_HEADER_NAME = "X-Request-ID";
     private static final byte[] REQUEST_BODY = "some request body".getBytes();
@@ -62,14 +62,14 @@ public class LoggingContextInterceptorTest {
     @InjectMocks
     private LoggingContextInterceptor loggingContextInterceptor;
 
-    @Before
-    public void setUp() throws IOException {
+    @BeforeEach
+    void setUp() throws IOException {
         when(mockHttpRequest.getHeaders()).thenReturn(new HttpHeaders());
         when(mockClientHttpRequestExecution.execute(mockHttpRequest, REQUEST_BODY)).thenReturn(mockClientHttpResponse);
     }
 
     @Test
-    public void intercept() throws IOException {
+    void intercept() throws IOException {
         // Given
         when(loggingContextService.getRequestInformation()).thenReturn(new RequestInfo(INTERNAL_REQUEST_ID, X_REQUEST_ID));
 
@@ -87,7 +87,7 @@ public class LoggingContextInterceptorTest {
     }
 
     @Test
-    public void intercept_noValues() throws IOException {
+    void intercept_noValues() throws IOException {
         // Given
         when(loggingContextService.getRequestInformation()).thenReturn(new RequestInfo(null, null));
 

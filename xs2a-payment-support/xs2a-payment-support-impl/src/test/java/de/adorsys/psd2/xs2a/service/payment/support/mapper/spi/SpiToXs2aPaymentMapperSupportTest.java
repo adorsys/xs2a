@@ -29,19 +29,19 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SpiToXs2aPaymentMapperSupportTest {
+@ExtendWith(MockitoExtension.class)
+class SpiToXs2aPaymentMapperSupportTest {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String XS2A_SINGLE_PAYMENT_JSON_PATH = "json/support/mapper/xs2a-single-payment.json";
     private static final String SINGLE_PAYMENT_INITIATION_JSON_PATH = "json/support/mapper/single-payment-initiation.json";
@@ -67,8 +67,8 @@ public class SpiToXs2aPaymentMapperSupportTest {
 
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         spiToXs2aPaymentMapperSupport = new SpiToXs2aPaymentMapperSupport(spiToXs2aSinglePaymentMapper,
                                                                           spiToXs2aPeriodicPaymentMapper,
                                                                           spiToXs2aBulkPaymentMapper,
@@ -77,7 +77,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     }
 
     @Test
-    public void mapToSinglePayment() throws JsonProcessingException {
+    void mapToSinglePayment() throws JsonProcessingException {
         // Given
         SpiSinglePayment spiSinglePayment = new SpiSinglePayment(PAYMENT_PRODUCT);
 
@@ -98,7 +98,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     }
 
     @Test
-    public void mapToSinglePayment_nullPayment() {
+    void mapToSinglePayment_nullPayment() {
         // When
         SinglePayment actualPayment = spiToXs2aPaymentMapperSupport.mapToSinglePayment(null);
 
@@ -107,7 +107,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     }
 
     @Test
-    public void mapToSinglePayment_nullPsd2Payment() {
+    void mapToSinglePayment_nullPsd2Payment() {
         // Given
         SpiSinglePayment spiSinglePayment = new SpiSinglePayment(PAYMENT_PRODUCT);
 
@@ -125,7 +125,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     }
 
     @Test
-    public void mapToSinglePayment_serializationException() throws JsonProcessingException {
+    void mapToSinglePayment_serializationException() throws JsonProcessingException {
         // Given
         SpiToXs2aPaymentMapperSupport spiToXs2aPaymentMapperSupportWithMock =
             new SpiToXs2aPaymentMapperSupport(spiToXs2aSinglePaymentMapper,
@@ -155,7 +155,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     }
 
     @Test
-    public void mapToPeriodicPayment() throws JsonProcessingException {
+    void mapToPeriodicPayment() throws JsonProcessingException {
         // Given
         SpiPeriodicPayment spiPeriodicPayment = new SpiPeriodicPayment(PAYMENT_PRODUCT);
 
@@ -176,7 +176,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     }
 
     @Test
-    public void mapToPeriodicPayment_nullPayment() {
+    void mapToPeriodicPayment_nullPayment() {
         // When
         PeriodicPayment actualPayment = spiToXs2aPaymentMapperSupport.mapToPeriodicPayment(null);
 
@@ -185,7 +185,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     }
 
     @Test
-    public void mapToPeriodicPayment_nullPsd2Payment() {
+    void mapToPeriodicPayment_nullPsd2Payment() {
         // Given
         SpiPeriodicPayment spiPeriodicPayment = new SpiPeriodicPayment(PAYMENT_PRODUCT);
 
@@ -203,7 +203,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     }
 
     @Test
-    public void mapToPeriodicPayment_serializationException() throws JsonProcessingException {
+    void mapToPeriodicPayment_serializationException() throws JsonProcessingException {
         // Given
         SpiToXs2aPaymentMapperSupport spiToXs2aPaymentMapperSupportWithMock =
             new SpiToXs2aPaymentMapperSupport(spiToXs2aSinglePaymentMapper,
@@ -233,7 +233,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     }
 
     @Test
-    public void mapToBulkPayment() throws JsonProcessingException {
+    void mapToBulkPayment() throws JsonProcessingException {
         // Given
         SpiBulkPayment spiBulkPayment = new SpiBulkPayment();
 
@@ -254,7 +254,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     }
 
     @Test
-    public void mapToBulkPayment_nullPayment() {
+    void mapToBulkPayment_nullPayment() {
         // When
         BulkPayment actualPayment = spiToXs2aPaymentMapperSupport.mapToBulkPayment(null);
 
@@ -263,7 +263,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     }
 
     @Test
-    public void mapToBulkPayment_nullPsd2Payment() {
+    void mapToBulkPayment_nullPsd2Payment() {
         // Given
         SpiBulkPayment spiBulkPayment = new SpiBulkPayment();
 
@@ -281,7 +281,7 @@ public class SpiToXs2aPaymentMapperSupportTest {
     }
 
     @Test
-    public void mapToBulkPayment_serializationException() throws JsonProcessingException {
+    void mapToBulkPayment_serializationException() throws JsonProcessingException {
         // Given
         SpiToXs2aPaymentMapperSupport spiToXs2aPaymentMapperSupportWithMock =
             new SpiToXs2aPaymentMapperSupport(spiToXs2aSinglePaymentMapper,

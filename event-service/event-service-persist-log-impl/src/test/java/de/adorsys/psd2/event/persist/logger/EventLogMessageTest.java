@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ import de.adorsys.psd2.event.core.model.EventOrigin;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.event.persist.model.EventPO;
 import de.adorsys.psd2.event.persist.model.PsuIdDataPO;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EventLogMessageTest {
+class EventLogMessageTest {
     private static final String TIMESTAMP_MESSAGE_FORMAT = "timestamp: [%s]";
     private static final String EVENT_ORIGIN_MESSAGE_FORMAT = "eventOrigin: [%s]";
     private static final String EVENT_TYPE_MESSAGE_FORMAT = "eventType: [%s]";
@@ -42,7 +42,7 @@ public class EventLogMessageTest {
     private static final String PAYLOAD_MESSAGE_FORMAT = "payload: [%s]";
 
     @Test
-    public void withTimestamp_shouldAddTimestampFromEvent() {
+    void withTimestamp_shouldAddTimestampFromEvent() {
         // Given
         EventPO eventPO = new EventPO();
         String timestamp = "2019-07-09T13:29:50+03:00";
@@ -59,7 +59,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withEventOrigin_shouldAddEventOriginFromEvent() {
+    void withEventOrigin_shouldAddEventOriginFromEvent() {
         // Given
         EventPO eventPO = new EventPO();
         EventOrigin eventOrigin = EventOrigin.TPP;
@@ -76,7 +76,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withEventType_shouldAddEventTypeFromEvent() {
+    void withEventType_shouldAddEventTypeFromEvent() {
         // Given
         EventPO eventPO = new EventPO();
         EventType eventType = EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED;
@@ -93,7 +93,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withInternalRequestId_shouldAddInternalRequestIdFromEvent() {
+    void withInternalRequestId_shouldAddInternalRequestIdFromEvent() {
         // Given
         EventPO eventPO = new EventPO();
         String internalRequestId = "0cbaf14a-a861-454e-9a11-e21464c69de9";
@@ -110,7 +110,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withXRequestId_shouldAddXRequestIdFromEvent() {
+    void withXRequestId_shouldAddXRequestIdFromEvent() {
         // Given
         EventPO eventPO = new EventPO();
         String xRequestId = "3437e005-07d6-4a89-b3d3-94a095906941";
@@ -127,7 +127,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withConsentId_shouldAddConsentIdFromEvent() {
+    void withConsentId_shouldAddConsentIdFromEvent() {
         // Given
         EventPO eventPO = new EventPO();
         String consentId = "consent id";
@@ -144,7 +144,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withConsentId_withNullId_shouldSkipConsentId() {
+    void withConsentId_withNullId_shouldSkipConsentId() {
         // Given
         EventPO eventPO = new EventPO();
 
@@ -158,7 +158,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withPaymentId_shouldAddPaymentIdFromEvent() {
+    void withPaymentId_shouldAddPaymentIdFromEvent() {
         // Given
         EventPO eventPO = new EventPO();
         String paymentId = "payment id";
@@ -175,7 +175,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withPaymentId_withNullId_shouldSkipPaymentId() {
+    void withPaymentId_withNullId_shouldSkipPaymentId() {
         // Given
         EventPO eventPO = new EventPO();
 
@@ -189,7 +189,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withTppAuthorisationNumber_shouldAddTppAuthorisationNumberFromEvent() {
+    void withTppAuthorisationNumber_shouldAddTppAuthorisationNumberFromEvent() {
         // Given
         EventPO eventPO = new EventPO();
         String tppAuthorisationNumber = "tpp authorisation number";
@@ -206,7 +206,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withPsuData_shouldAddPsuDataFromEvent() {
+    void withPsuData_shouldAddPsuDataFromEvent() {
         // Given
         EventPO eventPO = new EventPO();
         PsuIdDataPO psuData = new PsuIdDataPO();
@@ -234,7 +234,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withPsuData_withNullData_shouldSkipPsuData() {
+    void withPsuData_withNullData_shouldSkipPsuData() {
         // Given
         EventPO eventPO = new EventPO();
 
@@ -248,7 +248,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withPsuData_withAllFieldsNull_shouldAddEmptyPsuData() {
+    void withPsuData_withAllFieldsNull_shouldAddEmptyPsuData() {
         // Given
         EventPO eventPO = new EventPO();
         PsuIdDataPO psuData = new PsuIdDataPO();
@@ -264,7 +264,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withPsuData_withSomeFieldsNull_shouldSkipNulls() {
+    void withPsuData_withSomeFieldsNull_shouldSkipNulls() {
         // Given
         EventPO eventPO = new EventPO();
         PsuIdDataPO psuData = new PsuIdDataPO();
@@ -286,7 +286,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withPsuData_withFirstFieldsNull_shouldSkipNulls() {
+    void withPsuData_withFirstFieldsNull_shouldSkipNulls() {
         // Given
         EventPO eventPO = new EventPO();
         PsuIdDataPO psuData = new PsuIdDataPO();
@@ -308,7 +308,7 @@ public class EventLogMessageTest {
     }
 
     @Test
-    public void withPayload_shouldAddPayloadFromEvent() {
+    void withPayload_shouldAddPayloadFromEvent() {
         // Given
         EventPO eventPO = new EventPO();
         String payload = "some payload";

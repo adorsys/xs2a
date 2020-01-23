@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package de.adorsys.psd2.xs2a.domain.consent;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Xs2aCreatePisCancellationAuthorisationResponseTest {
+class Xs2aCreatePisCancellationAuthorisationResponseTest {
     @Test
-    public void getAuthorisationResponseType_shouldReturnStart() {
+    void getAuthorisationResponseType_shouldReturnStart() {
         // Given
         Xs2aCreatePisCancellationAuthorisationResponse response = new Xs2aCreatePisCancellationAuthorisationResponse("some cancellation id", ScaStatus.RECEIVED, PaymentType.SINGLE, null);
 

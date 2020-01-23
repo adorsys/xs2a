@@ -29,11 +29,11 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -44,8 +44,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class DecoupledAisAuthorizationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class DecoupledAisAuthorizationServiceTest {
     private static final String CONSENT_ID = "f2c43cad-6811-4cb6-bfce-31050095ed5d";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
@@ -68,7 +68,7 @@ public class DecoupledAisAuthorizationServiceTest {
     private AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
 
     @Test
-    public void createConsentAuthorization_success() {
+    void createConsentAuthorization_success() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(ACCOUNT_CONSENT));
@@ -84,7 +84,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void createConsentAuthorization_wrongConsentId_fail() {
+    void createConsentAuthorization_wrongConsentId_fail() {
         // Given
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
@@ -97,7 +97,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_success() {
+    void getAccountConsentAuthorizationById_success() {
         // Given
         when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(Optional.of(ACCOUNT_CONSENT_AUTHORIZATION));
@@ -111,7 +111,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_wrongIds_fail() {
+    void getAccountConsentAuthorizationById_wrongIds_fail() {
         // Given
         when(aisConsentService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID, WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
@@ -124,7 +124,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_success() {
+    void getAuthorisationScaStatus_success() {
         // Given
         when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
@@ -138,7 +138,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_wrongIds_fail() {
+    void getAuthorisationScaStatus_wrongIds_fail() {
         // Given
         when(aisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
@@ -151,7 +151,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getScaApproachServiceType_success() {
+    void getScaApproachServiceType_success() {
         // When
         ScaApproach actualResponse = decoupledAisAuthorizationService.getScaApproachServiceType();
 

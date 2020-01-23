@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,15 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ValidationResultMapperTest {
+class ValidationResultMapperTest {
     private ValidationResultMapper validationResultMapper = new ValidationResultMapper();
 
     @Test
-    public void mapToValidationResult_valid() {
+    void mapToValidationResult_valid() {
         // Given
         ValidationResult xs2aValidationResult = ValidationResult.valid();
 
@@ -41,7 +41,7 @@ public class ValidationResultMapperTest {
     }
 
     @Test
-    public void mapToValidationResult_invalid_messageErrors() {
+    void mapToValidationResult_invalid_messageErrors() {
         // Given
         MessageError messageError = new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR));
         ValidationResult xs2aValidationResult = ValidationResult.invalid(messageError);
@@ -54,7 +54,7 @@ public class ValidationResultMapperTest {
     }
 
     @Test
-    public void mapToValidationResult_invalid_errorTypeAndCode() {
+    void mapToValidationResult_invalid_errorTypeAndCode() {
         // Given
         ErrorType errorType = ErrorType.AIS_400;
         MessageErrorCode errorCode = MessageErrorCode.FORMAT_ERROR;
@@ -68,7 +68,7 @@ public class ValidationResultMapperTest {
     }
 
     @Test
-    public void mapToValidationResult_invalid_errorTypeAndTppMessageInformation() {
+    void mapToValidationResult_invalid_errorTypeAndTppMessageInformation() {
         // Given
         ErrorType errorType = ErrorType.AIS_400;
         TppMessageInformation tppMessageInformation = TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR);

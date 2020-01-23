@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,23 @@
 
 package de.adorsys.psd2.event.rest.client;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EventRemoteUrlsTest {
-
+class EventRemoteUrlsTest {
     private EventRemoteUrls eventRemoteUrls;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         eventRemoteUrls = new EventRemoteUrls();
         ReflectionTestUtils.setField(eventRemoteUrls, "consentServiceBaseUrl", "base.url");
     }
 
     @Test
-    public void createEvent() {
+    void createEvent() {
         assertEquals("base.url/events/", eventRemoteUrls.createEvent());
     }
 }

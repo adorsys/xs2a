@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,24 +19,24 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Xs2aToSpiAddressMapper.class})
-public class Xs2aToSpiAddressMapperTest {
+class Xs2aToSpiAddressMapperTest {
     @Autowired
     private Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToSpiAddress() {
+    void mapToSpiAddress() {
         //Given
         Xs2aAddress xs2aAddress = jsonReader.getObjectFromFile("json/Xs2aAddress.json", Xs2aAddress.class);
         SpiAddress expectedSpiAddress = jsonReader.getObjectFromFile("json/SpiAddress.json", SpiAddress.class);
@@ -47,7 +47,7 @@ public class Xs2aToSpiAddressMapperTest {
     }
 
     @Test
-    public void mapToSpiAddress_xs2aAddressIsNull() {
+    void mapToSpiAddress_xs2aAddressIsNull() {
         //Given
         Xs2aAddress xs2aAddress = null;
         //When

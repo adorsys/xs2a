@@ -20,17 +20,17 @@ import de.adorsys.psd2.aspsp.profile.domain.migration.NewProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.migration.OldProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.mapper.NewProfileConfigurationMapper;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AspspProfileConvertServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+ class AspspProfileConvertServiceImplTest {
     @Mock
     private NewProfileConfigurationMapper newProfileConfigurationMapper;
 
@@ -40,7 +40,7 @@ public class AspspProfileConvertServiceImplTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void convertProfile() {
+     void convertProfile() {
         // Given
         OldProfileConfiguration oldProfileConfiguration = jsonReader.getObjectFromFile("json/mapper/old-profile-configuration.json", OldProfileConfiguration.class);
         NewProfileConfiguration newProfileConfiguration = jsonReader.getObjectFromFile("json/mapper/new-profile-configuration.json", NewProfileConfiguration.class);

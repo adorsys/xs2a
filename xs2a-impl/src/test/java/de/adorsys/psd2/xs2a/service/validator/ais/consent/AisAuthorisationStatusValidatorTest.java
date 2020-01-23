@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,17 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.STATUS_INVALID;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisAuthorisationStatusValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class AisAuthorisationStatusValidatorTest {
     private static final MessageError STATUS_VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_409, TppMessageInformation.of(STATUS_INVALID));
 
@@ -43,7 +43,7 @@ public class AisAuthorisationStatusValidatorTest {
     private AisAuthorisationStatusValidator aisAuthorisationStatusValidator;
 
     @Test
-    public void validate_withValidStatus_shouldReturnValid() {
+    void validate_withValidStatus_shouldReturnValid() {
         // When
         ValidationResult validationResult = aisAuthorisationStatusValidator.validate(ScaStatus.RECEIVED);
 
@@ -54,7 +54,7 @@ public class AisAuthorisationStatusValidatorTest {
     }
 
     @Test
-    public void validate_withFailedStatus_shouldReturnError() {
+    void validate_withFailedStatus_shouldReturnError() {
         // When
         ValidationResult validationResult = aisAuthorisationStatusValidator.validate(ScaStatus.FAILED);
 

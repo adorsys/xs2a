@@ -27,23 +27,22 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisAuthorisationServiceInternalEncryptedTest {
+@ExtendWith(MockitoExtension.class)
+class PisAuthorisationServiceInternalEncryptedTest {
     private static final ScaStatus SCA_STATUS = ScaStatus.SCAMETHODSELECTED;
     private static final String ENCRYPTED_PAYMENT_ID = "encrypted payment id";
     private static final String DECRYPTED_PAYMENT_ID = "1856e4fa-8af8-427b-85ec-4caf515ce074";
@@ -64,48 +63,16 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     @Mock
     private SecurityDataService securityDataService;
 
-    @Before
-    public void setUp() {
+    @Test
+    void createAuthorization_success() {
+        // Given
+        CreatePisAuthorisationResponse expected = buildCreatePisAuthorisationResponse();
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID))
             .thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
         when(pisAuthorisationService.createAuthorization(DECRYPTED_PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST))
             .thenReturn(CmsResponse.<CreatePisAuthorisationResponse>builder()
                             .payload(buildCreatePisAuthorisationResponse())
                             .build());
-        when(pisAuthorisationService.createAuthorizationCancellation(DECRYPTED_PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST))
-            .thenReturn(CmsResponse.<CreatePisAuthorisationResponse>builder()
-                            .payload(buildCreatePisAuthorisationResponse())
-                            .build());
-        when(pisAuthorisationService.updatePisAuthorisation(AUTHORISATION_ID, buildUpdatePisCommonPaymentPsuDataRequest()))
-            .thenReturn(CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
-                            .payload(buildUpdatePisCommonPaymentPsuDataResponse())
-                            .build());
-        when(pisAuthorisationService.updatePisCancellationAuthorisation(AUTHORISATION_ID, buildUpdatePisCommonPaymentPsuDataRequest()))
-            .thenReturn(CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
-                            .payload(buildUpdatePisCommonPaymentPsuDataResponse())
-                            .build());
-        when(pisAuthorisationService.getPisAuthorisationById(AUTHORISATION_ID))
-            .thenReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
-                            .payload(buildGetPisAuthorisationResponse())
-                            .build());
-        when(pisAuthorisationService.getPisCancellationAuthorisationById(AUTHORISATION_ID))
-            .thenReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
-                            .payload(buildGetPisAuthorisationResponse())
-                            .build());
-        when(pisAuthorisationService.getAuthorisationsByPaymentId(DECRYPTED_PAYMENT_ID, PaymentAuthorisationType.CREATED))
-            .thenReturn(CmsResponse.<List<String>>builder()
-                            .payload(buildPaymentAuthorisations())
-                            .build());
-        when(pisAuthorisationService.getAuthorisationScaStatus(DECRYPTED_PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
-            .thenReturn(CmsResponse.<ScaStatus>builder()
-                            .payload(SCA_STATUS)
-                            .build());
-    }
-
-    @Test
-    public void createAuthorization_success() {
-        // Given
-        CreatePisAuthorisationResponse expected = buildCreatePisAuthorisationResponse();
 
         // When
         CmsResponse<CreatePisAuthorisationResponse> actual =
@@ -120,7 +87,7 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void createAuthorization_technicalError() {
+    void createAuthorization_technicalError() {
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.empty());
 
         CmsResponse<CreatePisAuthorisationResponse> actual =
@@ -131,9 +98,15 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void createAuthorizationCancellation_success() {
+    void createAuthorizationCancellation_success() {
         // Given
         CreatePisAuthorisationResponse expected = buildCreatePisAuthorisationResponse();
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID))
+            .thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
+        when(pisAuthorisationService.createAuthorizationCancellation(DECRYPTED_PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST))
+            .thenReturn(CmsResponse.<CreatePisAuthorisationResponse>builder()
+                            .payload(buildCreatePisAuthorisationResponse())
+                            .build());
 
         // When
         CmsResponse<CreatePisAuthorisationResponse> actual =
@@ -148,7 +121,7 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void createAuthorizationCancellation_technicalError() {
+    void createAuthorizationCancellation_technicalError() {
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.empty());
 
         CmsResponse<CreatePisAuthorisationResponse> actual =
@@ -159,10 +132,14 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updatePisAuthorisation_success() {
+    void updatePisAuthorisation_success() {
         // Given
         UpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
         UpdatePisCommonPaymentPsuDataResponse expected = buildUpdatePisCommonPaymentPsuDataResponse();
+        when(pisAuthorisationService.updatePisAuthorisation(AUTHORISATION_ID, buildUpdatePisCommonPaymentPsuDataRequest()))
+            .thenReturn(CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
+                            .payload(buildUpdatePisCommonPaymentPsuDataResponse())
+                            .build());
 
         // When
         CmsResponse<UpdatePisCommonPaymentPsuDataResponse> actual = pisAuthorisationServiceInternalEncrypted.updatePisAuthorisation(AUTHORISATION_ID, request);
@@ -176,10 +153,15 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updatePisCancellationAuthorisation_success() {
+    void updatePisCancellationAuthorisation_success() {
         // Given
         UpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
         UpdatePisCommonPaymentPsuDataResponse expected = buildUpdatePisCommonPaymentPsuDataResponse();
+
+        when(pisAuthorisationService.updatePisCancellationAuthorisation(AUTHORISATION_ID, buildUpdatePisCommonPaymentPsuDataRequest()))
+            .thenReturn(CmsResponse.<UpdatePisCommonPaymentPsuDataResponse>builder()
+                            .payload(buildUpdatePisCommonPaymentPsuDataResponse())
+                            .build());
 
         // When
         CmsResponse<UpdatePisCommonPaymentPsuDataResponse> actual =
@@ -194,9 +176,13 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getPisAuthorisationById_success() {
+    void getPisAuthorisationById_success() {
         // Given
         GetPisAuthorisationResponse expected = buildGetPisAuthorisationResponse();
+        when(pisAuthorisationService.getPisAuthorisationById(AUTHORISATION_ID))
+            .thenReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
+                            .payload(buildGetPisAuthorisationResponse())
+                            .build());
 
         // When
         CmsResponse<GetPisAuthorisationResponse> actual =
@@ -210,9 +196,13 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getPisCancellationAuthorisationById_success() {
+    void getPisCancellationAuthorisationById_success() {
         // Given
         GetPisAuthorisationResponse expected = buildGetPisAuthorisationResponse();
+        when(pisAuthorisationService.getPisCancellationAuthorisationById(AUTHORISATION_ID))
+            .thenReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
+                            .payload(buildGetPisAuthorisationResponse())
+                            .build());
 
         // When
         CmsResponse<GetPisAuthorisationResponse> actual =
@@ -227,9 +217,15 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAuthorisationsByPaymentId_success() {
+    void getAuthorisationsByPaymentId_success() {
         // Given
         List<String> expected = buildPaymentAuthorisations();
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID))
+            .thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
+        when(pisAuthorisationService.getAuthorisationsByPaymentId(DECRYPTED_PAYMENT_ID, PaymentAuthorisationType.CREATED))
+            .thenReturn(CmsResponse.<List<String>>builder()
+                            .payload(buildPaymentAuthorisations())
+                            .build());
 
         // When
         CmsResponse<List<String>> actual = pisAuthorisationServiceInternalEncrypted.getAuthorisationsByPaymentId(ENCRYPTED_PAYMENT_ID,
@@ -244,7 +240,7 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAuthorisationsByPaymentId_technicalError() {
+    void getAuthorisationsByPaymentId_technicalError() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.empty());
 
@@ -260,7 +256,13 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_success() {
+    void getAuthorisationScaStatus_success() {
+        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID))
+            .thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
+        when(pisAuthorisationService.getAuthorisationScaStatus(DECRYPTED_PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
+            .thenReturn(CmsResponse.<ScaStatus>builder()
+                            .payload(SCA_STATUS)
+                            .build());
         // When
         CmsResponse<ScaStatus> actual = pisAuthorisationServiceInternalEncrypted.getAuthorisationScaStatus(ENCRYPTED_PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
 
@@ -272,7 +274,7 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_technicalError() {
+    void getAuthorisationScaStatus_technicalError() {
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.empty());
         // When
         CmsResponse<ScaStatus> actual = pisAuthorisationServiceInternalEncrypted.getAuthorisationScaStatus(ENCRYPTED_PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED);
@@ -285,7 +287,7 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAuthorisationScaApproach() {
+    void getAuthorisationScaApproach() {
         when(pisAuthorisationService.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
             .thenReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED))
@@ -300,28 +302,28 @@ public class PisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updatePisAuthorisationStatus() {
+    void updatePisAuthorisationStatus() {
         pisAuthorisationServiceInternalEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.RECEIVED);
 
         verify(pisAuthorisationService).updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.RECEIVED);
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled() {
+    void isAuthenticationMethodDecoupled() {
         pisAuthorisationServiceInternalEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHORISATION_METHOD_ID);
 
         verify(pisAuthorisationService).isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHORISATION_METHOD_ID);
     }
 
     @Test
-    public void saveAuthenticationMethods() {
+    void saveAuthenticationMethods() {
         pisAuthorisationServiceInternalEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, Collections.emptyList());
 
         verify(pisAuthorisationService).saveAuthenticationMethods(AUTHORISATION_ID, Collections.emptyList());
     }
 
     @Test
-    public void updateScaApproach() {
+    void updateScaApproach() {
         pisAuthorisationServiceInternalEncrypted.updateScaApproach(AUTHORISATION_ID, ScaApproach.EMBEDDED);
 
         verify(pisAuthorisationService).updateScaApproach(AUTHORISATION_ID, ScaApproach.EMBEDDED);

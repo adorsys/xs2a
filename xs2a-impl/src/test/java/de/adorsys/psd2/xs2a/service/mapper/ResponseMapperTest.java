@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,23 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.xs2a.domain.CustomContentTypeProvider;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ResponseMapperTest {
+@ExtendWith(MockitoExtension.class)
+class ResponseMapperTest {
     @InjectMocks
     private ResponseMapper responseMapper;
 
     @Test
-    public void contentTypeSet() {
+    void contentTypeSet() {
         CustomContentTypeProvider responseWithContentType = () -> MediaType.APPLICATION_PDF;
 
         ResponseObject<CustomContentTypeProvider> responseObject = ResponseObject
@@ -44,19 +44,17 @@ public class ResponseMapperTest {
 
         ResponseEntity responseEntity = responseMapper.ok(responseObject);
 
-        assertEquals("When response object is CustomContentTypeProvider, use custom ContentType",
-                     MediaType.APPLICATION_PDF, responseEntity.getHeaders().getContentType());
+        assertEquals(MediaType.APPLICATION_PDF, responseEntity.getHeaders().getContentType());
     }
 
     @Test
-    public void contentTypeNotSet() {
+    void contentTypeNotSet() {
         ResponseObject<String> responseObject = ResponseObject.<String>builder()
                                                    .body("some body")
                                                    .build();
 
         ResponseEntity responseEntity = responseMapper.ok(responseObject);
 
-        assertNull("When response object is not CustomContentTypeProvider, ContentType not set explicitly",
-                     responseEntity.getHeaders().getContentType());
+        assertNull(responseEntity.getHeaders().getContentType());
     }
 }

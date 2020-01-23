@@ -39,20 +39,20 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusRespo
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ReadCommonPaymentStatusServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ReadCommonPaymentStatusServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
     private static final CommonPayment COMMON_PAYMENT = new CommonPayment();
@@ -82,8 +82,8 @@ public class ReadCommonPaymentStatusServiceTest {
     @Mock
     private MediaTypeMapper mediaTypeMapper;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
             .thenReturn(spiAspspConsentDataProvider);
         when(cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(PIS_COMMON_PAYMENT_RESPONSE))
@@ -93,7 +93,7 @@ public class ReadCommonPaymentStatusServiceTest {
     }
 
     @Test
-    public void readPaymentStatus_success() {
+    void readPaymentStatus_success() {
         //Given
         when(commonPaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, JSON_MEDIA_TYPE, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
             .thenReturn(TRANSACTION_RESPONSE);
@@ -108,7 +108,7 @@ public class ReadCommonPaymentStatusServiceTest {
     }
 
     @Test
-    public void readPaymentStatus_failed() {
+    void readPaymentStatus_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))

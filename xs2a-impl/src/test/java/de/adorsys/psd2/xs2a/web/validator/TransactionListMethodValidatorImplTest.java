@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,23 +23,23 @@ import de.adorsys.psd2.xs2a.web.validator.header.HeaderValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.account.TransactionListHeaderValidator;
 import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import de.adorsys.psd2.xs2a.web.validator.query.account.TransactionListQueryParamsValidator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TransactionListMethodValidatorImplTest {
+@ExtendWith(MockitoExtension.class)
+class TransactionListMethodValidatorImplTest {
     private static final String METHOD_NAME = "_getTransactionList";
     private static final String QUERY_PARAMETER_NAME = "some parameter name";
     private static final String QUERY_PARAMETER_VALUE = "some parameter value";
@@ -56,15 +56,15 @@ public class TransactionListMethodValidatorImplTest {
     private MessageError messageError;
     private MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         transactionListMethodValidator = new TransactionListMethodValidatorImpl(Collections.singletonList(transactionListHeaderValidator),
                                                                                 Collections.singletonList(transactionListBodyValidator),
                                                                                 Collections.singletonList(transactionListQueryParamsValidator));
     }
 
     @Test
-    public void validate_shouldPassQueryParametersToValidators() {
+    void validate_shouldPassQueryParametersToValidators() {
         // Given
         mockHttpServletRequest.addParameter(QUERY_PARAMETER_NAME, QUERY_PARAMETER_VALUE);
 
@@ -83,7 +83,7 @@ public class TransactionListMethodValidatorImplTest {
     }
 
     @Test
-    public void validate_withNoQueryParamsInRequest_shouldPassEmptyMap() {
+    void validate_withNoQueryParamsInRequest_shouldPassEmptyMap() {
         // Given
         // noinspection unchecked
         ArgumentCaptor<Map<String, List<String>>> queryParamCaptor = ArgumentCaptor.forClass(Map.class);
@@ -97,7 +97,7 @@ public class TransactionListMethodValidatorImplTest {
     }
 
     @Test
-    public void validate_withMultipleValuesForOneParam_shouldPassValuesInList() {
+    void validate_withMultipleValuesForOneParam_shouldPassValuesInList() {
         // Given
         mockHttpServletRequest.addParameter(QUERY_PARAMETER_NAME, QUERY_PARAMETER_VALUE);
         mockHttpServletRequest.addParameter(QUERY_PARAMETER_NAME, ANOTHER_QUERY_PARAMETER_VALUE);
@@ -118,7 +118,7 @@ public class TransactionListMethodValidatorImplTest {
     }
 
     @Test
-    public void getValidators_shouldReturnValidatorsFromConstructors() {
+    void getValidators_shouldReturnValidatorsFromConstructors() {
         // When
         List<? extends QueryParameterValidator> actualQueryValidators = transactionListMethodValidator.getValidatorWrapper().getQueryParameterValidators();
         List<? extends HeaderValidator> actualHeaderValidators = transactionListMethodValidator.getValidatorWrapper().getHeaderValidators();
@@ -131,7 +131,7 @@ public class TransactionListMethodValidatorImplTest {
     }
 
     @Test
-    public void getMethodName_shouldReturnCorrectName() {
+    void getMethodName_shouldReturnCorrectName() {
         // When
         String actualName = transactionListMethodValidator.getMethodName();
 

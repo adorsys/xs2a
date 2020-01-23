@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,20 @@ package de.adorsys.psd2.xs2a.service.spi;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SpiAspspConsentDataProviderImplTest {
+@ExtendWith(MockitoExtension.class)
+class SpiAspspConsentDataProviderImplTest {
     private static final String SOME_CONSENT_ID = "someConsentId";
     private static final byte[] SOME_DATA = "some data".getBytes();
     private static final AspspConsentData SOME_CONSENT_DATA = new AspspConsentData(SOME_DATA, SOME_CONSENT_ID);
@@ -45,17 +45,17 @@ public class SpiAspspConsentDataProviderImplTest {
     @Mock
     private AspspDataService aspspDataService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         spiAspspConsentDataProvider =
             spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(SOME_CONSENT_ID);
-
-        when(aspspDataService.readAspspConsentData(anyString()))
-            .thenReturn(Optional.of(SOME_CONSENT_DATA));
     }
 
     @Test
-    public void loadDataCallsAspspDataService() {
+    void loadDataCallsAspspDataService() {
+        when(aspspDataService.readAspspConsentData(anyString()))
+            .thenReturn(Optional.of(SOME_CONSENT_DATA));
+
         byte[] readData = spiAspspConsentDataProvider.loadAspspConsentData();
 
         assertArrayEquals(SOME_DATA, readData);
@@ -63,32 +63,38 @@ public class SpiAspspConsentDataProviderImplTest {
     }
 
     @Test
-    public void savingTheSameCallsNoRealUpdate() {
+    void savingTheSameCallsNoRealUpdate() {
+        when(aspspDataService.readAspspConsentData(anyString()))
+            .thenReturn(Optional.of(SOME_CONSENT_DATA));
+
         byte[] readData = spiAspspConsentDataProvider.loadAspspConsentData();
         verify(aspspDataService).readAspspConsentData(SOME_CONSENT_ID);
 
         spiAspspConsentDataProvider.updateAspspConsentData(readData);
-        verifyZeroInteractions(aspspDataService);
+        verifyNoMoreInteractions(aspspDataService);
     }
 
     @Test
-    public void dobuleUpdateDoesntCallRealUpdate() {
+    void doubleUpdateDoesntCallRealUpdate() {
         byte[] bytes = "some another data".getBytes();
         spiAspspConsentDataProvider.updateAspspConsentData(bytes);
         verify(aspspDataService).updateAspspConsentData(new AspspConsentData(bytes, SOME_CONSENT_ID));
 
         spiAspspConsentDataProvider.updateAspspConsentData(bytes);
-        verifyZeroInteractions(aspspDataService);
+        verifyNoMoreInteractions(aspspDataService);
 
         spiAspspConsentDataProvider.clearAspspConsentData();
         verify(aspspDataService).deleteAspspConsentData(SOME_CONSENT_ID);
 
         spiAspspConsentDataProvider.updateAspspConsentData(new byte[0]);
-        verifyZeroInteractions(aspspDataService);
+        verifyNoMoreInteractions(aspspDataService);
     }
 
     @Test
-    public void settingEmptyArrayRemovesData() {
+    void settingEmptyArrayRemovesData() {
+        when(aspspDataService.readAspspConsentData(anyString()))
+            .thenReturn(Optional.of(SOME_CONSENT_DATA));
+
         byte[] bytes = "some another data".getBytes();
         spiAspspConsentDataProvider.updateAspspConsentData(bytes);
         verify(aspspDataService).updateAspspConsentData(new AspspConsentData(bytes, SOME_CONSENT_ID));

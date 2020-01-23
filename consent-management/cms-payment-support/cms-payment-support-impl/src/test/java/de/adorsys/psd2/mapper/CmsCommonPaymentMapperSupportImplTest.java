@@ -29,12 +29,12 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -42,12 +42,12 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CmsCommonPaymentMapperSupportImpl.class, Xs2aObjectMapper.class})
-public class CmsCommonPaymentMapperSupportImplTest {
+class CmsCommonPaymentMapperSupportImplTest {
 
     private static final String PAYMENT_PRODUCT = "payments";
 
@@ -59,13 +59,13 @@ public class CmsCommonPaymentMapperSupportImplTest {
     private JsonReader jsonReader = new JsonReader();
     private CmsCommonPayment cmsCommonPayment;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         cmsCommonPayment = createCmsCommonPayment();
     }
 
     @Test
-    public void mapToCmsSinglePayment() throws JsonProcessingException {
+    void mapToCmsSinglePayment() throws JsonProcessingException {
         PaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile("json/payment-initiation-resp.json", PaymentInitiationJson.class);
         cmsCommonPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
         CmsPayment actual = mapper.mapToCmsSinglePayment(cmsCommonPayment);
@@ -75,13 +75,13 @@ public class CmsCommonPaymentMapperSupportImplTest {
     }
 
     @Test
-    public void mapToCmsSinglePayment_payDataIsNull() {
+    void mapToCmsSinglePayment_payDataIsNull() {
         cmsCommonPayment.setPaymentData(null);
         assertNull(mapper.mapToCmsSinglePayment(cmsCommonPayment));
     }
 
     @Test
-    public void mapToCmsBulkPayment() throws JsonProcessingException {
+    void mapToCmsBulkPayment() throws JsonProcessingException {
         BulkPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile("json/bulk-payment-initiation-resp.json", BulkPaymentInitiationJson.class);
         cmsCommonPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
         CmsPayment actual = mapper.mapToCmsBulkPayment(cmsCommonPayment);
@@ -91,13 +91,13 @@ public class CmsCommonPaymentMapperSupportImplTest {
     }
 
     @Test
-    public void mapToCmsBulkPayment_payDataIsNull() {
+    void mapToCmsBulkPayment_payDataIsNull() {
         cmsCommonPayment.setPaymentData(null);
         assertNull(mapper.mapToCmsBulkPayment(cmsCommonPayment));
     }
 
     @Test
-    public void mapToCmsPeriodicPayment() throws JsonProcessingException {
+    void mapToCmsPeriodicPayment() throws JsonProcessingException {
         PeriodicPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile("json/periodic-payment-initiation-resp.json", PeriodicPaymentInitiationJson.class);
         cmsCommonPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
         CmsPayment actual = mapper.mapToCmsPeriodicPayment(cmsCommonPayment);
@@ -107,13 +107,13 @@ public class CmsCommonPaymentMapperSupportImplTest {
     }
 
     @Test
-    public void mapToCmsPeriodicPayment_payDataIsNull() {
+    void mapToCmsPeriodicPayment_payDataIsNull() {
         cmsCommonPayment.setPaymentData(null);
         assertNull(mapper.mapToCmsPeriodicPayment(cmsCommonPayment));
     }
 
     @Test
-    public void mapToCmsPeriodicPayment_remittanceIsNull() throws JsonProcessingException {
+    void mapToCmsPeriodicPayment_remittanceIsNull() throws JsonProcessingException {
         // Given
         PeriodicPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile("json/periodic-payment-initiation-resp.json", PeriodicPaymentInitiationJson.class);
         paymentInitiationJson.setRemittanceInformationStructured(null);

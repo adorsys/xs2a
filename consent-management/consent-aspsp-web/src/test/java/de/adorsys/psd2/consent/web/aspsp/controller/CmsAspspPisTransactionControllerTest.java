@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package de.adorsys.psd2.consent.web.aspsp.controller;
 import de.adorsys.psd2.consent.aspsp.api.pis.AspspPaymentService;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,8 +37,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspPisTransactionControllerTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspPisTransactionControllerTest {
     private final String PAYMENT_ID = "paymentID";
     private final String INSTANCE_ID = "UNDEFINED";
     private final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACCC;
@@ -53,8 +53,8 @@ public class CmsAspspPisTransactionControllerTest {
     @Mock
     private AspspPaymentService aspspPaymentService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         httpHeaders.add("Content-Type", "application/json");
         httpHeaders.add("instance-id", INSTANCE_ID);
 
@@ -66,7 +66,7 @@ public class CmsAspspPisTransactionControllerTest {
     }
 
     @Test
-    public void updatePaymentStatus_Success() throws Exception {
+    void updatePaymentStatus_Success() throws Exception {
         when(aspspPaymentService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS, INSTANCE_ID)).thenReturn(true);
 
         mockMvc.perform(put(UPDATE_PAYMENT_STATUS_URL)
@@ -78,7 +78,7 @@ public class CmsAspspPisTransactionControllerTest {
     }
 
     @Test
-    public void updatePaymentStatus_Error() throws Exception {
+    void updatePaymentStatus_Error() throws Exception {
         when(aspspPaymentService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS, INSTANCE_ID)).thenReturn(false);
 
         mockMvc.perform(put(UPDATE_PAYMENT_STATUS_URL)

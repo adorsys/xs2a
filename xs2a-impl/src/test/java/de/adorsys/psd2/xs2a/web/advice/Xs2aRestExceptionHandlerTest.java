@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package de.adorsys.psd2.xs2a.web.advice;
 import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,12 +36,12 @@ import java.io.IOException;
 import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_405_METHOD_NOT_SUPPORTED;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aRestExceptionHandlerTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aRestExceptionHandlerTest {
     private static final String METHOD_NAME = "DELETE";
 
     @InjectMocks
@@ -60,17 +60,18 @@ public class Xs2aRestExceptionHandlerTest {
     private HttpRequestMethodNotSupportedException methodNotSupportedException;
     private HttpMediaTypeNotAcceptableException mediaTypeNotAcceptableException;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         handler = new Object();
-        methodNotSupportedException =  new HttpRequestMethodNotSupportedException(METHOD_NAME);
+        methodNotSupportedException = new HttpRequestMethodNotSupportedException(METHOD_NAME);
         mediaTypeNotAcceptableException = new HttpMediaTypeNotAcceptableException("Error message");
-        when(xs2aEndpointChecker.isXs2aEndpoint(request)).thenReturn(true);
     }
 
     @Test
-    public void doResolveException_resolve() {
+    void doResolveException_resolve() {
         // When
+        when(xs2aEndpointChecker.isXs2aEndpoint(request)).thenReturn(true);
+
         ModelAndView actual = exceptionHandler.doResolveException(request, response, handler, methodNotSupportedException);
 
         // Then
@@ -78,7 +79,7 @@ public class Xs2aRestExceptionHandlerTest {
     }
 
     @Test
-    public void doResolveException_doNotResolve() {
+    void doResolveException_doNotResolve() {
         // Given
         when(xs2aEndpointChecker.isXs2aEndpoint(request)).thenReturn(false);
 
@@ -90,7 +91,7 @@ public class Xs2aRestExceptionHandlerTest {
     }
 
     @Test
-    public void handleHttpRequestMethodNotSupported() throws IOException {
+    void handleHttpRequestMethodNotSupported() throws IOException {
         // Given
         TppErrorMessage tppErrorMessage = new TppErrorMessage(ERROR, SERVICE_INVALID_405_METHOD_NOT_SUPPORTED, methodNotSupportedException.getMethod());
 
@@ -102,7 +103,7 @@ public class Xs2aRestExceptionHandlerTest {
     }
 
     @Test
-    public void handleHttpMediaTypeNotAcceptable() throws IOException {
+    void handleHttpMediaTypeNotAcceptable() throws IOException {
         // Given
         TppErrorMessage tppErrorMessage = new TppErrorMessage(ERROR, CONSENT_INVALID);
 

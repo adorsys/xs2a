@@ -17,32 +17,32 @@
 package de.adorsys.psd2.xs2a.service.validator;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.validation.Validation;
 import javax.validation.ValidationException;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ValueValidatorServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ValueValidatorServiceTest {
     private static final String ACCOUNT_ID = "11111111";
     private static final String TRANSACTION_ID = "22222222";
 
     @InjectMocks
     private ValueValidatorService valueValidatorService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         valueValidatorService = new ValueValidatorService(Validation.buildDefaultValidatorFactory().getValidator());
     }
 
     @Test
-    public void validate_AccountAndTransaction() {
+    void validate_AccountAndTransaction() {
         //Given:
         ValidationGroup fields = new ValidationGroup();
         fields.setAccountId(ACCOUNT_ID);
@@ -53,7 +53,7 @@ public class ValueValidatorServiceTest {
     }
 
     @Test
-    public void shouldFail_validate_AccountAndEmptyTransaction() {
+    void shouldFail_validate_AccountAndEmptyTransaction() {
         //Given:
         ValidationGroup fields = new ValidationGroup();
         fields.setAccountId(ACCOUNT_ID);
@@ -64,7 +64,7 @@ public class ValueValidatorServiceTest {
     }
 
     @Test
-    public void shouldFail_validate_EmptyAccountAndTransaction() {
+    void shouldFail_validate_EmptyAccountAndTransaction() {
         //Given:
         ValidationGroup fields = new ValidationGroup();
         fields.setTransactionId(TRANSACTION_ID);

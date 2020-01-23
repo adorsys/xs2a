@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class AccountAccessValidatorTest {
+class AccountAccessValidatorTest {
 
     private static final MessageError AIS_VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
@@ -38,14 +38,14 @@ public class AccountAccessValidatorTest {
     private JsonReader jsonReader;
     private AccountConsent accountConsent;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         accountAccessValidator = new AccountAccessValidator();
         jsonReader = new JsonReader();
     }
 
     @Test
-    public void testValidate_withoutBalance_shouldReturnValid() {
+    void testValidate_withoutBalance_shouldReturnValid() {
         // Given
         accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent.json", AccountConsent.class);
 
@@ -57,7 +57,7 @@ public class AccountAccessValidatorTest {
     }
 
     @Test
-    public void testValidate_withBalanceAndNullBalances_shouldReturnError() {
+    void testValidate_withBalanceAndNullBalances_shouldReturnError() {
         // Given
         accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent.json", AccountConsent.class);
         accountConsent.getAccess().getBalances().clear();
@@ -71,7 +71,7 @@ public class AccountAccessValidatorTest {
     }
 
     @Test
-    public void testValidate_globalConsent_withBalanceAndNullBalances_shouldReturnError() {
+    void testValidate_globalConsent_withBalanceAndNullBalances_shouldReturnError() {
         // Given
         accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent-global.json", AccountConsent.class);
         assertNull(accountConsent.getAccess().getBalances());
@@ -84,7 +84,7 @@ public class AccountAccessValidatorTest {
     }
 
     @Test
-    public void testValidate_globalConsent_withoutBalanceAndNullBalances_shouldReturnError() {
+    void testValidate_globalConsent_withoutBalanceAndNullBalances_shouldReturnError() {
         // Given
         accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent-global.json", AccountConsent.class);
         assertNull(accountConsent.getAccess().getBalances());

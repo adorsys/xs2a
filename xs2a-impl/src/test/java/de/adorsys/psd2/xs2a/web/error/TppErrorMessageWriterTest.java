@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2020 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.xs2a.web.error;
 
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
@@ -10,12 +26,12 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,12 +39,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TppErrorMessageWriterTest {
+@ExtendWith(MockitoExtension.class)
+class TppErrorMessageWriterTest {
     @Mock
     private ServiceTypeDiscoveryService serviceTypeDiscoveryService;
     @Mock
@@ -49,22 +66,22 @@ public class TppErrorMessageWriterTest {
     private final static PrintWriter PRINT_WRITER = new PrintWriter(System.out);
     private final static ErrorMapperContainer.ErrorBody ERROR_BODY = new ErrorMapperContainer.ErrorBody(new Object(), HttpStatus.OK);
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         tppErrorMessageWriter = new TppErrorMessageWriter(serviceTypeDiscoveryService, errorMapperContainer, xs2aObjectMapper);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void writeError_wrongServiceType() throws IOException {
+    @Test
+    void writeError_wrongServiceType() {
         TppErrorMessage tppErrorMessage = new TppErrorMessage(MESSAGE_CATEGORY, MESSAGE_ERROR_CODE, MESSAGE_ERROR_STRING);
 
-        tppErrorMessageWriter.writeError(response, STATUS_CODE, tppErrorMessage);
+        assertThrows(IllegalArgumentException.class, () -> tppErrorMessageWriter.writeError(response, STATUS_CODE, tppErrorMessage));
 
         verify(serviceTypeDiscoveryService).getServiceType();
     }
 
     @Test
-    public void writeError_successful() throws IOException {
+    void writeError_successful() throws IOException {
         when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE);
 
         TppErrorMessage tppErrorMessage = new TppErrorMessage(MESSAGE_CATEGORY, MESSAGE_ERROR_CODE, MESSAGE_ERROR_STRING);
@@ -81,7 +98,7 @@ public class TppErrorMessageWriterTest {
         verify(errorMapperContainer).getErrorBody(messageError);
         verify(xs2aObjectMapper).writeValue(writerArgumentCaptor.capture(), errorBodyArgumentCaptor.capture());
 
-        assertEquals(writerArgumentCaptor.getValue(), PRINT_WRITER);
-        assertEquals(errorBodyArgumentCaptor.getValue(), ERROR_BODY.getBody());
+        assertEquals(PRINT_WRITER, writerArgumentCaptor.getValue());
+        assertEquals(ERROR_BODY.getBody(), errorBodyArgumentCaptor.getValue());
     }
 }

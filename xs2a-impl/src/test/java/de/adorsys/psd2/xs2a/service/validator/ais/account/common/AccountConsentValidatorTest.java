@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,23 +24,23 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AccountConsentValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class AccountConsentValidatorTest {
     private static final String AUTHORISATION_NUMBER = "authorisation number";
     private static final String REQUEST_URI = "/accounts";
 
@@ -59,7 +59,7 @@ public class AccountConsentValidatorTest {
     private RequestProviderService requestProviderService;
 
     @Test
-    public void testValidate_shouldReturnValid() {
+    void testValidate_shouldReturnValid() {
         // Given
         AccountConsent accountConsent = buildAccountConsentValid();
 
@@ -71,7 +71,7 @@ public class AccountConsentValidatorTest {
     }
 
     @Test
-    public void testValidateInvalid_shouldReturnInvalidErrorWithTextConsentRevoked() {
+    void testValidateInvalid_shouldReturnInvalidErrorWithTextConsentRevoked() {
         // Given
         AccountConsent accountConsent = buildAccountConsentInvalidRevokedByPsu();
 
@@ -84,7 +84,7 @@ public class AccountConsentValidatorTest {
     }
 
     @Test
-    public void testValidateExpired_shouldReturnExpiredError() {
+    void testValidateExpired_shouldReturnExpiredError() {
         // Given
         AccountConsent accountConsent = buildAccountConsentExpired();
 
@@ -97,7 +97,7 @@ public class AccountConsentValidatorTest {
     }
 
     @Test
-    public void testValidateInvalid_shouldReturnInvalidError() {
+    void testValidateInvalid_shouldReturnInvalidError() {
         // Given
         AccountConsent accountConsent = buildAccountConsentInvalid();
 
@@ -110,7 +110,7 @@ public class AccountConsentValidatorTest {
     }
 
     @Test
-    public void testValidateAccessExceeded_shouldReturnExceededError() {
+    void testValidateAccessExceeded_shouldReturnExceededError() {
         // Given
         when(requestProviderService.isRequestFromPsu()).thenReturn(false);
         AccountConsent accountConsent = buildAccountConsentAccessExceeded();
@@ -124,7 +124,7 @@ public class AccountConsentValidatorTest {
     }
 
     @Test
-    public void testValidateAccessExceeded_shouldReturnValid_UsageCounterMapNotContainsRequestUri() {
+    void testValidateAccessExceeded_shouldReturnValid_UsageCounterMapNotContainsRequestUri() {
         // Given
         when(requestProviderService.isRequestFromPsu()).thenReturn(false);
         AccountConsent accountConsent = buildAccountConsentAccessExceededIsOneAccessType();
@@ -138,7 +138,7 @@ public class AccountConsentValidatorTest {
 
 
     @Test
-    public void testValidateAccessExceeded_shouldReturnValid() {
+    void testValidateAccessExceeded_shouldReturnValid() {
         // Given
         when(requestProviderService.isRequestFromPsu()).thenReturn(true);
         AccountConsent accountConsent = buildAccountConsentAccessExceeded();
@@ -151,7 +151,7 @@ public class AccountConsentValidatorTest {
     }
 
     @Test
-    public void testValidateAccessExceeded_oneOff_shouldReturnExceededError() {
+    void testValidateAccessExceeded_oneOff_shouldReturnExceededError() {
         // Given
         when(requestProviderService.isRequestFromPsu()).thenReturn(false);
         AccountConsent accountConsent = buildOneOffAccountConsentAccessExceeded();

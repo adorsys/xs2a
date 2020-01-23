@@ -23,23 +23,19 @@ import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisConsentAuthorisationServiceRemoteTest {
+@ExtendWith(MockitoExtension.class)
+class AisConsentAuthorisationServiceRemoteTest {
     private static final String CONSENT_ID = "some consent id";
     private static final String AUTHORISATION_ID = "2400de4c-1c74-4ca0-941d-8f56b828f31d";
     private static final String URL = "http://base.url";
@@ -55,7 +51,7 @@ public class AisConsentAuthorisationServiceRemoteTest {
     private CmsRestException cmsRestException;
 
     @Test
-    public void getAuthorisationScaApproach() {
+    void getAuthorisationScaApproach() {
         when(remoteAisConsentUrls.getAuthorisationScaApproach()).thenReturn(URL);
         when(consentRestTemplate.getForEntity(URL, AuthorisationScaApproachResponse.class, AUTHORISATION_ID))
             .thenReturn(ResponseEntity.ok(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
@@ -67,7 +63,7 @@ public class AisConsentAuthorisationServiceRemoteTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_success() {
+    void getAccountConsentAuthorizationById_success() {
         // Given
         AisConsentAuthorizationResponse consentAuthorisationResponse = new AisConsentAuthorizationResponse();
         consentAuthorisationResponse.setConsentId(CONSENT_ID);
@@ -88,7 +84,7 @@ public class AisConsentAuthorisationServiceRemoteTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_withNullBodyInResponse_shouldReturnEmpty() {
+    void getAccountConsentAuthorizationById_withNullBodyInResponse_shouldReturnEmpty() {
         // Given
         AisConsentAuthorizationResponse consentAuthorisationResponse = new AisConsentAuthorizationResponse();
         consentAuthorisationResponse.setConsentId(CONSENT_ID);
@@ -108,7 +104,7 @@ public class AisConsentAuthorisationServiceRemoteTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_withCmsRestException_shouldReturnEmpty() {
+    void getAccountConsentAuthorizationById_withCmsRestException_shouldReturnEmpty() {
         // Given
         AisConsentAuthorizationResponse consentAuthorisationResponse = new AisConsentAuthorizationResponse();
         consentAuthorisationResponse.setConsentId(CONSENT_ID);

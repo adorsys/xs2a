@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,22 +23,22 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class TransactionListBodyValidatorImplTest {
+class TransactionListBodyValidatorImplTest {
 
     private TransactionListBodyValidatorImpl transactionListBodyValidatorImpl;
     private MessageError messageError;
     private MockHttpServletRequest request;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         messageError = new MessageError();
         request = new MockHttpServletRequest();
 
@@ -47,7 +47,7 @@ public class TransactionListBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_successForAnyBookingStatusWhenJson() {
+    void validate_successForAnyBookingStatusWhenJson() {
         request.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
         for (BookingStatus bookingStatus : BookingStatus.values()) {
             request.setParameter(TransactionListBodyValidatorImpl.BOOKING_STATUS_PARAM, bookingStatus.getValue());
@@ -58,7 +58,7 @@ public class TransactionListBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_requestedFormatInvalidError() {
+    void validate_requestedFormatInvalidError() {
         request.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE);
         request.setParameter(TransactionListBodyValidatorImpl.BOOKING_STATUS_PARAM, BookingStatus.INFORMATION.getValue());
 
@@ -69,7 +69,7 @@ public class TransactionListBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_successWithOtherBookingStatuses() {
+    void validate_successWithOtherBookingStatuses() {
         request.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE);
 
         for (BookingStatus bookingStatus : BookingStatus.values()) {
@@ -83,7 +83,7 @@ public class TransactionListBodyValidatorImplTest {
     }
 
     @Test
-    public void validate_noAcceptHeader() {
+    void validate_noAcceptHeader() {
         transactionListBodyValidatorImpl.validate(request, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }

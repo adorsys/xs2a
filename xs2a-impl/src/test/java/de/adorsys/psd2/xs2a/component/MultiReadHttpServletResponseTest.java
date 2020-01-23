@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,25 @@
 
 package de.adorsys.psd2.xs2a.component;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-@RunWith(MockitoJUnitRunner.class)
-public class MultiReadHttpServletResponseTest {
+@ExtendWith(MockitoExtension.class)
+class MultiReadHttpServletResponseTest {
     private static final String CONTENT = "some string";
 
     @Mock
     private HttpServletResponse response;
 
     @Test
-    public void getCachedContent_shouldReturnContentFromOutputStream() throws IOException {
+    void getCachedContent_shouldReturnContentFromOutputStream() throws IOException {
         // Given
         MultiReadHttpServletResponse multiReadHttpServletResponse = new MultiReadHttpServletResponse(response);
         multiReadHttpServletResponse.getOutputStream().write(CONTENT.getBytes());
@@ -47,7 +47,7 @@ public class MultiReadHttpServletResponseTest {
     }
 
     @Test
-    public void getCachedContent_shouldReturnContentFromWriter() throws IOException {
+    void getCachedContent_shouldReturnContentFromWriter() throws IOException {
         // Given
         MultiReadHttpServletResponse multiReadHttpServletResponse = new MultiReadHttpServletResponse(response);
         multiReadHttpServletResponse.getWriter().write(CONTENT);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,24 +29,24 @@ import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAutho
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AisAuthorisationStatusChecker;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisConsentTppInfoValidator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CreateConsentAuthorisationValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class CreateConsentAuthorisationValidatorTest {
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
 
@@ -73,21 +73,17 @@ public class CreateConsentAuthorisationValidatorTest {
     @InjectMocks
     private CreateConsentAuthorisationValidator createConsentAuthorisationValidator;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         // Inject pisTppInfoValidator via setter
         createConsentAuthorisationValidator.setAisConsentTppInfoValidator(aisConsentTppInfoValidator);
-
-        when(aisConsentTppInfoValidator.validateTpp(TPP_INFO))
-            .thenReturn(ValidationResult.valid());
-        when(aisConsentTppInfoValidator.validateTpp(INVALID_TPP_INFO))
-            .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
     }
 
     @Test
-    public void validate_withValidConsentObject_shouldReturnValid() {
+    void validate_withValidConsentObject_shouldReturnValid() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = createConsentAuthorisationValidator.validate(new CreateConsentAuthorisationObject(accountConsent, EMPTY_PSU_DATA));
@@ -101,10 +97,12 @@ public class CreateConsentAuthorisationValidatorTest {
     }
 
     @Test
-    public void validate_withDifferentPsuIdInConsent_shouldReturnPsuCredentialsInvalidError() {
+    void validate_withDifferentPsuIdInConsent_shouldReturnPsuCredentialsInvalidError() {
         // Given
         AccountConsent accountConsent = buildAccountConsentWithPsuIdData(false);
         when(authorisationPsuDataChecker.isPsuDataWrong(anyBoolean(), any(), any())).thenReturn(true);
+        when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
         // When
         ValidationResult validationResult = createConsentAuthorisationValidator.validate(new CreateConsentAuthorisationObject(accountConsent, NEW_PSU_DATA));
 
@@ -117,10 +115,12 @@ public class CreateConsentAuthorisationValidatorTest {
     }
 
     @Test
-    public void validate_withDifferentPsuIdInConsent_multilevelSca_shouldReturnValid() {
+    void validate_withDifferentPsuIdInConsent_multilevelSca_shouldReturnValid() {
         // Given
         AccountConsent accountConsent = buildAccountConsentWithPsuIdData(true);
         when(authorisationPsuDataChecker.isPsuDataWrong(anyBoolean(), any(), any())).thenReturn(false);
+        when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
         // When
         ValidationResult validationResult = createConsentAuthorisationValidator.validate(new CreateConsentAuthorisationObject(accountConsent, NEW_PSU_DATA));
 
@@ -133,11 +133,13 @@ public class CreateConsentAuthorisationValidatorTest {
     }
 
     @Test
-    public void validate_withFinalisedAuthorisation_shouldReturnStatusInvalidError() {
+    void validate_withFinalisedAuthorisation_shouldReturnStatusInvalidError() {
         // Given
         AccountConsent accountConsent = buildAccountConsentWithPsuIdDataAndAuthorisation();
         CreateConsentAuthorisationObject createPisAuthorisationPO = new CreateConsentAuthorisationObject(accountConsent, PSU_DATA);
         when(aisAuthorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList())).thenReturn(true);
+
+        when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = createConsentAuthorisationValidator.validate(createPisAuthorisationPO);
@@ -151,9 +153,10 @@ public class CreateConsentAuthorisationValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidTppInConsent_shouldReturnTppValidationError() {
+    void validate_withInvalidTppInConsent_shouldReturnTppValidationError() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
+        when(aisConsentTppInfoValidator.validateTpp(INVALID_TPP_INFO)).thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
 
         // When
         ValidationResult validationResult = createConsentAuthorisationValidator.validate(new CreateConsentAuthorisationObject(accountConsent, EMPTY_PSU_DATA));

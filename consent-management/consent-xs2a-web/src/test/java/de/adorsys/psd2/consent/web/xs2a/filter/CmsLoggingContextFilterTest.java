@@ -18,13 +18,13 @@ package de.adorsys.psd2.consent.web.xs2a.filter;
 
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.logger.context.RequestInfo;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -37,8 +37,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsLoggingContextFilterTest {
+@ExtendWith(MockitoExtension.class)
+class CmsLoggingContextFilterTest {
     private static final String CMS_ENDPOINT_PATH = "/api/v1/";
     private static final String CUSTOM_PATH = "/custom-endpoint";
     private static final String X_REQUEST_ID_HEADER_NAME = "X-Request-ID";
@@ -56,7 +56,7 @@ public class CmsLoggingContextFilterTest {
     private CmsLoggingContextFilter cmsLoggingContextFilter;
 
     @Test
-    public void doFilter_onCmsEndpoint_shouldHandleLoggingContext() throws ServletException, IOException {
+    void doFilter_onCmsEndpoint_shouldHandleLoggingContext() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(HTTP_METHOD, CMS_ENDPOINT_PATH);
         mockRequest.addHeader(INTERNAL_REQUEST_ID_HEADER_NAME, INTERNAL_REQUEST_ID);
@@ -75,7 +75,7 @@ public class CmsLoggingContextFilterTest {
     }
 
     @Test
-    public void doFilter_onCmsEndpointAndNoHeaders_shouldHandleLoggingContext() throws ServletException, IOException {
+    void doFilter_onCmsEndpointAndNoHeaders_shouldHandleLoggingContext() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(HTTP_METHOD, CMS_ENDPOINT_PATH);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -92,7 +92,7 @@ public class CmsLoggingContextFilterTest {
     }
 
     @Test
-    public void doFilter_onCustomEndpoint_shouldSkipFilter() throws ServletException, IOException {
+    void doFilter_onCustomEndpoint_shouldSkipFilter() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(HTTP_METHOD, CUSTOM_PATH);
         mockRequest.addHeader(INTERNAL_REQUEST_ID_HEADER_NAME, INTERNAL_REQUEST_ID);

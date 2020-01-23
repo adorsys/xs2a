@@ -19,20 +19,20 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.config.PisCommonPaymentRemoteUrls;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCommonPaymentServiceRemoteTest {
+@ExtendWith(MockitoExtension.class)
+class PisCommonPaymentServiceRemoteTest {
 
     private static final String UPDATE_MULTILEVEL_SCA_URL = "http://base.url/pis/common-payments/{payment-id}/multilevel-sca?multilevel-sca={multilevel-sca}";
     private static final String PAYMENT_ID = "paymentId";
@@ -46,7 +46,7 @@ public class PisCommonPaymentServiceRemoteTest {
     private PisCommonPaymentRemoteUrls remotePisCommonPaymentUrls;
 
     @Test
-    public void updateMultilevelSca() {
+    void updateMultilevelSca() {
         when(remotePisCommonPaymentUrls.updateMultilevelScaRequired()).thenReturn(UPDATE_MULTILEVEL_SCA_URL);
         when(consentRestTemplate.exchange(UPDATE_MULTILEVEL_SCA_URL, HttpMethod.PUT, null, Boolean.class, PAYMENT_ID, true)).thenReturn(ResponseEntity.ok(true));
 

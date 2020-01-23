@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,17 @@ import de.adorsys.psd2.model.RemittanceInformationStructured;
 import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RemittanceMapperTest {
+class RemittanceMapperTest {
     private JsonReader jsonReader = new JsonReader();
     private RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
 
     @Test
-    public void mapToRemittanceInformationStructured() {
+    void mapToRemittanceInformationStructured() {
         Remittance remittance = getRemittanceFromFile(Remittance.class);
         RemittanceInformationStructured remittanceInformationStructured = remittanceMapper.mapToRemittanceInformationStructured(remittance);
         RemittanceInformationStructured expectedRemittanceInformationStructured = getRemittanceFromFile(RemittanceInformationStructured.class);
@@ -38,7 +38,7 @@ public class RemittanceMapperTest {
     }
 
     @Test
-    public void mapToToRemittance() {
+    void mapToToRemittance() {
         RemittanceInformationStructured remittanceInformationStructured = getRemittanceFromFile(RemittanceInformationStructured.class);
         Remittance remittance = remittanceMapper.mapToToRemittance(remittanceInformationStructured);
         Remittance expectedRemittance = getRemittanceFromFile(Remittance.class);
@@ -46,7 +46,7 @@ public class RemittanceMapperTest {
     }
 
     @Test
-    public void mapToSpiRemitance() {
+    void mapToSpiRemitance() {
         Remittance remittance = getRemittanceFromFile(Remittance.class);
         SpiRemittance spiRemittance = remittanceMapper.mapToSpiRemittance(remittance);
         SpiRemittance expectedSpiRemittance = getRemittanceFromFile(SpiRemittance.class);
@@ -54,7 +54,7 @@ public class RemittanceMapperTest {
     }
 
     @Test
-    public void mapToRemittance() {
+    void mapToRemittance() {
         SpiRemittance spiRemittance = getRemittanceFromFile(SpiRemittance.class);
         Remittance remittance = remittanceMapper.mapToRemittance(spiRemittance);
         Remittance expectedRemittance = getRemittanceFromFile(Remittance.class);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,12 +31,12 @@ import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -47,10 +47,10 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsToXs2aPaymentMapperTest {
+@ExtendWith(MockitoExtension.class)
+class CmsToXs2aPaymentMapperTest {
     private static final String PAYMENT_ID = "payment id";
     private static final String EXECUTION_ID = "execution id";
     private static final String END_TO_END_IDENTIFICATION = "RI-123456789";
@@ -112,7 +112,7 @@ public class CmsToXs2aPaymentMapperTest {
     private Xs2aRemittanceMapper xs2aRemittanceMapper = Mappers.getMapper(Xs2aRemittanceMapper.class);
 
     @Test
-    public void mapToPeriodicPayment() {
+    void mapToPeriodicPayment() {
         PisPayment pisPayment = buildPisPayment();
 
         PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(pisPayment);
@@ -162,7 +162,7 @@ public class CmsToXs2aPaymentMapperTest {
     }
 
     @Test
-    public void mapToPeriodicPayment_shouldNotMapRequestedExecutionDateAndTime() {
+    void mapToPeriodicPayment_shouldNotMapRequestedExecutionDateAndTime() {
         PisPayment pisPayment = buildPisPayment();
 
         PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(pisPayment);
@@ -172,14 +172,14 @@ public class CmsToXs2aPaymentMapperTest {
     }
 
     @Test
-    public void mapToPeriodicPayment_withNullPisPayment_shouldReturnNull() {
+    void mapToPeriodicPayment_withNullPisPayment_shouldReturnNull() {
         PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(null);
 
         assertNull(periodicPayment);
     }
 
     @Test
-    public void mapToSinglePayment() {
+    void mapToSinglePayment() {
         PisPayment pisPayment = buildPisPayment();
 
         SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(pisPayment);
@@ -221,14 +221,14 @@ public class CmsToXs2aPaymentMapperTest {
     }
 
     @Test
-    public void mapToSinglePayment_withNullPisPayment_shouldReturnNull() {
+    void mapToSinglePayment_withNullPisPayment_shouldReturnNull() {
         SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(null);
 
         assertNull(singlePayment);
     }
 
     @Test
-    public void mapToBulkPayment() {
+    void mapToBulkPayment() {
         PisPayment pisPayment = buildPisPayment();
 
         BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(Collections.singletonList(pisPayment));
@@ -286,7 +286,7 @@ public class CmsToXs2aPaymentMapperTest {
     }
 
     @Test
-    public void mapToXs2aCommonPayment() {
+    void mapToXs2aCommonPayment() {
         PisCommonPaymentResponse pisCommonPaymentResponse = buildPisCommonPaymentResponse();
 
         CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(pisCommonPaymentResponse);
@@ -303,7 +303,7 @@ public class CmsToXs2aPaymentMapperTest {
     }
 
     @Test
-    public void mapToXs2aCommonPayment_withNullPisCommonPaymentResponse_shouldReturnNull() {
+    void mapToXs2aCommonPayment_withNullPisCommonPaymentResponse_shouldReturnNull() {
         CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(null);
 
         assertNull(commonPayment);

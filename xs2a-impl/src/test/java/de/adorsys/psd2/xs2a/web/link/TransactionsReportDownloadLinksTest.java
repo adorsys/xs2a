@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,25 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TransactionsReportDownloadLinksTest {
+class TransactionsReportDownloadLinksTest {
 
     private static final String HTTP_URL = "http://url";
     private static final String ACCOUNT_ID = "33333-999999999";
     private Links expectedLinks;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         expectedLinks = new Links();
         expectedLinks.setDownload(new HrefType(HTTP_URL + "/v1/accounts/" + ACCOUNT_ID + "/transactions/download/encoded-string"));
     }
 
     @Test
-    public void success_noBalance() {
+    void success_noBalance() {
         boolean withBalance = false;
 
         TransactionsReportDownloadLinks links = new TransactionsReportDownloadLinks(HTTP_URL, ACCOUNT_ID, withBalance, "encoded-string");
@@ -45,7 +45,7 @@ public class TransactionsReportDownloadLinksTest {
     }
 
     @Test
-    public void success_with_balance() {
+    void success_with_balance() {
         boolean withBalance = true;
 
         TransactionsReportDownloadLinks links = new TransactionsReportDownloadLinks(HTTP_URL, ACCOUNT_ID, withBalance, "encoded-string");

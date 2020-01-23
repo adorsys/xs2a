@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,17 @@ package de.adorsys.psd2.xs2a.service.spi;
 
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class InitialSpiAspspConsentDataProviderTest {
+@ExtendWith(MockitoExtension.class)
+class InitialSpiAspspConsentDataProviderTest {
     @InjectMocks
     private InitialSpiAspspConsentDataProvider initialSpiAspspConsentDataProvider;
 
@@ -36,7 +36,7 @@ public class InitialSpiAspspConsentDataProviderTest {
     private AspspDataService aspspDataService;
 
     @Test
-    public void onSettingEncryptedIdSaveServiceWillBeCalled() {
+    void onSettingEncryptedIdSaveServiceWillBeCalled() {
         when(aspspDataService.updateAspspConsentData(any()))
             .thenReturn(true);
 
@@ -52,7 +52,7 @@ public class InitialSpiAspspConsentDataProviderTest {
     }
 
     @Test
-    public void dataPutIntoWillBeReadBack() {
+    void dataPutIntoWillBeReadBack() {
         byte[] initialState = initialSpiAspspConsentDataProvider.loadAspspConsentData();
         assertArrayEquals(new byte[0], initialState);
 
@@ -66,14 +66,14 @@ public class InitialSpiAspspConsentDataProviderTest {
     }
 
     @Test
-    public void clearWithoutConsentIdDoesntCallRealUpdate() {
+    void clearWithoutConsentIdDoesntCallRealUpdate() {
         initialSpiAspspConsentDataProvider.clearAspspConsentData();
         verify(aspspDataService, never())
             .deleteAspspConsentData("Some ID");
     }
 
     @Test
-    public void clearWithConsentIdDoesCallUpdate() {
+    void clearWithConsentIdDoesCallUpdate() {
         initialSpiAspspConsentDataProvider.saveWith("Some ID");
         verify(aspspDataService, times(1))
             .deleteAspspConsentData("Some ID");

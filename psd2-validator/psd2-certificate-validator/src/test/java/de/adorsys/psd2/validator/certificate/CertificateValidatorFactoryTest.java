@@ -19,45 +19,43 @@ package de.adorsys.psd2.validator.certificate;
 import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
 import no.difi.certvalidator.api.CertificateValidationException;
 import no.difi.certvalidator.util.SimpleCertificateBucket;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.security.cert.CertificateException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CertificateValidatorFactoryTest {
+class CertificateValidatorFactoryTest {
 
-	private SimpleCertificateBucket blockedCertBucket;
-	private SimpleCertificateBucket rootCertBucket;
-	private SimpleCertificateBucket intermediateCertBucket;
+    private SimpleCertificateBucket blockedCertBucket;
+    private SimpleCertificateBucket rootCertBucket;
+    private SimpleCertificateBucket intermediateCertBucket;
 
-	@Before
-	public void init() {
+    @BeforeEach
+    void init() {
+        blockedCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("blockedcert"));
+        rootCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("rootcert", "TCA3.crt"));
+        intermediateCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("intermediatecert"));
+    }
 
-		blockedCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("blockedcert"));
-		rootCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("rootcert", "TCA3.crt"));
-		intermediateCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("intermediatecert"));
-	}
+    @Test
+    void when_ValidCertificate_Expected_True() {
+        String encodedCert = CertificateUtils.getCertificateByName("certificateValid.crt");
+        CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
+                                                                                       rootCertBucket, intermediateCertBucket);
 
-	@Test(expected = CertificateValidationException.class)
-	public void when_ValidCertificate_Expected_True() throws CertificateException, CertificateValidationException {
+        assertThrows(
+            CertificateValidationException.class, () -> validatorFactory.validate(encodedCert)
+        );
+    }
 
-		String encodedCert = CertificateUtils.getCertificateByName("certificateValid.crt");
+    @Test
+    void when_InValidCertificate_Expected_Exception() {
+        String encodedCert = CertificateUtils.getCertificateByName("certificateInvalid.crt");
+        CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
+                                                                                       rootCertBucket, intermediateCertBucket);
 
-		CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
-				rootCertBucket, intermediateCertBucket);
-
-		validatorFactory.validate(encodedCert);
-	}
-
-	@Test(expected = CertificateValidationException.class)
-	public void when_InValidCertificate_Expected_Exception()
-			throws CertificateException, CertificateValidationException {
-
-		String encodedCert = CertificateUtils.getCertificateByName("certificateInvalid.crt");
-
-		CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
-				rootCertBucket, intermediateCertBucket);
-
-		validatorFactory.validate(encodedCert);
-	}
+        assertThrows(
+            CertificateValidationException.class, () -> validatorFactory.validate(encodedCert)
+        );
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,17 @@ import de.adorsys.psd2.event.persist.logger.EventLogMessage;
 import de.adorsys.psd2.event.persist.logger.EventLogger;
 import de.adorsys.psd2.event.persist.model.EventPO;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class LogEventRepositoryImplTest {
+@ExtendWith(MockitoExtension.class)
+class LogEventRepositoryImplTest {
     @Mock
     private EventLogger eventLogger;
 
@@ -40,7 +40,7 @@ public class LogEventRepositoryImplTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void save_shouldLogEvent() {
+    void save_shouldLogEvent() {
         // Given
         EventPO eventPO = jsonReader.getObjectFromFile("json/logger/event.json", EventPO.class);
         EventLogMessage logMessage = EventLogMessage.builder(eventPO)

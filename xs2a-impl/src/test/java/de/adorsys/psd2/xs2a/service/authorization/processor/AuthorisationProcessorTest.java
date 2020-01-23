@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,18 +25,19 @@ import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationP
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.AisAuthorisationProcessorServiceImpl;
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.PisAuthorisationProcessorServiceImpl;
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.PisCancellationAuthorisationProcessorServiceImpl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AuthorisationProcessorTest {
+@ExtendWith(MockitoExtension.class)
+class AuthorisationProcessorTest {
 
     private AuthorisationProcessor authorisationProcessor;
 
@@ -53,8 +54,8 @@ public class AuthorisationProcessorTest {
 
     private AisAuthorisationProcessorRequest request;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         authorisationProcessor = new ReceivedAuthorisationProcessor(applicationContext);
         authorisationProcessor.setNext(nextProcessor);
 
@@ -62,7 +63,7 @@ public class AuthorisationProcessorTest {
     }
 
     @Test
-    public void apply_currentProcessor() {
+    void apply_currentProcessor() {
         request.setScaStatus(ScaStatus.RECEIVED);
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
 
@@ -78,7 +79,7 @@ public class AuthorisationProcessorTest {
     }
 
     @Test
-    public void apply_nextProcessor() {
+    void apply_nextProcessor() {
         request.setScaStatus(ScaStatus.PSUIDENTIFIED);
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
 
@@ -95,7 +96,7 @@ public class AuthorisationProcessorTest {
     }
 
     @Test
-    public void getProcessorService_AIS() {
+    void getProcessorService_AIS() {
         request.setServiceType(ServiceType.AIS);
         when(applicationContext.getBean(AisAuthorisationProcessorServiceImpl.class)).thenReturn(aisAuthorisationProcessorServiceImpl);
 
@@ -105,7 +106,7 @@ public class AuthorisationProcessorTest {
     }
 
     @Test
-    public void getProcessorService_PIS_initiation() {
+    void getProcessorService_PIS_initiation() {
         request.setServiceType(ServiceType.PIS);
         request.setPaymentAuthorisationType(PaymentAuthorisationType.CREATED);
         when(applicationContext.getBean(PisAuthorisationProcessorServiceImpl.class)).thenReturn(pisAuthorisationProcessorService);
@@ -116,7 +117,7 @@ public class AuthorisationProcessorTest {
     }
 
     @Test
-    public void getProcessorService_PIS_cancellation() {
+    void getProcessorService_PIS_cancellation() {
         request.setServiceType(ServiceType.PIS);
         request.setPaymentAuthorisationType(PaymentAuthorisationType.CANCELLED);
         when(applicationContext.getBean(PisCancellationAuthorisationProcessorServiceImpl.class)).thenReturn(pisCancellationAuthorisationProcessorServiceImpl);
@@ -126,18 +127,18 @@ public class AuthorisationProcessorTest {
         verify(applicationContext, times(1)).getBean(PisCancellationAuthorisationProcessorServiceImpl.class);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getProcessorService_PIS_noPaymentAuthorisationType() {
+    @Test
+    void getProcessorService_PIS_noPaymentAuthorisationType() {
         request.setServiceType(ServiceType.PIS);
         request.setPaymentAuthorisationType(null);
 
-        authorisationProcessor.getProcessorService(request);
+        assertThrows(IllegalArgumentException.class, () -> authorisationProcessor.getProcessorService(request));
 
         verify(applicationContext, never()).getBean(anyString());
     }
 
     @Test
-    public void process_nextProcessorIsNotSet() {
+    void process_nextProcessorIsNotSet() {
         request.setScaStatus(ScaStatus.PSUIDENTIFIED);
         authorisationProcessor.setNext(null);
 

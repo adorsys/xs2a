@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import de.adorsys.psd2.xs2a.integration.builder.AuthorisationTemplateBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -53,7 +54,7 @@ public class AisConsentBuilder {
     private final static String AUTHORISATION_ID = UUID.randomUUID().toString();
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
-    public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, Xs2aObjectMapper mapper, AisAccountConsentAuthorisation consentAuthorisation) throws Exception {
+    public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, Xs2aObjectMapper mapper, AisAccountConsentAuthorisation consentAuthorisation) throws IOException {
         CreateConsentReq consentReq = mapper.readValue(
             resourceToString(jsonPath, UTF_8),
             new TypeReference<CreateConsentReq>() {
@@ -62,7 +63,7 @@ public class AisConsentBuilder {
         return buildAisConsent(consentReq, encryptConsentId, scaApproach, consentAuthorisation);
     }
 
-    public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, Xs2aObjectMapper mapper) throws Exception {
+    public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, Xs2aObjectMapper mapper) throws IOException {
         return buildAisAccountConsent(jsonPath, scaApproach, encryptConsentId, mapper, null);
     }
 

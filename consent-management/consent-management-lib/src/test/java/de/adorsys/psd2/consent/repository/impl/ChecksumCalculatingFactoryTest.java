@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,23 @@ package de.adorsys.psd2.consent.repository.impl;
 
 import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingService;
 import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingServiceV1;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Base64;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ChecksumCalculatingFactoryTest {
+@ExtendWith(MockitoExtension.class)
+class ChecksumCalculatingFactoryTest {
+    private static final byte[] CHECKSUM = Base64.getDecoder().decode(getCorrectChecksum());
+    private static final byte[] WRONG_CHECKSUM = "wrong checksum in consent".getBytes();
 
     @InjectMocks
     private ChecksumCalculatingFactory factory;
@@ -40,51 +42,48 @@ public class ChecksumCalculatingFactoryTest {
     @Mock
     private ChecksumCalculatingServiceV1 v001;
 
-    private static final byte[] CHECKSUM = Base64.getDecoder().decode(getCorrectChecksum());
-    private static final byte[] WRONG_CHECKSUM = "wrong checksum in consent".getBytes();
-
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         when(v001.getVersion()).thenReturn("001");
         factory.init();
     }
 
     @Test
-    public void getServiceByChecksum_success() {
+    void getServiceByChecksum_success() {
         // When
         Optional<ChecksumCalculatingService> actualResult = factory.getServiceByChecksum(CHECKSUM);
 
         // Then
-        assertThat(actualResult.isPresent()).isEqualTo(true);
-        assertThat(actualResult.get().getVersion()).isEqualTo(v001.getVersion());
+        assertTrue(actualResult.isPresent());
+        assertEquals(v001.getVersion(), actualResult.get().getVersion());
     }
 
     @Test
-    public void getServiceByChecksum_emptyChecksum() {
+    void getServiceByChecksum_emptyChecksum() {
         // When
         Optional<ChecksumCalculatingService> actualResult = factory.getServiceByChecksum(new byte[0]);
 
         // Then
-        assertThat(actualResult.isPresent()).isEqualTo(false);
+        assertFalse(actualResult.isPresent());
     }
 
     @Test
-    public void getServiceByChecksum_wrongChecksum() {
+    void getServiceByChecksum_wrongChecksum() {
         // When
         Optional<ChecksumCalculatingService> actualResult = factory.getServiceByChecksum(WRONG_CHECKSUM);
 
         // Then
-        assertThat(actualResult.isPresent()).isEqualTo(false);
+        assertFalse(actualResult.isPresent());
     }
 
     @Test
-    public void getServiceByChecksum_nullChecksum() {
+    void getServiceByChecksum_nullChecksum() {
         // When
         Optional<ChecksumCalculatingService> actualResult = factory.getServiceByChecksum(null);
 
         // Then
-        assertThat(actualResult.isPresent()).isEqualTo(true);
-        assertThat(actualResult.get().getVersion()).isEqualTo(v001.getVersion());
+        assertTrue(actualResult.isPresent());
+        assertEquals(v001.getVersion(), actualResult.get().getVersion());
     }
 
     private static String getCorrectChecksum() {

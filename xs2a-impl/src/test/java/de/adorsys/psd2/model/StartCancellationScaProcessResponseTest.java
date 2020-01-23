@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,15 @@
 
 package de.adorsys.psd2.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class StartCancellationScaProcessResponseTest {
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+class StartCancellationScaProcessResponseTest {
     private final Class clazz = StartCancellationScaProcessResponse.class;
 
-    @Test()
-    public void cancellationId_shouldExist() throws NoSuchFieldException {
-        clazz.getDeclaredField("cancellationId");
+    @Test
+    void cancellationId_shouldExist() {
+        assertDoesNotThrow(() -> clazz.getDeclaredField("cancellationId"));
     }
 }

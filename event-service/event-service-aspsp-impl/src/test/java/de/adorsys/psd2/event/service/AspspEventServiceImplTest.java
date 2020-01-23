@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ import de.adorsys.psd2.event.core.model.EventOrigin;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.event.persist.EventReportRepository;
 import de.adorsys.psd2.event.service.mapper.AspspEventMapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -34,8 +34,8 @@ import java.util.Collections;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AspspEventServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class AspspEventServiceImplTest {
     private static final OffsetDateTime START = OffsetDateTime.now().minusHours(1);
     private static final OffsetDateTime END = OffsetDateTime.now().plusHours(1);
     private static final String INSTANCE_ID = "3de76f19-1df7-44d8-b760-ca972d2f945c";
@@ -51,7 +51,7 @@ public class AspspEventServiceImplTest {
     private AspspEventMapper mapper = Mappers.getMapper(AspspEventMapper.class);
 
     @Test
-    public void getEventsForPeriod() {
+    void getEventsForPeriod() {
         when(eventReportRepository.getEventsForPeriod(START, END, INSTANCE_ID)).thenReturn(Collections.emptyList());
 
         aspspEventService.getEventsForPeriod(START, END, INSTANCE_ID);
@@ -60,7 +60,7 @@ public class AspspEventServiceImplTest {
     }
 
     @Test
-    public void getEventsForPeriodAndConsentId() {
+    void getEventsForPeriodAndConsentId() {
         when(eventReportRepository.getEventsForPeriodAndConsentId(START, END, CONSENT_ID, INSTANCE_ID)).thenReturn(Collections.emptyList());
 
         aspspEventService.getEventsForPeriodAndConsentId(START, END, CONSENT_ID, INSTANCE_ID);
@@ -69,7 +69,7 @@ public class AspspEventServiceImplTest {
     }
 
     @Test
-    public void getEventsForPeriodAndPaymentId() {
+    void getEventsForPeriodAndPaymentId() {
         when(eventReportRepository.getEventsForPeriodAndPaymentId(START, END, PAYMENT_ID, INSTANCE_ID)).thenReturn(Collections.emptyList());
 
         aspspEventService.getEventsForPeriodAndPaymentId(START, END, PAYMENT_ID, INSTANCE_ID);
@@ -78,7 +78,7 @@ public class AspspEventServiceImplTest {
     }
 
     @Test
-    public void getEventsForPeriodAndEventOrigin() {
+    void getEventsForPeriodAndEventOrigin() {
         when(eventReportRepository.getEventsForPeriodAndEventOrigin(START, END, EventOrigin.ASPSP, INSTANCE_ID)).thenReturn(Collections.emptyList());
 
         aspspEventService.getEventsForPeriodAndEventOrigin(START, END, EventOrigin.ASPSP, INSTANCE_ID);
@@ -87,7 +87,7 @@ public class AspspEventServiceImplTest {
     }
 
     @Test
-    public void getEventsForPeriodAndEventType() {
+    void getEventsForPeriodAndEventType() {
         when(eventReportRepository.getEventsForPeriodAndEventType(START, END, EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, INSTANCE_ID)).thenReturn(Collections.emptyList());
 
         aspspEventService.getEventsForPeriodAndEventType(START, END, EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, INSTANCE_ID);

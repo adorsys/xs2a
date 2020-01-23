@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,27 +20,24 @@ import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RedirectAisAuthorizationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class RedirectAisAuthorizationServiceTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
@@ -65,7 +62,7 @@ public class RedirectAisAuthorizationServiceTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void createConsentAuthorization_success() {
+    void createConsentAuthorization_success() {
         // Given
         when(xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, ScaStatus.RECEIVED, PSU_ID_DATA))
             .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
@@ -79,7 +76,7 @@ public class RedirectAisAuthorizationServiceTest {
     }
 
     @Test
-    public void createConsentAuthorization_wrongConsentId_fail() {
+    void createConsentAuthorization_wrongConsentId_fail() {
         // Given
         when(xs2aAisConsentService.createAisConsentAuthorization(WRONG_CONSENT_ID, ScaStatus.RECEIVED, PSU_ID_DATA))
             .thenReturn(Optional.empty());
@@ -92,7 +89,7 @@ public class RedirectAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_success() {
+    void getAccountConsentAuthorizationById_success() {
         // When
         Optional<AccountConsentAuthorization> actualResponse = redirectAisAuthorisationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
 
@@ -101,7 +98,7 @@ public class RedirectAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_success() {
+    void getAuthorisationScaStatus_success() {
         // Given
         when(xs2aAisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
@@ -111,12 +108,11 @@ public class RedirectAisAuthorizationServiceTest {
 
         // Then
         assertThat(actual.isPresent()).isTrue();
-        //noinspection OptionalGetWithoutIsPresent
         assertThat(actual.get()).isEqualTo(SCA_STATUS);
     }
 
     @Test
-    public void getAuthorisationScaStatus_failure_wrongIds() {
+    void getAuthorisationScaStatus_failure_wrongIds() {
         // Given
         when(xs2aAisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
@@ -129,7 +125,7 @@ public class RedirectAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getScaApproachServiceType_success() {
+    void getScaApproachServiceType_success() {
         //When
         ScaApproach actualResponse = redirectAisAuthorisationService.getScaApproachServiceType();
 
@@ -149,15 +145,5 @@ public class RedirectAisAuthorizationServiceTest {
 
     private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {
         return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, PSU_ID_DATA);
-    }
-
-    private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentResponseObject() {
-        return ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                   .body((new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID))).build();
-    }
-
-    private UpdateConsentPsuDataReq buildUpdateConsentPsuDataRequest() {
-        return jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-with-password.json",
-                                            UpdateConsentPsuDataReq.class);
     }
 }

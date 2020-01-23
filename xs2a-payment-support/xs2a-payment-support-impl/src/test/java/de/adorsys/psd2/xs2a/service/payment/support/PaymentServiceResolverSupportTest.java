@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,18 +35,17 @@ import de.adorsys.psd2.xs2a.service.payment.support.create.CreateBulkPaymentServ
 import de.adorsys.psd2.xs2a.service.payment.support.create.CreatePeriodicPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.support.create.CreateSinglePaymentService;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentServiceResolverSupportTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentServiceResolverSupportTest {
     private static final String STANDARD_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String RAW_PAYMENT_PRODUCT = "raw-product";
 
@@ -81,14 +80,11 @@ public class PaymentServiceResolverSupportTest {
     @InjectMocks
     private PaymentServiceResolverSupport paymentServiceResolverSupport;
 
-    @Before
-    public void setUp() {
-        when(standardPaymentProductsResolver.isRawPaymentProduct(RAW_PAYMENT_PRODUCT)).thenReturn(true);
-    }
-
     @Test
-    public void getCreatePaymentService_raw() {
+    void getCreatePaymentService_raw() {
         // Given
+        when(standardPaymentProductsResolver.isRawPaymentProduct(RAW_PAYMENT_PRODUCT)).thenReturn(true);
+
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(RAW_PAYMENT_PRODUCT, PaymentType.SINGLE);
 
         // When
@@ -99,7 +95,7 @@ public class PaymentServiceResolverSupportTest {
     }
 
     @Test
-    public void getCreatePaymentService_single() {
+    void getCreatePaymentService_single() {
         // Given
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(STANDARD_PAYMENT_PRODUCT, PaymentType.SINGLE);
 
@@ -111,7 +107,7 @@ public class PaymentServiceResolverSupportTest {
     }
 
     @Test
-    public void getCreatePaymentService_periodic() {
+    void getCreatePaymentService_periodic() {
         // Given
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(STANDARD_PAYMENT_PRODUCT, PaymentType.PERIODIC);
 
@@ -123,7 +119,7 @@ public class PaymentServiceResolverSupportTest {
     }
 
     @Test
-    public void getCreatePaymentService_bulk() {
+    void getCreatePaymentService_bulk() {
         // Given
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(STANDARD_PAYMENT_PRODUCT, PaymentType.BULK);
 
@@ -135,8 +131,10 @@ public class PaymentServiceResolverSupportTest {
     }
 
     @Test
-    public void getReadPaymentService_raw() {
+    void getReadPaymentService_raw() {
         // Given
+        when(standardPaymentProductsResolver.isRawPaymentProduct(RAW_PAYMENT_PRODUCT)).thenReturn(true);
+
         PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
         pisCommonPaymentResponse.setPaymentProduct(RAW_PAYMENT_PRODUCT);
 
@@ -148,7 +146,7 @@ public class PaymentServiceResolverSupportTest {
     }
 
     @Test
-    public void getReadPaymentService_standard() {
+    void getReadPaymentService_standard() {
         // Given
         PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
         pisCommonPaymentResponse.setPaymentProduct(STANDARD_PAYMENT_PRODUCT);
@@ -164,8 +162,10 @@ public class PaymentServiceResolverSupportTest {
     }
 
     @Test
-    public void getReadPaymentStatusService_raw() {
+    void getReadPaymentStatusService_raw() {
         // Given
+        when(standardPaymentProductsResolver.isRawPaymentProduct(RAW_PAYMENT_PRODUCT)).thenReturn(true);
+
         PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
         pisCommonPaymentResponse.setPaymentProduct(RAW_PAYMENT_PRODUCT);
 
@@ -177,7 +177,7 @@ public class PaymentServiceResolverSupportTest {
     }
 
     @Test
-    public void getReadPaymentStatusService_standard() {
+    void getReadPaymentStatusService_standard() {
         // Given
         PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
         pisCommonPaymentResponse.setPaymentProduct(STANDARD_PAYMENT_PRODUCT);
@@ -193,8 +193,10 @@ public class PaymentServiceResolverSupportTest {
     }
 
     @Test
-    public void getCancelPaymentService_raw() {
+    void getCancelPaymentService_raw() {
         // Given
+        when(standardPaymentProductsResolver.isRawPaymentProduct(RAW_PAYMENT_PRODUCT)).thenReturn(true);
+
         PisPaymentCancellationRequest pisPaymentCancellationRequest =
             new PisPaymentCancellationRequest(PaymentType.SINGLE, RAW_PAYMENT_PRODUCT, null, null, null);
 
@@ -206,7 +208,7 @@ public class PaymentServiceResolverSupportTest {
     }
 
     @Test
-    public void getCancelPaymentService_standard() {
+    void getCancelPaymentService_standard() {
         // Given
         PisPaymentCancellationRequest pisPaymentCancellationRequest =
             new PisPaymentCancellationRequest(PaymentType.SINGLE, STANDARD_PAYMENT_PRODUCT, null, null, null);

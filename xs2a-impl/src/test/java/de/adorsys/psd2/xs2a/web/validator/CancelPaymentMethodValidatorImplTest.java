@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,17 @@ package de.adorsys.psd2.xs2a.web.validator;
 
 import de.adorsys.psd2.xs2a.web.validator.body.cancelpayment.CancelPaymentBodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.CancelPaymentHeaderValidator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class CancelPaymentMethodValidatorImplTest {
+class CancelPaymentMethodValidatorImplTest {
 
     @Test
-    public void init() {
+    void init() {
         List<CancelPaymentHeaderValidator> headerValidators = new ArrayList<>();
         List<CancelPaymentBodyValidator> bodyValidators = new ArrayList<>();
         CancelPaymentMethodValidatorImpl methodValidator = new CancelPaymentMethodValidatorImpl(headerValidators, bodyValidators);

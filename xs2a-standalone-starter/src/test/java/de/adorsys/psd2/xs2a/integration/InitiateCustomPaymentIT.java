@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,9 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -48,7 +48,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -65,7 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -76,61 +76,61 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class
 })
 public class InitiateCustomPaymentIT extends CustomPaymentTestParent {
-    @Before
-    public void init() {
+    @BeforeEach
+    protected void init() {
         super.init();
     }
 
     //Single
     @Test
-    public void initiateSinglePaymentCustom_explicit_embedded_successful() throws Exception {
+    void initiateSinglePaymentCustom_explicit_embedded_successful() throws Exception {
         initiateSinglePaymentCustomSuccessful(httpHeadersJson, ScaApproach.EMBEDDED, SINGLE_PAYMENT_CUSTOM_REQUEST_JSON_PATH);
     }
 
     @Test
-    public void initiateSinglePaymentCustom_explicit_redirect_successful() throws Exception {
+    void initiateSinglePaymentCustom_explicit_redirect_successful() throws Exception {
         initiateSinglePaymentCustomSuccessful(httpHeadersJson, ScaApproach.REDIRECT, SINGLE_PAYMENT_CUSTOM_REQUEST_JSON_PATH);
     }
 
     @Test
-    public void initiateSinglePaymentCustomXML_explicit_embedded_successful() throws Exception {
+    void initiateSinglePaymentCustomXML_explicit_embedded_successful() throws Exception {
         initiateSinglePaymentCustomSuccessful(httpHeadersXml, ScaApproach.EMBEDDED, SINGLE_PAYMENT_CUSTOM_REQUEST_XML_PATH);
     }
 
     @Test
-    public void initiateSinglePaymentCustomXML_explicit_redirect_successful() throws Exception {
+    void initiateSinglePaymentCustomXML_explicit_redirect_successful() throws Exception {
         initiateSinglePaymentCustomSuccessful(httpHeadersXml, ScaApproach.REDIRECT, SINGLE_PAYMENT_CUSTOM_REQUEST_XML_PATH);
     }
 
     //Periodic
     @Test
-    public void initiatePeriodicPaymentCustom_explicit_embedded_successful() throws Exception {
+    void initiatePeriodicPaymentCustom_explicit_embedded_successful() throws Exception {
         initiatePeriodicPaymentCustomSuccessful(ScaApproach.EMBEDDED);
     }
 
     @Test
-    public void initiatePeriodicPaymentCustom_explicit_redirect_successful() throws Exception {
+    void initiatePeriodicPaymentCustom_explicit_redirect_successful() throws Exception {
         initiatePeriodicPaymentCustomSuccessful(ScaApproach.REDIRECT);
     }
 
     //Bulk
     @Test
-    public void initiateBulkPaymentCustom_explicit_embedded_successful() throws Exception {
+    void initiateBulkPaymentCustom_explicit_embedded_successful() throws Exception {
         initiateBulkPaymentCustomSuccessful(httpHeadersJson, ScaApproach.EMBEDDED, BULK_PAYMENT_CUSTOM_REQUEST_JSON_PATH);
     }
 
     @Test
-    public void initiateBulkPaymentCustom_explicit_redirect_successful() throws Exception {
+    void initiateBulkPaymentCustom_explicit_redirect_successful() throws Exception {
         initiateBulkPaymentCustomSuccessful(httpHeadersJson, ScaApproach.REDIRECT, BULK_PAYMENT_CUSTOM_REQUEST_JSON_PATH);
     }
 
     @Test
-    public void initiateBulkPaymentCustomXML_explicit_embedded_successful() throws Exception {
+    void initiateBulkPaymentCustomXML_explicit_embedded_successful() throws Exception {
         initiateBulkPaymentCustomSuccessful(httpHeadersXml, ScaApproach.EMBEDDED, BULK_PAYMENT_CUSTOM_REQUEST_XML_PATH);
     }
 
     @Test
-    public void initiateBulkPaymentCustomXML_explicit_redirect_successful() throws Exception {
+    void initiateBulkPaymentCustomXML_explicit_redirect_successful() throws Exception {
         initiateBulkPaymentCustomSuccessful(httpHeadersXml, ScaApproach.REDIRECT, BULK_PAYMENT_CUSTOM_REQUEST_XML_PATH);
     }
 

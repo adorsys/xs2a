@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,23 +25,23 @@ import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisConsentTppInfoValidator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class GetConsentAuthorisationsValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class GetConsentAuthorisationsValidatorTest {
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
 
@@ -57,23 +57,18 @@ public class GetConsentAuthorisationsValidatorTest {
     @InjectMocks
     private GetConsentAuthorisationsValidator getConsentAuthorisationsValidator;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         // Inject pisTppInfoValidator via setter
         getConsentAuthorisationsValidator.setAisConsentTppInfoValidator(aisConsentTppInfoValidator);
-
-        when(aisConsentTppInfoValidator.validateTpp(TPP_INFO))
-            .thenReturn(ValidationResult.valid());
-        when(aisConsentTppInfoValidator.validateTpp(INVALID_TPP_INFO))
-            .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
     }
 
     @Test
-    public void validate_withValidConsentObject_shouldReturnValid() {
+    void validate_withValidConsentObject_shouldReturnValid() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
-        when(oauthConsentValidator.validate(accountConsent))
-            .thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(accountConsent)).thenReturn(ValidationResult.valid());
+        when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = getConsentAuthorisationsValidator.validate(new CommonConsentObject(accountConsent));
@@ -87,9 +82,10 @@ public class GetConsentAuthorisationsValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidTppInConsent_shouldReturnTppValidationError() {
+    void validate_withInvalidTppInConsent_shouldReturnTppValidationError() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
+        when(aisConsentTppInfoValidator.validateTpp(INVALID_TPP_INFO)).thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
 
         // When
         ValidationResult validationResult = getConsentAuthorisationsValidator.validate(new CommonConsentObject(accountConsent));

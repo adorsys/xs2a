@@ -34,7 +34,6 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
@@ -54,12 +53,12 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,11 +66,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisAuthorisationProcessorServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class AisAuthorisationProcessorServiceImplTest {
     private static final String AUTHORISATION_ID = "authorisation-id";
     private static final String ENCRYPTED_CONSENT_ID = "encrypted-consent-id";
     private static final String INTERNAL_CONSENT_ID = "consent-id";
@@ -83,8 +82,6 @@ public class AisAuthorisationProcessorServiceImplTest {
 
     @Mock
     private AisAuthorizationService embeddedAisAuthorisationService;
-    @Mock
-    private RequestProviderService requestProviderService;
     @Mock
     private Xs2aAisConsentService xs2aAisConsentService;
     @Mock
@@ -106,23 +103,23 @@ public class AisAuthorisationProcessorServiceImplTest {
 
     private AisAuthorisationProcessorServiceImpl aisAuthorisationProcessorService;
 
-    @Before
-    public void setUp() {
-        when(embeddedAisAuthorisationService.getScaApproachServiceType()).thenReturn(ScaApproach.EMBEDDED);
+    @BeforeEach
+    void setUp() {
         AisAuthorizationService decoupledAisAuthorisationService = Mockito.mock(AisAuthorizationService.class);
-        when(decoupledAisAuthorisationService.getScaApproachServiceType()).thenReturn(ScaApproach.DECOUPLED);
         List<AisAuthorizationService> services = Arrays.asList(decoupledAisAuthorisationService, embeddedAisAuthorisationService);
 
         aisAuthorisationProcessorService = new AisAuthorisationProcessorServiceImpl(services, xs2aAisConsentService, aisConsentSpi, xs2aAisConsentMapper, spiContextDataProvider, spiAspspConsentDataProviderFactory, spiErrorMapper, commonDecoupledAisService, aisScaAuthorisationService, xs2aToSpiPsuDataMapper);
     }
 
     @Test
-    public void updateAuthorisation_shouldUpdateWithCorrectService() {
+    void updateAuthorisation_shouldUpdateWithCorrectService() {
         // Given
         UpdateAuthorisationRequest updateAuthorisationRequest = new UpdateConsentPsuDataReq();
         Object authorisation = new Object();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
+
+        when(embeddedAisAuthorisationService.getScaApproachServiceType()).thenReturn(ScaApproach.EMBEDDED);
 
         // When
         aisAuthorisationProcessorService.updateAuthorisation(processorRequest, processorResponse);
@@ -131,8 +128,8 @@ public class AisAuthorisationProcessorServiceImplTest {
         verify(embeddedAisAuthorisationService).updateConsentPsuData(updateAuthorisationRequest, processorResponse);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void updateAuthorisation_withNoAuthorisationServiceForApproach_shouldThrowException() {
+    @Test
+    void updateAuthorisation_withNoAuthorisationServiceForApproach_shouldThrowException() {
         // Given
         UpdateAuthorisationRequest updateAuthorisationRequest = new UpdateConsentPsuDataReq();
         Object authorisation = new Object();
@@ -140,14 +137,14 @@ public class AisAuthorisationProcessorServiceImplTest {
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
 
         // When
-        aisAuthorisationProcessorService.updateAuthorisation(processorRequest, processorResponse);
+        assertThrows(IllegalArgumentException.class, () -> aisAuthorisationProcessorService.updateAuthorisation(processorRequest, processorResponse));
 
         // Then
         verify(embeddedAisAuthorisationService, never()).updateConsentPsuData(any(UpdateAuthorisationRequest.class), any(AuthorisationProcessorResponse.class));
     }
 
     @Test
-    public void doScaReceived_withPsuIdentificationRequest() {
+    void doScaReceived_withPsuIdentificationRequest() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         updateAuthorisationRequest.setUpdatePsuIdentification(true);
@@ -168,7 +165,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaReceived_withPsuIdentificationRequest_withoutPsuData_shouldReturnError() {
+    void doScaReceived_withPsuIdentificationRequest_withoutPsuData_shouldReturnError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         updateAuthorisationRequest.setUpdatePsuIdentification(true);
@@ -188,7 +185,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaReceived_withPsuAuthorisationRequest_withOneScaMethod() {
+    void doScaReceived_withPsuAuthorisationRequest_withOneScaMethod() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -257,7 +254,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaReceived_withPsuAuthorisationRequest_withOneDecoupledScaMethod() {
+    void doScaReceived_withPsuAuthorisationRequest_withOneDecoupledScaMethod() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -319,7 +316,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaReceived_withPsuAuthorisationRequest_withMultipleScaMethods() {
+    void doScaReceived_withPsuAuthorisationRequest_withMultipleScaMethods() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -377,7 +374,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaReceived_withPsuAuthorisationRequest_oneFactorAuthorisation() {
+    void doScaReceived_withPsuAuthorisationRequest_oneFactorAuthorisation() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -424,7 +421,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaReceived_withPsuAuthorisationRequest_decoupledApproach() {
+    void doScaReceived_withPsuAuthorisationRequest_decoupledApproach() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -473,7 +470,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaReceived_withPsuAuthorisationRequest_withZeroScaMethods_shouldReturnError() {
+    void doScaReceived_withPsuAuthorisationRequest_withZeroScaMethods_shouldReturnError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -534,7 +531,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaReceived_withPsuAuthorisationRequest_withInvalidConsentId_shouldReturnError() {
+    void doScaReceived_withPsuAuthorisationRequest_withInvalidConsentId_shouldReturnError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -558,7 +555,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaReceived_withPsuAuthorisationRequest_withAuthorisePsuError_shouldReturnSpiError() {
+    void doScaReceived_withPsuAuthorisationRequest_withAuthorisePsuError_shouldReturnSpiError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -614,7 +611,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaReceived_withPsuAuthorisationRequest_withFailedPsuAuthorisation_shouldReturnError() {
+    void doScaReceived_withPsuAuthorisationRequest_withFailedPsuAuthorisation_shouldReturnError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -664,7 +661,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaReceived_withPsuAuthorisationRequest_withRequestScaMethodsError_shouldReturnSpiError() {
+    void doScaReceived_withPsuAuthorisationRequest_withRequestScaMethodsError_shouldReturnSpiError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -727,7 +724,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuIdentified_withPsuIdentificationRequest() {
+    void doScaPsuIdentified_withPsuIdentificationRequest() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         updateAuthorisationRequest.setUpdatePsuIdentification(true);
@@ -748,7 +745,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuIdentified_withPsuIdentificationRequest_withoutPsuData_shouldReturnError() {
+    void doScaPsuIdentified_withPsuIdentificationRequest_withoutPsuData_shouldReturnError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         updateAuthorisationRequest.setUpdatePsuIdentification(true);
@@ -768,7 +765,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuIdentified_withPsuAuthorisationRequest_withOneScaMethod() {
+    void doScaPsuIdentified_withPsuAuthorisationRequest_withOneScaMethod() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -837,7 +834,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuIdentified_withPsuAuthorisationRequest_withOneDecoupledScaMethod() {
+    void doScaPsuIdentified_withPsuAuthorisationRequest_withOneDecoupledScaMethod() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -899,7 +896,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuIdentified_withPsuAuthorisationRequest_withMultipleScaMethods() {
+    void doScaPsuIdentified_withPsuAuthorisationRequest_withMultipleScaMethods() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -957,7 +954,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuIdentified_withPsuAuthorisationRequest_oneFactorAuthorisation() {
+    void doScaPsuIdentified_withPsuAuthorisationRequest_oneFactorAuthorisation() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1004,7 +1001,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuIdentified_withPsuAuthorisationRequest_decoupledApproach() {
+    void doScaPsuIdentified_withPsuAuthorisationRequest_decoupledApproach() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1053,7 +1050,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuIdentified_withPsuAuthorisationRequest_withZeroScaMethods_shouldReturnError() {
+    void doScaPsuIdentified_withPsuAuthorisationRequest_withZeroScaMethods_shouldReturnError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1114,7 +1111,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuIdentified_withPsuAuthorisationRequest_withInvalidConsentId_shouldReturnError() {
+    void doScaPsuIdentified_withPsuAuthorisationRequest_withInvalidConsentId_shouldReturnError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1138,7 +1135,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuIdentified_withPsuAuthorisationRequest_withAuthorisePsuError_shouldReturnSpiError() {
+    void doScaPsuIdentified_withPsuAuthorisationRequest_withAuthorisePsuError_shouldReturnSpiError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1194,7 +1191,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuIdentified_withPsuAuthorisationRequest_withFailedPsuAuthorisation_shouldReturnError() {
+    void doScaPsuIdentified_withPsuAuthorisationRequest_withFailedPsuAuthorisation_shouldReturnError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1244,7 +1241,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuIdentified_withPsuAuthorisationRequest_withRequestScaMethodsError_shouldReturnSpiError() {
+    void doScaPsuIdentified_withPsuAuthorisationRequest_withRequestScaMethodsError_shouldReturnSpiError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1307,7 +1304,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuAuthenticated() {
+    void doScaPsuAuthenticated() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1357,7 +1354,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuAuthenticated_decoupledApproach() {
+    void doScaPsuAuthenticated_decoupledApproach() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1398,7 +1395,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuAuthenticated_withInvalidConsentId_shouldReturnError() {
+    void doScaPsuAuthenticated_withInvalidConsentId_shouldReturnError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1427,7 +1424,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaPsuAuthenticated_withRequestAuthCodeError_shouldReturnSpiError() {
+    void doScaPsuAuthenticated_withRequestAuthCodeError_shouldReturnSpiError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1485,7 +1482,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaMethodSelected() {
+    void doScaMethodSelected() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1534,7 +1531,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaMethodSelected_withPartiallyAuthorisedConsent_shouldUpdateMultilevelSca() {
+    void doScaMethodSelected_withPartiallyAuthorisedConsent_shouldUpdateMultilevelSca() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1584,7 +1581,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaMethodSelected_withInvalidConsentId_shouldReturnError() {
+    void doScaMethodSelected_withInvalidConsentId_shouldReturnError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1608,7 +1605,7 @@ public class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    public void doScaMethodSelected_withRequestScaMethodsError_shouldReturnSpiError() {
+    void doScaMethodSelected_withRequestScaMethodsError_shouldReturnSpiError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
@@ -1667,17 +1664,17 @@ public class AisAuthorisationProcessorServiceImplTest {
         return new AccountConsent(INTERNAL_CONSENT_ID, null, null, false, null, null, 1, null, null, false, false, null, null, null, false, null, null, null, null);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void doScaStarted_shouldThrowException() {
+    @Test
+    void doScaStarted_shouldThrowException() {
         // Given
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.STARTED, null, null);
 
         // When
-        aisAuthorisationProcessorService.doScaStarted(processorRequest);
+        assertThrows(UnsupportedOperationException.class, () -> aisAuthorisationProcessorService.doScaStarted(processorRequest));
     }
 
     @Test
-    public void doScaFinalised_shouldReturnFinalisedResponse() {
+    void doScaFinalised_shouldReturnFinalisedResponse() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.FINALISED, updateAuthorisationRequest, null);
@@ -1693,22 +1690,22 @@ public class AisAuthorisationProcessorServiceImplTest {
         assertEquals(AUTHORISATION_ID, processorResponse.getAuthorisationId());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void doScaFailed_shouldThrowException() {
+    @Test
+    void doScaFailed_shouldThrowException() {
         // Given
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.FAILED, null, null);
 
         // When
-        aisAuthorisationProcessorService.doScaFailed(processorRequest);
+        assertThrows(UnsupportedOperationException.class, () -> aisAuthorisationProcessorService.doScaFailed(processorRequest));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void doScaExempted_shouldThrowException() {
+    @Test
+    void doScaExempted_shouldThrowException() {
         // Given
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.EXEMPTED, null, null);
 
         // When
-        aisAuthorisationProcessorService.doScaExempted(processorRequest);
+        assertThrows(UnsupportedOperationException.class, () -> aisAuthorisationProcessorService.doScaExempted(processorRequest));
     }
 
     private UpdateConsentPsuDataReq buildUpdateConsentPsuDataReq() {

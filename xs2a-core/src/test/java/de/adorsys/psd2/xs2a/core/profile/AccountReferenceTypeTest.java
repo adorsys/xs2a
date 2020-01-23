@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package de.adorsys.psd2.xs2a.core.profile;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AccountReferenceTypeTest {
+class AccountReferenceTypeTest {
 
     @Test
-    public void getByValue() {
+    void getByValue() {
         assertEquals(AccountReferenceType.IBAN, AccountReferenceType.getByValue("iban").get());
         assertEquals(AccountReferenceType.BBAN, AccountReferenceType.getByValue("bban").get());
         assertEquals(AccountReferenceType.MASKED_PAN, AccountReferenceType.getByValue("maskedPan").get());

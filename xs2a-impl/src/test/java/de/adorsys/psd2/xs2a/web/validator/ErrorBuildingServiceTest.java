@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,26 +25,26 @@ import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ErrorBuildingServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ErrorBuildingServiceTest {
 
     private static final String RESPONSE_TEXT = "some response text";
     private static final int STATUS_CODE_400 = 400;
@@ -68,8 +68,8 @@ public class ErrorBuildingServiceTest {
     @Captor
     private ArgumentCaptor<MessageError> messageErrorCaptor;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         response = new MockHttpServletResponse();
 
         when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE_PIS);
@@ -79,7 +79,7 @@ public class ErrorBuildingServiceTest {
     }
 
     @Test
-    public void buildErrorResponse_success() throws IOException {
+    void buildErrorResponse_success() throws IOException {
         // Given
         ValidationResult validationResult = buildValidationResult(MessageErrorCode.FORMAT_ERROR);
 
@@ -100,7 +100,7 @@ public class ErrorBuildingServiceTest {
     }
 
     @Test
-    public void buildErrorResponse_executionDateInvalid() throws IOException {
+    void buildErrorResponse_executionDateInvalid() throws IOException {
         // Given
         ValidationResult validationResult = buildValidationResult(MessageErrorCode.EXECUTION_DATE_INVALID);
 

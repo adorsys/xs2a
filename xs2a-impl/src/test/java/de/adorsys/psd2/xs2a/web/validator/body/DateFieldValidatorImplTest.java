@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,25 +25,25 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
+import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateField;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields.PAYMENT_DATE_FIELDS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DateFieldValidatorImplTest {
-
+@ExtendWith(MockitoExtension.class)
+class DateFieldValidatorImplTest {
     private static final String DAY_OF_EXECUTION_FIELD_NAME = "dayOfExecution";
     private static final String REQUESTED_EXECUTION_DATE_FIELD_NAME = "requestedExecutionDate";
     private static final String REQUESTED_EXECUTION_TIME_FIELD_NAME = "requestedExecutionTime";
@@ -63,80 +63,87 @@ public class DateFieldValidatorImplTest {
 
     private DateFieldValidator validator;
     private MessageError messageError;
-    private FieldExtractor fieldExtractor;
 
     @Mock
     private Xs2aObjectMapper xs2aObjectMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         messageError = new MessageError(ErrorType.PIS_400);
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.PIS_400);
-        fieldExtractor = new FieldExtractor(errorService, xs2aObjectMapper);
+        FieldExtractor fieldExtractor = new FieldExtractor(errorService, xs2aObjectMapper);
         validator = new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor);
     }
 
     @Test
-    public void validate_requestedExecutionDateWrongValue_wrongFormat_error() {
+    void validate_requestedExecutionDateWrongValue_wrongFormat_error() {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
+        // noinspection unchecked
         when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_DATE_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_DATE));
 
         // When
-        validator.validateDateFormat(mockRequest, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
+        validator.validateDateFormat(mockRequest, Collections.singleton(Xs2aRequestBodyDateField.REQUESTED_EXECUTION_DATE), messageError);
 
         // Then
         assertEquals(REQUESTED_EXECUTION_DATE_WRONG_VALUE_ERROR, messageError);
     }
 
     @Test
-    public void validate_requestedExecutionDateWrongValue_success() {
+    void validate_requestedExecutionDateWrongValue_success() {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
-        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_DATE_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_DATE));
+        // noinspection unchecked
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_DATE_FIELD_NAME), any(TypeReference.class)))
+            .thenReturn(Optional.of(CORRECT_FORMAT_DATE));
+
 
         // When
-        validator.validateDateFormat(mockRequest, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
+        validator.validateDateFormat(mockRequest, Collections.singleton(Xs2aRequestBodyDateField.REQUESTED_EXECUTION_DATE), messageError);
 
         // Then
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validate_requestedExecutionTimeWrongValue_wrongFormat_error() {
+    void validate_requestedExecutionTimeWrongValue_wrongFormat_error() {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
-        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_TIME_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_FORMAT_TIME));
+        // noinspection unchecked
+        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_TIME_FIELD_NAME), any(TypeReference.class)))
+            .thenReturn(Optional.of(WRONG_FORMAT_TIME));
 
         // When
-        validator.validateDateFormat(mockRequest, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
+        validator.validateDateFormat(mockRequest, Collections.singleton(Xs2aRequestBodyDateField.REQUESTED_EXECUTION_TIME), messageError);
 
         // Then
         assertEquals(REQUESTED_EXECUTION_TIME_WRONG_VALUE_ERROR, messageError);
     }
 
     @Test
-    public void validate_requestedExecutionTimeWrongValue_success() {
+    void validate_requestedExecutionTimeWrongValue_success() {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
+        // noinspection unchecked
         when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(REQUESTED_EXECUTION_TIME_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_FORMAT_TIME));
 
         // When
-        validator.validateDateFormat(mockRequest, PAYMENT_DATE_FIELDS.getDateFields(), messageError);
+        validator.validateDateFormat(mockRequest, Collections.singleton(Xs2aRequestBodyDateField.REQUESTED_EXECUTION_TIME), messageError);
 
         // Then
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validate_dayOfExecutionWrongValue_wrongFormat_error() {
+    void validate_dayOfExecutionWrongValue_wrongFormat_error() {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
+        // noinspection unchecked
         when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(DAY_OF_EXECUTION_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(WRONG_DAY_OF_MONTH));
 
         // When
@@ -147,10 +154,11 @@ public class DateFieldValidatorImplTest {
     }
 
     @Test
-    public void validate_dayOfExecutionWrongValue_success() {
+    void validate_dayOfExecutionWrongValue_success() {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
+        // noinspection unchecked
         when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(DAY_OF_EXECUTION_FIELD_NAME), any(TypeReference.class))).thenReturn(Optional.of(CORRECT_DAY_OF_MONTH));
 
         // When

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,21 +26,21 @@ import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class GetPaymentInitiationAuthorisationScaStatusValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class GetPaymentInitiationAuthorisationScaStatusValidatorTest {
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
     private static final String AUTHORISATION_ID = "random";
@@ -71,21 +71,18 @@ public class GetPaymentInitiationAuthorisationScaStatusValidatorTest {
     @InjectMocks
     private GetPaymentInitiationAuthorisationScaStatusValidator getPaymentInitiationAuthorisationScaStatusValidator;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         // Inject pisTppInfoValidator via setter
         getPaymentInitiationAuthorisationScaStatusValidator.setPisValidators(pisTppInfoValidator);
-
-        when(pisTppInfoValidator.validateTpp(TPP_INFO))
-            .thenReturn(ValidationResult.valid());
-        when(pisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
-            .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
     }
 
     @Test
-    public void validate_withValidPaymentObjectAndValidId_shouldReturnValid() {
+    void validate_withValidPaymentObjectAndValidId_shouldReturnValid() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
+        when(pisTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
         when( pisAuthorisationValidator.validate(AUTHORISATION_ID,commonPaymentResponse) )
             .thenReturn( ValidationResult.valid() );
         when(oauthPaymentValidator.validate(commonPaymentResponse))
@@ -103,8 +100,10 @@ public class GetPaymentInitiationAuthorisationScaStatusValidatorTest {
     }
 
     @Test
-    public void validate_withValidPaymentObjectAndInvalidId_shouldReturnInvalid(){
+    void validate_withValidPaymentObjectAndInvalidId_shouldReturnInvalid(){
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
+        when(pisTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
         when( pisAuthorisationValidator.validate(INVALID_AUTHORISATION_ID, commonPaymentResponse) )
             .thenReturn( ValidationResult.invalid(AUTHORISATION_VALIDATION_ERROR));
 
@@ -116,7 +115,7 @@ public class GetPaymentInitiationAuthorisationScaStatusValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidPaymentProduct_shouldReturnPaymentProductValidationError() {
+    void validate_withInvalidPaymentProduct_shouldReturnPaymentProductValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
         commonPaymentResponse.setPaymentProduct(WRONG_PAYMENT_PRODUCT);
@@ -130,9 +129,11 @@ public class GetPaymentInitiationAuthorisationScaStatusValidatorTest {
     }
 
     @Test
-    public void validate_withInvalidTppInPayment_shouldReturnTppValidationError() {
+    void validate_withInvalidTppInPayment_shouldReturnTppValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(INVALID_TPP_INFO);
+        when(pisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
+            .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
 
         // When
         ValidationResult validationResult = getPaymentInitiationAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(commonPaymentResponse, AUTHORISATION_ID, SINGLE, CORRECT_PAYMENT_PRODUCT));

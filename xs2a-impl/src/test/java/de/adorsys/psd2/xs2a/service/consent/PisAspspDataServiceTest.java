@@ -1,19 +1,35 @@
+/*
+ * Copyright 2018-2020 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisAspspDataServiceTest {
+@ExtendWith(MockitoExtension.class)
+class PisAspspDataServiceTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String ENCRYPTED_ID = "3278921mxl-n2131-13nw";
     private static final String WRONG_ID = "wrong id";
@@ -25,7 +41,7 @@ public class PisAspspDataServiceTest {
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
 
     @Test
-    public void getInternalPaymentIdByEncryptedString_success() {
+    void getInternalPaymentIdByEncryptedString_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getDecryptedId(ENCRYPTED_ID))
             .thenReturn(CmsResponse.<String>builder().payload(PAYMENT_ID).build());
@@ -38,7 +54,7 @@ public class PisAspspDataServiceTest {
     }
 
     @Test
-    public void getInternalPaymentIdByEncryptedString_failed() {
+    void getInternalPaymentIdByEncryptedString_failed() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getDecryptedId(WRONG_ID))
             .thenReturn(CmsResponse.<String>builder().error(CmsError.TECHNICAL_ERROR).build());

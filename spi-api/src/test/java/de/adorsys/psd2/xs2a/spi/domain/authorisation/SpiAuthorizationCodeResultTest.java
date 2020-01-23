@@ -17,15 +17,15 @@
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SpiAuthorizationCodeResultTest {
+class SpiAuthorizationCodeResultTest {
 
     @Test
-    public void isEmpty_works_by_null_ChallengeData() {
+    void isEmpty_works_by_null_ChallengeData() {
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
         spiAuthorizationCodeResult.setSelectedScaMethod(new AuthenticationObject());
 
@@ -33,7 +33,7 @@ public class SpiAuthorizationCodeResultTest {
     }
 
     @Test
-    public void isEmpty_works_by_null_ChallengeData_and_AuthObject() {
+    void isEmpty_works_by_null_ChallengeData_and_AuthObject() {
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
 
         assertTrue(spiAuthorizationCodeResult.isEmpty());

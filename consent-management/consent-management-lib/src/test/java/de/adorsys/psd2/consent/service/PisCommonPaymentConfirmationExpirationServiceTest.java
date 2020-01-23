@@ -25,22 +25,22 @@ import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCommonPaymentConfirmationExpirationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class PisCommonPaymentConfirmationExpirationServiceTest {
 
     @InjectMocks
     private PisCommonPaymentConfirmationExpirationService service;
@@ -53,7 +53,7 @@ public class PisCommonPaymentConfirmationExpirationServiceTest {
     private AspspSettings aspspSettings;
 
     @Test
-    public void checkAndUpdatePaymentDataOnConfirmationExpiration_confirmationIsNotExpired() {
+    void checkAndUpdatePaymentDataOnConfirmationExpiration_confirmationIsNotExpired() {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
         pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.now().minusSeconds(100));
@@ -73,7 +73,7 @@ public class PisCommonPaymentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void checkAndUpdatePaymentDataOnConfirmationExpiration_confirmationIsExpired() {
+    void checkAndUpdatePaymentDataOnConfirmationExpiration_confirmationIsExpired() {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
         pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.now().plusHours(1));
@@ -91,7 +91,7 @@ public class PisCommonPaymentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void isPaymentDataOnConfirmationExpired() {
+    void isPaymentDataOnConfirmationExpired() {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
         pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.now().minusHours(1));
@@ -105,7 +105,7 @@ public class PisCommonPaymentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void isPaymentDataOnConfirmationNotExpired() {
+    void isPaymentDataOnConfirmationNotExpired() {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
         pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.now().plusHours(1));
@@ -119,7 +119,7 @@ public class PisCommonPaymentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void isPaymentDataOnConfirmationExpired_pisCommonPaymentDataIsNull() {
+    void isPaymentDataOnConfirmationExpired_pisCommonPaymentDataIsNull() {
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
         when(aspspSettings.getPis()).thenReturn(getPisAspspProfileSetting(10L));
 
@@ -128,7 +128,7 @@ public class PisCommonPaymentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void updatePaymentDataOnConfirmationExpiration() {
+    void updatePaymentDataOnConfirmationExpiration() {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
         PisAuthorization pisAuthorization = new PisAuthorization();
@@ -144,7 +144,7 @@ public class PisCommonPaymentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void updatePaymentDataListOnConfirmationExpiration() {
+    void updatePaymentDataListOnConfirmationExpiration() {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
         PisAuthorization pisAuthorization = new PisAuthorization();

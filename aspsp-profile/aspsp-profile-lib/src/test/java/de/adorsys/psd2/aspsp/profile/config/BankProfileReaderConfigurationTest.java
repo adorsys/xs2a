@@ -25,24 +25,25 @@ import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class BankProfileReaderConfigurationTest {
+@ExtendWith(MockitoExtension.class)
+ class BankProfileReaderConfigurationTest {
     @Mock
     private BankProfileReadingService bankProfileReadingService;
 
     private BankProfileReaderConfiguration bankProfileReaderConfiguration;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+     void setUp() {
         bankProfileReaderConfiguration = new BankProfileReaderConfiguration(bankProfileReadingService);
         ProfileConfiguration profileConfiguration = buildProfileConfiguration();
         profileConfiguration.afterPropertiesSet();
@@ -51,7 +52,7 @@ public class BankProfileReaderConfigurationTest {
     }
 
     @Test
-    public void profileConfigurationDefaultScaRedirectFlow() {
+     void profileConfigurationDefaultScaRedirectFlow() {
         //Given
         //When
         ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
@@ -60,27 +61,27 @@ public class BankProfileReaderConfigurationTest {
     }
 
     @Test
-    public void profileConfigurationDefaultBookingStatus() {
+     void profileConfigurationDefaultBookingStatus() {
         //Given
         //When
         ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
         //Then
         assertEquals(1, profileConfiguration.getSetting().getAis().getTransactionParameters().getAvailableBookingStatuses().size());
-        assertEquals(true, profileConfiguration.getSetting().getAis().getTransactionParameters().getAvailableBookingStatuses().contains(BookingStatus.BOOKED));
+        assertTrue(profileConfiguration.getSetting().getAis().getTransactionParameters().getAvailableBookingStatuses().contains(BookingStatus.BOOKED));
     }
 
     @Test
-    public void profileConfigurationDefaultScaApproach() {
+     void profileConfigurationDefaultScaApproach() {
         //Given
         //When
         ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
         //Then
         assertEquals(1, profileConfiguration.getSetting().getCommon().getScaApproachesSupported().size());
-        assertEquals(true, profileConfiguration.getSetting().getCommon().getScaApproachesSupported().contains(ScaApproach.REDIRECT));
+        assertTrue(profileConfiguration.getSetting().getCommon().getScaApproachesSupported().contains(ScaApproach.REDIRECT));
     }
 
     @Test
-    public void profileConfigurationDefaultStartAuthorisationMode() {
+     void profileConfigurationDefaultStartAuthorisationMode() {
         //Given
         //When
         ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
