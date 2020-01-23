@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,12 +40,11 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageBuilder;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -57,6 +56,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -68,12 +68,12 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_EXPIR
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
-import static junit.framework.TestCase.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AccountControllerTest {
+@ExtendWith(MockitoExtension.class)
+class AccountControllerTest {
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String DOWNLOAD_ID = "dGVzdA==";
     private static final String TEST_JSON_FILENAME = "test.json";
@@ -84,7 +84,7 @@ public class AccountControllerTest {
     private static final String ACCOUNT_REPORT_SOURCE = "/json/AccountReportTestData.json";
     private static final String BALANCES_SOURCE = "/json/ReadBalanceResponse.json";
     private static final String REQUEST_URI = "/accounts";
-    private static final Charset UTF_8 = Charset.forName("utf-8");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final MessageError MESSAGE_ERROR_AIS_404 = new MessageError(ErrorType.AIS_404, of(MessageErrorCode.RESOURCE_UNKNOWN_404));
     private static final Currency CURRENCY = Currency.getInstance("EUR");
@@ -119,18 +119,12 @@ public class AccountControllerTest {
     @Mock
     private TppErrorMessageBuilder tppErrorMessageBuilder;
 
-    @Before
-    public void setUp() {
-        when(accountListService.getAccountList(anyString(), anyBoolean(), anyString())).thenReturn(getXs2aAccountListHolder());
-        when(balanceService.getBalancesReport(anyString(), anyString(), anyString())).thenReturn(getBalanceReport());
-        when(accountDetailsService.getAccountDetails(anyString(), any(), anyBoolean(), anyString())).thenReturn(getXs2aAccountDetailsHolder());
-        when(transactionService.getTransactionDetails(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), eq(REQUEST_URI))).thenReturn(buildTransaction());
-        when(request.getRequestURI()).thenReturn(REQUEST_URI);
-    }
-
     @Test
-    public void getAccountDetails_withBalance() throws IOException {
+    void getAccountDetails_withBalance() throws IOException {
         // Given
+        when(accountDetailsService.getAccountDetails(anyString(), any(), anyBoolean(), anyString())).thenReturn(getXs2aAccountDetailsHolder());
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+
         boolean withBalance = true;
         ResponseObject<AccountDetails> expectedResult = getAccountDetails();
 
@@ -147,8 +141,11 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void readAccountDetails_wrongId_fail() {
+    void readAccountDetails_wrongId_fail() {
         // Given
+        when(accountDetailsService.getAccountDetails(anyString(), any(), anyBoolean(), anyString())).thenReturn(getXs2aAccountDetailsHolder());
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+
         boolean withBalance = true;
         ResponseObject<Xs2aAccountDetailsHolder> responseEntity = buildXs2aAccountDetailsWithError();
         when(accountDetailsService.getAccountDetails(WRONG_CONSENT_ID, WRONG_ACCOUNT_ID, withBalance, REQUEST_URI))
@@ -166,8 +163,11 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getAccounts_ResultTest() throws IOException {
+    void getAccounts_ResultTest() throws IOException {
         // Given
+        when(accountListService.getAccountList(anyString(), anyBoolean(), anyString())).thenReturn(getXs2aAccountListHolder());
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+
         boolean withBalance = true;
         AccountList expectedResult = createAccountDetailsList().getBody();
 
@@ -185,8 +185,11 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getAccountList_wrongId_fail() {
+    void getAccountList_wrongId_fail() {
         // Given
+        when(accountListService.getAccountList(anyString(), anyBoolean(), anyString())).thenReturn(getXs2aAccountListHolder());
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+
         boolean withBalance = true;
         ResponseObject<Xs2aAccountListHolder> responseEntity = getXs2aAccountListHolderWithError();
 
@@ -206,10 +209,13 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getBalances_ResultTest() throws IOException {
+    void getBalances_ResultTest() throws IOException {
         // Given
+        when(balanceService.getBalancesReport(anyString(), anyString(), anyString())).thenReturn(getBalanceReport());
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+
         ReadAccountBalanceResponse200 expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
-                                                                              ReadAccountBalanceResponse200.class);
+                                                                                  ReadAccountBalanceResponse200.class);
 
         doReturn(new ResponseEntity<>(createReadBalances().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -224,8 +230,11 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getBalances_wrongId_fail() {
+    void getBalances_wrongId_fail() {
         // Given
+        when(balanceService.getBalancesReport(anyString(), anyString(), anyString())).thenReturn(getBalanceReport());
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+
         ResponseObject<Xs2aBalancesReport> responseEntity = buildBalanceReportWithError();
         when(balanceService.getBalancesReport(WRONG_CONSENT_ID, WRONG_ACCOUNT_ID, REQUEST_URI))
             .thenReturn(responseEntity);
@@ -242,10 +251,10 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getTransactions_ResultTest() throws IOException {
+    void getTransactions_ResultTest() throws IOException {
         // Given
         AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class);
+                                                                  AccountReport.class);
 
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -268,10 +277,12 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getTransactionList_success() throws IOException {
+    void getTransactionList_success() throws IOException {
         // Given
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+
         AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class);
+                                                                  AccountReport.class);
 
         doReturn(new ResponseEntity<>(buildAccountReportWithError().getBody(), HttpStatus.OK))
             .when(responseErrorMapper).generateErrorResponse(MESSAGE_ERROR_AIS_404);
@@ -292,10 +303,10 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getTransactionList_isRespContentTypeJSON_success() throws IOException {
+    void getTransactionList_isRespContentTypeJSON_success() throws IOException {
         // Given
         AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class);
+                                                                  AccountReport.class);
 
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -316,13 +327,16 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getTransactionDetails_success() throws IOException {
+    void getTransactionDetails_success() throws IOException {
+        // Given
+        when(transactionService.getTransactionDetails(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), eq(REQUEST_URI))).thenReturn(buildTransaction());
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
 
-        // Given
         AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class);
+                                                                  AccountReport.class);
 
         // When
         AccountReport result = (AccountReport) accountController.getTransactionDetails(ACCOUNT_ID, null,
@@ -334,14 +348,16 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getTransactionDetails1_success() throws IOException {
+    void getTransactionDetails1_success() throws IOException {
         // Given
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+
         when(transactionService.getTransactionDetails(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), eq(REQUEST_URI))).thenReturn(buildTransactionWithError());
         doReturn(new ResponseEntity<>(buildAccountReportWithError().getBody(), HttpStatus.OK))
             .when(responseErrorMapper).generateErrorResponse(MESSAGE_ERROR_AIS_404);
 
         AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                              AccountReport.class);
+                                                                  AccountReport.class);
 
         // When
         AccountReport result = (AccountReport) accountController.getTransactionDetails(ACCOUNT_ID, null,
@@ -353,7 +369,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void downloadTransactions_success() throws IOException {
+    void downloadTransactions_success() throws IOException {
         // Given
         when(transactionService.downloadTransactions(CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID)).thenReturn(buildTransactionDownloadResponseOk());
         when(response.getOutputStream()).thenReturn(servletOutputStream);
@@ -367,7 +383,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void downloadTransactions_spiError() throws IOException {
+    void downloadTransactions_spiError() throws IOException {
         // Given
         TppErrorMessage tppErrorMessage = new TppErrorMessage(ERROR, CERTIFICATE_EXPIRED, "Certificate is expired");
 
@@ -424,7 +440,7 @@ public class AccountControllerTest {
 
     private ResponseObject<AccountReport> createAccountReport() throws IOException {
         AccountReport accountReport = xs2aObjectMapper.readValue(IOUtils.resourceToString(AccountControllerTest.ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                             AccountReport.class);
+                                                                 AccountReport.class);
 
         return ResponseObject.<AccountReport>builder()
                    .body(accountReport).build();
@@ -432,7 +448,7 @@ public class AccountControllerTest {
 
     private ResponseObject<AccountReport> buildAccountReportWithError() throws IOException {
         AccountReport accountReport = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                             AccountReport.class);
+                                                                 AccountReport.class);
 
         return ResponseObject.<AccountReport>builder()
                    .fail(AccountControllerTest.MESSAGE_ERROR_AIS_404)
@@ -441,7 +457,7 @@ public class AccountControllerTest {
 
     private ResponseObject<ReadAccountBalanceResponse200> createReadBalances() throws IOException {
         ReadAccountBalanceResponse200 read = xs2aObjectMapper.readValue(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
-                                                                    ReadAccountBalanceResponse200.class);
+                                                                        ReadAccountBalanceResponse200.class);
         return ResponseObject.<ReadAccountBalanceResponse200>builder()
                    .body(read).build();
     }

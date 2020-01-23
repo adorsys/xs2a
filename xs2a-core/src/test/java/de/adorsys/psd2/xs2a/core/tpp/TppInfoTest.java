@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,19 @@
 
 package de.adorsys.psd2.xs2a.core.tpp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class TppInfoTest {
+class TppInfoTest {
     private static final String AUTHORISATION_NUMBER = "authorisation number";
     private static final String AUTHORISATION_NUMBER_2 = "authorisation number 2";
 
     @Test
-    public void equals_withOnlyAuthorisationNumberAndAuthorityIdSame_shouldReturnTrue() {
+    void equals_withOnlyAuthorisationNumberAndAuthorityIdSame_shouldReturnTrue() {
         TppInfo tppInfoFirst = buildTppInfo(AUTHORISATION_NUMBER);
         tppInfoFirst.setAuthorityId("authorisation number");
         tppInfoFirst.setTppName("some tpp name");
@@ -57,7 +57,7 @@ public class TppInfoTest {
     }
 
     @Test
-    public void equals_withDifferentAuthorisationNumber_shouldReturnFalse() {
+    void equals_withDifferentAuthorisationNumber_shouldReturnFalse() {
         TppInfo tppInfoFirst = buildTppInfo(AUTHORISATION_NUMBER);
         TppInfo tppInfoSecond = buildTppInfo(AUTHORISATION_NUMBER_2);
 

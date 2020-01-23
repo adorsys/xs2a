@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,21 +20,21 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpiToXs2aBalanceReportMapperImpl.class, SpiToXs2aBalanceMapperImpl.class,
     SpiToXs2aAccountReferenceMapperImpl.class, SpiToXs2aAmountMapperImpl.class})
-public class SpiToXs2aBalanceReportMapperTest {
+class SpiToXs2aBalanceReportMapperTest {
 
     @Autowired
     private SpiToXs2aBalanceReportMapper mapper;
@@ -42,7 +42,7 @@ public class SpiToXs2aBalanceReportMapperTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToXs2aBalancesReport() {
+    void mapToXs2aBalancesReport() {
         SpiAccountBalance spiAccountBalance = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-balance.json",
                                                                            SpiAccountBalance.class);
         SpiAccountReference spiAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json",
@@ -56,7 +56,7 @@ public class SpiToXs2aBalanceReportMapperTest {
     }
 
     @Test
-    public void mapToXs2aBalancesReport_nullValue() {
+    void mapToXs2aBalancesReport_nullValue() {
         Xs2aBalancesReport xs2aBalancesReport = mapper.mapToXs2aBalancesReport(null, null);
         assertNull(xs2aBalancesReport);
     }

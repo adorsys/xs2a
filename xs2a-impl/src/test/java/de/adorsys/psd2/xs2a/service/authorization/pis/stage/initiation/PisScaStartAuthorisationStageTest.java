@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,12 +57,12 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Arrays;
@@ -75,8 +75,8 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisScaStartAuthorisationStageTest {
+@ExtendWith(MockitoExtension.class)
+class PisScaStartAuthorisationStageTest {
     private static final String AUTHENTICATION_METHOD_ID = "sms";
     private static final String PAYMENT_ID = "123456789";
     private static final String PSU_ID = "Test psuId";
@@ -138,8 +138,40 @@ public class PisScaStartAuthorisationStageTest {
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
+
+
+    }
+
+    @Test
+    void apply_Identification_Success() {
+        //Given
+        when(request.isUpdatePsuIdentification()).thenReturn(true);
+        when(request.getPsuData()).thenReturn(PSU_ID_DATA);
+        //When
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(request, response);
+        //Then
+        assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.PSUIDENTIFIED);
+    }
+
+    @Test
+    void apply_Identification_Failure() {
+        //Given
+        when(request.isUpdatePsuIdentification()).thenReturn(true);
+        when(request.getPsuData()).thenReturn(null);
+
+        //When
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(request, response);
+
+        //Then
+        assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FAILED);
+        assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(ErrorType.PIS_400);
+        assertThat(actualResponse.getErrorHolder().getErrorType().getErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR.getCode());
+    }
+
+    @Test
+    void apply_paymentAuthorisationSpi_authorisePsu_fail() {
         ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
                                       .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                                       .build();
@@ -151,34 +183,6 @@ public class PisScaStartAuthorisationStageTest {
             .thenReturn(spiAspspConsentDataProvider);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
 
-    }
-
-    @Test
-    public void apply_Identification_Success() {
-        //Given
-        when(request.isUpdatePsuIdentification()).thenReturn(true);
-        when(request.getPsuData()).thenReturn(PSU_ID_DATA);
-        //When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(request, response);
-        //Then
-        assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.PSUIDENTIFIED);
-    }
-
-    @Test
-    public void apply_Identification_Failure() {
-        //Given
-        when(request.isUpdatePsuIdentification()).thenReturn(true);
-        when(request.getPsuData()).thenReturn(null);
-        //When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(request, response);
-        //Then
-        assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FAILED);
-        assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(ErrorType.PIS_400);
-        assertThat(actualResponse.getErrorHolder().getErrorType().getErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR.getCode());
-    }
-
-    @Test
-    public void apply_paymentAuthorisationSpi_authorisePsu_fail() {
         SpiResponse<SpiAuthorisationStatus> spiErrorMessage = SpiResponse.<SpiAuthorisationStatus>builder()
                                                                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                                   .build();
@@ -200,7 +204,18 @@ public class PisScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_paymentAuthorisationSpi_requestAvailableScaMethods_fail() {
+    void apply_paymentAuthorisationSpi_requestAvailableScaMethods_fail() {
+        ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
+                                      .build();
+
+        when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIS)))
+            .thenReturn(errorHolder);
+        when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class))).thenReturn(CONTEXT_DATA);
+        when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
+            .thenReturn(spiAspspConsentDataProvider);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
                                                             .build();
@@ -224,7 +239,19 @@ public class PisScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_paymentAuthorisationSpi_requestAuthorisationCode_fail() {
+    void apply_paymentAuthorisationSpi_requestAuthorisationCode_fail() {
+        // Given
+        ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
+                                      .build();
+
+        when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIS)))
+            .thenReturn(errorHolder);
+        when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class))).thenReturn(CONTEXT_DATA);
+        when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
+            .thenReturn(spiAspspConsentDataProvider);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
                                                             .build();
@@ -254,14 +281,26 @@ public class PisScaStartAuthorisationStageTest {
 
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
-        // Then
 
+        // Then
         assertFormatError(actualResponse);
     }
 
 
     @Test
-    public void apply_singlePaymentSpi_executePaymentWithoutSca_fail() {
+    void apply_singlePaymentSpi_executePaymentWithoutSca_fail() {
+        // Given
+        ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
+                                      .build();
+
+        when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIS)))
+            .thenReturn(errorHolder);
+        when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class))).thenReturn(CONTEXT_DATA);
+        when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
+            .thenReturn(spiAspspConsentDataProvider);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
                                                             .build();
@@ -300,7 +339,8 @@ public class PisScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_noneScaMethods_Success() {
+    void apply_noneScaMethods_Success() {
+        // Given
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
                                                             .build();
@@ -334,15 +374,26 @@ public class PisScaStartAuthorisationStageTest {
         when(updatePaymentAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP))
             .thenReturn(true);
 
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALISED);
     }
 
     @Test
-    public void apply_singleScaMethod_decoupled_Success() {
+    void apply_singleScaMethod_decoupled_Success() {
+        // Given
+        ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
+                                      .build();
+
+        when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class))).thenReturn(CONTEXT_DATA);
+        when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
+            .thenReturn(spiAspspConsentDataProvider);
+
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
                                                             .build();
@@ -369,14 +420,25 @@ public class PisScaStartAuthorisationStageTest {
         when(pisCommonDecoupledService.proceedDecoupledInitiation(eq(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID)), any(), eq(AUTHENTICATION_METHOD_ID)))
             .thenReturn(mockedExpectedResponse);
 
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
+        // Then
         assertThat(actualResponse).isNotNull();
         verify(pisCommonDecoupledService).proceedDecoupledInitiation(eq(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID)), any(), eq(AUTHENTICATION_METHOD_ID));
     }
 
     @Test
-    public void apply_singleScaMethod_embedded_Success() {
+    void apply_singleScaMethod_embedded_Success() {
+        // Given
+        ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
+                                      .build();
+
+        when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class))).thenReturn(CONTEXT_DATA);
+        when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
+            .thenReturn(spiAspspConsentDataProvider);
+
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
                                                             .build();
@@ -416,8 +478,10 @@ public class PisScaStartAuthorisationStageTest {
         when(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(any()))
             .thenReturn(xs2aAuthenticationObject);
 
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getScaStatus()).isEqualTo(SCAMETHODSELECTED);
@@ -426,7 +490,16 @@ public class PisScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_multipleScaMethod_Success() {
+    void apply_multipleScaMethod_Success() {
+        // Given
+        ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
+                                      .build();
+
+        when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class))).thenReturn(CONTEXT_DATA);
+        when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
+            .thenReturn(spiAspspConsentDataProvider);
+
         SpiResponse<SpiAuthorisationStatus> spiStatus = SpiResponse.<SpiAuthorisationStatus>builder()
                                                             .payload(SpiAuthorisationStatus.SUCCESS)
                                                             .build();
@@ -452,8 +525,10 @@ public class PisScaStartAuthorisationStageTest {
         when(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(MULTIPLE_SPI_SCA_METHODS))
             .thenReturn(xs2aAuthenticationObjects);
 
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getScaStatus()).isEqualTo(PSUAUTHENTICATED);

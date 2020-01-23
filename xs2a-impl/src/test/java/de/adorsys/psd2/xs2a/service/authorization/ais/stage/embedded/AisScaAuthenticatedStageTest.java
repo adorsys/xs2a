@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,12 +44,12 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -58,8 +58,8 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisScaAuthenticatedStageTest {
+@ExtendWith(MockitoExtension.class)
+class AisScaAuthenticatedStageTest {
     private static final String CONSENT_ID = "Test consentId";
     private static final String WRONG_CONSENT_ID = "wrong consent id";
     private static final String TEST_AUTHENTICATION_DATA = "Test authenticationData";
@@ -102,19 +102,20 @@ public class AisScaAuthenticatedStageTest {
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(request.getConsentId())
             .thenReturn(CONSENT_ID);
+    }
 
+    @Test
+    void apply_Success() {
+        // Given
         when(request.getPsuData())
             .thenReturn(PSU_ID_DATA);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
-
-        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
-            .thenReturn(Optional.empty());
 
         when(aisConsentMapper.mapToSpiScaConfirmation(eq(request), any()))
             .thenReturn(scaConfirmation);
@@ -124,13 +125,9 @@ public class AisScaAuthenticatedStageTest {
 
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
             .thenReturn(spiAspspConsentDataProvider);
-    }
 
-    @Test
-    public void apply_Success() {
         when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(VALID_CONSENT_STATUS));
 
@@ -143,15 +140,35 @@ public class AisScaAuthenticatedStageTest {
         when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(true);
 
+        // When
         UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
     }
 
     @Test
-    public void apply_Failure_SpiResponseWithError() {
+    void apply_Failure_SpiResponseWithError() {
+        // Given
+        when(request.getPsuData())
+            .thenReturn(PSU_ID_DATA);
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        when(aisConsentMapper.mapToSpiScaConfirmation(eq(request), any()))
+            .thenReturn(scaConfirmation);
+
+        when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
+            .thenReturn(spiAccountConsent);
+
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
+
         when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildErrorSpiResponse());
 
@@ -161,17 +178,22 @@ public class AisScaAuthenticatedStageTest {
                             .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
                             .build());
 
+        // When
         UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
         assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }
 
     @Test
-    public void apply_Identification_wrongId_Failure() {
+    void apply_Identification_wrongId_Failure() {
         //Given
         when(request.getConsentId()).thenReturn(WRONG_CONSENT_ID);
+
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
+            .thenReturn(Optional.empty());
 
         //When
         UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
@@ -183,7 +205,25 @@ public class AisScaAuthenticatedStageTest {
     }
 
     @Test
-    public void apply_Success_verifyUpdateMultilevelScaRequiredMethodIsCalled() {
+    void apply_Success_verifyUpdateMultilevelScaRequiredMethodIsCalled() {
+        // Given
+        when(request.getPsuData())
+            .thenReturn(PSU_ID_DATA);
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        when(aisConsentMapper.mapToSpiScaConfirmation(eq(request), any()))
+            .thenReturn(scaConfirmation);
+
+        when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
+            .thenReturn(spiAccountConsent);
+
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
+
         when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(PARTIALLY_AUTHORISED_CONSENT_STATUS));
 
@@ -196,8 +236,10 @@ public class AisScaAuthenticatedStageTest {
         when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(true);
 
+        // When
         UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
@@ -206,7 +248,25 @@ public class AisScaAuthenticatedStageTest {
     }
 
     @Test
-    public void apply_Success_verifyUpdateMultilevelScaRequiredMethodIsNotCalled() {
+    void apply_Success_verifyUpdateMultilevelScaRequiredMethodIsNotCalled() {
+        // Given
+        when(request.getPsuData())
+            .thenReturn(PSU_ID_DATA);
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        when(aisConsentMapper.mapToSpiScaConfirmation(eq(request), any()))
+            .thenReturn(scaConfirmation);
+
+        when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
+            .thenReturn(spiAccountConsent);
+
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
+
         when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(VALID_CONSENT_STATUS));
 
@@ -219,8 +279,10 @@ public class AisScaAuthenticatedStageTest {
         when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(true);
 
+        // When
         UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
@@ -229,7 +291,25 @@ public class AisScaAuthenticatedStageTest {
     }
 
     @Test
-    public void apply_Success_verifyUpdateConsentStatusMethodIsCalled() {
+    void apply_Success_verifyUpdateConsentStatusMethodIsCalled() {
+        // Given
+        when(request.getPsuData())
+            .thenReturn(PSU_ID_DATA);
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        when(aisConsentMapper.mapToSpiScaConfirmation(eq(request), any()))
+            .thenReturn(scaConfirmation);
+
+        when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
+            .thenReturn(spiAccountConsent);
+
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
+
         when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(VALID_CONSENT_STATUS));
 
@@ -245,8 +325,10 @@ public class AisScaAuthenticatedStageTest {
         when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(true);
 
+        // When
         UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
@@ -255,7 +337,25 @@ public class AisScaAuthenticatedStageTest {
     }
 
     @Test
-    public void apply_Success_verifyUpdateConsentStatusMethodIsNotCalled() {
+    void apply_Success_verifyUpdateConsentStatusMethodIsNotCalled() {
+        // Given
+        when(request.getPsuData())
+            .thenReturn(PSU_ID_DATA);
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        when(aisConsentMapper.mapToSpiScaConfirmation(eq(request), any()))
+            .thenReturn(scaConfirmation);
+
+        when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
+            .thenReturn(spiAccountConsent);
+
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
+
         when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(PARTIALLY_AUTHORISED_CONSENT_STATUS));
 
@@ -268,8 +368,10 @@ public class AisScaAuthenticatedStageTest {
         when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(true);
 
+        // When
         UpdateConsentPsuDataResponse actualResponse = scaAuthenticatedStage.apply(request);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaAuthenticationData()).isEqualTo(TEST_AUTHENTICATION_DATA);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,21 +33,21 @@ import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisati
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.link.PaymentCancellationLinks;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentCancellationAspectTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentCancellationAspectTest {
     private static final String HTTP_URL = "http://base.url";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
@@ -75,15 +75,10 @@ public class PaymentCancellationAspectTest {
     private ResponseObject<CancelPaymentResponse> responseObject;
     private PisPaymentCancellationRequest paymentCancellationRequest;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         JsonReader jsonReader = new JsonReader();
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-
-        when(cancellationScaNeededDecider.isScaRequired(true)).thenReturn(true);
-
-        when(authorisationMethodDecider.isExplicitMethod(false, false)).thenReturn(false);
-        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
         response = new CancelPaymentResponse();
         response.setStartAuthorisationRequired(true);
@@ -99,8 +94,10 @@ public class PaymentCancellationAspectTest {
     }
 
     @Test
-    public void cancelPayment_status_RJCT() {
+    void cancelPayment_status_RJCT() {
         // Given
+        when(cancellationScaNeededDecider.isScaRequired(true)).thenReturn(true);
+
         response.setTransactionStatus(TransactionStatus.RJCT);
 
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
@@ -115,15 +112,24 @@ public class PaymentCancellationAspectTest {
     }
 
     @Test
-    public void cancelPayment_success() {
+    void cancelPayment_success() {
+        // Given
+        when(cancellationScaNeededDecider.isScaRequired(true)).thenReturn(true);
+
+        when(authorisationMethodDecider.isExplicitMethod(false, false)).thenReturn(false);
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
+
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
         PaymentCancellationLinks links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, false);
 
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
                              .body(response)
                              .build();
+
+        // When
         ResponseObject<CancelPaymentResponse> actualResponse = aspect.cancelPayment(responseObject, paymentCancellationRequest);
 
+        // Then
         verify(aspspProfileService, times(1)).getAspspSettings();
 
         assertFalse(actualResponse.hasError());
@@ -131,7 +137,7 @@ public class PaymentCancellationAspectTest {
     }
 
     @Test
-    public void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
+    void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
         // When
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))

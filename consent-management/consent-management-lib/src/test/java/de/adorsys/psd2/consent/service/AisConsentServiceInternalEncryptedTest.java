@@ -25,22 +25,21 @@ import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisConsentServiceInternalEncryptedTest {
+@ExtendWith(MockitoExtension.class)
+class AisConsentServiceInternalEncryptedTest {
     private static final String ENCRYPTED_CONSENT_ID = "encrypted consent id";
     private static final String UNDECRYPTABLE_CONSENT_ID = "undecryptable consent id";
     private static final String DECRYPTED_CONSENT_ID = "255574b2-f115-4f3c-8d77-c1897749c060";
@@ -53,34 +52,12 @@ public class AisConsentServiceInternalEncryptedTest {
     @Mock
     private SecurityDataService securityDataService;
 
-    @Before
-    public void setUp() {
-        when(securityDataService.encryptId(DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(ENCRYPTED_CONSENT_ID));
-        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
-        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID))
-            .thenReturn(Optional.empty());
-
-        when(aisConsentService.createConsent(any()))
-            .thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
-        when(aisConsentService.getConsentStatusById(DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(CONSENT_STATUS));
-        when(aisConsentService.updateConsentStatusById(DECRYPTED_CONSENT_ID, CONSENT_STATUS))
-            .thenReturn(true);
-        when(aisConsentService.updateAspspAccountAccess(eq(DECRYPTED_CONSENT_ID), any()))
-            .thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
-        when(aisConsentService.getAisAccountConsentById(DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(buildAisAccountConsent()));
-
-        when(aisConsentService.getPsuDataByConsentId(DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(Collections.singletonList(buildPsuIdData())));
-    }
-
     @Test
-    public void createConsent_success() {
+    void createConsent_success() {
         // Given
         CreateAisConsentRequest request = buildCreateAisConsentRequest();
+        when(securityDataService.encryptId(DECRYPTED_CONSENT_ID)).thenReturn(Optional.of(ENCRYPTED_CONSENT_ID));
+        when(aisConsentService.createConsent(any())).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
 
         // When
         Optional<String> actual = aisConsentServiceInternalEncrypted.createConsent(request);
@@ -92,7 +69,7 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void createConsent_failure_internalServiceFailed() {
+    void createConsent_failure_internalServiceFailed() {
         when(aisConsentService.createConsent(any())).thenReturn(Optional.empty());
 
         // Given
@@ -107,7 +84,7 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void createConsent_failure_encryptionFailed() {
+    void createConsent_failure_encryptionFailed() {
         when(aisConsentService.createConsent(any())).thenReturn(Optional.empty());
 
         // Given
@@ -122,7 +99,10 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getConsentStatusById_success() {
+    void getConsentStatusById_success() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(aisConsentService.getConsentStatusById(DECRYPTED_CONSENT_ID)).thenReturn(Optional.of(CONSENT_STATUS));
+
         // When
         Optional<ConsentStatus> actual = aisConsentServiceInternalEncrypted.getConsentStatusById(ENCRYPTED_CONSENT_ID);
 
@@ -134,7 +114,8 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getConsentStatusById_internalServiceFailed() {
+    void getConsentStatusById_internalServiceFailed() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentService.getConsentStatusById(any())).thenReturn(Optional.empty());
 
         // When
@@ -146,7 +127,9 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getConsentStatusById_decryptionFailed() {
+    void getConsentStatusById_decryptionFailed() {
+        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID)).thenReturn(Optional.empty());
+
         // When
         Optional<ConsentStatus> actual = aisConsentServiceInternalEncrypted.getConsentStatusById(UNDECRYPTABLE_CONSENT_ID);
 
@@ -156,7 +139,10 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateConsentStatusById_success() {
+    void updateConsentStatusById_success() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(aisConsentService.updateConsentStatusById(DECRYPTED_CONSENT_ID, CONSENT_STATUS)).thenReturn(true);
+
         // When
         boolean actual = aisConsentServiceInternalEncrypted.updateConsentStatusById(ENCRYPTED_CONSENT_ID, CONSENT_STATUS);
 
@@ -166,7 +152,8 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateConsentStatusById_internalServiceFailed() {
+    void updateConsentStatusById_internalServiceFailed() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentService.updateConsentStatusById(any(), any())).thenReturn(false);
 
         // When
@@ -178,7 +165,9 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateConsentStatusById_decryptionFailed() {
+    void updateConsentStatusById_decryptionFailed() {
+        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID)).thenReturn(Optional.empty());
+
         // When
         boolean actual = aisConsentServiceInternalEncrypted.updateConsentStatusById(UNDECRYPTABLE_CONSENT_ID, CONSENT_STATUS);
 
@@ -188,9 +177,11 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAisAccountConsentById_success() {
+    void getAisAccountConsentById_success() {
         // Given
         AisAccountConsent expected = buildAisAccountConsent();
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(aisConsentService.getAisAccountConsentById(DECRYPTED_CONSENT_ID)).thenReturn(Optional.of(buildAisAccountConsent()));
 
         // When
         Optional<AisAccountConsent> actual = aisConsentServiceInternalEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID);
@@ -203,7 +194,8 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAisAccountConsentById_internalServiceFailed() {
+    void getAisAccountConsentById_internalServiceFailed() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentService.getAisAccountConsentById(any())).thenReturn(Optional.empty());
 
         // When
@@ -215,7 +207,9 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAisAccountConsentById_decryptionFailed() {
+    void getAisAccountConsentById_decryptionFailed() {
+        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID)).thenReturn(Optional.empty());
+
         // When
         Optional<AisAccountConsent> actual = aisConsentServiceInternalEncrypted.getAisAccountConsentById(UNDECRYPTABLE_CONSENT_ID);
 
@@ -225,9 +219,10 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void checkConsentAndSaveActionLog_success() {
+    void checkConsentAndSaveActionLog_success() {
         // Given
         AisConsentActionRequest request = buildAisActionRequest(ENCRYPTED_CONSENT_ID);
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
 
         // When
         aisConsentServiceInternalEncrypted.checkConsentAndSaveActionLog(request);
@@ -238,9 +233,10 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void checkConsentAndSaveActionLog_decryptionFailed() {
+    void checkConsentAndSaveActionLog_decryptionFailed() {
         // Given
         AisConsentActionRequest request = buildAisActionRequest(UNDECRYPTABLE_CONSENT_ID);
+        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID)).thenReturn(Optional.empty());
 
         // When
         aisConsentServiceInternalEncrypted.checkConsentAndSaveActionLog(request);
@@ -250,9 +246,13 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateAccountAccess_success() {
+    void updateAccountAccess_success() {
         // Given
         AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
+        when(securityDataService.encryptId(DECRYPTED_CONSENT_ID)).thenReturn(Optional.of(ENCRYPTED_CONSENT_ID));
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+
+        when(aisConsentService.updateAspspAccountAccess(eq(DECRYPTED_CONSENT_ID), any())).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
 
         // When
         Optional<String> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, accountAccessInfo);
@@ -265,7 +265,9 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateAccountAccess_internalServiceFailed() {
+    void updateAccountAccess_internalServiceFailed() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+
         when(aisConsentService.updateAspspAccountAccess(any(), any())).thenReturn(Optional.empty());
 
         // Given
@@ -280,9 +282,11 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateAccountAccess_decryptionFailed() {
+    void updateAccountAccess_decryptionFailed() {
         // Given
         AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
+        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID)).thenReturn(Optional.empty());
+
 
         // When
         Optional<String> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(UNDECRYPTABLE_CONSENT_ID, accountAccessInfo);
@@ -293,10 +297,13 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getPsuDataByConsentId_success() {
+    void getPsuDataByConsentId_success() {
         // Given
 
         List<PsuIdData> expected = Collections.singletonList(buildPsuIdData());
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+
+        when(aisConsentService.getPsuDataByConsentId(DECRYPTED_CONSENT_ID)).thenReturn(Optional.of(Collections.singletonList(buildPsuIdData())));
 
         // When
         Optional<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
@@ -309,7 +316,8 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getPsuDataByConsentId_internalServiceFailed() {
+    void getPsuDataByConsentId_internalServiceFailed() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentService.getPsuDataByConsentId(any())).thenReturn(Optional.empty());
 
         // When
@@ -321,7 +329,9 @@ public class AisConsentServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getPsuDataByConsentId_decryptionFailed() {
+    void getPsuDataByConsentId_decryptionFailed() {
+        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID)).thenReturn(Optional.empty());
+
         // When
         Optional<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(UNDECRYPTABLE_CONSENT_ID);
 

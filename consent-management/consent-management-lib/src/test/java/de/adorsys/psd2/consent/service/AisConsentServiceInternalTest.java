@@ -44,13 +44,13 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -59,11 +59,11 @@ import java.util.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisConsentServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class AisConsentServiceInternalTest {
     private static final long CONSENT_ID = 1;
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
@@ -114,21 +114,18 @@ public class AisConsentServiceInternalTest {
     @Mock
     private AisConsentRequestTypeService aisConsentRequestTypeService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         AisConsentAuthorization aisConsentAuthorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, ScaStatus.RECEIVED);
         aisConsentAuthorisationList.add(aisConsentAuthorisation);
         aisConsent = buildConsent(EXTERNAL_CONSENT_ID);
-        when(tppInfoMapper.mapToTppInfoEntity(buildTppInfo())).thenReturn(buildTppInfoEntity());
-        AisConsentAction action = buildAisConsentAction();
-        when(aisConsentActionRepository.save(action)).thenReturn(action);
-        when(tppInfoRepository.findByAuthorisationNumber(any())).thenReturn(Optional.of(buildTppInfoEntity()));
-        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
     }
 
     @Test
-    public void shouldReturnAisConsent_whenGetConsentByIdIsCalled() {
+    void shouldReturnAisConsent_whenGetConsentByIdIsCalled() {
         // Given
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
+
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(aisConsent)).thenReturn(aisConsent);
         when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(buildSpiAccountConsent());
 
@@ -141,7 +138,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void getAisAccountConsentById_checkAndUpdateOnExpirationInvoked() {
+    void getAisAccountConsentById_checkAndUpdateOnExpirationInvoked() {
         // Given
         AisConsent aisConsent = buildConsent(EXTERNAL_CONSENT_ID, Collections.singletonList(psuDataMocked), LocalDate.now().minusDays(1));
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
@@ -158,7 +155,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void getAisAccountConsentById_checkAndUpdateOnExpirationNotInvoked() {
+    void getAisAccountConsentById_checkAndUpdateOnExpirationNotInvoked() {
         // Given
         AisConsent aisConsent = buildConsent(EXTERNAL_CONSENT_ID, Collections.singletonList(psuDataMocked), LocalDate.now());
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
@@ -174,7 +171,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void getAisAccountConsentById_withValidUsedNonRecurringConsent_shouldExpireConsent() {
+    void getAisAccountConsentById_withValidUsedNonRecurringConsent_shouldExpireConsent() {
         // Given
         AisConsent consent = buildUsedNonRecurringConsent();
 
@@ -192,7 +189,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void shouldReturnExternalId_WhenCreateConsentIsCalled() {
+    void shouldReturnExternalId_WhenCreateConsentIsCalled() {
         // Given
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
@@ -206,7 +203,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void createConsent_AdjustValidUntil_ZeroLifeTime() {
+    void createConsent_AdjustValidUntil_ZeroLifeTime() {
         // Given
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
@@ -225,7 +222,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void createConsent_AdjustValidUntil_NoAdjustment() {
+    void createConsent_AdjustValidUntil_NoAdjustment() {
         // Given
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
@@ -244,7 +241,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void createConsent_AdjustValidUntil_AdjustmentToLifeTime() {
+    void createConsent_AdjustValidUntil_AdjustmentToLifeTime() {
         // Given
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
@@ -263,7 +260,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void createConsent_checkLastActionDate() {
+    void createConsent_checkLastActionDate() {
         // Given
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
@@ -278,9 +275,9 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void updateAccountAccessById() {
+    void updateAccountAccessById() {
         // Given
-        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
 
         AisAccountAccessInfo info = new AisAccountAccessInfo();
@@ -292,8 +289,12 @@ public class AisConsentServiceInternalTest {
         Optional<String> consentId = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Then
         assertTrue(consentId.isPresent());
+        reset(aisConsentRepository);
 
         // Given
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
+        when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
+
         info = new AisAccountAccessInfo();
         info.setAccounts(Arrays.asList(
             AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-1").currency(EUR).build(),
@@ -306,15 +307,18 @@ public class AisConsentServiceInternalTest {
         consentId = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Then
         assertTrue(consentId.isPresent());
+        reset(aisConsentRepository);
 
         // When
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
+
         Optional<String> consentId_notExist = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
         // Then
         assertFalse(consentId_notExist.isPresent());
     }
 
     @Test
-    public void updateConsentStatusById_UpdateFinalisedStatus_Fail() {
+    void updateConsentStatusById_UpdateFinalisedStatus_Fail() {
         // Given
         AisConsent finalisedConsent = buildFinalisedConsent();
         when(aisConsentRepository.findByExternalId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(finalisedConsent));
@@ -326,17 +330,19 @@ public class AisConsentServiceInternalTest {
         assertFalse(result);
     }
 
-
-    @Test(expected = IllegalArgumentException.class)
-    public void findAndTerminateOldConsentsByNewConsentId_failure_consentNotFound() {
+    @Test
+    void findAndTerminateOldConsentsByNewConsentId_failure_consentNotFound() {
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST))
             .thenReturn(Optional.empty());
 
-        aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID_NOT_EXIST);
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID_NOT_EXIST)
+        );
     }
 
     @Test
-    public void findAndTerminateOldConsentsByNewConsentId_success_newConsentRecurringIndicatorIsFalse() {
+    void findAndTerminateOldConsentsByNewConsentId_success_newConsentRecurringIndicatorIsFalse() {
         // Given
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(aisConsentMocked));
@@ -352,8 +358,8 @@ public class AisConsentServiceInternalTest {
         verify(aisConsentRepository, never()).findOldConsentsByNewConsentParams(any(), any(), any(), any(), any());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void findAndTerminateOldConsentsByNewConsentId_failure_wrongConsentData() {
+    @Test
+    void findAndTerminateOldConsentsByNewConsentId_failure_wrongConsentData() {
         // Given
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(aisConsentMocked));
@@ -362,11 +368,14 @@ public class AisConsentServiceInternalTest {
             .thenReturn(true);
 
         // When
-        aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID)
+        );
     }
 
     @Test
-    public void findAndTerminateOldConsentsByNewConsentId_success_oldConsentsEmpty() {
+    void findAndTerminateOldConsentsByNewConsentId_success_oldConsentsEmpty() {
         // Given
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(aisConsentMocked));
@@ -391,7 +400,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void findAndTerminateOldConsentsByNewConsentId_success() {
+    void findAndTerminateOldConsentsByNewConsentId_success() {
         // Given
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(aisConsentMocked));
@@ -435,7 +444,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void findAndTerminateOldConsentsByNewConsentId_success_multilevel_SCA() {
+    void findAndTerminateOldConsentsByNewConsentId_success_multilevel_SCA() {
         // Given
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(aisConsentMocked));
@@ -480,7 +489,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void findAndTerminateOldConsentsByNewConsentId_shouldFail_unequalPsuDataLists() {
+    void findAndTerminateOldConsentsByNewConsentId_shouldFail_unequalPsuDataLists() {
         // Given
         List<PsuData> psuDataList = Collections.singletonList(psuDataMocked);
 
@@ -508,20 +517,24 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void checkConsentAndSaveActionLog() {
+    void checkConsentAndSaveActionLog() {
         // Given
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.empty());
 
         try {
             aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null));
-            assertTrue("Method works without exceptions", true);
+            assertTrue(true);
         } catch (Exception ex) {
             fail("Exception should not be appeared.");
         }
     }
 
     @Test
-    public void checkConsentAndSaveActionLog_updateUsageCounter() {
+    void checkConsentAndSaveActionLog_updateUsageCounter() {
+        AisConsentAction action = buildAisConsentAction();
+        when(aisConsentActionRepository.save(action)).thenReturn(action);
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
+
         // When
         AisConsentActionRequest request = new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
         aisConsentService.checkConsentAndSaveActionLog(request);
@@ -530,7 +543,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void checkConsentAndSaveActionLog_NotUpdateUsageCounter() {
+    void checkConsentAndSaveActionLog_NotUpdateUsageCounter() {
         // When
         AisConsentActionRequest request = new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, false, null, null);
         aisConsentService.checkConsentAndSaveActionLog(request);
@@ -539,7 +552,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void checkConsentAndSaveActionLog_withValidUsedNonRecurringConsent_shouldExpireConsent() {
+    void checkConsentAndSaveActionLog_withValidUsedNonRecurringConsent_shouldExpireConsent() {
         // Given
         AisConsent consent = buildUsedNonRecurringConsent();
 
@@ -557,7 +570,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void getConsentStatusById_withValidUsedNonRecurringConsent_shouldExpireConsent() {
+    void getConsentStatusById_withValidUsedNonRecurringConsent_shouldExpireConsent() {
         // Given
         AisConsent consent = buildUsedNonRecurringConsent();
 
@@ -576,7 +589,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void getInitialAisAccountConsentById_withValidUsedNonRecurringConsent_shouldExpireConsent() {
+    void getInitialAisAccountConsentById_withValidUsedNonRecurringConsent_shouldExpireConsent() {
         // Given
         AisConsent consent = buildUsedNonRecurringConsent();
 
@@ -708,11 +721,5 @@ public class AisConsentServiceInternalTest {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber("tpp-id-1");
         return tppInfo;
-    }
-
-    private TppInfoEntity buildTppInfoEntity() {
-        TppInfoEntity tppInfoEntity = new TppInfoEntity();
-        tppInfoEntity.setAuthorisationNumber("tpp-id-1");
-        return tppInfoEntity;
     }
 }

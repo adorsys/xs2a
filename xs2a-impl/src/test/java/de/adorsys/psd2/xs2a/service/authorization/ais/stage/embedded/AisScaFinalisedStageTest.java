@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,17 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisScaFinalisedStageTest {
+@ExtendWith(MockitoExtension.class)
+class AisScaFinalisedStageTest {
     private static final ScaStatus FINALIZED_SCA_STATUS = ScaStatus.FINALISED;
 
     @InjectMocks
@@ -50,10 +51,12 @@ public class AisScaFinalisedStageTest {
     private UpdateConsentPsuDataReq request;
 
     @Test
-    public void apply_Success() {
+    void apply_Success() {
+        // When
         UpdateConsentPsuDataResponse actualResponse = scaFinalisedStage.apply(request);
 
-        assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getScaStatus()).isEqualTo(FINALIZED_SCA_STATUS);
+        // Then
+        assertNotNull(actualResponse);
+        assertEquals(FINALIZED_SCA_STATUS, actualResponse.getScaStatus());
     }
 }

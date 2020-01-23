@@ -26,12 +26,11 @@ import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.OffsetDateTime;
@@ -40,11 +39,11 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PiisConsentServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class PiisConsentServiceInternalTest {
     private static final Currency CURRENCY = Currency.getInstance("EUR");
     private static final String IBAN = "DE62500105179972514662";
     private static final String WRONG_IBAN = "FR7030066926176517166656113";
@@ -54,9 +53,7 @@ public class PiisConsentServiceInternalTest {
     private static final String PSU_CORPORATE_ID_TYPE = "Some corporate id type";
     private static final OffsetDateTime CREATION_TIMESTAMP = OffsetDateTime.of(2019, 2, 4, 12, 0, 0, 0, ZoneOffset.UTC);
     private static final AccountReferenceSelector SELECTOR_IBAN = new AccountReferenceSelector(AccountReferenceType.IBAN, IBAN);
-    private static final AccountReferenceSelector SELECTOR_WRONG_IBAN = new AccountReferenceSelector(AccountReferenceType.IBAN, WRONG_IBAN);
     private static final Specification<PiisConsentEntity> SPECIFICATION_IBAN = (root, cq, cb) -> null;
-    private static final Specification<PiisConsentEntity> SPECIFICATION_WRONG_IBAN = (root, criteriaQuery, criteriaBuilder) -> null;
 
     @Mock
     private PiisConsentRepository piisConsentRepository;
@@ -67,37 +64,36 @@ public class PiisConsentServiceInternalTest {
     @Mock
     private PiisConsentEntitySpecification piisConsentEntitySpecification;
 
-    @Before
-    public void setUp() {
-        List<PiisConsentEntity> validConsentEntities = Collections.singletonList(buildPiisConsentEntity());
-        List<PiisConsent> validConsents = Collections.singletonList(buildPiisConsent());
-        when(piisConsentMapper.mapToPiisConsentList(validConsentEntities)).thenReturn(validConsents);
-    }
-
     @Test
-    public void getPiisConsentListByAccountIdentifier_Success() {
+    void getPiisConsentListByAccountIdentifier_Success() {
         // Given
         when(piisConsentEntitySpecification.byCurrencyAndAccountReferenceSelector(CURRENCY, SELECTOR_IBAN))
             .thenReturn(SPECIFICATION_IBAN);
         when(piisConsentRepository.findAll(SPECIFICATION_IBAN))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
+
+        List<PiisConsentEntity> validConsentEntities = Collections.singletonList(buildPiisConsentEntity());
+        List<PiisConsent> validConsents = Collections.singletonList(buildPiisConsent());
+        when(piisConsentMapper.mapToPiisConsentList(validConsentEntities)).thenReturn(validConsents);
+
+
         PiisConsent expected = buildPiisConsent();
 
         // When
         List<PiisConsent> piisConsents = piisConsentServiceInternal.getPiisConsentListByAccountIdentifier(CURRENCY, new AccountReferenceSelector(AccountReferenceType.IBAN, IBAN));
 
         // Then
-        assertThat(piisConsents.isEmpty()).isFalse();
-        assertThat(piisConsents.get(0)).isEqualTo(expected);
+        assertFalse(piisConsents.isEmpty());
+        assertEquals(expected, piisConsents.get(0));
     }
 
     @Test
-    public void getPiisConsentListByAccountIdentifier_Failure_WrongIban() {
+    void getPiisConsentListByAccountIdentifier_Failure_WrongIban() {
         // When
         List<PiisConsent> piisConsents = piisConsentServiceInternal.getPiisConsentListByAccountIdentifier(CURRENCY, new AccountReferenceSelector(AccountReferenceType.IBAN, WRONG_IBAN));
 
         // Then
-        assertThat(piisConsents.isEmpty()).isTrue();
+        assertTrue(piisConsents.isEmpty());
     }
 
     private PiisConsentEntity buildPiisConsentEntity() {

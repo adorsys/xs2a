@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,21 @@ package de.adorsys.psd2.xs2a.service.authorization;
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AuthorisationMethodDeciderTest {
+@ExtendWith(MockitoExtension.class)
+class AuthorisationMethodDeciderTest {
 
     @InjectMocks
     private AuthorisationMethodDecider authorisationMethodDecider;
@@ -43,14 +43,14 @@ public class AuthorisationMethodDeciderTest {
     @Mock
     private RequestProviderService requestProviderService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     //Multilevel = true
     @Test
-    public void isExplicitMethod_Success_Multilevel_TppExplicitPreferredTrue_SigningBasketTrue() {
+    void isExplicitMethod_Success_Multilevel_TppExplicitPreferredTrue_SigningBasketTrue() {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = true;
@@ -64,7 +64,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isExplicitMethod_Success_Multilevel_TppExplicitPreferredFalse_SigningBasketTrue() {
+    void isExplicitMethod_Success_Multilevel_TppExplicitPreferredFalse_SigningBasketTrue() {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = false;
@@ -78,7 +78,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isExplicitMethod_Success_Multilevel_TppExplicitPreferredTrue_SigningBasketFalse() {
+    void isExplicitMethod_Success_Multilevel_TppExplicitPreferredTrue_SigningBasketFalse() {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = true;
@@ -92,7 +92,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isExplicitMethod_Success_Multilevel_TppExplicitPreferredFalse_SigningBasketFalse() {
+    void isExplicitMethod_Success_Multilevel_TppExplicitPreferredFalse_SigningBasketFalse() {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = false;
@@ -106,7 +106,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isImplicitMethod_Fail_Multilevel_TppExplicitPreferredTrue_SigningBasketTrue() {
+    void isImplicitMethod_Fail_Multilevel_TppExplicitPreferredTrue_SigningBasketTrue() {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = true;
@@ -120,7 +120,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isImplicitMethod_Fail_Multilevel_TppExplicitPreferredFalse_SigningBasketTrue() {
+    void isImplicitMethod_Fail_Multilevel_TppExplicitPreferredFalse_SigningBasketTrue() {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = false;
@@ -134,7 +134,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isImplicitMethod_Fail_Multilevel_TppExplicitPreferredTrue_SigningBasketFalse() {
+    void isImplicitMethod_Fail_Multilevel_TppExplicitPreferredTrue_SigningBasketFalse() {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = true;
@@ -148,7 +148,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isImplicitMethod_Fail_Multilevel_TppExplicitPreferredFalse_SigningBasketFalse() {
+    void isImplicitMethod_Fail_Multilevel_TppExplicitPreferredFalse_SigningBasketFalse() {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = false;
@@ -163,7 +163,7 @@ public class AuthorisationMethodDeciderTest {
 
     //Multilevel false
     @Test
-    public void isExplicitMethod_Success_TppExplicitPreferredTrue_SigningBasketTrue() {
+    void isExplicitMethod_Success_TppExplicitPreferredTrue_SigningBasketTrue() {
         //Given
         boolean multilevelScaRequired = false;
         boolean tppExplicitAuthorisationPreferred = true;
@@ -178,7 +178,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isExplicitMethod_Fail_TppExplicitPreferredFalse_SigningBasketTrue() {
+    void isExplicitMethod_Fail_TppExplicitPreferredFalse_SigningBasketTrue() {
         //Given
         boolean multilevelScaRequired = false;
         boolean tppExplicitAuthorisationPreferred = false;
@@ -192,7 +192,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isExplicitMethod_Fail_TppExplicitPreferredTrue_SigningBasketFalse() {
+    void isExplicitMethod_Fail_TppExplicitPreferredTrue_SigningBasketFalse() {
         //Given
         boolean multilevelScaRequired = false;
         boolean tppExplicitAuthorisationPreferred = true;
@@ -207,7 +207,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isExplicitMethod_Success_ExplicitAuthorisationMode() {
+    void isExplicitMethod_Success_ExplicitAuthorisationMode() {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = true;
@@ -221,7 +221,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isExplicitMethod_Fail_ImplicitAuthorisationMode() {
+    void isExplicitMethod_Fail_ImplicitAuthorisationMode() {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = true;
@@ -235,7 +235,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isExplicitMethod_Fail_TppExplicitPreferredFalse_SigningBasketFalse() {
+    void isExplicitMethod_Fail_TppExplicitPreferredFalse_SigningBasketFalse() {
         //Given
         boolean multilevelScaRequired = false;
         boolean tppExplicitAuthorisationPreferred = false;
@@ -249,7 +249,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isImplicitMethod_Fail_TppExplicitPreferredTrue_SigningBasketTrue() {
+    void isImplicitMethod_Fail_TppExplicitPreferredTrue_SigningBasketTrue() {
         //Given
         boolean multilevelScaRequired = false;
         boolean tppExplicitAuthorisationPreferred = true;
@@ -264,7 +264,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isImplicitMethod_Success_TppExplicitPreferredFalse_SigningBasketTrue() {
+    void isImplicitMethod_Success_TppExplicitPreferredFalse_SigningBasketTrue() {
         //Given
         boolean multilevelScaRequired = false;
         boolean tppExplicitAuthorisationPreferred = false;
@@ -278,7 +278,7 @@ public class AuthorisationMethodDeciderTest {
     }
 
     @Test
-    public void isImplicitMethod_Success_TppExplicitPreferredTrue_SigningBasketFalse() {
+    void isImplicitMethod_Success_TppExplicitPreferredTrue_SigningBasketFalse() {
         //Given
         boolean multilevelScaRequired = false;
         boolean tppExplicitAuthorisationPreferred = true;

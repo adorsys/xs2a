@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,19 +25,19 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisAuthorisationValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class PisAuthorisationValidatorTest {
     private static final String AUTHORISATION_ID = "62561aa4-5d69-4bac-9483-09376188eb78";
     private static final String UNKNOWN_AUTHORISATION_ID = "unknown id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
@@ -53,7 +53,7 @@ public class PisAuthorisationValidatorTest {
     private PisAuthorisationValidator pisAuthorisationValidator;
 
     @Test
-    public void validate_withValidAuthorisation_shouldReturnValid() {
+    void validate_withValidAuthorisation_shouldReturnValid() {
         PisCommonPaymentResponse paymentResponse = buildPisCommonPaymentResponse(new Authorisation(AUTHORISATION_ID, SCA_STATUS, PSU_ID_DATA));
 
         // When
@@ -66,7 +66,7 @@ public class PisAuthorisationValidatorTest {
     }
 
     @Test
-    public void validate_withUnknownAuthorisationId_shouldReturnUnknownError() {
+    void validate_withUnknownAuthorisationId_shouldReturnUnknownError() {
         // Given
         PisCommonPaymentResponse paymentResponse = buildPisCommonPaymentResponse(new Authorisation(AUTHORISATION_ID, SCA_STATUS, PSU_ID_DATA));
 

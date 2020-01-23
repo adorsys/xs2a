@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded;
 
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -49,12 +50,12 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -63,8 +64,8 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisScaMethodSelectedStageTest {
+@ExtendWith(MockitoExtension.class)
+class AisScaMethodSelectedStageTest {
     private static final String CONSENT_ID = "Test consentId";
     private static final String WRONG_CONSENT_ID = "wrong consent id";
     private static final String AUTHORISATION_ID = "Test authorisation id";
@@ -111,14 +112,15 @@ public class AisScaMethodSelectedStageTest {
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(request.getConsentId())
             .thenReturn(CONSENT_ID);
+    }
 
-        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
-            .thenReturn(Optional.empty());
-
+    @Test
+    void apply_Success() {
+        // Given
         when(request.getAuthenticationMethodId())
             .thenReturn(TEST_AUTHENTICATION_METHOD_ID);
 
@@ -139,32 +141,47 @@ public class AisScaMethodSelectedStageTest {
 
         when(spiContextDataProvider.provideWithPsuIdData(any()))
             .thenReturn(SPI_CONTEXT_DATA);
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
-    }
-
-    @Test
-    public void apply_Success() {
         when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(buildSpiAuthorizationCodeResult()));
 
+        // When
         UpdateConsentPsuDataResponse actualResponse = scaMethodSelectedStage.apply(request);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getChosenScaMethod()).isEqualTo(buildXs2aAuthenticationObject());
         assertThat(actualResponse.getScaStatus()).isEqualTo(METHOD_SELECTED_SCA_STATUS);
     }
 
     @Test
-    public void apply_Success_DecoupledApproach() {
+    void apply_Success_DecoupledApproach() {
+        // Given
+        when(request.getAuthenticationMethodId())
+            .thenReturn(TEST_AUTHENTICATION_METHOD_ID);
+
+        when(request.getAuthorizationId())
+            .thenReturn(AUTHORISATION_ID);
+
+        when(request.getPsuData())
+            .thenReturn(PSU_DATA);
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
+            .thenReturn(spiAccountConsent);
+
         when(aisConsentService.isAuthenticationMethodDecoupled(anyString(), anyString()))
             .thenReturn(true);
         when(commonDecoupledAisService.proceedDecoupledApproach(any(), any(), eq(AUTHENTICATION_METHOD_ID), any()))
             .thenReturn(buildUpdateConsentPsuDataResponse());
 
+        // When
         UpdateConsentPsuDataResponse actualResponse = scaMethodSelectedStage.apply(request);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getPsuMessage()).isEqualTo(PSU_SUCCESS_MESSAGE);
         assertThat(actualResponse.getScaStatus()).isEqualTo(METHOD_SELECTED_SCA_STATUS);
@@ -172,14 +189,54 @@ public class AisScaMethodSelectedStageTest {
     }
 
     @Test
-    public void apply_DecoupledApproach_ShouldChangeScaApproach() {
+    void apply_DecoupledApproach_ShouldChangeScaApproach() {
+        // Given
+        when(request.getAuthenticationMethodId())
+            .thenReturn(TEST_AUTHENTICATION_METHOD_ID);
+
+        when(request.getAuthorizationId())
+            .thenReturn(AUTHORISATION_ID);
+
+        when(request.getPsuData())
+            .thenReturn(PSU_DATA);
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
+            .thenReturn(spiAccountConsent);
+
         when(aisConsentService.isAuthenticationMethodDecoupled(anyString(), anyString())).thenReturn(true);
 
+        // When
         scaMethodSelectedStage.apply(request);
+
+        // Then
+        verify(aisConsentService).updateScaApproach(AUTHORISATION_ID, ScaApproach.DECOUPLED);
     }
 
     @Test
-    public void apply_Failure_SpiResponseWithError() {
+    void apply_Failure_SpiResponseWithError() {
+        // Given
+        when(request.getAuthenticationMethodId())
+            .thenReturn(TEST_AUTHENTICATION_METHOD_ID);
+
+        when(request.getAuthorizationId())
+            .thenReturn(AUTHORISATION_ID);
+
+        when(request.getPsuData())
+            .thenReturn(PSU_DATA);
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
+            .thenReturn(spiAccountConsent);
+
+        when(spiContextDataProvider.provideWithPsuIdData(any()))
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
         when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildErrorSpiResponse());
 
@@ -189,17 +246,22 @@ public class AisScaMethodSelectedStageTest {
                             .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
                             .build());
 
+        // When
         UpdateConsentPsuDataResponse actualResponse = scaMethodSelectedStage.apply(request);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
         assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }
 
     @Test
-    public void apply_Identification_wrongId_Failure() {
+    void apply_Identification_wrongId_Failure() {
         //Given
         when(request.getConsentId()).thenReturn(WRONG_CONSENT_ID);
+
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
+            .thenReturn(Optional.empty());
 
         //When
         UpdateConsentPsuDataResponse actualResponse = scaMethodSelectedStage.apply(request);

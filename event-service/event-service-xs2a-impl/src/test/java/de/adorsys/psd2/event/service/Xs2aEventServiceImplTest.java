@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,18 +21,18 @@ import de.adorsys.psd2.event.persist.model.EventPO;
 import de.adorsys.psd2.event.service.mapper.Xs2aEventBOMapper;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aEventServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aEventServiceImplTest {
 
     @InjectMocks
     private Xs2aEventServiceImpl xs2aEventService;
@@ -45,7 +45,7 @@ public class Xs2aEventServiceImplTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void recordEvent() {
+    void recordEvent() {
         EventBO eventBO = jsonReader.getObjectFromFile("json/event-po.json", EventBO.class);
         EventPO eventPO = new EventPO();
         when(mapper.toEventPO(eventBO)).thenReturn(eventPO);

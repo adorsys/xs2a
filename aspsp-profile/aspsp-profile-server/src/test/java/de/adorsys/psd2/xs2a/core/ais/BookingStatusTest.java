@@ -19,18 +19,18 @@ package de.adorsys.psd2.xs2a.core.ais;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BookingStatusTest {
+class BookingStatusTest {
 
     private final Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 
     @Test
-    public void forValue_lowerCase() throws IOException {
+    void forValue_lowerCase() throws IOException {
         //Given
         String bookingStatusJson = "{ \"bookingStatus\": \"booked\" }";
         Container expectedResult = new Container(BookingStatus.BOOKED);
@@ -43,7 +43,7 @@ public class BookingStatusTest {
     }
 
     @Test
-    public void forValue_upperCase() throws IOException {
+    void forValue_upperCase() throws IOException {
         //Given
         String bookingStatusJson = "{ \"bookingStatus\": \"BOOKED\" }";
         Container expectedResult = new Container(BookingStatus.BOOKED);

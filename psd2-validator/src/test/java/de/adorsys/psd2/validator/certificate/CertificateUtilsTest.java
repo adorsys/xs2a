@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,30 +16,29 @@
 
 package de.adorsys.psd2.validator.certificate;
 
+import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+
 import java.security.cert.X509Certificate;
 
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
-import org.junit.Test;
-
-import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
+class CertificateUtilsTest {
 
-public class CertificateUtilsTest {
-	
-	@Test
-	public void test_getRootCertificate() {
-		
-		X509Certificate[] rootCertList = CertificateUtils.getCertificates("rootcert","TCA3.crt");
-		Assert.assertTrue(rootCertList.length >= 1);
-	}
-	
-	@Test
-	public void test_getCertificateByName() {
-		
-		String encodedCert = CertificateUtils.getCertificateByName("certificateValid.crt");
-		Assert.assertTrue(StringUtils.isNotBlank(encodedCert));
-	}
+    @Test
+    void test_getRootCertificate() {
+
+        X509Certificate[] rootCertList = CertificateUtils.getCertificates("rootcert", "TCA3.crt");
+        assertTrue(rootCertList.length >= 1);
+    }
+
+    @Test
+    void test_getCertificateByName() {
+
+        String encodedCert = CertificateUtils.getCertificateByName("certificateValid.crt");
+        assertTrue(StringUtils.isNotBlank(encodedCert));
+    }
 
 }

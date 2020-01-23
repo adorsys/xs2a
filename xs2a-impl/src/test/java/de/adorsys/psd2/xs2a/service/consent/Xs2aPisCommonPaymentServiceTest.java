@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2020 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.CmsScaMethod;
@@ -18,12 +34,12 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,8 +49,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aPisCommonPaymentServiceTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aPisCommonPaymentServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
@@ -63,13 +79,8 @@ public class Xs2aPisCommonPaymentServiceTest {
     @Mock
     private RequestProviderService requestProviderService;
 
-    @Before
-    public void setUp() {
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-    }
-
     @Test
-    public void createCommonPayment_by_request_success() {
+    void createCommonPayment_by_request_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
@@ -82,7 +93,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void createCommonPayment_by_request_failed() {
+    void createCommonPayment_by_request_failed() {
         //Given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(Optional.empty());
@@ -95,7 +106,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void getPisCommonPaymentById_success() {
+    void getPisCommonPaymentById_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(PIS_COMMON_PAYMENT_RESPONSE));
@@ -109,7 +120,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void getPisCommonPaymentById_failed() {
+    void getPisCommonPaymentById_failed() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.empty());
@@ -122,7 +133,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_success() {
+    void isAuthenticationMethodDecoupled_success() {
         //Given
         when(pisAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(true);
@@ -135,7 +146,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_failed() {
+    void isAuthenticationMethodDecoupled_failed() {
         //Given
         when(pisAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(false);
@@ -148,7 +159,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void saveAuthenticationMethods_success() {
+    void saveAuthenticationMethods_success() {
         //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
@@ -163,7 +174,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void saveAuthenticationMethods_failed() {
+    void saveAuthenticationMethods_failed() {
         //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
@@ -178,7 +189,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void updateMultilevelSca() {
+    void updateMultilevelSca() {
         // Given
         when(pisCommonPaymentServiceEncrypted.updateMultilevelSca(PAYMENT_ID, true)).thenReturn(true);
 
@@ -190,7 +201,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void updatePisAuthorisationStatus_success() {
+    void updatePisAuthorisationStatus_success() {
         // Given
         when(pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
             .thenReturn(true);
@@ -203,7 +214,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void updatePisAuthorisationStatus_failure() {
+    void updatePisAuthorisationStatus_failure() {
         // Given
         when(pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
             .thenReturn(false);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,18 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCancellationScaIdentifiedAuthorisationStageTest {
+@ExtendWith(MockitoExtension.class)
+class PisCancellationScaIdentifiedAuthorisationStageTest {
     private final static String DECOUPLED_SERVICE_NAME = PisScaStageAuthorisationFactory.getCancellationServiceName(ScaApproach.EMBEDDED, ScaStatus.RECEIVED);
 
     @InjectMocks
@@ -52,7 +52,7 @@ public class PisCancellationScaIdentifiedAuthorisationStageTest {
     private Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResponse;
 
     @Test
-    public void apply_Success() {
+    void apply_Success() {
         when(pisScaStageAuthorisationFactory.getService(DECOUPLED_SERVICE_NAME))
             .thenReturn(pisCancellationScaReceivedAuthorisationStage);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,18 +30,18 @@ import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentInitiationLinksTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentInitiationLinksTest {
     private static final String HTTP_URL = "http://url";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
@@ -64,8 +64,8 @@ public class PaymentInitiationLinksTest {
     private Links expectedLinks;
     private JsonReader jsonReader;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         jsonReader = new JsonReader();
         expectedLinks = new Links();
 
@@ -83,7 +83,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void transactionRejected() {
+    void transactionRejected() {
         response.setTransactionStatus(TransactionStatus.RJCT);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -92,7 +92,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachEmbeddedAndExplicitMethodAndNotMultiLevelScaRequired() {
+    void scaApproachEmbeddedAndExplicitMethodAndNotMultiLevelScaRequired() {
         response.setMultilevelScaRequired(false);
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.EMBEDDED);
@@ -106,7 +106,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachEmbedded_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
+    void scaApproachEmbedded_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
         response.setMultilevelScaRequired(false);
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.EMBEDDED);
@@ -120,7 +120,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachEmbeddedAndExplicitMethodAndMultiLevelScaRequiredAndPsuDataIsEmpty() {
+    void scaApproachEmbeddedAndExplicitMethodAndMultiLevelScaRequiredAndPsuDataIsEmpty() {
         response.setMultilevelScaRequired(true);
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.EMBEDDED);
@@ -135,7 +135,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachEmbeddedAndExplicitMethodAndMultiLevelScaRequiredAndPsuDataNotEmpty() {
+    void scaApproachEmbeddedAndExplicitMethodAndMultiLevelScaRequiredAndPsuDataNotEmpty() {
         psuIdData = jsonReader.getObjectFromFile("json/link/psu-id-data.json", PsuIdData.class);
         paymentRequestParameters.setPsuData(psuIdData);
 
@@ -152,7 +152,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachEmbeddedAndImplicitMethodAndPsuDataIsEmpty() {
+    void scaApproachEmbeddedAndImplicitMethodAndPsuDataIsEmpty() {
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.EMBEDDED);
 
@@ -166,7 +166,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachEmbeddedAndImplicitMethodAndPsuDataIsNotEmpty() {
+    void scaApproachEmbeddedAndImplicitMethodAndPsuDataIsNotEmpty() {
         psuIdData = jsonReader.getObjectFromFile("json/link/psu-id-data.json", PsuIdData.class);
         paymentRequestParameters.setPsuData(psuIdData);
 
@@ -183,7 +183,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachDecoupledAndExplicitMethodAndNotMultiLevelScaRequired() {
+    void scaApproachDecoupledAndExplicitMethodAndNotMultiLevelScaRequired() {
         response.setMultilevelScaRequired(false);
 
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
@@ -198,7 +198,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproach_Decoupled_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
+    void scaApproach_Decoupled_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
         response.setMultilevelScaRequired(false);
 
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
@@ -212,7 +212,7 @@ public class PaymentInitiationLinksTest {
         assertEquals(expectedLinks, links);
     }
     @Test
-    public void scaApproachDecoupledAndExplicitMethodAndMultiLevelScaRequiredAndPsuDataIsEmpty() {
+    void scaApproachDecoupledAndExplicitMethodAndMultiLevelScaRequiredAndPsuDataIsEmpty() {
         response.setMultilevelScaRequired(true);
 
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
@@ -227,7 +227,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachDecoupledAndExplicitMethodAndMultiLevelScaRequiredAndPsuDataNotEmpty() {
+    void scaApproachDecoupledAndExplicitMethodAndMultiLevelScaRequiredAndPsuDataNotEmpty() {
         psuIdData = jsonReader.getObjectFromFile("json/link/psu-id-data.json", PsuIdData.class);
         paymentRequestParameters.setPsuData(psuIdData);
 
@@ -245,7 +245,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachDecoupledAndImplicitMethodAndPsuDataIsEmpty() {
+    void scaApproachDecoupledAndImplicitMethodAndPsuDataIsEmpty() {
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.DECOUPLED);
 
@@ -259,7 +259,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachDecoupledAndImplicitMethodAndPsuDataIsNotEmpty() {
+    void scaApproachDecoupledAndImplicitMethodAndPsuDataIsNotEmpty() {
         psuIdData = jsonReader.getObjectFromFile("json/link/psu-id-data.json", PsuIdData.class);
         paymentRequestParameters.setPsuData(psuIdData);
 
@@ -276,7 +276,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachOAuth() {
+    void scaApproachOAuth() {
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.OAUTH);
 
@@ -290,7 +290,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachRedirectAndExplicitMethod() {
+    void scaApproachRedirectAndExplicitMethod() {
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.REDIRECT);
 
@@ -303,7 +303,7 @@ public class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachRedirectAndImplicitMethod() {
+    void scaApproachRedirectAndImplicitMethod() {
         when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.REDIRECT);
 

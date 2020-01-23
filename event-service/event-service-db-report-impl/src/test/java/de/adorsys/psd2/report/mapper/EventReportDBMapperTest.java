@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,18 @@ package de.adorsys.psd2.report.mapper;
 import de.adorsys.psd2.event.persist.model.ReportEvent;
 import de.adorsys.psd2.report.entity.EventEntityForReport;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {EventReportDBMapperImpl.class})
-public class EventReportDBMapperTest {
+class EventReportDBMapperTest {
 
     private static final byte[] PAYLOAD = "payload".getBytes();
 
@@ -39,7 +40,7 @@ public class EventReportDBMapperTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToReportEvent_PsuIdIsPresent() {
+    void mapToReportEvent_PsuIdIsPresent() {
         EventEntityForReport event = jsonReader.getObjectFromFile("json/event-entity-report.json", EventEntityForReport.class);
         ReportEvent actualReportEvent = mapper.mapToReportEvent(event);
 
@@ -49,7 +50,7 @@ public class EventReportDBMapperTest {
     }
 
     @Test
-    public void mapToReportEvent_PsuIdIsNotPresentUseEx() {
+    void mapToReportEvent_PsuIdIsNotPresentUseEx() {
         EventEntityForReport event = jsonReader.getObjectFromFile("json/event-entity-report-ex.json", EventEntityForReport.class);
         ReportEvent actualReportEvent = mapper.mapToReportEvent(event);
 
@@ -59,7 +60,7 @@ public class EventReportDBMapperTest {
     }
 
     @Test
-    public void mapToReportEvent_nullValue() {
+    void mapToReportEvent_nullValue() {
         ReportEvent actualReportEvent = mapper.mapToReportEvent(null);
         assertNull(actualReportEvent);
     }

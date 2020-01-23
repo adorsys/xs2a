@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,37 +20,37 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ContentType;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ContentTypeHeaderValidatorImplTest {
+class ContentTypeHeaderValidatorImplTest {
 
     private static final String[] CONTENT_TYPE_HEADER_NAME = {"content-type"};
     private ContentTypeHeaderValidatorImpl validator;
     private MessageError messageError;
     private Map<String, String> headers;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         validator = new ContentTypeHeaderValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400));
         messageError = new MessageError();
         headers = new HashMap<>();
     }
 
     @Test
-    public void validate_success() {
+    void validate_success() {
         headers.put(validator.getHeaderName(), ContentType.JSON.getType());
         validator.validate(headers, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validate_absentHeaderError() {
+    void validate_absentHeaderError() {
         validator.validate(headers, messageError);
 
         assertEquals(MessageErrorCode.FORMAT_ERROR_ABSENT_HEADER, messageError.getTppMessage().getMessageErrorCode());
@@ -58,7 +58,7 @@ public class ContentTypeHeaderValidatorImplTest {
     }
 
     @Test
-    public void validate_nullHeaderError() {
+    void validate_nullHeaderError() {
         headers.put(validator.getHeaderName(), null);
         validator.validate(headers, messageError);
 
@@ -67,7 +67,7 @@ public class ContentTypeHeaderValidatorImplTest {
     }
 
     @Test
-    public void validate_blankHeaderError() {
+    void validate_blankHeaderError() {
         headers.put(validator.getHeaderName(), "");
         validator.validate(headers, messageError);
 

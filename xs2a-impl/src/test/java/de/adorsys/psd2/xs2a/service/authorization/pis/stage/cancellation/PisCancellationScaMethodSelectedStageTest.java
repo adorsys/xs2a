@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,12 +39,12 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePayme
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,9 +55,8 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-
-@RunWith(MockitoJUnitRunner.class)
-public class PisCancellationScaMethodSelectedStageTest {
+@ExtendWith(MockitoExtension.class)
+class PisCancellationScaMethodSelectedStageTest {
     private static final String PAYMENT_ID = "123456789";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
@@ -86,8 +85,8 @@ public class PisCancellationScaMethodSelectedStageTest {
     @Mock
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         ErrorHolder errorHolder = ErrorHolder.builder(PIS_400)
                                       .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                                       .build();
@@ -101,7 +100,7 @@ public class PisCancellationScaMethodSelectedStageTest {
     }
 
     @Test
-    public void apply_paymentCancellationSpi_verifyScaAuthorisationAndCancelPayment_fail() {
+    void apply_paymentCancellationSpi_verifyScaAuthorisationAndCancelPayment_fail() {
         SpiResponse<SpiResponse.VoidResponse> spiErrorMessage = SpiResponse.<SpiResponse.VoidResponse>builder()
                                                                     .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                                     .build();

@@ -20,13 +20,13 @@ import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 import com.tngtech.archunit.lang.syntax.elements.ClassesShouldConjunction;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.repository.CrudRepository;
 
-public class Xs2aCrudRepositoryTest {
+class Xs2aCrudRepositoryTest {
 
     @Test
-    public void checkCrudRepositoryNotUsed() {
+    void checkCrudRepositoryNotUsed() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("de.adorsys.psd2");
 
         ClassesShouldConjunction rule = ArchRuleDefinition.classes()

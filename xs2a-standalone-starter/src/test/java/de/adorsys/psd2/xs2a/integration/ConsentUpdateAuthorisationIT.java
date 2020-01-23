@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,9 @@ import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentBuilder;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,7 +50,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -65,7 +65,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -76,7 +76,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         Xs2aEndpointPathConstant.class,
         Xs2aInterfaceConfig.class
     })
-public class ConsentUpdateAuthorisationIT {
+class ConsentUpdateAuthorisationIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final String PSU_ID_1 = "PSU-1";
@@ -103,13 +103,13 @@ public class ConsentUpdateAuthorisationIT {
     @MockBean
     private AisConsentServiceEncrypted aisConsentService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
     }
 
     @Test
-    public void updateConsentPsuData_failed_psu_authorisation_psu_request_are_different() throws Exception {
+    void updateConsentPsuData_failed_psu_authorisation_psu_request_are_different() throws Exception {
         //When
         ResultActions resultActions = updateConsentPsuDataAndGetResultActions(PSU_ID_1, PSU_ID_2);
 
@@ -120,7 +120,7 @@ public class ConsentUpdateAuthorisationIT {
     }
 
     @Test
-    public void updateConsentPsuData_failed_no_psu_authorisation_no_psu_request() throws Exception {
+    void updateConsentPsuData_failed_no_psu_authorisation_no_psu_request() throws Exception {
         //When
         ResultActions resultActions = updateConsentPsuDataAndGetResultActions(null, null);
 
@@ -136,7 +136,7 @@ public class ConsentUpdateAuthorisationIT {
         ScaApproach scaApproach = ScaApproach.EMBEDDED;
 
         PsuIdData psuIdDataAuthorisation = buildPsuIdDataAuthorisation(psuIdAuthorisation);
-        HttpHeadersIT httpHeaders = buildHttpHeaders(psuIdHeader);
+        HttpHeadersMock httpHeaders = buildHttpHeaders(psuIdHeader);
 
         AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisAccountConsent(CONSENT_PATH, scaApproach, CONSENT_ID, xs2aObjectMapper, new AisAccountConsentAuthorisation(AUTHORISATION_ID, psuIdDataAuthorisation, ScaStatus.RECEIVED));
 
@@ -155,8 +155,8 @@ public class ConsentUpdateAuthorisationIT {
         return mockMvc.perform(requestBuilder);
     }
 
-    private HttpHeadersIT buildHttpHeaders(String psuIdHeader) {
-        HttpHeadersIT httpHeadersBase = HttpHeadersBuilder.buildHttpHeaders();
+    private HttpHeadersMock buildHttpHeaders(String psuIdHeader) {
+        HttpHeadersMock httpHeadersBase = HttpHeadersBuilder.buildHttpHeaders();
         return Optional.ofNullable(psuIdHeader)
                    .map(httpHeadersBase::addPsuIdHeader)
                    .orElse(httpHeadersBase);

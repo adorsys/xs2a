@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,22 +32,22 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class EmbeddedPisScaAuthorisationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class EmbeddedPisScaAuthorisationServiceTest {
     private static final String PAYMENT_ID = "c713a32c-15ff-4f90-afa0-34a500359844";
     private static final String WRONG_PAYMENT_ID = "wrong payment id";
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
@@ -76,7 +76,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     private Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
 
     @Test
-    public void createCommonPaymentAuthorisation_success() {
+    void createCommonPaymentAuthorisation_success() {
         // Given
         when(pisAuthorisationService.createPisAuthorisation(PAYMENT_ID, PSU_ID_DATA))
             .thenReturn(CREATE_PIS_AUTHORISATION_RESPONSE);
@@ -92,7 +92,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void createCommonPaymentAuthorisation_wrongId_fail() {
+    void createCommonPaymentAuthorisation_wrongId_fail() {
         // Given
         when(pisAuthorisationService.createPisAuthorisation(WRONG_PAYMENT_ID, PSU_ID_DATA))
             .thenReturn(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE);
@@ -107,7 +107,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void updateCommonPaymentPsuData_success() {
+    void updateCommonPaymentPsuData_success() {
         // Given
         when(pisAuthorisationService.updatePisAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, ScaApproach.EMBEDDED))
             .thenReturn(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_RESPONSE);
@@ -120,7 +120,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void updateCommonPaymentPsuData_fail() {
+    void updateCommonPaymentPsuData_fail() {
         // Given
         Xs2aUpdatePisCommonPaymentPsuDataResponse errorResponse = buildErrorXs2aUpdatePisCommonPaymentPsuDataResponse();
         when(pisAuthorisationService.updatePisAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, ScaApproach.EMBEDDED))
@@ -134,7 +134,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void createCommonPaymentCancellationAuthorisation_success() {
+    void createCommonPaymentCancellationAuthorisation_success() {
         // Given
         when(pisAuthorisationService.createPisAuthorisationCancellation(PAYMENT_ID, PSU_ID_DATA))
             .thenReturn(CREATE_PIS_AUTHORISATION_RESPONSE);
@@ -150,7 +150,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void createCommonPaymentCancellationAuthorisation_wrongId_fail() {
+    void createCommonPaymentCancellationAuthorisation_wrongId_fail() {
         // Given
         when(pisAuthorisationService.createPisAuthorisationCancellation(WRONG_PAYMENT_ID, PSU_ID_DATA))
             .thenReturn(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE);
@@ -165,7 +165,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getCancellationAuthorisationSubResources_success() {
+    void getCancellationAuthorisationSubResources_success() {
         // Given
         when(pisAuthorisationService.getCancellationAuthorisationSubResources(PAYMENT_ID))
             .thenReturn(Optional.of(STRING_LIST));
@@ -179,7 +179,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getCancellationAuthorisationSubResources_wrongPaymentId_fail() {
+    void getCancellationAuthorisationSubResources_wrongPaymentId_fail() {
         // Given
         when(pisAuthorisationService.getCancellationAuthorisationSubResources(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
@@ -192,7 +192,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void updateCommonPaymentCancellationPsuData_success() {
+    void updateCommonPaymentCancellationPsuData_success() {
         // Given
         when(pisAuthorisationService.updatePisCancellationAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, ScaApproach.EMBEDDED))
             .thenReturn(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_RESPONSE);
@@ -204,7 +204,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void updateCommonPaymentCancellationPsuData_fail() {
+    void updateCommonPaymentCancellationPsuData_fail() {
         // Given
         Xs2aUpdatePisCommonPaymentPsuDataResponse errorResponse = buildErrorXs2aUpdatePisCommonPaymentPsuDataResponse();
         when(pisAuthorisationService.updatePisCancellationAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, ScaApproach.EMBEDDED))
@@ -217,7 +217,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getAuthorisationSubResources_success() {
+    void getAuthorisationSubResources_success() {
         // Given
         when(pisAuthorisationService.getAuthorisationSubResources(PAYMENT_ID))
             .thenReturn(Optional.of(STRING_LIST));
@@ -231,7 +231,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getAuthorisationSubResources_wrongPaymentId_fail() {
+    void getAuthorisationSubResources_wrongPaymentId_fail() {
         // Given
         when(pisAuthorisationService.getAuthorisationSubResources(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
@@ -244,7 +244,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_success() {
+    void getAuthorisationScaStatus_success() {
         // Given
         when(pisAuthorisationService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(ScaStatus.RECEIVED));
@@ -258,7 +258,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_wrongIds_failure() {
+    void getAuthorisationScaStatus_wrongIds_failure() {
         // Given
         when(pisAuthorisationService.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
@@ -271,7 +271,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getCancellationAuthorisationScaStatus_success() {
+    void getCancellationAuthorisationScaStatus_success() {
         // Given
         when(pisAuthorisationService.getCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
@@ -285,7 +285,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getCancellationAuthorisationScaStatus_wrongIds_failure() {
+    void getCancellationAuthorisationScaStatus_wrongIds_failure() {
         // Given
         when(pisAuthorisationService.getCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_CANCELLATION_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
@@ -298,7 +298,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getScaApproachServiceType_success() {
+    void getScaApproachServiceType_success() {
         //When
         ScaApproach actualResponse = embeddedPisScaAuthorisationService.getScaApproachServiceType();
 

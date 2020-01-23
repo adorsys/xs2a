@@ -35,14 +35,14 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.collections4.CollectionUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -50,11 +50,11 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsPsuPisMapperTest {
+@ExtendWith(MockitoExtension.class)
+class CmsPsuPisMapperTest {
     private static final String PAYMENT_PRODUCT = "PAYMENT_PRODUCT";
     private static final String PAYMENT_ID = "PAYMENT_ID";
     private static final PaymentType PAYMENT_TYPE_SINGLE = PaymentType.SINGLE;
@@ -65,8 +65,6 @@ public class CmsPsuPisMapperTest {
     private static final String TPP_AUTHORISATION_NUMBER = "TPP_AUTHORISATION_NUMBER";
     private static final String TPP_AUTHORITY_ID = "TPP_AUTHORITY_ID";
     private static final List<TppRole> TPP_ROLES = buildTppRoles();
-    private static final String REDIRECT_URI = "REDIRECT_URI";
-    private static final String NOK_REDIRECT_URI = "NOK_REDIRECT_URI";
     private static final TppInfoEntity TPP_INFO_ENTITY = buildTppInfoEntity();
     private static final TppInfo TPP_INFO = buildTppInfo();
     private static final String PSU_ID = "PSU_ID";
@@ -133,20 +131,14 @@ public class CmsPsuPisMapperTest {
     @Spy
     private CmsRemittanceMapper cmsRemittanceMapper = Mappers.getMapper(CmsRemittanceMapper.class);
 
-    @Before
-    public void setUp() {
-        when(tppInfoMapper.mapToTppInfo(TPP_INFO_ENTITY))
-            .thenReturn(TPP_INFO);
-
-        when(psuDataMapper.mapToPsuIdDataList(PSU_DATA_LIST))
-            .thenReturn(PSU_ID_DATA_LIST);
-
-        when(pisCommonPaymentMapper.mapToCmsAddress(CREDITOR_ADDRESS))
-            .thenReturn(CREDITOR_CMS_ADDRESS);
+    @BeforeEach
+    void setUp() {
+        when(tppInfoMapper.mapToTppInfo(TPP_INFO_ENTITY)).thenReturn(TPP_INFO);
+        when(psuDataMapper.mapToPsuIdDataList(PSU_DATA_LIST)).thenReturn(PSU_ID_DATA_LIST);
     }
 
     @Test
-    public void mapToCmsPayment_paymentData_Success() {
+    void mapToCmsPayment_paymentData_Success() {
         CmsPayment cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_COMMON_PAYMENT_DATA_SINGLE);
 
         assertNotNull(cmsPayment);
@@ -160,7 +152,9 @@ public class CmsPsuPisMapperTest {
     }
 
     @Test
-    public void mapToCmsPayment_pisPaymentDataList_single_Success() {
+    void mapToCmsPayment_pisPaymentDataList_single_Success() {
+        when(pisCommonPaymentMapper.mapToCmsAddress(CREDITOR_ADDRESS)).thenReturn(CREDITOR_CMS_ADDRESS);
+
         CmsPayment cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_SINGLE_LIST);
 
         assertNotNull(cmsPayment);
@@ -195,7 +189,9 @@ public class CmsPsuPisMapperTest {
     }
 
     @Test
-    public void mapToCmsPayment_pisPaymentDataList_periodic_Success() {
+    void mapToCmsPayment_pisPaymentDataList_periodic_Success() {
+        when(pisCommonPaymentMapper.mapToCmsAddress(CREDITOR_ADDRESS)).thenReturn(CREDITOR_CMS_ADDRESS);
+
         CmsPayment cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_PERIODIC_LIST);
 
         assertNotNull(cmsPayment);
@@ -230,7 +226,9 @@ public class CmsPsuPisMapperTest {
     }
 
     @Test
-    public void mapToCmsPayment_pisPaymentDataList_bulk_Success() {
+    void mapToCmsPayment_pisPaymentDataList_bulk_Success() {
+        when(pisCommonPaymentMapper.mapToCmsAddress(CREDITOR_ADDRESS)).thenReturn(CREDITOR_CMS_ADDRESS);
+
         CmsPayment cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_BULK_LIST);
 
         assertNotNull(cmsPayment);

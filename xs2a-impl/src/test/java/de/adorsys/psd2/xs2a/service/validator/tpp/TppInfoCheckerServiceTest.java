@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,18 @@ package de.adorsys.psd2.xs2a.service.validator.tpp;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.TppService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TppInfoCheckerServiceTest {
+@ExtendWith(MockitoExtension.class)
+class TppInfoCheckerServiceTest {
     private static final String AUTHORISATION_NUMBER = "authorisation number";
     private static final String DIFFERENT_AUTHORISATION_NUMBER = "different authorisation number";
 
@@ -40,7 +40,7 @@ public class TppInfoCheckerServiceTest {
     private TppInfoCheckerService tppInfoCheckerService;
 
     @Test
-    public void differsFromTppInRequest_withDifferentTppInRequest_shouldReturnTrue() {
+    void differsFromTppInRequest_withDifferentTppInRequest_shouldReturnTrue() {
         // Given
         TppInfo tppInfoInRequest = buildTppInfo(AUTHORISATION_NUMBER);
         when(tppService.getTppInfo()).thenReturn(tppInfoInRequest);
@@ -55,7 +55,7 @@ public class TppInfoCheckerServiceTest {
     }
 
     @Test
-    public void differsFromTppInRequest_withNullValuesInRequest_shouldReturnTrue() {
+    void differsFromTppInRequest_withNullValuesInRequest_shouldReturnTrue() {
         // Given
         TppInfo tppInfoInRequest = buildTppInfo(null);
         when(tppService.getTppInfo()).thenReturn(tppInfoInRequest);
@@ -70,7 +70,7 @@ public class TppInfoCheckerServiceTest {
     }
 
     @Test
-    public void differsFromTppInRequest_withSameTppInRequest_shouldReturnFalse() {
+    void differsFromTppInRequest_withSameTppInRequest_shouldReturnFalse() {
         // Given
         TppInfo tppInfo = buildTppInfo(AUTHORISATION_NUMBER);
         when(tppService.getTppInfo()).thenReturn(tppInfo);
@@ -83,7 +83,7 @@ public class TppInfoCheckerServiceTest {
     }
 
     @Test
-    public void differsFromTppInRequest_withNullTppInfo_shouldReturnTrue() {
+    void differsFromTppInRequest_withNullTppInfo_shouldReturnTrue() {
         // Given
 
         // When
@@ -94,7 +94,7 @@ public class TppInfoCheckerServiceTest {
     }
 
     @Test
-    public void differsFromTppInRequest_withNullTppAuthorisationNumber_shouldReturnTrue() {
+    void differsFromTppInRequest_withNullTppAuthorisationNumber_shouldReturnTrue() {
         // Given
         TppInfo tppInfo = buildTppInfo(null);
 

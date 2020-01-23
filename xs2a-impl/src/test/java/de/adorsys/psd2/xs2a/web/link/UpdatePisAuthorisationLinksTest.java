@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,19 +25,19 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UpdatePisAuthorisationLinksTest {
+@ExtendWith(MockitoExtension.class)
+class UpdatePisAuthorisationLinksTest {
     private static final String HTTP_URL = "http://url";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
@@ -53,8 +53,8 @@ public class UpdatePisAuthorisationLinksTest {
 
     private Links expectedLinks;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         expectedLinks = new Links();
 
         JsonReader jsonReader = new JsonReader();
@@ -66,7 +66,7 @@ public class UpdatePisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodAuthenticated() {
+    void isScaStatusMethodAuthenticated() {
         response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
         links = new UpdatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, response, request);
 
@@ -76,7 +76,7 @@ public class UpdatePisAuthorisationLinksTest {
     }
 
     @Test
-    public void isAnotherScaStatus_failed() {
+    void isAnotherScaStatus_failed() {
         response.setScaStatus(ScaStatus.FAILED);
         links = new UpdatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, response, request);
 
@@ -85,7 +85,7 @@ public class UpdatePisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodSelectedAndEmbedded() {
+    void isScaStatusMethodSelectedAndEmbedded() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
 
         response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
@@ -98,7 +98,7 @@ public class UpdatePisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusFinalised() {
+    void isScaStatusFinalised() {
         response.setScaStatus(ScaStatus.FINALISED);
         links = new UpdatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, response, request);
 
@@ -107,7 +107,7 @@ public class UpdatePisAuthorisationLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodIdentified() {
+    void isScaStatusMethodIdentified() {
         response.setScaStatus(ScaStatus.PSUIDENTIFIED);
         links = new UpdatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, response, request);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,25 +21,25 @@ import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.event.persist.model.EventPO;
 import de.adorsys.psd2.event.persist.model.ReportEvent;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 @ContextConfiguration(classes = TestDBConfiguration.class)
-public class EventReportRepositoryImplIT {
+class EventReportRepositoryImplIT {
     private static final String INSTANCE_ID = "3de76f19-1df7-44d8-b760-ca972d2f945c";
     private static final String CONSENT_ID = "fa6e687b-1ac9-4b1a-9c74-357c35c82ba1";
     private static final String PAYMENT_ID = "j-t4XyLJTzQkonfSTnyxIMc";
@@ -53,8 +53,8 @@ public class EventReportRepositoryImplIT {
     private OffsetDateTime start;
     private OffsetDateTime end;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         eventPO = jsonReader.getObjectFromFile("json/event.json", EventPO.class);
         eventPO.setTimestamp(CREATED_DATETIME);
         eventPO.setPayload(PAYLOAD);
@@ -64,8 +64,8 @@ public class EventReportRepositoryImplIT {
     }
 
     @Test
-    @Ignore
-    public void getEventsForPeriod() {
+    @Disabled
+    void getEventsForPeriod() {
         List<ReportEvent> eventsForPeriod = repository.getEventsForPeriod(start, end, INSTANCE_ID);
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
@@ -73,8 +73,8 @@ public class EventReportRepositoryImplIT {
     }
 
     @Test
-    @Ignore
-    public void getEventsForPeriodAndConsentId() {
+    @Disabled
+    void getEventsForPeriodAndConsentId() {
         List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndConsentId(start, end, CONSENT_ID, INSTANCE_ID);
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
@@ -82,8 +82,8 @@ public class EventReportRepositoryImplIT {
     }
 
     @Test
-    @Ignore
-    public void getEventsForPeriodAndPaymentId() {
+    @Disabled
+    void getEventsForPeriodAndPaymentId() {
         List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndPaymentId(start, end, PAYMENT_ID, INSTANCE_ID);
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
@@ -91,8 +91,8 @@ public class EventReportRepositoryImplIT {
     }
 
     @Test
-    @Ignore
-    public void getEventsForPeriodAndEventOrigin() {
+    @Disabled
+    void getEventsForPeriodAndEventOrigin() {
         List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndEventOrigin(start, end, EventOrigin.TPP, INSTANCE_ID);
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
@@ -100,8 +100,8 @@ public class EventReportRepositoryImplIT {
     }
 
     @Test
-    @Ignore
-    public void getEventsForPeriodAndEventType() {
+    @Disabled
+    void getEventsForPeriodAndEventType() {
         List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndEventType(start, end, EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, INSTANCE_ID);
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());

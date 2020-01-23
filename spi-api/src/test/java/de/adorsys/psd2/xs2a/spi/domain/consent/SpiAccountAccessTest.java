@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,20 @@ package de.adorsys.psd2.xs2a.spi.domain.consent;
 
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SpiAccountAccessTest {
+class SpiAccountAccessTest {
 
     @Test
-    public void isEmpty() {
+    void isEmpty() {
         //given:
         List<SpiAccountAccess> listOfAccesses = Arrays.asList(
             new SpiAccountAccess(null, null, null, null, null, null),              //all fields are null
@@ -40,11 +41,11 @@ public class SpiAccountAccessTest {
         );
         //then:
         listOfAccesses
-            .forEach(a -> assertThat(a.isEmpty()).isTrue());
+            .forEach(a -> assertTrue(a.isEmpty()));
     }
 
     @Test
-    public void isEmpty_NotEmpty_Access() {
+    void isEmpty_NotEmpty_Access() {
         //given:
         List<SpiAccountAccess> listOfAccesses = Arrays.asList(
             new SpiAccountAccess(Collections.singletonList(getReference()), null, null, null, null, null),    //accounts are present
@@ -56,7 +57,7 @@ public class SpiAccountAccessTest {
         );
         //then:
         listOfAccesses
-            .forEach(a -> assertThat(a.isEmpty()).isFalse());
+            .forEach(a -> assertFalse(a.isEmpty()));
     }
 
     private SpiAccountReference getReference() {

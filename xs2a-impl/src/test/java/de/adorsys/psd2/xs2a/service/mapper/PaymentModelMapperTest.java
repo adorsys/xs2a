@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,14 +32,13 @@ import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapper;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -50,8 +49,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentModelMapperTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentModelMapperTest {
 
     private static final boolean BATCH_BOOKING_PREFERRED = true;
     private static final String END_TO_END_IDENTIFICATION = "123456789";
@@ -100,15 +99,12 @@ public class PaymentModelMapperTest {
     @Spy
     RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
 
-    @Before
-    public void setUp() {
-        when(amountModelMapper.mapToAmount(buildXs2aAmount())).thenReturn(getAmount12(true, true));
-        when(standardPaymentProductsResolver.isRawPaymentProduct(STANDARD_PAYMENT_TYPE)).thenReturn(false);
-        when(standardPaymentProductsResolver.isRawPaymentProduct(NON_STANDARD_PAYMENT_TYPE)).thenReturn(true);
-    }
-
     @Test
-    public void mapToGetPaymentResponse12_Single_success() {
+    void mapToGetPaymentResponse12_Single_success() {
+        // Given
+        when(standardPaymentProductsResolver.isRawPaymentProduct(STANDARD_PAYMENT_TYPE)).thenReturn(false);
+        when(amountModelMapper.mapToAmount(buildXs2aAmount())).thenReturn(getAmount12(true, true));
+
         //When
         PaymentInitiationWithStatusResponse result = (PaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse(buildSinglePayment(TransactionStatus.RCVD), SINGLE, STANDARD_PAYMENT_TYPE);
 
@@ -131,7 +127,11 @@ public class PaymentModelMapperTest {
     }
 
     @Test
-    public void mapToGetPaymentResponse12_Periodic_success() {
+    void mapToGetPaymentResponse12_Periodic_success() {
+        // Given
+        when(standardPaymentProductsResolver.isRawPaymentProduct(STANDARD_PAYMENT_TYPE)).thenReturn(false);
+        when(amountModelMapper.mapToAmount(buildXs2aAmount())).thenReturn(getAmount12(true, true));
+
         //When
         PeriodicPaymentInitiationWithStatusResponse result = (PeriodicPaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse(buildPeriodicPayment(TransactionStatus.RCVD), PERIODIC, STANDARD_PAYMENT_TYPE);
 
@@ -159,7 +159,11 @@ public class PaymentModelMapperTest {
     }
 
     @Test
-    public void mapToGetPaymentResponse12_Bulk_success() {
+    void mapToGetPaymentResponse12_Bulk_success() {
+        // Given
+        when(standardPaymentProductsResolver.isRawPaymentProduct(STANDARD_PAYMENT_TYPE)).thenReturn(false);
+        when(amountModelMapper.mapToAmount(buildXs2aAmount())).thenReturn(getAmount12(true, true));
+
         //When
         BulkPaymentInitiationWithStatusResponse result = (BulkPaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse(buildBulkPayment(TransactionStatus.RCVD), BULK, STANDARD_PAYMENT_TYPE);
 
@@ -187,7 +191,10 @@ public class PaymentModelMapperTest {
     }
 
     @Test
-    public void mapToGetPaymentResponse12_NonStandardFormat_success() {
+    void mapToGetPaymentResponse12_NonStandardFormat_success() {
+        // Given
+        when(standardPaymentProductsResolver.isRawPaymentProduct(NON_STANDARD_PAYMENT_TYPE)).thenReturn(true);
+
         //When
         String result = (String) paymentModelMapperPsd2.mapToGetPaymentResponse(buildNonStandardPayment(), any(), NON_STANDARD_PAYMENT_TYPE);
 

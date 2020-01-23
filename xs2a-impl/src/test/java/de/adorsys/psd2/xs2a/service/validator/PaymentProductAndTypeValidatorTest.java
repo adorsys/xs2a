@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,22 +20,22 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PARAMETER_NOT_SUPPORTED_WRONG_PAYMENT_TYPE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentProductAndTypeValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentProductAndTypeValidatorTest {
 
     private static final String CORRECT_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String WRONG_PAYMENT_PRODUCT = "sepa-credit-transfers111";
@@ -47,14 +47,14 @@ public class PaymentProductAndTypeValidatorTest {
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         Map<PaymentType, Set<String>> matrix = getSupportedPaymentTypeAndProductMatrix();
         when(aspspProfileService.getSupportedPaymentTypeAndProductMatrix()).thenReturn(matrix);
     }
 
     @Test
-    public void validatePaymentInitiationParams_correct() {
+    void validatePaymentInitiationParams_correct() {
         //When:
         ValidationResult actual = paymentProductAndTypeValidator.validateTypeAndProduct(PaymentType.SINGLE, CORRECT_PAYMENT_PRODUCT);
 
@@ -63,7 +63,7 @@ public class PaymentProductAndTypeValidatorTest {
     }
 
     @Test
-    public void validatePaymentInitiationParams_wrongProduct() {
+    void validatePaymentInitiationParams_wrongProduct() {
         //When:
         ValidationResult actual = paymentProductAndTypeValidator.validateTypeAndProduct(PaymentType.SINGLE, WRONG_PAYMENT_PRODUCT);
 
@@ -74,7 +74,7 @@ public class PaymentProductAndTypeValidatorTest {
     }
 
     @Test
-    public void validatePaymentInitiationParams_unsupportedType() {
+    void validatePaymentInitiationParams_unsupportedType() {
         //When:
         ValidationResult actual = paymentProductAndTypeValidator.validateTypeAndProduct(UNSUPPORTED_PAYMENT_TYPE, CORRECT_PAYMENT_PRODUCT);
 

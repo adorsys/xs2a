@@ -27,12 +27,12 @@ import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -44,12 +44,12 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspPisExportServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspPisExportServiceInternalTest {
     private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
     private static final String WRONG_TPP_AUTHORISATION_NUMBER = "wrong authorisation number";
     private static final LocalDate CREATION_DATE_FROM = LocalDate.of(2019, 1, 1);
@@ -76,17 +76,14 @@ public class CmsAspspPisExportServiceInternalTest {
     @Mock
     private CmsPsuPisMapper cmsPsuPisMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         psuIdData = buildPsuIdData(PSU_ID);
         wrongPsuIdData = buildPsuIdData(WRONG_PSU_ID);
-
-        when(cmsPsuPisMapper.mapPaymentDataToCmsPayments(Collections.singletonList(buildPisCommonPaymentData())))
-            .thenReturn(Collections.singletonList(buildCmsPayment()));
     }
 
     @Test
-    public void exportPaymentsByTpp_success() {
+    void exportPaymentsByTpp_success() {
         // Given
         when(pisCommonPaymentDataSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER,
             CREATION_DATE_FROM,
@@ -97,6 +94,8 @@ public class CmsAspspPisExportServiceInternalTest {
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
         CmsPayment expectedPayment = buildCmsPayment();
+        when(cmsPsuPisMapper.mapPaymentDataToCmsPayments(Collections.singletonList(buildPisCommonPaymentData())))
+            .thenReturn(Collections.singletonList(buildCmsPayment()));
 
         // When
         Collection<CmsPayment> payments =
@@ -112,7 +111,7 @@ public class CmsAspspPisExportServiceInternalTest {
     }
 
     @Test
-    public void exportPaymentsByTpp_failure_wrongTppAuthorisationNumber() {
+    void exportPaymentsByTpp_failure_wrongTppAuthorisationNumber() {
         // Given
 
         // When
@@ -128,7 +127,7 @@ public class CmsAspspPisExportServiceInternalTest {
     }
 
     @Test
-    public void exportPaymentsByTpp_failure_nullTppAuthorisationNumber() {
+    void exportPaymentsByTpp_failure_nullTppAuthorisationNumber() {
         // Given
 
         // When
@@ -144,7 +143,7 @@ public class CmsAspspPisExportServiceInternalTest {
     }
 
     @Test
-    public void exportPaymentsByPsu_success() {
+    void exportPaymentsByPsu_success() {
         // Given
         when(pisCommonPaymentDataSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
             CREATION_DATE_FROM,
@@ -154,6 +153,8 @@ public class CmsAspspPisExportServiceInternalTest {
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
         CmsPayment expectedPayment = buildCmsPayment();
+        when(cmsPsuPisMapper.mapPaymentDataToCmsPayments(Collections.singletonList(buildPisCommonPaymentData())))
+            .thenReturn(Collections.singletonList(buildCmsPayment()));
 
         // When
         Collection<CmsPayment> payments =
@@ -169,7 +170,7 @@ public class CmsAspspPisExportServiceInternalTest {
     }
 
     @Test
-    public void exportPaymentsByPsu_failure_wrongPsuIdData() {
+    void exportPaymentsByPsu_failure_wrongPsuIdData() {
         // Given
 
         // When
@@ -185,7 +186,7 @@ public class CmsAspspPisExportServiceInternalTest {
     }
 
     @Test
-    public void exportPaymentsByPsu_failure_nullPsuIdData() {
+    void exportPaymentsByPsu_failure_nullPsuIdData() {
         // When
         Collection<CmsPayment> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(null, CREATION_DATE_FROM,
@@ -198,7 +199,7 @@ public class CmsAspspPisExportServiceInternalTest {
     }
 
     @Test
-    public void exportPaymentsByPsu_failure_emptyPsuIdData() {
+    void exportPaymentsByPsu_failure_emptyPsuIdData() {
         // Given
         PsuIdData emptyPsuIdData = buildEmptyPsuIdData();
 
@@ -214,7 +215,7 @@ public class CmsAspspPisExportServiceInternalTest {
     }
 
     @Test
-    public void exportPaymentsByAccountId_success() {
+    void exportPaymentsByAccountId_success() {
         // Given
         when(pisCommonPaymentDataSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
             CREATION_DATE_FROM,
@@ -224,6 +225,8 @@ public class CmsAspspPisExportServiceInternalTest {
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
         CmsPayment expectedPayment = buildCmsPayment();
+        when(cmsPsuPisMapper.mapPaymentDataToCmsPayments(Collections.singletonList(buildPisCommonPaymentData())))
+            .thenReturn(Collections.singletonList(buildCmsPayment()));
 
         // When
         Collection<CmsPayment> payments =
@@ -239,7 +242,7 @@ public class CmsAspspPisExportServiceInternalTest {
     }
 
     @Test
-    public void exportPaymentsByAccountId_failure_wrongAspspAccountId() {
+    void exportPaymentsByAccountId_failure_wrongAspspAccountId() {
         // Given
 
         // When
@@ -255,7 +258,7 @@ public class CmsAspspPisExportServiceInternalTest {
     }
 
     @Test
-    public void exportPaymentsByAccountId_failure_blankAspspAccountId() {
+    void exportPaymentsByAccountId_failure_blankAspspAccountId() {
         // When
         Collection<CmsPayment> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(" ", CREATION_DATE_FROM,

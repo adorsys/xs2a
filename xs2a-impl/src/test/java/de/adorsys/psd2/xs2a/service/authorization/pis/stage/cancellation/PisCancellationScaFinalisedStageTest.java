@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,17 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage.cancellation;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.FINALISED;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCancellationScaFinalisedStageTest {
+@ExtendWith(MockitoExtension.class)
+class PisCancellationScaFinalisedStageTest {
     @InjectMocks
     private PisCancellationScaFinalisedStage pisScaFinalisedStage;
 
@@ -39,7 +39,7 @@ public class PisCancellationScaFinalisedStageTest {
     private GetPisAuthorisationResponse response;
 
     @Test
-    public void apply_Success() {
+    void apply_Success() {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaFinalisedStage.apply(request, response);
 
         assertThat(actualResponse).isNotNull();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@ package de.adorsys.psd2.event.persist.mapper;
 import de.adorsys.psd2.event.persist.entity.EventEntity;
 import de.adorsys.psd2.event.persist.model.EventPO;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {EventDBMapperImpl.class})
-public class EventDBMapperTest {
+class EventDBMapperTest {
     private static final byte[] PAYLOAD = "payload".getBytes();
 
     @Autowired
@@ -39,7 +39,7 @@ public class EventDBMapperTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void toEventEntity() {
+    void toEventEntity() {
         EventPO eventPO = jsonReader.getObjectFromFile("json/event.json", EventPO.class);
         eventPO.setPayload(PAYLOAD);
 
@@ -51,7 +51,7 @@ public class EventDBMapperTest {
     }
 
     @Test
-    public void toEventEntity_instanceIdNotSet() {
+    void toEventEntity_instanceIdNotSet() {
         EventPO eventPO = jsonReader.getObjectFromFile("json/event.json", EventPO.class);
         eventPO.setPayload(PAYLOAD);
         eventPO.setInstanceId(null);
@@ -65,7 +65,7 @@ public class EventDBMapperTest {
     }
 
     @Test
-    public void toEventEntity_nullValue() {
+    void toEventEntity_nullValue() {
         EventEntity actualEventEntity = mapper.toEventEntity(null);
         assertNull(actualEventEntity);
     }

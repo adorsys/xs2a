@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,15 +35,15 @@ import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.collections4.CollectionUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class BulkPaymentTypeValidatorImplTest {
+class BulkPaymentTypeValidatorImplTest {
 
     private static final String VALUE_36_LENGHT = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJK";
     private static final String VALUE_71_LENGHT = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJKQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJ";
@@ -54,8 +54,8 @@ public class BulkPaymentTypeValidatorImplTest {
     private BulkPayment bulkPayment;
     private SinglePayment singlePayment;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         JsonReader jsonReader = new JsonReader();
         messageError = new MessageError();
         bulkPayment = jsonReader.getObjectFromFile("json/validation/bulk-payment.json", BulkPayment.class);
@@ -79,18 +79,18 @@ public class BulkPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void getPaymentType() {
+    void getPaymentType() {
         assertEquals(PaymentType.BULK, validator.getPaymentType());
     }
 
     @Test
-    public void doValidation_success() {
+    void doValidation_success() {
         validator.doBulkValidation(bulkPayment, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void doValidation_endToEndIdentification_tooLong_error() {
+    void doValidation_endToEndIdentification_tooLong_error() {
         singlePayment.setEndToEndIdentification(VALUE_36_LENGHT);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -100,7 +100,7 @@ public class BulkPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructionIdentification_tooLong_error() {
+    void doValidation_instructionIdentification_tooLong_error() {
         singlePayment.setInstructionIdentification(VALUE_36_LENGHT);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -109,7 +109,7 @@ public class BulkPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_singleDebtorAccount_null_error() {
+    void doValidation_singleDebtorAccount_null_error() {
         singlePayment.setDebtorAccount(null);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -118,7 +118,7 @@ public class BulkPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructedAmount_null_error() {
+    void doValidation_instructedAmount_null_error() {
         singlePayment.setInstructedAmount(null);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -127,7 +127,7 @@ public class BulkPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructedAmount_currency_null_error() {
+    void doValidation_instructedAmount_currency_null_error() {
         Xs2aAmount instructedAmount = singlePayment.getInstructedAmount();
         instructedAmount.setCurrency(null);
 
@@ -137,7 +137,7 @@ public class BulkPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructedAmount_amount_null_error() {
+    void doValidation_instructedAmount_amount_null_error() {
         Xs2aAmount instructedAmount = singlePayment.getInstructedAmount();
         instructedAmount.setAmount(null);
 
@@ -147,7 +147,7 @@ public class BulkPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructedAmount_amount_wrong_format_error() {
+    void doValidation_instructedAmount_amount_wrong_format_error() {
         Xs2aAmount instructedAmount = singlePayment.getInstructedAmount();
         instructedAmount.setAmount(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
@@ -157,7 +157,7 @@ public class BulkPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_creditorAccount_null_error() {
+    void doValidation_creditorAccount_null_error() {
         singlePayment.setCreditorAccount(null);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -166,7 +166,7 @@ public class BulkPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_creditorName_null_error() {
+    void doValidation_creditorName_null_error() {
         singlePayment.setCreditorName(null);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -175,7 +175,7 @@ public class BulkPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_creditorName_tooLong_error() {
+    void doValidation_creditorName_tooLong_error() {
         singlePayment.setCreditorName(VALUE_71_LENGHT);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -184,7 +184,7 @@ public class BulkPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_requestedExecutionDate_error() {
+    void doValidation_requestedExecutionDate_error() {
         singlePayment.setRequestedExecutionDate(LocalDate.now().minusDays(1));
 
         validator.doSingleValidation(singlePayment, messageError);

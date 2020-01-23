@@ -39,23 +39,23 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisAuthorisationServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class AisAuthorisationServiceInternalTest {
     private static final long CONSENT_ID = 1;
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
@@ -98,15 +98,15 @@ public class AisAuthorisationServiceInternalTest {
     @Mock
     private ScaMethodMapper scaMethodMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         aisConsentAuthorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, ScaStatus.RECEIVED);
         aisConsentAuthorisationList.add(aisConsentAuthorisation);
         aisConsent = buildConsent(EXTERNAL_CONSENT_ID);
     }
 
     @Test
-    public void getAuthorisationScaStatus_success() {
+    void getAuthorisationScaStatus_success() {
         List<AisConsentAuthorization> authorisations = Collections.singletonList(buildAisConsentAuthorisation(AUTHORISATION_ID, SCA_STATUS));
         AisConsent consent = buildConsentWithAuthorisations(EXTERNAL_CONSENT_ID, authorisations);
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
@@ -121,7 +121,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_failure_wrongConsentId() {
+    void getAuthorisationScaStatus_failure_wrongConsentId() {
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST))
             .thenReturn(Optional.empty());
 
@@ -133,7 +133,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_failure_wrongAuthorisationId() {
+    void getAuthorisationScaStatus_failure_wrongAuthorisationId() {
         List<AisConsentAuthorization> authorisations = Collections.singletonList(buildAisConsentAuthorisation(WRONG_AUTHORISATION_ID, SCA_STATUS));
         AisConsent consent = buildConsentWithAuthorisations(EXTERNAL_CONSENT_ID, authorisations);
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
@@ -147,7 +147,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationScaApproach_success() {
+    void getAuthorisationScaApproach_success() {
         //Given
         AisConsentAuthorization aisConsentAuthorization = new AisConsentAuthorization();
         aisConsentAuthorization.setScaApproach(SCA_APPROACH);
@@ -163,7 +163,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void getAuthorisationScaApproach_failure_wrongAuthorisationId() {
+    void getAuthorisationScaApproach_failure_wrongAuthorisationId() {
         //Given
         when(aisConsentAuthorisationRepository.findByExternalId(WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
@@ -176,7 +176,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void createAuthorizationWithClosingPreviousAuthorisations_success() {
+    void createAuthorizationWithClosingPreviousAuthorisations_success() {
         //Given
         ArgumentCaptor<AisConsentAuthorization> argument = ArgumentCaptor.forClass(AisConsentAuthorization.class);
         //noinspection unchecked
@@ -216,7 +216,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void createAuthorizationWithClosingPreviousAuthorisationsTppRedirectLinksFromAuthorisationTemplate_success() {
+    void createAuthorizationWithClosingPreviousAuthorisationsTppRedirectLinksFromAuthorisationTemplate_success() {
         //Given
         AuthorisationTemplateEntity authorisationTemplateEntity = buildAuthorisationTemplateEntity();
         AisConsent aisConsent = buildConsent(EXTERNAL_CONSENT_ID, authorisationTemplateEntity);
@@ -257,7 +257,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_success_decoupled() {
+    void isAuthenticationMethodDecoupled_success_decoupled() {
         // Given
         List<ScaMethod> methods = Collections.singletonList(buildScaMethod(true));
         when(aisConsentAuthorisationRepository.findByExternalId(AUTHORISATION_ID))
@@ -271,7 +271,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_success_notDecoupled() {
+    void isAuthenticationMethodDecoupled_success_notDecoupled() {
         // Given
         List<ScaMethod> methods = Collections.singletonList(buildScaMethod(false));
         when(aisConsentAuthorisationRepository.findByExternalId(AUTHORISATION_ID))
@@ -285,7 +285,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_failure_wrongMethodId() {
+    void isAuthenticationMethodDecoupled_failure_wrongMethodId() {
         // Given
         List<ScaMethod> methods = Collections.singletonList(buildScaMethod(true));
         when(aisConsentAuthorisationRepository.findByExternalId(AUTHORISATION_ID))
@@ -299,7 +299,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_failure_wrongAuthorisationId() {
+    void isAuthenticationMethodDecoupled_failure_wrongAuthorisationId() {
         // Given
         when(aisConsentAuthorisationRepository.findByExternalId(WRONG_AUTHORISATION_ID)).thenReturn(Optional.empty());
 
@@ -311,7 +311,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_failure_noMethodsPresent() {
+    void isAuthenticationMethodDecoupled_failure_noMethodsPresent() {
         // Given
         when(aisConsentAuthorisationRepository.findByExternalId(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAisConsentAuthorisationWithMethods(Collections.emptyList())));
@@ -324,7 +324,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void saveAuthenticationMethods_success() {
+    void saveAuthenticationMethods_success() {
         // Given
         List<CmsScaMethod> cmsScaMethods = Collections.singletonList(buildCmsScaMethod(true));
         List<ScaMethod> scaMethods = Collections.singletonList(buildScaMethod(true));
@@ -344,7 +344,7 @@ public class AisAuthorisationServiceInternalTest {
     }
 
     @Test
-    public void saveAuthenticationMethods_failure_wrongAuthorisationId() {
+    void saveAuthenticationMethods_failure_wrongAuthorisationId() {
         // Given
         List<CmsScaMethod> cmsScaMethods = Collections.singletonList(buildCmsScaMethod(true));
 

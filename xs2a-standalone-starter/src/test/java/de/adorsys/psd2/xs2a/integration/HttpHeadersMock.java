@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.reader;
+package de.adorsys.psd2.xs2a.integration;
 
-public class ParseContentJsonReaderException extends RuntimeException {
+import org.springframework.http.HttpHeaders;
 
-    public ParseContentJsonReaderException(String message) {
-        super(message);
+public class HttpHeadersMock extends HttpHeaders {
+    HttpHeadersMock addPsuIdHeader(String psuIdHeader) {
+        this.add("PSU-ID", psuIdHeader);
+        return this;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,17 @@ package de.adorsys.psd2.xs2a.service.discovery;
 
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ServiceTypeDiscoveryServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ServiceTypeDiscoveryServiceTest {
     private MockHttpServletRequest request;
 
     @Mock
@@ -37,7 +37,7 @@ public class ServiceTypeDiscoveryServiceTest {
     private ServiceTypeDiscoveryService cut;
 
     @Test
-    public void getServiceType() {
+    void getServiceType() {
         request = new MockHttpServletRequest("GET", "/v1/consents");
         cut = new ServiceTypeDiscoveryService(request, requestProviderService);
         ServiceType result = cut.getServiceType();
@@ -46,7 +46,7 @@ public class ServiceTypeDiscoveryServiceTest {
     }
 
     @Test
-    public void getServiceTypeWithContextPath() {
+    void getServiceTypeWithContextPath() {
         request = new MockHttpServletRequest("GET", "/xs2a/v1/consents");
         request.setContextPath("/xs2a");
         cut = new ServiceTypeDiscoveryService(request, requestProviderService);

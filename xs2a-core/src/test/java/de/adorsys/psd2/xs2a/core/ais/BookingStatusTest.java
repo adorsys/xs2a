@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,31 +16,31 @@
 
 package de.adorsys.psd2.xs2a.core.ais;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class BookingStatusTest {
+class BookingStatusTest {
     private static final BookingStatus BOOKING_STATUS = BookingStatus.BOOKED;
     private static final String BOOKING_STATUS_STRING = "booked";
 
     @Test
-    public void getByValue_withValidValue_shouldReturnEnum() {
+    void getByValue_withValidValue_shouldReturnEnum() {
         Optional<BookingStatus> actualValue = BookingStatus.getByValue(BOOKING_STATUS_STRING);
         assertTrue(actualValue.isPresent());
         assertEquals(BOOKING_STATUS, actualValue.get());
     }
 
     @Test
-    public void getByValue_withInvalidValue_shouldReturnEmpty() {
+    void getByValue_withInvalidValue_shouldReturnEmpty() {
         Optional<BookingStatus> actualValue = BookingStatus.getByValue("invalid value");
         assertFalse(actualValue.isPresent());
     }
 
     @Test
-    public void getByValue_withUpperCaseValue_shouldReturnEnum() {
+    void getByValue_withUpperCaseValue_shouldReturnEnum() {
         Optional<BookingStatus> actualValue = BookingStatus.getByValue(BOOKING_STATUS_STRING.toUpperCase());
         assertTrue(actualValue.isPresent());
         assertEquals(BOOKING_STATUS, actualValue.get());

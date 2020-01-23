@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,13 +40,12 @@ import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -54,8 +53,8 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FundsConfirmationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class FundsConfirmationServiceTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null, null), new TppInfo(), UUID.randomUUID(), UUID.randomUUID());
 
@@ -79,8 +78,9 @@ public class FundsConfirmationServiceTest {
     @InjectMocks
     private FundsConfirmationService fundsConfirmationService;
 
-    @Before
-    public void setUp() {
+    @Test
+    void fundsConfirmation_Success_ShouldRecordEvent() {
+        // Given
         when(xs2aToSpiFundsConfirmationRequestMapper.mapToSpiFundsConfirmationRequest(buildFundsConfirmationRequest()))
             .thenReturn(buildSpiFundsConfirmationRequest());
         when(requestProviderService.getPsuIdData()).thenReturn(PSU_ID_DATA);
@@ -89,11 +89,7 @@ public class FundsConfirmationServiceTest {
         when(spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(buildSpiFundsConfirmationResponse()))
             .thenReturn(buildFundsConfirmationResponse());
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-    }
 
-    @Test
-    public void fundsConfirmation_Success_ShouldRecordEvent() {
-        // Given
         when(aspspProfileServiceWrapper.isPiisConsentSupported()).thenReturn(false);
         when(fundsConfirmationSpi.performFundsSufficientCheck(any(), any(), any(), any()))
             .thenReturn(buildSuccessSpiResponse());
@@ -109,13 +105,19 @@ public class FundsConfirmationServiceTest {
     }
 
     @Test
-    public void fundsConfirmation_fundsConfirmationSpi_performFundsSufficientCheck_fail() {
+    void fundsConfirmation_fundsConfirmationSpi_performFundsSufficientCheck_fail() {
         // Given
 
         ErrorHolder errorHolder = ErrorHolder
                                       .builder(PIIS_400)
                                       .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                                       .build();
+        when(xs2aToSpiFundsConfirmationRequestMapper.mapToSpiFundsConfirmationRequest(buildFundsConfirmationRequest()))
+            .thenReturn(buildSpiFundsConfirmationRequest());
+        when(requestProviderService.getPsuIdData()).thenReturn(PSU_ID_DATA);
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIIS)))
             .thenReturn(errorHolder);
 

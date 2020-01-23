@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator.constants;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateField.*;
 
@@ -25,13 +26,13 @@ public enum Xs2aRequestBodyDateFields {
 
     AIS_CONSENT_DATE_FIELDS(EnumSet.of(VALID_UNTIL));
 
-    private EnumSet<Xs2aRequestBodyDateField> dateFields;
+    private Set<Xs2aRequestBodyDateField> dateFields;
 
-    Xs2aRequestBodyDateFields(EnumSet<Xs2aRequestBodyDateField> dateFields) {
+    Xs2aRequestBodyDateFields(Set<Xs2aRequestBodyDateField> dateFields) {
         this.dateFields = dateFields;
     }
 
-    public EnumSet<Xs2aRequestBodyDateField> getDateFields() {
+    public Set<Xs2aRequestBodyDateField> getDateFields() {
         return dateFields;
     }
 }

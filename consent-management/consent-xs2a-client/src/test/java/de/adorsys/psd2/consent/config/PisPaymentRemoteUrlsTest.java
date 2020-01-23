@@ -16,32 +16,32 @@
 
 package de.adorsys.psd2.consent.config;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PisPaymentRemoteUrlsTest {
+class PisPaymentRemoteUrlsTest {
 
     private static final String BASE_URL = "http://base.url";
 
     private PisPaymentRemoteUrls pisPaymentRemoteUrls;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         pisPaymentRemoteUrls = new PisPaymentRemoteUrls();
         ReflectionTestUtils.setField(pisPaymentRemoteUrls, "paymentServiceBaseUrl", BASE_URL);
     }
 
     @Test
-    public void updatePaymentStatus() {
+    void updatePaymentStatus() {
         assertEquals("http://base.url/pis/payment/{payment-id}/status/{status}",
                      pisPaymentRemoteUrls.updatePaymentStatus());
     }
 
     @Test
-    public void updatePaymentCancellationRedirectURIs() {
+    void updatePaymentCancellationRedirectURIs() {
         assertEquals("http://base.url/pis/payment/{payment-id}/cancellation/redirects",
                      pisPaymentRemoteUrls.updatePaymentCancellationRedirectURIs());
     }

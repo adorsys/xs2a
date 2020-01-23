@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,21 +50,22 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCancellationScaAuthenticatedStageTest {
+@ExtendWith(MockitoExtension.class)
+class PisCancellationScaAuthenticatedStageTest {
     private static final String PAYMENT_PRODUCT = "Test payment product";
     private static final String PAYMENT_ID = "Test payment id";
     private static final String AUTHORISATION_ID = "Test authorisation id";
@@ -124,8 +125,8 @@ public class PisCancellationScaAuthenticatedStageTest {
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(response.getPaymentType())
             .thenReturn(SINGLE_PAYMENT_TYPE);
 
@@ -146,13 +147,10 @@ public class PisCancellationScaAuthenticatedStageTest {
 
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(Collections.singletonList(PSU_ID_DATA)))
             .thenReturn(Collections.singletonList(SPI_PSU_DATA));
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
-
     }
 
     @Test
-    public void apply_Success_decoupledApproach() {
+    void apply_Success_decoupledApproach() {
         when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(true);
 
@@ -166,7 +164,10 @@ public class PisCancellationScaAuthenticatedStageTest {
     }
 
     @Test
-    public void apply_Failure_embeddedApproach_spiResponseHasError() {
+    void apply_Failure_embeddedApproach_spiResponseHasError() {
+        // Given
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
         when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(false);
 
@@ -190,15 +191,20 @@ public class PisCancellationScaAuthenticatedStageTest {
                             .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                             .build());
 
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaAuthenticatedStage.apply(request, response);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
         assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(PIS_400_ERROR_TYPE);
     }
 
     @Test
-    public void apply_Failure_embeddedApproach_authorizationCodeResultIsEmpty() {
+    void apply_Failure_embeddedApproach_authorizationCodeResultIsEmpty() {
+        // Given
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
         when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(false);
 
@@ -219,15 +225,20 @@ public class PisCancellationScaAuthenticatedStageTest {
         when(spiAuthorizationCodeResult.isEmpty())
             .thenReturn(true);
 
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaAuthenticatedStage.apply(request, response);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
         assertThat(actualResponse.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode()).isEqualTo(SCA_METHOD_UNKNOWN);
     }
 
     @Test
-    public void apply_Success_embeddedApproach() {
+    void apply_Success_embeddedApproach() {
+        // Given
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
         when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(false);
 
@@ -257,9 +268,10 @@ public class PisCancellationScaAuthenticatedStageTest {
         when(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(spiAuthenticationObject))
             .thenReturn(xs2aAuthenticationObject);
 
-
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaAuthenticatedStage.apply(request, response);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getChosenScaMethod()).isEqualTo(xs2aAuthenticationObject);
         assertThat(actualResponse.getChallengeData()).isEqualTo(challengeData);

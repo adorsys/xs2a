@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,14 @@ import de.adorsys.psd2.xs2a.web.validator.DefaultMethodValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.MethodValidator;
 import de.adorsys.psd2.xs2a.web.validator.MethodValidatorController;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,12 +41,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RequestValidationInterceptorTest {
-
+@ExtendWith(MockitoExtension.class)
+class RequestValidationInterceptorTest {
     private static final String METHOD_NAME = "publicMethod";
 
     @InjectMocks
@@ -69,8 +68,8 @@ public class RequestValidationInterceptorTest {
 
     private MethodValidator methodValidator;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         methodValidator = new MethodValidator() {
             @Override
             public String getMethodName() {
@@ -90,14 +89,14 @@ public class RequestValidationInterceptorTest {
     }
 
     @Test
-    public void preHandle_instanceOf_incorrectFormat() throws IOException {
+    void preHandle_instanceOf_incorrectFormat() throws IOException {
         assertTrue(interceptor.preHandle(request, response, null));
 
         verify(errorBuildingService, never()).buildErrorResponse(eq(response), any(MessageError.class));
     }
 
     @Test
-    public void preHandle_methodValidator_isNotPresent() throws IOException, NoSuchMethodException {
+    void preHandle_methodValidator_isNotPresent() throws IOException, NoSuchMethodException {
         Method method = getClass().getDeclaredMethod(METHOD_NAME);
         when(handler.getMethod()).thenReturn(method);
         when(methodValidatorController.getMethod(anyString())).thenReturn(defaultMethodValidator);
@@ -109,7 +108,7 @@ public class RequestValidationInterceptorTest {
     }
 
     @Test
-    public void preHandle_methodValidator_hasError() throws IOException, NoSuchMethodException {
+    void preHandle_methodValidator_hasError() throws IOException, NoSuchMethodException {
         ArgumentCaptor<MessageError> messageErrorCaptor = ArgumentCaptor.forClass(MessageError.class);
         Method method = getClass().getDeclaredMethod(METHOD_NAME);
         when(handler.getMethod()).thenReturn(method);

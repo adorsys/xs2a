@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,13 +66,13 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -80,11 +80,11 @@ import java.util.*;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ConsentServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ConsentServiceTest {
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String WRONG_CONSENT_ID = "wrong_consent_id";
     private static final String PASSWORD = "password";
@@ -177,81 +177,43 @@ public class ConsentServiceTest {
     private AccountConsent accountConsent;
 
     private TppInfo tppInfo;
+    private SpiContextData spiContextData;
 
-    @Before
-    public void setUp() {
-        //ConsentMapping
-        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
-            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
-
+    @BeforeEach
+    void setUp() {
         //ByPSU-ID
         tppInfo = buildTppInfo();
 
         accountConsent = getAccountConsent();
 
-        //ByAccess
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
-            .thenReturn(CONSENT_ID);
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, tppInfo))
-            .thenReturn(CONSENT_ID);
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)), PSU_ID_DATA, tppInfo))
-            .thenReturn(CONSENT_ID);
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
-            .thenReturn(CONSENT_ID);
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), PSU_ID_DATA, tppInfo))
-            .thenReturn(CONSENT_ID);
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
-            .thenReturn(CONSENT_ID);
-
-        //GetConsentById
-        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
-        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
-        when(aisConsentService.getAccountConsentById(CONSENT_ID_FINALISED)).thenReturn(Optional.of(getAccountConsentFinalised(getXs2aAccountAccess(Collections.singletonList(getXs2aReference())))));
-        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);
-
-        when(tppService.getTppInfo()).thenReturn(tppInfo);
-        when(aisConsentMapper.mapToSpiAccountConsent(any()))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
-        when(getAccountConsentsStatusByIdValidator.validate(any(CommonConsentObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(getAccountConsentByIdValidator.validate(any(CommonConsentObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(deleteAccountConsentsByIdValidator.validate(any(CommonConsentObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(createConsentAuthorisationValidator.validate(any(CommonConsentObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(updateConsentPsuDataValidator.validate(any(UpdateConsentPsuDataRequestObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(getConsentAuthorisationScaStatusValidator.validate(any(GetConsentAuthorisationScaStatusPO.class)))
-            .thenReturn(ValidationResult.valid());
-
-        SpiContextData spiContextData = new SpiContextData(SPI_PSU_DATA, tppInfo, UUID.randomUUID(), UUID.randomUUID());
-        when(spiContextDataProvider.provide()).thenReturn(spiContextData);
-        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
-        when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(spiContextData);
-
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
-
-        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
-            .thenReturn(initialSpiAspspConsentDataProvider);
-        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
-            .thenReturn(spiAspspConsentDataProvider);
+        spiContextData = new SpiContextData(SPI_PSU_DATA, tppInfo, UUID.randomUUID(), UUID.randomUUID());
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_AllAccounts() {
+    void createAccountConsentsWithResponse_Success_AllAccounts() {
         // Given
         ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
         );
+        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
+            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
+
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        SpiContextData spiContextData = new SpiContextData(SPI_PSU_DATA, tppInfo, UUID.randomUUID(), UUID.randomUUID());
+        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
+
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
 
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(true, null));
@@ -271,12 +233,31 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_AllAccountsSpiMultilevelTrueScaRequiredFalse() {
+    void createAccountConsentsWithResponse_Success_AllAccountsSpiMultilevelTrueScaRequiredFalse() {
         // Given
         ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
         );
+
+        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
+            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
+
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        SpiContextData spiContextData = new SpiContextData(SPI_PSU_DATA, tppInfo, UUID.randomUUID(), UUID.randomUUID());
+        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
+
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
 
         when(aisScaAuthorisationService.isOneFactorAuthorisation(true, true)).thenReturn(true);
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
@@ -297,12 +278,28 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_AllAccountsSpiMultilevelTrueScaRequiredTrue() {
+    void createAccountConsentsWithResponse_Success_AllAccountsSpiMultilevelTrueScaRequiredTrue() {
         // Given
         ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
         );
+
+        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
+            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
+
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
+
 
         when(aisScaAuthorisationService.isOneFactorAuthorisation(true, true)).thenReturn(false);
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
@@ -323,12 +320,25 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_ShouldRecordEvent() {
+    void createAccountConsentsWithResponse_Success_ShouldRecordEvent() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
         );
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
+            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
 
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(true, null));
@@ -346,11 +356,24 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_AllPSD2() {
+    void createAccountConsentsWithResponse_Success_AllPSD2() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)
         );
+
+        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
+            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
 
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(true, null));
@@ -369,11 +392,14 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Failure_AllPSD2() {
+    void createAccountConsentsWithResponse_Failure_AllPSD2() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)
         );
+
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
 
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_400, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
@@ -394,12 +420,24 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_ByAccess_Account() {
+    void createAccountConsentsWithResponse_Success_ByAccess_Account() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), false, false)
         );
 
+        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
+            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
+
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(true, null));
 
@@ -417,12 +455,24 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_ByAccess_Balances() {
+    void createAccountConsentsWithResponse_Success_ByAccess_Balances() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)
         );
 
+        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
+            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
+
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(true, null));
         when(spiContextDataProvider.provide(eq(PSU_ID_DATA), any(TppInfo.class))).thenReturn(SPI_CONTEXT_DATA);
@@ -442,12 +492,25 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_ByAccess_Balances_Transactions() {
+    void createAccountConsentsWithResponse_Success_ByAccess_Balances_Transactions() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)
         );
 
+        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
+            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
+
         // When
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(true, null));
@@ -465,11 +528,23 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentWithResponse_Success_BankOfferedConsent() {
+    void createAccountConsentWithResponse_Success_BankOfferedConsent() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)
         );
+
+        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
+            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
 
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(true, null));
@@ -491,11 +566,24 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_onImplicitApproach_shouldCreateAuthorisation() {
+    void createAccountConsentsWithResponse_onImplicitApproach_shouldCreateAuthorisation() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
         );
+
+        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
+            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
 
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(ValidationResult.valid());
@@ -526,11 +614,24 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_shouldRecordIntoLoggingContext() {
+    void createAccountConsentsWithResponse_shouldRecordIntoLoggingContext() {
         // Given
         Xs2aAccountAccess access = getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false);
         CreateConsentReq req = getCreateConsentRequest(access);
         ArgumentCaptor<ConsentStatus> consentStatusCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
+
+        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
+            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
 
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(true, null));
@@ -548,12 +649,25 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_implicit_shouldRecordIntoLoggingContext() {
+    void createAccountConsentsWithResponse_implicit_shouldRecordIntoLoggingContext() {
         // Given
         Xs2aAccountAccess access = getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false);
         CreateConsentReq req = getCreateConsentRequest(access);
         ArgumentCaptor<ConsentStatus> consentStatusCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
         ArgumentCaptor<ScaStatus> scaStatusCaptor = ArgumentCaptor.forClass(ScaStatus.class);
+
+        when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
+            .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference()))));
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
 
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(true, null));
@@ -580,16 +694,17 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Failure() {
+    void createAccountConsentsWithResponse_Failure() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.singletonList(getReference(WRONG_IBAN, CURRENCY)), Collections.emptyList(), Collections.emptyList(), false, false)
         );
-
-        // When
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(true, null));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentService.createConsent(req, PSU_ID_DATA, tppInfo)).thenReturn(null);
 
+        // When
         ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
             req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         // Then
@@ -597,11 +712,13 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentWithResponse_Failure_BankOfferedConsent() {
+    void createAccountConsentWithResponse_Failure_BankOfferedConsent() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)
         );
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
 
         // When
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
@@ -622,11 +739,13 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentWithResponse_Failure_NotSupportedAvailableAccounts() {
+    void createAccountConsentWithResponse_Failure_NotSupportedAvailableAccounts() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
         );
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
 
         // When
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
@@ -647,11 +766,13 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_withInvalidConsent_shouldReturnValidationError() {
+    void createAccountConsentsWithResponse_withInvalidConsent_shouldReturnValidationError() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.singletonList(getReference(WRONG_IBAN, CURRENCY)), Collections.emptyList(), Collections.emptyList(), false, false)
         );
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
 
         when(createConsentRequestValidator.validate(any(CreateConsentRequestObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
@@ -665,11 +786,19 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_onInitialConsentNotFound_shouldReturnError() {
+    void createAccountConsentsWithResponse_onInitialConsentNotFound_shouldReturnError() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
         );
+
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
 
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(ValidationResult.valid());
@@ -686,11 +815,26 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_onSpiError_shouldReturnError() {
+    void createAccountConsentsWithResponse_onSpiError_shouldReturnError() {
         // Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
         );
+
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, tppInfo))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
+
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
 
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(ValidationResult.valid());
@@ -716,11 +860,20 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsStatusById_Success() {
+    void getAccountConsentsStatusById_Success() {
         // Given
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
                                                                    .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
                                                                    .build();
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(getAccountConsentsStatusByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(spiContextDataProvider.provide()).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
 
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiResponse);
@@ -732,7 +885,11 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsStatusById_status_finalised_Success() {
+    void getAccountConsentsStatusById_status_finalised_Success() {
+        when(aisConsentService.getAccountConsentById(CONSENT_ID_FINALISED)).thenReturn(Optional.of(getAccountConsentFinalised(getXs2aAccountAccess(Collections.singletonList(getXs2aReference())))));
+        when(getAccountConsentsStatusByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+
         // When
         ResponseObject response = consentService.getAccountConsentsStatusById(CONSENT_ID_FINALISED);
 
@@ -741,11 +898,25 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsStatusById_spi_response_has_error() {
+    void getAccountConsentsStatusById_spi_response_has_error() {
         // Given
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
                                                                    .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                                    .build();
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(getAccountConsentsStatusByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+
+        when(spiContextDataProvider.provide()).thenReturn(spiContextData);
+
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
 
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiResponse);
@@ -766,11 +937,20 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsStatusById_Success_ShouldRecordEvent() {
+    void getAccountConsentsStatusById_Success_ShouldRecordEvent() {
         // Given
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
                                                                    .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
                                                                    .build();
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(getAccountConsentsStatusByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(spiContextDataProvider.provide()).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
 
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
@@ -784,8 +964,11 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsStatusById_withUnknownConsent_shouldReturnConsentUnknownError() {
+    void getAccountConsentsStatusById_withUnknownConsent_shouldReturnConsentUnknownError() {
         // Given
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(Optional.empty());
 
         // When
@@ -796,8 +979,10 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsStatusById_withInvalidConsent_shouldReturnValidationError() {
+    void getAccountConsentsStatusById_withInvalidConsent_shouldReturnValidationError() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+
         when(getAccountConsentsStatusByIdValidator.validate(any(CommonConsentObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
@@ -810,12 +995,23 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsStatusById_shouldRecordIntoLoggingContext() {
+    void getAccountConsentsStatusById_shouldRecordIntoLoggingContext() {
         // Given
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
                                                                    .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
                                                                    .build();
         ArgumentCaptor<ConsentStatus> consentStatusCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(getAccountConsentsStatusByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+
+        when(spiContextDataProvider.provide()).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
 
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiResponse);
@@ -829,11 +1025,21 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsById_Success() {
+    void getAccountConsentsById_Success() {
         // Given
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
                                                                    .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
                                                                    .build();
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(getAccountConsentByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+
+        when(spiContextDataProvider.provide()).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiResponse);
         when(aisConsentMapper.mapToAccountConsentWithNewStatus(accountConsent, spiResponse.getPayload().getConsentStatus()))
@@ -848,12 +1054,21 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsById_shouldRecordIntoLoggingContext() {
+    void getAccountConsentsById_shouldRecordIntoLoggingContext() {
         // Given
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
                                                                    .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
                                                                    .build();
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(getAccountConsentByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(spiContextDataProvider.provide()).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
+
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiResponse);
         when(aisConsentMapper.mapToAccountConsentWithNewStatus(accountConsent, spiResponse.getPayload().getConsentStatus()))
@@ -868,9 +1083,12 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsById_finalised_shouldRecordIntoLoggingContext() {
+    void getAccountConsentsById_finalised_shouldRecordIntoLoggingContext() {
         // Given
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
+        when(aisConsentService.getAccountConsentById(CONSENT_ID_FINALISED)).thenReturn(Optional.of(getAccountConsentFinalised(getXs2aAccountAccess(Collections.singletonList(getXs2aReference())))));
+        when(getAccountConsentByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
 
         // When
         consentService.getAccountConsentById(CONSENT_ID_FINALISED);
@@ -881,8 +1099,11 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsById_withUnknownConsent_shouldReturnConsentUnknownError() {
+    void getAccountConsentsById_withUnknownConsent_shouldReturnConsentUnknownError() {
         // Given
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(Optional.empty());
 
         // When
@@ -893,8 +1114,12 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsById_withInvalidConsent_shouldReturnValidationError() {
+    void getAccountConsentsById_withInvalidConsent_shouldReturnValidationError() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+
         when(getAccountConsentByIdValidator.validate(any(CommonConsentObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
@@ -907,12 +1132,23 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsById_Success_ShouldRecordEvent() {
+    void getAccountConsentsById_Success_ShouldRecordEvent() {
         // Given
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
                                                                    .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
                                                                    .build();
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(getAccountConsentByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+
+        when(spiContextDataProvider.provide()).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
+
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiResponse);
         when(aisConsentMapper.mapToAccountConsentWithNewStatus(accountConsent, spiResponse.getPayload().getConsentStatus()))
@@ -927,8 +1163,18 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void deleteAccountConsentsById_Success() {
+    void deleteAccountConsentsById_Success() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(deleteAccountConsentsByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(spiContextData);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
+
         when(aisConsentSpi.revokeAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder()
                             .payload(SpiResponse.voidResponse())
@@ -942,7 +1188,19 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void deleteAccountConsentsById_Success_ShouldRecordEvent() {
+    void deleteAccountConsentsById_Success_ShouldRecordEvent() {
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(deleteAccountConsentsByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(spiContextData);
+
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
+
         when(aisConsentSpi.revokeAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder()
                             .payload(SpiResponse.voidResponse())
@@ -960,8 +1218,12 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void deleteAccountConsentsById_withUnknownConsent_shouldReturnConsentUnknownError() {
+    void deleteAccountConsentsById_withUnknownConsent_shouldReturnConsentUnknownError() {
         // Given
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
 
@@ -973,8 +1235,12 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void deleteAccountConsentsById_withInvalidConsent_shouldReturnValidationError() {
+    void deleteAccountConsentsById_withInvalidConsent_shouldReturnValidationError() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+
         when(deleteAccountConsentsByIdValidator.validate(any(CommonConsentObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
@@ -987,7 +1253,20 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void deleteAccountConsentsById_shouldRecordStatusInLoggingContext() {
+    void deleteAccountConsentsById_shouldRecordStatusInLoggingContext() {
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(deleteAccountConsentsByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+
+        when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(spiContextData);
+
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
+
         when(aisConsentSpi.revokeAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder()
                             .payload(SpiResponse.voidResponse())
@@ -1005,8 +1284,14 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createConsentAuthorizationWithResponse_Success_ShouldRecordEvent() {
+    void createConsentAuthorizationWithResponse_Success_ShouldRecordEvent() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(createConsentAuthorisationValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
         createConsentAuthorizationResponse.setPsuIdData(PSU_ID_DATA);
@@ -1023,8 +1308,14 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createConsentAuthorizationWithResponse_Success_WithoutPsuIdHeader() {
+    void createConsentAuthorizationWithResponse_Success_WithoutPsuIdHeader() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(createConsentAuthorisationValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
         createConsentAuthorizationResponse.setPsuIdData(PSU_ID_DATA);
@@ -1041,8 +1332,12 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createConsentAuthorisationWithResponse_withInvalidConsent_shouldReturnValidationError() {
+    void createConsentAuthorisationWithResponse_withInvalidConsent_shouldReturnValidationError() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+
         when(createConsentAuthorisationValidator.validate(any(CommonConsentObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
@@ -1055,8 +1350,14 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAisAuthorisation_PSU_ID_empty_shouldRecordStatusInLoggingContext() {
+    void createAisAuthorisation_PSU_ID_empty_shouldRecordStatusInLoggingContext() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(createConsentAuthorisationValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
         createConsentAuthorizationResponse.setScaStatus(ScaStatus.RECEIVED);
@@ -1075,8 +1376,14 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAisAuthorisation_shouldRecordStatusInLoggingContext() {
+    void createAisAuthorisation_shouldRecordStatusInLoggingContext() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(createConsentAuthorisationValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(updateConsentPsuDataValidator.validate(any(UpdateConsentPsuDataRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
         createConsentAuthorizationResponse.setAuthorisationId(AUTHORISATION_ID);
@@ -1112,9 +1419,12 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAisAuthorisation_withUnknownConsent_shouldReturnConsentUnknownError() {
+    void createAisAuthorisation_withUnknownConsent_shouldReturnConsentUnknownError() {
         // Given
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(Optional.empty());
+
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
 
         // When
         ResponseObject response = consentService.createAisAuthorisation(PSU_ID_DATA, WRONG_CONSENT_ID, "");
@@ -1124,8 +1434,12 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void updateConsentPsuData_Success_ShouldRecordEvent() {
+    void updateConsentPsuData_Success_ShouldRecordEvent() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(updateConsentPsuDataValidator.validate(any(UpdateConsentPsuDataRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+
         when(aisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(true);
@@ -1150,9 +1464,11 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void updateConsentPsuData_Failure_EndpointIsNotAccessible() {
+    void updateConsentPsuData_Failure_EndpointIsNotAccessible() {
         // Given
         UpdateConsentPsuDataReq updateConsentPsuDataReq = buildUpdateConsentPsuDataReq(CONSENT_ID);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
 
         doNothing()
             .when(xs2aEventService).recordAisTppRequest(CONSENT_ID, EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED, updateConsentPsuDataReq);
@@ -1172,9 +1488,12 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void updateConsentPsuData_withInvalidRequest_shouldReturnValidationError() {
+    void updateConsentPsuData_withInvalidRequest_shouldReturnValidationError() {
         // Given
         UpdateConsentPsuDataReq updateConsentPsuDataReq = buildUpdateConsentPsuDataReq(CONSENT_ID);
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
 
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(true);
@@ -1192,13 +1511,16 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void updateConsentPsuData_withUnknownConsent_shouldReturnConsentUnknownError() {
+    void updateConsentPsuData_withUnknownConsent_shouldReturnConsentUnknownError() {
         // Given
         UpdateConsentPsuDataReq updateConsentPsuDataReq = buildUpdateConsentPsuDataReq(WRONG_CONSENT_ID);
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, WRONG_CONSENT_ID))
             .thenReturn(true);
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
+
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
 
         // When
         ResponseObject response = consentService.updateConsentPsuData(updateConsentPsuDataReq);
@@ -1208,8 +1530,12 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void updateConsentPsuData_shouldRecordStatusInLoggingContext() {
+    void updateConsentPsuData_shouldRecordStatusInLoggingContext() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(updateConsentPsuDataValidator.validate(any(UpdateConsentPsuDataRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+
         when(aisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(true);
@@ -1236,7 +1562,7 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void updateConsentPsuData_shouldStoreConsentStatusInLoggingContextWhenUpdateConsentRequestInvalid() {
+    void updateConsentPsuData_shouldStoreConsentStatusInLoggingContextWhenUpdateConsentRequestInvalid() {
         // Given
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(true);
@@ -1248,6 +1574,11 @@ public class ConsentServiceTest {
 
         ArgumentCaptor<ConsentStatus> consentStatusArgumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
 
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+
         // When
         ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuDataResponseResponseObject = consentService.updateConsentPsuData(updateConsentPsuDataReq);
 
@@ -1257,7 +1588,7 @@ public class ConsentServiceTest {
         assertThat(consentStatusArgumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
     }
 
-    public void getConsentInitiationAuthorisation() {
+    void getConsentInitiationAuthorisation() {
         // Given
         when(aisConsentService.getAuthorisationSubResources(anyString()))
             .thenReturn(Optional.of(Collections.singletonList(CONSENT_ID)));
@@ -1277,10 +1608,13 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getConsentInitiationAuthorisations_withInvalidConsent_shouldReturnValidationError() {
+    void getConsentInitiationAuthorisations_withInvalidConsent_shouldReturnValidationError() {
         // Given
         when(getConsentAuthorisationsValidator.validate(any(CommonConsentObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
 
         // When
         ResponseObject<Xs2aAuthorisationSubResources> actualResponse = consentService.getConsentInitiationAuthorisations(CONSENT_ID);
@@ -1291,7 +1625,7 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getConsentInitiationAuthorisations_withUnknownConsent_shouldReturnConsentUnknownError() {
+    void getConsentInitiationAuthorisations_withUnknownConsent_shouldReturnConsentUnknownError() {
         // Given
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
@@ -1304,7 +1638,12 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getConsentInitiationAuthorisations_shouldRecordStatusInLoggingContext() {
+    void getConsentInitiationAuthorisations_shouldRecordStatusInLoggingContext() {
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+
         when(getConsentAuthorisationsValidator.validate(any(CommonConsentObject.class)))
             .thenReturn(ValidationResult.valid());
 
@@ -1316,8 +1655,17 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getConsentAuthorisationScaStatus_success() {
+    void getConsentAuthorisationScaStatus_success() {
         // Given
+        AccountConsent accountConsent = getAccountConsent();
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
+        when(getConsentAuthorisationScaStatusValidator.validate(any(GetConsentAuthorisationScaStatusPO.class)))
+            .thenReturn(ValidationResult.valid());
+
         when(aisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(ScaStatus.RECEIVED));
@@ -1331,11 +1679,8 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getConsentAuthorisationScaStatus_success_shouldRecordEvent() {
+    void getConsentAuthorisationScaStatus_success_shouldRecordEvent() {
         // Given
-        when(aisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
-        when(redirectAisAuthorizationService.getAuthorisationScaStatus(any(), any()))
-            .thenReturn(Optional.of(ScaStatus.RECEIVED));
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
@@ -1347,12 +1692,8 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getConsentAuthorisationScaStatus_failure() {
+    void getConsentAuthorisationScaStatus_failure() {
         // Given
-        when(aisScaAuthorisationServiceResolver.getServiceInitiation(WRONG_AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
-        when(redirectAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID))
-            .thenReturn(Optional.empty());
-
         // When
         ResponseObject<ScaStatus> actual = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
 
@@ -1362,8 +1703,12 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getConsentAuthorisationScaStatus_withInvalidConsent_shouldReturnValidationError() {
+    void getConsentAuthorisationScaStatus_withInvalidConsent_shouldReturnValidationError() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+        when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
+
         when(getConsentAuthorisationScaStatusValidator.validate(any(GetConsentAuthorisationScaStatusPO.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
@@ -1376,7 +1721,7 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getConsentAuthorisationScaStatus_withUnknownConsent_shouldReturnConsentUnknownError() {
+    void getConsentAuthorisationScaStatus_withUnknownConsent_shouldReturnConsentUnknownError() {
         // Given
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
@@ -1389,8 +1734,12 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getConsentAuthorisationScaStatus_shouldRecordStatusInLoggingContext() {
+    void getConsentAuthorisationScaStatus_shouldRecordStatusInLoggingContext() {
         // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent()));
+        when(getConsentAuthorisationScaStatusValidator.validate(any(GetConsentAuthorisationScaStatusPO.class)))
+            .thenReturn(ValidationResult.valid());
+
         when(aisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.getAuthorisationScaStatus(any(), any()))
             .thenReturn(Optional.of(ScaStatus.RECEIVED));

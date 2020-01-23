@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,12 +37,12 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusRespo
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -54,8 +54,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ReadBulkPaymentStatusServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ReadBulkPaymentStatusServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private final static UUID X_REQUEST_ID = UUID.randomUUID();
     private final static UUID INTERNAL_REQUEST_ID = UUID.randomUUID();
@@ -82,13 +82,13 @@ public class ReadBulkPaymentStatusServiceTest {
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
     private PisCommonPaymentResponse commonPaymentData;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         commonPaymentData = getCommonPaymentData();
     }
 
     @Test
-    public void readPaymentStatus_success() {
+    void readPaymentStatus_success() {
         // Given
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
             .thenReturn(spiAspspConsentDataProvider);
@@ -105,7 +105,7 @@ public class ReadBulkPaymentStatusServiceTest {
     }
 
     @Test
-    public void readPaymentStatus_spiPaymentFactory_pisPaymentsListIsEmpty_failed() {
+    void readPaymentStatus_spiPaymentFactory_pisPaymentsListIsEmpty_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_400)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_PAYMENT_NOT_FOUND))
@@ -123,7 +123,7 @@ public class ReadBulkPaymentStatusServiceTest {
     }
 
     @Test
-    public void readPaymentStatus_spiPaymentFactory_createSpiBulkPayment_failed() {
+    void readPaymentStatus_spiPaymentFactory_createSpiBulkPayment_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
@@ -141,7 +141,7 @@ public class ReadBulkPaymentStatusServiceTest {
     }
 
     @Test
-    public void readPaymentStatus_bulkPaymentSpi_getPaymentStatusById_failed() {
+    void readPaymentStatus_bulkPaymentSpi_getPaymentStatusById_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))

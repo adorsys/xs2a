@@ -25,19 +25,19 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.OffsetDateTime;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CmsPsuAuthorisationMapperImpl.class})
-public class CmsPsuAuthorisationMapperTest {
+class CmsPsuAuthorisationMapperTest {
 
     private static final String EXTERNAL_ID = "123";
     private static final String OK_REDIRECT_URI = "OK redirect";
@@ -50,13 +50,13 @@ public class CmsPsuAuthorisationMapperTest {
 
     private JsonReader jsonReader;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         jsonReader = new JsonReader();
     }
 
     @Test
-    public void mapToCmsPsuAuthorisationPis_success() {
+    void mapToCmsPsuAuthorisationPis_success() {
         // Given
         PisAuthorization pisAuthorization = buildPisAuthorization();
 
@@ -71,7 +71,7 @@ public class CmsPsuAuthorisationMapperTest {
     }
 
     @Test
-    public void mapToCmsPsuAuthorisationAis_success() {
+    void mapToCmsPsuAuthorisationAis_success() {
         // Given
         AisConsentAuthorization aisConsentAuthorization = buildAisConsentAuthorization();
 

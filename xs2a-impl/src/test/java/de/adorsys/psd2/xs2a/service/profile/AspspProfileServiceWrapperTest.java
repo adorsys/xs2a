@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,21 +20,21 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AspspProfileServiceWrapperTest {
+@ExtendWith(MockitoExtension.class)
+class AspspProfileServiceWrapperTest {
     private static final String ASPSP_SETTINGS_JSON_PATH = "json/service/profile/AspspSettings.json";
 
     @Mock
@@ -43,14 +43,14 @@ public class AspspProfileServiceWrapperTest {
     @InjectMocks
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(aspspProfileService.getAspspSettings())
             .thenReturn(new JsonReader().getObjectFromFile(ASPSP_SETTINGS_JSON_PATH, AspspSettings.class));
     }
 
     @Test
-    public void getAvailableBookingStatuses() {
+    void getAvailableBookingStatuses() {
         // Given
         BookingStatus bookingStatus = BookingStatus.BOOKED;
 

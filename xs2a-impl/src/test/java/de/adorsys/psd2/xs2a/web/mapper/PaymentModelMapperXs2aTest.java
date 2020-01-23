@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,29 +25,27 @@ import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.validation.Validation;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {PaymentModelMapperImpl.class, Xs2aAddressMapperImpl.class, RemittanceMapperImpl.class, PurposeCodeMapperImpl.class})
-public class PaymentModelMapperXs2aTest {
+class PaymentModelMapperXs2aTest {
 
     @Autowired
     private PaymentModelMapper paymentModelMapper;
-    private RequestProviderService requestProviderService;
     private PaymentModelMapperXs2a paymentModelMapperXs2a;
     private PaymentInitiationParameters paymentInitiationParameters;
     private JsonReader jsonReader = new JsonReader();
@@ -55,13 +53,13 @@ public class PaymentModelMapperXs2aTest {
     @MockBean
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
         xs2aObjectMapper.findAndRegisterModules();
 
         paymentInitiationParameters = new PaymentInitiationParameters();
-        ValueValidatorService validatorService = new ValueValidatorService(requestProviderService,
+        ValueValidatorService validatorService = new ValueValidatorService(null,
             Validation.buildDefaultValidatorFactory().getValidator());
         paymentModelMapperXs2a = new PaymentModelMapperXs2a(validatorService,
                                                             null, xs2aObjectMapper,
@@ -69,7 +67,7 @@ public class PaymentModelMapperXs2aTest {
     }
 
     @Test
-    public void mapToXs2aPayment_PeriodicPayment() {
+    void mapToXs2aPayment_PeriodicPayment() {
         paymentInitiationParameters.setPaymentType(PaymentType.PERIODIC);
 
         PeriodicPaymentInitiationJson periodicPaymentInitiationJson =
@@ -84,7 +82,7 @@ public class PaymentModelMapperXs2aTest {
     }
 
     @Test
-    public void mapToXs2aPayment_SinglePayment() {
+    void mapToXs2aPayment_SinglePayment() {
         paymentInitiationParameters.setPaymentType(PaymentType.SINGLE);
 
         PaymentInitiationJson singlePaymentInitiationJson =
@@ -99,7 +97,7 @@ public class PaymentModelMapperXs2aTest {
     }
 
     @Test
-    public void mapToXs2aPayment_BulkPayment() {
+    void mapToXs2aPayment_BulkPayment() {
         paymentInitiationParameters.setPaymentType(PaymentType.BULK);
 
         BulkPaymentInitiationJson bulkPaymentInitiationJson =

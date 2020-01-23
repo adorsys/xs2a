@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~ Copyright 2018-2020 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-	<groupId>de.adorsys.psd2</groupId>
 	<artifactId>psd2-validator</artifactId>
 	<version>4.9-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -35,12 +34,6 @@
     </properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>org.tomitribe</groupId>
 			<artifactId>tomitribe-http-signatures</artifactId>
@@ -92,6 +85,13 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
+        </dependency>
+
+        <!-- Test dependencies-->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
 	</dependencies>
 </project>

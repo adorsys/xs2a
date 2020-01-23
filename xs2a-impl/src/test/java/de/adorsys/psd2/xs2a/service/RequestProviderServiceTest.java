@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,24 +21,24 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.RequestData;
 import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RequestProviderServiceTest {
+@ExtendWith(MockitoExtension.class)
+class RequestProviderServiceTest {
     private static final String URI = "http://www.adorsys.de";
     private static final String IP = "192.168.0.26";
     private static PsuIdData PSU_ID_DATA;
@@ -54,19 +54,19 @@ public class RequestProviderServiceTest {
     @Mock
     private InternalRequestIdService internalRequestIdService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         PSU_ID_DATA = buildPsuIdData();
+    }
+
+    @Test
+    void getRequestDataSuccess() {
+        //Given
         HEADERS.forEach((key, value) -> when(httpServletRequest.getHeader(key)).thenReturn(value));
         when(httpServletRequest.getHeaderNames()).thenReturn(Collections.enumeration(HEADERS.keySet()));
         when(httpServletRequest.getRequestURI()).thenReturn(URI);
         when(httpServletRequest.getRemoteAddr()).thenReturn(IP);
         when(internalRequestIdService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
-    }
-
-    @Test
-    public void getRequestDataSuccess() {
-        //Given
         //When
         RequestData requestData = requestProviderService.getRequestData();
         //Then
@@ -79,8 +79,9 @@ public class RequestProviderServiceTest {
     }
 
     @Test
-    public void getPsuIpAddress() {
+    void getPsuIpAddress() {
         //Given
+        when(httpServletRequest.getHeader(Xs2aHeaderConstant.PSU_IP_ADDRESS)).thenReturn(HEADERS.get(Xs2aHeaderConstant.PSU_IP_ADDRESS));
         //When
         String psuIpAddress = requestProviderService.getPsuIpAddress();
         //Then
@@ -90,7 +91,8 @@ public class RequestProviderServiceTest {
     }
 
     @Test
-    public void getInternalRequestId() {
+    void getInternalRequestId() {
+        when(internalRequestIdService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
         // When
         UUID actualInternalRequestId = requestProviderService.getInternalRequestId();
 

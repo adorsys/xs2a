@@ -20,12 +20,12 @@ import de.adorsys.psd2.consent.aspsp.api.tpp.CmsAspspTppService;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,8 +40,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspTppInfoControllerTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspTppInfoControllerTest {
     private final String tppAuthorisationNumber = "PSDDE-FAKENCA-87B2AC";
     private final String GET_TPP_INFO_URL = "/aspsp-api/v1/tpp";
     private final String INSTANCE_ID = "UNDEFINED";
@@ -58,8 +58,8 @@ public class CmsAspspTppInfoControllerTest {
     @Mock
     private CmsAspspTppService cmsAspspTppService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
 
         tppInfo = jsonReader.getObjectFromFile("json/tpp-info.json", TppInfo.class);
@@ -73,7 +73,7 @@ public class CmsAspspTppInfoControllerTest {
     }
 
     @Test
-    public void getTppInfo_Success() throws Exception {
+    void getTppInfo_Success() throws Exception {
         when(cmsAspspTppService.getTppInfo(tppAuthorisationNumber, INSTANCE_ID))
             .thenReturn(Optional.of(tppInfo));
 
@@ -87,7 +87,7 @@ public class CmsAspspTppInfoControllerTest {
     }
 
     @Test
-    public void getTppInfo_404() throws Exception {
+    void getTppInfo_404() throws Exception {
         when(cmsAspspTppService.getTppInfo(tppAuthorisationNumber, INSTANCE_ID))
             .thenReturn(Optional.empty());
 

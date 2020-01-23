@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class PermittedAccountReferenceValidatorTest {
+class PermittedAccountReferenceValidatorTest {
     private static final String ACCOUNT_ID = "11111-999999999";
     private static final String WRONG_ACCOUNT_ID = "wrong_account_id";
 
@@ -34,28 +34,28 @@ public class PermittedAccountReferenceValidatorTest {
     private JsonReader jsonReader;
     private AccountConsent accountConsent;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         validator = new PermittedAccountReferenceValidator(new AccountReferenceAccessValidator());
         jsonReader = new JsonReader();
     }
 
     @Test
-    public void validate_withBalanceIsTrue_success() {
+    void validate_withBalanceIsTrue_success() {
         accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent.json", AccountConsent.class);
         ValidationResult validationResult = validator.validate(accountConsent, ACCOUNT_ID, true);
         assertTrue(validationResult.isValid());
     }
 
     @Test
-    public void validate_withBalanceIsFalse_success() {
+    void validate_withBalanceIsFalse_success() {
         accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent.json", AccountConsent.class);
         ValidationResult validationResult = validator.validate(accountConsent, ACCOUNT_ID, false);
         assertTrue(validationResult.isValid());
     }
 
     @Test
-    public void validate_withBalanceIsTrue_notValidByAccountId() {
+    void validate_withBalanceIsTrue_notValidByAccountId() {
         accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent.json", AccountConsent.class);
         ValidationResult validationResult = validator.validate(accountConsent, WRONG_ACCOUNT_ID, true);
 
@@ -65,7 +65,7 @@ public class PermittedAccountReferenceValidatorTest {
     }
 
     @Test
-    public void validate_withBalanceIsFalse_notValidByAccountId() {
+    void validate_withBalanceIsFalse_notValidByAccountId() {
         accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent.json", AccountConsent.class);
         ValidationResult validationResult = validator.validate(accountConsent, WRONG_ACCOUNT_ID, false);
 

@@ -26,12 +26,12 @@ import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -39,12 +39,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsPsuPisControllerTest {
+@ExtendWith(MockitoExtension.class)
+class CmsPsuPisControllerTest {
     private static final String PAYMENT_ID = "payment id";
     private static final String AUTHORISATION_ID = "authorisation id";
     private static final String PSU_ID = "psu id";
@@ -64,7 +64,7 @@ public class CmsPsuPisControllerTest {
     private CmsPsuPisService cmsPsuPisService;
 
     @Test
-    public void updateAuthorisationStatus_withValidRequest_shouldReturnOk() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatus_withValidRequest_shouldReturnOk() throws AuthorisationIsExpiredException {
         // Given
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
         when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
@@ -80,7 +80,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void updateAuthorisationStatus_withValidRequestAndLowercaseScaStatus_shouldReturnOk() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatus_withValidRequestAndLowercaseScaStatus_shouldReturnOk() throws AuthorisationIsExpiredException {
         // Given
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
         when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
@@ -97,7 +97,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void updateAuthorisationStatus_withFalseFromService_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatus_withFalseFromService_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
         // Given
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
         when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
@@ -113,7 +113,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void updateAuthorisationStatus_AuthorisationIsExpired_requestTimeout() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatus_AuthorisationIsExpired_requestTimeout() throws AuthorisationIsExpiredException {
         // Given
         PsuIdData psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
         when(cmsPsuPisService.updateAuthorisationStatus(psuIdData, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
@@ -129,7 +129,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void updateAuthorisationStatus_withInvalidScaStatus_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatus_withInvalidScaStatus_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
         // Given
         String invalidScaStatus = "invalid SCA status";
 
@@ -144,7 +144,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void updatePsuInPayment_success() throws AuthorisationIsExpiredException {
+    void updatePsuInPayment_success() throws AuthorisationIsExpiredException {
         when(cmsPsuPisService.updatePsuInPayment(PSU_ID_DATA, AUTHORISATION_ID, INSTANCE_ID)).thenReturn(true);
 
         // When
@@ -153,7 +153,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void updatePsuInPayment_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
+    void updatePsuInPayment_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
         when(cmsPsuPisService.updatePsuInPayment(PSU_ID_DATA, AUTHORISATION_ID, INSTANCE_ID)).thenReturn(false);
 
         // When
@@ -162,7 +162,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void updatePsuInPayment_requestTimeout() throws AuthorisationIsExpiredException {
+    void updatePsuInPayment_requestTimeout() throws AuthorisationIsExpiredException {
         when(cmsPsuPisService.updatePsuInPayment(PSU_ID_DATA, AUTHORISATION_ID, INSTANCE_ID)).thenThrow(new AuthorisationIsExpiredException(TPP_NOK_REDIRECT_URI));
 
         // When
@@ -172,7 +172,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void getPaymentByPaymentId_success() {
+    void getPaymentByPaymentId_success() {
         ArgumentCaptor<PsuIdData> psuIdDataCaptor = ArgumentCaptor.forClass(PsuIdData.class);
         when(cmsPsuPisService.getPayment(psuIdDataCaptor.capture(), eq(PAYMENT_ID), eq(INSTANCE_ID))).thenReturn(Optional.of(new CmsSinglePayment("payment_product")));
 
@@ -187,7 +187,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void getPaymentIdByRedirectId_success() throws RedirectUrlIsExpiredException {
+    void getPaymentIdByRedirectId_success() throws RedirectUrlIsExpiredException {
         CmsPaymentResponse cmsPaymentResponse = new CmsPaymentResponse();
         CmsSinglePayment payment = new CmsSinglePayment("payment product");
         payment.setPaymentId(PAYMENT_ID);
@@ -200,7 +200,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void getPaymentIdByRedirectId_shouldReturnNotFound() throws RedirectUrlIsExpiredException {
+    void getPaymentIdByRedirectId_shouldReturnNotFound() throws RedirectUrlIsExpiredException {
         when(cmsPsuPisService.checkRedirectAndGetPayment(REDIRECT_ID, INSTANCE_ID)).thenReturn(Optional.empty());
 
         ResponseEntity<CmsPaymentResponse> actualResponse = cmsPsuPisController.getPaymentIdByRedirectId(REDIRECT_ID, INSTANCE_ID);
@@ -208,7 +208,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void getPaymentIdByRedirectId_RedirectUriIsExpired_requestTimeout() throws RedirectUrlIsExpiredException {
+    void getPaymentIdByRedirectId_RedirectUriIsExpired_requestTimeout() throws RedirectUrlIsExpiredException {
         when(cmsPsuPisService.checkRedirectAndGetPayment(REDIRECT_ID, INSTANCE_ID)).thenThrow(new RedirectUrlIsExpiredException(TPP_NOK_REDIRECT_URI));
 
         ResponseEntity<CmsPaymentResponse> actualResponse = cmsPsuPisController.getPaymentIdByRedirectId(REDIRECT_ID, INSTANCE_ID);
@@ -217,7 +217,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void getPaymentIdByRedirectIdForCancellation_success() throws RedirectUrlIsExpiredException {
+    void getPaymentIdByRedirectIdForCancellation_success() throws RedirectUrlIsExpiredException {
         CmsPaymentResponse cmsPaymentResponse = new CmsPaymentResponse();
         CmsSinglePayment payment = new CmsSinglePayment("payment product");
         payment.setPaymentId(PAYMENT_ID);
@@ -230,7 +230,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void getPaymentIdByRedirectIdForCancellation_shouldReturnNotFound() throws RedirectUrlIsExpiredException {
+    void getPaymentIdByRedirectIdForCancellation_shouldReturnNotFound() throws RedirectUrlIsExpiredException {
         when(cmsPsuPisService.checkRedirectAndGetPaymentForCancellation(REDIRECT_ID, INSTANCE_ID)).thenReturn(Optional.empty());
 
         ResponseEntity<CmsPaymentResponse> actualResponse = cmsPsuPisController.getPaymentIdByRedirectIdForCancellation(REDIRECT_ID, INSTANCE_ID);
@@ -238,7 +238,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void getPaymentIdByRedirectIdForCancellation_RedirectUriIsExpired_requestTimeout() throws RedirectUrlIsExpiredException {
+    void getPaymentIdByRedirectIdForCancellation_RedirectUriIsExpired_requestTimeout() throws RedirectUrlIsExpiredException {
         when(cmsPsuPisService.checkRedirectAndGetPaymentForCancellation(REDIRECT_ID, INSTANCE_ID)).thenThrow(new RedirectUrlIsExpiredException(TPP_NOK_REDIRECT_URI));
 
         ResponseEntity<CmsPaymentResponse> actualResponse = cmsPsuPisController.getPaymentIdByRedirectIdForCancellation(REDIRECT_ID, INSTANCE_ID);
@@ -247,7 +247,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void updatePaymentStatus_success() {
+    void updatePaymentStatus_success() {
         when(cmsPsuPisService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP, INSTANCE_ID)).thenReturn(true);
 
         ResponseEntity<Void> actualResponse = cmsPsuPisController.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP.name(), INSTANCE_ID);
@@ -257,7 +257,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void updatePaymentStatus_badRequest() {
+    void updatePaymentStatus_badRequest() {
         when(cmsPsuPisService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP, INSTANCE_ID)).thenReturn(false);
 
         ResponseEntity<Void> actualResponse = cmsPsuPisController.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP.name(), INSTANCE_ID);
@@ -267,7 +267,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void psuAuthorisationStatuses_success() {
+    void psuAuthorisationStatuses_success() {
         when(cmsPsuPisService.getPsuDataAuthorisations(PAYMENT_ID, INSTANCE_ID)).thenReturn(Optional.of(new ArrayList<>()));
 
         ResponseEntity<List<CmsPisPsuDataAuthorisation>> actualResponse = cmsPsuPisController.psuAuthorisationStatuses(PAYMENT_ID, INSTANCE_ID);
@@ -277,7 +277,7 @@ public class CmsPsuPisControllerTest {
     }
 
     @Test
-    public void psuAuthorisationStatuses_notFound() {
+    void psuAuthorisationStatuses_notFound() {
         when(cmsPsuPisService.getPsuDataAuthorisations(PAYMENT_ID, INSTANCE_ID)).thenReturn(Optional.empty());
 
         ResponseEntity<List<CmsPisPsuDataAuthorisation>> actualResponse = cmsPsuPisController.psuAuthorisationStatuses(PAYMENT_ID, INSTANCE_ID);

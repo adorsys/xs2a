@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,23 +26,23 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.link.CreatePisAuthorisationLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdatePisAuthorisationLinks;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CreatePisAuthorizationAspectTest {
+@ExtendWith(MockitoExtension.class)
+class CreatePisAuthorizationAspectTest {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
 
@@ -62,8 +62,8 @@ public class CreatePisAuthorizationAspectTest {
     private ResponseObject responseObject;
     private Xs2aCreatePisAuthorisationRequest request;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         JsonReader jsonReader = new JsonReader();
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
 
@@ -71,7 +71,7 @@ public class CreatePisAuthorizationAspectTest {
     }
 
     @Test
-    public void createPisAuthorizationAspect_successOnCreatePisAuthorization() {
+    void createPisAuthorizationAspect_successOnCreatePisAuthorization() {
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
 
         responseObject = ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
@@ -86,7 +86,7 @@ public class CreatePisAuthorizationAspectTest {
     }
 
     @Test
-    public void updatePisAuthorizationAspect_successOnUpdateAuthorization() {
+    void updatePisAuthorizationAspect_successOnUpdateAuthorization() {
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
 
         responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
@@ -101,7 +101,7 @@ public class CreatePisAuthorizationAspectTest {
     }
 
     @Test
-    public void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
+    void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
         // When
         responseObject = ResponseObject.builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))

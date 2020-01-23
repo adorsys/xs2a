@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,21 +22,21 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.AisAuthorisationValidator;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisAuthorisationValidatorTest {
-    public static final String AUTHORISATION_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
-    public static final String WRONG_AUTHORISATION_ID = "234ef79c-d785-41ec-9b14-2ea3a7ae2ce0";
+@ExtendWith(MockitoExtension.class)
+class AisAuthorisationValidatorTest {
+    static final String AUTHORISATION_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
+    static final String WRONG_AUTHORISATION_ID = "234ef79c-d785-41ec-9b14-2ea3a7ae2ce0";
 
     @InjectMocks
     private AisAuthorisationValidator validator;
@@ -48,20 +48,20 @@ public class AisAuthorisationValidatorTest {
 
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         accountConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent-with-authorisations.json",
                                                       AccountConsent.class);
     }
 
     @Test
-    public void validate_success() {
+    void validate_success() {
         ValidationResult validationResult = validator.validate(AUTHORISATION_ID, accountConsent);
         assertTrue(validationResult.isValid());
     }
 
     @Test
-    public void validate_wrong_authorisationId() {
+    void validate_wrong_authorisationId() {
         ValidationResult validationResult = validator.validate(WRONG_AUTHORISATION_ID, accountConsent);
 
         assertTrue(validationResult.isNotValid());

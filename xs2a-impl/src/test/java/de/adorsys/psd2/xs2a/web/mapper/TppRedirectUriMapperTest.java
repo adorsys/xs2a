@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,23 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TppRedirectUriMapperTest {
+class TppRedirectUriMapperTest {
 
     private TppRedirectUriMapper mapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         mapper = new TppRedirectUriMapper();
     }
 
     @Test
-    public void mapToTppRedirectUri_success() {
+    void mapToTppRedirectUri_success() {
         TppRedirectUri tppRedirectUri = mapper.mapToTppRedirectUri("ok_url", "nok_url");
         assertNotNull(tppRedirectUri);
         assertEquals("ok_url", tppRedirectUri.getUri());
@@ -40,7 +41,7 @@ public class TppRedirectUriMapperTest {
     }
 
     @Test
-    public void mapToTppRedirectUri_blankValues() {
+    void mapToTppRedirectUri_blankValues() {
         TppRedirectUri tppRedirectUri = mapper.mapToTppRedirectUri("", "");
         assertNotNull(tppRedirectUri);
         assertEquals("", tppRedirectUri.getUri());
