@@ -17,13 +17,17 @@
 package de.adorsys.psd2.consent.repository;
 
 import de.adorsys.psd2.consent.domain.account.AisConsent;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AisConsentVerifyingRepository {
-    AisConsent verifyAndSave(AisConsent entity);
+    AisConsent verifyAndSave(AisConsent entity) throws WrongChecksumException;
 
-    AisConsent verifyAndUpdate(AisConsent entity);
+    AisConsent verifyAndUpdate(AisConsent entity) throws WrongChecksumException;
 
-    List<AisConsent> verifyAndSaveAll(List<AisConsent> entity);
+    List<AisConsent> verifyAndSaveAll(List<AisConsent> entity) throws WrongChecksumException;
+
+    Optional<AisConsent> getActualAisConsent(String consentId);
 }

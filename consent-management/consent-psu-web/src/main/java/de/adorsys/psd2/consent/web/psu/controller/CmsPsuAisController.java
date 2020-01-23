@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.api.CmsConstant;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
@@ -121,6 +122,7 @@ public class CmsPsuAisController {
     @ApiOperation(value = "Puts a Status of AIS Consent object by its ID and PSU ID to VALID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
+        @ApiResponse(code = 400, message = "Checksum verification failed"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Boolean> confirmConsent(
         @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
@@ -129,13 +131,19 @@ public class CmsPsuAisController {
             required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
-        return new ResponseEntity<>(cmsPsuAisService.confirmConsent(consentId, instanceId), HttpStatus.OK);
+
+        try {
+            return new ResponseEntity<>(cmsPsuAisService.confirmConsent(consentId, instanceId), HttpStatus.OK);
+        } catch (WrongChecksumException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping(path = "/{consent-id}/reject-consent")
     @ApiOperation(value = "Puts a Status of AIS Consent object by its ID and PSU ID to REJECTED")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
+        @ApiResponse(code = 400, message = "Checksum verification failed"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Boolean> rejectConsent(
         @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
@@ -144,7 +152,12 @@ public class CmsPsuAisController {
             required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
-        return new ResponseEntity<>(cmsPsuAisService.rejectConsent(consentId, instanceId), HttpStatus.OK);
+
+        try {
+            return new ResponseEntity<>(cmsPsuAisService.rejectConsent(consentId, instanceId), HttpStatus.OK);
+        } catch (WrongChecksumException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping(path = "/consents")
@@ -167,6 +180,7 @@ public class CmsPsuAisController {
     @ApiOperation(value = "Revokes AIS Consent object by its ID. Consent gets status Revoked by PSU.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
+        @ApiResponse(code = 400, message = "Checksum verification failed"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Boolean> revokeConsent(
         @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
@@ -175,13 +189,19 @@ public class CmsPsuAisController {
             required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
-        return new ResponseEntity<>(cmsPsuAisService.revokeConsent(consentId, instanceId), HttpStatus.OK);
+
+        try {
+            return new ResponseEntity<>(cmsPsuAisService.revokeConsent(consentId, instanceId), HttpStatus.OK);
+        } catch (WrongChecksumException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping(path = "/{consent-id}/authorise-partially-consent")
     @ApiOperation(value = "Puts a Status of AIS Consent object by its ID and PSU ID to PARTIALLY_AUTHORISED.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
+        @ApiResponse(code = 400, message = "Checksum verification failed"),
         @ApiResponse(code = 404, message = "Not Found")})
     @PsuHeadersDescription
     public ResponseEntity<Boolean> authorisePartiallyConsent(
@@ -191,7 +211,12 @@ public class CmsPsuAisController {
             required = true)
         @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
-        return new ResponseEntity<>(cmsPsuAisService.authorisePartiallyConsent(consentId, instanceId), HttpStatus.OK);
+
+        try {
+            return new ResponseEntity<>(cmsPsuAisService.authorisePartiallyConsent(consentId, instanceId), HttpStatus.OK);
+        } catch (WrongChecksumException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping(path = "/redirect/{redirect-id}")

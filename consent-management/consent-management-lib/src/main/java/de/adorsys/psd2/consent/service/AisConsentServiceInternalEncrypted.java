@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
@@ -35,15 +36,15 @@ import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncrypted {
     private final SecurityDataService securityDataService;
     private final AisConsentService aisConsentService;
 
     @Override
-    @Transactional
-    public CmsResponse<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public CmsResponse<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request) throws WrongChecksumException {
         CmsResponse<CreateAisConsentResponse> serviceResponse = aisConsentService.createConsent(request);
 
         if (serviceResponse.hasError()) {
@@ -81,8 +82,8 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
-    @Transactional
-    public CmsResponse<Boolean> updateConsentStatusById(String encryptedConsentId, ConsentStatus status) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public CmsResponse<Boolean> updateConsentStatusById(String encryptedConsentId, ConsentStatus status) throws WrongChecksumException {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedConsentId);
 
         if (!decryptIdOptional.isPresent()) {
@@ -126,8 +127,8 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
-    @Transactional
-    public CmsResponse<CmsResponse.VoidResponse> checkConsentAndSaveActionLog(AisConsentActionRequest encryptedRequest) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public CmsResponse<CmsResponse.VoidResponse> checkConsentAndSaveActionLog(AisConsentActionRequest encryptedRequest) throws WrongChecksumException {
         String consentId = encryptedRequest.getConsentId();
         Optional<String> decryptedConsentId = securityDataService.decryptId(consentId);
         if (!decryptedConsentId.isPresent()) {
@@ -149,8 +150,8 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
-    @Transactional
-    public CmsResponse<String> updateAspspAccountAccess(String encryptedConsentId, AisAccountAccessInfo request) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public CmsResponse<String> updateAspspAccountAccess(String encryptedConsentId, AisAccountAccessInfo request) throws WrongChecksumException {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedConsentId);
 
         if (!decryptIdOptional.isPresent()) {
@@ -181,9 +182,9 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = WrongChecksumException.class)
     public CmsResponse<AisAccountConsent> updateAspspAccountAccessWithResponse(String
-                                                                                   encryptedConsentId, AisAccountAccessInfo request) {
+                                                                                   encryptedConsentId, AisAccountAccessInfo request) throws WrongChecksumException {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedConsentId);
 
         if (!decryptIdOptional.isPresent()) {
@@ -213,8 +214,8 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
-    @Transactional
-    public CmsResponse<Boolean> updateMultilevelScaRequired(String encryptedConsentId, boolean multilevelScaRequired) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public CmsResponse<Boolean> updateMultilevelScaRequired(String encryptedConsentId, boolean multilevelScaRequired) throws WrongChecksumException {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedConsentId);
 
         if (!decryptIdOptional.isPresent()) {

@@ -154,7 +154,11 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
                            .build();
             }
         } catch (CmsRestException cmsRestException) {
-            log.warn("Remote update aspsp account access with response failed");
+            log.warn("Remote update ASPSP account access with response failed");
+
+            return CmsResponse.<AisAccountConsent>builder()
+                       .error(cmsRestException.getCmsError())
+                       .build();
         }
 
         return CmsResponse.<AisAccountConsent>builder()

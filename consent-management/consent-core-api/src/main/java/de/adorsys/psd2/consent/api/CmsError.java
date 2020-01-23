@@ -16,6 +16,9 @@
 
 package de.adorsys.psd2.consent.api;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
 public enum CmsError {
     /**
      * Describes cases, when the error is caused by 3rd party libraries, network errors, etc.
@@ -24,5 +27,17 @@ public enum CmsError {
     /**
      * Describes cases, when the error is caused by the mistakes in business logic (like providing wrong payment ID)
      */
-    LOGICAL_ERROR
+    LOGICAL_ERROR,
+    /**
+     * Should be used in case of wrong AIS consent checksum after definite consent properties were set initially and then
+     * are being changed.
+     */
+    CHECKSUM_ERROR;
+
+    public static Optional<CmsError> getByName(String name) {
+        return Stream.of(values())
+                   .filter(v -> v.name().equalsIgnoreCase(name))
+                   .findFirst();
+    }
+
 }

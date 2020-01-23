@@ -17,8 +17,10 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 
+import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
@@ -50,9 +52,16 @@ public class AisConsentController {
     @ApiOperation(value = "Create consent for given psu id and accesses.")
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = String.class),
+        @ApiResponse(code = 400, message = "Checksum verification failed"),
         @ApiResponse(code = 204, message = "No Content")})
-    public ResponseEntity<CreateAisConsentResponse> createConsent(@RequestBody CreateAisConsentRequest request) {
-        CmsResponse<CreateAisConsentResponse> cmsResponse = aisConsentService.createConsent(request);
+    public ResponseEntity createConsent(@RequestBody CreateAisConsentRequest request) {
+        CmsResponse<CreateAisConsentResponse> cmsResponse;
+
+        try {
+            cmsResponse = aisConsentService.createConsent(request);
+        } catch (WrongChecksumException e) {
+            return new ResponseEntity<>(CmsError.CHECKSUM_ERROR, HttpStatus.BAD_REQUEST);
+        }
 
         if (cmsResponse.hasError()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -63,8 +72,14 @@ public class AisConsentController {
 
     @PostMapping(path = "/action")
     @ApiOperation(value = "Save information about uses of consent")
-    public ResponseEntity<Void> saveConsentActionLog(@RequestBody AisConsentActionRequest request) {
-        aisConsentService.checkConsentAndSaveActionLog(request);
+    public ResponseEntity saveConsentActionLog(@RequestBody AisConsentActionRequest request) {
+
+        try {
+            aisConsentService.checkConsentAndSaveActionLog(request);
+        } catch (WrongChecksumException e) {
+            return new ResponseEntity<>(CmsError.CHECKSUM_ERROR, HttpStatus.BAD_REQUEST);
+        }
+
         return ResponseEntity.ok().build();
     }
 
@@ -92,18 +107,25 @@ public class AisConsentController {
     @ApiOperation(value = "Update AccountAccess in the consent identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Checksum verification failed"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<UpdateAisConsentResponse> updateAccountAccess(
+    public ResponseEntity updateAccountAccess(
         @ApiParam(name = "consent-id",
             value = "The account consent identification assigned to the created account consent.",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("consent-id") String consentId,
         @RequestBody AisAccountAccessInfo request) {
-        CmsResponse<AisAccountConsent> response = aisConsentService.updateAspspAccountAccessWithResponse(consentId, request);
+        CmsResponse<AisAccountConsent> response;
+
+        try {
+            response = aisConsentService.updateAspspAccountAccessWithResponse(consentId, request);
+        } catch (WrongChecksumException e) {
+            return new ResponseEntity<>(CmsError.CHECKSUM_ERROR, HttpStatus.BAD_REQUEST);
+        }
 
         if (response.hasError()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(response.getError(), HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>(new UpdateAisConsentResponse(response.getPayload()), HttpStatus.OK);
@@ -133,8 +155,9 @@ public class AisConsentController {
     @ApiOperation(value = "Update consent status in the consent identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Checksum verification failed"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<Void> updateConsentStatus(
+    public ResponseEntity updateConsentStatus(
         @ApiParam(name = "consent-id",
             value = "The account consent identification assigned to the created account consent.",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
@@ -144,7 +167,14 @@ public class AisConsentController {
             example = "VALID",
             required = true)
         @PathVariable("status") String status) {
-        CmsResponse<Boolean> response = aisConsentService.updateConsentStatusById(consentId, ConsentStatus.valueOf(status));
+        CmsResponse<Boolean> response;
+
+        try {
+            response = aisConsentService.updateConsentStatusById(consentId, ConsentStatus.valueOf(status));
+        } catch (WrongChecksumException e) {
+            return new ResponseEntity<>(CmsError.CHECKSUM_ERROR, HttpStatus.BAD_REQUEST);
+        }
+
         if (response.isSuccessful() && response.getPayload()) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -370,13 +400,20 @@ public class AisConsentController {
     @ApiOperation(value = "Updates multilevel SCA in consent")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Checksum verification failed"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<Boolean> updateMultilevelScaRequired(
+    public ResponseEntity updateMultilevelScaRequired(
         @ApiParam(name = "consent-id", value = "The consent identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7", required = true)
         @PathVariable("consent-id") String consentId,
         @ApiParam(name = "multilevel-sca", value = "Multilevel SCA.", example = "false")
         @RequestParam(value = "multilevel-sca", defaultValue = "false") boolean multilevelSca) {
-        CmsResponse<Boolean> response = aisConsentService.updateMultilevelScaRequired(consentId, multilevelSca);
+        CmsResponse<Boolean> response;
+
+        try {
+            response = aisConsentService.updateMultilevelScaRequired(consentId, multilevelSca);
+        } catch (WrongChecksumException e) {
+            return new ResponseEntity<>(CmsError.CHECKSUM_ERROR, HttpStatus.BAD_REQUEST);
+        }
 
         if (response.isSuccessful() && response.getPayload()) {
             return new ResponseEntity<>(true, HttpStatus.OK);

@@ -17,7 +17,9 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
@@ -62,7 +64,7 @@ public class Xs2aAisConsentService {
     private final LoggingContextService loggingContextService;
 
     /**
-     * Sends a POST request to CMS to store created AISconsent
+     * Sends a POST request to CMS to store created AIS consent
      *
      * @param request Request body storing main consent details
      * @param psuData PsuIdData container of authorisation data about PSU
@@ -72,7 +74,14 @@ public class Xs2aAisConsentService {
     public Optional<Xs2aCreateAisConsentResponse> createConsent(CreateConsentReq request, PsuIdData psuData, TppInfo tppInfo) {
         int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppInfo, allowedFrequencyPerDay, requestProviderService.getInternalRequestIdString());
-        CmsResponse<CreateAisConsentResponse> response = aisConsentService.createConsent(createAisConsentRequest);
+        CmsResponse<CreateAisConsentResponse> response;
+
+        try {
+            response = aisConsentService.createConsent(createAisConsentRequest);
+        } catch (WrongChecksumException e) {
+            log.info("Consent cannot be created, checksum verification failed");
+            return Optional.empty();
+        }
 
         if (response.hasError()) {
             log.info("Consent cannot be created, because can't save to cms DB");
@@ -119,7 +128,14 @@ public class Xs2aAisConsentService {
      * @param consentStatus ConsentStatus the consent be changed to
      */
     public void updateConsentStatus(String consentId, ConsentStatus consentStatus) {
-        CmsResponse<Boolean> statusUpdated = aisConsentService.updateConsentStatusById(consentId, consentStatus);
+        CmsResponse<Boolean> statusUpdated;
+
+        try {
+            statusUpdated = aisConsentService.updateConsentStatusById(consentId, consentStatus);
+        } catch (WrongChecksumException e) {
+            log.info("updateConsentStatus cannot be executed, checksum verification failed");
+            return;
+        }
 
         if (statusUpdated.isSuccessful() && statusUpdated.getPayload()) {
             loggingContextService.storeConsentStatus(consentStatus);
@@ -137,7 +153,11 @@ public class Xs2aAisConsentService {
      */
     public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus, String requestUri, boolean updateUsage,
                                  String resourceId, String transactionId) {
-        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(tppId, consentId, actionStatus, requestUri, updateUsage, resourceId, transactionId));
+        try {
+            aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(tppId, consentId, actionStatus, requestUri, updateUsage, resourceId, transactionId));
+        } catch (WrongChecksumException e) {
+            log.info("consentActionLog cannot be executed, checksum verification failed");
+        }
     }
 
     /**
@@ -211,14 +231,22 @@ public class Xs2aAisConsentService {
      * @param aisAccountAccessInfo AIS account access information
      * @return Response containing AIS Consent
      */
-    public Optional<AccountConsent> updateAspspAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
-        CmsResponse<AisAccountConsent> response = aisConsentService.updateAspspAccountAccessWithResponse(consentId, aisAccountAccessInfo);
+    public CmsResponse<AccountConsent> updateAspspAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
+        CmsResponse<AisAccountConsent> response;
 
-        if (response.hasError()) {
-            return Optional.empty();
+        CmsResponse.CmsResponseBuilder<AccountConsent> builder = CmsResponse.builder();
+
+        try {
+            response = aisConsentService.updateAspspAccountAccessWithResponse(consentId, aisAccountAccessInfo);
+        } catch (WrongChecksumException e) {
+            return builder.error(CmsError.CHECKSUM_ERROR).build();
         }
 
-        return Optional.ofNullable(aisConsentMapper.mapToAccountConsent(response.getPayload()));
+        if (response.hasError()) {
+            return builder.error(response.getError()).build();
+        }
+
+        return builder.payload(aisConsentMapper.mapToAccountConsent(response.getPayload())).build();
     }
 
     /**
@@ -295,7 +323,11 @@ public class Xs2aAisConsentService {
      * @param multilevelScaRequired multilevel SCA required indicator
      */
     public void updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) {
-        aisConsentService.updateMultilevelScaRequired(consentId, multilevelScaRequired);
+        try {
+            aisConsentService.updateMultilevelScaRequired(consentId, multilevelScaRequired);
+        } catch (WrongChecksumException e) {
+            log.info("updateMultilevelScaRequired cannot be executed, checksum verification failed");
+        }
     }
 
     /**

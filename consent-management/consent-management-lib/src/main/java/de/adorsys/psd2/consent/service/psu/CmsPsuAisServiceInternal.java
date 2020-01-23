@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service.psu;
 
 
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.AdditionalAccountInformationType;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
@@ -171,8 +172,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     @Override
-    @Transactional
-    public boolean confirmConsent(@NotNull String consentId, @NotNull String instanceId) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public boolean confirmConsent(@NotNull String consentId, @NotNull String instanceId) throws WrongChecksumException {
         if (changeConsentStatus(consentId, VALID, instanceId)) {
             aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
             return true;
@@ -183,8 +184,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     @Override
-    @Transactional
-    public boolean rejectConsent(@NotNull String consentId, @NotNull String instanceId) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public boolean rejectConsent(@NotNull String consentId, @NotNull String instanceId) throws WrongChecksumException {
         return changeConsentStatus(consentId, REJECTED, instanceId);
     }
 
@@ -200,14 +201,14 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     @Override
-    @Transactional
-    public boolean revokeConsent(@NotNull String consentId, @NotNull String instanceId) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public boolean revokeConsent(@NotNull String consentId, @NotNull String instanceId) throws WrongChecksumException {
         return changeConsentStatus(consentId, REVOKED_BY_PSU, instanceId);
     }
 
     @Override
-    @Transactional
-    public boolean authorisePartiallyConsent(@NotNull String consentId, @NotNull String instanceId) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public boolean authorisePartiallyConsent(@NotNull String consentId, @NotNull String instanceId) throws WrongChecksumException {
         return changeConsentStatus(consentId, PARTIALLY_AUTHORISED, instanceId);
     }
 
@@ -244,7 +245,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     private boolean updateAccountAccessInConsent(AisConsent consent, CmsAisConsentAccessRequest request) {
         if (consent.getConsentStatus() == VALID) {
-            log.warn("Checksum verification failed!");
+            log.info("Consent ID [{}]. Can't execute updateAccountAccessInConsent, because AIS consent has already VALID status.",
+                     consent.getExternalId());
             return false;
         }
 
@@ -282,7 +284,15 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         consent.setAllowedFrequencyPerDay(request.getFrequencyPerDay());
 
         aisConsentUsageService.resetUsage(consent);
-        aisConsentRepository.verifyAndUpdate(consent);
+
+        try {
+            aisConsentRepository.verifyAndUpdate(consent);
+        } catch (WrongChecksumException e) {
+            log.info("Consent ID [{}]. Update account access in consent failed, because consent has wrong checksum",
+                     consent.getExternalId());
+            return false;
+        }
+
         return true;
     }
 
@@ -293,19 +303,22 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         consent.setOwnerNameType(ownerNameType);
     }
 
-    private boolean changeConsentStatus(String consentId, ConsentStatus status, String instanceId) {
-        return aisConsentJpaRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId))
-                   .map(con -> updateConsentStatus(con, status))
-                   .orElseGet(() -> {
-                       log.info("Consent ID [{}], Instance ID: [{}]. Change consent status failed, because AIS consent not found",
-                                consentId, instanceId);
-                       return false;
-                   });
+    private boolean changeConsentStatus(String consentId, ConsentStatus status, String instanceId) throws WrongChecksumException {
+
+        Optional<AisConsent> aisConsentOptional = aisConsentJpaRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId));
+
+        if (aisConsentOptional.isPresent()) {
+            return updateConsentStatus(aisConsentOptional.get(), status);
+        }
+
+        log.info("Consent ID [{}], Instance ID: [{}]. Change consent status failed, because AIS consent not found",
+                 consentId, instanceId);
+        return false;
     }
 
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
         if (consent != null && consent.shouldConsentBeExpired()) {
-           return aisConsentConfirmationExpirationService.expireConsent(consent);
+            return aisConsentConfirmationExpirationService.expireConsent(consent);
         }
 
         return consent;
@@ -316,7 +329,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
     }
 
-    private boolean updateConsentStatus(AisConsent consent, ConsentStatus status) {
+    private boolean updateConsentStatus(AisConsent consent, ConsentStatus status) throws WrongChecksumException {
         if (consent.getConsentStatus().isFinalisedStatus()) {
             log.info("Consent ID: [{}], Consent status: [{}]. Confirmation of consent failed in updateConsentStatus method, because consent has finalised status",
                      consent.getExternalId(), consent.getConsentStatus().getValue());
@@ -327,6 +340,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         }
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
+
         return aisConsentRepository.verifyAndSave(consent) != null;
     }
 
@@ -343,7 +357,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         if (optionalPsuData.isPresent()) {
             newPsuData.setId(optionalPsuData.get().getId());
         } else {
-            log.info("Authorisation ID [{}]. No PSU data available in the authorization.", authorisation.getId());
+            log.info("Authorisation ID [{}]. No PSU data available in the authorisation.", authorisation.getId());
             List<PsuData> psuDataList = authorisation.getConsent().getPsuDataList();
             Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(newPsuData, psuDataList);
             if (psuDataOptional.isPresent()) {

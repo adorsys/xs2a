@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.psu.controller;
 
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
@@ -49,7 +50,6 @@ public class CmsPsuAisControllerTest {
     private static final String PSU_ID_TYPE = "psu id type";
     private static final String PSU_CORPORATE_ID = "psu corporate id";
     private static final String PSU_CORPORATE_ID_TYPE = "psu corporate id type";
-    private static final String PSU_IP_ADDRESS = "psu ip address";
     private static final String INSTANCE_ID = "instance id";
     private static final String SCA_STATUS_RECEIVED = "RECEIVED";
     private static final String NOK_REDIRECT_URI = "http://everything_is_bad.html";
@@ -237,7 +237,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void confirmConsent_withTrueRequest_shouldReturnOk() {
+    public void confirmConsent_withTrueRequest_shouldReturnOk() throws WrongChecksumException {
         // Given
         when(cmsPsuAisService.confirmConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(true);
@@ -254,7 +254,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void confirmConsent_withFalseRequest_shouldReturnOk() {
+    public void confirmConsent_withFalseRequest_shouldReturnOk() throws WrongChecksumException {
         // Given
         when(cmsPsuAisService.confirmConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(false);
@@ -271,7 +271,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void rejectConsent_withTrueRequest_shouldReturnOk() {
+    public void rejectConsent_withTrueRequest_shouldReturnOk() throws WrongChecksumException {
         // Given
         when(cmsPsuAisService.rejectConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(true);
@@ -288,7 +288,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void rejectConsent_withFalseRequest_shouldReturnOk() {
+    public void rejectConsent_withFalseRequest_shouldReturnOk() throws WrongChecksumException {
         // Given
         when(cmsPsuAisService.rejectConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(false);
@@ -338,7 +338,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void revokeConsent_withTrueRequest_shouldReturnOk() {
+    public void revokeConsent_withTrueRequest_shouldReturnOk() throws WrongChecksumException {
         // Given
         when(cmsPsuAisService.revokeConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(true);
@@ -355,7 +355,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void revokeConsent_withFalseRequest_shouldReturnOk() {
+    public void revokeConsent_withFalseRequest_shouldReturnOk() throws WrongChecksumException {
         // Given
         when(cmsPsuAisService.revokeConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(false);

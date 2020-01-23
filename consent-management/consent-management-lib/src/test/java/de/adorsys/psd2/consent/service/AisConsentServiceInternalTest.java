@@ -21,10 +21,7 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.ais.AisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.ais.ConsentTypeSetting;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.consent.api.AccountInfo;
-import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.CmsError;
-import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.*;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -35,8 +32,8 @@ import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.repository.AisConsentVerifyingRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
-import de.adorsys.psd2.consent.repository.impl.AisConsentRepositoryImpl;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
@@ -102,8 +99,6 @@ public class AisConsentServiceInternalTest {
     @Mock
     private AisConsentJpaRepository aisConsentJpaRepository;
     @Mock
-    private AisConsentRepositoryImpl aisConsentRepositoryImpl;
-    @Mock
     private PsuDataMapper psuDataMapper;
     @Mock
     private TppInfoMapper tppInfoMapper;
@@ -127,6 +122,8 @@ public class AisConsentServiceInternalTest {
     private TppInfoRepository tppInfoRepository;
     @Mock
     private AisConsentRequestTypeService aisConsentRequestTypeService;
+    @Mock
+    private AisConsentVerifyingRepository aisConsentVerifyingRepository;
 
     @Before
     public void setUp() {
@@ -214,9 +211,9 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void createConsent_shouldReturnCreateAisConsentResponse() {
+    public void createConsent_shouldReturnCreateAisConsentResponse() throws WrongChecksumException {
         // Given
-        when(aisConsentRepositoryImpl.verifyAndSave(any(AisConsent.class)))
+        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
             .thenReturn(aisConsent);
         when(aspspProfileService.getAspspSettings())
             .thenReturn(getAspspSettings());
@@ -235,9 +232,9 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void createConsent_shouldReturnCreateAisConsentResponse_withTppRedirectUri() {
+    public void createConsent_shouldReturnCreateAisConsentResponse_withTppRedirectUri() throws WrongChecksumException {
         // Given
-        when(aisConsentRepositoryImpl.verifyAndSave(any(AisConsent.class)))
+        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
             .thenReturn(aisConsent);
         when(aspspProfileService.getAspspSettings())
             .thenReturn(getAspspSettings());
@@ -258,7 +255,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void createConsent_frequencyPerDay_isNull_shouldReturnLogicalError() {
+    public void createConsent_frequencyPerDay_isNull_shouldReturnLogicalError() throws WrongChecksumException {
         // Given
         CreateAisConsentRequest request = buildCorrectCreateAisConsentRequest();
         request.setAllowedFrequencyPerDay(null);
@@ -271,10 +268,10 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void createConsent_id_isNull_shouldReturnTechnicalError() {
+    public void createConsent_id_isNull_shouldReturnTechnicalError() throws WrongChecksumException {
         // Given
         aisConsent.setId(null);
-        when(aisConsentRepositoryImpl.verifyAndSave(any(AisConsent.class)))
+        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
             .thenReturn(aisConsent);
         when(aspspProfileService.getAspspSettings())
             .thenReturn(getAspspSettings());
@@ -288,9 +285,9 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void createConsent_AdjustValidUntil_ZeroLifeTime() {
+    public void createConsent_AdjustValidUntil_ZeroLifeTime() throws WrongChecksumException {
         // Given
-        when(aisConsentRepositoryImpl.verifyAndSave(any(AisConsent.class)))
+        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
             .thenReturn(aisConsent);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
 
@@ -304,14 +301,14 @@ public class AisConsentServiceInternalTest {
         aisConsentService.createConsent(buildCorrectCreateAisConsentRequest(validUntil));
 
         // Then
-        verify(aisConsentRepositoryImpl).verifyAndSave(argument.capture());
+        verify(aisConsentVerifyingRepository).verifyAndSave(argument.capture());
         assertEquals(argument.getValue().getValidUntil(), validUntil);
     }
 
     @Test
-    public void createConsent_AdjustValidUntil_NoAdjustment() {
+    public void createConsent_AdjustValidUntil_NoAdjustment() throws WrongChecksumException {
         // Given
-        when(aisConsentRepositoryImpl.verifyAndSave(any(AisConsent.class)))
+        when(aisConsentVerifyingRepository.verifyAndSave(any()))
             .thenReturn(aisConsent);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
 
@@ -324,14 +321,14 @@ public class AisConsentServiceInternalTest {
         aisConsentService.createConsent(buildCorrectCreateAisConsentRequest(validUntil));
 
         // Then
-        verify(aisConsentRepositoryImpl).verifyAndSave(argument.capture());
+        verify(aisConsentVerifyingRepository).verifyAndSave(argument.capture());
         assertEquals(argument.getValue().getValidUntil(), validUntil);
     }
 
     @Test
-    public void createConsent_AdjustValidUntil_AdjustmentToLifeTime() {
+    public void createConsent_AdjustValidUntil_AdjustmentToLifeTime() throws WrongChecksumException {
         // Given
-        when(aisConsentRepositoryImpl.verifyAndSave(any(AisConsent.class)))
+        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
             .thenReturn(aisConsent);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
 
@@ -344,14 +341,14 @@ public class AisConsentServiceInternalTest {
         aisConsentService.createConsent(buildCorrectCreateAisConsentRequest(validUntil));
 
         // Then
-        verify(aisConsentRepositoryImpl).verifyAndSave(argument.capture());
+        verify(aisConsentVerifyingRepository).verifyAndSave(argument.capture());
         assertEquals(argument.getValue().getValidUntil(), LocalDate.now().plusDays(maxConsentValidityDays - 1));
     }
 
     @Test
-    public void createConsent_checkLastActionDate() {
+    public void createConsent_checkLastActionDate() throws WrongChecksumException {
         // Given
-        when(aisConsentRepositoryImpl.verifyAndSave(any(AisConsent.class)))
+        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
             .thenReturn(aisConsent);
         when(aspspProfileService.getAspspSettings())
             .thenReturn(getAspspSettings());
@@ -361,16 +358,16 @@ public class AisConsentServiceInternalTest {
         aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
 
         // Then
-        verify(aisConsentRepositoryImpl).verifyAndSave(argument.capture());
+        verify(aisConsentVerifyingRepository).verifyAndSave(argument.capture());
         assertEquals(LocalDate.now(), argument.getValue().getLastActionDate());
     }
 
     @Test
-    public void updateAccountAccessById() {
+    public void updateAccountAccessById() throws WrongChecksumException {
         // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST))
-            .thenReturn(Optional.empty());
-        when(aisConsentRepositoryImpl.verifyAndSave(any(AisConsent.class)))
+        when(aisConsentVerifyingRepository.getActualAisConsent(EXTERNAL_CONSENT_ID))
+            .thenReturn(Optional.of(aisConsent));
+        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
             .thenReturn(aisConsent);
 
         AisAccountAccessInfo info = new AisAccountAccessInfo();
@@ -391,31 +388,42 @@ public class AisConsentServiceInternalTest {
         assertTrue(consentId.isSuccessful());
 
         // When
-        CmsResponse<String> consentId_notExist = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
+        CmsResponse<String> actual = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
         // Then
-        assertFalse(consentId_notExist.isSuccessful());
+        assertFalse(actual.isSuccessful());
     }
 
-    @Test
-    public void updateAccountAccessByIdWithResponse_noEntity_shouldReturnLogicalError() {
+    @Test(expected = WrongChecksumException.class)
+    public void updateAccountAccess_checksumBad_shouldReturnChecksumError() throws WrongChecksumException {
         // Given
-        AisConsent finalisedConsent = buildFinalisedConsent();
-        when(aisConsentJpaRepository.findByExternalId(FINALISED_CONSENT_ID))
-            .thenReturn(Optional.of(finalisedConsent));
+        when(aisConsentVerifyingRepository.getActualAisConsent(EXTERNAL_CONSENT_ID))
+            .thenReturn(Optional.of(aisConsent));
+
+        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
+            .thenThrow(WrongChecksumException.class);
+
+        AisAccountAccessInfo info = new AisAccountAccessInfo();
+        info.setAccounts(ACCOUNTS_2);
 
         // When
-        CmsResponse<AisAccountConsent> result = aisConsentService.updateAspspAccountAccessWithResponse(FINALISED_CONSENT_ID, buildAccess());
-
-        // Then
-        assertLogicalError(result);
+        aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID, info);
     }
 
     @Test
-    public void updateAccountAccessByIdWithResponse_success() {
+    public void updateAccountAccessByIdWithResponse_noEntity_shouldReturnLogicalError() throws WrongChecksumException {
+        // When
+        CmsResponse<AisAccountConsent> actual = aisConsentService.updateAspspAccountAccessWithResponse(FINALISED_CONSENT_ID, buildAccess());
+
+        // Then
+        assertLogicalError(actual);
+    }
+
+    @Test
+    public void updateAccountAccessByIdWithResponse_success() throws WrongChecksumException {
         // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST))
-            .thenReturn(Optional.empty());
-        when(aisConsentRepositoryImpl.verifyAndUpdate(any(AisConsent.class)))
+        when(aisConsentVerifyingRepository.getActualAisConsent(EXTERNAL_CONSENT_ID))
+            .thenReturn(Optional.of(aisConsent));
+        when(aisConsentVerifyingRepository.verifyAndUpdate(any(AisConsent.class)))
             .thenReturn(aisConsent);
         when(consentMapper.mapToAisAccountConsent(aisConsent))
             .thenReturn(buildSpiAccountConsent());
@@ -438,10 +446,26 @@ public class AisConsentServiceInternalTest {
         assertTrue(consentId.isSuccessful());
 
         // When
-        CmsResponse<String> consentId_notExist = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
+        CmsResponse<String> actual = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
         // Then
-        assertFalse(consentId_notExist.isSuccessful());
+        assertFalse(actual.isSuccessful());
     }
+
+    @Test(expected = WrongChecksumException.class)
+    public void updateAccountAccessByIdWithResponse_checksumBad_shouldReturnChecksumError() throws WrongChecksumException {
+        // Given
+        when(aisConsentVerifyingRepository.getActualAisConsent(EXTERNAL_CONSENT_ID))
+            .thenReturn(Optional.of(aisConsent));
+        when(aisConsentVerifyingRepository.verifyAndUpdate(any(AisConsent.class)))
+            .thenThrow(WrongChecksumException.class);
+
+        AisAccountAccessInfo info = new AisAccountAccessInfo();
+        info.setAccounts(ACCOUNTS_2);
+
+        // When
+        aisConsentService.updateAspspAccountAccessWithResponse(EXTERNAL_CONSENT_ID, info);
+    }
+
 
     @Test
     public void getPsuDataByConsentId_success() {
@@ -470,7 +494,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void updateMultilevelScaRequired_success() {
+    public void updateMultilevelScaRequired_success() throws WrongChecksumException {
         // When
         CmsResponse<Boolean> actual = aisConsentService.updateMultilevelScaRequired(EXTERNAL_CONSENT_ID, true);
 
@@ -478,8 +502,18 @@ public class AisConsentServiceInternalTest {
         assertTrue(actual.getPayload());
     }
 
+    @Test(expected = WrongChecksumException.class)
+    public void updateMultilevelScaRequired_checksumBad_shouldReturnChecksumError() throws WrongChecksumException {
+        // Given
+        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
+            .thenThrow(WrongChecksumException.class);
+
+        // When
+        aisConsentService.updateMultilevelScaRequired(EXTERNAL_CONSENT_ID, true);
+    }
+
     @Test
-    public void updateMultilevelScaRequired_noEntity_shouldReturnFalse() {
+    public void updateMultilevelScaRequired_noEntity_shouldReturnFalse() throws WrongChecksumException {
         // Given
         when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.empty());
@@ -492,7 +526,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void updateConsentStatusById_UpdateFinalisedStatus_Fail() {
+    public void updateConsentStatusById_UpdateFinalisedStatus_Fail() throws WrongChecksumException {
         // Given
         AisConsent finalisedConsent = buildFinalisedConsent();
         when(aisConsentJpaRepository.findByExternalId(FINALISED_CONSENT_ID))
@@ -506,7 +540,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void updateConsentStatusById_noActualConsent_shouldReturnFalse() {
+    public void updateConsentStatusById_noActualConsent_shouldReturnFalse() throws WrongChecksumException {
         // Given
         AisConsent nonFinalisedConsent = buildFinalisedConsent();
         nonFinalisedConsent.setConsentStatus(ConsentStatus.PARTIALLY_AUTHORISED);
@@ -722,7 +756,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void checkConsentAndSaveActionLog_updateUsageCounter() {
+    public void checkConsentAndSaveActionLog_updateUsageCounter() throws WrongChecksumException {
         // When
         AisConsentActionRequest request = new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
         aisConsentService.checkConsentAndSaveActionLog(request);
@@ -731,7 +765,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void checkConsentAndSaveActionLog_NotUpdateUsageCounter() {
+    public void checkConsentAndSaveActionLog_NotUpdateUsageCounter() throws WrongChecksumException {
         // When
         AisConsentActionRequest request = new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, false, null, null);
         aisConsentService.checkConsentAndSaveActionLog(request);
@@ -740,7 +774,7 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
-    public void checkConsentAndSaveActionLog_withValidUsedNonRecurringConsent_shouldExpireConsent() {
+    public void checkConsentAndSaveActionLog_withValidUsedNonRecurringConsent_shouldExpireConsent() throws WrongChecksumException {
         // Given
         AisConsent consent = buildUsedNonRecurringConsent();
 
